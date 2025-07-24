@@ -18,13 +18,13 @@ export default function Navbar() {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-lg border-b border-zinc-800"
+      className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-zinc-800/30"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="#" className="text-xl font-bold">
+            <a href="#" className="text-xl font-medium text-white">
               Executive AI Solutions
             </a>
           </div>
@@ -36,12 +36,12 @@ export default function Navbar() {
                 <a
                   key={item.label}
                   href={item.href}
-                  className="text-zinc-300 hover:text-white transition-colors duration-200"
+                  className="text-zinc-400 hover:text-white transition-all duration-300 text-sm"
                 >
                   {item.label}
                 </a>
               ))}
-              <button className="bg-white text-black px-6 py-2 rounded-full font-semibold hover:bg-zinc-200 transition-colors duration-200">
+              <button className="bg-white text-black px-6 py-2.5 rounded-md font-medium hover:bg-zinc-100 transition-all duration-300 text-sm shadow-sm">
                 Get Started
               </button>
             </div>
@@ -91,7 +91,7 @@ export default function Navbar() {
                   {item.label}
                 </a>
               ))}
-              <button className="w-full mt-4 bg-white text-black px-6 py-2 rounded-full font-semibold hover:bg-zinc-200 transition-colors duration-200">
+              <button className="w-full mt-4 bg-white text-black px-6 py-2.5 rounded-md font-medium hover:bg-zinc-100 transition-all duration-300 text-sm">
                 Get Started
               </button>
             </div>

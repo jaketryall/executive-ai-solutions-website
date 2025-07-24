@@ -8,7 +8,7 @@ export default function About() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section ref={ref} className="py-24 px-4 sm:px-6 lg:px-8">
+    <section ref={ref} className="py-32 px-4 sm:px-6 lg:px-8 bg-black">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -16,14 +16,14 @@ export default function About() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl sm:text-5xl font-bold mb-8">About Executive AI Solutions</h2>
+          <h2 className="text-4xl sm:text-5xl font-medium mb-8 text-white">About Executive AI Solutions</h2>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="space-y-6 text-lg text-zinc-300"
+          className="space-y-8 text-lg text-zinc-500 leading-relaxed"
         >
           <p>
             We believe AI should be practical, not theoretical. While others chase the latest buzzwords, 
@@ -45,24 +45,24 @@ export default function About() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="mt-12 p-8 bg-zinc-900 rounded-2xl"
+          className="mt-16 p-10 bg-zinc-900/50 rounded-xl border border-zinc-800"
         >
-          <h3 className="text-2xl font-semibold mb-4">Why Choose Us?</h3>
-          <ul className="space-y-3 text-zinc-300">
+          <h3 className="text-2xl font-medium mb-6 text-white">Why Choose Us?</h3>
+          <ul className="space-y-4 text-zinc-500">
             <li className="flex items-start">
-              <span className="text-green-400 mr-3">✓</span>
+              <span className="text-[#93bbfd] mr-4 text-xl">✓</span>
               <span>Practical solutions that work from day one</span>
             </li>
             <li className="flex items-start">
-              <span className="text-green-400 mr-3">✓</span>
+              <span className="text-[#93bbfd] mr-4 text-xl">✓</span>
               <span>No-nonsense approach to AI implementation</span>
             </li>
             <li className="flex items-start">
-              <span className="text-green-400 mr-3">✓</span>
+              <span className="text-[#93bbfd] mr-4 text-xl">✓</span>
               <span>Proven track record across multiple industries</span>
             </li>
             <li className="flex items-start">
-              <span className="text-green-400 mr-3">✓</span>
+              <span className="text-[#93bbfd] mr-4 text-xl">✓</span>
               <span>24/7 AI workforce that scales with your needs</span>
             </li>
           </ul>

@@ -33,7 +33,7 @@ export default function Contact() {
   };
 
   return (
-    <section ref={ref} className="py-24 px-4 sm:px-6 lg:px-8 bg-zinc-950">
+    <section ref={ref} className="py-32 px-4 sm:px-6 lg:px-8 bg-black">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -41,8 +41,8 @@ export default function Contact() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4">Get in Touch</h2>
-          <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
+          <h2 className="text-4xl sm:text-5xl font-medium mb-6 text-white">Get in Touch</h2>
+          <p className="text-lg text-zinc-500 max-w-2xl mx-auto font-light">
             Ready to deploy your AI workforce? Let's discuss how we can help transform your business.
           </p>
         </motion.div>
@@ -66,7 +66,7 @@ export default function Contact() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-zinc-600 transition-colors"
+                className="w-full px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-md focus:outline-none focus:border-[#3b82f6] transition-all duration-200"
               />
             </div>
             <div>
@@ -80,7 +80,7 @@ export default function Contact() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-zinc-600 transition-colors"
+                className="w-full px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-md focus:outline-none focus:border-[#3b82f6] transition-all duration-200"
               />
             </div>
           </div>
@@ -96,7 +96,7 @@ export default function Contact() {
               onChange={handleChange}
               required
               rows={6}
-              className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-zinc-600 transition-colors resize-none"
+              className="w-full px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-md focus:outline-none focus:border-[#3b82f6] transition-all duration-200 resize-none"
             />
           </div>
 
@@ -104,12 +104,12 @@ export default function Contact() {
             <button
               type="submit"
               disabled={status === "sending"}
-              className={`px-8 py-4 rounded-full font-semibold text-lg transition-all duration-200 ${
+              className={`px-8 py-4 rounded-md font-medium text-base transition-all duration-300 shadow-sm ${
                 status === "sending"
                   ? "bg-zinc-700 text-zinc-400 cursor-not-allowed"
                   : status === "success"
                   ? "bg-green-600 text-white"
-                  : "bg-white text-black hover:bg-zinc-200"
+                  : "bg-white text-black hover:bg-zinc-100"
               }`}
             >
               {status === "sending" ? "Sending..." : status === "success" ? "Message Sent!" : "Send Message"}
@@ -124,7 +124,7 @@ export default function Contact() {
           className="mt-16 text-center text-zinc-400"
         >
           <p className="mb-2">Or reach us directly at:</p>
-          <a href="mailto:hello@executiveaisolutions.com" className="text-white hover:text-zinc-300 transition-colors">
+          <a href="mailto:hello@executiveaisolutions.com" className="text-[#93bbfd] hover:text-[#60a5fa] transition-colors duration-300">
             hello@executiveaisolutions.com
           </a>
         </motion.div>
