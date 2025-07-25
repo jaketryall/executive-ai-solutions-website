@@ -33,8 +33,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className="dark" style={{ overflow: 'visible' }}>
+      <body className={`${inter.className} relative`} style={{ overflow: 'visible' }}>{children}</body>
     </html>
   );
 }

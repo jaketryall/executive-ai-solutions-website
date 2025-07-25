@@ -1,85 +1,316 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion, useInView, useScroll, useTransform, useSpring } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 
 const steps = [
   {
     number: "01",
     title: "Book a Strategy Call",
     description: "Tell us about your business challenges and goals. We'll identify where AI can make the biggest impact.",
+    color: "from-blue-500 to-cyan-500",
+    bgColor: "from-blue-500/20 to-cyan-500/20",
   },
   {
     number: "02",
     title: "Get Your AI Roadmap",
     description: "Receive a custom implementation plan with clear milestones and ROI projections for your AI initiatives.",
+    color: "from-purple-500 to-pink-500",
+    bgColor: "from-purple-500/20 to-pink-500/20",
   },
   {
     number: "03",
     title: "Deploy & Scale",
     description: "Launch your AI workforce with our support. Start small, measure results, and scale what works.",
+    color: "from-orange-500 to-red-500",
+    bgColor: "from-orange-500/20 to-red-500/20",
   },
 ];
 
-export default function HowItWorks() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+function StepCard({ step, index, progress }: { step: typeof steps[0], index: number, progress: any }) {
+  // Calculate individual step progress with overlap for smoother transitions
+  const stepStart = 0.15 + (index * 0.2); // Start at 15% progress, then space each card
+  const stepEnd = stepStart + 0.25; // 25% duration for each step
+  
+  const stepProgress = useTransform(progress, [stepStart, stepEnd], [0, 1]);
+  const smoothProgress = useSpring(stepProgress, { stiffness: 100, damping: 30 });
+  
+  // Animations based on scroll
+  const scale = useTransform(smoothProgress, [0, 0.5, 1], [0.8, 1, 0.95]);
+  const opacity = useTransform(smoothProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0.3]);
+  const rotateY = useTransform(smoothProgress, [0, 0.5, 1], [-90, 0, 0]);
+  const z = useTransform(smoothProgress, [0, 0.5, 1], [-200, 0, -50]);
+  
+  // Glow intensity based on progress
+  const glowOpacity = useTransform(smoothProgress, [0, 0.5, 1], [0, 0.5, 0.1]);
+  
+  // Number counter animation
+  const [displayNumber, setDisplayNumber] = useState("00");
+  
+  useEffect(() => {
+    const unsubscribe = smoothProgress.on("change", (value) => {
+      if (value > 0.2) {
+        setDisplayNumber(step.number);
+      } else {
+        setDisplayNumber("00");
+      }
+    });
+    return unsubscribe;
+  }, [smoothProgress, step.number]);
 
   return (
-    <section ref={ref} className="py-32 px-4 sm:px-6 lg:px-8 relative bg-black">
+    <motion.div
+      className="relative"
+      style={{
+        scale,
+        opacity,
+        rotateY,
+        z,
+        transformPerspective: 1000,
+        transformStyle: "preserve-3d",
+      }}
+    >
+      {/* Glow effect */}
+      <motion.div
+        className={`absolute inset-0 bg-gradient-to-r ${step.bgColor} rounded-3xl blur-3xl`}
+        style={{ opacity: glowOpacity }}
+      />
       
-      <div className="max-w-7xl mx-auto relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+      <div className="relative glass-card rounded-3xl p-10 backdrop-blur-xl border border-white/10 h-full flex flex-col">
+        {/* Animated number */}
+        <motion.div className="mb-8">
+          <span className={`text-7xl lg:text-8xl font-light text-transparent bg-gradient-to-br ${step.color} bg-clip-text`}>
+            {displayNumber}
+          </span>
+        </motion.div>
+        
+        {/* Content with staggered reveal */}
+        <motion.h3 
+          className="text-3xl font-light mb-6 text-white"
+          style={{
+            opacity: useTransform(smoothProgress, [0.3, 0.5], [0, 1]),
+            y: useTransform(smoothProgress, [0.3, 0.5], [20, 0]),
+          }}
         >
-          <h2 className="text-4xl sm:text-5xl font-medium mb-6 text-white">How It Works</h2>
-          <p className="text-lg text-zinc-500 max-w-2xl mx-auto font-light">
-            Your journey to AI transformation in three simple steps
-          </p>
+          {step.title}
+        </motion.h3>
+        
+        <motion.p 
+          className="text-zinc-400 text-lg font-light leading-relaxed flex-1"
+          style={{
+            opacity: useTransform(smoothProgress, [0.4, 0.6], [0, 1]),
+            y: useTransform(smoothProgress, [0.4, 0.6], [20, 0]),
+          }}
+        >
+          {step.description}
+        </motion.p>
+        
+        {/* Progress indicator */}
+        <motion.div className="mt-8 h-1 bg-zinc-800 rounded-full overflow-hidden">
+          <motion.div
+            className={`h-full bg-gradient-to-r ${step.color}`}
+            style={{
+              scaleX: smoothProgress,
+              transformOrigin: "left",
+            }}
+          />
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
+export default function HowItWorks() {
+  const ref = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Use window scroll instead of section scroll
+  const { scrollY } = useScroll();
+  const [sectionTop, setSectionTop] = useState(0);
+  const [sectionHeight, setSectionHeight] = useState(0);
+  
+  // Calculate section dimensions
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (ref.current) {
+        // Get absolute position from document top
+        const rect = ref.current.getBoundingClientRect();
+        const absoluteTop = rect.top + window.pageYOffset;
+        setSectionTop(absoluteTop);
+        setSectionHeight(ref.current.offsetHeight);
+      }
+    };
+    
+    // Initial calculation after mount
+    updateDimensions();
+    
+    // Recalculate after a delay to ensure all sections are rendered
+    const timer = setTimeout(updateDimensions, 500);
+    
+    window.addEventListener('resize', updateDimensions);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', updateDimensions);
+    };
+  }, []);
+  
+  // Store window height to avoid SSR issues
+  const [windowHeight, setWindowHeight] = useState(0);
+  
+  useEffect(() => {
+    setWindowHeight(window.innerHeight);
+    const handleResize = () => setWindowHeight(window.innerHeight);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
+  // Calculate scroll progress manually
+  const scrollYProgress = useTransform(scrollY, (value) => {
+    if (sectionHeight === 0 || windowHeight === 0) return 0;
+    
+    // Start when section top reaches top 25% of viewport
+    // This delays animation start until section is prominently visible
+    const sectionScrollStart = sectionTop - (windowHeight * 0.25);
+    
+    // End after scrolling through the full section height
+    const sectionScrollEnd = sectionTop + sectionHeight - windowHeight;
+    
+    if (value < sectionScrollStart) return 0;
+    if (value > sectionScrollEnd) return 1;
+    
+    return (value - sectionScrollStart) / (sectionScrollEnd - sectionScrollStart);
+  });
+  
+  
+  // Background parallax - start at 0 and move down slightly
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  
+  // Connection line drawing
+  const pathLength = useTransform(scrollYProgress, [0, 0.9], [0, 1]);
+  const pathOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+
+  // Floating particles - move down gently
+  const particleY = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const particleOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+
+  return (
+    <section ref={ref} id="how-it-works" className="relative bg-zinc-950" style={{ height: '250vh' }}>
+      {/* Sticky container - ensure no parent overflow issues */}
+      <div className="sticky-container" style={{ height: '100vh' }}>
+        {/* Animated background */}
+        <motion.div 
+          className="absolute inset-0"
+          style={{ y: bgY }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950" />
+          
+          {/* Floating particles */}
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-blue-500/30 rounded-full"
+              style={{
+                left: `${(i * 37) % 100}%`,
+                top: `${(i * 23) % 100}%`,
+                y: particleY,
+                opacity: particleOpacity,
+              }}
+              animate={{
+                x: [0, 30, 0],
+                y: [0, -30, 0],
+              }}
+              transition={{
+                duration: 10 + i * 2,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            />
+          ))}
         </motion.div>
 
-        <div className="relative">
-          {/* Connection line */}
-          <div className="absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#3b82f6]/30 to-transparent hidden md:block" />
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-            {steps.map((step, index) => (
-              <motion.div
-                key={step.number}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                className="relative"
+        {/* Content container */}
+        <div ref={containerRef} className="relative h-full flex flex-col justify-center px-4 sm:px-6 lg:px-8 position-relative -mt-16">
+          <div className="max-w-7xl mx-auto w-full">
+            {/* Header */}
+            <motion.div
+              className="text-center mb-20"
+              style={{
+                opacity: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]),
+                y: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [50, 0, 0, -50]),
+              }}
+            >
+              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-light mb-8 text-white">
+                <span className="text-gradient-shine">Process</span>
+              </h2>
+              <p className="text-xl text-zinc-600 font-light">
+                Three steps to AI transformation
+              </p>
+            </motion.div>
+
+            {/* Connection line SVG */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 600">
+              <defs>
+                <linearGradient id="process-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#3b82f6" />
+                  <stop offset="50%" stopColor="#8b5cf6" />
+                  <stop offset="100%" stopColor="#f97316" />
+                </linearGradient>
+              </defs>
+              <motion.path
+                d="M 100,300 Q 400,200 600,300 T 1100,300"
+                stroke="url(#process-gradient)"
+                strokeWidth="3"
+                fill="none"
+                style={{
+                  pathLength,
+                  opacity: pathOpacity,
+                }}
+              />
+            </svg>
+
+            {/* Steps container */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 relative z-10">
+              {steps.map((step, index) => (
+                <StepCard key={step.number} step={step} index={index} progress={scrollYProgress} />
+              ))}
+            </div>
+
+            {/* CTA Button */}
+            <motion.div
+              className="mt-12 text-center"
+              style={{
+                opacity: useTransform(scrollYProgress, [0.75, 0.85], [0, 1]),
+                y: useTransform(scrollYProgress, [0.75, 0.85], [50, 0]),
+              }}
+            >
+              <motion.button 
+                className="relative text-white border border-zinc-700 px-8 py-4 rounded-full font-light text-base overflow-hidden group"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-10 hover:border-zinc-700 transition-all duration-300">
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ duration: 0.2 }}
-                    className="w-14 h-14 bg-gradient-to-br from-[#3b82f6] to-[#2563eb] rounded-xl flex items-center justify-center mb-8 mx-auto md:mx-0 shadow-lg"
-                  >
-                    <span className="text-xl font-medium">{step.number}</span>
-                  </motion.div>
-                  <h3 className="text-xl font-medium mb-4 text-white">{step.title}</h3>
-                  <p className="text-zinc-500 leading-relaxed">{step.description}</p>
-                </div>
-              </motion.div>
-            ))}
+                <span className="relative z-10">Start the conversation →</span>
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: 0 }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.button>
+            </motion.div>
           </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-center mt-16"
-        >
-          <button className="bg-white text-black px-8 py-4 rounded-md font-medium text-base hover:bg-zinc-100 transition-all duration-300 shadow-lg">
-            Book Your Strategy Call
-          </button>
+        {/* Progress indicator */}
+        <motion.div className="absolute bottom-10 left-10 right-10 h-1 bg-zinc-800 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500"
+            style={{
+              scaleX: scrollYProgress,
+              transformOrigin: "left",
+            }}
+          />
         </motion.div>
+        
       </div>
     </section>
   );

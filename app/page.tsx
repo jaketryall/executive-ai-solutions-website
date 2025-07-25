@@ -11,21 +11,24 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main>
-        <Hero />
-        <section id="services">
+      {/* Move Hero outside of main to avoid overflow conflicts */}
+      <Hero />
+      {/* HowItWorks needs to be outside any parent with overflow hidden */}
+      <main className="relative">
+        <section id="services" className="relative">
           <Services />
         </section>
-        <section id="how-it-works">
-          <HowItWorks />
-        </section>
-        <section id="use-cases">
+      </main>
+      {/* HowItWorks component placed at root level without any parent overflow constraints */}
+      <HowItWorks />
+      <main className="relative">
+        <section id="use-cases" className="relative">
           <UseCases />
         </section>
-        <section id="about">
+        <section id="about" className="relative">
           <About />
         </section>
-        <section id="contact">
+        <section id="contact" className="relative">
           <Contact />
         </section>
       </main>

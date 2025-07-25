@@ -1,10 +1,21 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef } from "react";
 
 export default function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  
+  // Parallax scroll effect
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+    layoutEffect: false
+  });
+  
+  const y = useTransform(scrollYProgress, [0, 1], [0, 300]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -129,22 +140,35 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background layers */}
-      <div className="absolute inset-0 bg-black" />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#1e3a8a]/10 via-transparent to-black/50" />
+    <section ref={sectionRef} className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ position: 'relative' }}>
+      {/* Background layers with parallax */}
+      <motion.div 
+        className="absolute inset-0 bg-black"
+        style={{ y }}
+      />
+      <motion.div 
+        className="absolute inset-0 bg-gradient-to-b from-[#1e3a8a]/10 via-transparent to-transparent"
+        style={{ y: useTransform(y, (value) => value * 0.5) }}
+      />
       
-      {/* Animated particles canvas */}
-      <canvas
+      {/* Animated particles canvas with parallax */}
+      <motion.canvas
         ref={canvasRef}
         className="absolute inset-0 opacity-50"
+        style={{ y: useTransform(y, (value) => value * 0.8), opacity }}
       />
       
       {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-radial opacity-30" />
+      <motion.div 
+        className="absolute inset-0 bg-gradient-radial opacity-30"
+        style={{ y: useTransform(y, (value) => value * 0.3) }}
+      />
       
       {/* Content */}
-      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <motion.div 
+        className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
+        style={{ y: useTransform(y, (value) => value * 0.2) }}
+      >
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 0.6, y: 0 }}
@@ -158,16 +182,16 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-          className="text-6xl sm:text-7xl lg:text-8xl font-medium mb-6 text-white leading-tight"
+          className="text-6xl sm:text-7xl lg:text-8xl font-light mb-6 text-white leading-tight"
         >
-          Your AI Workforce
+          <span className="text-gradient-shine">Your AI Workforce</span>
         </motion.h1>
         
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="text-4xl sm:text-5xl lg:text-6xl font-light text-[#93bbfd] mb-10"
+          className="text-4xl sm:text-5xl lg:text-6xl font-light text-transparent bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text mb-10"
         >
           AI Employees
         </motion.h2>
@@ -187,21 +211,38 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
           className="flex flex-col sm:flex-row gap-6 justify-center"
         >
-          <button className="bg-white text-black px-8 py-4 rounded-lg font-medium text-base hover:bg-zinc-100 transition-all duration-300 shadow-lg">
-            Start Building
-          </button>
-          <button className="border border-zinc-700 text-white px-8 py-4 rounded-lg font-medium text-base hover:bg-zinc-900 transition-all duration-300">
+          <motion.button 
+            className="relative bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-4 rounded-full font-light text-base overflow-hidden group"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <span className="relative z-10">Start Building →</span>
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500"
+              initial={{ x: "100%" }}
+              whileHover={{ x: 0 }}
+              transition={{ duration: 0.3 }}
+            />
+          </motion.button>
+          <motion.button 
+            className="border border-zinc-700 text-white px-8 py-4 rounded-full font-light text-base hover:bg-zinc-900 transition-all duration-300"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             Book a Demo
-          </button>
+          </motion.button>
         </motion.div>
-      </div>
+      </motion.div>
+      
+      {/* Bottom fade transition */}
+      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black via-black/50 to-transparent pointer-events-none" />
       
       {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.5 }}
         transition={{ duration: 1, delay: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
       >
         <motion.div
           animate={{ y: [0, 8, 0] }}
