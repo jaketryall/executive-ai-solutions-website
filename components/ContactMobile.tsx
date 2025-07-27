@@ -48,8 +48,10 @@ export default function ContactMobile() {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl font-medium text-white mb-4 bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">Let&apos;s Talk</h2>
-          <p className="text-zinc-300 max-w-md mx-auto font-normal">
+          <h2 className="text-4xl sm:text-5xl font-light text-white mb-4">
+            <span className="text-gradient-shine">Let&apos;s Talk</span>
+          </h2>
+          <p className="text-zinc-300 max-w-md mx-auto font-light">
             Ready to transform your business with AI? We&apos;re here to help.
           </p>
         </motion.div>
@@ -80,7 +82,7 @@ export default function ContactMobile() {
               />
               <label
                 htmlFor="name"
-                className="absolute left-4 -top-2.5 bg-black px-3 text-sm text-zinc-300 font-medium transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-5 peer-placeholder-shown:bg-transparent peer-placeholder-shown:font-normal peer-focus:-top-2.5 peer-focus:text-sm peer-focus:bg-black peer-focus:text-[#0066ff] peer-focus:font-medium"
+                className="absolute left-4 -top-2.5 bg-black px-3 text-sm text-zinc-300 font-light transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-5 peer-placeholder-shown:bg-transparent peer-placeholder-shown:font-light peer-focus:-top-2.5 peer-focus:text-sm peer-focus:bg-black peer-focus:text-[#0066ff] peer-focus:font-light"
               >
                 Your Name
               </label>
@@ -103,7 +105,7 @@ export default function ContactMobile() {
               />
               <label
                 htmlFor="email"
-                className="absolute left-4 -top-2.5 bg-black px-3 text-sm text-zinc-300 font-medium transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-5 peer-placeholder-shown:bg-transparent peer-placeholder-shown:font-normal peer-focus:-top-2.5 peer-focus:text-sm peer-focus:bg-black peer-focus:text-[#0066ff] peer-focus:font-medium"
+                className="absolute left-4 -top-2.5 bg-black px-3 text-sm text-zinc-300 font-light transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-5 peer-placeholder-shown:bg-transparent peer-placeholder-shown:font-light peer-focus:-top-2.5 peer-focus:text-sm peer-focus:bg-black peer-focus:text-[#0066ff] peer-focus:font-light"
               >
                 Email Address
               </label>
@@ -126,7 +128,7 @@ export default function ContactMobile() {
               />
               <label
                 htmlFor="message"
-                className="absolute left-4 -top-2.5 bg-black px-3 text-sm text-zinc-300 font-medium transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-5 peer-placeholder-shown:bg-transparent peer-placeholder-shown:font-normal peer-focus:-top-2.5 peer-focus:text-sm peer-focus:bg-black peer-focus:text-[#0066ff] peer-focus:font-medium"
+                className="absolute left-4 -top-2.5 bg-black px-3 text-sm text-zinc-300 font-light transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-5 peer-placeholder-shown:bg-transparent peer-placeholder-shown:font-light peer-focus:-top-2.5 peer-focus:text-sm peer-focus:bg-black peer-focus:text-[#0066ff] peer-focus:font-light"
               >
                 Your Message
               </label>
@@ -137,7 +139,7 @@ export default function ContactMobile() {
               type="submit"
               disabled={isSubmitting || isSuccess}
               whileTap={{ scale: 0.95 }}
-              className="w-full py-4 bg-gradient-to-r from-[#0066ff] to-blue-600 text-white rounded-full font-medium relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-all group"
+              className="w-full py-4 bg-gradient-to-r from-[#0066ff] to-blue-600 text-white rounded-full font-light relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-all group"
             >
               <AnimatePresence mode="wait">
                 {isSubmitting ? (
@@ -198,7 +200,7 @@ export default function ContactMobile() {
                 exit={{ opacity: 0, y: -20 }}
                 className="mt-6 p-5 bg-gradient-to-br from-green-500/20 to-emerald-500/10 border border-green-500/30 rounded-2xl backdrop-blur-sm shadow-lg shadow-green-500/10"
               >
-                <p className="text-green-400 text-center text-sm font-medium">
+                <p className="text-green-400 text-center text-sm font-light">
                   Thanks for reaching out! We&apos;ll get back to you within 24 hours.
                 </p>
               </motion.div>
@@ -214,7 +216,7 @@ export default function ContactMobile() {
           transition={{ delay: 0.5 }}
           className="mt-16 text-center"
         >
-          <p className="text-zinc-400 text-sm mb-6 font-medium">Or reach us directly</p>
+          <p className="text-zinc-400 text-sm mb-6 font-light">Or reach us directly</p>
           <div className="flex justify-center">
             <a
               href="mailto:jaker@executiveaisolutions.com"

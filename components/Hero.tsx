@@ -72,7 +72,7 @@ export default function Hero() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl font-light mb-24 sm:mb-32 text-white leading-tight text-center lg:text-left">
+              <h1 className="text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-[5.5rem] xl:text-[6rem] font-light mb-24 sm:mb-32 text-white leading-tight text-center lg:text-left">
                 We Build
                 <span className="block relative mt-2 h-[1.5em]">
                   <AnimatePresence mode="wait">
