@@ -79,28 +79,9 @@ function ServiceCard({ service, index }: { service: typeof services[0], index: n
             {service.title}
           </h3>
           
-          <p className="text-zinc-400 text-sm sm:text-base font-light leading-relaxed flex-1 mb-4 sm:mb-6">
+          <p className="text-zinc-400 text-sm sm:text-base font-light leading-relaxed flex-1">
             {service.description}
           </p>
-          
-          {service.isConsultation && (
-            <a
-              href="#contact"
-              onClick={(e) => {
-                e.preventDefault();
-                const contactSection = document.querySelector('#contact');
-                if (contactSection) {
-                  contactSection.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              className="inline-flex items-center gap-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-all group"
-            >
-              Schedule Consultation
-              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </a>
-          )}
         </div>
       </div>
     </motion.div>

@@ -38,7 +38,7 @@ export default function Hero() {
   }, []); // Empty dependency array - only run on mount/unmount
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen flex items-start justify-center overflow-hidden bg-black pt-20">
+    <section ref={sectionRef} className="relative min-h-screen flex items-start justify-center overflow-hidden bg-black pt-32">
       {/* Gradient background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/10 to-pink-600/20" />
@@ -60,9 +60,9 @@ export default function Hero() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl font-light mb-8 sm:mb-10 text-white leading-tight">
+              <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl font-light mb-24 sm:mb-32 text-white leading-tight">
                 We Build
-                <span className="block relative mt-2 h-[1em] overflow-hidden">
+                <span className="block relative mt-2 h-[1.5em]">
                   <AnimatePresence mode="wait">
                     {activeService === 'automation' ? (
                       <motion.span
@@ -91,7 +91,7 @@ export default function Hero() {
                 </span>
               </h1>
               
-              <p className="text-base xs:text-lg sm:text-xl text-zinc-400 mb-6 sm:mb-8 font-light leading-relaxed">
+              <p className="text-base xs:text-lg sm:text-xl text-zinc-400 mb-6 sm:mb-8 font-light leading-relaxed mt-4">
                 Transform your business with AI automation and high-converting landing pages. 
                 <span className="hidden sm:inline">Scale operations, increase conversions, work smarter.</span>
                 <span className="sm:hidden">Scale operations, work smarter.</span>
