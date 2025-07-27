@@ -123,9 +123,52 @@ export default function UseCases() {
                   delay: index * 0.1,
                   ease: "easeOut"
                 }}
-                className="relative"
+                whileTap={{ scale: 0.98 }}
+                className="group relative"
               >
-                <div className="bg-zinc-900/50 backdrop-blur-sm rounded-2xl p-6 border border-zinc-800/50 relative overflow-hidden">
+                {/* Background glow effect - scroll triggered */}
+                <motion.div
+                  className={`absolute inset-0 bg-gradient-to-r ${useCase.color} rounded-2xl blur-xl pointer-events-none`}
+                  initial={{ opacity: 0 }}
+                  animate={isInView ? { opacity: 0.15 } : { opacity: 0 }}
+                  transition={{ duration: 0.8, delay: 0.3 + index * 0.1 }}
+                />
+                
+                <motion.div 
+                  className="relative rounded-2xl transition-all duration-300 bg-black/40 backdrop-blur-md border border-blue-500/10 overflow-hidden"
+                  animate={isInView ? {
+                    y: [0, -5, 0],
+                  } : {}}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: index * 0.5
+                  }}
+                >
+                  {/* Animated border glow - always visible on mobile */}
+                  <motion.div
+                    className="absolute inset-0 pointer-events-none"
+                    initial={{ opacity: 0 }}
+                    animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+                    transition={{ duration: 0.6, delay: 0.5 + index * 0.1 }}
+                  >
+                    <motion.div 
+                      className="absolute inset-[-2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl"
+                      animate={{
+                        opacity: [0.3, 0.6, 0.3],
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: index * 0.3
+                      }}
+                    />
+                  </motion.div>
+                  
+                  {/* Content container */}
+                  <div className="relative bg-black/80 rounded-xl p-6">
                   {/* Gradient accent line at top */}
                   <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${useCase.gradient}`} />
                   
