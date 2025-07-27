@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
+import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
 
 const useCases = [
   {
@@ -31,8 +32,18 @@ export default function UseCases() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, margin: "-100px" });
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
   
-  // Removed scroll-based animations for performance
+  // Scroll-based opacity transitions
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+  
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+  const cardsOpacity = useTransform(scrollYProgress, [0.1, 0.25, 0.75, 0.9], [0, 1, 1, 0]);
 
   return (
     <section ref={ref} id="use-cases" className="pt-20 sm:pt-24 lg:pt-32 pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8 relative bg-gradient-dark-blue overflow-hidden">
@@ -49,12 +60,16 @@ export default function UseCases() {
       <div className="absolute top-20 left-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
       <div className="absolute bottom-20 right-10 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl" />
       
-      <div className="max-w-7xl mx-auto relative">
+      <motion.div 
+        className="max-w-7xl mx-auto relative"
+        style={{ opacity: contentOpacity }}
+      >
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="mb-12 sm:mb-16 lg:mb-20"
+          style={{ opacity: titleOpacity }}
         >
           <motion.h2 
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light mb-4 sm:mb-8 text-white text-gradient-shine"
@@ -74,29 +89,35 @@ export default function UseCases() {
           </motion.p>
         </motion.div>
 
-        <div className="space-y-6">
+        <motion.div 
+          className="space-y-6"
+          style={{ opacity: cardsOpacity }}
+        >
           {useCases.map((useCase, index) => (
             <motion.div
               key={useCase.title}
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ 
-                duration: 0.5, 
-                delay: index * 0.1,
+                duration: prefersReducedMotion ? 0 : 0.5, 
+                delay: prefersReducedMotion ? 0 : index * 0.1,
                 ease: "easeOut"
               }}
               whileHover={{ 
-                scale: 1.02,
+                scale: isMobile ? 1 : 1.02,
                 transition: { duration: 0.2 }
               }}
+              whileTap={{ scale: isMobile ? 0.98 : 1 }}
               style={{ 
-                transformPerspective: 1000
+                transformPerspective: isMobile ? 0 : 1000
               }}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              className="group relative"
+              onMouseEnter={() => !isMobile && setHoveredIndex(index)}
+              onMouseLeave={() => !isMobile && setHoveredIndex(null)}
+              onTouchStart={() => isMobile && setHoveredIndex(index)}
+              onTouchEnd={() => isMobile && setTimeout(() => setHoveredIndex(null), 300)}
+              className="group relative touch-tap-highlight-transparent"
               onMouseMove={() => {
-                if (hoveredIndex !== index) {
+                if (!isMobile && hoveredIndex !== index) {
                   setHoveredIndex(index);
                 }
               }}
@@ -152,8 +173,8 @@ export default function UseCases() {
               </div>
             </motion.div>
           ))}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

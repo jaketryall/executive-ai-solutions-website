@@ -2,6 +2,8 @@
 
 import { motion, useInView, useScroll, useTransform, useSpring } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import { useIsMobile } from "@/hooks/useMobile";
+import HowItWorksMobile from "./HowItWorksMobile";
 
 const steps = [
   {
@@ -125,6 +127,7 @@ export default function HowItWorks() {
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(headerRef, { once: true, margin: "-100px" });
+  const isMobile = useIsMobile();
   
   // Use window scroll instead of section scroll
   const { scrollY } = useScroll();
@@ -193,6 +196,15 @@ export default function HowItWorks() {
 
   // Floating particles opacity
   const particleOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+  
+  // Additional transforms used in the component
+  const ctaOpacity = useTransform(scrollYProgress, [0.75, 0.85], [0, 1]);
+  const ctaY = useTransform(scrollYProgress, [0.75, 0.85], [50, 0]);
+
+  // Render mobile version on mobile devices
+  if (isMobile) {
+    return <HowItWorksMobile />;
+  }
 
   return (
     <section ref={ref} id="how-it-works" className="relative bg-zinc-950" style={{ height: '350vh' }}>
@@ -299,8 +311,8 @@ export default function HowItWorks() {
             <motion.div
               className="mt-20 mb-32 text-center"
               style={{
-                opacity: useTransform(scrollYProgress, [0.75, 0.85], [0, 1]),
-                y: useTransform(scrollYProgress, [0.75, 0.85], [50, 0]),
+                opacity: ctaOpacity,
+                y: ctaY,
               }}
             >
               <a href="#contact">
@@ -340,3 +352,4 @@ export default function HowItWorks() {
     </section>
   );
 }
+

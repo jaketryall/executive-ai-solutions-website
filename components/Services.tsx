@@ -2,6 +2,7 @@
 
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
 import { WorkflowVisualization, PageBuilderVisualization, ConsultingVisualization } from "./ServiceVisualizations";
 
 const services = [
@@ -39,7 +40,7 @@ const containerVariants = {
   }
 };
 
-function ServiceCard({ service, index }: { service: typeof services[0], index: number }) {
+function ServiceCard({ service, index, isMobile, prefersReducedMotion }: { service: typeof services[0], index: number, isMobile: boolean, prefersReducedMotion: boolean }) {
   const [isHovered, setIsHovered] = useState(false);
   const Visualization = service.visualization;
 
@@ -48,10 +49,12 @@ function ServiceCard({ service, index }: { service: typeof services[0], index: n
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group relative cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:z-10 h-full"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      transition={{ duration: prefersReducedMotion ? 0 : 0.5, delay: prefersReducedMotion ? 0 : index * 0.1 }}
+      className="group relative cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:z-10 h-full touch-tap-highlight-transparent"
+      onMouseEnter={() => !isMobile && setIsHovered(true)}
+      onMouseLeave={() => !isMobile && setIsHovered(false)}
+      onTouchStart={() => isMobile && setIsHovered(true)}
+      onTouchEnd={() => isMobile && setTimeout(() => setIsHovered(false), 300)}
     >
       <div className="relative bg-[#0a0a0a] rounded-xl sm:rounded-2xl border border-zinc-900 overflow-hidden hover:border-zinc-800 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 h-full flex flex-col">
         {/* Abstract graphic area */}
@@ -90,6 +93,8 @@ export default function Services() {
   const ref = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
   
   // Parallax scroll effects
   const { scrollYProgress } = useScroll({
@@ -119,10 +124,14 @@ export default function Services() {
     [30, 0, 0, -30]
   );
   
-  const y1 = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [0, -150]);
-  const y3 = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.3, 1, 0.3]);
+  const y1 = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -100]);
+  const y2 = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -150]);
+  const y3 = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -200]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], isMobile ? [1, 1, 1] : [0.3, 1, 0.3]);
+  
+  // New content opacity transitions
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+  const cardsOpacity = useTransform(scrollYProgress, [0.1, 0.3, 0.8, 0.95], [0, 1, 1, 0]);
 
   return (
     <section ref={ref} className="pt-24 sm:pt-32 lg:pt-48 pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-6 lg:px-8 relative bg-black overflow-hidden">
@@ -149,7 +158,10 @@ export default function Services() {
       />
       
       
-      <div className="max-w-7xl mx-auto relative z-10">
+      <motion.div 
+        className="max-w-7xl mx-auto relative z-10"
+        style={{ opacity: contentOpacity }}
+      >
         <motion.div
           ref={textRef}
           className="text-center mb-12 sm:mb-16 lg:mb-20 min-h-[150px] sm:min-h-[200px] flex flex-col justify-center"
@@ -172,12 +184,13 @@ export default function Services() {
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
+          style={{ opacity: cardsOpacity }}
         >
           {services.map((service, index) => (
-            <ServiceCard key={service.title} service={service} index={index} />
+            <ServiceCard key={service.title} service={service} index={index} isMobile={isMobile} prefersReducedMotion={prefersReducedMotion} />
           ))}
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }

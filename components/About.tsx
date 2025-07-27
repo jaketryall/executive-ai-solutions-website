@@ -2,11 +2,14 @@
 
 import { motion, useInView, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
+import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
 
 export default function About() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, margin: "-100px" });
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
   
   // Scroll-based animations
   const { scrollYProgress } = useScroll({
@@ -46,12 +49,16 @@ export default function About() {
     description: "No theory, no hype—just practical solutions that deliver results. Founded by entrepreneurs who understand real business challenges, we bridge the gap between cutting-edge AI and practical applications. Our AI employees enhance your workforce, automate repetitive tasks, and scale without limits."
   };
   
-  // Parallax transforms
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, -150]);
-  const orb1Y = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const orb2Y = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const contentY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
-  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.3, 1, 1, 0]);
+  // Parallax transforms - disabled on mobile
+  const bgY = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -150]);
+  const orb1Y = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -100]);
+  const orb2Y = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -200]);
+  const contentY = useTransform(scrollYProgress, [0, 0.5], isMobile ? [0, 0] : [0, -50]);
+  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], isMobile ? [1, 1, 1, 1] : [0.3, 1, 1, 0]);
+  
+  // Enhanced content opacity
+  const mainContentOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+  const statsOpacity = useTransform(scrollYProgress, [0.1, 0.25, 0.75, 0.9], [0, 1, 1, 0]);
 
   return (
     <section ref={ref} className="py-24 px-4 sm:px-6 lg:px-8 bg-black relative overflow-hidden">
@@ -142,7 +149,10 @@ export default function About() {
         </div>
       </motion.div>
 
-      <div className="max-w-7xl mx-auto relative">
+      <motion.div 
+        className="max-w-7xl mx-auto relative"
+        style={{ opacity: mainContentOpacity }}
+      >
         {/* Title - Left aligned with enhanced animation */}
         <motion.div
           initial={{ opacity: 0, x: -100, filter: "blur(10px)" }}
@@ -234,15 +244,18 @@ export default function About() {
                   x: ["-100%", "100%"]
                 }}
                 transition={{
-                  duration: 1.5,
-                  delay: 1.0,
+                  duration: prefersReducedMotion ? 0 : 1.5,
+                  delay: prefersReducedMotion ? 0 : 1.0,
                   ease: "easeInOut"
                 }}
               />
             </motion.div>
           </motion.div>
 
-          <div className="grid grid-cols-2 gap-8 lg:gap-12 auto-rows-fr">
+          <motion.div 
+            className="grid grid-cols-2 gap-8 lg:gap-12 auto-rows-fr"
+            style={{ opacity: statsOpacity }}
+          >
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}
@@ -267,24 +280,27 @@ export default function About() {
                   filter: "blur(10px)"
                 }}
                 transition={{ 
-                  duration: 0.8, 
-                  delay: 0.6 + index * 0.15,
+                  duration: prefersReducedMotion ? 0 : 0.8, 
+                  delay: prefersReducedMotion ? 0 : 0.6 + index * 0.15,
                   ease: [0.25, 0.1, 0.25, 1]
                 }}
                 whileHover={{ 
-                  scale: 1.05,
-                  rotateY: 5,
-                  rotateX: 5,
-                  y: -10,
+                  scale: isMobile ? 1 : 1.05,
+                  rotateY: isMobile ? 0 : 5,
+                  rotateX: isMobile ? 0 : 5,
+                  y: isMobile ? 0 : -10,
                   transition: { 
                     duration: 0.3,
                     ease: "easeOut"
                   }
                 }}
-                className="relative group perspective-1000 h-full"
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                style={{ transformStyle: "preserve-3d" }}
+                whileTap={{ scale: isMobile ? 0.98 : 1 }}
+                className="relative group perspective-1000 h-full touch-tap-highlight-transparent"
+                onMouseEnter={() => !isMobile && setHoveredIndex(index)}
+                onMouseLeave={() => !isMobile && setHoveredIndex(null)}
+                onTouchStart={() => isMobile && setHoveredIndex(index)}
+                onTouchEnd={() => isMobile && setTimeout(() => setHoveredIndex(null), 300)}
+                style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}
               >
                 {/* Animated glow background */}
                 <motion.div
@@ -310,7 +326,7 @@ export default function About() {
                 </motion.div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
         {/* Core Principles - Moved back to bottom */}
@@ -349,7 +365,7 @@ export default function About() {
               transition={{
                 opacity: { duration: 0.8, delay: 1.6 },
                 x: {
-                  duration: 40,
+                  duration: isMobile ? 40 : 20,
                   repeat: Infinity,
                   ease: "linear",
                   delay: 1.8,
@@ -385,7 +401,7 @@ export default function About() {
             <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-black to-transparent pointer-events-none z-10 opacity-50" />
           </div>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }

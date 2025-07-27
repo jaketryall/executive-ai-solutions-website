@@ -2,20 +2,23 @@
 
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeService, setActiveService] = useState<'automation' | 'landing'>('automation');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
   
-  // Parallax scroll
+  // Parallax scroll - disabled on mobile
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
   
-  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, 200]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], isMobile ? [1, 1] : [1, 0]);
   
   // Function to reset and start the interval
   const resetInterval = () => {
@@ -174,12 +177,12 @@ export default function Hero() {
             </motion.div>
           </div>
           
-          {/* Right side - Visual showcase - desktop only */}
+          {/* Right side - Visual showcase - responsive */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: isMobile ? 0 : 50, y: isMobile ? 20 : 0 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative h-[600px] w-full lg:w-[450px] xl:w-[500px] 2xl:w-[600px] hidden lg:block flex-shrink-0"
+            className="relative h-[300px] sm:h-[400px] lg:h-[600px] w-full lg:w-[450px] xl:w-[500px] 2xl:w-[600px] mt-8 lg:mt-0 flex-shrink-0"
           >
             {/* Service card display */}
             <div className="relative w-full h-full">
@@ -187,21 +190,83 @@ export default function Hero() {
                 {activeService === 'automation' ? (
                   <motion.div
                     key="automation"
-                    initial={{ opacity: 0, rotateY: 20, x: 100 }}
+                    initial={{ opacity: 0, rotateY: isMobile ? 0 : 20, x: isMobile ? 0 : 100 }}
                     animate={{ opacity: 1, rotateY: 0, x: 0 }}
-                    exit={{ opacity: 0, rotateY: -20, x: -100 }}
-                    transition={{ duration: 0.6 }}
+                    exit={{ opacity: 0, rotateY: isMobile ? 0 : -20, x: isMobile ? 0 : -100 }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
                     className="absolute inset-0"
                   >
-                    <div className="glass-card rounded-2xl p-8 h-full border border-[#0066ff]/20 bg-gradient-to-br from-[#0066ff]/10 to-transparent">
-                      <div className="text-sm text-[#0066ff] mb-4 font-light">AI AUTOMATION</div>
-                      <h3 className="text-2xl text-white mb-6">Workflow Engine</h3>
+                    <div className="glass-card rounded-2xl p-4 sm:p-6 lg:p-8 h-full border border-[#0066ff]/20 bg-gradient-to-br from-[#0066ff]/10 to-transparent">
+                      <div className="text-xs sm:text-sm text-[#0066ff] mb-2 sm:mb-4 font-light">AI AUTOMATION</div>
+                      <h3 className="text-lg sm:text-xl lg:text-2xl text-white mb-4 sm:mb-6">Workflow Engine</h3>
                       
-                      {/* AI Automation workflow visualization */}
-                      <div className="relative h-80 bg-zinc-950 rounded-lg p-4 overflow-hidden">
+                      {/* AI Automation workflow visualization - simplified for mobile */}
+                      <div className="relative h-40 sm:h-60 lg:h-80 bg-zinc-950 rounded-lg p-2 sm:p-4 overflow-hidden">
                         
                         <div className="relative h-full flex items-center justify-center">
-                          <div className="flex items-start justify-between w-full px-4 pt-8">
+                          {isMobile ? (
+                            // Simplified mobile visualization
+                            <div className="grid grid-cols-2 gap-3 w-full">
+                              <motion.div
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.3, duration: 0.5 }}
+                                className="bg-zinc-800 rounded-lg p-3 border border-zinc-700"
+                              >
+                                <div className="w-8 h-8 bg-orange-500 rounded mb-2 flex items-center justify-center">
+                                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+                                  </svg>
+                                </div>
+                                <div className="text-xs text-zinc-400">Data</div>
+                              </motion.div>
+                              
+                              <motion.div
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.5, duration: 0.5 }}
+                                className="bg-zinc-800 rounded-lg p-3 border border-zinc-700"
+                              >
+                                <div className="w-8 h-8 bg-blue-500 rounded mb-2 flex items-center justify-center">
+                                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  </svg>
+                                </div>
+                                <div className="text-xs text-zinc-400">Process</div>
+                              </motion.div>
+                              
+                              <motion.div
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.7, duration: 0.5 }}
+                                className="bg-zinc-800 rounded-lg p-3 border border-zinc-700"
+                              >
+                                <div className="w-8 h-8 bg-purple-500 rounded mb-2 flex items-center justify-center">
+                                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                  </svg>
+                                </div>
+                                <div className="text-xs text-zinc-400">AI</div>
+                              </motion.div>
+                              
+                              <motion.div
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.9, duration: 0.5 }}
+                                className="bg-zinc-800 rounded-lg p-3 border border-zinc-700"
+                              >
+                                <div className="w-8 h-8 bg-green-500 rounded mb-2 flex items-center justify-center">
+                                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                  </svg>
+                                </div>
+                                <div className="text-xs text-zinc-400">Output</div>
+                              </motion.div>
+                            </div>
+                          ) : (
+                            // Desktop visualization
+                            <div className="flex items-start justify-between w-full px-4 pt-8">
                             {/* Node 1: Data Collection */}
                             <motion.div
                               initial={{ scale: 0, opacity: 0 }}
@@ -301,6 +366,7 @@ export default function Hero() {
                               <div className="text-xs text-zinc-400 text-center mt-2 h-10 flex flex-col items-center justify-center leading-tight">Automated<br/>Output</div>
                             </motion.div>
                           </div>
+                          )}
                         </div>
                       </div>
                       
@@ -324,10 +390,10 @@ export default function Hero() {
                 ) : (
                   <motion.div
                     key="landing"
-                    initial={{ opacity: 0, rotateY: -20, x: -100 }}
+                    initial={{ opacity: 0, rotateY: isMobile ? 0 : -20, x: isMobile ? 0 : -100 }}
                     animate={{ opacity: 1, rotateY: 0, x: 0 }}
-                    exit={{ opacity: 0, rotateY: 20, x: 100 }}
-                    transition={{ duration: 0.6 }}
+                    exit={{ opacity: 0, rotateY: isMobile ? 0 : 20, x: isMobile ? 0 : 100 }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
                     className="absolute inset-0"
                   >
                     <div className="glass-card rounded-2xl p-8 h-full border border-purple-600/20 bg-gradient-to-br from-purple-600/10 to-transparent">
@@ -392,10 +458,10 @@ export default function Hero() {
                             <motion.div
                               initial={{ opacity: 0, y: 20 }}
                               animate={{ opacity: 1, y: 0 }}
-                              transition={{ duration: 0.5, delay: 1.2 }}
-                              className="mt-6 h-14 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center"
+                              transition={{ duration: prefersReducedMotion ? 0 : 0.5, delay: prefersReducedMotion ? 0 : 1.2 }}
+                              className="mt-3 sm:mt-6 h-10 sm:h-12 lg:h-14 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center"
                             >
-                              <span className="text-white text-sm font-medium">Get Started</span>
+                              <span className="text-white text-xs sm:text-sm font-medium">Get Started</span>
                             </motion.div>
                           </div>
                         </div>

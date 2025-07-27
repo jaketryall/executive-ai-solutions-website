@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
+import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
 
 export default function Contact() {
   const ref = useRef(null);
@@ -14,6 +15,17 @@ export default function Contact() {
   });
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
+  
+  // Scroll-based opacity transitions
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+  
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+  const formOpacity = useTransform(scrollYProgress, [0.1, 0.25, 0.8, 0.95], [0, 1, 1, 0]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,7 +80,7 @@ export default function Contact() {
                 y: [startY, endY, startY],
               }}
               transition={{
-                duration: duration,
+                duration: isMobile ? duration * 2 : duration,
                 repeat: Infinity,
                 ease: "linear",
               }}
@@ -77,7 +89,10 @@ export default function Contact() {
         })}
       </div>
 
-      <div className="max-w-7xl mx-auto relative">
+      <motion.div 
+        className="max-w-7xl mx-auto relative"
+        style={{ opacity: contentOpacity }}
+      >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -124,13 +139,14 @@ export default function Contact() {
             transition={{ duration: 0.8, delay: 0.2 }}
             onSubmit={handleSubmit}
             className="space-y-8"
+            style={{ opacity: formOpacity }}
           >
             {fields.map((field, index) => (
               <motion.div
                 key={field.name}
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.6, delay: prefersReducedMotion ? 0 : 0.3 + index * 0.1 }}
                 className="relative"
               >
                 <input
@@ -157,7 +173,7 @@ export default function Contact() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.6, delay: prefersReducedMotion ? 0 : 0.6 }}
               className="relative"
             >
               <textarea
@@ -183,7 +199,7 @@ export default function Contact() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.6, delay: prefersReducedMotion ? 0 : 0.7 }}
             >
               <motion.button
                 type="submit"
@@ -228,7 +244,7 @@ export default function Contact() {
             </motion.div>
           </motion.form>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
