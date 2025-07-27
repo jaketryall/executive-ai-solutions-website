@@ -1,8 +1,26 @@
 @import "tailwindcss";
 
+/* Add xs breakpoint */
+@media (min-width: 475px) {
+  .xs\:text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+  .xs\:text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+  .xs\:text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+  .xs\:px-4 { padding-left: 1rem; padding-right: 1rem; }
+  .xs\:py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+  .xs\:gap-3 { gap: 0.75rem; }
+  .xs\:h-\[1\.4em\] { height: 1.4em; }
+  .xs\:h-\[100px\] { height: 100px; }
+}
+
 /* Ensure proper positioning for scroll calculations */
 html, body {
   position: relative;
+}
+
+/* Fix sticky positioning for How It Works section */
+.sticky-container {
+  position: sticky;
+  top: 0;
 }
 
 @layer base {
@@ -184,6 +202,10 @@ html, body {
     50% { opacity: 0.8; filter: blur(30px); }
   }
   
+  .text-glow-blue {
+    text-shadow: 0 0 10px rgba(0, 102, 255, 0.5), 0 0 20px rgba(0, 102, 255, 0.3);
+  }
+  
   .glass-card {
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(20px);
@@ -213,6 +235,169 @@ html, body {
   @supports (-webkit-appearance: none) {
     .sticky-container {
       transform: translateZ(0);
+    }
+  }
+  
+  /* Use Cases section background patterns */
+  .bg-hexagon-pattern {
+    background-color: #000000;
+    background-image: 
+      linear-gradient(30deg, #0a0a0a 12%, transparent 12.5%, transparent 87%, #0a0a0a 87.5%, #0a0a0a),
+      linear-gradient(150deg, #0a0a0a 12%, transparent 12.5%, transparent 87%, #0a0a0a 87.5%, #0a0a0a),
+      linear-gradient(30deg, #0a0a0a 12%, transparent 12.5%, transparent 87%, #0a0a0a 87.5%, #0a0a0a),
+      linear-gradient(150deg, #0a0a0a 12%, transparent 12.5%, transparent 87%, #0a0a0a 87.5%, #0a0a0a),
+      linear-gradient(60deg, #111111 25%, transparent 25.5%, transparent 75%, #111111 75%, #111111),
+      linear-gradient(60deg, #111111 25%, transparent 25.5%, transparent 75%, #111111 75%, #111111);
+    background-size: 80px 140px;
+    background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+  }
+  
+  .bg-circuit-pattern {
+    background-color: #000000;
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(45deg, transparent 48%, rgba(255, 255, 255, 0.01) 48%, rgba(255, 255, 255, 0.01) 52%, transparent 52%),
+      linear-gradient(-45deg, transparent 48%, rgba(255, 255, 255, 0.01) 48%, rgba(255, 255, 255, 0.01) 52%, transparent 52%);
+    background-size: 
+      600px 600px,
+      600px 600px,
+      400px 400px,
+      50px 50px,
+      50px 50px,
+      25px 25px,
+      25px 25px;
+    background-position:
+      0% 0%,
+      100% 100%,
+      50% 50%,
+      0 0,
+      0 0,
+      0 0,
+      25px 25px;
+  }
+  
+  .bg-gradient-dark-blue {
+    background: linear-gradient(180deg, #000000 0%, #020817 50%, #000511 100%);
+  }
+  
+  .bg-animated-dots {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .bg-animated-dots::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background-image: 
+      radial-gradient(circle, rgba(59, 130, 246, 0.15) 1px, transparent 1px),
+      radial-gradient(circle, rgba(139, 92, 246, 0.15) 1px, transparent 1px);
+    background-size: 60px 60px, 90px 90px;
+    background-position: 0 0, 30px 30px;
+    animation: moveDots 30s linear infinite;
+  }
+  
+  @keyframes moveDots {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(60px, 60px) rotate(360deg); }
+  }
+  
+  /* Mobile-specific utilities */
+  @media (max-width: 768px) {
+    .hide-mobile {
+      display: none !important;
+    }
+    
+    .text-mobile-sm {
+      font-size: 0.875rem;
+    }
+    
+    .text-mobile-base {
+      font-size: 1rem;
+    }
+    
+    .text-mobile-lg {
+      font-size: 1.125rem;
+    }
+    
+    .text-mobile-xl {
+      font-size: 1.25rem;
+    }
+    
+    .text-mobile-2xl {
+      font-size: 1.5rem;
+    }
+    
+    .text-mobile-3xl {
+      font-size: 1.875rem;
+    }
+    
+    .text-mobile-4xl {
+      font-size: 2.25rem;
+    }
+    
+    /* Reduce animations on mobile for better performance */
+    .animate-float {
+      animation: none;
+    }
+    
+    .animate-pulse-glow {
+      animation: none;
+    }
+    
+    /* Simplified glassmorphism on mobile */
+    .glass-card {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    
+    /* Reduced glow effects on mobile */
+    .text-glow-blue,
+    .border-glow-blue {
+      text-shadow: none;
+      box-shadow: none;
+    }
+    
+    /* Disable parallax on mobile */
+    .parallax-mobile-disable {
+      transform: none !important;
+    }
+  }
+  
+  /* Touch-friendly utilities */
+  @media (hover: none) and (pointer: coarse) {
+    .touch\:tap-highlight-transparent {
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .touch\:active\:scale-95:active {
+      transform: scale(0.95);
+    }
+  }
+  
+  /* Smooth scrolling for mobile */
+  @media (prefers-reduced-motion: no-preference) {
+    .smooth-scroll {
+      scroll-behavior: smooth;
+    }
+  }
+  
+  /* Prevent horizontal scroll on mobile */
+  @media (max-width: 768px) {
+    body {
+      overflow-x: hidden;
+    }
+    
+    .container-mobile {
+      max-width: 100vw;
+      overflow-x: hidden;
     }
   }
 }

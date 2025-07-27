@@ -18,13 +18,13 @@ export default function Navbar() {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-zinc-800/30"
+      className="fixed top-0 left-0 right-0 z-50 bg-black/60 backdrop-blur-xl border-b border-zinc-800/50"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="#" className="text-xl font-medium text-white">
+            <a href="#" className="text-base sm:text-xl font-light text-white hover:text-glow-blue transition-all duration-300">
               Executive AI Solutions
             </a>
           </div>
@@ -36,14 +36,31 @@ export default function Navbar() {
                 <a
                   key={item.label}
                   href={item.href}
-                  className="text-zinc-400 hover:text-white transition-all duration-300 text-sm"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const section = document.querySelector(item.href);
+                    if (section) {
+                      section.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className="text-zinc-400 hover:text-white hover:text-glow-blue transition-all duration-300 text-sm font-light"
                 >
                   {item.label}
                 </a>
               ))}
-              <button className="bg-white text-black px-6 py-2.5 rounded-md font-medium hover:bg-zinc-100 transition-all duration-300 text-sm shadow-sm">
+              <a
+                href="#contact"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const contactSection = document.querySelector('#contact');
+                  if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                className="inline-block bg-gradient-to-r from-[#0066ff] to-blue-600 text-white px-6 py-2.5 rounded-full font-light hover:shadow-lg hover:shadow-[#0066ff]/25 transition-all duration-300 text-sm cursor-pointer"
+              >
                 Get Started
-              </button>
+              </a>
             </div>
           </div>
 
@@ -91,9 +108,20 @@ export default function Navbar() {
                   {item.label}
                 </a>
               ))}
-              <button className="w-full mt-4 bg-white text-black px-6 py-2.5 rounded-md font-medium hover:bg-zinc-100 transition-all duration-300 text-sm">
+              <a
+                href="#contact"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const contactSection = document.querySelector('#contact');
+                  if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                  setIsMenuOpen(false);
+                }}
+                className="block w-full mt-4 bg-gradient-to-r from-[#0066ff] to-blue-600 text-white px-6 py-2.5 rounded-full font-light text-center hover:shadow-lg hover:shadow-[#0066ff]/25 transition-all duration-300 text-sm cursor-pointer"
+              >
                 Get Started
-              </button>
+              </a>
             </div>
           </motion.div>
         )}

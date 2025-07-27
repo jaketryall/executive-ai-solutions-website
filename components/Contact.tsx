@@ -41,7 +41,7 @@ export default function Contact() {
   ];
 
   return (
-    <section ref={ref} className="py-24 px-4 sm:px-6 lg:px-8 bg-zinc-950 relative overflow-hidden">
+    <section ref={ref} className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-zinc-950 relative overflow-hidden">
       {/* Animated background particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => {
@@ -81,10 +81,10 @@ export default function Contact() {
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-light mb-12 text-white">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light mb-8 sm:mb-12 text-white">
               <span className="text-gradient-shine">Contact</span>
             </h2>
-            <p className="text-xl text-zinc-500 font-light mb-12">
+            <p className="text-lg sm:text-xl text-zinc-500 font-light mb-8 sm:mb-12">
               Let's discuss how AI can transform your business.
             </p>
             
@@ -93,9 +93,9 @@ export default function Contact() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="glass-card rounded-xl p-6"
+                className="glass-card rounded-lg sm:rounded-xl p-4 sm:p-6"
               >
-                <h3 className="text-lg font-light text-white mb-2">Email</h3>
+                <h3 className="text-base sm:text-lg font-light text-white mb-2">Email</h3>
                 <a href="mailto:hello@executiveaisolutions.com" className="text-zinc-400 hover:text-white transition-colors duration-300">
                   hello@executiveaisolutions.com
                 </a>
@@ -105,7 +105,7 @@ export default function Contact() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="glass-card rounded-xl p-6"
+                className="glass-card rounded-lg sm:rounded-xl p-4 sm:p-6"
               >
                 <h3 className="text-lg font-light text-white mb-2">Response Time</h3>
                 <p className="text-zinc-400">

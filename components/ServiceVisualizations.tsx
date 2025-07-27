@@ -255,7 +255,7 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
 // Landing Page Creation Visualization
 export function PageBuilderVisualization({ isActive }: { isActive: boolean }) {
   const [currentStep, setCurrentStep] = useState(0);
-  const steps = ["Template", "Design", "Content", "Deploy"];
+  const steps = ["Idea", "Design", "Content", "Deploy"];
 
   useEffect(() => {
     if (isActive) {
@@ -339,240 +339,97 @@ export function PageBuilderVisualization({ isActive }: { isActive: boolean }) {
 
 // AI Consulting Visualization
 export function ConsultingVisualization({ isActive }: { isActive: boolean }) {
-  const [connections, setConnections] = useState<Array<{ x1: number; y1: number; x2: number; y2: number }>>([]);
+  const [chartData, setChartData] = useState([30, 35, 45, 40, 55, 60, 70, 65, 80, 85]);
+  const [currentHighlight, setCurrentHighlight] = useState(0);
 
   useEffect(() => {
     if (isActive) {
-      let connectionIndex = 0;
-      const timer = setInterval(() => {
-        // Use deterministic positions based on index
-        const positions = [
-          { x1: 80, y1: 30, x2: 220, y2: 70 },
-          { x1: 100, y1: 70, x2: 200, y2: 30 },
-          { x1: 120, y1: 50, x2: 180, y2: 50 },
-          { x1: 90, y1: 40, x2: 210, y2: 60 },
-          { x1: 110, y1: 60, x2: 190, y2: 40 },
-        ];
-        const newConnection = positions[connectionIndex % positions.length];
-        connectionIndex++;
-        setConnections((prev) => [...prev.slice(-4), newConnection]);
-      }, 1000);
-      return () => clearInterval(timer);
-    } else {
-      setConnections([]);
+      // Animate chart bars growing
+      const interval = setInterval(() => {
+        setCurrentHighlight((prev) => (prev + 1) % 10);
+        // Gradually increase values to show growth
+        setChartData(prev => prev.map((val, i) => {
+          const maxVal = 30 + (i * 6) + Math.sin(Date.now() / 1000 + i) * 5;
+          return Math.min(maxVal, 90);
+        }));
+      }, 800);
+      return () => clearInterval(interval);
     }
   }, [isActive]);
 
-  // Brain/Network nodes - using fixed positions
-  const nodes = [
-    { x: 210, y: 50, size: 3 },
-    { x: 192, y: 79, size: 4.5 },
-    { x: 150, y: 80, size: 6 },
-    { x: 108, y: 79, size: 3 },
-    { x: 90, y: 50, size: 4.5 },
-    { x: 108, y: 21, size: 6 },
-    { x: 150, y: 20, size: 3 },
-    { x: 192, y: 21, size: 4.5 },
-  ];
-
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <svg viewBox="0 0 300 80" className="w-full h-full opacity-50">
-        {/* Dynamic connections */}
-        <AnimatePresence>
-          {connections.map((conn, i) => (
-            <motion.line
-              key={`conn-${i}-${conn.x1}-${conn.y1}`}
-              x1={conn.x1}
-              y1={conn.y1}
-              x2={conn.x2}
-              y2={conn.y2}
-              stroke="url(#consulting-gradient)"
-              strokeWidth="1"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 0.5 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1 }}
+      <div className="w-full h-full flex items-center justify-center gap-3 px-8">
+        {/* Bar Chart */}
+        <div className="flex items-end gap-1.5 h-24">
+          {chartData.map((height, i) => (
+            <motion.div
+              key={i}
+              className="w-3 bg-gradient-to-t from-orange-600 to-red-500 rounded-t"
+              initial={{ height: 0 }}
+              animate={{ 
+                height: isActive ? `${height}%` : 0,
+                opacity: currentHighlight === i ? 1 : 0.5
+              }}
+              transition={{ 
+                height: { duration: 0.5, delay: i * 0.05 },
+                opacity: { duration: 0.3 }
+              }}
             />
           ))}
-        </AnimatePresence>
+        </div>
 
-        {/* Central brain/hub */}
-        <motion.circle
-          cx="150"
-          cy="50"
-          r="20"
-          fill="rgba(251, 146, 60, 0.2)"
-          stroke="#fb923c"
+        {/* Metrics */}
+        <div className="flex flex-col gap-2">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : 20 }}
+            transition={{ delay: 0.5 }}
+            className="flex items-center gap-2"
+          >
+            <div className="w-2 h-2 bg-green-400 rounded-full" />
+            <span className="text-xs text-zinc-400">Growth</span>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : 20 }}
+            transition={{ delay: 0.7 }}
+            className="flex items-center gap-2"
+          >
+            <div className="w-2 h-2 bg-blue-400 rounded-full" />
+            <span className="text-xs text-zinc-400">ROI</span>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : 20 }}
+            transition={{ delay: 0.9 }}
+            className="flex items-center gap-2"
+          >
+            <div className="w-2 h-2 bg-purple-400 rounded-full" />
+            <span className="text-xs text-zinc-400">AI Ready</span>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Trend Line */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 300 150">
+        <motion.path
+          d="M 20 120 Q 80 100 150 60 T 280 30"
+          fill="none"
+          stroke="url(#trend-gradient)"
           strokeWidth="2"
-          animate={isActive ? { scale: [1, 1.1, 1] } : {}}
-          transition={{ duration: 2, repeat: Infinity }}
+          strokeDasharray="5,5"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ 
+            pathLength: isActive ? 1 : 0,
+            opacity: isActive ? 0.3 : 0
+          }}
+          transition={{ duration: 2, ease: "easeInOut" }}
         />
-        
-        {/* AI text in center */}
-        <motion.text
-          x="150"
-          y="55"
-          textAnchor="middle"
-          fontSize="16"
-          fontWeight="bold"
-          fill="#fb923c"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isActive ? 1 : 0.5 }}
-        >
-          AI
-        </motion.text>
-
-        {/* Network nodes */}
-        {nodes.map((node, i) => (
-          <motion.g key={`node-${i}`}>
-            <motion.circle
-              cx={node.x}
-              cy={node.y}
-              r={node.size}
-              fill="#fdba74"
-              initial={{ scale: 0 }}
-              animate={isActive ? { scale: [1, 1.5, 1] } : { scale: 1 }}
-              transition={{
-                duration: 2,
-                delay: i * 0.1,
-                repeat: isActive ? Infinity : 0,
-                repeatDelay: 2,
-              }}
-            />
-            {/* Connection to center */}
-            <motion.line
-              x1="150"
-              y1="50"
-              x2={node.x}
-              y2={node.y}
-              stroke="#fb923c"
-              strokeWidth="0.5"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isActive ? [0, 0.5, 0] : 0 }}
-              transition={{
-                duration: 3,
-                delay: i * 0.2,
-                repeat: isActive ? Infinity : 0,
-              }}
-            />
-          </motion.g>
-        ))}
-
-        {/* Orbiting AI service logos */}
-        <motion.g
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        >
-          {/* ChatGPT Logo */}
-          <motion.g transform="translate(190, 50)">
-            <motion.circle
-              r="10"
-              fill="rgba(116, 185, 138, 0.2)"
-              stroke="#74b98a"
-              strokeWidth="1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isActive ? 1 : 0 }}
-            />
-            {/* OpenAI Logo */}
-            <motion.path
-              d="M -5 -2 C -5 -4 -3 -6 0 -6 C 3 -6 5 -4 5 -1 C 5 2 3 4 0 4 C -3 4 -5 2 -5 -1 L -5 -2 M -2 0 L 2 0 M 0 -2 L 0 2"
-              stroke="#74b98a"
-              strokeWidth="1.2"
-              fill="none"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isActive ? 1 : 0 }}
-            />
-          </motion.g>
-          
-          {/* Claude Logo */}
-          <motion.g transform="translate(110, 50)">
-            <motion.circle
-              r="10"
-              fill="rgba(220, 168, 96, 0.2)"
-              stroke="#dca860"
-              strokeWidth="1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isActive ? 1 : 0 }}
-            />
-            {/* Claude Logo - Anthropic A */}
-            <motion.path
-              d="M -4 4 L -1 -4 L 0 -4 L 3 4 M -2.5 1 L 2.5 1"
-              stroke="#dca860"
-              strokeWidth="1.5"
-              fill="none"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isActive ? 1 : 0 }}
-            />
-          </motion.g>
-          
-          {/* Perplexity Logo */}
-          <motion.g transform="translate(150, 10)">
-            <motion.circle
-              r="10"
-              fill="rgba(32, 195, 204, 0.2)"
-              stroke="#20c3cc"
-              strokeWidth="1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isActive ? 1 : 0 }}
-            />
-            {/* Perplexity Logo - Stylized P with arrow */}
-            <motion.g>
-              <motion.path
-                d="M -3 -4 L -3 4 M -3 -4 L 1 -4 C 3 -4 4 -2 4 0 C 4 2 3 4 1 4 L -3 4"
-                stroke="#20c3cc"
-                strokeWidth="1.5"
-                fill="none"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isActive ? 1 : 0 }}
-              />
-              <motion.path
-                d="M 2 0 L 4 -2 M 2 0 L 4 2"
-                stroke="#20c3cc"
-                strokeWidth="1.5"
-                fill="none"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isActive ? 1 : 0 }}
-              />
-            </motion.g>
-          </motion.g>
-          
-          {/* Gemini Logo */}
-          <motion.g transform="translate(150, 90)">
-            <motion.circle
-              r="10"
-              fill="rgba(66, 133, 244, 0.2)"
-              stroke="#4285f4"
-              strokeWidth="1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isActive ? 1 : 0 }}
-            />
-            {/* Gemini Logo - Two curved paths */}
-            <motion.g>
-              <motion.path
-                d="M -3 -3 C -3 -5 -1 -5 0 -5 C 3 -5 5 -3 5 0 C 5 3 3 5 0 5"
-                stroke="#4285f4"
-                strokeWidth="1.5"
-                fill="none"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isActive ? 1 : 0 }}
-              />
-              <motion.path
-                d="M 3 3 C 3 5 1 5 0 5 C -3 5 -5 3 -5 0 C -5 -3 -3 -5 0 -5"
-                stroke="#ea4335"
-                strokeWidth="1.5"
-                fill="none"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isActive ? 1 : 0 }}
-              />
-            </motion.g>
-          </motion.g>
-        </motion.g>
-
         <defs>
-          <linearGradient id="consulting-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="trend-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#fb923c" />
-            <stop offset="100%" stopColor="#f97316" />
+            <stop offset="100%" stopColor="#ef4444" />
           </linearGradient>
         </defs>
       </svg>

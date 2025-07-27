@@ -7,21 +7,21 @@ const steps = [
   {
     number: "01",
     title: "Book a Strategy Call",
-    description: "Tell us about your business challenges and goals. We'll identify where AI can make the biggest impact.",
+    description: "Tell us about your business goals. We'll identify where AI automation can save time and how a high-converting landing page can accelerate growth.",
     color: "from-blue-500 to-cyan-500",
     bgColor: "from-blue-500/20 to-cyan-500/20",
   },
   {
     number: "02",
-    title: "Get Your AI Roadmap",
-    description: "Receive a custom implementation plan with clear milestones and ROI projections for your AI initiatives.",
+    title: "Get Your Custom Roadmap",
+    description: "Receive a tailored plan for AI automation implementation and/or landing page design, with clear milestones and expected ROI for your chosen services.",
     color: "from-purple-500 to-pink-500",
     bgColor: "from-purple-500/20 to-pink-500/20",
   },
   {
     number: "03",
     title: "Deploy & Scale",
-    description: "Launch your AI workforce with our support. Start small, measure results, and scale what works.",
+    description: "Launch your AI workforce and/or new landing page with our support. Start small, measure results, and scale what delivers real business impact.",
     color: "from-orange-500 to-red-500",
     bgColor: "from-orange-500/20 to-red-500/20",
   },
@@ -29,8 +29,8 @@ const steps = [
 
 function StepCard({ step, index, progress }: { step: typeof steps[0], index: number, progress: any }) {
   // Calculate individual step progress with overlap for smoother transitions
-  const stepStart = 0.15 + (index * 0.2); // Start at 15% progress, then space each card
-  const stepEnd = stepStart + 0.25; // 25% duration for each step
+  const stepStart = 0.1 + (index * 0.25); // Start at 10% progress, then space each card more
+  const stepEnd = stepStart + 0.2; // 20% duration for each step
   
   const stepProgress = useTransform(progress, [stepStart, stepEnd], [0, 1]);
   const smoothProgress = useSpring(stepProgress, { stiffness: 100, damping: 30 });
@@ -60,7 +60,7 @@ function StepCard({ step, index, progress }: { step: typeof steps[0], index: num
 
   return (
     <motion.div
-      className="relative"
+      className="relative z-30"
       style={{
         scale,
         opacity,
@@ -185,16 +185,15 @@ export default function HowItWorks() {
   // Background parallax - start at 0 and move down slightly
   const bgY = useTransform(scrollYProgress, [0, 1], [0, 100]);
   
-  // Connection line drawing
-  const pathLength = useTransform(scrollYProgress, [0, 0.9], [0, 1]);
-  const pathOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+  // Connection line drawing - delayed start to appear after cards
+  const pathLength = useTransform(scrollYProgress, [0.4, 0.8], [0, 1]);
+  const pathOpacity = useTransform(scrollYProgress, [0.35, 0.45, 0.75, 0.85], [0, 1, 1, 0]);
 
-  // Floating particles - move down gently
-  const particleY = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  // Floating particles opacity
   const particleOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
 
   return (
-    <section ref={ref} id="how-it-works" className="relative bg-zinc-950" style={{ height: '250vh' }}>
+    <section ref={ref} id="how-it-works" className="relative bg-zinc-950" style={{ height: '350vh' }}>
       {/* Sticky container - ensure no parent overflow issues */}
       <div className="sticky-container" style={{ height: '100vh' }}>
         {/* Animated background */}
@@ -205,103 +204,120 @@ export default function HowItWorks() {
           <div className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950" />
           
           {/* Floating particles */}
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-blue-500/30 rounded-full"
-              style={{
-                left: `${(i * 37) % 100}%`,
-                top: `${(i * 23) % 100}%`,
-                y: particleY,
-                opacity: particleOpacity,
-              }}
-              animate={{
-                x: [0, 30, 0],
-                y: [0, -30, 0],
-              }}
-              transition={{
-                duration: 10 + i * 2,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-            />
-          ))}
+          <motion.div
+            className="absolute inset-0"
+            style={{
+              opacity: particleOpacity,
+            }}
+          >
+            {[...Array(20)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-1 h-1 bg-blue-500/30 rounded-full"
+                initial={{
+                  left: `${(i * 37) % 100}%`,
+                  top: `${(i * 23) % 100}%`,
+                }}
+                animate={{
+                  x: [0, 30, -15, 0],
+                  y: [0, -30, 20, 0],
+                }}
+                transition={{
+                  duration: 10 + i * 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  repeatType: "loop",
+                }}
+              />
+            ))}
+          </motion.div>
         </motion.div>
 
         {/* Content container */}
-        <div ref={containerRef} className="relative h-full flex flex-col justify-center px-4 sm:px-6 lg:px-8 position-relative -mt-16">
-          <div className="max-w-7xl mx-auto w-full">
-            {/* Header */}
+        <div ref={containerRef} className="relative h-full flex flex-col px-4 sm:px-6 lg:px-8 pt-20">
+          <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col">
+            {/* Header - Fixed at top */}
             <motion.div
-              className="text-center mb-20"
+              className="text-center mb-12"
               style={{
-                opacity: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]),
-                y: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [50, 0, 0, -50]),
+                opacity: useTransform(scrollYProgress, [0, 0.05, 0.9, 1], [0, 1, 1, 0]),
               }}
             >
-              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-light mb-8 text-white">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light mb-4 text-white">
                 <span className="text-gradient-shine">Process</span>
               </h2>
-              <p className="text-xl text-zinc-600 font-light">
-                Three steps to AI transformation
+              <p className="text-lg text-zinc-600 font-light">
+                Three steps to transform your business with AI automation and high-converting landing pages
               </p>
             </motion.div>
+            
+            {/* Centered content area */}
+            <div className="flex-1 flex items-center justify-center relative">
+              <div className="w-full">
+                {/* Connection line SVG - positioned behind cards with proper z-index */}
+                <div className="absolute inset-0 pointer-events-none z-0">
+                  <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="process-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3" />
+                        <stop offset="50%" stopColor="#8b5cf6" stopOpacity="0.3" />
+                        <stop offset="100%" stopColor="#f97316" stopOpacity="0.3" />
+                      </linearGradient>
+                    </defs>
+                    <motion.line
+                      x1="10"
+                      y1="50"
+                      x2="90"
+                      y2="50"
+                      stroke="url(#process-gradient)"
+                      strokeWidth="0.5"
+                      strokeDasharray="2 2"
+                      style={{
+                        pathLength,
+                        opacity: pathOpacity,
+                      }}
+                    />
+                  </svg>
+                </div>
 
-            {/* Connection line SVG */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 600">
-              <defs>
-                <linearGradient id="process-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#3b82f6" />
-                  <stop offset="50%" stopColor="#8b5cf6" />
-                  <stop offset="100%" stopColor="#f97316" />
-                </linearGradient>
-              </defs>
-              <motion.path
-                d="M 100,300 Q 400,200 600,300 T 1100,300"
-                stroke="url(#process-gradient)"
-                strokeWidth="3"
-                fill="none"
-                style={{
-                  pathLength,
-                  opacity: pathOpacity,
-                }}
-              />
-            </svg>
-
-            {/* Steps container */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 relative z-10">
-              {steps.map((step, index) => (
-                <StepCard key={step.number} step={step} index={index} progress={scrollYProgress} />
-              ))}
+                {/* Steps container - elevated with higher z-index */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 relative z-20">
+                  {steps.map((step, index) => (
+                    <StepCard key={step.number} step={step} index={index} progress={scrollYProgress} />
+                  ))}
+                </div>
+              </div>
             </div>
 
-            {/* CTA Button */}
+            {/* CTA Button - Centered between cards and progress bar */}
             <motion.div
-              className="mt-12 text-center"
+              className="mt-20 mb-32 text-center"
               style={{
                 opacity: useTransform(scrollYProgress, [0.75, 0.85], [0, 1]),
                 y: useTransform(scrollYProgress, [0.75, 0.85], [50, 0]),
               }}
             >
-              <motion.button 
-                className="relative text-white border border-zinc-700 px-8 py-4 rounded-full font-light text-base overflow-hidden group"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span className="relative z-10">Start the conversation →</span>
+              <a href="#contact">
+                <motion.button 
+                  className="relative text-white border border-zinc-700 px-8 py-4 rounded-full font-light text-base overflow-hidden group"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span className="relative z-10">Start the conversation →</span>
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20"
                   initial={{ x: "-100%" }}
                   whileHover={{ x: 0 }}
                   transition={{ duration: 0.3 }}
                 />
-              </motion.button>
+                </motion.button>
+              </a>
             </motion.div>
           </div>
         </div>
 
         {/* Progress indicator */}
-        <motion.div className="absolute bottom-10 left-10 right-10 h-1 bg-zinc-800 rounded-full overflow-hidden">
+        <motion.div className="absolute bottom-6 left-10 right-10 h-1 bg-zinc-800 rounded-full overflow-hidden">
           <motion.div
             className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500"
             style={{
