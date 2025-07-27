@@ -561,4 +561,50 @@ html, body {
       backdrop-filter: none;
     }
   }
+  
+  /* Custom holographic effect */
+  .holographic-card {
+    position: relative;
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.1) 0%, 
+      rgba(255, 255, 255, 0.05) 40%, 
+      rgba(255, 255, 255, 0) 100%
+    );
+  }
+  
+  .holographic-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(
+      135deg,
+      #ff006e,
+      #8338ec,
+      #3a86ff,
+      #06ffa5,
+      #ffbe0b,
+      #ff006e
+    );
+    border-radius: inherit;
+    opacity: 0.2;
+    z-index: -1;
+    animation: holographic-rotate 8s linear infinite;
+  }
+  
+  @keyframes holographic-rotate {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+  
+  /* Liquid morphing effect */
+  .liquid-morph {
+    filter: url(#goo);
+  }
+  
+  /* SVG filter for gooey effect */
+  .goo-filter {
+    position: absolute;
+    width: 0;
+    height: 0;
+  }
 }

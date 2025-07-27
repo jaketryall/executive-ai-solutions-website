@@ -3,6 +3,7 @@
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
+import UseCasesMobile from "./UseCasesMobile";
 
 const useCases = [
   {
@@ -107,103 +108,12 @@ export default function UseCases() {
           </motion.p>
         </motion.div>
 
-        {/* Mobile view - simpler cards */}
+        {/* Mobile view - custom animated version */}
         {isMobile ? (
           <motion.div 
-            className="space-y-4"
             style={{ opacity: cardsOpacity }}
           >
-            {useCases.map((useCase, index) => (
-              <motion.div
-                key={useCase.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ 
-                  duration: 0.5, 
-                  delay: index * 0.1,
-                  ease: "easeOut"
-                }}
-                whileTap={{ scale: 0.98 }}
-                className="group relative"
-              >
-                {/* Background glow effect - scroll triggered */}
-                <motion.div
-                  className={`absolute inset-0 bg-gradient-to-r ${useCase.color} rounded-2xl blur-xl pointer-events-none`}
-                  initial={{ opacity: 0 }}
-                  animate={isInView ? { opacity: 0.15 } : { opacity: 0 }}
-                  transition={{ duration: 0.8, delay: 0.3 + index * 0.1 }}
-                />
-                
-                <motion.div 
-                  className="relative rounded-2xl transition-all duration-300 bg-black/40 backdrop-blur-md border border-blue-500/10 overflow-hidden"
-                  animate={isInView ? {
-                    y: [0, -5, 0],
-                  } : {}}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: index * 0.5
-                  }}
-                >
-                  {/* Animated border glow - always visible on mobile */}
-                  <motion.div
-                    className="absolute inset-0 pointer-events-none"
-                    initial={{ opacity: 0 }}
-                    animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-                    transition={{ duration: 0.6, delay: 0.5 + index * 0.1 }}
-                  >
-                    <motion.div 
-                      className="absolute inset-[-2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl"
-                      animate={{
-                        opacity: [0.3, 0.6, 0.3],
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: index * 0.3
-                      }}
-                    />
-                  </motion.div>
-                  
-                  {/* Content container */}
-                  <div className="relative bg-black/80 rounded-xl p-6">
-                  {/* Gradient accent line at top */}
-                  <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${useCase.gradient}`} />
-                  
-                  {/* Icon and category */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`p-2 rounded-lg bg-gradient-to-r ${useCase.gradient} text-white`}>
-                      {useCase.icon}
-                    </div>
-                    <span className="text-xs text-zinc-500 uppercase tracking-wider">
-                      {useCase.category}
-                    </span>
-                  </div>
-                  
-                  {/* Title */}
-                  <h3 className="text-lg font-light text-white mb-2">
-                    {useCase.title}
-                  </h3>
-                  
-                  {/* Description */}
-                  <p className="text-zinc-400 text-sm font-light leading-relaxed mb-4">
-                    {useCase.description}
-                  </p>
-                  
-                  {/* Metrics - more prominent */}
-                  <div className={`bg-gradient-to-r ${useCase.gradient} rounded-lg p-3 text-center`}>
-                    <div className="text-lg font-medium text-white">
-                      {useCase.metrics}
-                    </div>
-                    <div className="text-xs text-white/70">
-                      potential impact
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+            <UseCasesMobile />
           </motion.div>
         ) : (
           /* Desktop view - keep existing design */
