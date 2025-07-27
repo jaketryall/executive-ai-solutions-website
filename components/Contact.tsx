@@ -3,6 +3,7 @@
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
+import ContactMobile from "./ContactMobile";
 
 export default function Contact() {
   const ref = useRef(null);
@@ -51,6 +52,11 @@ export default function Contact() {
     { name: "email", type: "email", placeholder: "Email", required: true },
     { name: "company", type: "text", placeholder: "Company", required: false },
   ];
+
+  // Use mobile-specific component
+  if (isMobile) {
+    return <ContactMobile />;
+  }
 
   return (
     <section ref={ref} className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-zinc-950 relative overflow-hidden">
@@ -103,7 +109,7 @@ export default function Contact() {
               <span className="text-gradient-shine">Contact</span>
             </h2>
             <p className="text-lg sm:text-xl text-zinc-500 font-light mb-8 sm:mb-12 text-center lg:text-left">
-              Let's discuss how AI can transform your business.
+              Let&apos;s discuss how AI can transform your business.
             </p>
             
             <div className="space-y-8">
@@ -114,8 +120,8 @@ export default function Contact() {
                 className="glass-card rounded-lg sm:rounded-xl p-4 sm:p-6"
               >
                 <h3 className="text-base sm:text-lg font-light text-white mb-2 text-center lg:text-left">Email</h3>
-                <a href="mailto:hello@executiveaisolutions.com" className="text-zinc-400 hover:text-white transition-colors duration-300 block text-center lg:text-left">
-                  hello@executiveaisolutions.com
+                <a href="mailto:jaker@executiveaisolutions.com" className="text-zinc-400 hover:text-white transition-colors duration-300 block text-center lg:text-left">
+                  jaker@executiveaisolutions.com
                 </a>
               </motion.div>
               

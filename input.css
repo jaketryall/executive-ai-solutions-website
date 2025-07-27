@@ -484,6 +484,32 @@ html, body {
     }
   }
   
+  /* Mobile-specific animations */
+  @keyframes float-mobile {
+    0%, 100% {
+      transform: translateY(0) translateX(0);
+    }
+    33% {
+      transform: translateY(-10px) translateX(5px);
+    }
+    66% {
+      transform: translateY(5px) translateX(-5px);
+    }
+  }
+  
+  .animate-float-mobile {
+    animation: float-mobile 20s ease-in-out infinite;
+  }
+  
+  /* Hide scrollbar for horizontal scroll */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
   /* Touch optimizations */
   .touch-target {
     min-height: 44px;
@@ -602,5 +628,172 @@ html, body {
     position: absolute;
     width: 0;
     height: 0;
+  }
+  
+  /* Enhanced mobile visual effects */
+  @media (max-width: 768px) {
+    /* Premium glassmorphism variants */
+    .glass-premium {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 
+        0 8px 32px 0 rgba(0, 0, 0, 0.37),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Enhanced gradient backgrounds */
+    .bg-gradient-premium {
+      background: 
+        radial-gradient(ellipse at top left, rgba(0, 102, 255, 0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(168, 85, 247, 0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at center, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+    }
+    
+    /* Improved shadow effects */
+    .shadow-premium {
+      box-shadow: 
+        0 10px 40px -10px rgba(0, 102, 255, 0.3),
+        0 0 80px -20px rgba(0, 102, 255, 0.2);
+    }
+    
+    /* Enhanced text effects */
+    .text-shine-mobile {
+      background: linear-gradient(120deg, #ffffff 0%, #e5e5e5 40%, #ffffff 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shine-mobile 4s ease-in-out infinite;
+    }
+    
+    @keyframes shine-mobile {
+      to { background-position: 200% center; }
+    }
+    
+    /* Improved card hover states for touch */
+    .card-interactive {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .card-interactive:active {
+      transform: scale(0.98);
+      box-shadow: 
+        0 5px 20px -5px rgba(0, 102, 255, 0.3),
+        0 0 40px -10px rgba(0, 102, 255, 0.1);
+    }
+    
+    /* Gradient overlays for depth */
+    .overlay-gradient-mobile {
+      position: relative;
+    }
+    
+    .overlay-gradient-mobile::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.2) 100%);
+      pointer-events: none;
+    }
+    
+    /* Neon glow effects (optimized for mobile) */
+    .neon-blue {
+      color: #0066ff;
+      text-shadow: 
+        0 0 10px rgba(0, 102, 255, 0.8),
+        0 0 20px rgba(0, 102, 255, 0.6),
+        0 0 30px rgba(0, 102, 255, 0.4);
+    }
+    
+    /* Smooth gradient animations */
+    .animate-gradient-mobile {
+      background-size: 200% 200%;
+      animation: gradient-shift 8s ease infinite;
+    }
+    
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* Enhanced button styles */
+    .btn-premium {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0066ff 0%, #0052cc 100%);
+      box-shadow: 
+        0 4px 15px 0 rgba(0, 102, 255, 0.3),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+    }
+    
+    .btn-premium::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .btn-premium:active::before {
+      left: 100%;
+    }
+    
+    /* Refined animations */
+    .slide-up-mobile {
+      animation: slideUpMobile 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    
+    @keyframes slideUpMobile {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Improved focus states */
+    .focus-ring-mobile:focus {
+      outline: none;
+      box-shadow: 
+        0 0 0 2px rgba(0, 102, 255, 0.5),
+        0 0 0 4px rgba(0, 102, 255, 0.2);
+    }
+    
+    /* Enhanced scrollbar styling for mobile */
+    .custom-scrollbar-mobile {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 102, 255, 0.3) transparent;
+    }
+    
+    .custom-scrollbar-mobile::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    
+    .custom-scrollbar-mobile::-webkit-scrollbar-thumb {
+      background: rgba(0, 102, 255, 0.3);
+      border-radius: 2px;
+    }
+    
+    /* Frosted glass navigation bar */
+    .nav-glass-mobile {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Smooth transitions for all interactive elements */
+    button, a, input, textarea, select, .interactive {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
   }
 }

@@ -3,6 +3,7 @@
 import { motion, useInView, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
+import AboutMobile from "./AboutMobile";
 
 export default function About() {
   const ref = useRef(null);
@@ -59,6 +60,11 @@ export default function About() {
   // Enhanced content opacity
   const mainContentOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
   const statsOpacity = useTransform(scrollYProgress, [0.1, 0.25, 0.75, 0.9], [0, 1, 1, 0]);
+
+  // Use mobile-specific component
+  if (isMobile) {
+    return <AboutMobile />;
+  }
 
   return (
     <section ref={ref} className="py-24 px-4 sm:px-6 lg:px-8 bg-black relative overflow-hidden">

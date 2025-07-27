@@ -41,8 +41,8 @@ export default function LandingPageDemo() {
     setTimeout(() => {
       const content: AIGeneratedContent = {
         headline: getAIHeadline(selectedIndustry, selectedTone),
-        subheadline: getAISubheadline(selectedIndustry, selectedTone),
-        cta: getAICTA(selectedIndustry, selectedTone),
+        subheadline: getAISubheadline(selectedIndustry),
+        cta: getAICTA(selectedIndustry),
         benefits: getAIBenefits(selectedIndustry),
         colorScheme: getAIColorScheme(selectedIndustry),
         layout: "hero-centered"
@@ -92,7 +92,7 @@ export default function LandingPageDemo() {
     return headlines[industry]?.[tone] || "Transform Your Business Today";
   };
 
-  const getAISubheadline = (industry: string, tone: string) => {
+  const getAISubheadline = (industry: string) => {
     const subheadlines: { [key: string]: string } = {
       "SaaS Startup": "Join thousands of companies streamlining their workflows",
       "E-commerce Store": "Fast shipping. Easy returns. Great service.",
@@ -103,23 +103,16 @@ export default function LandingPageDemo() {
     return subheadlines[industry] || "Trusted by thousands of satisfied customers";
   };
 
-  const getAICTA = (industry: string, tone: string) => {
-    const ctas: { [key: string]: { [key: string]: string } } = {
-      "Professional": { default: "Get Started" },
-      "Friendly": { default: "Let's Do This!" },
-      "Urgent": { default: "Claim Your Spot Now" },
-      "Innovative": { default: "Experience the Future" }
-    };
-    
+  const getAICTA = (industry: string) => {
     const industryCTAs: { [key: string]: string } = {
-      "SaaS Startup": tone === "Urgent" ? "Start Free Trial Now" : "Start 14-Day Free Trial",
-      "E-commerce Store": tone === "Urgent" ? "Shop the Sale" : "Browse Collection",
+      "SaaS Startup": "Start 14-Day Free Trial",
+      "E-commerce Store": "Browse Collection",
       "Consulting Firm": "Book Free Consultation",
       "Fitness Studio": "Claim Free Week Pass",
       "Restaurant": "Reserve Your Table"
     };
     
-    return industryCTAs[industry] || ctas[tone]?.default || "Learn More";
+    return industryCTAs[industry] || "Learn More";
   };
 
   const getAIBenefits = (industry: string) => {
@@ -148,6 +141,7 @@ export default function LandingPageDemo() {
     if (selectedIndustry && selectedTone) {
       generateAIContent();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIndustry, selectedTone]);
 
   return (

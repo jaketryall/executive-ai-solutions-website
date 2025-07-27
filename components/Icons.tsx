@@ -4,11 +4,7 @@ const pathVariants = {
   hidden: { pathLength: 0, opacity: 0 },
   visible: {
     pathLength: 1,
-    opacity: 1,
-    transition: {
-      pathLength: { duration: 1.5, ease: "easeInOut" },
-      opacity: { duration: 0.3 }
-    }
+    opacity: 1
   }
 };
 

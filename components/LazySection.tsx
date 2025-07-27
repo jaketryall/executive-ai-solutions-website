@@ -17,7 +17,8 @@ export default function LazySection({
   const ref = useRef(null);
   const isInView = useInView(ref, { 
     once: true, 
-    margin: rootMargin 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    margin: rootMargin as any 
   });
 
   return (

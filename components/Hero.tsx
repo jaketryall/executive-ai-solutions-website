@@ -5,13 +5,15 @@ import { useRef, useState, useEffect } from "react";
 import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
 import { useOptimizedAnimation } from "@/hooks/usePerformance";
 
+import HeroMobile from "./HeroMobile";
+
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeService, setActiveService] = useState<'automation' | 'landing'>('automation');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const isMobile = useIsMobile();
   const prefersReducedMotion = useReducedMotion();
-  const { enableParallax, animationDuration } = useOptimizedAnimation();
+  const { enableParallax } = useOptimizedAnimation();
   
   // Parallax scroll - disabled on mobile
   const { scrollYProgress } = useScroll({
@@ -19,7 +21,7 @@ export default function Hero() {
     offset: ["start start", "end start"],
   });
   
-  const y = useTransform(scrollYProgress, [0, 1], isMobile || !enableParallax ? [0, 0] : [0, 200]);
+  // const y = useTransform(scrollYProgress, [0, 1], isMobile || !enableParallax ? [0, 0] : [0, 200]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], isMobile || !enableParallax ? [1, 1] : [1, 0]);
   
   // Function to reset and start the interval
@@ -41,6 +43,11 @@ export default function Hero() {
       }
     };
   }, []); // Empty dependency array - only run on mount/unmount
+
+  // Use mobile-specific component
+  if (isMobile) {
+    return <HeroMobile />;
+  }
 
   return (
     <section ref={sectionRef} className="relative min-h-screen flex items-start justify-center overflow-hidden bg-black pt-32">

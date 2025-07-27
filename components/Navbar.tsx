@@ -2,9 +2,12 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useIsMobile } from "@/hooks/useMobile";
+import NavbarMobile from "./NavbarMobile";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const navItems = [
     { label: "Services", href: "#services" },
@@ -12,6 +15,11 @@ export default function Navbar() {
     { label: "About", href: "#about" },
     { label: "Contact", href: "#contact" },
   ];
+
+  // Use mobile-specific component
+  if (isMobile) {
+    return <NavbarMobile />;
+  }
 
   return (
     <motion.nav

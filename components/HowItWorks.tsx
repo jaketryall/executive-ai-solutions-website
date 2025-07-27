@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useInView, useScroll, useTransform, useSpring, MotionValue } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/useMobile";
 import HowItWorksMobile from "./HowItWorksMobile";
@@ -29,7 +29,7 @@ const steps = [
   },
 ];
 
-function StepCard({ step, index, progress }: { step: typeof steps[0], index: number, progress: any }) {
+function StepCard({ step, index, progress }: { step: typeof steps[0], index: number, progress: MotionValue<number> }) {
   // Calculate individual step progress with overlap for smoother transitions
   const stepStart = 0.1 + (index * 0.25); // Start at 10% progress, then space each card more
   const stepEnd = stepStart + 0.2; // 20% duration for each step

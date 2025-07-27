@@ -1,9 +1,10 @@
 "use client";
 
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
 import { WorkflowVisualization, PageBuilderVisualization, ConsultingVisualization } from "./ServiceVisualizations";
+import ServicesMobile from "./ServicesMobile";
 
 const services = [
   {
@@ -132,6 +133,11 @@ export default function Services() {
   // New content opacity transitions
   const contentOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
   const cardsOpacity = useTransform(scrollYProgress, [0.1, 0.3, 0.8, 0.95], [0, 1, 1, 0]);
+
+  // Use mobile-specific component
+  if (isMobile) {
+    return <ServicesMobile />;
+  }
 
   return (
     <section ref={ref} className="pt-24 sm:pt-32 lg:pt-48 pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-6 lg:px-8 relative bg-black overflow-hidden">
