@@ -24,10 +24,10 @@ export default function Footer() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h3 className="text-2xl font-light mb-4 text-white">
+            <h3 className="text-2xl font-light mb-4 text-white text-center lg:text-left">
               <span className="text-gradient-subtle">Executive AI Solutions</span>
             </h3>
-            <p className="text-zinc-600 font-light text-lg">
+            <p className="text-zinc-600 font-light text-lg text-center lg:text-left">
               Practical AI solutions that work.
             </p>
           </motion.div>
@@ -39,7 +39,7 @@ export default function Footer() {
               transition={{ duration: 0.6, delay: 0.1 }}
               viewport={{ once: true }}
             >
-              <h4 className="text-sm font-light text-zinc-500 mb-6 uppercase tracking-wider">Navigate</h4>
+              <h4 className="text-sm font-light text-zinc-500 mb-6 uppercase tracking-wider text-center lg:text-left">Navigate</h4>
               <ul className="space-y-3">
                 {[
                   { href: "#services", label: "Services" },
@@ -55,7 +55,7 @@ export default function Footer() {
                   >
                     <motion.a 
                       href={link.href} 
-                      className="text-zinc-600 hover:text-white transition-colors duration-300 font-light inline-block"
+                      className="text-zinc-600 hover:text-white transition-colors duration-300 font-light block text-center lg:text-left lg:inline-block"
                       variants={linkVariants}
                       initial="initial"
                       whileHover="hover"
@@ -73,7 +73,7 @@ export default function Footer() {
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <h4 className="text-sm font-light text-zinc-500 mb-6 uppercase tracking-wider">Connect</h4>
+              <h4 className="text-sm font-light text-zinc-500 mb-6 uppercase tracking-wider text-center lg:text-left">Connect</h4>
               <ul className="space-y-3">
                 {[
                   { href: "#contact", label: "Contact" },
@@ -88,7 +88,7 @@ export default function Footer() {
                   >
                     <motion.a 
                       href={link.href} 
-                      className="text-zinc-600 hover:text-white transition-colors duration-300 font-light inline-block"
+                      className="text-zinc-600 hover:text-white transition-colors duration-300 font-light block text-center lg:text-left lg:inline-block"
                       variants={linkVariants}
                       initial="initial"
                       whileHover="hover"

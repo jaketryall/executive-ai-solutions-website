@@ -18,13 +18,15 @@ export default function Navbar() {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-black/60 backdrop-blur-xl border-b border-zinc-800/50"
+      className="fixed top-0 left-0 right-0 z-50 bg-black/60 backdrop-blur-xl border-b border-zinc-800/50 safe-top"
+      role="navigation"
+      aria-label="Main navigation"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="#" className="text-base sm:text-xl font-light text-white hover:text-glow-blue transition-all duration-300">
+            <a href="#" className="text-base sm:text-xl font-light text-white hover:text-glow-blue transition-all duration-300 touch-target" aria-label="Executive AI Solutions Home">
               Executive AI Solutions
             </a>
           </div>
@@ -43,7 +45,8 @@ export default function Navbar() {
                       section.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className="text-zinc-400 hover:text-white hover:text-glow-blue transition-all duration-300 text-sm font-light"
+                  className="text-zinc-400 hover:text-white hover:text-glow-blue transition-all duration-300 text-sm font-light touch-target focus-visible"
+                  aria-label={`Navigate to ${item.label}`}
                 >
                   {item.label}
                 </a>
@@ -57,7 +60,8 @@ export default function Navbar() {
                     contactSection.scrollIntoView({ behavior: 'smooth' });
                   }
                 }}
-                className="inline-block bg-gradient-to-r from-[#0066ff] to-blue-600 text-white px-6 py-2.5 rounded-full font-light hover:shadow-lg hover:shadow-[#0066ff]/25 transition-all duration-300 text-sm cursor-pointer"
+                className="inline-block bg-gradient-to-r from-[#0066ff] to-blue-600 text-white px-6 py-2.5 rounded-full font-light hover:shadow-lg hover:shadow-[#0066ff]/25 transition-all duration-300 text-sm cursor-pointer touch-target focus-visible"
+                aria-label="Get started with AI solutions"
               >
                 Get Started
               </a>
@@ -68,7 +72,10 @@ export default function Navbar() {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-zinc-300 hover:text-white focus:outline-none"
+              className="text-zinc-300 hover:text-white focus-visible touch-target w-10 h-10 flex items-center justify-center rounded-lg"
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
             >
               <svg
                 className="h-6 w-6"
@@ -92,17 +99,21 @@ export default function Navbar() {
         {/* Mobile menu */}
         {isMenuOpen && (
           <motion.div
+            id="mobile-menu"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden"
+            role="navigation"
+            aria-label="Mobile navigation"
           >
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navItems.map((item) => (
                 <a
                   key={item.label}
                   href={item.href}
-                  className="block px-3 py-2 text-zinc-300 hover:text-white transition-colors duration-200"
+                  className="block px-4 py-3 text-zinc-300 hover:text-white transition-colors duration-200 touch-target focus-visible"
+                  aria-label={`Navigate to ${item.label}`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}
@@ -118,7 +129,8 @@ export default function Navbar() {
                   }
                   setIsMenuOpen(false);
                 }}
-                className="block w-full mt-4 bg-gradient-to-r from-[#0066ff] to-blue-600 text-white px-6 py-2.5 rounded-full font-light text-center hover:shadow-lg hover:shadow-[#0066ff]/25 transition-all duration-300 text-sm cursor-pointer"
+                className="block w-full mt-4 bg-gradient-to-r from-[#0066ff] to-blue-600 text-white px-6 py-3 rounded-full font-light text-center hover:shadow-lg hover:shadow-[#0066ff]/25 transition-all duration-300 text-sm cursor-pointer touch-target focus-visible"
+                aria-label="Get started with AI solutions"
               >
                 Get Started
               </a>

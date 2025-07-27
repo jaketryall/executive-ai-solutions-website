@@ -281,7 +281,41 @@ export default function HowItWorks() {
                         <stop offset="50%" stopColor="#8b5cf6" stopOpacity="0.3" />
                         <stop offset="100%" stopColor="#f97316" stopOpacity="0.3" />
                       </linearGradient>
+                      
+                      {/* Animated gradient for flow effect */}
+                      <linearGradient id="flow-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <motion.stop
+                          offset="0%"
+                          stopColor="#3b82f6"
+                          stopOpacity="0"
+                          animate={{
+                            stopOpacity: [0, 0.8, 0],
+                            offset: ["0%", "100%", "100%"]
+                          }}
+                          transition={{
+                            duration: 3,
+                            repeat: Infinity,
+                            ease: "linear"
+                          }}
+                        />
+                        <motion.stop
+                          offset="10%"
+                          stopColor="#8b5cf6"
+                          stopOpacity="0"
+                          animate={{
+                            stopOpacity: [0, 0.8, 0],
+                            offset: ["10%", "110%", "110%"]
+                          }}
+                          transition={{
+                            duration: 3,
+                            repeat: Infinity,
+                            ease: "linear"
+                          }}
+                        />
+                      </linearGradient>
                     </defs>
+                    
+                    {/* Base line */}
                     <motion.line
                       x1="10"
                       y1="50"
@@ -293,6 +327,21 @@ export default function HowItWorks() {
                       style={{
                         pathLength,
                         opacity: pathOpacity,
+                      }}
+                    />
+                    
+                    {/* Animated flow line */}
+                    <motion.line
+                      x1="10"
+                      y1="50"
+                      x2="90"
+                      y2="50"
+                      stroke="url(#flow-gradient)"
+                      strokeWidth="2"
+                      style={{
+                        pathLength,
+                        opacity: pathOpacity,
+                        filter: "blur(4px)"
                       }}
                     />
                   </svg>

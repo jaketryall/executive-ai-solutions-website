@@ -69,15 +69,15 @@ export default function HowItWorksMobile() {
                 {/* Step card */}
                 <div className="glass-card rounded-2xl p-6 sm:p-8 backdrop-blur-xl border border-white/10">
                   {/* Step number */}
-                  <div className="flex items-start gap-4 mb-4">
-                    <span className={`text-5xl sm:text-6xl font-light text-transparent bg-gradient-to-br ${step.color} bg-clip-text`}>
+                  <div className="flex flex-col items-center text-center mb-4">
+                    <span className={`text-5xl sm:text-6xl font-light text-transparent bg-gradient-to-br ${step.color} bg-clip-text mb-4`}>
                       {step.number}
                     </span>
-                    <div className="flex-1">
-                      <h3 className="text-xl sm:text-2xl font-light mb-3 text-white">
+                    <div className="w-full">
+                      <h3 className="text-xl sm:text-2xl font-light mb-3 text-white text-center">
                         {step.title}
                       </h3>
-                      <p className="text-zinc-400 text-sm sm:text-base font-light leading-relaxed">
+                      <p className="text-zinc-400 text-sm sm:text-base font-light leading-relaxed text-center">
                         {step.description}
                       </p>
                     </div>
@@ -97,13 +97,46 @@ export default function HowItWorksMobile() {
                 
                 {/* Connection line (except for last item) */}
                 {index < steps.length - 1 && (
-                  <motion.div
-                    className="w-0.5 h-12 bg-gradient-to-b from-zinc-700 to-transparent mx-auto mt-4"
-                    initial={{ scaleY: 0 }}
-                    animate={isInView ? { scaleY: 1 } : { scaleY: 0 }}
-                    transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
-                    style={{ transformOrigin: "top" }}
-                  />
+                  <div className="relative w-1 h-16 mx-auto mt-6">
+                    {/* Base line */}
+                    <motion.div
+                      className={`absolute inset-0 bg-gradient-to-b from-transparent via-zinc-700 to-zinc-600 rounded-full`}
+                      initial={{ scaleY: 0, opacity: 0 }}
+                      animate={isInView ? { scaleY: 1, opacity: 1 } : { scaleY: 0, opacity: 0 }}
+                      transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
+                      style={{ transformOrigin: "top" }}
+                    />
+                    
+                    {/* Animated flow effect */}
+                    <motion.div
+                      className={`absolute inset-x-0 h-4 bg-gradient-to-b ${step.color} rounded-full blur-sm`}
+                      initial={{ top: "0%", opacity: 0 }}
+                      animate={isInView ? {
+                        top: ["0%", "100%"],
+                        opacity: [0, 0.8, 0],
+                      } : { top: "0%", opacity: 0 }}
+                      transition={{
+                        duration: 1.5,
+                        delay: 1.2 + index * 0.2,
+                        repeat: Infinity,
+                        repeatDelay: 2,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    
+                    {/* Glow effect */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-b from-zinc-500/20 to-transparent rounded-full blur-md"
+                      initial={{ opacity: 0 }}
+                      animate={isInView ? { opacity: [0, 0.5, 0] } : { opacity: 0 }}
+                      transition={{
+                        duration: 2,
+                        delay: 1 + index * 0.2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                  </div>
                 )}
               </motion.div>
             ))}

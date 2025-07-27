@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
+import { useOptimizedAnimation } from "@/hooks/usePerformance";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -10,6 +11,7 @@ export default function Hero() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const isMobile = useIsMobile();
   const prefersReducedMotion = useReducedMotion();
+  const { enableParallax, animationDuration } = useOptimizedAnimation();
   
   // Parallax scroll - disabled on mobile
   const { scrollYProgress } = useScroll({
@@ -17,8 +19,8 @@ export default function Hero() {
     offset: ["start start", "end start"],
   });
   
-  const y = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, 200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], isMobile ? [1, 1] : [1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], isMobile || !enableParallax ? [0, 0] : [0, 200]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], isMobile || !enableParallax ? [1, 1] : [1, 0]);
   
   // Function to reset and start the interval
   const resetInterval = () => {
@@ -63,7 +65,7 @@ export default function Hero() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl font-light mb-24 sm:mb-32 text-white leading-tight">
+              <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl font-light mb-24 sm:mb-32 text-white leading-tight text-center lg:text-left">
                 We Build
                 <span className="block relative mt-2 h-[1.5em]">
                   <AnimatePresence mode="wait">
@@ -94,24 +96,26 @@ export default function Hero() {
                 </span>
               </h1>
               
-              <p className="text-base xs:text-lg sm:text-xl text-zinc-400 mb-6 sm:mb-8 font-light leading-relaxed mt-4">
+              <p className="text-base xs:text-lg sm:text-xl text-zinc-400 mb-6 sm:mb-8 font-light leading-relaxed mt-4 text-center lg:text-left">
                 Transform your business with AI automation and high-converting landing pages. 
                 <span className="hidden sm:inline">Scale operations, increase conversions, work smarter.</span>
                 <span className="sm:hidden">Scale operations, work smarter.</span>
               </p>
               
               {/* Service toggles */}
-              <div className="flex gap-2 xs:gap-3 sm:gap-4 mb-6 sm:mb-8 flex-wrap">
+              <div className="flex gap-2 xs:gap-3 sm:gap-4 mb-6 sm:mb-8 flex-wrap justify-center lg:justify-start">
                 <button
                   onClick={() => {
                     setActiveService('automation');
                     resetInterval();
                   }}
-                  className={`px-3 xs:px-4 sm:px-6 py-2 xs:py-2.5 sm:py-3 rounded-full font-light transition-all text-xs xs:text-sm sm:text-base ${
+                  className={`px-3 xs:px-4 sm:px-6 py-2 xs:py-2.5 sm:py-3 rounded-full font-light transition-all text-xs xs:text-sm sm:text-base touch-target ${
                     activeService === 'automation'
                       ? 'bg-gradient-to-r from-[#0066ff] to-cyan-500 text-white'
                       : 'bg-zinc-900 text-zinc-400 hover:bg-zinc-800'
                   }`}
+                  aria-pressed={activeService === 'automation'}
+                  aria-label="View AI Automation services"
                 >
                   AI Automation
                 </button>
@@ -120,11 +124,13 @@ export default function Hero() {
                     setActiveService('landing');
                     resetInterval();
                   }}
-                  className={`px-3 xs:px-4 sm:px-6 py-2 xs:py-2.5 sm:py-3 rounded-full font-light transition-all text-xs xs:text-sm sm:text-base ${
+                  className={`px-3 xs:px-4 sm:px-6 py-2 xs:py-2.5 sm:py-3 rounded-full font-light transition-all text-xs xs:text-sm sm:text-base touch-target ${
                     activeService === 'landing'
                       ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white'
                       : 'bg-zinc-900 text-zinc-400 hover:bg-zinc-800'
                   }`}
+                  aria-pressed={activeService === 'landing'}
+                  aria-label="View Landing Page creation services"
                 >
                   Landing Pages
                 </button>
@@ -142,30 +148,30 @@ export default function Hero() {
                   >
                     {activeService === 'automation' ? (
                       <>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 justify-center lg:justify-start">
                           <div className="w-2 h-2 bg-[#0066ff] rounded-full" />
                           <span className="text-sm sm:text-base text-zinc-300">24/7 automated workflows</span>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 justify-center lg:justify-start">
                           <div className="w-2 h-2 bg-cyan-500 rounded-full" />
                           <span className="text-sm sm:text-base text-zinc-300">Intelligent data processing</span>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 justify-center lg:justify-start">
                           <div className="w-2 h-2 bg-blue-500 rounded-full" />
                           <span className="text-sm sm:text-base text-zinc-300">Scale without hiring</span>
                         </div>
                       </>
                     ) : (
                       <>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 justify-center lg:justify-start">
                           <div className="w-2 h-2 bg-purple-600 rounded-full" />
                           <span className="text-sm sm:text-base text-zinc-300">AI-optimized for conversions</span>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 justify-center lg:justify-start">
                           <div className="w-2 h-2 bg-pink-500 rounded-full" />
                           <span className="text-sm sm:text-base text-zinc-300">Mobile-ready designs</span>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 justify-center lg:justify-start">
                           <div className="w-2 h-2 bg-purple-500 rounded-full" />
                           <span className="text-sm sm:text-base text-zinc-300">Launch in hours, not weeks</span>
                         </div>

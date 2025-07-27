@@ -72,7 +72,7 @@ function ServiceCard({ service, index, isMobile, prefersReducedMotion }: { servi
         
         {/* Content */}
         <div className="p-6 sm:p-8 flex-1 flex flex-col">
-          <h3 className={`text-xl sm:text-2xl font-light mb-3 sm:mb-4 transition-all duration-300 ${
+          <h3 className={`text-xl sm:text-2xl font-light mb-3 sm:mb-4 transition-all duration-300 text-center lg:text-left ${
             isHovered 
               ? `text-transparent bg-gradient-to-r ${service.gradient} bg-clip-text` 
               : 'text-white'
@@ -80,7 +80,7 @@ function ServiceCard({ service, index, isMobile, prefersReducedMotion }: { servi
             {service.title}
           </h3>
           
-          <p className="text-zinc-400 text-sm sm:text-base font-light leading-relaxed flex-1">
+          <p className="text-zinc-400 text-sm sm:text-base font-light leading-relaxed flex-1 text-center lg:text-left">
             {service.description}
           </p>
         </div>

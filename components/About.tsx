@@ -153,7 +153,7 @@ export default function About() {
         className="max-w-7xl mx-auto relative"
         style={{ opacity: mainContentOpacity }}
       >
-        {/* Title - Left aligned with enhanced animation */}
+        {/* Title - Center on mobile, left on desktop */}
         <motion.div
           initial={{ opacity: 0, x: -100, filter: "blur(10px)" }}
           animate={isInView ? { 
@@ -171,7 +171,7 @@ export default function About() {
             opacity: { duration: 0.8 },
             filter: { duration: 1.0 }
           }}
-          className="mb-20"
+          className="mb-20 text-center lg:text-left"
           style={{ y: contentY }}
         >
           <motion.h2 
@@ -215,11 +215,11 @@ export default function About() {
                   transition={{ duration: 0.3 }}
                   className="h-full flex flex-col"
                 >
-                  <h3 className="text-2xl lg:text-3xl font-light text-white mb-3 h-[40px] flex items-start">
+                  <h3 className="text-2xl lg:text-3xl font-light text-white mb-3 h-[40px] flex items-start justify-center lg:justify-start text-center lg:text-left">
                     {hoveredIndex !== null ? stats[hoveredIndex].title : defaultContent.title}
                   </h3>
                   
-                  <p className="text-lg text-zinc-400 font-light leading-relaxed">
+                  <p className="text-lg text-zinc-400 font-light leading-relaxed text-center lg:text-left">
                     {hoveredIndex !== null ? stats[hoveredIndex].description : defaultContent.description}
                   </p>
                 </motion.div>
