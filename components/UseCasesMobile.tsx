@@ -221,47 +221,90 @@ function UseCaseCard({ useCase, index, isActive, onActivate }: CardProps) {
           </p>
           
           {/* Animated metrics */}
-          <div className="relative">
-            {/* Progress ring */}
-            <svg className="absolute -left-2 -top-2 w-20 h-20">
-              <motion.circle
-                cx="40"
-                cy="40"
-                r="36"
-                fill="none"
-                stroke="rgba(255,255,255,0.1)"
-                strokeWidth="2"
-              />
-              <motion.circle
-                cx="40"
-                cy="40"
-                r="36"
-                fill="none"
-                stroke={`url(#gradient-${index})`}
-                strokeWidth="2"
-                strokeLinecap="round"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: isActive ? 0.8 : 0 }}
-                transition={{ duration: 1.5, ease: "easeOut" }}
-                style={{
-                  rotate: -90,
-                  transformOrigin: "center",
-                }}
-              />
-              <defs>
-                <linearGradient id={`gradient-${index}`}>
-                  <stop offset="0%" stopColor={useCase.particleColor} />
-                  <stop offset="100%" stopColor={useCase.particleColor} stopOpacity="0.3" />
-                </linearGradient>
-              </defs>
-            </svg>
-            
-            {/* Metric value */}
-            <div className="relative z-10 pl-20">
-              <div className="text-3xl font-light text-white">
-                <MetricCounter value={useCase.metrics} isActive={isActive} />
-                <span className="text-xl">x</span>
+          <div className="flex items-center gap-6">
+            {/* Progress ring with number inside */}
+            <motion.div 
+              className="relative"
+              animate={isActive ? {
+                scale: [1, 1.05, 1],
+              } : {}}
+              transition={{
+                duration: 2,
+                repeat: isActive ? Infinity : 0,
+                ease: "easeInOut",
+              }}
+            >
+              <svg className="w-24 h-24">
+                {/* Background circle */}
+                <motion.circle
+                  cx="48"
+                  cy="48"
+                  r="40"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.1)"
+                  strokeWidth="3"
+                />
+                {/* Glow effect circle */}
+                {isActive && (
+                  <motion.circle
+                    cx="48"
+                    cy="48"
+                    r="40"
+                    fill="none"
+                    stroke={useCase.particleColor}
+                    strokeWidth="3"
+                    initial={{ opacity: 0, scale: 1 }}
+                    animate={{
+                      opacity: [0, 0.3, 0],
+                      scale: [1, 1.2, 1.3],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeOut",
+                    }}
+                    style={{
+                      filter: "blur(4px)",
+                    }}
+                  />
+                )}
+                <motion.circle
+                  cx="48"
+                  cy="48"
+                  r="40"
+                  fill="none"
+                  stroke={`url(#gradient-${index})`}
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: isActive ? 0.8 : 0 }}
+                  transition={{ duration: 1.5, ease: "easeOut" }}
+                  style={{
+                    rotate: -90,
+                    transformOrigin: "center",
+                  }}
+                />
+                <defs>
+                  <linearGradient id={`gradient-${index}`}>
+                    <stop offset="0%" stopColor={useCase.particleColor} />
+                    <stop offset="100%" stopColor={useCase.particleColor} stopOpacity="0.3" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              
+              {/* Metric value centered in circle */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="text-2xl font-light text-white">
+                    <MetricCounter value={useCase.metrics} isActive={isActive} />
+                    <span className="text-lg">x</span>
+                  </div>
+                </div>
               </div>
+            </motion.div>
+            
+            {/* Metric label */}
+            <div className="flex-1">
               <div className="text-sm text-zinc-400">{useCase.metricLabel}</div>
             </div>
           </div>
