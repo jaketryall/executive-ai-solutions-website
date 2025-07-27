@@ -65,8 +65,6 @@ function ServiceCard({ service, index }: { service: typeof services[0], index: n
           {/* Service Visualization */}
           <Visualization isActive={isHovered} />
 
-          {/* Grid pattern overlay */}
-          <div className="absolute inset-0 bg-grid-pattern opacity-5" />
         </div>
         
         {/* Content */}
@@ -150,11 +148,6 @@ export default function Services() {
         style={{ y: y3 }}
       />
       
-      {/* Grid pattern with parallax */}
-      <motion.div 
-        className="absolute inset-0 bg-grid-pattern opacity-5"
-        style={{ y: y1 }}
-      />
       
       <div className="max-w-7xl mx-auto relative z-10">
         <motion.div

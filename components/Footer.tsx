@@ -11,7 +11,7 @@ export default function Footer() {
   };
   
   return (
-    <footer className="py-20 px-4 sm:px-6 lg:px-8 border-t border-zinc-900 bg-gradient-to-b from-black to-zinc-950 relative overflow-hidden">
+    <footer className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black to-zinc-950 relative overflow-hidden">
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-gradient-mesh opacity-10" />
       

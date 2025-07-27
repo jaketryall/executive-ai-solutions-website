@@ -14,7 +14,7 @@ const steps = [
   {
     number: "02",
     title: "Get Your Custom Roadmap",
-    description: "Receive a tailored plan for AI automation implementation and/or landing page design, with clear milestones and expected ROI for your chosen services.",
+    description: "Receive a tailored plan for AI automation implementation and/or landing page design, with clear milestones for your chosen services.",
     color: "from-purple-500 to-pink-500",
     bgColor: "from-purple-500/20 to-pink-500/20",
   },
@@ -123,6 +123,8 @@ function StepCard({ step, index, progress }: { step: typeof steps[0], index: num
 export default function HowItWorks() {
   const ref = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(headerRef, { once: true, margin: "-100px" });
   
   // Use window scroll instead of section scroll
   const { scrollY } = useScroll();
@@ -194,6 +196,9 @@ export default function HowItWorks() {
 
   return (
     <section ref={ref} id="how-it-works" className="relative bg-zinc-950" style={{ height: '350vh' }}>
+      {/* Top gradient fade */}
+      <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black to-transparent pointer-events-none z-20" />
+      
       {/* Sticky container - ensure no parent overflow issues */}
       <div className="sticky-container" style={{ height: '100vh' }}>
         {/* Animated background */}
@@ -238,10 +243,11 @@ export default function HowItWorks() {
           <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col">
             {/* Header - Fixed at top */}
             <motion.div
+              ref={headerRef}
               className="text-center mb-12"
-              style={{
-                opacity: useTransform(scrollYProgress, [0, 0.05, 0.9, 1], [0, 1, 1, 0]),
-              }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light mb-4 text-white">
                 <span className="text-gradient-shine">Process</span>
@@ -328,6 +334,9 @@ export default function HowItWorks() {
         </motion.div>
         
       </div>
+      
+      {/* Bottom gradient fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black to-transparent pointer-events-none z-20" />
     </section>
   );
 }

@@ -35,9 +35,9 @@ export default function UseCases() {
   // Removed scroll-based animations for performance
 
   return (
-    <section ref={ref} id="use-cases" className="pt-20 sm:pt-24 lg:pt-32 pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8 relative bg-gradient-dark-blue overflow-hidden border-t border-blue-900/30">
-      {/* Circuit pattern background */}
-      <div className="absolute inset-0 bg-circuit-pattern opacity-50 pointer-events-none" />
+    <section ref={ref} id="use-cases" className="pt-20 sm:pt-24 lg:pt-32 pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8 relative bg-gradient-dark-blue overflow-hidden">
+      {/* Top gradient fade */}
+      <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-black to-transparent pointer-events-none z-10" />
       
       {/* Animated dots overlay */}
       <div className="absolute inset-0 bg-animated-dots pointer-events-none" />

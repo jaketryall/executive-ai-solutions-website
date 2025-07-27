@@ -1,12 +1,18 @@
 "use client";
 
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 
 export default function About() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: false, margin: "-100px" });
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  
+  // Scroll-based animations
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
 
   const stats = [
     { 
@@ -39,13 +45,29 @@ export default function About() {
     title: "We deploy AI that works",
     description: "No theory, no hype—just practical solutions that deliver results. Founded by entrepreneurs who understand real business challenges, we bridge the gap between cutting-edge AI and practical applications. Our AI employees enhance your workforce, automate repetitive tasks, and scale without limits."
   };
+  
+  // Parallax transforms
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, -150]);
+  const orb1Y = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const orb2Y = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  const contentY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
+  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.3, 1, 1, 0]);
 
   return (
     <section ref={ref} className="py-24 px-4 sm:px-6 lg:px-8 bg-black relative overflow-hidden">
+      {/* Top gradient fade */}
+      <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-black to-transparent pointer-events-none z-10" />
+      
       {/* Multi-layer animated background */}
-      <div className="absolute inset-0">
-        {/* Base gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-950/20 via-black to-purple-950/20" />
+      <motion.div 
+        className="absolute inset-0"
+        style={{ opacity }}
+      >
+        {/* Base gradient with parallax */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-br from-blue-950/20 via-black to-purple-950/20" 
+          style={{ y: bgY }}
+        />
         
         {/* Animated mesh gradient */}
         <motion.div
@@ -62,35 +84,26 @@ export default function About() {
           transition={{ duration: 40, repeat: Infinity, ease: "easeInOut" }}
         />
         
-        {/* Floating orbs */}
+        {/* Floating orbs with parallax */}
         <motion.div
           className="absolute top-20 -left-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"
+          style={{ y: orb1Y }}
           animate={{
             x: [0, 100, 50, 0],
-            y: [0, 50, 100, 0],
             scale: [1, 1.2, 1.1, 1],
           }}
           transition={{ duration: 50, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
           className="absolute bottom-20 -right-20 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"
+          style={{ y: orb2Y }}
           animate={{
             x: [0, -50, -100, 0],
-            y: [0, -100, -50, 0],
             scale: [1, 1.1, 1.2, 1],
           }}
           transition={{ duration: 60, repeat: Infinity, ease: "easeInOut" }}
         />
         
-        {/* Grid pattern overlay */}
-        <div 
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(59, 130, 246, 0.3) 1px, transparent 1px),
-                             linear-gradient(90deg, rgba(59, 130, 246, 0.3) 1px, transparent 1px)`,
-            backgroundSize: '50px 50px'
-          }}
-        />
         
         {/* Animated particles */}
         <div className="absolute inset-0">
@@ -127,29 +140,58 @@ export default function About() {
             );
           })}
         </div>
-      </div>
+      </motion.div>
 
       <div className="max-w-7xl mx-auto relative">
-        {/* Title - Left aligned */}
+        {/* Title - Left aligned with enhanced animation */}
         <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
-          exit={{ opacity: 0, x: -50 }}
-          transition={{ duration: 1.8, ease: "easeOut" }}
+          initial={{ opacity: 0, x: -100, filter: "blur(10px)" }}
+          animate={isInView ? { 
+            opacity: 1, 
+            x: 0,
+            filter: "blur(0px)"
+          } : { 
+            opacity: 0, 
+            x: -100,
+            filter: "blur(10px)"
+          }}
+          transition={{ 
+            duration: 1.2, 
+            ease: [0.25, 0.1, 0.25, 1],
+            opacity: { duration: 0.8 },
+            filter: { duration: 1.0 }
+          }}
           className="mb-20"
+          style={{ y: contentY }}
         >
-          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white">
-            <span className="text-gradient-shine">About Executive AI</span>
-          </h2>
+          <motion.h2 
+            className="text-5xl sm:text-6xl lg:text-7xl font-light text-white overflow-hidden"
+            initial={{ y: 100 }}
+            animate={isInView ? { y: 0 } : { y: 100 }}
+            transition={{ duration: 1.0, ease: [0.25, 0.1, 0.25, 1], delay: 0.2 }}
+          >
+            <span className="text-gradient-shine inline-block">About Executive AI</span>
+          </motion.h2>
         </motion.div>
 
         {/* Main content grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 1.5, delay: 1.8 }}
+            initial={{ opacity: 0, x: -80, scale: 0.95 }}
+            animate={isInView ? { 
+              opacity: 1, 
+              x: 0, 
+              scale: 1 
+            } : { 
+              opacity: 0, 
+              x: -80, 
+              scale: 0.95 
+            }}
+            transition={{ 
+              duration: 1.0, 
+              delay: 0.4,
+              ease: [0.25, 0.1, 0.25, 1]
+            }}
             className="flex flex-col"
           >
             {/* Fixed height container for dynamic content */}
@@ -176,36 +218,73 @@ export default function About() {
             
             {/* Animated line */}
             <motion.div
-              className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full overflow-hidden mt-8"
-              initial={{ scaleX: 0 }}
-              animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
-              exit={{ scaleX: 0 }}
-              transition={{ duration: 1.5, delay: 2.2 }}
+              className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full overflow-hidden mt-8 relative"
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={isInView ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
+              transition={{ 
+                duration: 1.2, 
+                delay: 0.8,
+                ease: [0.25, 0.1, 0.25, 1]
+              }}
               style={{ transformOrigin: "left" }}
-            />
+            >
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-50"
+                animate={{
+                  x: ["-100%", "100%"]
+                }}
+                transition={{
+                  duration: 1.5,
+                  delay: 1.0,
+                  ease: "easeInOut"
+                }}
+              />
+            </motion.div>
           </motion.div>
 
-          <div className="grid grid-cols-2 gap-8 lg:gap-12">
+          <div className="grid grid-cols-2 gap-8 lg:gap-12 auto-rows-fr">
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, scale: 0.5, rotateY: -30 }}
-                animate={isInView ? { opacity: 1, scale: 1, rotateY: 0 } : { opacity: 0, scale: 0.5, rotateY: -30 }}
-                exit={{ opacity: 0, scale: 0.5, rotateY: 30 }}
+                initial={{ 
+                  opacity: 0, 
+                  scale: 0.8, 
+                  rotateX: -45,
+                  y: 50,
+                  filter: "blur(10px)"
+                }}
+                animate={isInView ? { 
+                  opacity: 1, 
+                  scale: 1, 
+                  rotateX: 0,
+                  y: 0,
+                  filter: "blur(0px)"
+                } : { 
+                  opacity: 0, 
+                  scale: 0.8, 
+                  rotateX: -45,
+                  y: 50,
+                  filter: "blur(10px)"
+                }}
                 transition={{ 
-                  duration: 1.5, 
-                  delay: 2.0 + index * 0.2,
-                  type: "spring",
-                  stiffness: 80
+                  duration: 0.8, 
+                  delay: 0.6 + index * 0.15,
+                  ease: [0.25, 0.1, 0.25, 1]
                 }}
                 whileHover={{ 
                   scale: 1.05,
                   rotateY: 5,
-                  transition: { duration: 0.3 }
+                  rotateX: 5,
+                  y: -10,
+                  transition: { 
+                    duration: 0.3,
+                    ease: "easeOut"
+                  }
                 }}
-                className="relative group perspective-1000"
+                className="relative group perspective-1000 h-full"
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
+                style={{ transformStyle: "preserve-3d" }}
               >
                 {/* Animated glow background */}
                 <motion.div
@@ -217,14 +296,14 @@ export default function About() {
                 
                 {/* Floating animation for card */}
                 <motion.div 
-                  className="relative glass-card rounded-xl p-8 h-full flex items-center justify-center backdrop-blur-xl border border-white/10"
+                  className="relative glass-card rounded-xl p-8 h-full min-h-[160px] flex items-center justify-center backdrop-blur-xl border border-white/10"
                   animate={{
                     y: hoveredIndex === index ? -5 : 0,
                   }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="text-center">
-                    <div className={`text-xl lg:text-2xl font-light bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
+                  <div className="text-center w-full">
+                    <div className={`text-xl lg:text-2xl font-light bg-gradient-to-r ${stat.color} bg-clip-text text-transparent break-words`}>
                       {stat.label}
                     </div>
                   </div>
@@ -236,16 +315,23 @@ export default function About() {
 
         {/* Core Principles - Moved back to bottom */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          exit={{ opacity: 0, y: 30 }}
-          transition={{ duration: 1.2, delay: 2.5 }}
-          className="mt-24 border-t border-zinc-900 pt-16"
+          initial={{ opacity: 0, y: 80 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }}
+          transition={{ 
+            duration: 1.0, 
+            delay: 1.2,
+            ease: [0.25, 0.1, 0.25, 1]
+          }}
+          className="mt-24 pt-16"
         >
           <motion.h3 
-            initial={{ opacity: 0, x: -30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
-            transition={{ duration: 1.0, delay: 2.7 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+            transition={{ 
+              duration: 0.8, 
+              delay: 1.4,
+              ease: "easeOut"
+            }}
             className="text-2xl font-light mb-12 text-white text-center"
           >
             Core Principles
@@ -255,19 +341,18 @@ export default function About() {
           <div className="relative overflow-hidden py-4">
             <motion.div
               className="flex gap-8"
-              initial={{ opacity: 0 }}
+              initial={{ opacity: 0, x: 100 }}
               animate={isInView ? {
                 opacity: 1,
-                x: ["0%", "-50%"],
-              } : { opacity: 0 }}
-              exit={{ opacity: 0 }}
+                x: ["100px", "-50%"],
+              } : { opacity: 0, x: 100 }}
               transition={{
-                opacity: { duration: 1.0, delay: 2.9 },
+                opacity: { duration: 0.8, delay: 1.6 },
                 x: {
                   duration: 40,
                   repeat: Infinity,
                   ease: "linear",
-                  delay: 3.2,
+                  delay: 1.8,
                 },
               }}
             >

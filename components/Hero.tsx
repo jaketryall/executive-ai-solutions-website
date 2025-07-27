@@ -199,7 +199,6 @@ export default function Hero() {
                       
                       {/* AI Automation workflow visualization */}
                       <div className="relative h-80 bg-zinc-950 rounded-lg p-4 overflow-hidden">
-                        <div className="absolute inset-0 bg-grid-pattern opacity-5" />
                         
                         <div className="relative h-full flex items-center justify-center">
                           <div className="flex items-start justify-between w-full px-4 pt-8">

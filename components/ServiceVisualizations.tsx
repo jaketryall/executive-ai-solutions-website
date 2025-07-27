@@ -397,7 +397,7 @@ export function ConsultingVisualization({ isActive }: { isActive: boolean }) {
             className="flex items-center gap-2"
           >
             <div className="w-2 h-2 bg-blue-400 rounded-full" />
-            <span className="text-xs text-zinc-400">ROI</span>
+            <span className="text-xs text-zinc-400">Efficiency</span>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
