@@ -62,7 +62,6 @@ html, body {
   html,
   body {
     max-width: 100vw;
-    overflow-x: hidden;
     background-color: var(--background);
     color: var(--foreground);
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -448,7 +447,7 @@ html, body {
   
   /* Prevent horizontal scroll on mobile */
   @media (max-width: 768px) {
-    body {
+    .overflow-x-hidden-mobile {
       overflow-x: hidden;
     }
     
@@ -460,11 +459,8 @@ html, body {
   
   /* iOS specific fixes */
   @supports (-webkit-touch-callout: none) {
-    /* Prevent bounce scroll on iOS */
+    /* Enable smooth scrolling on iOS without breaking sticky */
     body {
-      position: fixed;
-      width: 100%;
-      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
     

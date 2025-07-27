@@ -212,7 +212,7 @@ export default function HowItWorks() {
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black to-transparent pointer-events-none z-20" />
       
       {/* Sticky container - ensure no parent overflow issues */}
-      <div className="sticky-container" style={{ height: '100vh' }}>
+      <div className="sticky top-0" style={{ height: '100vh', position: 'sticky' }}>
         {/* Animated background */}
         <motion.div 
           className="absolute inset-0"

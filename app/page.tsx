@@ -13,28 +13,33 @@ export default function Home() {
     <>
       <SkipLink />
       <Navbar />
-      {/* Move Hero outside of main to avoid overflow conflicts */}
-      <Hero />
-      {/* HowItWorks needs to be outside any parent with overflow hidden */}
-      <main id="main-content" className="relative" role="main">
-        <section id="services" className="relative" aria-label="Our Services">
-          <Services />
-        </section>
-      </main>
+      {/* Overflow wrapper that doesn't affect sticky positioning */}
+      <div className="overflow-x-clip">
+        {/* Move Hero outside of main to avoid overflow conflicts */}
+        <Hero />
+        {/* HowItWorks needs to be outside any parent with overflow hidden */}
+        <main id="main-content" className="relative" role="main">
+          <section id="services" className="relative" aria-label="Our Services">
+            <Services />
+          </section>
+        </main>
+      </div>
       {/* HowItWorks component placed at root level without any parent overflow constraints */}
       <HowItWorks />
-      <main className="relative" role="main">
-        <section id="use-cases" className="relative" aria-label="Use Cases">
-          <UseCases />
-        </section>
-        <section id="about" className="relative" aria-label="About Executive AI">
-          <About />
-        </section>
-        <section id="contact" className="relative" aria-label="Contact Us">
-          <Contact />
-        </section>
-      </main>
-      <Footer />
+      <div className="overflow-x-clip">
+        <main className="relative" role="main">
+          <section id="use-cases" className="relative" aria-label="Use Cases">
+            <UseCases />
+          </section>
+          <section id="about" className="relative" aria-label="About Executive AI">
+            <About />
+          </section>
+          <section id="contact" className="relative" aria-label="Contact Us">
+            <Contact />
+          </section>
+        </main>
+        <Footer />
+      </div>
     </>
   );
 }
