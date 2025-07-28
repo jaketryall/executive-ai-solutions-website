@@ -1,22 +1,11 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
 
 // AI Workflow Automation Visualization
 export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
-  const [currentStep, setCurrentStep] = useState(0);
-  
-  useEffect(() => {
-    if (isActive) {
-      const interval = setInterval(() => {
-        setCurrentStep((prev) => (prev + 1) % 5);
-      }, 1200);
-      return () => clearInterval(interval);
-    } else {
-      setCurrentStep(0);
-    }
-  }, [isActive]);
+  // Remove continuous animation for better performance
+  const animationStep = isActive ? 4 : 0;
 
   const nodes = [
     { id: 1, x: 50, y: 70, label: "Daily Trigger", icon: "clock", subtitle: "Every 24 hours" },
@@ -27,8 +16,8 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
 
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <svg viewBox="0 0 400 140" className="w-full h-full opacity-50">
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ transform: 'translateZ(0)' }}>
+      <svg viewBox="0 0 400 140" className="w-full h-full opacity-50" style={{ willChange: 'transform' }}>
         {/* Connection lines */}
         <motion.path
           d="M 90 70 L 110 70"
@@ -36,7 +25,7 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
           strokeWidth="2"
           fill="none"
           initial={{ pathLength: 0 }}
-          animate={{ pathLength: isActive && currentStep >= 1 ? 1 : 0 }}
+          animate={{ pathLength: isActive && animationStep >= 1 ? 1 : 0 }}
           transition={{ duration: 0.5 }}
         />
         <motion.path
@@ -45,7 +34,7 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
           strokeWidth="2"
           fill="none"
           initial={{ pathLength: 0 }}
-          animate={{ pathLength: isActive && currentStep >= 2 ? 1 : 0 }}
+          animate={{ pathLength: isActive && animationStep >= 2 ? 1 : 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
         />
         <motion.path
@@ -54,13 +43,13 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
           strokeWidth="2"
           fill="none"
           initial={{ pathLength: 0 }}
-          animate={{ pathLength: isActive && currentStep >= 3 ? 1 : 0 }}
+          animate={{ pathLength: isActive && animationStep >= 3 ? 1 : 0 }}
           transition={{ duration: 0.5, delay: 1 }}
         />
         
         {/* Animated data flow */}
         <AnimatePresence>
-          {isActive && currentStep >= 1 && (
+          {isActive && animationStep >= 1 && (
             <motion.circle
               key="flow-1"
               r="3"
@@ -71,7 +60,7 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
               transition={{ duration: 0.5 }}
             />
           )}
-          {isActive && currentStep >= 2 && (
+          {isActive && animationStep >= 2 && (
             <motion.circle
               key="flow-2"
               r="3"
@@ -82,7 +71,7 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
               transition={{ duration: 0.5, delay: 0.5 }}
             />
           )}
-          {isActive && currentStep >= 3 && (
+          {isActive && animationStep >= 3 && (
             <motion.circle
               key="flow-3"
               r="3"
@@ -110,8 +99,8 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
               strokeWidth="2"
               initial={{ scale: 0, opacity: 0 }}
               animate={{ 
-                scale: isActive && currentStep >= i ? 1 : 0,
-                opacity: isActive && currentStep >= i ? 1 : 0,
+                scale: isActive && animationStep >= i ? 1 : 0,
+                opacity: isActive && animationStep >= i ? 1 : 0,
               }}
               transition={{ duration: 0.5, delay: i * 0.3 }}
             />
@@ -127,7 +116,7 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
                   stroke="#60a5fa"
                   strokeWidth="1.5"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: isActive && currentStep >= i ? 1 : 0 }}
+                  animate={{ opacity: isActive && animationStep >= i ? 1 : 0 }}
                 />
                 <motion.path
                   d="M 0 -5 L 0 0 L 5 3"
@@ -135,7 +124,7 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
                   strokeWidth="1.5"
                   fill="none"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: isActive && currentStep >= i ? 1 : 0 }}
+                  animate={{ opacity: isActive && animationStep >= i ? 1 : 0 }}
                 />
               </motion.g>
             )}
@@ -151,28 +140,28 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
                   stroke="#60a5fa"
                   strokeWidth="1.5"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: isActive && currentStep >= i ? 1 : 0 }}
+                  animate={{ opacity: isActive && animationStep >= i ? 1 : 0 }}
                 />
                 <motion.line 
                   x1="-4" y1="-5" x2="4" y2="-5" 
                   stroke="#60a5fa" 
                   strokeWidth="1"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: isActive && currentStep >= i ? 1 : 0 }}
+                  animate={{ opacity: isActive && animationStep >= i ? 1 : 0 }}
                 />
                 <motion.line 
                   x1="-4" y1="0" x2="4" y2="0" 
                   stroke="#60a5fa" 
                   strokeWidth="1"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: isActive && currentStep >= i ? 1 : 0 }}
+                  animate={{ opacity: isActive && animationStep >= i ? 1 : 0 }}
                 />
                 <motion.line 
                   x1="-4" y1="5" x2="4" y2="5" 
                   stroke="#60a5fa" 
                   strokeWidth="1"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: isActive && currentStep >= i ? 1 : 0 }}
+                  animate={{ opacity: isActive && animationStep >= i ? 1 : 0 }}
                 />
               </motion.g>
             )}
@@ -184,7 +173,7 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
                   stroke="#60a5fa"
                   strokeWidth="1.5"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: isActive && currentStep >= i ? 1 : 0 }}
+                  animate={{ opacity: isActive && animationStep >= i ? 1 : 0 }}
                 />
                 <motion.text
                   x="0"
@@ -193,7 +182,7 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
                   fontSize="12"
                   fill="#60a5fa"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: isActive && currentStep >= i ? 1 : 0 }}
+                  animate={{ opacity: isActive && animationStep >= i ? 1 : 0 }}
                 >
                   ?
                 </motion.text>
@@ -206,7 +195,7 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
                 strokeWidth="1.5"
                 fill="none"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: isActive && currentStep >= i ? 1 : 0 }}
+                animate={{ opacity: isActive && animationStep >= i ? 1 : 0 }}
               />
             )}
             
@@ -218,10 +207,10 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
               fontWeight="600"
               fill="#93bbfd"
               initial={{ opacity: 0 }}
-              animate={{ opacity: isActive && currentStep === i ? 1 : 0 }}
+              animate={{ opacity: isActive && animationStep === i ? 1 : 0 }}
               transition={{ 
-                duration: isActive && currentStep === i ? 0.5 : 0.2,
-                delay: isActive && currentStep === i ? i * 0.3 : 0,
+                duration: isActive && animationStep === i ? 0.5 : 0.2,
+                delay: isActive && animationStep === i ? i * 0.3 : 0,
                 ease: "easeInOut" 
               }}
             >
@@ -233,7 +222,7 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
               fontSize="10"
               fill="#60a5fa"
               initial={{ opacity: 0 }}
-              animate={{ opacity: isActive && currentStep >= i ? 0.7 : 0 }}
+              animate={{ opacity: isActive && animationStep >= i ? 0.7 : 0 }}
             >
               {node.subtitle}
             </motion.text>
@@ -254,21 +243,12 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
 
 // Landing Page Creation Visualization
 export function PageBuilderVisualization({ isActive }: { isActive: boolean }) {
-  const [currentStep, setCurrentStep] = useState(0);
-  const steps = ["Idea", "Design", "Content", "Deploy"];
-
-  useEffect(() => {
-    if (isActive) {
-      const interval = setInterval(() => {
-        setCurrentStep((prev) => (prev + 1) % steps.length);
-      }, 1200);
-      return () => clearInterval(interval);
-    }
-  }, [isActive, steps.length]);
+  // Static animation state for better performance
+  const animationStep = isActive ? 3 : -1;
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <div className="relative w-48 h-32 opacity-50">
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ transform: 'translateZ(0)' }}>
+      <div className="relative w-48 h-32 opacity-50" style={{ willChange: 'transform' }}>
         {/* Browser mockup */}
         <motion.div
           className="absolute inset-0 border-2 border-purple-500/40 rounded-lg bg-purple-500/10"
@@ -286,7 +266,7 @@ export function PageBuilderVisualization({ isActive }: { isActive: boolean }) {
           {/* Page sections animating in */}
           <div className="p-2 space-y-1">
             <AnimatePresence mode="wait">
-              {isActive && currentStep >= 0 && (
+              {isActive && animationStep >= 0 && (
                 <motion.div
                   key="header"
                   className="h-3 bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded"
@@ -300,7 +280,7 @@ export function PageBuilderVisualization({ isActive }: { isActive: boolean }) {
 
             <div className="grid grid-cols-2 gap-1">
               <AnimatePresence>
-                {isActive && currentStep >= 1 && (
+                {isActive && animationStep >= 1 && (
                   <motion.div
                     key="section1"
                     className="h-6 bg-purple-500/20 rounded"
@@ -309,7 +289,7 @@ export function PageBuilderVisualization({ isActive }: { isActive: boolean }) {
                     transition={{ type: "spring", delay: 0.2 }}
                   />
                 )}
-                {isActive && currentStep >= 2 && (
+                {isActive && animationStep >= 2 && (
                   <motion.div
                     key="section2"
                     className="h-6 bg-pink-500/20 rounded"
@@ -330,7 +310,7 @@ export function PageBuilderVisualization({ isActive }: { isActive: boolean }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: isActive ? 1 : 0 }}
         >
-          {steps[currentStep]}
+          {isActive ? "Deploy" : ""}
         </motion.div>
       </div>
     </div>
@@ -339,27 +319,13 @@ export function PageBuilderVisualization({ isActive }: { isActive: boolean }) {
 
 // AI Consulting Visualization
 export function ConsultingVisualization({ isActive }: { isActive: boolean }) {
-  const [chartData, setChartData] = useState([30, 35, 45, 40, 55, 60, 70, 65, 80, 85]);
-  const [currentHighlight, setCurrentHighlight] = useState(0);
-
-  useEffect(() => {
-    if (isActive) {
-      // Animate chart bars growing
-      const interval = setInterval(() => {
-        setCurrentHighlight((prev) => (prev + 1) % 10);
-        // Gradually increase values to show growth
-        setChartData(prev => prev.map((val, i) => {
-          const maxVal = 30 + (i * 6) + Math.sin(Date.now() / 1000 + i) * 5;
-          return Math.min(maxVal, 90);
-        }));
-      }, 800);
-      return () => clearInterval(interval);
-    }
-  }, [isActive]);
+  // Static data for better performance
+  const chartData = [30, 35, 45, 40, 55, 60, 70, 65, 80, 85];
+  const currentHighlight = isActive ? 9 : -1;
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <div className="w-full h-full flex items-center justify-center gap-3 px-8">
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ transform: 'translateZ(0)' }}>
+      <div className="w-full h-full flex items-center justify-center gap-3 px-8" style={{ willChange: 'transform' }}>
         {/* Bar Chart */}
         <div className="flex items-end gap-1.5 h-24">
           {chartData.map((height, i) => (

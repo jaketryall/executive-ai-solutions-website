@@ -31,16 +31,6 @@ const services = [
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    }
-  }
-};
-
 function ServiceCard({ service, index, isMobile, prefersReducedMotion }: { service: typeof services[0], index: number, isMobile: boolean, prefersReducedMotion: boolean }) {
   const [isHovered, setIsHovered] = useState(false);
   const Visualization = service.visualization;
@@ -52,10 +42,11 @@ function ServiceCard({ service, index, isMobile, prefersReducedMotion }: { servi
       viewport={{ once: true }}
       transition={{ duration: prefersReducedMotion ? 0 : 0.5, delay: prefersReducedMotion ? 0 : index * 0.1 }}
       className="group relative cursor-pointer h-full touch-tap-highlight-transparent"
+      style={{ transform: 'translateZ(0)', willChange: 'transform' }}
       whileHover={{ 
         scale: 1.02, 
         zIndex: 10,
-        transition: { duration: 0.2, ease: "easeOut" }
+        transition: { duration: 0.15, ease: "easeOut" }
       }}
       onMouseEnter={() => !isMobile && setIsHovered(true)}
       onMouseLeave={() => !isMobile && setIsHovered(false)}
@@ -112,42 +103,14 @@ export default function Services() {
   const isMobile = false; // Always false for desktop component
   const prefersReducedMotion = useReducedMotion();
   
-  // Parallax scroll effects
+  // Simplified scroll effect - only track if in view
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
   });
   
-  // Text scroll effects
-  const { scrollYProgress: textScrollProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "center start"]
-  });
-  
-  // Simpler transforms
-  const textOpacity = useTransform(textScrollProgress, 
-    [0, 0.2, 0.8, 1], 
-    [0, 1, 1, 0]
-  );
-  
-  const textScale = useTransform(textScrollProgress, 
-    [0, 0.2, 0.5, 0.7], 
-    [0.8, 1, 1, 0.9]
-  );
-  
-  const textY = useTransform(textScrollProgress, 
-    [0, 0.2, 0.8, 1], 
-    [30, 0, 0, -30]
-  );
-  
-  const y1 = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -100]);
-  const y2 = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -150]);
-  const y3 = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], isMobile ? [1, 1, 1] : [0.3, 1, 0.3]);
-  
-  // New content opacity transitions
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
-  const cardsOpacity = useTransform(scrollYProgress, [0.1, 0.3, 0.8, 0.95], [0, 1, 1, 0]);
+  // Single opacity transform for performance
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
   return (
     <>
@@ -161,38 +124,26 @@ export default function Services() {
       {/* Top fade transition */}
       <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none z-10" />
       
-      {/* Parallax background layers */}
-      <motion.div 
-        className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a14] to-black"
-        style={{ y: y1 }}
-      />
+      {/* Static background - no parallax for better performance */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a14] to-black" />
       
-      <motion.div 
-        className="absolute inset-0"
-        style={{ y: y2, opacity }}
-      >
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
-      </motion.div>
-      
-      <motion.div 
-        className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black opacity-50"
-        style={{ y: y3 }}
-      />
+      {/* Static gradient orbs with GPU acceleration - reduced opacity */}
+      <div className="absolute inset-0 pointer-events-none" style={{ transform: 'translateZ(0)' }}>
+        <div className="absolute top-0 left-1/4 w-48 h-48 bg-blue-500/10 rounded-full blur-lg" />
+        <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-purple-500/10 rounded-full blur-lg" />
+      </div>
       
       
       <motion.div 
         className="max-w-7xl mx-auto relative z-10"
-        style={{ opacity: contentOpacity }}
+        style={{ opacity: sectionOpacity }}
       >
         <motion.div
           ref={textRef}
-          className="text-center mb-12 sm:mb-16 lg:mb-20 min-h-[150px] sm:min-h-[200px] flex flex-col justify-center"
-          style={{ 
-            opacity: textOpacity, 
-            y: textY,
-            scale: textScale
-          }}
+          className="text-center mb-12 sm:mb-16 lg:mb-20"
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.6 }}
         >
           <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light mb-4 sm:mb-8 text-white">
             <span className="text-gradient-shine">Our Services</span>
@@ -202,17 +153,13 @@ export default function Services() {
           </p>
         </motion.div>
 
-        <motion.div 
+        <div 
           className="grid grid-cols-1 lg:grid-cols-3 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          style={{ opacity: cardsOpacity }}
         >
           {services.map((service, index) => (
             <ServiceCard key={service.title} service={service} index={index} isMobile={isMobile} prefersReducedMotion={prefersReducedMotion} />
           ))}
-        </motion.div>
+        </div>
       </motion.div>
     </section>
     </>

@@ -47,84 +47,26 @@ export default function AboutMobile() {
       {/* Top gradient fade */}
       <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-black to-transparent pointer-events-none z-10" />
       
-      {/* Multi-layer animated background */}
-      <motion.div 
+      {/* Simplified static background for better performance */}
+      <div 
         className="absolute inset-0"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isInView ? 1 : 0 }}
-        transition={{ duration: 1 }}
+        style={{ transform: 'translateZ(0)' }}
       >
         {/* Base gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-950/20 via-black to-purple-950/20" />
         
-        {/* Animated mesh gradient */}
-        <motion.div
+        {/* Static mesh gradient */}
+        <div
           className="absolute inset-0"
-          animate={{
-            background: [
-              "radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%)",
-              "radial-gradient(circle at 80% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%)",
-              "radial-gradient(circle at 50% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%)",
-              "radial-gradient(circle at 50% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%)",
-              "radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%)",
-            ]
+          style={{
+            background: "radial-gradient(circle at 30% 40%, rgba(59, 130, 246, 0.15) 0%, transparent 50%)",
           }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
         />
         
-        {/* Floating orbs */}
-        <motion.div
-          className="absolute top-10 -left-10 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl"
-          animate={{
-            x: [0, 50, 25, 0],
-            scale: [1, 1.2, 1.1, 1],
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute bottom-10 -right-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl"
-          animate={{
-            x: [0, -25, -50, 0],
-            scale: [1, 1.1, 1.2, 1],
-          }}
-          transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
-        />
-        
-        {/* Animated particles - reduced for mobile */}
-        <div className="absolute inset-0">
-          {[...Array(10)].map((_, i) => {
-            const seed = i * 137.5;
-            const left = ((seed * 7) % 100);
-            const top = ((seed * 13) % 100);
-            const xMove1 = ((seed * 17) % 100) - 50;
-            const xMove2 = ((seed * 23) % 100) - 50;
-            const yMove1 = ((seed * 29) % 100) - 50;
-            const yMove2 = ((seed * 31) % 100) - 50;
-            const duration = ((seed * 37) % 20) + 30;
-            
-            return (
-              <motion.div
-                key={i}
-                className="absolute w-1 h-1 bg-blue-400/30 rounded-full"
-                style={{
-                  left: `${left}%`,
-                  top: `${top}%`,
-                }}
-                animate={{
-                  x: [0, xMove1, xMove2, 0],
-                  y: [0, yMove1, yMove2, 0],
-                  opacity: [0.3, 0.6, 0.3],
-                }}
-                transition={{
-                  duration: duration,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-            );
-          })}
-        </div>
-      </motion.div>
+        {/* Static orbs - smaller and more subtle */}
+        <div className="absolute top-10 -left-10 w-20 h-20 bg-blue-500/10 rounded-full blur-lg" />
+        <div className="absolute bottom-10 -right-10 w-20 h-20 bg-purple-500/10 rounded-full blur-lg" />
+      </div>
 
       <div className="max-w-2xl mx-auto relative">
         {/* Title */}
@@ -289,23 +231,12 @@ export default function AboutMobile() {
             Core Principles
           </motion.h3>
           
-          {/* Carousel container */}
+          {/* Carousel container with CSS animation */}
           <div className="relative overflow-hidden py-4">
-            <motion.div
-              className="flex gap-4"
-              initial={{ opacity: 0, x: 50 }}
-              animate={isInView ? {
-                opacity: 1,
-                x: ["50px", "-50%"],
-              } : { opacity: 0, x: 50 }}
-              transition={{
-                opacity: { duration: 0.6, delay: 1 },
-                x: {
-                  duration: 30,
-                  repeat: Infinity,
-                  ease: "linear",
-                  delay: 1.1,
-                },
+            <div
+              className="flex gap-4 animate-scroll-left"
+              style={{
+                animation: prefersReducedMotion ? 'none' : 'scroll-left 30s linear infinite',
               }}
             >
               {/* Double the principles for seamless loop */}
@@ -330,7 +261,7 @@ export default function AboutMobile() {
                   ))}
                 </div>
               ))}
-            </motion.div>
+            </div>
             
             {/* Gradient overlays */}
             <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-black to-transparent pointer-events-none z-10 opacity-50" />

@@ -232,6 +232,11 @@ html, body {
     to { background-position: 200% center; }
   }
   
+  @keyframes scroll-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  
   .glow-blue {
     box-shadow: 0 0 30px rgba(59, 130, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.1);
   }

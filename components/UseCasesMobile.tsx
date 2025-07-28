@@ -54,7 +54,7 @@ function UseCaseCard({ useCase, index, hoveredIndex, setHoveredIndex }: {
 }) {
   const cardRef = useRef(null);
   const isCardInView = useInView(cardRef, { 
-    once: false, 
+    once: true, // Changed to once: true for better performance
     margin: "-20%",
     amount: 0.3
   });
@@ -80,6 +80,7 @@ function UseCaseCard({ useCase, index, hoveredIndex, setHoveredIndex }: {
       onTouchStart={() => setHoveredIndex(index)}
       onTouchEnd={() => setHoveredIndex(null)}
       className="group relative"
+      style={{ transform: 'translateZ(0)', willChange: 'transform' }}
     >
       {/* Background glow effect */}
       <motion.div
@@ -91,26 +92,13 @@ function UseCaseCard({ useCase, index, hoveredIndex, setHoveredIndex }: {
       />
       
       <div className="relative rounded-2xl p-6 transition-all duration-300 bg-black/40 backdrop-blur-md border border-blue-500/10 overflow-hidden">
-        {/* Animated border glow - always visible on mobile with animation */}
+        {/* Static border glow for better performance */}
         <div className="absolute inset-0 pointer-events-none">
-          <motion.div 
-            className="absolute inset-[-2px] rounded-2xl opacity-60"
-            animate={{
-              background: [
-                "linear-gradient(0deg, #3b82f6 0%, #a855f7 50%, #ec4899 100%)",
-                "linear-gradient(90deg, #3b82f6 0%, #a855f7 50%, #ec4899 100%)",
-                "linear-gradient(180deg, #3b82f6 0%, #a855f7 50%, #ec4899 100%)",
-                "linear-gradient(270deg, #3b82f6 0%, #a855f7 50%, #ec4899 100%)",
-                "linear-gradient(360deg, #3b82f6 0%, #a855f7 50%, #ec4899 100%)",
-              ]
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "linear"
-            }}
+          <div 
+            className="absolute inset-[-2px] rounded-2xl opacity-40"
             style={{
-              filter: "blur(8px)",
+              background: "linear-gradient(45deg, #3b82f6 0%, #a855f7 50%, #ec4899 100%)",
+              filter: "blur(6px)",
             }}
           />
           {/* Extra glow on touch */}

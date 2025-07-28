@@ -20,21 +20,29 @@ export default function NavbarMobile() {
   // const prefersReducedMotion = useReducedMotion();
   const dragControls = useDragControls();
   
-  // Track active section
+  // Track active section with throttling
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      const sections = navigation.map(item => item.href.substring(1));
-      const scrollPosition = window.scrollY + 100;
-      
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section);
-            break;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const sections = navigation.map(item => item.href.substring(1));
+          const scrollPosition = window.scrollY + 100;
+          
+          for (const section of sections) {
+            const element = document.getElementById(section);
+            if (element) {
+              const { offsetTop, offsetHeight } = element;
+              if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+                setActiveSection(section);
+                break;
+              }
+            }
           }
-        }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
     
@@ -50,17 +58,13 @@ export default function NavbarMobile() {
       scale: 0.95,
       transition: {
         duration: 0.2,
-        staggerChildren: 0.05,
-        staggerDirection: -1,
       }
     },
     open: {
       opacity: 1,
       scale: 1,
       transition: {
-        duration: 0.3,
-        staggerChildren: 0.07,
-        delayChildren: 0.1,
+        duration: 0.2,
       }
     }
   };
@@ -72,8 +76,8 @@ export default function NavbarMobile() {
   
   return (
     <>
-      {/* Enhanced fixed header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/90 to-black/80 backdrop-blur-xl border-b border-zinc-800/50 shadow-2xl">
+      {/* Enhanced fixed header - reduced blur */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/90 to-black/80 backdrop-blur-md border-b border-zinc-800/50 shadow-2xl">
         <nav className="flex items-center justify-between px-6 py-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
@@ -204,10 +208,7 @@ export default function NavbarMobile() {
                 </a>
               </motion.div>
               
-              {/* Enhanced decorative elements */}
-              <div className="absolute -bottom-20 -right-20 w-60 h-60 bg-gradient-to-br from-blue-500/20 to-purple-500/10 rounded-full blur-3xl" />
-              <div className="absolute -top-20 -left-20 w-60 h-60 bg-gradient-to-br from-purple-500/20 to-pink-500/10 rounded-full blur-3xl" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-full blur-3xl" />
+              {/* Removed orbs for better performance */}
             </motion.div>
           </>
         )}

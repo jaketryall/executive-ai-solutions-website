@@ -6,32 +6,18 @@ import { useReducedMotion } from "@/hooks/useMobile";
 
 export default function HeroMobile() {
   const [activeService, setActiveService] = useState<'automation' | 'landing'>('automation');
-  const [animationKey, setAnimationKey] = useState(0);
   const prefersReducedMotion = useReducedMotion();
   
-  // Combined service cycling effect
+  // Simplified service cycling - less frequent for better performance
   useEffect(() => {
     if (prefersReducedMotion) return;
     
-    let timer: NodeJS.Timeout;
+    const timer = setInterval(() => {
+      setActiveService(prev => prev === 'automation' ? 'landing' : 'automation');
+    }, 10000); // Increased to 10 seconds
     
-    if (activeService === 'automation') {
-      // Switch to landing pages after the pulse completes (around 6.4s)
-      timer = setTimeout(() => {
-        setActiveService('landing');
-      }, 6400);
-    } else if (activeService === 'landing') {
-      // When on landing pages, switch back to automation after 8 seconds
-      timer = setTimeout(() => {
-        setActiveService('automation');
-        setAnimationKey(prev => prev + 1); // Trigger new animation
-      }, 8000);
-    }
-    
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [activeService, prefersReducedMotion]);
+    return () => clearInterval(timer);
+  }, [prefersReducedMotion]);
   
   const titleVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -43,18 +29,14 @@ export default function HeroMobile() {
   
   return (
     <section className="relative min-h-screen flex items-start justify-center overflow-hidden bg-black pt-24">
-      {/* Gradient background - matching desktop */}
-      <div className="absolute inset-0">
+      {/* Simplified gradient background for better performance */}
+      <div className="absolute inset-0" style={{ transform: 'translateZ(0)' }}>
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/10 to-pink-600/20" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent" />
         
-        {/* Decorative orbs */}
-        <div className="absolute top-20 -left-20 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 -right-20 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl" />
-        
-        {/* Grid pattern overlay */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cdefs%3E%3Cpattern id=%22grid%22 width=%2260%22 height=%2260%22 patternUnits=%22userSpaceOnUse%22%3E%3Cpath d=%22M 60 0 L 0 0 0 60%22 fill=%22none%22 stroke=%22rgba(255,255,255,0.03)%22 stroke-width=%221%22/%3E%3C/pattern%3E%3C/defs%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22url(%23grid)%22/%3E%3C/svg%3E')] opacity-50" />
+        {/* Static decorative orbs - much smaller and subtler */}
+        <div className="absolute top-20 -left-20 w-24 h-24 bg-blue-500/10 rounded-full blur-lg" />
+        <div className="absolute bottom-20 -right-20 w-24 h-24 bg-purple-500/10 rounded-full blur-lg" />
       </div>
       
       
@@ -128,7 +110,6 @@ export default function HeroMobile() {
                       {/* Workflow visualization - mobile with cool desktop-like animation */}
                       <div className="relative h-48 bg-zinc-950 rounded-lg p-4 overflow-hidden flex items-center justify-center">
                         <motion.div 
-                          key={`workflow-${animationKey}`}
                           className="flex items-center justify-between w-full px-2"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
@@ -260,7 +241,6 @@ export default function HeroMobile() {
                         
                         {/* Pulse effect on completion */}
                         <motion.div
-                          key={`pulse-${animationKey}`}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: [0, 0.3, 0] }}
                           transition={{ delay: 5.7, duration: 0.7 }}

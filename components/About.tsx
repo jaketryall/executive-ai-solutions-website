@@ -55,11 +55,11 @@ export default function About() {
   const orb1Y = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -100]);
   const orb2Y = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -200]);
   const contentY = useTransform(scrollYProgress, [0, 0.5], isMobile ? [0, 0] : [0, -50]);
-  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], isMobile ? [1, 1, 1, 1] : [0.3, 1, 1, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], isMobile ? [1, 1, 1, 1] : [0.8, 1, 1, 1]);
   
-  // Enhanced content opacity
-  const mainContentOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
-  const statsOpacity = useTransform(scrollYProgress, [0.1, 0.25, 0.75, 0.9], [0, 1, 1, 0]);
+  // Enhanced content opacity - keep visible at the end
+  const mainContentOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.8, 1, 1, 1]);
+  const statsOpacity = useTransform(scrollYProgress, [0.1, 0.25, 0.75, 0.9], [0.8, 1, 1, 1]);
 
   // Use mobile-specific component
   if (isMobile) {
@@ -97,9 +97,9 @@ export default function About() {
           transition={{ duration: 40, repeat: Infinity, ease: "easeInOut" }}
         />
         
-        {/* Floating orbs with parallax */}
+        {/* Floating orbs with parallax - reduced size and opacity */}
         <motion.div
-          className="absolute top-20 -left-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"
+          className="absolute top-20 -left-20 w-64 h-64 bg-blue-500/5 rounded-full blur-2xl"
           style={{ y: orb1Y }}
           animate={{
             x: [0, 100, 50, 0],
@@ -108,7 +108,7 @@ export default function About() {
           transition={{ duration: 50, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute bottom-20 -right-20 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"
+          className="absolute bottom-20 -right-20 w-56 h-56 bg-purple-500/5 rounded-full blur-2xl"
           style={{ y: orb2Y }}
           animate={{
             x: [0, -50, -100, 0],

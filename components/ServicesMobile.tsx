@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { WorkflowVisualization, PageBuilderVisualization, ConsultingVisualization } from "./ServiceVisualizations";
 
 const services = [
@@ -32,30 +32,24 @@ const services = [
 function ServiceCard({ service, index }: { service: typeof services[0], index: number }) {
   const [isActive, setIsActive] = useState(false);
   const cardRef = useRef(null);
-  const isInView = useInView(cardRef, { once: false, margin: "-100px" });
+  const isInView = useInView(cardRef, { once: true, margin: "-100px" }); // Changed to once: true
   const Visualization = service.visualization;
 
-  // Auto-activate animation when in view
-  useEffect(() => {
-    if (isInView) {
-      // Stagger the activation based on index
-      const timer = setTimeout(() => {
-        setIsActive(true);
-      }, index * 200);
-      return () => clearTimeout(timer);
-    } else {
-      setIsActive(false);
-    }
-  }, [isInView, index]);
+  // Simple touch interaction for mobile
+  const handleTouch = () => {
+    setIsActive(true);
+    setTimeout(() => setIsActive(false), 2000);
+  };
 
   return (
     <motion.div
       ref={cardRef}
       initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group relative cursor-pointer transform transition-all duration-300 h-full"
+      className="group relative cursor-pointer h-full"
+      style={{ transform: 'translateZ(0)', willChange: 'transform' }}
+      onTouchStart={handleTouch}
     >
       <div className="relative bg-[#0a0a0a] rounded-2xl border border-zinc-900 transition-all duration-300 shadow-2xl shadow-blue-500/10 h-full flex flex-col">
         {/* Abstract graphic area */}
@@ -123,8 +117,8 @@ export default function ServicesMobile() {
       
       {/* Background layers */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a14] to-black" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
+      <div className="absolute top-0 left-1/4 w-32 h-32 bg-blue-500/5 rounded-full blur-lg" />
+      <div className="absolute bottom-0 right-1/4 w-32 h-32 bg-purple-500/5 rounded-full blur-lg" />
       
       <div className="max-w-xl mx-auto relative z-10">
         {/* Section header */}

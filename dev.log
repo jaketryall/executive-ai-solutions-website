@@ -1,0 +1,109 @@
+
+> executive-ai-solutions@0.1.0 dev
+> concurrently "npm run build:css" "next dev"
+
+[0] 
+[0] > executive-ai-solutions@0.1.0 build:css
+[0] > npx @tailwindcss/cli -i ./input.css -o ./app/output.css --watch
+[0] 
+[0] ≈ tailwindcss v4.1.11
+[0] 
+[0] Done in 34ms
+[1]    ▲ Next.js 15.4.3
+[1]    - Local:        http://localhost:3001
+[1]    - Network:      http://192.168.1.30:3001
+[1] 
+[1]  ✓ Starting...
+[0] Done in 15µs
+[0] Done in 906µs
+[0] Done in 1ms
+[1]  ✓ Ready in 834ms
+[0] Done in 1ms
+[1]  ○ Compiling / ...
+[0] Done in 956µs
+[0] Done in 1ms
+[0] Done in 876µs
+[1]  ✓ Compiled / in 2.2s (1480 modules)
+[0] Done in 1ms
+[1]  GET / 200 in 1030ms
+[0] Done in 893µs
+[0] Done in 1ms
+[0] Done in 947µs
+[0] Done in 895µs
+[0] Done in 1ms
+[1]  HEAD / 200 in 104ms
+[0] Done in 7ms
+[1]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[0] Done in 1ms
+[0] Done in 915µs
+[1]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[1]  ✓ Compiled in 351ms (1471 modules)
+[0] Done in 969µs
+[0] Done in 856µs
+[1]  GET / 200 in 425ms
+[0] Done in 1ms
+[0] Done in 1ms
+[0] Done in 485µs
+[1]  ✓ Compiled in 89ms (1457 modules)
+[0] Done in 1ms
+[0] Done in 9µs
+[0] Done in 450µs
+[1]  ✓ Compiled in 87ms (1457 modules)
+[0] Done in 1ms
+[0] Done in 6ms
+[0] Done in 1ms
+[0] Done in 1ms
+[1]  ✓ Compiled in 455ms (1471 modules)
+[1]  GET / 200 in 35ms
+[0] Done in 1ms
+[0] Done in 419µs
+[1]  ✓ Compiled in 90ms (1457 modules)
+[0] Done in 1ms
+[0] Done in 46µs
+[0] Done in 2ms
+[1]  ✓ Compiled in 109ms (1457 modules)
+[0] Done in 1ms
+[0] Done in 1ms
+[0] Done in 510µs
+[1]  ✓ Compiled in 97ms (1457 modules)
+[0] Done in 1ms
+[0] Done in 541µs
+[1]  ✓ Compiled in 90ms (1457 modules)
+[1]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[0] Done in 1ms
+[1]  GET / 200 in 208ms
+[0] Done in 1ms
+[0] Done in 542µs
+[1]  ✓ Compiled in 90ms (1457 modules)
+[1]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[0] Done in 1ms
+[1]  GET / 200 in 176ms
+[0] Done in 444µs
+[1]  ✓ Compiled in 108ms (1457 modules)
+[1]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[0] Done in 971µs
+[1]  GET / 200 in 166ms
+[0] Done in 1ms
+[1]  ✓ Compiled in 90ms (1457 modules)
+[0] Done in 1ms
+[0] Done in 987µs
+[0] Done in 1ms
+[0] Done in 810µs
+[0] Done in 1ms
+[1]  GET / 200 in 193ms
+[0] Done in 997µs
+[1]  GET / 200 in 117ms
+[1]  GET / 200 in 112ms
+[1]  GET / 200 in 85ms
+[0] Done in 579µs
+[0] Done in 1ms
+[1]  ✓ Compiled in 196ms (1457 modules)
+[0] Done in 1ms
+[0] Done in 473µs
+[1]  ✓ Compiled in 90ms (1457 modules)
+[0] Done in 1ms
+[1]  GET / 200 in 203ms
+[0] Done in 1ms
+[0] Done in 958µs
+[0] Done in 1ms
+[0] Done in 9µs

@@ -75,9 +75,9 @@ export default function UseCases() {
       {/* Gradient overlay for depth */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-black/60 pointer-events-none" />
       
-      {/* Static gradient orbs */}
-      <div className="absolute top-20 left-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 right-10 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl" />
+      {/* Static gradient orbs - reduced size and opacity */}
+      <div className="absolute top-20 left-10 w-64 h-64 bg-blue-500/5 rounded-full blur-2xl" />
+      <div className="absolute bottom-20 right-10 w-56 h-56 bg-purple-500/5 rounded-full blur-2xl" />
       
       <motion.div 
         className="max-w-7xl mx-auto relative"
