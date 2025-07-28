@@ -32,12 +32,27 @@ export default function Contact() {
     e.preventDefault();
     setStatus("sending");
     
-    // Simulate form submission
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
       setStatus("success");
       setFormData({ name: "", email: "", company: "", message: "" });
       setTimeout(() => setStatus("idle"), 3000);
-    }, 1000);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setStatus("idle");
+      alert('Failed to send message. Please try again.');
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -102,7 +117,7 @@ export default function Contact() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light mb-8 sm:mb-12 text-white text-center lg:text-left">
@@ -115,7 +130,7 @@ export default function Contact() {
             <div className="space-y-8">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="glass-card rounded-lg sm:rounded-xl p-4 sm:p-6"
               >
@@ -127,7 +142,7 @@ export default function Contact() {
               
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="glass-card rounded-lg sm:rounded-xl p-4 sm:p-6"
               >
@@ -141,7 +156,7 @@ export default function Contact() {
 
           <motion.form
             initial={{ opacity: 0, x: 50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
             onSubmit={handleSubmit}
             className="space-y-8"
@@ -151,7 +166,7 @@ export default function Contact() {
               <motion.div
                 key={field.name}
                 initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: prefersReducedMotion ? 0 : 0.6, delay: prefersReducedMotion ? 0 : 0.3 + index * 0.1 }}
                 className="relative"
               >

@@ -14,11 +14,37 @@ export default function ContactMobile() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsSubmitting(false);
-    setIsSuccess(true);
+    try {
+      const formData = new FormData(e.target as HTMLFormElement);
+      const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        message: formData.get('message'),
+      };
+
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
+      setIsSubmitting(false);
+      setIsSuccess(true);
+      
+      // Reset form
+      (e.target as HTMLFormElement).reset();
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setIsSubmitting(false);
+      // You might want to add an error state here
+      alert('Failed to send message. Please try again.');
+    }
   };
   
   const inputVariants = {
@@ -74,6 +100,7 @@ export default function ContactMobile() {
               <input
                 type="text"
                 id="name"
+                name="name"
                 required
                 className="w-full px-5 py-5 bg-gradient-to-b from-zinc-800/60 to-zinc-900/60 backdrop-blur-md border border-zinc-700/50 rounded-2xl text-white placeholder-transparent peer focus:border-[#0066ff] focus:shadow-[0_0_20px_rgba(0,102,255,0.3)] transition-all"
                 placeholder="Name"
@@ -97,6 +124,7 @@ export default function ContactMobile() {
               <input
                 type="email"
                 id="email"
+                name="email"
                 required
                 className="w-full px-5 py-5 bg-gradient-to-b from-zinc-800/60 to-zinc-900/60 backdrop-blur-md border border-zinc-700/50 rounded-2xl text-white placeholder-transparent peer focus:border-[#0066ff] focus:shadow-[0_0_20px_rgba(0,102,255,0.3)] transition-all"
                 placeholder="Email"
@@ -119,6 +147,7 @@ export default function ContactMobile() {
             >
               <textarea
                 id="message"
+                name="message"
                 required
                 rows={4}
                 className="w-full px-5 py-5 bg-gradient-to-b from-zinc-800/60 to-zinc-900/60 backdrop-blur-md border border-zinc-700/50 rounded-2xl text-white placeholder-transparent peer focus:border-[#0066ff] focus:shadow-[0_0_20px_rgba(0,102,255,0.3)] transition-all resize-none"
