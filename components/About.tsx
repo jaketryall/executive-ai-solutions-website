@@ -47,7 +47,7 @@ export default function About() {
 
   const defaultContent = {
     title: "We deploy AI that works",
-    description: "No theory, no hype—just practical solutions that deliver results. Founded by entrepreneurs who understand real business challenges, we bridge the gap between cutting-edge AI and practical applications. Our AI employees enhance your workforce, automate repetitive tasks, and scale without limits."
+    description: "No theory, no hype—just practical solutions that deliver results. Founded by an entrepreneur who understands real business challenges, I bridge the gap between cutting-edge AI and practical applications. Our AI employees enhance your workforce, automate repetitive tasks, and scale without limits."
   };
   
   // Parallax transforms - disabled on mobile

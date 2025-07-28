@@ -34,7 +34,7 @@ const useCases = [
   },
   {
     title: "AI Landing Pages",
-    description: "Create high-converting pages that adapt to each visitor for maximum engagement.",
+    description: "Create high-converting pages optimized for maximum engagement and conversions.",
     metrics: "3x Better Conversions",
     category: "Marketing",
     color: "from-orange-500/20 to-red-500/20",

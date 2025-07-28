@@ -131,7 +131,7 @@ export default function Contact() {
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="glass-card rounded-lg sm:rounded-xl p-4 sm:p-6"
               >
-                <h3 className="text-lg font-light text-white mb-2 text-center lg:text-left">Response Time</h3>
+                <h3 className="text-lg font-light text-white mb-2 text-center lg:text-left">Typical Response Time</h3>
                 <p className="text-zinc-400 text-center lg:text-left">
                   Within 24 hours
                 </p>
