@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -34,6 +34,9 @@ export default function NavbarMobile() {
   
   // Track active section with throttling
   useEffect(() => {
+    // Don't track active section when menu is open
+    if (isOpen) return;
+    
     let ticking = false;
     
     const handleScroll = () => {
@@ -62,27 +65,10 @@ export default function NavbarMobile() {
     handleScroll();
     
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isOpen]);
   
-  const menuVariants = {
-    closed: {
-      opacity: 0,
-      transition: {
-        duration: 0.15
-      }
-    },
-    open: {
-      opacity: 1,
-      transition: {
-        duration: 0.2
-      }
-    }
-  };
-  
-  const itemVariants = {
-    closed: { opacity: 0 },
-    open: { opacity: 1 }
-  };
+  // Remove animation flicker on mobile
+  const isMobile = typeof window !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   
   return (
     <>
@@ -138,22 +124,27 @@ export default function NavbarMobile() {
       </header>
       
       {/* Fullscreen menu */}
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.15 }}
-            className="fixed inset-0 bg-gradient-to-br from-black/95 via-zinc-900/95 to-black/95 backdrop-blur-2xl z-40"
-            onClick={() => setIsOpen(false)}
-          />
+      <AnimatePresence mode="wait">
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-gradient-to-br from-black/95 via-zinc-900/95 to-black/95 backdrop-blur-2xl z-40"
+              onClick={() => setIsOpen(false)}
+            />
             
             {/* Menu content */}
             <motion.div
-              variants={menuVariants}
-              initial="closed"
-              animate="open"
+              key="menu"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
               className="fixed inset-x-6 top-24 bottom-32 z-50 bg-gradient-to-b from-zinc-800/90 to-zinc-900/90 backdrop-blur-xl rounded-3xl border border-zinc-700/50 shadow-2xl overflow-hidden flex flex-col"
             >
               {/* Enhanced drag handle */}
@@ -167,10 +158,9 @@ export default function NavbarMobile() {
                   const isActive = activeSection === item.href.substring(1);
                   
                   return (
-                    <motion.a
+                    <a
                       key={item.name}
                       href={item.href}
-                      variants={itemVariants}
                       onClick={(e) => {
                         e.preventDefault();
                         setIsOpen(false);
@@ -191,16 +181,13 @@ export default function NavbarMobile() {
                           className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#0066ff] to-blue-500 rounded-full shadow-lg shadow-blue-500/50"
                         />
                       )}
-                    </motion.a>
+                    </a>
                   );
                 })}
               </nav>
               
               {/* CTA button */}
-              <motion.div
-                variants={itemVariants}
-                className="px-8 mt-8 pb-8 flex-shrink-0"
-              >
+              <div className="px-8 mt-8 pb-8 flex-shrink-0">
                 <a
                   href="#contact"
                   onClick={(e) => {
@@ -216,12 +203,13 @@ export default function NavbarMobile() {
                   <span className="relative z-10">Get Started</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-[#0066ff] opacity-0 group-hover:opacity-100 transition-opacity" />
                 </a>
-              </motion.div>
+              </div>
               
               {/* Removed orbs for better performance */}
             </motion.div>
         </>
       )}
+    </AnimatePresence>
     </>
   );
 }
