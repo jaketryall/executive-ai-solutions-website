@@ -51,20 +51,32 @@ function ServiceCard({ service, index, isMobile, prefersReducedMotion }: { servi
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: prefersReducedMotion ? 0 : 0.5, delay: prefersReducedMotion ? 0 : index * 0.1 }}
-      className="group relative cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:z-10 h-full touch-tap-highlight-transparent"
+      className="group relative cursor-pointer h-full touch-tap-highlight-transparent"
+      whileHover={{ scale: 1.02, zIndex: 10 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
       onMouseEnter={() => !isMobile && setIsHovered(true)}
       onMouseLeave={() => !isMobile && setIsHovered(false)}
       onTouchStart={() => isMobile && setIsHovered(true)}
       onTouchEnd={() => isMobile && setTimeout(() => setIsHovered(false), 300)}
     >
-      <div className="relative bg-[#0a0a0a] rounded-xl sm:rounded-2xl border border-zinc-900 overflow-hidden hover:border-zinc-800 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 h-full flex flex-col">
+      <motion.div 
+        className="relative bg-[#0a0a0a] rounded-xl sm:rounded-2xl border border-zinc-900 overflow-hidden h-full flex flex-col"
+        animate={{ 
+          borderColor: isHovered ? "#3f3f46" : "#18181b",
+          boxShadow: isHovered ? "0 25px 50px -12px rgba(59, 130, 246, 0.25)" : "0 0 0 0 rgba(59, 130, 246, 0)"
+        }}
+        transition={{ duration: 0.2 }}>
         {/* Abstract graphic area */}
         <div 
           className="h-40 sm:h-48 lg:h-56 relative overflow-hidden bg-zinc-950"
           style={{ background: service.bgPattern }}
         >
           {/* Gradient overlay */}
-          <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-10 group-hover:opacity-20 transition-opacity duration-500`} />
+          <motion.div 
+            className={`absolute inset-0 bg-gradient-to-br ${service.gradient}`}
+            animate={{ opacity: isHovered ? 0.2 : 0.1 }}
+            transition={{ duration: 0.2 }}
+          />
           
           {/* Service Visualization */}
           <Visualization isActive={isHovered} />
@@ -73,7 +85,7 @@ function ServiceCard({ service, index, isMobile, prefersReducedMotion }: { servi
         
         {/* Content */}
         <div className="p-6 sm:p-8 flex-1 flex flex-col">
-          <h3 className={`text-xl sm:text-2xl font-light mb-3 sm:mb-4 transition-all duration-300 text-center lg:text-left ${
+          <h3 className={`text-xl sm:text-2xl font-light mb-3 sm:mb-4 text-center lg:text-left ${
             isHovered 
               ? `text-transparent bg-gradient-to-r ${service.gradient} bg-clip-text` 
               : 'text-white'
@@ -85,7 +97,7 @@ function ServiceCard({ service, index, isMobile, prefersReducedMotion }: { servi
             {service.description}
           </p>
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }

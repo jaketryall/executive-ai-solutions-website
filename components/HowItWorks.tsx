@@ -270,7 +270,7 @@ export default function HowItWorks() {
             </motion.div>
             
             {/* Centered content area */}
-            <div className="flex-1 flex items-center justify-center relative">
+            <div className="flex items-start justify-center relative">
               <div className="w-full">
                 {/* Connection line SVG - positioned behind cards with proper z-index */}
                 <div className="absolute inset-0 pointer-events-none z-0">
@@ -333,7 +333,7 @@ export default function HowItWorks() {
 
             {/* CTA Button - Centered between cards and progress bar */}
             <motion.div
-              className="mt-20 mb-16 text-center"
+              className="mt-8 mb-8 text-center"
               style={{
                 opacity: ctaOpacity,
                 y: ctaY,
