@@ -106,7 +106,7 @@ export default function Hero() {
               </h1>
               
               <p className="text-base xs:text-lg sm:text-xl text-zinc-400 mb-6 sm:mb-8 font-light leading-relaxed mt-4 text-center lg:text-left">
-                Transform your business with AI automation and high-converting landing pages. 
+                Transform your business with AI automation and high-converting landing pages.{' '}
                 <span className="hidden sm:inline">Scale operations, increase conversions, work smarter.</span>
                 <span className="sm:hidden">Scale operations, work smarter.</span>
               </p>
