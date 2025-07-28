@@ -7,7 +7,7 @@ import AboutMobile from "./AboutMobile";
 
 export default function About() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const isMobile = useIsMobile(1024);
   const prefersReducedMotion = useReducedMotion();

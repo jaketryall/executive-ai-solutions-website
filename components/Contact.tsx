@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
 import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
 import ContactMobile from "./ContactMobile";
@@ -218,14 +218,9 @@ export default function Contact() {
                 }`}
                 whileTap={{ scale: 0.95 }}
               >
-                {/* Background gradient animation */}
-                <motion.div
+                {/* Background gradient */}
+                <div
                   className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
-                  animate={{
-                    x: status === "success" ? [0, 100, 0] : 0,
-                    opacity: status === "success" ? [1, 0, 1] : 1,
-                  }}
-                  transition={{ duration: 1 }}
                 />
                 <span className="relative z-10">
                   {status === "sending" ? (
@@ -250,6 +245,22 @@ export default function Contact() {
               </motion.button>
             </motion.div>
           </motion.form>
+          
+          {/* Success message */}
+          <AnimatePresence>
+            {status === "success" && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="mt-8 p-6 bg-gradient-to-br from-green-500/20 to-emerald-500/10 border border-green-500/30 rounded-2xl backdrop-blur-sm shadow-lg shadow-green-500/10"
+              >
+                <p className="text-green-400 text-center text-lg font-light">
+                  Thanks for reaching out! We'll get back to you soon.
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </motion.div>
     </section>

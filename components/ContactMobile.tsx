@@ -138,8 +138,8 @@ export default function ContactMobile() {
             <motion.button
               type="submit"
               disabled={isSubmitting || isSuccess}
-              whileTap={{ scale: 0.95 }}
-              className="w-full py-4 bg-gradient-to-r from-[#0066ff] to-blue-600 text-white rounded-full font-light relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-all group"
+              whileTap={!isSubmitting && !isSuccess ? { scale: 0.95 } : {}}
+              className="w-full py-4 bg-gradient-to-r from-[#0066ff]/80 to-[#0066ff]/60 text-white rounded-full font-light relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed border border-[#0066ff]/40 transition-all"
             >
               <AnimatePresence mode="wait">
                 {isSubmitting ? (
@@ -177,7 +177,6 @@ export default function ContactMobile() {
                 )}
               </AnimatePresence>
               
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0066ff] to-blue-600 rounded-full blur-xl opacity-0 group-hover:opacity-50 transition-opacity" />
               
               {/* Progress bar */}
               {isSubmitting && (
@@ -201,7 +200,7 @@ export default function ContactMobile() {
                 className="mt-6 p-5 bg-gradient-to-br from-green-500/20 to-emerald-500/10 border border-green-500/30 rounded-2xl backdrop-blur-sm shadow-lg shadow-green-500/10"
               >
                 <p className="text-green-400 text-center text-sm font-light">
-                  Thanks for reaching out! We&apos;ll get back to you within 24 hours.
+                  Thanks for reaching out! We&apos;ll get back to you soon.
                 </p>
               </motion.div>
             )}

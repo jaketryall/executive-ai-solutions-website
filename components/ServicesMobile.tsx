@@ -31,6 +31,7 @@ const services = [
 
 function ServiceCard({ service, index }: { service: typeof services[0], index: number }) {
   const [isActive, setIsActive] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: true, margin: "-100px" }); // Changed to once: true
   const Visualization = service.visualization;
@@ -38,7 +39,11 @@ function ServiceCard({ service, index }: { service: typeof services[0], index: n
   // Simple touch interaction for mobile
   const handleTouch = () => {
     setIsActive(true);
-    setTimeout(() => setIsActive(false), 2000);
+    setIsHovered(true);
+    setTimeout(() => {
+      setIsActive(false);
+      setIsHovered(false);
+    }, 2000);
   };
 
   return (
@@ -50,15 +55,59 @@ function ServiceCard({ service, index }: { service: typeof services[0], index: n
       className="group relative cursor-pointer h-full"
       style={{ transform: 'translateZ(0)', willChange: 'transform' }}
       onTouchStart={handleTouch}
+      onClick={handleTouch}
     >
-      <div className="relative bg-[#0a0a0a] rounded-2xl border border-zinc-900 transition-all duration-300 shadow-2xl shadow-blue-500/10 h-full flex flex-col">
+      <motion.div 
+        className="relative bg-[#0a0a0a] rounded-2xl border border-zinc-900 transition-all duration-300 shadow-2xl shadow-blue-500/10 h-full flex flex-col overflow-hidden"
+        animate={{
+          borderColor: isHovered ? 'rgba(59, 130, 246, 0.3)' : 'rgba(39, 39, 42, 1)',
+        }}
+        transition={{ duration: 0.3 }}
+      >
         {/* Abstract graphic area */}
         <div 
           className="h-48 relative overflow-hidden bg-zinc-950"
           style={{ background: service.bgPattern }}
         >
-          {/* Gradient overlay */}
-          <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-20 transition-opacity duration-500`} />
+          {/* Tap indicator */}
+          <div className="absolute top-3 right-3 z-20">
+            <motion.div
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900/80 backdrop-blur-sm rounded-full border border-zinc-800"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5 + index * 0.1 }}
+            >
+              <span className="text-zinc-500 text-xs font-light">Tap to explore</span>
+              <svg className="w-3 h-3 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2z" />
+              </svg>
+            </motion.div>
+          </div>
+          {/* Gradient overlay with animation */}
+          <motion.div 
+            className={`absolute inset-0 bg-gradient-to-br ${service.gradient}`}
+            animate={{
+              opacity: isHovered ? 0.3 : 0.2,
+            }}
+            transition={{ duration: 0.5 }}
+          />
+          
+          {/* Tap ripple effect */}
+          {isHovered && (
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center pointer-events-none"
+              initial={{ opacity: 1 }}
+              animate={{ opacity: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <motion.div
+                className={`w-32 h-32 bg-gradient-to-br ${service.gradient} rounded-full opacity-30`}
+                initial={{ scale: 0 }}
+                animate={{ scale: 3 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+              />
+            </motion.div>
+          )}
           
           {/* Service Visualization */}
           <Visualization isActive={isActive} />
@@ -104,7 +153,7 @@ function ServiceCard({ service, index }: { service: typeof services[0], index: n
             </motion.div>
           )}
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }

@@ -82,40 +82,21 @@ function UseCaseCard({ useCase, index, hoveredIndex, setHoveredIndex }: {
       className="group relative"
       style={{ transform: 'translateZ(0)', willChange: 'transform' }}
     >
-      {/* Background glow effect */}
-      <motion.div
-        className={`absolute inset-0 bg-gradient-to-r ${useCase.color} rounded-2xl blur-xl pointer-events-none`}
-        animate={{
-          opacity: hoveredIndex === index ? 0.2 : 0,
-        }}
-        transition={{ duration: 0.4 }}
+      {/* Background glow effect - always visible on mobile */}
+      <div
+        className={`absolute inset-0 bg-gradient-to-r ${useCase.color} rounded-2xl blur-xl pointer-events-none opacity-15`}
       />
       
       <div className="relative rounded-2xl p-6 transition-all duration-300 bg-black/40 backdrop-blur-md border border-blue-500/10 overflow-hidden">
         {/* Static border glow for better performance */}
         <div className="absolute inset-0 pointer-events-none">
           <div 
-            className="absolute inset-[-2px] rounded-2xl opacity-40"
+            className="absolute inset-[-2px] rounded-2xl opacity-60"
             style={{
               background: "linear-gradient(45deg, #3b82f6 0%, #a855f7 50%, #ec4899 100%)",
               filter: "blur(6px)",
             }}
           />
-          {/* Extra glow on touch */}
-          <AnimatePresence>
-            {hoveredIndex === index && (
-              <motion.div
-                className="absolute inset-[-4px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.8 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                style={{
-                  filter: "blur(12px)",
-                }}
-              />
-            )}
-          </AnimatePresence>
         </div>
         
         {/* Content container */}

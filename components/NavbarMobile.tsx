@@ -55,23 +55,21 @@ export default function NavbarMobile() {
   const menuVariants = {
     closed: {
       opacity: 0,
-      scale: 0.95,
       transition: {
-        duration: 0.2,
+        duration: 0.15
       }
     },
     open: {
       opacity: 1,
-      scale: 1,
       transition: {
-        duration: 0.2,
+        duration: 0.2
       }
     }
   };
   
   const itemVariants = {
-    closed: { opacity: 0, x: -20 },
-    open: { opacity: 1, x: 0 }
+    closed: { opacity: 0 },
+    open: { opacity: 1 }
   };
   
   return (
@@ -128,34 +126,22 @@ export default function NavbarMobile() {
       </header>
       
       {/* Fullscreen menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-gradient-to-br from-black/95 via-zinc-900/95 to-black/95 backdrop-blur-2xl z-40"
-              onClick={() => setIsOpen(false)}
-            />
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 bg-gradient-to-br from-black/95 via-zinc-900/95 to-black/95 backdrop-blur-2xl z-40"
+            onClick={() => setIsOpen(false)}
+          />
             
             {/* Menu content */}
             <motion.div
               variants={menuVariants}
               initial="closed"
               animate="open"
-              exit="closed"
-              drag="y"
-              dragControls={dragControls}
-              dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={0.2}
-              onDragEnd={(_, info) => {
-                if (info.offset.y > 100) {
-                  setIsOpen(false);
-                }
-              }}
               className="fixed inset-x-6 top-24 bottom-32 z-50 bg-gradient-to-b from-zinc-800/90 to-zinc-900/90 backdrop-blur-xl rounded-3xl border border-zinc-700/50 shadow-2xl overflow-hidden"
             >
               {/* Enhanced drag handle */}
@@ -210,9 +196,8 @@ export default function NavbarMobile() {
               
               {/* Removed orbs for better performance */}
             </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+        </>
+      )}
     </>
   );
 }
