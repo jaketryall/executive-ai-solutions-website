@@ -1,13 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/useMobile";
 import NavbarMobile from "./NavbarMobile";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const isMobile = useIsMobile();
 
   const navItems = [
     { label: "Services", href: "#services" },
@@ -16,26 +16,35 @@ export default function Navbar() {
     { label: "Contact", href: "#contact" },
   ];
 
-  // Use mobile-specific component
-  if (isMobile) {
-    return <NavbarMobile />;
-  }
-
   return (
-    <motion.nav
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-black/60 backdrop-blur-xl border-b border-zinc-800/50 safe-top"
-      role="navigation"
-      aria-label="Main navigation"
-    >
+    <>
+      {/* Mobile Navbar - shown below lg breakpoint */}
+      <div className="lg:hidden">
+        <NavbarMobile />
+      </div>
+
+      {/* Desktop Navbar - shown at lg breakpoint and above */}
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-black/60 backdrop-blur-xl border-b border-zinc-800/50 safe-top"
+        role="navigation"
+        aria-label="Main navigation"
+      >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="#" className="text-base sm:text-xl font-light text-white hover:text-glow-blue transition-all duration-300 touch-target" aria-label="Executive AI Solutions Home">
-              Executive AI Solutions
+            <a href="#" className="flex items-center gap-3 group" aria-label="Executive AI Solutions Home">
+              <Image 
+                src="/logo.png" 
+                alt="Executive AI Solutions Logo" 
+                width={822}
+                height={218}
+                priority
+                className="h-8 sm:h-10 w-auto transition-all duration-300 group-hover:scale-105"
+              />
             </a>
           </div>
 
@@ -147,5 +156,6 @@ export default function Navbar() {
         )}
       </div>
     </motion.nav>
+    </>
   );
 }

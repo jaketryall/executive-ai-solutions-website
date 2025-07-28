@@ -16,7 +16,7 @@ export default function Contact() {
   });
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(1024);
   const prefersReducedMotion = useReducedMotion();
   
   // Scroll-based opacity transitions

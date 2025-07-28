@@ -11,7 +11,7 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeService, setActiveService] = useState<'automation' | 'landing'>('automation');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isMobile = useIsMobile();
+  const isMobile = false; // Always false for desktop component
   const prefersReducedMotion = useReducedMotion();
   const { enableParallax } = useOptimizedAnimation();
   
@@ -44,13 +44,15 @@ export default function Hero() {
     };
   }, []); // Empty dependency array - only run on mount/unmount
 
-  // Use mobile-specific component
-  if (isMobile) {
-    return <HeroMobile />;
-  }
-
   return (
-    <section ref={sectionRef} className="relative min-h-screen flex items-start justify-center overflow-hidden bg-black pt-32">
+    <>
+      {/* Mobile Hero - shown below lg breakpoint */}
+      <div className="lg:hidden">
+        <HeroMobile />
+      </div>
+
+      {/* Desktop Hero - shown at lg breakpoint and above */}
+      <section ref={sectionRef} className="hidden lg:flex relative min-h-screen items-start justify-center overflow-hidden bg-black pt-32">
       {/* Gradient background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/10 to-pink-600/20" />
@@ -532,5 +534,6 @@ export default function Hero() {
         </motion.div>
       </motion.div>
     </section>
+    </>
   );
 }

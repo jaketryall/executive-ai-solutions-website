@@ -3,6 +3,7 @@
 import { motion, AnimatePresence, useDragControls } from "framer-motion";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 // import { useReducedMotion } from "@/hooks/useMobile";
 
 const navigation = [
@@ -76,10 +77,14 @@ export default function NavbarMobile() {
         <nav className="flex items-center justify-between px-6 py-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#0066ff] to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25 group-hover:shadow-blue-500/40 transition-all">
-              <span className="text-white text-sm font-bold">EA</span>
-            </div>
-            <span className="text-white font-medium bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">Executive AI Solutions</span>
+            <Image 
+              src="/logo.png" 
+              alt="Executive AI Solutions Logo" 
+              width={822}
+              height={218}
+              priority
+              className="h-10 w-auto transition-all duration-300 group-hover:scale-105"
+            />
           </Link>
           
           {/* Menu button */}

@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 
 export function useIsMobile(breakpoint: number = 768) {
-  const [isMobile, setIsMobile] = useState(false);
+  // Start with undefined to ensure consistent SSR
+  const [isMobile, setIsMobile] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
     // Only run on client side
@@ -22,7 +23,9 @@ export function useIsMobile(breakpoint: number = 768) {
     return () => window.removeEventListener('resize', checkIsMobile);
   }, [breakpoint]);
 
-  return isMobile;
+  // Return false during SSR and initial render to prevent hydration mismatch
+  // This ensures server and client render the same content initially
+  return isMobile ?? false;
 }
 
 export function useReducedMotion() {

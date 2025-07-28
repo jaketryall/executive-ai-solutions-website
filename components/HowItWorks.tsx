@@ -127,7 +127,7 @@ export default function HowItWorks() {
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(headerRef, { once: true, margin: "-100px" });
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(1024);
   
   // Use window scroll instead of section scroll
   const { scrollY } = useScroll();
@@ -284,34 +284,9 @@ export default function HowItWorks() {
                       
                       {/* Animated gradient for flow effect */}
                       <linearGradient id="flow-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <motion.stop
-                          offset="0%"
-                          stopColor="#3b82f6"
-                          stopOpacity="0"
-                          animate={{
-                            stopOpacity: [0, 0.8, 0],
-                            offset: ["0%", "100%", "100%"]
-                          }}
-                          transition={{
-                            duration: 3,
-                            repeat: Infinity,
-                            ease: "linear"
-                          }}
-                        />
-                        <motion.stop
-                          offset="10%"
-                          stopColor="#8b5cf6"
-                          stopOpacity="0"
-                          animate={{
-                            stopOpacity: [0, 0.8, 0],
-                            offset: ["10%", "110%", "110%"]
-                          }}
-                          transition={{
-                            duration: 3,
-                            repeat: Infinity,
-                            ease: "linear"
-                          }}
-                        />
+                        <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2" />
+                        <stop offset="50%" stopColor="#8b5cf6" stopOpacity="0.5" />
+                        <stop offset="100%" stopColor="#f97316" stopOpacity="0.2" />
                       </linearGradient>
                     </defs>
                     
@@ -358,7 +333,7 @@ export default function HowItWorks() {
 
             {/* CTA Button - Centered between cards and progress bar */}
             <motion.div
-              className="mt-20 mb-32 text-center"
+              className="mt-20 mb-16 text-center"
               style={{
                 opacity: ctaOpacity,
                 y: ctaY,

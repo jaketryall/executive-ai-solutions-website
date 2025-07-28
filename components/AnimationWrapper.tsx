@@ -4,7 +4,7 @@ import { motion, MotionConfig } from "framer-motion";
 import { useIsMobile, usePrefersReducedMotion } from "@/hooks/useIsMobile";
 
 export function AnimationWrapper({ children }: { children: React.ReactNode }) {
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(1024);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   // Reduce animations on mobile or when user prefers reduced motion

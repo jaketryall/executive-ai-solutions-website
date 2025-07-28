@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
 import { WorkflowVisualization, PageBuilderVisualization, ConsultingVisualization } from "./ServiceVisualizations";
 import ServicesMobile from "./ServicesMobile";
@@ -94,7 +94,7 @@ export default function Services() {
   const ref = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const isMobile = useIsMobile();
+  const isMobile = false; // Always false for desktop component
   const prefersReducedMotion = useReducedMotion();
   
   // Parallax scroll effects
@@ -134,13 +134,15 @@ export default function Services() {
   const contentOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
   const cardsOpacity = useTransform(scrollYProgress, [0.1, 0.3, 0.8, 0.95], [0, 1, 1, 0]);
 
-  // Use mobile-specific component
-  if (isMobile) {
-    return <ServicesMobile />;
-  }
-
   return (
-    <section ref={ref} className="pt-24 sm:pt-32 lg:pt-48 pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-6 lg:px-8 relative bg-black overflow-hidden">
+    <>
+      {/* Mobile Services - shown below lg breakpoint */}
+      <div className="lg:hidden">
+        <ServicesMobile />
+      </div>
+
+      {/* Desktop Services - shown at lg breakpoint and above */}
+      <section ref={ref} className="hidden lg:block pt-24 sm:pt-32 lg:pt-48 pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-6 lg:px-8 relative bg-black overflow-hidden">
       {/* Top fade transition */}
       <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none z-10" />
       
@@ -198,5 +200,6 @@ export default function Services() {
         </motion.div>
       </motion.div>
     </section>
+    </>
   );
 }

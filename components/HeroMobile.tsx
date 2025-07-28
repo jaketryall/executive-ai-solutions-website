@@ -103,12 +103,12 @@ export default function HeroMobile() {
             </motion.h1>
           </motion.div>
           
-          {/* Visual service card display - mobile optimized */}
+          {/* Visual service card display - mobile optimized - moved right after title */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="relative h-[400px] w-full mt-12 mb-8"
+            className="relative h-[400px] w-full mb-8"
           >
             <div className="relative w-full h-full">
               <AnimatePresence mode="wait">
@@ -152,8 +152,8 @@ export default function HeroMobile() {
                           </motion.div>
                           
                           {/* Connection line 1 */}
-                          <div className="flex-1 relative mx-1 flex items-center">
-                            <div className="relative w-full h-0.5">
+                          <div className="flex-1 relative mx-1 flex items-center h-12">
+                            <div className="relative w-full h-0.5 flex items-center">
                               <motion.div
                                 initial={{ scaleX: 0 }}
                                 animate={{ scaleX: 1 }}
@@ -164,8 +164,7 @@ export default function HeroMobile() {
                                 initial={{ opacity: 0, left: "0%" }}
                                 animate={{ opacity: 1, left: "calc(100% - 8px)" }}
                                 transition={{ delay: 1.7, duration: 0.7 }}
-                                className="absolute w-2 h-2 bg-[#60a5fa] rounded-full"
-                                style={{ top: "-3px" }}
+                                className="absolute w-2 h-2 bg-[#60a5fa] rounded-full -top-1"
                               />
                             </div>
                           </div>
@@ -189,8 +188,8 @@ export default function HeroMobile() {
                           </motion.div>
                           
                           {/* Connection line 2 */}
-                          <div className="flex-1 relative mx-1 flex items-center">
-                            <div className="relative w-full h-0.5">
+                          <div className="flex-1 relative mx-1 flex items-center h-12">
+                            <div className="relative w-full h-0.5 flex items-center">
                               <motion.div
                                 initial={{ scaleX: 0 }}
                                 animate={{ scaleX: 1 }}
@@ -201,8 +200,7 @@ export default function HeroMobile() {
                                 initial={{ opacity: 0, left: "0%" }}
                                 animate={{ opacity: 1, left: "calc(100% - 8px)" }}
                                 transition={{ delay: 3.5, duration: 0.7 }}
-                                className="absolute w-2 h-2 bg-[#60a5fa] rounded-full"
-                                style={{ top: "-3px" }}
+                                className="absolute w-2 h-2 bg-[#60a5fa] rounded-full -top-1"
                               />
                             </div>
                           </div>
@@ -225,8 +223,8 @@ export default function HeroMobile() {
                           </motion.div>
                           
                           {/* Connection line 3 */}
-                          <div className="flex-1 relative mx-1 flex items-center">
-                            <div className="relative w-full h-0.5">
+                          <div className="flex-1 relative mx-1 flex items-center h-12">
+                            <div className="relative w-full h-0.5 flex items-center">
                               <motion.div
                                 initial={{ scaleX: 0 }}
                                 animate={{ scaleX: 1 }}
@@ -237,8 +235,7 @@ export default function HeroMobile() {
                                 initial={{ opacity: 0, left: "0%" }}
                                 animate={{ opacity: 1, left: "calc(100% - 8px)" }}
                                 transition={{ delay: 5.3, duration: 0.7 }}
-                                className="absolute w-2 h-2 bg-[#60a5fa] rounded-full"
-                                style={{ top: "-3px" }}
+                                className="absolute w-2 h-2 bg-[#60a5fa] rounded-full -top-1"
                               />
                             </div>
                           </div>
@@ -390,21 +387,11 @@ export default function HeroMobile() {
             </div>
           </motion.div>
           
-          {/* Description */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.5 }}
-            className="text-lg text-zinc-400 mb-8 font-light leading-relaxed text-center"
-          >
-            Transform your business with AI automation and high-converting landing pages. Scale operations, increase conversions, work smarter.
-          </motion.p>
-          
-          {/* Service pills */}
+          {/* Service pills - moved here before description */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.5 }}
+            transition={{ delay: 0.7, duration: 0.5 }}
             className="mb-8"
           >
             <div className="flex gap-4 justify-center">
@@ -430,6 +417,16 @@ export default function HeroMobile() {
               </button>
             </div>
           </motion.div>
+          
+          {/* Description */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9, duration: 0.5 }}
+            className="text-lg text-zinc-400 mb-8 font-light leading-relaxed text-center"
+          >
+            Transform your business with AI automation and high-converting landing pages. Scale operations, increase conversions, work smarter.
+          </motion.p>
           
           {/* Feature list - similar to desktop */}
           <motion.div
