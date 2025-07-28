@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Resend with API key if available, otherwise use a placeholder
+// This prevents build errors when the environment variable is not set
+const resend = new Resend(process.env.RESEND_API_KEY || 'placeholder_key_for_build');
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,6 +24,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Invalid email format' },
         { status: 400 }
+      );
+    }
+
+    // Check if we have a valid API key
+    if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === 'placeholder_key_for_build') {
+      console.warn('RESEND_API_KEY is not configured. Email will not be sent.');
+      // Return success to prevent form errors in development/preview
+      return NextResponse.json(
+        { success: true, message: 'Message received (email service not configured)', warning: 'Email service not configured' },
+        { status: 200 }
       );
     }
 
