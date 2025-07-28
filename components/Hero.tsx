@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
+import { useReducedMotion } from "@/hooks/useMobile";
 import { useOptimizedAnimation } from "@/hooks/usePerformance";
 
 import HeroMobile from "./HeroMobile";

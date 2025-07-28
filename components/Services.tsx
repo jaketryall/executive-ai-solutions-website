@@ -1,8 +1,8 @@
 "use client";
 
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
-import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
+import { useRef, useState } from "react";
+import { useReducedMotion } from "@/hooks/useMobile";
 import { WorkflowVisualization, PageBuilderVisualization, ConsultingVisualization } from "./ServiceVisualizations";
 import ServicesMobile from "./ServicesMobile";
 
@@ -52,8 +52,11 @@ function ServiceCard({ service, index, isMobile, prefersReducedMotion }: { servi
       viewport={{ once: true }}
       transition={{ duration: prefersReducedMotion ? 0 : 0.5, delay: prefersReducedMotion ? 0 : index * 0.1 }}
       className="group relative cursor-pointer h-full touch-tap-highlight-transparent"
-      whileHover={{ scale: 1.02, zIndex: 10 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
+      whileHover={{ 
+        scale: 1.02, 
+        zIndex: 10,
+        transition: { duration: 0.2, ease: "easeOut" }
+      }}
       onMouseEnter={() => !isMobile && setIsHovered(true)}
       onMouseLeave={() => !isMobile && setIsHovered(false)}
       onTouchStart={() => isMobile && setIsHovered(true)}

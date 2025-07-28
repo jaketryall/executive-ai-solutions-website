@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, MotionConfig } from "framer-motion";
+import { MotionConfig } from "framer-motion";
 import { useIsMobile, usePrefersReducedMotion } from "@/hooks/useIsMobile";
 
 export function AnimationWrapper({ children }: { children: React.ReactNode }) {
