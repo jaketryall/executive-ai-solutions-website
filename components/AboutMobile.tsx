@@ -99,25 +99,27 @@ export default function AboutMobile() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-8"
         >
-          {/* Dynamic content */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={hoveredIndex ?? 'default'}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-              className="text-center"
-            >
-              <h3 className="text-xl sm:text-2xl font-light text-white mb-3">
-                {hoveredIndex !== null ? stats[hoveredIndex].title : defaultContent.title}
-              </h3>
-              
-              <p className="text-base text-zinc-400 font-light leading-relaxed px-4">
-                {hoveredIndex !== null ? stats[hoveredIndex].description : defaultContent.description}
-              </p>
-            </motion.div>
-          </AnimatePresence>
+          {/* Dynamic content with fixed height container */}
+          <div className="relative h-[240px] flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={hoveredIndex ?? 'default'}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="text-center absolute inset-0 flex flex-col justify-center"
+              >
+                <h3 className="text-xl sm:text-2xl font-light text-white mb-3">
+                  {hoveredIndex !== null ? stats[hoveredIndex].title : defaultContent.title}
+                </h3>
+                
+                <p className="text-base text-zinc-400 font-light leading-relaxed px-4">
+                  {hoveredIndex !== null ? stats[hoveredIndex].description : defaultContent.description}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+          </div>
           
           {/* Animated line */}
           <motion.div
@@ -177,9 +179,8 @@ export default function AboutMobile() {
                 delay: prefersReducedMotion ? 0 : 0.4 + index * 0.1,
                 ease: [0.25, 0.1, 0.25, 1]
               }}
-              onTouchStart={() => setHoveredIndex(index)}
-              onTouchEnd={() => setTimeout(() => setHoveredIndex(null), 300)}
-              className="relative group"
+              onClick={() => setHoveredIndex(hoveredIndex === index ? null : index)}
+              className="relative group cursor-pointer"
             >
               {/* Animated glow background */}
               <motion.div
@@ -191,15 +192,28 @@ export default function AboutMobile() {
               
               {/* Card with floating animation */}
               <motion.div 
-                className="relative glass-card rounded-xl p-6 h-full min-h-[120px] flex items-center justify-center backdrop-blur-xl border border-white/10"
+                className={`relative glass-card rounded-xl p-6 h-full min-h-[120px] flex items-center justify-center backdrop-blur-xl transition-all ${
+                  hoveredIndex === index 
+                    ? 'bg-black/80 border-2 shadow-2xl' 
+                    : 'border border-white/10'
+                } ${hoveredIndex === index ? `border-${stat.color.split(' ')[1].split('-')[1]}-500/50` : ''}`}
                 animate={{
                   y: hoveredIndex === index ? -5 : 0,
+                  scale: hoveredIndex === index ? 1.02 : 1,
                 }}
                 transition={{ duration: 0.3 }}
               >
                 <div className="text-center w-full">
-                  <div className={`text-lg font-light bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
+                  <div className={`text-lg font-light bg-gradient-to-r ${stat.color} bg-clip-text text-transparent ${
+                    hoveredIndex === index ? 'brightness-125' : ''
+                  }`}>
                     {stat.label}
+                  </div>
+                  {/* Tap indicator with reserved space */}
+                  <div className="text-xs mt-2 h-4">
+                    {hoveredIndex !== index && (
+                      <span className="text-zinc-500">Tap to explore</span>
+                    )}
                   </div>
                 </div>
               </motion.div>

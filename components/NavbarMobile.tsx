@@ -19,6 +19,19 @@ export default function NavbarMobile() {
   const [activeSection, setActiveSection] = useState("");
   // const prefersReducedMotion = useReducedMotion();
   
+  // Lock body scroll when menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+  
   // Track active section with throttling
   useEffect(() => {
     let ticking = false;
@@ -141,7 +154,7 @@ export default function NavbarMobile() {
               variants={menuVariants}
               initial="closed"
               animate="open"
-              className="fixed inset-x-6 top-24 bottom-32 z-50 bg-gradient-to-b from-zinc-800/90 to-zinc-900/90 backdrop-blur-xl rounded-3xl border border-zinc-700/50 shadow-2xl overflow-hidden"
+              className="fixed inset-x-6 top-24 bottom-32 z-50 bg-gradient-to-b from-zinc-800/90 to-zinc-900/90 backdrop-blur-xl rounded-3xl border border-zinc-700/50 shadow-2xl overflow-hidden flex flex-col"
             >
               {/* Enhanced drag handle */}
               <div className="flex justify-center py-4">
@@ -149,7 +162,7 @@ export default function NavbarMobile() {
               </div>
               
               {/* Navigation items */}
-              <nav className="px-8 py-4">
+              <nav className="px-8 py-4 overflow-y-auto overflow-x-hidden flex-1">
                 {navigation.map((item) => {
                   const isActive = activeSection === item.href.substring(1);
                   
@@ -158,7 +171,14 @@ export default function NavbarMobile() {
                       key={item.name}
                       href={item.href}
                       variants={itemVariants}
-                      onClick={() => setIsOpen(false)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsOpen(false);
+                        const element = document.querySelector(item.href);
+                        if (element) {
+                          element.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
                       className={`block py-5 text-2xl font-medium transition-all relative group ${
                         isActive ? "text-white" : "text-zinc-400 hover:text-zinc-200"
                       }`}
@@ -167,10 +187,8 @@ export default function NavbarMobile() {
                       {/* Hover effect */}
                       <div className="absolute left-0 right-0 bottom-0 h-0.5 bg-gradient-to-r from-zinc-600 to-zinc-700 opacity-0 group-hover:opacity-100 transition-opacity" />
                       {isActive && (
-                        <motion.div
-                          layoutId="activeSection"
+                        <div
                           className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#0066ff] to-blue-500 rounded-full shadow-lg shadow-blue-500/50"
-                          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                         />
                       )}
                     </motion.a>
@@ -181,11 +199,18 @@ export default function NavbarMobile() {
               {/* CTA button */}
               <motion.div
                 variants={itemVariants}
-                className="px-8 mt-8"
+                className="px-8 mt-8 pb-8 flex-shrink-0"
               >
                 <a
                   href="#contact"
-                  onClick={() => setIsOpen(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsOpen(false);
+                    const element = document.querySelector('#contact');
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
                   className="block w-full py-5 text-center bg-gradient-to-r from-[#0066ff] to-blue-500 text-white rounded-full font-medium text-lg shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-all relative overflow-hidden group"
                 >
                   <span className="relative z-10">Get Started</span>

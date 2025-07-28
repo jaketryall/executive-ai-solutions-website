@@ -389,7 +389,7 @@ export default function Hero() {
                       <div className="grid grid-cols-3 gap-4 mt-8">
                         <div className="text-center">
                           <div className="text-2xl font-light text-white">24/7</div>
-                          <div className="text-xs text-zinc-500">Runtime</div>
+                          <div className="text-xs text-zinc-500">Workers</div>
                         </div>
                         <div className="text-center">
                           <div className="text-2xl font-light text-white">100%</div>
