@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence, useDragControls } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -18,7 +18,6 @@ export default function NavbarMobile() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   // const prefersReducedMotion = useReducedMotion();
-  const dragControls = useDragControls();
   
   // Track active section with throttling
   useEffect(() => {

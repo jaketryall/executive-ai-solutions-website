@@ -271,7 +271,7 @@ export default function Contact() {
                 className="mt-8 p-6 bg-gradient-to-br from-green-500/20 to-emerald-500/10 border border-green-500/30 rounded-2xl backdrop-blur-sm shadow-lg shadow-green-500/10"
               >
                 <p className="text-green-400 text-center text-lg font-light">
-                  Thanks for reaching out! We'll get back to you soon.
+                  Thanks for reaching out! We&apos;ll get back to you soon.
                 </p>
               </motion.div>
             )}

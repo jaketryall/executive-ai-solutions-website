@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, AnimatePresence, useInView } from "framer-motion";
-import { useState, useRef } from "react";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 
 const useCases = [
   {
@@ -46,11 +46,9 @@ const useCases = [
 ];
 
 // Separate component for each card to handle individual scroll animations
-function UseCaseCard({ useCase, index, hoveredIndex, setHoveredIndex }: {
+function UseCaseCard({ useCase, index }: {
   useCase: typeof useCases[0];
   index: number;
-  hoveredIndex: number | null;
-  setHoveredIndex: (index: number | null) => void;
 }) {
   const cardRef = useRef(null);
   const isCardInView = useInView(cardRef, { 
@@ -77,8 +75,6 @@ function UseCaseCard({ useCase, index, hoveredIndex, setHoveredIndex }: {
         duration: 0.6, 
         ease: [0.25, 0.1, 0.25, 1]
       }}
-      onTouchStart={() => setHoveredIndex(index)}
-      onTouchEnd={() => setHoveredIndex(null)}
       className="group relative"
       style={{ transform: 'translateZ(0)', willChange: 'transform' }}
     >
@@ -134,7 +130,6 @@ function UseCaseCard({ useCase, index, hoveredIndex, setHoveredIndex }: {
 }
 
 export default function UseCasesMobile() {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   
   return (
     <div className="space-y-6">
@@ -143,8 +138,6 @@ export default function UseCasesMobile() {
           key={useCase.title}
           useCase={useCase}
           index={index}
-          hoveredIndex={hoveredIndex}
-          setHoveredIndex={setHoveredIndex}
         />
       ))}
     </div>
