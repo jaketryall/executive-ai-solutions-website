@@ -169,45 +169,33 @@ export default function About() {
       >
         {/* Title - Center on mobile, left on desktop */}
         <motion.div
-          initial={{ opacity: 0, x: -100 }}
+          initial={{ opacity: 0 }}
           animate={isInView ? { 
-            opacity: 1, 
-            x: 0
+            opacity: 1
           } : {}}
           transition={{ 
-            duration: 0.8, 
+            duration: 0.5, 
             ease: "easeOut"
           }}
           className="mb-20 text-center lg:text-left"
-          style={!isMobile ? { y: contentY } : {}}
         >
-          <motion.h2 
-            className="text-5xl sm:text-6xl lg:text-7xl font-light text-white overflow-hidden"
-            initial={{ y: 100 }}
-            animate={isInView ? { y: 0 } : { y: 100 }}
-            transition={{ duration: 1.0, ease: [0.25, 0.1, 0.25, 1], delay: 0.2 }}
-          >
+          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white">
             <span className="text-gradient-shine inline-block">About Executive AI</span>
-          </motion.h2>
+          </h2>
         </motion.div>
 
         {/* Main content grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
           <motion.div
-            initial={{ opacity: 0, x: -80, scale: 0.95 }}
+            initial={{ opacity: 0 }}
             animate={isInView ? { 
-              opacity: 1, 
-              x: 0, 
-              scale: 1 
+              opacity: 1
             } : { 
-              opacity: 0, 
-              x: -80, 
-              scale: 0.95 
+              opacity: 0
             }}
             transition={{ 
-              duration: 1.0, 
-              delay: 0.4,
-              ease: [0.25, 0.1, 0.25, 1]
+              duration: 0.5, 
+              delay: 0.1
             }}
             className="flex flex-col"
           >
@@ -239,9 +227,8 @@ export default function About() {
               initial={{ scaleX: 0, opacity: 0 }}
               animate={isInView ? { scaleX: 1, opacity: 1 } : {}}
               transition={{ 
-                duration: 1.2, 
-                delay: 0.8,
-                ease: [0.25, 0.1, 0.25, 1]
+                duration: 0.6, 
+                delay: 0.3
               }}
               style={{ transformOrigin: "left" }}
             >
@@ -267,23 +254,16 @@ export default function About() {
               <motion.div
                 key={stat.label}
                 initial={{ 
-                  opacity: 0, 
-                  scale: 0.9, 
-                  y: 30
+                  opacity: 0
                 }}
                 animate={isInView ? { 
-                  opacity: 1, 
-                  scale: 1, 
-                  y: 0
+                  opacity: 1
                 } : { 
-                  opacity: 0, 
-                  scale: 0.9, 
-                  y: 30
+                  opacity: 0
                 }}
                 transition={{ 
-                  duration: prefersReducedMotion ? 0 : 0.8, 
-                  delay: prefersReducedMotion ? 0 : 0.6 + index * 0.15,
-                  ease: [0.25, 0.1, 0.25, 1]
+                  duration: prefersReducedMotion ? 0 : 0.4, 
+                  delay: prefersReducedMotion ? 0 : 0.2 + index * 0.1
                 }}
                 whileHover={{ 
                   scale: isMobile ? 1 : 1.02,
@@ -329,12 +309,11 @@ export default function About() {
 
         {/* Core Principles - Moved back to bottom */}
         <motion.div
-          initial={{ opacity: 0, y: 80 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
           transition={{ 
-            duration: 1.0, 
-            delay: 1.2,
-            ease: [0.25, 0.1, 0.25, 1]
+            duration: 0.5, 
+            delay: 0.4
           }}
           className="mt-24 pt-16"
         >

@@ -228,7 +228,7 @@ export default function Hero() {
                               <motion.div
                                 initial={{ scale: 0, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
-                                transition={{ delay: 0.3, duration: 0.5 }}
+                                transition={{ delay: 0.3, duration: 0.4, ease: "easeOut" }}
                                 className="bg-zinc-800 rounded-lg p-3 border border-zinc-700"
                               >
                                 <div className="w-8 h-8 bg-orange-500 rounded mb-2 flex items-center justify-center">
@@ -242,7 +242,7 @@ export default function Hero() {
                               <motion.div
                                 initial={{ scale: 0, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
-                                transition={{ delay: 0.5, duration: 0.5 }}
+                                transition={{ delay: 0.5, duration: 0.4, ease: "easeOut" }}
                                 className="bg-zinc-800 rounded-lg p-3 border border-zinc-700"
                               >
                                 <div className="w-8 h-8 bg-blue-500 rounded mb-2 flex items-center justify-center">
@@ -257,7 +257,7 @@ export default function Hero() {
                               <motion.div
                                 initial={{ scale: 0, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
-                                transition={{ delay: 0.7, duration: 0.5 }}
+                                transition={{ delay: 0.7, duration: 0.4, ease: "easeOut" }}
                                 className="bg-zinc-800 rounded-lg p-3 border border-zinc-700"
                               >
                                 <div className="w-8 h-8 bg-purple-500 rounded mb-2 flex items-center justify-center">
@@ -271,7 +271,7 @@ export default function Hero() {
                               <motion.div
                                 initial={{ scale: 0, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
-                                transition={{ delay: 0.9, duration: 0.5 }}
+                                transition={{ delay: 0.9, duration: 0.4, ease: "easeOut" }}
                                 className="bg-zinc-800 rounded-lg p-3 border border-zinc-700"
                               >
                                 <div className="w-8 h-8 bg-green-500 rounded mb-2 flex items-center justify-center">
@@ -289,7 +289,7 @@ export default function Hero() {
                             <motion.div
                               initial={{ scale: 0, opacity: 0 }}
                               animate={{ scale: 1, opacity: 1 }}
-                              transition={{ delay: 0.8, duration: 0.8, type: "spring" }}
+                              transition={{ delay: 0.8, duration: 0.5, ease: "easeOut" }}
                               className="flex flex-col items-center flex-shrink-0"
                             >
                               <div className="w-20 h-20 bg-zinc-800 rounded-xl border border-zinc-700 flex items-center justify-center mb-2">
@@ -316,7 +316,7 @@ export default function Hero() {
                             <motion.div
                               initial={{ scale: 0, opacity: 0 }}
                               animate={{ scale: 1, opacity: 1 }}
-                              transition={{ delay: 2.0, duration: 0.8, type: "spring" }}
+                              transition={{ delay: 2.0, duration: 0.5, ease: "easeOut" }}
                               className="flex flex-col items-center flex-shrink-0"
                             >
                               <div className="w-20 h-20 bg-zinc-800 rounded-xl border border-zinc-700 flex items-center justify-center mb-2">
@@ -344,7 +344,7 @@ export default function Hero() {
                             <motion.div
                               initial={{ scale: 0, opacity: 0 }}
                               animate={{ scale: 1, opacity: 1 }}
-                              transition={{ delay: 3.2, duration: 0.8, type: "spring" }}
+                              transition={{ delay: 3.2, duration: 0.5, ease: "easeOut" }}
                               className="flex flex-col items-center flex-shrink-0"
                             >
                               <div className="w-20 h-20 bg-zinc-800 rounded-xl border border-zinc-700 flex items-center justify-center mb-2">
@@ -371,7 +371,7 @@ export default function Hero() {
                             <motion.div
                               initial={{ scale: 0, opacity: 0 }}
                               animate={{ scale: 1, opacity: 1 }}
-                              transition={{ delay: 4.4, duration: 0.8, type: "spring" }}
+                              transition={{ delay: 4.4, duration: 0.5, ease: "easeOut" }}
                               className="flex flex-col items-center flex-shrink-0"
                             >
                               <div className="w-20 h-20 bg-zinc-800 rounded-xl border border-zinc-700 flex items-center justify-center mb-2">
