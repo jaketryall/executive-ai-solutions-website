@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
 import { WorkflowVisualization, PageBuilderVisualization, ConsultingVisualization } from "./ServiceVisualizations";
 
@@ -43,7 +43,7 @@ function ServiceCard({ service, index }: { service: typeof services[0], index: n
     setTimeout(() => {
       setIsActive(false);
       setIsHovered(false);
-    }, 2000);
+    }, 7000);
   };
 
   return (
@@ -70,19 +70,29 @@ function ServiceCard({ service, index }: { service: typeof services[0], index: n
           style={{ background: service.bgPattern }}
         >
           {/* Tap indicator */}
-          <div className="absolute top-3 right-3 z-20">
-            <motion.div
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900/80 backdrop-blur-sm rounded-full border border-zinc-800"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 + index * 0.1 }}
-            >
-              <span className="text-zinc-500 text-xs font-light">Tap to explore</span>
-              <svg className="w-3 h-3 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2z" />
-              </svg>
-            </motion.div>
-          </div>
+          <AnimatePresence>
+            {!isActive && (
+              <motion.div 
+                className="absolute top-3 right-3 z-20"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.div
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900/80 backdrop-blur-sm rounded-full border border-zinc-800"
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.5 + index * 0.1 }}
+                >
+                  <span className="text-zinc-500 text-xs font-light">Tap to explore</span>
+                  <svg className="w-3 h-3 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2z" />
+                  </svg>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           {/* Gradient overlay with animation */}
           <motion.div 
             className={`absolute inset-0 bg-gradient-to-br ${service.gradient}`}

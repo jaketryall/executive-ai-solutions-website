@@ -16,7 +16,7 @@ export default function Contact() {
   });
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const isMobile = useIsMobile(1024);
+  const isMobile = useIsMobile(1023);
   const prefersReducedMotion = useReducedMotion();
   
   // Scroll-based opacity transitions
@@ -68,12 +68,15 @@ export default function Contact() {
     { name: "company", type: "text", placeholder: "Company", required: false },
   ];
 
-  // Use mobile-specific component
-  if (isMobile) {
-    return <ContactMobile />;
-  }
-
   return (
+    <>
+      {/* Mobile version - shown below lg breakpoint */}
+      <div className="lg:hidden">
+        <ContactMobile />
+      </div>
+      
+      {/* Desktop version - shown at lg breakpoint and above */}
+      <div className="hidden lg:block">
     <section ref={ref} className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-zinc-950 relative overflow-hidden">
       {/* Top gradient fade */}
       <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-black to-transparent pointer-events-none z-10" />
@@ -279,5 +282,7 @@ export default function Contact() {
         </div>
       </motion.div>
     </section>
+      </div>
+    </>
   );
 }

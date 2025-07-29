@@ -9,7 +9,7 @@ export default function About() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const isMobile = useIsMobile(1024);
+  const isMobile = useIsMobile(1023);
   const prefersReducedMotion = useReducedMotion();
   
   // Scroll-based animations
@@ -61,12 +61,15 @@ export default function About() {
   const mainContentOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.8, 1, 1, 1]);
   const statsOpacity = useTransform(scrollYProgress, [0.1, 0.25, 0.75, 0.9], [0.8, 1, 1, 1]);
 
-  // Use mobile-specific component
-  if (isMobile) {
-    return <AboutMobile />;
-  }
-
   return (
+    <>
+      {/* Mobile version - shown below lg breakpoint */}
+      <div className="lg:hidden">
+        <AboutMobile />
+      </div>
+      
+      {/* Desktop version - shown at lg breakpoint and above */}
+      <div className="hidden lg:block">
     <section ref={ref} className="py-24 px-4 sm:px-6 lg:px-8 bg-black relative overflow-hidden">
       {/* Top gradient fade */}
       <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-black to-transparent pointer-events-none z-10" />
@@ -405,5 +408,7 @@ export default function About() {
         </motion.div>
       </motion.div>
     </section>
+      </div>
+    </>
   );
 }
