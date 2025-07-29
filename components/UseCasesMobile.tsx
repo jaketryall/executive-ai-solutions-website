@@ -60,26 +60,24 @@ function UseCaseCard({ useCase }: {
     <motion.div
       ref={cardRef}
       key={useCase.title}
-      initial={{ opacity: 0, y: 50, scale: 0.9 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={isCardInView ? { 
         opacity: 1, 
-        y: 0,
-        scale: 1
+        y: 0
       } : { 
         opacity: 0, 
-        y: 50,
-        scale: 0.9
+        y: 30
       }}
       transition={{ 
-        duration: 0.6, 
-        ease: [0.25, 0.1, 0.25, 1]
+        duration: 0.3, 
+        ease: "easeOut"
       }}
       className="group relative"
-      style={{ transform: 'translateZ(0)', willChange: 'transform' }}
+      style={{ transform: 'translateZ(0)' }}
     >
       {/* Background glow effect - always visible on mobile */}
       <div
-        className={`absolute inset-0 bg-gradient-to-r ${useCase.color} rounded-2xl blur-xl pointer-events-none opacity-15`}
+        className={`absolute inset-0 bg-gradient-to-r ${useCase.color} rounded-2xl pointer-events-none opacity-10`}
       />
       
       <div className="relative rounded-2xl p-6 transition-all duration-300 bg-black/40 backdrop-blur-md border border-blue-500/10 overflow-hidden">

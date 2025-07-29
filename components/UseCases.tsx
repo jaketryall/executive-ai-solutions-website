@@ -1,14 +1,9 @@
 "use client";
 
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
-import dynamic from "next/dynamic";
-
-const UseCasesMobile = dynamic(() => import("./UseCasesMobile"), {
-  loading: () => <div className="py-16 px-4 bg-zinc-900 min-h-screen" />,
-  ssr: false
-});
+import UseCasesMobile from "./UseCasesMobile";
 
 const useCases = [
   {
@@ -58,16 +53,13 @@ export default function UseCases() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const isMobile = useIsMobile(1024);
   const prefersReducedMotion = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
-  // Scroll-based opacity transitions
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"]
-  });
-  
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
-  const cardsOpacity = useTransform(scrollYProgress, [0.1, 0.25, 0.75, 0.9], [0, 1, 1, 0]);
+  // Removed scroll-based opacity transitions for better mobile performance
 
   return (
     <section ref={ref} id="use-cases" className="pt-16 sm:pt-24 lg:pt-32 pb-12 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8 relative bg-gradient-dark-blue overflow-hidden">
@@ -84,48 +76,29 @@ export default function UseCases() {
       <div className="absolute top-20 left-10 w-64 h-64 bg-blue-500/5 rounded-full blur-2xl" />
       <div className="absolute bottom-20 right-10 w-56 h-56 bg-purple-500/5 rounded-full blur-2xl" />
       
-      <motion.div 
-        className="max-w-7xl mx-auto relative"
-        style={{ opacity: contentOpacity }}
-      >
+      <div className="max-w-7xl mx-auto relative">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
           className="mb-12 sm:mb-16 lg:mb-20"
-          style={{ opacity: titleOpacity }}
         >
-          <motion.h2 
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light mb-4 sm:mb-8 text-white text-gradient-shine text-center lg:text-left"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          >
+          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light mb-4 sm:mb-8 text-white text-gradient-shine text-center lg:text-left">
             Use Cases
-          </motion.h2>
-          <motion.p 
-            className="text-lg sm:text-xl text-zinc-400 font-light text-center lg:text-left"
-            initial={{ opacity: 0, x: -50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-          >
+          </h2>
+          <p className="text-lg sm:text-xl text-zinc-400 font-light text-center lg:text-left">
             See how AI transforms different industries.
-          </motion.p>
+          </p>
         </motion.div>
 
         {/* Mobile view - custom animated version */}
-        {isMobile ? (
-          <motion.div 
-            style={{ opacity: cardsOpacity }}
-          >
+        {mounted && isMobile ? (
+          <div>
             <UseCasesMobile />
-          </motion.div>
+          </div>
         ) : (
           /* Desktop view - keep existing design */
-          <motion.div 
-            className="space-y-6"
-            style={{ opacity: cardsOpacity }}
-          >
+          <motion.div className="space-y-6">
             {useCases.map((useCase, index) => (
               <motion.div
                 key={useCase.title}
@@ -197,7 +170,7 @@ export default function UseCases() {
             ))}
           </motion.div>
         )}
-      </motion.div>
+      </div>
     </section>
   );
 }

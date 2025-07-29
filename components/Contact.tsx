@@ -24,7 +24,7 @@ export default function Contact() {
   const isMobile = useIsMobile(1023);
   const prefersReducedMotion = useReducedMotion();
   
-  // Scroll-based opacity transitions
+  // Scroll-based opacity transitions - always call hooks
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
@@ -120,7 +120,7 @@ export default function Contact() {
 
       <motion.div 
         className="max-w-7xl mx-auto relative"
-        style={{ opacity: contentOpacity }}
+        style={!isMobile ? { opacity: contentOpacity } : {}}
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
           <motion.div
@@ -168,7 +168,7 @@ export default function Contact() {
             transition={{ duration: 0.8, delay: 0.2 }}
             onSubmit={handleSubmit}
             className="space-y-8"
-            style={{ opacity: formOpacity }}
+            style={!isMobile ? { opacity: formOpacity } : {}}
           >
             {fields.map((field, index) => (
               <motion.div

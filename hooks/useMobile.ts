@@ -3,13 +3,8 @@
 import { useState, useEffect } from 'react';
 
 export function useIsMobile(breakpoint: number = 768) {
-  // Initialize with SSR-safe value based on CSS media query
-  const [isMobile, setIsMobile] = useState<boolean>(() => {
-    if (typeof window === 'undefined') {
-      return false; // SSR default
-    }
-    return window.matchMedia(`(max-width: ${breakpoint - 1}px)`).matches;
-  });
+  // Always initialize with false to avoid hydration mismatches
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
     // Only run on client side

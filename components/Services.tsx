@@ -108,7 +108,7 @@ export default function Services() {
   const isMobile = false; // Always false for desktop component
   const prefersReducedMotion = useReducedMotion();
   
-  // Simplified scroll effect - only track if in view
+  // Simplified scroll effect - always call hook
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
@@ -141,7 +141,7 @@ export default function Services() {
       
       <motion.div 
         className="max-w-7xl mx-auto relative z-10"
-        style={{ opacity: sectionOpacity }}
+        style={!prefersReducedMotion ? { opacity: sectionOpacity } : {}}
       >
         <motion.div
           ref={textRef}

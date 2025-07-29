@@ -15,18 +15,17 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeService, setActiveService] = useState<'automation' | 'landing'>('automation');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isMobile = false; // Always false for desktop component
   const prefersReducedMotion = useReducedMotion();
   const { enableParallax } = useOptimizedAnimation();
   
-  // Parallax scroll - disabled on mobile
+  // Parallax scroll - always call hook
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
   
-  // const y = useTransform(scrollYProgress, [0, 1], isMobile || !enableParallax ? [0, 0] : [0, 200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], isMobile || !enableParallax ? [1, 1] : [1, 0]);
+  // const y = useTransform(scrollYProgress, [0, 1], !enableParallax ? [0, 0] : [0, 200]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   
   // Function to reset and start the interval
   const resetInterval = () => {
@@ -67,7 +66,7 @@ export default function Hero() {
       {/* Content */}
       <motion.div 
         className="relative z-10 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
-        style={{ opacity }}
+        style={!prefersReducedMotion && enableParallax ? { opacity } : {}}
       >
         {/* Main content flex container */}
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center min-h-[calc(100vh-8rem)] lg:min-h-0 justify-center py-8 sm:py-4 lg:py-0">
@@ -198,7 +197,7 @@ export default function Hero() {
           
           {/* Right side - Visual showcase - responsive */}
           <motion.div
-            initial={{ opacity: 0, x: isMobile ? 0 : 50, y: isMobile ? 20 : 0 }}
+            initial={{ opacity: 0, x: 50, y: 0 }}
             animate={{ opacity: 1, x: 0, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative h-[300px] sm:h-[400px] lg:h-[600px] w-full lg:w-[450px] xl:w-[500px] 2xl:w-[600px] mt-8 lg:mt-0 flex-shrink-0"
@@ -209,9 +208,9 @@ export default function Hero() {
                 {activeService === 'automation' ? (
                   <motion.div
                     key="automation"
-                    initial={{ opacity: 0, rotateY: isMobile ? 0 : 20, x: isMobile ? 0 : 100 }}
+                    initial={{ opacity: 0, rotateY: 20, x: 100 }}
                     animate={{ opacity: 1, rotateY: 0, x: 0 }}
-                    exit={{ opacity: 0, rotateY: isMobile ? 0 : -20, x: isMobile ? 0 : -100 }}
+                    exit={{ opacity: 0, rotateY: -20, x: -100 }}
                     transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
                     className="absolute inset-0"
                   >
@@ -223,7 +222,7 @@ export default function Hero() {
                       <div className="relative h-40 sm:h-60 lg:h-80 bg-zinc-950 rounded-lg p-2 sm:p-4 overflow-hidden">
                         
                         <div className="relative h-full flex items-center justify-center">
-                          {isMobile ? (
+                          {false ? (
                             // Simplified mobile visualization
                             <div className="grid grid-cols-2 gap-3 w-full">
                               <motion.div
@@ -409,9 +408,9 @@ export default function Hero() {
                 ) : (
                   <motion.div
                     key="landing"
-                    initial={{ opacity: 0, rotateY: isMobile ? 0 : -20, x: isMobile ? 0 : -100 }}
+                    initial={{ opacity: 0, rotateY: -20, x: -100 }}
                     animate={{ opacity: 1, rotateY: 0, x: 0 }}
-                    exit={{ opacity: 0, rotateY: isMobile ? 0 : 20, x: isMobile ? 0 : 100 }}
+                    exit={{ opacity: 0, rotateY: 20, x: 100 }}
                     transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
                     className="absolute inset-0"
                   >

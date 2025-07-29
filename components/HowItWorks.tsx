@@ -206,7 +206,7 @@ export default function HowItWorks() {
   const ctaOpacity = useTransform(scrollYProgress, [0.75, 0.85], [0, 1]);
   const ctaY = useTransform(scrollYProgress, [0.75, 0.85], [50, 0]);
 
-  // Render mobile version on mobile devices
+  // Render mobile version after all hooks
   if (isMobile) {
     return <HowItWorksMobile />;
   }

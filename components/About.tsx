@@ -17,7 +17,7 @@ export default function About() {
   const isMobile = useIsMobile(1023);
   const prefersReducedMotion = useReducedMotion();
   
-  // Scroll-based animations
+  // Scroll-based animations - always call hook
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
@@ -55,14 +55,14 @@ export default function About() {
     description: "No theory, no hype—just practical solutions that deliver results. Founded by an entrepreneur who understands real business challenges, I bridge the gap between cutting-edge AI and practical applications. Our AI employees enhance your workforce, automate repetitive tasks, and scale without limits."
   };
   
-  // Parallax transforms - disabled on mobile
-  const bgY = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -150]);
-  const orb1Y = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -100]);
-  const orb2Y = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -200]);
-  const contentY = useTransform(scrollYProgress, [0, 0.5], isMobile ? [0, 0] : [0, -50]);
-  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], isMobile ? [1, 1, 1, 1] : [0.8, 1, 1, 1]);
+  // Parallax transforms - always create but conditionally use
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, -150]);
+  const orb1Y = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const orb2Y = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  const contentY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
+  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.8, 1, 1, 1]);
   
-  // Enhanced content opacity - keep visible at the end
+  // Enhanced content opacity
   const mainContentOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.8, 1, 1, 1]);
   const statsOpacity = useTransform(scrollYProgress, [0.1, 0.25, 0.75, 0.9], [0.8, 1, 1, 1]);
 
@@ -82,107 +82,104 @@ export default function About() {
       {/* Multi-layer animated background */}
       <motion.div 
         className="absolute inset-0"
-        style={{ opacity }}
+        style={!isMobile ? { opacity } : {}}
       >
         {/* Base gradient with parallax */}
         <motion.div 
           className="absolute inset-0 bg-gradient-to-br from-blue-950/20 via-black to-purple-950/20" 
-          style={{ y: bgY }}
+          style={!isMobile ? { y: bgY } : {}}
         />
         
-        {/* Animated mesh gradient */}
-        <motion.div
-          className="absolute inset-0"
-          animate={{
-            background: [
-              "radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%)",
-              "radial-gradient(circle at 80% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%)",
-              "radial-gradient(circle at 50% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%)",
-              "radial-gradient(circle at 50% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%)",
-              "radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%)",
-            ]
-          }}
-          transition={{ duration: 40, repeat: Infinity, ease: "easeInOut" }}
-        />
+        {/* Animated mesh gradient - disabled on mobile */}
+        {!isMobile && !prefersReducedMotion && (
+          <motion.div
+            className="absolute inset-0"
+            animate={{
+              background: [
+                "radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)",
+                "radial-gradient(circle at 80% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%)",
+                "radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)",
+              ]
+            }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+          />
+        )}
         
         {/* Floating orbs with parallax - reduced size and opacity */}
         <motion.div
-          className="absolute top-20 -left-20 w-64 h-64 bg-blue-500/5 rounded-full blur-2xl"
-          style={{ y: orb1Y }}
+          className="absolute top-20 -left-20 w-48 h-48 bg-blue-500/5 rounded-full blur-xl"
+          style={!isMobile ? { y: orb1Y, transform: 'translateZ(0)' } : { transform: 'translateZ(0)' }}
           animate={{
             x: [0, 100, 50, 0],
             scale: [1, 1.2, 1.1, 1],
           }}
-          transition={{ duration: 50, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
         />
         <motion.div
-          className="absolute bottom-20 -right-20 w-56 h-56 bg-purple-500/5 rounded-full blur-2xl"
-          style={{ y: orb2Y }}
+          className="absolute bottom-20 -right-20 w-40 h-40 bg-purple-500/5 rounded-full blur-xl"
+          style={!isMobile ? { y: orb2Y, transform: 'translateZ(0)' } : { transform: 'translateZ(0)' }}
           animate={{
             x: [0, -50, -100, 0],
             scale: [1, 1.1, 1.2, 1],
           }}
-          transition={{ duration: 60, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
         />
         
         
-        {/* Animated particles */}
-        <div className="absolute inset-0">
-          {[...Array(20)].map((_, i) => {
-            // Use deterministic values based on index instead of Math.random()
-            const seed = i * 137.5; // Prime number for better distribution
-            const left = ((seed * 7) % 100);
-            const top = ((seed * 13) % 100);
-            const xMove1 = ((seed * 17) % 200) - 100;
-            const xMove2 = ((seed * 23) % 200) - 100;
-            const yMove1 = ((seed * 29) % 200) - 100;
-            const yMove2 = ((seed * 31) % 200) - 100;
-            const duration = ((seed * 37) % 30) + 40;
-            
-            return (
-              <motion.div
-                key={i}
-                className="absolute w-1 h-1 bg-blue-400/30 rounded-full"
-                style={{
-                  left: `${left}%`,
-                  top: `${top}%`,
-                }}
-                animate={{
-                  x: [0, xMove1, xMove2, 0],
-                  y: [0, yMove1, yMove2, 0],
-                  opacity: [0.3, 0.6, 0.3],
-                }}
-                transition={{
-                  duration: duration,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-            );
-          })}
-        </div>
+        {/* Animated particles - reduced count and simplified */}
+        {!isMobile && !prefersReducedMotion && (
+          <div className="absolute inset-0">
+            {[...Array(10)].map((_, i) => {
+              // Use deterministic values based on index
+              const seed = i * 137.5;
+              const left = ((seed * 7) % 100);
+              const top = ((seed * 13) % 100);
+              const xMove = ((seed * 17) % 100) - 50;
+              const yMove = ((seed * 23) % 100) - 50;
+              const duration = ((seed * 37) % 20) + 30;
+              
+              return (
+                <motion.div
+                  key={i}
+                  className="absolute w-1 h-1 bg-blue-400/20 rounded-full"
+                  style={{
+                    left: `${left}%`,
+                    top: `${top}%`,
+                    transform: 'translateZ(0)', // Force GPU acceleration
+                  }}
+                  animate={{
+                    x: [0, xMove, 0],
+                    y: [0, yMove, 0],
+                  }}
+                  transition={{
+                    duration: duration,
+                    repeat: Infinity,
+                    ease: "linear", // Simpler easing
+                  }}
+                />
+              );
+            })}
+          </div>
+        )}
       </motion.div>
 
       <motion.div 
         className="max-w-7xl mx-auto relative"
-        style={{ opacity: mainContentOpacity }}
+        style={!isMobile ? { opacity: mainContentOpacity } : {}}
       >
         {/* Title - Center on mobile, left on desktop */}
         <motion.div
-          initial={{ opacity: 0, x: -100, filter: "blur(10px)" }}
+          initial={{ opacity: 0, x: -100 }}
           animate={isInView ? { 
             opacity: 1, 
-            x: 0,
-            filter: "blur(0px)"
+            x: 0
           } : {}}
           transition={{ 
-            duration: 1.2, 
-            ease: [0.25, 0.1, 0.25, 1],
-            opacity: { duration: 0.8 },
-            filter: { duration: 1.0 }
+            duration: 0.8, 
+            ease: "easeOut"
           }}
           className="mb-20 text-center lg:text-left"
-          style={{ y: contentY }}
+          style={!isMobile ? { y: contentY } : {}}
         >
           <motion.h2 
             className="text-5xl sm:text-6xl lg:text-7xl font-light text-white overflow-hidden"
@@ -264,30 +261,24 @@ export default function About() {
 
           <motion.div 
             className="grid grid-cols-2 gap-8 lg:gap-12 auto-rows-fr"
-            style={{ opacity: statsOpacity }}
+            style={!isMobile ? { opacity: statsOpacity } : {}}
           >
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}
                 initial={{ 
                   opacity: 0, 
-                  scale: 0.8, 
-                  rotateX: -45,
-                  y: 50,
-                  filter: "blur(10px)"
+                  scale: 0.9, 
+                  y: 30
                 }}
                 animate={isInView ? { 
                   opacity: 1, 
                   scale: 1, 
-                  rotateX: 0,
-                  y: 0,
-                  filter: "blur(0px)"
+                  y: 0
                 } : { 
                   opacity: 0, 
-                  scale: 0.8, 
-                  rotateX: -45,
-                  y: 50,
-                  filter: "blur(10px)"
+                  scale: 0.9, 
+                  y: 30
                 }}
                 transition={{ 
                   duration: prefersReducedMotion ? 0 : 0.8, 
@@ -295,26 +286,23 @@ export default function About() {
                   ease: [0.25, 0.1, 0.25, 1]
                 }}
                 whileHover={{ 
-                  scale: isMobile ? 1 : 1.05,
-                  rotateY: isMobile ? 0 : 5,
-                  rotateX: isMobile ? 0 : 5,
-                  y: isMobile ? 0 : -10,
+                  scale: isMobile ? 1 : 1.02,
+                  y: isMobile ? 0 : -5,
                   transition: { 
-                    duration: 0.3,
+                    duration: 0.2,
                     ease: "easeOut"
                   }
                 }}
                 whileTap={{ scale: isMobile ? 0.98 : 1 }}
-                className="relative group perspective-1000 h-full touch-tap-highlight-transparent"
+                className="relative group h-full touch-tap-highlight-transparent"
                 onMouseEnter={() => !isMobile && setHoveredIndex(index)}
                 onMouseLeave={() => !isMobile && setHoveredIndex(null)}
                 onTouchStart={() => isMobile && setHoveredIndex(index)}
                 onTouchEnd={() => isMobile && setTimeout(() => setHoveredIndex(null), 300)}
-                style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}
               >
                 {/* Animated glow background */}
                 <motion.div
-                  className={`absolute -inset-4 bg-gradient-to-r ${stat.color} rounded-2xl blur-xl`}
+                  className={`absolute -inset-4 bg-gradient-to-r ${stat.color} rounded-2xl blur-lg`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: hoveredIndex === index ? 0.4 : 0 }}
                   transition={{ duration: 0.3 }}

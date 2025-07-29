@@ -92,6 +92,7 @@
     --radius-xl: 0.75rem;
     --radius-2xl: 1rem;
     --radius-3xl: 1.5rem;
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --animate-spin: spin 1s linear infinite;
     --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     --blur-sm: 8px;
@@ -651,6 +652,9 @@
   .w-32 {
     width: calc(var(--spacing) * 32);
   }
+  .w-40 {
+    width: calc(var(--spacing) * 40);
+  }
   .w-48 {
     width: calc(var(--spacing) * 48);
   }
@@ -1031,10 +1035,10 @@
   .bg-blue-400 {
     background-color: var(--color-blue-400);
   }
-  .bg-blue-400\/30 {
-    background-color: color-mix(in srgb, oklch(70.7% 0.165 254.624) 30%, transparent);
+  .bg-blue-400\/20 {
+    background-color: color-mix(in srgb, oklch(70.7% 0.165 254.624) 20%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-blue-400) 30%, transparent);
+      background-color: color-mix(in oklab, var(--color-blue-400) 20%, transparent);
     }
   }
   .bg-blue-500 {
@@ -2004,9 +2008,6 @@
   }
   .opacity-10 {
     opacity: 10%;
-  }
-  .opacity-15 {
-    opacity: 15%;
   }
   .opacity-30 {
     opacity: 30%;

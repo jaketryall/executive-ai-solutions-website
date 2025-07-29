@@ -120,7 +120,7 @@ export default function HeroMobile() {
                           <motion.div
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 0.5, duration: 0.6, type: "spring" }}
+                            transition={{ delay: 0.5, duration: 0.4, ease: "easeOut" }}
                             className="flex flex-col items-center flex-shrink-0 z-10"
                           >
                             <div className="w-16 h-16 bg-zinc-800 rounded-lg border border-zinc-700 flex items-center justify-center mb-1">
@@ -154,7 +154,7 @@ export default function HeroMobile() {
                           <motion.div
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 2.4, duration: 0.6, type: "spring" }}
+                            transition={{ delay: 2.4, duration: 0.4, ease: "easeOut" }}
                             className="flex flex-col items-center flex-shrink-0 z-10"
                           >
                             <div className="w-16 h-16 bg-zinc-800 rounded-lg border border-zinc-700 flex items-center justify-center mb-1">
@@ -189,7 +189,7 @@ export default function HeroMobile() {
                           <motion.div
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 4.2, duration: 0.6, type: "spring" }}
+                            transition={{ delay: 4.2, duration: 0.4, ease: "easeOut" }}
                             className="flex flex-col items-center flex-shrink-0 z-10"
                           >
                             <div className="w-16 h-16 bg-zinc-800 rounded-lg border border-zinc-700 flex items-center justify-center mb-1">
@@ -223,7 +223,7 @@ export default function HeroMobile() {
                           <motion.div
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 5.2, duration: 0.5, type: "spring" }}
+                            transition={{ delay: 5.2, duration: 0.4, ease: "easeOut" }}
                             className="flex flex-col items-center flex-shrink-0 z-10"
                           >
                             <div className="w-16 h-16 bg-zinc-800 rounded-lg border border-zinc-700 flex items-center justify-center mb-1">
@@ -431,30 +431,30 @@ export default function HeroMobile() {
                 {activeService === 'automation' ? (
                   <>
                     <div className="flex items-center gap-3 justify-center">
-                      <div className="w-2 h-2 bg-[#0066ff] rounded-full animate-pulse" />
+                      <div className="w-2 h-2 bg-[#0066ff] rounded-full" />
                       <span className="text-sm text-zinc-300">24/7 automated workflows</span>
                     </div>
                     <div className="flex items-center gap-3 justify-center">
-                      <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse" />
+                      <div className="w-2 h-2 bg-cyan-500 rounded-full" />
                       <span className="text-sm text-zinc-300">Intelligent data processing</span>
                     </div>
                     <div className="flex items-center gap-3 justify-center">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                      <div className="w-2 h-2 bg-blue-500 rounded-full" />
                       <span className="text-sm text-zinc-300">Scale without hiring</span>
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="flex items-center gap-3 justify-center">
-                      <div className="w-2 h-2 bg-purple-600 rounded-full animate-pulse" />
+                      <div className="w-2 h-2 bg-purple-600 rounded-full" />
                       <span className="text-sm text-zinc-300">AI-optimized for conversions</span>
                     </div>
                     <div className="flex items-center gap-3 justify-center">
-                      <div className="w-2 h-2 bg-pink-500 rounded-full animate-pulse" />
+                      <div className="w-2 h-2 bg-pink-500 rounded-full" />
                       <span className="text-sm text-zinc-300">Mobile-ready designs</span>
                     </div>
                     <div className="flex items-center gap-3 justify-center">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
+                      <div className="w-2 h-2 bg-purple-500 rounded-full" />
                       <span className="text-sm text-zinc-300">Launch in hours, not weeks</span>
                     </div>
                   </>
