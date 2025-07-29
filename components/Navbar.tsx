@@ -2,8 +2,13 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import NavbarMobile from "./NavbarMobile";
+import dynamic from "next/dynamic";
 import Image from "next/image";
+
+const NavbarMobile = dynamic(() => import("./NavbarMobile"), {
+  loading: () => null,
+  ssr: false
+});
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

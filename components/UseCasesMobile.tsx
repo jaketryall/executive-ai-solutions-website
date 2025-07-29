@@ -46,9 +46,8 @@ const useCases = [
 ];
 
 // Separate component for each card to handle individual scroll animations
-function UseCaseCard({ useCase, index }: {
+function UseCaseCard({ useCase }: {
   useCase: typeof useCases[0];
-  index: number;
 }) {
   const cardRef = useRef(null);
   const isCardInView = useInView(cardRef, { 
@@ -133,11 +132,10 @@ export default function UseCasesMobile() {
   
   return (
     <div className="space-y-6">
-      {useCases.map((useCase, index) => (
+      {useCases.map((useCase) => (
         <UseCaseCard
           key={useCase.title}
           useCase={useCase}
-          index={index}
         />
       ))}
     </div>

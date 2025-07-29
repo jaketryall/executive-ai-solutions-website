@@ -3,7 +3,12 @@
 import { motion, useInView, useScroll, useTransform, useSpring, MotionValue } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/useMobile";
-import HowItWorksMobile from "./HowItWorksMobile";
+import dynamic from "next/dynamic";
+
+const HowItWorksMobile = dynamic(() => import("./HowItWorksMobile"), {
+  loading: () => <div className="py-16 px-4 bg-black min-h-screen" />,
+  ssr: false
+});
 
 const steps = [
   {

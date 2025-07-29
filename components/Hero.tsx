@@ -4,8 +4,12 @@ import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import { useRef, useState, useEffect } from "react";
 import { useReducedMotion } from "@/hooks/useMobile";
 import { useOptimizedAnimation } from "@/hooks/usePerformance";
+import dynamic from "next/dynamic";
 
-import HeroMobile from "./HeroMobile";
+const HeroMobile = dynamic(() => import("./HeroMobile"), {
+  loading: () => <div className="relative min-h-screen bg-black" />,
+  ssr: false
+});
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);

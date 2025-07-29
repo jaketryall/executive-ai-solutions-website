@@ -3,7 +3,12 @@
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
 import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
-import ContactMobile from "./ContactMobile";
+import dynamic from "next/dynamic";
+
+const ContactMobile = dynamic(() => import("./ContactMobile"), {
+  loading: () => <div className="py-16 px-4 bg-zinc-950 min-h-screen" />,
+  ssr: false
+});
 
 export default function Contact() {
   const ref = useRef(null);

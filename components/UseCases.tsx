@@ -3,7 +3,12 @@
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
-import UseCasesMobile from "./UseCasesMobile";
+import dynamic from "next/dynamic";
+
+const UseCasesMobile = dynamic(() => import("./UseCasesMobile"), {
+  loading: () => <div className="py-16 px-4 bg-zinc-900 min-h-screen" />,
+  ssr: false
+});
 
 const useCases = [
   {

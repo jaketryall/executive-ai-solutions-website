@@ -4,7 +4,12 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { useReducedMotion } from "@/hooks/useMobile";
 import { WorkflowVisualization, PageBuilderVisualization, ConsultingVisualization } from "./ServiceVisualizations";
-import ServicesMobile from "./ServicesMobile";
+import dynamic from "next/dynamic";
+
+const ServicesMobile = dynamic(() => import("./ServicesMobile"), {
+  loading: () => <div className="py-20 px-6 bg-black min-h-screen" />,
+  ssr: false
+});
 
 const services = [
   {

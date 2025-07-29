@@ -3,29 +3,34 @@
 import { useState, useEffect } from 'react';
 
 export function useIsMobile(breakpoint: number = 768) {
-  // Start with undefined to ensure consistent SSR
-  const [isMobile, setIsMobile] = useState<boolean | undefined>(undefined);
+  // Initialize with SSR-safe value based on CSS media query
+  const [isMobile, setIsMobile] = useState<boolean>(() => {
+    if (typeof window === 'undefined') {
+      return false; // SSR default
+    }
+    return window.matchMedia(`(max-width: ${breakpoint - 1}px)`).matches;
+  });
 
   useEffect(() => {
     // Only run on client side
     if (typeof window === 'undefined') return;
     
-    const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < breakpoint);
+    const mediaQuery = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
+    
+    const handleChange = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches);
     };
 
-    // Check on mount
-    checkIsMobile();
+    // Set initial value
+    setIsMobile(mediaQuery.matches);
 
-    // Add resize listener
-    window.addEventListener('resize', checkIsMobile);
+    // Add listener
+    mediaQuery.addEventListener('change', handleChange);
     
-    return () => window.removeEventListener('resize', checkIsMobile);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, [breakpoint]);
 
-  // Return false during SSR and initial render to prevent hydration mismatch
-  // This ensures server and client render the same content initially
-  return isMobile ?? false;
+  return isMobile;
 }
 
 export function useReducedMotion() {

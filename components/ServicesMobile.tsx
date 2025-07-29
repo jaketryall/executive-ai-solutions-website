@@ -46,6 +46,14 @@ function ServiceCard({ service, index }: { service: typeof services[0], index: n
     }, 7000);
   };
 
+  // Swipe handlers
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: { offset: { x: number; y: number } }) => {
+    // Trigger animation on horizontal swipe
+    if (Math.abs(info.offset.x) > 50) {
+      handleTouch();
+    }
+  };
+
   return (
     <motion.div
       ref={cardRef}
@@ -56,6 +64,11 @@ function ServiceCard({ service, index }: { service: typeof services[0], index: n
       style={{ transform: 'translateZ(0)', willChange: 'transform' }}
       onTouchStart={handleTouch}
       onClick={handleTouch}
+      drag="x"
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.2}
+      onDragEnd={handleDragEnd}
+      whileDrag={{ scale: 0.98 }}
     >
       <motion.div 
         className="relative bg-[#0a0a0a] rounded-2xl border border-zinc-900 transition-all duration-300 shadow-2xl shadow-blue-500/10 h-full flex flex-col overflow-hidden"

@@ -67,8 +67,8 @@ export default function NavbarMobile() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isOpen]);
   
-  // Remove animation flicker on mobile
-  const isMobile = typeof window !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  // Remove animation flicker on mobile - commented out as not currently used
+  // const isMobile = typeof window !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   
   return (
     <>
