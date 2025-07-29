@@ -36,14 +36,68 @@ const defaultContent = {
   description: "No theory, no hype—just practical solutions that deliver results. Founded by an entrepreneur who understands real business challenges, I bridge the gap between cutting-edge AI and practical applications. Our AI employees enhance your workforce, automate repetitive tasks, and scale without limits."
 };
 
+// Separate component for each stat card with individual scroll animations
+function StatCard({ stat, index, onTap, isActive }: {
+  stat: typeof stats[0];
+  index: number;
+  onTap: () => void;
+  isActive: boolean;
+}) {
+  const cardRef = useRef(null);
+  const isCardInView = useInView(cardRef, { 
+    once: true,
+    margin: "-10%"
+  });
+  
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0 }}
+      animate={isCardInView ? { 
+        opacity: 1
+      } : { 
+        opacity: 0
+      }}
+      transition={{ 
+        duration: 0.2,
+        delay: index * 0.05
+      }}
+      onClick={onTap}
+      className="relative group cursor-pointer"
+      style={{ transform: 'translateZ(0)' }}
+    >
+      {/* Card - simplified with no glow effect */}
+      <div 
+        className={`relative glass-card rounded-xl p-6 h-full min-h-[120px] flex items-center justify-center backdrop-blur-sm transition-colors duration-150 ${
+          isActive 
+            ? 'bg-black/60 border-2' 
+            : 'bg-black/40 border border-white/10'
+        } ${isActive ? `border-${stat.color.split(' ')[0].split('-')[1]}-500/60` : ''}`}
+      >
+        <div className="text-center w-full">
+          <div className={`text-lg font-light bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
+            {stat.label}
+          </div>
+          {/* Tap indicator */}
+          <div className="text-xs mt-2 h-4">
+            {!isActive && (
+              <span className="text-zinc-500">Tap to explore</span>
+            )}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function AboutMobile() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, margin: "-100px" });
+  const titleRef = useRef(null);
+  const isTitleInView = useInView(titleRef, { once: true, margin: "-50px" });
   const prefersReducedMotion = useReducedMotion();
   
   return (
-    <section ref={ref} className="py-20 px-6 bg-black relative overflow-hidden">
+    <section className="py-20 px-6 bg-black relative overflow-hidden">
       {/* Top gradient fade */}
       <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-black to-transparent pointer-events-none z-10" />
       
@@ -71,19 +125,15 @@ export default function AboutMobile() {
       <div className="max-w-2xl mx-auto relative">
         {/* Title */}
         <motion.div
-          initial={{ opacity: 0, x: -50, filter: "blur(10px)" }}
-          animate={isInView ? { 
-            opacity: 1, 
-            x: 0,
-            filter: "blur(0px)"
+          ref={titleRef}
+          initial={{ opacity: 0 }}
+          animate={isTitleInView ? { 
+            opacity: 1
           } : { 
-            opacity: 0, 
-            x: -50,
-            filter: "blur(10px)"
+            opacity: 0
           }}
           transition={{ 
-            duration: 0.8, 
-            ease: [0.25, 0.1, 0.25, 1],
+            duration: 0.2
           }}
           className="mb-12 text-center"
         >
@@ -93,12 +143,7 @@ export default function AboutMobile() {
         </motion.div>
 
         {/* Main content */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-8"
-        >
+        <div className="mb-8">
           {/* Dynamic content with fixed height container */}
           <div className="relative h-[240px] flex items-center justify-center">
             <AnimatePresence mode="wait">
@@ -121,129 +166,28 @@ export default function AboutMobile() {
             </AnimatePresence>
           </div>
           
-          {/* Animated line */}
-          <motion.div
-            className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full overflow-hidden mt-6 mx-auto max-w-xs relative"
-            initial={{ scaleX: 0, opacity: 0 }}
-            animate={isInView ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
-            transition={{ 
-              duration: 0.8, 
-              delay: 0.4,
-              ease: [0.25, 0.1, 0.25, 1]
-            }}
-            style={{ transformOrigin: "left" }}
-          >
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-50"
-              animate={{
-                x: ["-100%", "100%"]
-              }}
-              transition={{
-                duration: prefersReducedMotion ? 0 : 1.5,
-                delay: prefersReducedMotion ? 0 : 0.6,
-                ease: "easeInOut"
-              }}
-            />
-          </motion.div>
-        </motion.div>
+          {/* Static line for better performance */}
+          <div className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mt-6 mx-auto max-w-xs" />
+        </div>
 
         {/* Stats grid - 2x2 for mobile */}
-        <motion.div 
-          className="grid grid-cols-2 gap-4"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
+        <div className="grid grid-cols-2 gap-4">
           {stats.map((stat, index) => (
-            <motion.div
+            <StatCard
               key={stat.label}
-              initial={{ 
-                opacity: 0, 
-                scale: 0.8, 
-                y: 30,
-                filter: "blur(10px)"
-              }}
-              animate={isInView ? { 
-                opacity: 1, 
-                scale: 1, 
-                y: 0,
-                filter: "blur(0px)"
-              } : { 
-                opacity: 0, 
-                scale: 0.8, 
-                y: 30,
-                filter: "blur(10px)"
-              }}
-              transition={{ 
-                duration: prefersReducedMotion ? 0 : 0.6, 
-                delay: prefersReducedMotion ? 0 : 0.4 + index * 0.1,
-                ease: [0.25, 0.1, 0.25, 1]
-              }}
-              onClick={() => setHoveredIndex(hoveredIndex === index ? null : index)}
-              className="relative group cursor-pointer"
-            >
-              {/* Animated glow background */}
-              <motion.div
-                className={`absolute -inset-2 bg-gradient-to-r ${stat.color} rounded-2xl blur-xl`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: hoveredIndex === index ? 0.4 : 0 }}
-                transition={{ duration: 0.3 }}
-              />
-              
-              {/* Card with floating animation */}
-              <motion.div 
-                className={`relative glass-card rounded-xl p-6 h-full min-h-[120px] flex items-center justify-center backdrop-blur-xl transition-all ${
-                  hoveredIndex === index 
-                    ? 'bg-black/80 border-2 shadow-2xl' 
-                    : 'border border-white/10'
-                } ${hoveredIndex === index ? `border-${stat.color.split(' ')[1].split('-')[1]}-500/50` : ''}`}
-                animate={{
-                  y: hoveredIndex === index ? -5 : 0,
-                  scale: hoveredIndex === index ? 1.02 : 1,
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="text-center w-full">
-                  <div className={`text-lg font-light bg-gradient-to-r ${stat.color} bg-clip-text text-transparent ${
-                    hoveredIndex === index ? 'brightness-125' : ''
-                  }`}>
-                    {stat.label}
-                  </div>
-                  {/* Tap indicator with reserved space */}
-                  <div className="text-xs mt-2 h-4">
-                    {hoveredIndex !== index && (
-                      <span className="text-zinc-500">Tap to explore</span>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
+              stat={stat}
+              index={index}
+              onTap={() => setHoveredIndex(hoveredIndex === index ? null : index)}
+              isActive={hoveredIndex === index}
+            />
           ))}
-        </motion.div>
+        </div>
 
         {/* Core Principles */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-          transition={{ 
-            duration: 0.8, 
-            delay: 0.8,
-            ease: [0.25, 0.1, 0.25, 1]
-          }}
-          className="mt-16 pt-8"
-        >
-          <motion.h3 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-            transition={{ 
-              duration: 0.6, 
-              delay: 0.9,
-              ease: "easeOut"
-            }}
-            className="text-xl font-light mb-8 text-white text-center"
-          >
+        <div className="mt-16 pt-8">
+          <h3 className="text-xl font-light mb-8 text-white text-center">
             Core Principles
-          </motion.h3>
+          </h3>
           
           {/* Carousel container with CSS animation */}
           <div className="relative overflow-hidden py-4">
@@ -281,7 +225,7 @@ export default function AboutMobile() {
             <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-black to-transparent pointer-events-none z-10 opacity-50" />
             <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-black to-transparent pointer-events-none z-10 opacity-50" />
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

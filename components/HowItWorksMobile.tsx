@@ -27,12 +27,79 @@ const steps = [
   },
 ];
 
+// Separate component for each step card with individual scroll animations
+function StepCard({ step, index }: {
+  step: typeof steps[0];
+  index: number;
+}) {
+  const cardRef = useRef(null);
+  const isCardInView = useInView(cardRef, { 
+    once: true,
+    margin: "-20%",
+    amount: 0.3
+  });
+  
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 30 }}
+      animate={isCardInView ? { 
+        opacity: 1, 
+        y: 0
+      } : { 
+        opacity: 0, 
+        y: 30
+      }}
+      transition={{ 
+        duration: 0.3, 
+        ease: "easeOut"
+      }}
+      className="relative"
+      style={{ transform: 'translateZ(0)' }}
+    >
+      {/* Step card */}
+      <div className="glass-card rounded-2xl p-6 sm:p-8 backdrop-blur-xl border border-white/10">
+        {/* Step number */}
+        <div className="flex flex-col items-center text-center mb-4">
+          <span className={`text-5xl sm:text-6xl font-light text-transparent bg-gradient-to-br ${step.color} bg-clip-text mb-4`}>
+            {step.number}
+          </span>
+          <div className="w-full">
+            <h3 className="text-xl sm:text-2xl font-light mb-3 text-white text-center">
+              {step.title}
+            </h3>
+            <p className="text-zinc-400 text-sm sm:text-base font-light leading-relaxed text-center">
+              {step.description}
+            </p>
+          </div>
+        </div>
+        
+        {/* Progress bar - static gradient on mobile */}
+        <div className="h-1 bg-zinc-800 rounded-full overflow-hidden mt-6">
+          <div
+            className={`h-full bg-gradient-to-r ${step.color}`}
+          />
+        </div>
+      </div>
+      
+      {/* Connection line (except for last item) */}
+      {index < steps.length - 1 && (
+        <div className="relative w-1 h-16 mx-auto mt-6">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-700 to-zinc-600 rounded-full" />
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
 export default function HowItWorksMobile() {
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: false, margin: "-50px" });
+  const headerRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const isHeaderInView = useInView(headerRef, { once: true, margin: "-50px" });
+  const isCtaInView = useInView(ctaRef, { once: true, margin: "-50px" });
 
   return (
-    <section ref={ref} id="how-it-works" className="py-16 sm:py-20 bg-zinc-950 relative overflow-hidden">
+    <section id="how-it-works" className="py-16 sm:py-20 bg-zinc-950 relative overflow-hidden">
       {/* Top gradient fade */}
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black to-transparent pointer-events-none z-20" />
       
@@ -43,12 +110,14 @@ export default function HowItWorksMobile() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <motion.div
+            ref={headerRef}
             className="text-center mb-12"
             initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6 }}
+            animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            style={{ transform: 'translateZ(0)' }}
           >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-light mb-4 text-white">
+            <h2 className="text-4xl sm:text-5xl font-light mb-4 text-white">
               <span className="text-gradient-shine">Process</span>
             </h2>
             <p className="text-base sm:text-lg text-zinc-600 font-light max-w-2xl mx-auto px-4">
@@ -59,95 +128,22 @@ export default function HowItWorksMobile() {
           {/* Steps */}
           <div className="space-y-6 sm:space-y-8">
             {steps.map((step, index) => (
-              <motion.div
+              <StepCard
                 key={step.number}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                className="relative"
-              >
-                {/* Step card */}
-                <div className="glass-card rounded-2xl p-6 sm:p-8 backdrop-blur-xl border border-white/10">
-                  {/* Step number */}
-                  <div className="flex flex-col items-center text-center mb-4">
-                    <span className={`text-5xl sm:text-6xl font-light text-transparent bg-gradient-to-br ${step.color} bg-clip-text mb-4`}>
-                      {step.number}
-                    </span>
-                    <div className="w-full">
-                      <h3 className="text-xl sm:text-2xl font-light mb-3 text-white text-center">
-                        {step.title}
-                      </h3>
-                      <p className="text-zinc-400 text-sm sm:text-base font-light leading-relaxed text-center">
-                        {step.description}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {/* Progress bar */}
-                  <motion.div className="h-1 bg-zinc-800 rounded-full overflow-hidden mt-6">
-                    <motion.div
-                      className={`h-full bg-gradient-to-r ${step.color}`}
-                      initial={{ scaleX: 0 }}
-                      animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
-                      transition={{ duration: 0.8, delay: 0.5 + index * 0.2 }}
-                      style={{ transformOrigin: "left" }}
-                    />
-                  </motion.div>
-                </div>
-                
-                {/* Connection line (except for last item) */}
-                {index < steps.length - 1 && (
-                  <div className="relative w-1 h-16 mx-auto mt-6">
-                    {/* Base line */}
-                    <motion.div
-                      className={`absolute inset-0 bg-gradient-to-b from-transparent via-zinc-700 to-zinc-600 rounded-full`}
-                      initial={{ scaleY: 0, opacity: 0 }}
-                      animate={isInView ? { scaleY: 1, opacity: 1 } : { scaleY: 0, opacity: 0 }}
-                      transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
-                      style={{ transformOrigin: "top" }}
-                    />
-                    
-                    {/* Animated flow effect */}
-                    <motion.div
-                      className={`absolute inset-x-0 h-4 bg-gradient-to-b ${step.color} rounded-full blur-sm`}
-                      initial={{ top: "0%", opacity: 0 }}
-                      animate={isInView ? {
-                        top: ["0%", "100%"],
-                        opacity: [0, 0.8, 0],
-                      } : { top: "0%", opacity: 0 }}
-                      transition={{
-                        duration: 1.5,
-                        delay: 1.2 + index * 0.2,
-                        repeat: Infinity,
-                        repeatDelay: 2,
-                        ease: "easeInOut"
-                      }}
-                    />
-                    
-                    {/* Glow effect */}
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-b from-zinc-500/20 to-transparent rounded-full blur-md"
-                      initial={{ opacity: 0 }}
-                      animate={isInView ? { opacity: [0, 0.5, 0] } : { opacity: 0 }}
-                      transition={{
-                        duration: 2,
-                        delay: 1 + index * 0.2,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                  </div>
-                )}
-              </motion.div>
+                step={step}
+                index={index}
+              />
             ))}
           </div>
 
           {/* CTA Button */}
           <motion.div
+            ref={ctaRef}
             className="mt-8 text-center"
             initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
+            animate={isCtaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            style={{ transform: 'translateZ(0)' }}
           >
             <a href="#contact">
               <motion.button 

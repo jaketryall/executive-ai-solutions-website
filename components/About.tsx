@@ -59,7 +59,6 @@ export default function About() {
   const bgY = useTransform(scrollYProgress, [0, 1], [0, -150]);
   const orb1Y = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const orb2Y = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const contentY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
   const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.8, 1, 1, 1]);
   
   // Enhanced content opacity
