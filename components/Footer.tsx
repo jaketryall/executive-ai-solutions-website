@@ -77,7 +77,7 @@ export default function Footer() {
               <ul className="space-y-3">
                 {[
                   { href: "#contact", label: "Contact" },
-                  { href: "mailto:hello@executiveaisolutions.com", label: "Email" },
+                  { href: "mailto:jaker@executiveaisolutions.com", label: "Email" },
                 ].map((link, index) => (
                   <motion.li
                     key={link.href}
