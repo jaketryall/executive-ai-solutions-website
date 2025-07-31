@@ -189,41 +189,39 @@ export default function AboutMobile() {
             Core Principles
           </h3>
           
-          {/* Carousel container with CSS animation */}
-          <div className="relative overflow-hidden py-4">
-            <div
-              className="flex gap-4 animate-scroll-left"
-              style={{
-                animation: prefersReducedMotion ? 'none' : 'scroll-left 30s linear infinite',
-              }}
+          {/* Draggable carousel container */}
+          <div className="relative overflow-hidden py-4 -mx-6 px-6">
+            <motion.div
+              className="flex gap-4 cursor-grab active:cursor-grabbing"
+              drag="x"
+              dragConstraints={{ left: -800, right: 0 }}
+              dragElastic={0.2}
+              dragMomentum={true}
+              dragTransition={{ bounceStiffness: 200, bounceDamping: 20 }}
+              whileTap={{ cursor: "grabbing" }}
             >
-              {/* Double the principles for seamless loop */}
-              {[...Array(2)].map((_, setIndex) => (
-                <div key={setIndex} className="flex gap-4 flex-shrink-0">
-                  {[
-                    { text: "Practical over theoretical" },
-                    { text: "Results over promises" },
-                    { text: "Simple over complex" },
-                    { text: "Action over analysis" },
-                    { text: "Speed over perfection" },
-                    { text: "Data over opinions" }
-                  ].map((principle) => (
-                    <div
-                      key={`${setIndex}-${principle.text}`}
-                      className="glass-card rounded-lg p-4 text-center flex-shrink-0 min-w-[200px]"
-                    >
-                      <p className="text-sm text-zinc-300 whitespace-nowrap">
-                        {principle.text}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+              {[
+                { text: "Practical over theoretical" },
+                { text: "Results over promises" },
+                { text: "Simple over complex" },
+                { text: "Action over analysis" },
+                { text: "Speed over perfection" },
+                { text: "Data over opinions" }
+              ].map((principle, index) => (
+                <motion.div
+                  key={principle.text}
+                  className="glass-card rounded-lg p-4 text-center flex-shrink-0 min-w-[200px]"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <p className="text-sm text-zinc-300 whitespace-nowrap">
+                    {principle.text}
+                  </p>
+                </motion.div>
               ))}
-            </div>
-            
-            {/* Gradient overlays */}
-            <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-black to-transparent pointer-events-none z-10 opacity-50" />
-            <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-black to-transparent pointer-events-none z-10 opacity-50" />
+            </motion.div>
           </div>
         </div>
       </div>

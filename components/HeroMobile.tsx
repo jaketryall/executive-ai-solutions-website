@@ -118,9 +118,9 @@ export default function HeroMobile() {
                         <div className="flex items-center justify-between w-full relative" style={{ maxWidth: '100%' }}>
                           {/* Node 1: Data */}
                           <motion.div
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 0.5, duration: 0.4, ease: "easeOut" }}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5, duration: 0.5, ease: "easeInOut" }}
                             className="flex flex-col items-center flex-shrink-0 z-10"
                           >
                             <div className="w-16 h-16 bg-zinc-800 rounded-lg border border-zinc-700 flex items-center justify-center mb-1">
@@ -152,9 +152,9 @@ export default function HeroMobile() {
                           
                           {/* Node 2: Process */}
                           <motion.div
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 2.4, duration: 0.4, ease: "easeOut" }}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 2.4, duration: 0.5, ease: "easeInOut" }}
                             className="flex flex-col items-center flex-shrink-0 z-10"
                           >
                             <div className="w-16 h-16 bg-zinc-800 rounded-lg border border-zinc-700 flex items-center justify-center mb-1">
@@ -187,9 +187,9 @@ export default function HeroMobile() {
                           
                           {/* Node 3: AI */}
                           <motion.div
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 4.2, duration: 0.4, ease: "easeOut" }}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 4.2, duration: 0.5, ease: "easeInOut" }}
                             className="flex flex-col items-center flex-shrink-0 z-10"
                           >
                             <div className="w-16 h-16 bg-zinc-800 rounded-lg border border-zinc-700 flex items-center justify-center mb-1">
@@ -221,9 +221,9 @@ export default function HeroMobile() {
                           
                           {/* Node 4: Output */}
                           <motion.div
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 5.2, duration: 0.4, ease: "easeOut" }}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 5.2, duration: 0.5, ease: "easeInOut" }}
                             className="flex flex-col items-center flex-shrink-0 z-10"
                           >
                             <div className="w-16 h-16 bg-zinc-800 rounded-lg border border-zinc-700 flex items-center justify-center mb-1">
