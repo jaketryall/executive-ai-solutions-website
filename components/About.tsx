@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
 import { useIsMobile, useReducedMotion } from "@/hooks/useMobile";
 import dynamic from "next/dynamic";
@@ -17,11 +17,7 @@ export default function About() {
   const isMobile = useIsMobile(1023);
   const prefersReducedMotion = useReducedMotion();
   
-  // Scroll-based animations - always call hook
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"]
-  });
+  // Remove scroll-based animations for better performance
 
   const stats = [
     { 
@@ -55,15 +51,6 @@ export default function About() {
     description: "No theory, no hype—just practical solutions that deliver results. Founded by an entrepreneur who understands real business challenges, I bridge the gap between cutting-edge AI and practical applications. Our AI employees enhance your workforce, automate repetitive tasks, and scale without limits."
   };
   
-  // Parallax transforms - always create but conditionally use
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, -150]);
-  const orb1Y = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const orb2Y = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.8, 1, 1, 1]);
-  
-  // Enhanced content opacity
-  const mainContentOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.8, 1, 1, 1]);
-  const statsOpacity = useTransform(scrollYProgress, [0.1, 0.25, 0.75, 0.9], [0.8, 1, 1, 1]);
 
   return (
     <>
@@ -79,14 +66,12 @@ export default function About() {
       <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-black to-transparent pointer-events-none z-10" />
       
       {/* Multi-layer animated background */}
-      <motion.div 
+      <div 
         className="absolute inset-0"
-        style={!isMobile ? { opacity } : {}}
       >
-        {/* Base gradient with parallax */}
-        <motion.div 
+        {/* Base gradient */}
+        <div 
           className="absolute inset-0 bg-gradient-to-br from-blue-950/20 via-black to-purple-950/20" 
-          style={!isMobile ? { y: bgY } : {}}
         />
         
         {/* Animated mesh gradient - disabled on mobile */}
@@ -104,10 +89,10 @@ export default function About() {
           />
         )}
         
-        {/* Floating orbs with parallax - reduced size and opacity */}
+        {/* Floating orbs - reduced size and opacity */}
         <motion.div
           className="absolute top-20 -left-20 w-48 h-48 bg-blue-500/5 rounded-full blur-xl"
-          style={!isMobile ? { y: orb1Y, transform: 'translateZ(0)' } : { transform: 'translateZ(0)' }}
+          style={{ transform: 'translateZ(0)' }}
           animate={{
             x: [0, 100, 50, 0],
             scale: [1, 1.2, 1.1, 1],
@@ -116,7 +101,7 @@ export default function About() {
         />
         <motion.div
           className="absolute bottom-20 -right-20 w-40 h-40 bg-purple-500/5 rounded-full blur-xl"
-          style={!isMobile ? { y: orb2Y, transform: 'translateZ(0)' } : { transform: 'translateZ(0)' }}
+          style={{ transform: 'translateZ(0)' }}
           animate={{
             x: [0, -50, -100, 0],
             scale: [1, 1.1, 1.2, 1],
@@ -160,11 +145,10 @@ export default function About() {
             })}
           </div>
         )}
-      </motion.div>
+      </div>
 
-      <motion.div 
+      <div 
         className="max-w-7xl mx-auto relative"
-        style={!isMobile ? { opacity: mainContentOpacity } : {}}
       >
         {/* Title - Center on mobile, left on desktop */}
         <motion.div
@@ -247,7 +231,6 @@ export default function About() {
 
           <motion.div 
             className="grid grid-cols-2 gap-8 lg:gap-12 auto-rows-fr"
-            style={!isMobile ? { opacity: statsOpacity } : {}}
           >
             {stats.map((stat, index) => (
               <motion.div
@@ -377,9 +360,9 @@ export default function About() {
             <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-black to-transparent pointer-events-none z-10 opacity-50" />
           </div>
         </motion.div>
-      </motion.div>
-    </section>
       </div>
+    </section>
+    </div>
     </>
   );
 }

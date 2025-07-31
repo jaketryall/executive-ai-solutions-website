@@ -18,14 +18,15 @@ export default function Hero() {
   const prefersReducedMotion = useReducedMotion();
   const { enableParallax } = useOptimizedAnimation();
   
-  // Parallax scroll - always call hook
+  // Simplified scroll effect - only opacity for better performance
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
   
-  // const y = useTransform(scrollYProgress, [0, 1], !enableParallax ? [0, 0] : [0, 200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  // Always call the hook, but conditionally use its value
+  const opacityTransform = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const opacity = !prefersReducedMotion && enableParallax ? opacityTransform : undefined;
   
   // Function to reset and start the interval
   const resetInterval = useCallback(() => {
@@ -77,7 +78,7 @@ export default function Hero() {
       {/* Content */}
       <motion.div 
         className="relative z-10 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
-        style={!prefersReducedMotion && enableParallax ? { opacity } : {}}
+        style={opacity ? { opacity } : {}}
       >
         {/* Main content flex container */}
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center min-h-[calc(100vh-8rem)] lg:min-h-0 justify-center py-8 sm:py-4 lg:py-0">
@@ -86,7 +87,7 @@ export default function Hero() {
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.8, type: "tween", ease: "easeOut" }}
             >
               <h1 className="text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-[5.5rem] xl:text-[6rem] font-light mb-24 sm:mb-32 text-white leading-tight text-center lg:text-left">
                 We Build
@@ -204,7 +205,7 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, x: 50, y: 0 }}
             animate={{ opacity: 1, x: 0, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.2, type: "tween", ease: "easeOut" }}
             className="relative h-[300px] sm:h-[400px] lg:h-[600px] w-full lg:w-[450px] xl:w-[500px] 2xl:w-[600px] mt-8 lg:mt-0 flex-shrink-0"
           >
             {/* Service card display */}
@@ -213,11 +214,12 @@ export default function Hero() {
                 {activeService === 'automation' ? (
                   <motion.div
                     key="automation"
-                    initial={{ opacity: 0, rotateY: 20, x: 100 }}
-                    animate={{ opacity: 1, rotateY: 0, x: 0 }}
-                    exit={{ opacity: 0, rotateY: -20, x: -100 }}
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
+                    initial={{ opacity: 0, x: 100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -100 }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.4, type: "tween", ease: "easeInOut" }}
                     className="absolute inset-0"
+                    style={{ transform: 'translateZ(0)' }}
                   >
                     <div className="glass-card rounded-2xl p-4 sm:p-6 lg:p-8 h-full border border-[#0066ff]/20 bg-gradient-to-br from-[#0066ff]/10 to-transparent">
                       <div className="text-xs sm:text-sm text-[#0066ff] mb-2 sm:mb-4 font-light">AI AUTOMATION</div>
@@ -413,11 +415,12 @@ export default function Hero() {
                 ) : (
                   <motion.div
                     key="landing"
-                    initial={{ opacity: 0, rotateY: -20, x: -100 }}
-                    animate={{ opacity: 1, rotateY: 0, x: 0 }}
-                    exit={{ opacity: 0, rotateY: 20, x: 100 }}
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
+                    initial={{ opacity: 0, x: -100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 100 }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.4, type: "tween", ease: "easeInOut" }}
                     className="absolute inset-0"
+                    style={{ transform: 'translateZ(0)' }}
                   >
                     <div className="glass-card rounded-2xl p-8 h-full border border-purple-600/20 bg-gradient-to-br from-purple-600/10 to-transparent">
                       <div className="text-sm text-purple-600 mb-4 font-light">LANDING PAGES</div>

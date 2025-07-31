@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef, useState, memo, useCallback } from "react";
 import { useReducedMotion } from "@/hooks/useMobile";
 import { WorkflowVisualization, PageBuilderVisualization, ConsultingVisualization } from "./ServiceVisualizations";
@@ -49,37 +49,32 @@ const ServiceCard = memo(function ServiceCard({ service, index, isMobile, prefer
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: prefersReducedMotion ? 0 : 0.5, delay: prefersReducedMotion ? 0 : index * 0.1 }}
+      viewport={{ once: true, margin: "50px" }}
+      transition={{ duration: prefersReducedMotion ? 0 : 0.3, delay: prefersReducedMotion ? 0 : index * 0.05, type: "tween", ease: "easeOut" }}
       className="group relative cursor-pointer h-full touch-tap-highlight-transparent"
-      style={{ transform: 'translateZ(0)', willChange: 'transform' }}
-      whileHover={{ 
-        scale: 1.02, 
-        zIndex: 10,
-        transition: { duration: 0.15, ease: "easeOut" }
-      }}
+      style={{ transform: 'translateZ(0)' }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <motion.div 
-        className="relative bg-[#0a0a0a] rounded-xl sm:rounded-2xl border border-zinc-900 overflow-hidden h-full flex flex-col"
-        animate={{ 
-          borderColor: isHovered ? "#3f3f46" : "#18181b",
-          boxShadow: isHovered ? "0 25px 50px -12px rgba(59, 130, 246, 0.25)" : "0 0 0 0 rgba(59, 130, 246, 0)"
-        }}
-        transition={{ duration: 0.2 }}>
+      <div 
+        className={`relative bg-[#0a0a0a] rounded-xl sm:rounded-2xl border overflow-hidden h-full flex flex-col transition-all duration-200 ${
+          isHovered 
+            ? 'border-zinc-700 shadow-lg shadow-blue-500/25 scale-[1.02]' 
+            : 'border-zinc-900 shadow-none scale-100'
+        }`}
+        style={{ transform: 'translateZ(0)' }}>
         {/* Abstract graphic area */}
         <div 
           className="h-40 sm:h-48 lg:h-56 relative overflow-hidden bg-zinc-950"
           style={{ background: service.bgPattern }}
         >
           {/* Gradient overlay */}
-          <motion.div 
-            className={`absolute inset-0 bg-gradient-to-br ${service.gradient}`}
-            animate={{ opacity: isHovered ? 0.2 : 0.1 }}
-            transition={{ duration: 0.2 }}
+          <div 
+            className={`absolute inset-0 bg-gradient-to-br ${service.gradient} transition-opacity duration-200 ${
+              isHovered ? 'opacity-20' : 'opacity-10'
+            }`}
           />
           
           {/* Service Visualization */}
@@ -101,7 +96,7 @@ const ServiceCard = memo(function ServiceCard({ service, index, isMobile, prefer
             {service.description}
           </p>
         </div>
-      </motion.div>
+      </div>
     </motion.div>
   );
 });
@@ -113,14 +108,8 @@ export default function Services() {
   const isMobile = false; // Always false for desktop component
   const prefersReducedMotion = useReducedMotion();
   
-  // Simplified scroll effect - always call hook
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"]
-  });
-  
-  // Single opacity transform for performance
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  // Remove scroll-based opacity for better performance
+  // We'll use CSS-based fade-in instead
 
   return (
     <>
@@ -144,9 +133,8 @@ export default function Services() {
       </div>
       
       
-      <motion.div 
+      <div 
         className="max-w-7xl mx-auto relative z-10"
-        style={!prefersReducedMotion ? { opacity: sectionOpacity } : {}}
       >
         <motion.div
           ref={textRef}
@@ -170,7 +158,7 @@ export default function Services() {
             <ServiceCard key={service.title} service={service} index={index} isMobile={isMobile} prefersReducedMotion={prefersReducedMotion} />
           ))}
         </div>
-      </motion.div>
+      </div>
     </section>
     </>
   );

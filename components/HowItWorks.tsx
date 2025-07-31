@@ -42,14 +42,9 @@ function StepCard({ step, index, progress }: { step: typeof steps[0], index: num
   const stepProgress = useTransform(progress, [stepStart, stepEnd], [0, 1]);
   const smoothProgress = useSpring(stepProgress, { stiffness: 100, damping: 30 });
   
-  // Animations based on scroll
-  const scale = useTransform(smoothProgress, [0, 0.5, 1], [0.8, 1, 0.95]);
+  // Simplified animations - only opacity and scale
   const opacity = useTransform(smoothProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0.3]);
-  const rotateY = useTransform(smoothProgress, [0, 0.5, 1], [-90, 0, 0]);
-  const z = useTransform(smoothProgress, [0, 0.5, 1], [-200, 0, -50]);
-  
-  // Glow intensity based on progress
-  const glowOpacity = useTransform(smoothProgress, [0, 0.5, 1], [0, 0.5, 0.1]);
+  const scale = useTransform(smoothProgress, [0, 0.5, 1], [0.95, 1, 0.95]);
   
   // Number counter animation
   const [displayNumber, setDisplayNumber] = useState("00");
@@ -71,16 +66,12 @@ function StepCard({ step, index, progress }: { step: typeof steps[0], index: num
       style={{
         scale,
         opacity,
-        rotateY,
-        z,
-        transformPerspective: 1000,
-        transformStyle: "preserve-3d",
+        transform: 'translateZ(0)',
       }}
     >
-      {/* Glow effect */}
-      <motion.div
-        className={`absolute inset-0 bg-gradient-to-r ${step.bgColor} rounded-3xl blur-3xl`}
-        style={{ opacity: glowOpacity }}
+      {/* Static glow effect */}
+      <div
+        className={`absolute inset-0 bg-gradient-to-r ${step.bgColor} rounded-3xl blur-2xl opacity-20`}
       />
       
       <div className="relative glass-card rounded-3xl p-10 backdrop-blur-xl border border-white/10 h-full flex flex-col">
@@ -91,26 +82,18 @@ function StepCard({ step, index, progress }: { step: typeof steps[0], index: num
           </span>
         </motion.div>
         
-        {/* Content with staggered reveal */}
-        <motion.h3 
+        {/* Content - no additional animations */}
+        <h3 
           className="text-3xl font-light mb-6 text-white"
-          style={{
-            opacity: useTransform(smoothProgress, [0.3, 0.5], [0, 1]),
-            y: useTransform(smoothProgress, [0.3, 0.5], [20, 0]),
-          }}
         >
           {step.title}
-        </motion.h3>
+        </h3>
         
-        <motion.p 
+        <p 
           className="text-zinc-400 text-lg font-light leading-relaxed flex-1"
-          style={{
-            opacity: useTransform(smoothProgress, [0.4, 0.6], [0, 1]),
-            y: useTransform(smoothProgress, [0.4, 0.6], [20, 0]),
-          }}
         >
           {step.description}
-        </motion.p>
+        </p>
         
         {/* Progress indicator */}
         <motion.div className="mt-8 h-1 bg-zinc-800 rounded-full overflow-hidden">
@@ -336,9 +319,9 @@ export default function HowItWorks() {
               </div>
             </div>
 
-            {/* CTA Button - Centered between cards and progress bar */}
+            {/* CTA Button - Centered between cards and progress bar - Only show on xl breakpoint and above */}
             <motion.div
-              className="mt-8 mb-8 text-center"
+              className="hidden xl:block mt-8 mb-8 text-center"
               style={{
                 opacity: ctaOpacity,
                 y: ctaY,

@@ -30,7 +30,7 @@ export const WorkflowVisualization = memo(function WorkflowVisualization({ isAct
 
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ transform: 'translateZ(0)' }}>
-      <svg viewBox="0 0 400 140" className="w-full h-full opacity-50" style={{ willChange: 'transform' }}>
+      <svg viewBox="0 0 400 140" className="w-full h-full opacity-50">
         {/* Static placeholder lines - hide when active */}
         {!isActive && (
           <>
@@ -63,7 +63,7 @@ export const WorkflowVisualization = memo(function WorkflowVisualization({ isAct
           fill="none"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: isActive && animationStep >= 1 ? 1 : 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
+          transition={{ duration: 0.6, delay: 0.6, type: "tween", ease: "easeOut" }}
         />
         <motion.path
           d="M 190 70 L 210 70"
@@ -72,7 +72,7 @@ export const WorkflowVisualization = memo(function WorkflowVisualization({ isAct
           fill="none"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: isActive && animationStep >= 2 ? 1 : 0 }}
-          transition={{ duration: 0.6, delay: 2.6 }}
+          transition={{ duration: 0.6, delay: 2.6, type: "tween", ease: "easeOut" }}
         />
         <motion.path
           d="M 290 70 L 310 70"
@@ -81,7 +81,7 @@ export const WorkflowVisualization = memo(function WorkflowVisualization({ isAct
           fill="none"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: isActive && animationStep >= 3 ? 1 : 0 }}
-          transition={{ duration: 0.6, delay: 4.6 }}
+          transition={{ duration: 0.6, delay: 4.6, type: "tween", ease: "easeOut" }}
         />
         
         {/* Animated data flow - animate after lines */}
