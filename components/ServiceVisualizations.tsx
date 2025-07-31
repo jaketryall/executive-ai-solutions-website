@@ -1,10 +1,10 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import React from "react";
+import React, { memo } from "react";
 
 // AI Workflow Automation Visualization
-export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
+export const WorkflowVisualization = memo(function WorkflowVisualization({ isActive }: { isActive: boolean }) {
   const [currentStep, setCurrentStep] = React.useState(0);
   
   React.useEffect(() => {
@@ -301,10 +301,10 @@ export function WorkflowVisualization({ isActive }: { isActive: boolean }) {
       </svg>
     </div>
   );
-}
+});
 
 // Landing Page Creation Visualization
-export function PageBuilderVisualization({ isActive }: { isActive: boolean }) {
+export const PageBuilderVisualization = memo(function PageBuilderVisualization({ isActive }: { isActive: boolean }) {
   // Static animation state for better performance
   const animationStep = isActive ? 3 : -1;
 
@@ -395,10 +395,10 @@ export function PageBuilderVisualization({ isActive }: { isActive: boolean }) {
       </div>
     </div>
   );
-}
+});
 
 // AI Consulting Visualization
-export function ConsultingVisualization({ isActive }: { isActive: boolean }) {
+export const ConsultingVisualization = memo(function ConsultingVisualization({ isActive }: { isActive: boolean }) {
   const metrics = [
     { label: "Productivity", current: 45, potential: 85, prefix: "+", suffix: "%" },
     { label: "Efficiency", current: 35, potential: 90, prefix: "+", suffix: "%" },
@@ -493,4 +493,4 @@ export function ConsultingVisualization({ isActive }: { isActive: boolean }) {
       </div>
     </div>
   );
-}
+});

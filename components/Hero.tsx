@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { useReducedMotion } from "@/hooks/useMobile";
 import { useOptimizedAnimation } from "@/hooks/usePerformance";
 import dynamic from "next/dynamic";
@@ -28,14 +28,25 @@ export default function Hero() {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   
   // Function to reset and start the interval
-  const resetInterval = () => {
+  const resetInterval = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
     intervalRef.current = setInterval(() => {
       setActiveService(prev => prev === 'automation' ? 'landing' : 'automation');
     }, 8000); // 8 seconds to allow full animation to complete
-  };
+  }, []);
+  
+  // Create callbacks for button clicks
+  const handleAutomationClick = useCallback(() => {
+    setActiveService('automation');
+    resetInterval();
+  }, [resetInterval]);
+  
+  const handleLandingClick = useCallback(() => {
+    setActiveService('landing');
+    resetInterval();
+  }, [resetInterval]);
   
   // Set up auto-cycle on mount
   useEffect(() => {
@@ -45,7 +56,7 @@ export default function Hero() {
         clearInterval(intervalRef.current);
       }
     };
-  }, []); // Empty dependency array - only run on mount/unmount
+  }, [resetInterval]); // Include resetInterval in dependency array
 
   return (
     <>
@@ -117,10 +128,7 @@ export default function Hero() {
               {/* Service toggles */}
               <div className="flex gap-2 xs:gap-3 sm:gap-4 mb-6 sm:mb-8 flex-wrap justify-center lg:justify-start">
                 <button
-                  onClick={() => {
-                    setActiveService('automation');
-                    resetInterval();
-                  }}
+                  onClick={handleAutomationClick}
                   className={`px-3 xs:px-4 sm:px-6 py-2 xs:py-2.5 sm:py-3 rounded-full font-light transition-all text-xs xs:text-sm sm:text-base touch-target ${
                     activeService === 'automation'
                       ? 'bg-gradient-to-r from-[#0066ff] to-cyan-500 text-white'
@@ -132,10 +140,7 @@ export default function Hero() {
                   AI Automation
                 </button>
                 <button
-                  onClick={() => {
-                    setActiveService('landing');
-                    resetInterval();
-                  }}
+                  onClick={handleLandingClick}
                   className={`px-3 xs:px-4 sm:px-6 py-2 xs:py-2.5 sm:py-3 rounded-full font-light transition-all text-xs xs:text-sm sm:text-base touch-target ${
                     activeService === 'landing'
                       ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white'

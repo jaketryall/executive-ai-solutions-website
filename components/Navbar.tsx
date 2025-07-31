@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 
@@ -19,6 +19,22 @@ export default function Navbar() {
     { label: "About", href: "#about" },
     { label: "Contact", href: "#contact" },
   ];
+  
+  const handleNavClick = useCallback((e: React.MouseEvent, href: string) => {
+    e.preventDefault();
+    const section = document.querySelector(href);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
+  
+  const handleContactClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    const contactSection = document.querySelector('#contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
 
   return (
     <>
@@ -59,13 +75,7 @@ export default function Navbar() {
                 <a
                   key={item.label}
                   href={item.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const section = document.querySelector(item.href);
-                    if (section) {
-                      section.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
+                  onClick={(e) => handleNavClick(e, item.href)}
                   className="text-zinc-400 hover:text-white hover:text-glow-blue transition-all duration-300 text-sm font-light touch-target focus-visible"
                   aria-label={`Navigate to ${item.label}`}
                 >
@@ -74,13 +84,7 @@ export default function Navbar() {
               ))}
               <a
                 href="#contact"
-                onClick={(e) => {
-                  e.preventDefault();
-                  const contactSection = document.querySelector('#contact');
-                  if (contactSection) {
-                    contactSection.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
+                onClick={handleContactClick}
                 className="inline-block bg-gradient-to-r from-[#0066ff] to-blue-600 text-white px-6 py-2.5 rounded-full font-light hover:shadow-lg hover:shadow-[#0066ff]/25 transition-all duration-300 text-sm cursor-pointer touch-target focus-visible"
                 aria-label="Get started with AI solutions"
               >

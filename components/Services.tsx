@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, memo, useCallback } from "react";
 import { useReducedMotion } from "@/hooks/useMobile";
 import { WorkflowVisualization, PageBuilderVisualization, ConsultingVisualization } from "./ServiceVisualizations";
 import dynamic from "next/dynamic";
@@ -36,9 +36,14 @@ const services = [
   },
 ];
 
-function ServiceCard({ service, index, isMobile, prefersReducedMotion }: { service: typeof services[0], index: number, isMobile: boolean, prefersReducedMotion: boolean }) {
+const ServiceCard = memo(function ServiceCard({ service, index, isMobile, prefersReducedMotion }: { service: typeof services[0], index: number, isMobile: boolean, prefersReducedMotion: boolean }) {
   const [isHovered, setIsHovered] = useState(false);
   const Visualization = service.visualization;
+  
+  const handleMouseEnter = useCallback(() => !isMobile && setIsHovered(true), [isMobile]);
+  const handleMouseLeave = useCallback(() => !isMobile && setIsHovered(false), [isMobile]);
+  const handleTouchStart = useCallback(() => isMobile && setIsHovered(true), [isMobile]);
+  const handleTouchEnd = useCallback(() => isMobile && setTimeout(() => setIsHovered(false), 300), [isMobile]);
 
   return (
     <motion.div
@@ -53,10 +58,10 @@ function ServiceCard({ service, index, isMobile, prefersReducedMotion }: { servi
         zIndex: 10,
         transition: { duration: 0.15, ease: "easeOut" }
       }}
-      onMouseEnter={() => !isMobile && setIsHovered(true)}
-      onMouseLeave={() => !isMobile && setIsHovered(false)}
-      onTouchStart={() => isMobile && setIsHovered(true)}
-      onTouchEnd={() => isMobile && setTimeout(() => setIsHovered(false), 300)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <motion.div 
         className="relative bg-[#0a0a0a] rounded-xl sm:rounded-2xl border border-zinc-900 overflow-hidden h-full flex flex-col"
@@ -99,7 +104,7 @@ function ServiceCard({ service, index, isMobile, prefersReducedMotion }: { servi
       </motion.div>
     </motion.div>
   );
-}
+});
 
 export default function Services() {
   const ref = useRef<HTMLElement>(null);
