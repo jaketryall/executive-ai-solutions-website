@@ -489,21 +489,25 @@ html, body {
     }
   }
   
-  /* Mobile-specific animations */
-  @keyframes float-mobile {
-    0%, 100% {
-      transform: translateY(0) translateX(0);
-    }
-    33% {
-      transform: translateY(-10px) translateX(5px);
-    }
-    66% {
-      transform: translateY(5px) translateX(-5px);
-    }
-  }
+  /* Mobile-specific animations - removed float-mobile to prevent icon bouncing */
   
-  .animate-float-mobile {
-    animation: float-mobile 20s ease-in-out infinite;
+  /* Prevent workflow icons from floating on mobile */
+  @media (max-width: 768px) {
+    [class*="WorkflowVisualization"] *,
+    [class*="workflow-animation"] *,
+    svg g, svg rect, svg circle, svg path, svg text {
+      animation: none !important;
+      transform: none !important;
+    }
+    
+    /* Allow only specific Framer Motion transforms */
+    [data-framer-component] svg g,
+    [data-framer-component] svg rect,
+    [data-framer-component] svg circle,
+    [data-framer-component] svg path {
+      animation: unset !important;
+      transform: unset !important;
+    }
   }
   
   /* Hide scrollbar for horizontal scroll */
