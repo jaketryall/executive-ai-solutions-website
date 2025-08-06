@@ -10,29 +10,30 @@ export default function EteryPricing() {
     {
       name: "Jesse Leigh",
       role: "CEO & Founder",
-      quote: "The best investment solution for our business! AI technologies not only save time, but also increase efficiency.",
-      date: "time, but also increase efficiency."
+      quote: "They built us an amazing website that increased our conversions by 150%. The design is beautiful and it loads incredibly fast.",
+      date: "increased our conversions by 150%"
     },
     {
       name: "Michael Joseph",
-      role: "Head of Content",
-      quote: "Thanks to their team, our internal processes were optimized, resulting in significant better results for my work.",
-      date: "significant better results for my"
+      role: "E-commerce Owner",
+      quote: "Our new Shopify store looks professional and works flawlessly. Sales have doubled since launch. Highly recommend!",
+      date: "Sales have doubled since launch"
     },
     {
       name: "Amy Louise",
-      role: "Customer Success Manager",
-      quote: "Thanks to their team, our internal processes were optimized, resulting in significant savings and better results.",
-      date: "significant savings and better resul..."
+      role: "Marketing Director",
+      quote: "They handled everything from design to deployment. Our Squarespace site is exactly what we wanted and more.",
+      date: "exactly what we wanted and more"
     }
   ];
 
   const features = [
-    "Full AI Strategy & Roadmap",
-    "Real-Time Performance Tuning",
-    "Custom Dashboards & KPIs",
-    "Unlimited AI Use Cases",
-    "24/7 Priority Support"
+    "Custom Website Design & Development",
+    "Mobile Responsive Design",
+    "SEO Optimization & Setup",
+    "CMS Integration (WordPress, Sanity, etc.)",
+    "3 Months Free Maintenance",
+    "Optional: AI Chatbot Integration"
   ];
 
   return (
@@ -47,11 +48,11 @@ export default function EteryPricing() {
           className="text-center mb-16"
         >
           <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6">
-            Simple Membership
+            Website Packages
           </h2>
           <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-            One plan. Full access. Get expert AI support without
-            the complexity — just simple, scalable membership.
+            Transparent pricing for every project size. From simple landing pages
+            to complex web applications — we have a package that fits.
           </p>
         </motion.div>
 
@@ -66,7 +67,7 @@ export default function EteryPricing() {
             <div className="bg-[#0d0d0d] border border-zinc-800 rounded-2xl p-8 lg:p-10">
               {/* Plan Header */}
               <div className="mb-8">
-                <h3 className="text-2xl font-bold text-white mb-2">Pro Plan</h3>
+                <h3 className="text-2xl font-bold text-white mb-2">Website Development</h3>
                 
                 {/* Billing Toggle */}
                 <div className="flex items-center gap-4 mb-6">
@@ -86,8 +87,8 @@ export default function EteryPricing() {
 
                 {/* Price */}
                 <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-5xl font-bold text-white">$999</span>
-                  <span className="text-zinc-400">per month</span>
+                  <span className="text-5xl font-bold text-white">$2,999</span>
+                  <span className="text-zinc-400">starting price</span>
                 </div>
                 
                 {/* CTA Button */}

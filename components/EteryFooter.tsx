@@ -39,10 +39,10 @@ export default function EteryFooter() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
           {/* Left Column - Logo and Description */}
           <div className="lg:col-span-1">
-            <h3 className="text-2xl font-bold text-white mb-4">Executive AI</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">Executive AI Solutions</h3>
             <p className="text-zinc-400 mb-6 leading-relaxed">
-              Executive AI is a premium AI solutions provider designed specifically for
-              businesses ready to transform through Artificial Intelligence.
+              Executive AI Solutions specializes in custom website development that converts visitors into customers.
+              Modern web technologies, unique designs, and intelligent AI automation.
             </p>
             
             {/* Social Links */}

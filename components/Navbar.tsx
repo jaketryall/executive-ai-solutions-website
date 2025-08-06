@@ -56,10 +56,10 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="#" className="flex items-center gap-3 group" aria-label="Executive Web Solutions Home">
+            <a href="#" className="flex items-center gap-3 group" aria-label="Executive AI Solutions Home">
               <Image 
                 src="/logo.png" 
-                alt="Executive Web Solutions Logo" 
+                alt="Executive AI Solutions Logo" 
                 width={822}
                 height={218}
                 priority

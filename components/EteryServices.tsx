@@ -19,6 +19,7 @@ interface Service {
 export default function EteryServices() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedDates, setSelectedDates] = useState<number[]>([]);
 
   useEffect(() => {
     async function fetchServices() {
@@ -31,35 +32,35 @@ export default function EteryServices() {
         setServices([
           {
             _id: '1',
-            title: "Chatbot Development",
-            description: "We build custom AI chat solutions for instant support, streamlined processes, and a seamless audience experience.",
-            slug: { current: 'chatbot-development' },
-            tags: ["Proactive chat", "Customization", "Sales tracking", "Post purchase support"],
+            title: "Custom Website Development",
+            description: "We build stunning custom websites from scratch using modern frameworks like React, Next.js, and TypeScript for blazing-fast performance.",
+            slug: { current: 'custom-development' },
+            tags: ["React/Next.js", "Custom Design", "Mobile Responsive", "SEO Optimized"],
             isLarge: true,
             order: 1
           },
           {
             _id: '2',
-            title: "Voice Assistants",
-            description: "We build smart voice solutions for effortless control, better access, and engaging user experiences.",
-            slug: { current: 'voice-assistants' },
+            title: "CMS & Platform Solutions",
+            description: "Content management systems and platform solutions including WordPress, Webflow, and headless CMS for easy content updates.",
+            slug: { current: 'cms-solutions' },
             isLarge: false,
             order: 2
           },
           {
             _id: '3',
-            title: "AI Consulting",
-            description: "We help you strategize, automate, and implement AI solutions for maximum efficiency and growth.",
-            slug: { current: 'ai-consulting' },
-            tags: ["Revenue analytics"],
+            title: "E-commerce Solutions",
+            description: "Complete online stores with payment processing, inventory management, and AI-powered product recommendations.",
+            slug: { current: 'ecommerce-solutions' },
+            tags: ["Shopify/WooCommerce"],
             isLarge: false,
             order: 3
           },
           {
             _id: '4',
-            title: "Tools Integrations",
-            description: "We help companies integrate AI tools into their existing software platforms, CRM systems, or marketing channels.",
-            slug: { current: 'tools-integrations' },
+            title: "Maintenance & AI Automation",
+            description: "Keep your site running smoothly with ongoing support, updates, and optional AI features like chatbots and content generation.",
+            slug: { current: 'maintenance-automation' },
             isLarge: true,
             order: 4
           }
@@ -105,11 +106,11 @@ export default function EteryServices() {
           className="text-center mb-16"
         >
           <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6">
-            Full-Service Agency
+Full-Service Custom Web Development
           </h2>
           <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-            Whether you&apos;re automating processes or building advanced analytics,
-            we bring your vision to life with tailored artificial intelligence strategies.
+            Specializing in custom-built websites with modern technologies,
+            we create unique digital experiences that look amazing and drive real business results.
           </p>
         </motion.div>
 
@@ -121,13 +122,23 @@ export default function EteryServices() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              animate={{ 
+                boxShadow: [
+                  "0 10px 15px -3px rgba(0, 0, 0, 0.3)",
+                  "0 10px 25px -3px rgba(0, 102, 255, 0.15)",
+                  "0 10px 15px -3px rgba(0, 0, 0, 0.3)"
+                ]
+              }}
+              transition={{ 
+                boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                opacity: { duration: 0.6 }
+              }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="lg:col-span-2 bg-[#0d0d0d] border border-zinc-800 border-t-zinc-700 rounded-2xl p-8 shadow-lg shadow-black/30"
+              className="lg:col-span-2 bg-[#0d0d0d] border border-zinc-800 border-t-zinc-700 rounded-2xl p-8 cursor-pointer"
             >
               <div className="mb-6">
-                <h3 className="text-2xl font-bold text-white mb-3">{firstRowServices[0]?.title}</h3>
-                <p className="text-zinc-400">{firstRowServices[0]?.description}</p>
+                <h3 className="text-2xl font-bold text-white mb-3">Custom Website Development</h3>
+                <p className="text-zinc-400">We build stunning custom websites from scratch using modern frameworks like React, Next.js, and TypeScript for blazing-fast performance.</p>
               </div>
 
               {firstRowServices[0]?.tags && (
@@ -143,28 +154,37 @@ export default function EteryServices() {
                 </div>
               )}
 
-              <div className="bg-zinc-900 rounded-xl p-4 mb-4">
+              <motion.div 
+                className="bg-zinc-900 rounded-xl p-4 mb-4"
+                animate={{ 
+                  borderColor: ["rgb(39 39 42)", "rgb(0 102 255 / 0.3)", "rgb(39 39 42)"]
+                }}
+                transition={{ duration: 4, repeat: Infinity }}
+                style={{ borderWidth: "1px", borderStyle: "solid" }}
+              >
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full" />
-                  <span className="text-zinc-300 text-sm">Live chat</span>
+                  <motion.div 
+                    className="w-2 h-2 bg-green-400 rounded-full"
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                  <span className="text-zinc-300 text-sm">Live Preview</span>
                 </div>
                 <div className="text-zinc-500 text-sm">
-                  GPT 4.0 • Customization • 98% accuracy
+                  Next.js 14 • TypeScript • 95+ PageSpeed
                 </div>
-              </div>
+              </motion.div>
               
               <div className="bg-zinc-900 rounded-xl p-4">
-                <p className="text-zinc-300 text-sm mb-2">How do I reset my password?</p>
+                <p className="text-zinc-300 text-sm mb-2">Website Features:</p>
                 <p className="text-zinc-400 text-sm whitespace-pre-line">
-                  I can help you with that! To reset your password, please follow these steps:
-
-1. Go to the login page
-2. Click on 'Forgot Password'
-3. Enter your email address
-4. Check your email for a reset link
-5. Follow the instructions in the email
-
-Is there anything else I can help you with?
+                  {`✓ Lightning-fast load times (under 2s)
+✓ Mobile-first responsive design
+✓ SEO optimized structure
+✓ Custom animations & interactions
+✓ CMS integration
+✓ Analytics dashboard
+✓ Optional AI chatbot integration`}
                 </p>
               </div>
             </motion.div>
@@ -173,25 +193,57 @@ Is there anything else I can help you with?
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              animate={{
+                rotate: [0, 0.5, 0, -0.5, 0]
+              }}
+              transition={{ 
+                rotate: { duration: 8, repeat: Infinity, ease: "easeInOut" },
+                opacity: { duration: 0.6, delay: 0.1 }
+              }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="bg-[#0d0d0d] border border-zinc-800 border-t-zinc-700 rounded-2xl p-8 shadow-lg shadow-black/30"
+              className="bg-[#0d0d0d] border border-zinc-800 border-t-zinc-700 rounded-2xl p-8 shadow-lg shadow-black/30 cursor-pointer"
             >
               <div className="mb-6">
-                <h3 className="text-2xl font-bold text-white mb-3">{firstRowServices[1]?.title}</h3>
-                <p className="text-zinc-400">{firstRowServices[1]?.description}</p>
+                <h3 className="text-2xl font-bold text-white mb-3">CMS & Platform Solutions</h3>
+                <p className="text-zinc-400">Content management systems and platform solutions including WordPress, Webflow, and headless CMS for easy content updates.</p>
               </div>
 
-              <div className="space-y-2">
-                {[...Array(4)].map((_, idx) => (
-                  <div key={idx} className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-zinc-700 rounded-full" />
-                      <span className="text-zinc-300 text-sm">Potential Buyer</span>
+              <div className="relative h-[200px] overflow-hidden">
+                {/* Gradient fade at top and bottom */}
+                <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-[#0d0d0d] to-transparent z-10 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[#0d0d0d] to-transparent z-10 pointer-events-none" />
+                
+                <motion.div 
+                  className="space-y-2"
+                  animate={{
+                    y: ["0%", "-50%"]
+                  }}
+                  transition={{
+                    y: {
+                      duration: 10,
+                      repeat: Infinity,
+                      ease: "linear"
+                    }
+                  }}
+                >
+                  {/* Double the items for seamless loop */}
+                  {['WordPress', 'Webflow', 'Sanity CMS', 'Strapi', 'WordPress', 'Webflow', 'Sanity CMS', 'Strapi'].map((platform, idx) => (
+                    <div 
+                      key={idx} 
+                      className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-3">
+                        <motion.div 
+                          className="w-8 h-8 bg-zinc-700 rounded-full"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                        />
+                        <span className="text-zinc-300 text-sm">{platform}</span>
+                      </div>
+                      <span className="text-zinc-500 text-xs">Expert Level</span>
                     </div>
-                    <span className="text-zinc-500 text-xs">Processing call</span>
-                  </div>
-                ))}
+                  ))}
+                </motion.div>
               </div>
             </motion.div>
           </div>
@@ -204,11 +256,13 @@ Is there anything else I can help you with?
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-[#0d0d0d] border border-zinc-800 border-t-zinc-700 rounded-2xl p-8 shadow-lg shadow-black/30"
+              className="bg-[#0d0d0d] border border-zinc-800 border-t-zinc-700 rounded-2xl p-8 shadow-lg shadow-black/30 cursor-pointer"
+              onClick={() => console.log('E-commerce clicked')}
+              whileTap={{ scale: 0.98 }}
             >
               <div className="mb-6">
-                <h3 className="text-2xl font-bold text-white mb-3">{secondRowServices[0]?.title}</h3>
-                <p className="text-zinc-400">{secondRowServices[0]?.description}</p>
+                <h3 className="text-2xl font-bold text-white mb-3">E-commerce Solutions</h3>
+                <p className="text-zinc-400">Complete online stores with payment processing, inventory management, and AI-powered product recommendations.</p>
               </div>
 
               {secondRowServices[0]?.tags && (
@@ -224,7 +278,11 @@ Is there anything else I can help you with?
                 </div>
               )}
 
-              <div className="bg-zinc-900 rounded-xl p-6">
+              <motion.div 
+                className="bg-zinc-900 rounded-xl p-6 cursor-pointer"
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+              >
                 <div className="grid grid-cols-7 gap-1 text-center mb-2">
                   {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"].map((month) => (
                     <span key={month} className="text-zinc-500 text-xs">{month}</span>
@@ -234,44 +292,80 @@ Is there anything else I can help you with?
                   {[...Array(35)].map((_, i) => {
                     // Create a deterministic pattern based on index
                     const isActive = (i % 3 === 0) || (i % 5 === 0) || (i % 7 === 1);
+                    const isSelected = selectedDates.includes(i);
                     return (
-                      <div
+                      <motion.div
                         key={i}
-                        className={`aspect-square rounded ${
-                          isActive ? 'bg-[#0066ff]' : 'bg-zinc-800'
+                        className={`aspect-square rounded cursor-pointer ${
+                          isSelected ? 'bg-cyan-400' : isActive ? 'bg-[#0066ff]' : 'bg-zinc-800'
                         }`}
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        animate={isActive && !isSelected ? {
+                          opacity: [1, 0.5, 1]
+                        } : {}}
+                        transition={{ 
+                          scale: { delay: i * 0.01, duration: 0.3 },
+                          opacity: { duration: 2, delay: i * 0.1, repeat: Infinity }
+                        }}
+                        viewport={{ once: true }}
+                        whileTap={{ scale: 0.8 }}
+                        onClick={() => {
+                          setSelectedDates(prev => 
+                            prev.includes(i) 
+                              ? prev.filter(d => d !== i)
+                              : [...prev, i]
+                          );
+                        }}
                       />
                     );
                   })}
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
 
             {/* Tools Integrations - Large Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              animate={{
+                borderColor: ["rgb(39 39 42)", "rgb(0 102 255 / 0.2)", "rgb(39 39 42)"]
+              }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="lg:col-span-2 bg-[#0d0d0d] border border-zinc-800 border-t-zinc-700 rounded-2xl p-8 shadow-lg shadow-black/30"
+              transition={{ 
+                borderColor: { duration: 5, repeat: Infinity },
+                opacity: { duration: 0.6, delay: 0.3 }
+              }}
+              className="lg:col-span-2 bg-[#0d0d0d] border border-zinc-800 border-t-zinc-700 rounded-2xl p-8 shadow-lg shadow-black/30 cursor-pointer"
             >
               <div className="mb-6">
-                <h3 className="text-2xl font-bold text-white mb-3">{secondRowServices[1]?.title}</h3>
-                <p className="text-zinc-400">{secondRowServices[1]?.description}</p>
+                <h3 className="text-2xl font-bold text-white mb-3">Maintenance & AI Automation</h3>
+                <p className="text-zinc-400">Keep your site running smoothly with ongoing support, updates, and optional AI features like chatbots and content generation.</p>
               </div>
 
               <div className="flex flex-wrap gap-4 mb-4">
-                {["K", "bolt", "VQ", "asterisk", "AI", "Make", "G"].map((logo, idx) => (
-                  <div
+                {["24/7", "Updates", "SEO", "Speed", "AI", "Chat", "CMS"].map((logo, idx) => (
+                  <motion.div
                     key={idx}
-                    className="w-12 h-12 bg-zinc-900 rounded-lg flex items-center justify-center text-zinc-400 font-bold"
+                    className="w-12 h-12 bg-zinc-900 rounded-lg flex items-center justify-center text-zinc-400 font-bold cursor-pointer"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    animate={{
+                      y: [0, -10, 0]
+                    }}
+                    transition={{ 
+                      y: { duration: 2, delay: idx * 0.2, repeat: Infinity },
+                      opacity: { delay: idx * 0.05, duration: 0.3 }
+                    }}
+                    viewport={{ once: true }}
+                    whileTap={{ scale: 0.9, backgroundColor: "#0066ff" }}
                   >
                     {logo}
-                  </div>
+                  </motion.div>
                 ))}
               </div>
 
-              <p className="text-zinc-400 mt-4">Seamlessly connect your favorite tools and platforms with our AI solutions.</p>
+              <p className="text-zinc-400 mt-4">Complete website maintenance with optional AI enhancements to automate and improve your site.</p>
             </motion.div>
           </div>
 
@@ -279,15 +373,26 @@ Is there anything else I can help you with?
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            animate={{
+              backgroundImage: [
+                "linear-gradient(45deg, rgb(13 13 13) 0%, rgb(13 13 13) 100%)",
+                "linear-gradient(45deg, rgb(13 13 13) 0%, rgb(0 102 255 / 0.05) 100%)",
+                "linear-gradient(45deg, rgb(13 13 13) 0%, rgb(13 13 13) 100%)"
+              ]
+            }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="bg-zinc-900 rounded-2xl p-10 text-center"
+            transition={{ 
+              backgroundImage: { duration: 4, repeat: Infinity },
+              opacity: { duration: 0.6, delay: 0.4 }
+            }}
+            className="bg-zinc-900 rounded-2xl p-10 text-center cursor-pointer"
+            whileTap={{ scale: 0.98 }}
           >
             <h3 className="text-2xl font-semibold text-white mb-4">
               Need Something Custom?
             </h3>
             <p className="text-zinc-400 mb-6">
-              Let&apos;s discuss your unique AI requirements
+              Let&apos;s discuss your website project
             </p>
             <a
               href="#contact"

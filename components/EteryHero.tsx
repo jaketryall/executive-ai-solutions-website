@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 
 export default function EteryHero() {
   const metrics = [
-    { label: "Total Sales", value: "$35,495", trend: "13.5% Up from past week" },
-    { label: "Total User", value: "15889", trend: "9.1% Up from past week" },
-    { label: "Total Order", value: "5789", trend: "9.1% Up from past week" },
-    { label: "Total Pending", value: "7805", trend: "13.2% Up from past week" }
+    { label: "Sites Built", value: "250+", trend: "Custom & Platform Sites" },
+    { label: "Client Satisfaction", value: "98%", trend: "5-Star Reviews" },
+    { label: "Avg Page Speed", value: "<2s", trend: "Lightning Fast" },
+    { label: "Uptime", value: "99.9%", trend: "Always Online" }
   ];
 
   return (
@@ -36,7 +36,7 @@ export default function EteryHero() {
           className="flex items-center gap-2 mb-8"
         >
           <div className="w-2 h-2 bg-[#0066ff] rounded-full" />
-          <span className="text-zinc-400 text-sm">Cutting-Edge AI Solutions</span>
+          <span className="text-zinc-400 text-sm">Professional Website Development</span>
         </motion.div>
 
         {/* Main Heading */}
@@ -46,9 +46,9 @@ export default function EteryHero() {
           transition={{ duration: 0.8, delay: 0.1 }}
           className="text-6xl sm:text-7xl lg:text-8xl font-bold text-white leading-[0.9] mb-6"
         >
-          Fuel Your<br />
-          Growth With<br />
-          Next-Gen AI
+          Beautiful<br />
+          Websites That<br />
+          Drive Results
         </motion.h1>
 
         {/* Subtext */}
@@ -58,7 +58,7 @@ export default function EteryHero() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-zinc-400 text-lg mb-12 max-w-md"
         >
-          Unlock new levels of productivity with intelligent automation.
+          Custom-built websites tailored to your brand - designed to convert visitors into customers.
         </motion.p>
 
         {/* CTA Buttons and Reviews */}
@@ -197,7 +197,7 @@ export default function EteryHero() {
             href="#services"
             className="text-zinc-500 text-sm hover:text-[#0066ff] transition-colors"
           >
-            https://executiveai.com
+            https://executiveaisolutions.com
           </a>
         </motion.div>
 
@@ -212,7 +212,7 @@ export default function EteryHero() {
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
             </svg>
-            Buy Template
+            Get Started
           </button>
         </motion.div>
       </div>

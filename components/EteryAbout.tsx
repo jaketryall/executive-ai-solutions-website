@@ -18,7 +18,7 @@ export default function EteryAbout() {
   ];
 
   // Split text into words for animation
-  const text = "We help brands unlock growth through smart AI automation. With 12+ years behind us, we turn bold ideas into scalable, intelligent systems that work.";
+  const text = "We build stunning custom websites that convert visitors into customers. Specializing in modern web technologies and AI integration, we create unique digital experiences that grow your business.";
   const words = text.split(" ");
 
   return (

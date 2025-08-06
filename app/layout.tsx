@@ -19,30 +19,30 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Executive Web Solutions - Modern Websites Built with AI",
-  description: "We build fast, modern websites enhanced with AI features. Custom web development, e-commerce solutions, and intelligent web applications for businesses that want to grow.",
-  keywords: "web development, website design, custom websites, e-commerce development, web applications, AI-powered websites, responsive design",
-  authors: [{ name: "Executive Web Solutions" }],
+  title: "Executive AI Solutions - Custom Website Development",
+  description: "We build stunning custom websites that convert. Specializing in modern web technologies, e-commerce solutions, and intelligent AI automation for businesses that want to grow.",
+  keywords: "custom website development, web development, custom web design, React developer, Next.js, e-commerce, AI automation, website builder",
+  authors: [{ name: "Executive AI Solutions" }],
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Executive Web",
+    title: "Executive AI",
   },
   formatDetection: {
     telephone: false, // Disable auto phone number detection
   },
   openGraph: {
-    title: "Executive Web Solutions - Modern Websites Built with AI",
-    description: "We build fast, modern websites enhanced with AI features for businesses that want to grow.",
-    url: "https://executivewebsolutions.com",
-    siteName: "Executive Web Solutions",
+    title: "Executive AI Solutions - Custom Website Development",
+    description: "We build stunning custom websites that convert. Modern web technologies with intelligent AI automation.",
+    url: "https://executiveaisolutions.com",
+    siteName: "Executive AI Solutions",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Executive Web Solutions - Modern Websites Built with AI",
-    description: "We build fast, modern websites enhanced with AI features for businesses that want to grow.",
+    title: "Executive AI Solutions - Custom Website Development",
+    description: "We build stunning custom websites that convert. Modern web technologies with intelligent AI automation.",
   },
 };
 
