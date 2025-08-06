@@ -25,9 +25,9 @@ export default function WhatWeOffer() {
           <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight mb-8">
             What We{" "}
             <span className="text-transparent bg-gradient-to-r from-[#0066ff] to-cyan-400 bg-clip-text">
-              Offer
+              Build
             </span>{" "}
-            - AI solutions that solve real problems, not just look cool
+            - Websites that drive real results, enhanced with AI
           </h2>
         </motion.div>
 
@@ -83,9 +83,9 @@ export default function WhatWeOffer() {
             </div>
             
             <div>
-              <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">AI-Powered Chatbots</h3>
+              <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">AI-Enhanced Websites</h3>
               <p className="text-zinc-400 text-lg font-light leading-relaxed">
-                Our chatbots are built to understand your business type.
+                Smart features like chatbots, search, and personalized content.
               </p>
             </div>
           </motion.div>
@@ -131,9 +131,9 @@ export default function WhatWeOffer() {
             </div>
             
             <div>
-              <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">Blockchain Integration</h3>
+              <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">Performance Optimization</h3>
               <p className="text-zinc-400 text-lg font-light leading-relaxed">
-                From smart contract validation to predictive analytics.
+                Lightning-fast websites with AI-powered monitoring and optimization.
               </p>
             </div>
           </motion.div>
@@ -194,9 +194,9 @@ export default function WhatWeOffer() {
             </div>
             
             <div>
-              <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">Lead Generation</h3>
+              <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">SEO & Analytics</h3>
               <p className="text-zinc-400 text-lg font-light leading-relaxed">
-                Generate high quality lead for your business growth.
+                AI-powered SEO recommendations and user behavior insights.
               </p>
             </div>
           </motion.div>
@@ -212,9 +212,9 @@ export default function WhatWeOffer() {
             transition={{ duration: 0.6, delay: 0.8 }}
             className="bg-[#0066ff]/10 backdrop-blur-sm border border-[#0066ff]/20 rounded-2xl p-8"
           >
-            <h4 className="text-xl font-bold text-white mb-4">We are suitable for</h4>
+            <h4 className="text-xl font-bold text-white mb-4">We build for</h4>
             <div className="space-y-3">
-              {["Creative agencies", "Startup", "Creators & marketers", "Small business", "Product teams", "Startup"].map((audience, index) => (
+              {["Small Businesses", "Startups", "E-commerce Brands", "SaaS Companies", "Agencies", "Enterprises"].map((audience, index) => (
                 <div key={index} className="bg-[#0066ff]/20 text-[#0066ff] px-4 py-2 rounded-full text-center font-medium">
                   {audience}
                 </div>
@@ -243,9 +243,9 @@ export default function WhatWeOffer() {
             </div>
             
             <div>
-              <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">Image & Video Generation</h3>
+              <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">Content Management</h3>
               <p className="text-zinc-400 text-lg font-light leading-relaxed">
-                Generate high-quality visuals matched to your style.
+                Easy content updates with AI writing and image generation tools.
               </p>
             </div>
           </motion.div>
@@ -284,9 +284,9 @@ export default function WhatWeOffer() {
             </div>
             
             <div>
-              <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">AI Consultation</h3>
+              <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">Custom Integrations</h3>
               <p className="text-zinc-400 text-lg font-light leading-relaxed">
-                We engineer smart tools built around your business logic.
+                Connect your website with any API or third-party service.
               </p>
             </div>
           </motion.div>
@@ -300,7 +300,7 @@ export default function WhatWeOffer() {
           className="text-center mt-16 space-y-8"
         >
           <p className="text-xl lg:text-2xl text-zinc-300 font-light leading-relaxed max-w-4xl mx-auto">
-            We provide intelligent solutions to help brands think fast, build smart, and grow big beyond boundaries.
+            We build modern websites that leverage AI technology to help your business grow faster and smarter.
           </p>
           
           <motion.a

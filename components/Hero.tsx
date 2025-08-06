@@ -217,7 +217,7 @@ export default function Hero() {
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
                 Welcome to{" "}
                 <span className="text-transparent bg-gradient-to-r from-[#0066ff] to-cyan-400 bg-clip-text">
-                  Executive AI
+                  Executive Web
                 </span>
                 <br />
                 <span className="text-zinc-400 font-light italic text-4xl sm:text-5xl lg:text-6xl">
@@ -226,7 +226,7 @@ export default function Hero() {
               </h1>
               
               <p className="text-xl text-zinc-400 font-light leading-relaxed max-w-lg">
-                We help brands move faster with smart AI solutions.
+                We build modern, fast websites powered by intelligent AI features.
               </p>
             </div>
 
@@ -299,28 +299,28 @@ export default function Hero() {
               className="absolute -top-4 -right-8 bg-zinc-900/80 backdrop-blur-sm border border-zinc-700 rounded-2xl p-4 shadow-xl"
             >
               <div className="text-center">
-                <div className="text-2xl font-bold text-white mb-1">AI isn&apos;t the future. It&apos;s the now.</div>
+                <div className="text-2xl font-bold text-white mb-1">Modern websites that drive results.</div>
                 <div className="flex flex-wrap gap-2 mt-3">
                   <span className="bg-[#0066ff]/20 text-[#0066ff] px-3 py-1 rounded-full text-sm font-medium">
-                    Custom AI Development
+                    Custom Websites
                   </span>
                   <span className="bg-[#0066ff]/20 text-[#0066ff] px-3 py-1 rounded-full text-sm font-medium">
-                    AI Bot
+                    E-commerce
                   </span>
                   <span className="bg-[#0066ff]/20 text-[#0066ff] px-3 py-1 rounded-full text-sm font-medium">
-                    Blockchain Integration
+                    Web Applications
                   </span>
                   <span className="bg-[#0066ff]/20 text-[#0066ff] px-3 py-1 rounded-full text-sm font-medium">
-                    AI Tools
+                    AI-Powered Features
                   </span>
                   <span className="bg-[#0066ff]/20 text-[#0066ff] px-3 py-1 rounded-full text-sm font-medium">
-                    AI-First Strategy
+                    SEO Optimization
                   </span>
                   <span className="bg-[#0066ff]/20 text-[#0066ff] px-3 py-1 rounded-full text-sm font-medium">
-                    Web3 Solutions
+                    CMS Integration
                   </span>
                   <span className="bg-[#0066ff]/20 text-[#0066ff] px-3 py-1 rounded-full text-sm font-medium">
-                    Blockchain Integration
+                    Responsive Design
                   </span>
                 </div>
               </div>

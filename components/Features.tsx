@@ -11,40 +11,40 @@ export default function Features() {
 
   const features = [
     {
+      icon: "⚡",
+      title: "Rapid Website Development",
+      description: "Fast turnaround with modern frameworks like Next.js, React, and TypeScript for scalable solutions.",
+      benefits: ["2-4 Week Delivery", "Modern Tech Stack", "Scalable Architecture"]
+    },
+    {
       icon: "🤖",
-      title: "AI Workflow Automation",
-      description: "Streamline repetitive tasks with intelligent automation that learns and adapts to your business processes.",
-      benefits: ["24/7 Operation", "Zero Human Error", "Scalable Processing"]
+      title: "AI-Powered Features",
+      description: "Enhance your website with intelligent chatbots, content generation, and personalization.",
+      benefits: ["Smart Chatbots", "AI Content Tools", "Personalization"]
     },
     {
-      icon: "💼",
-      title: "Virtual AI Employees",
-      description: "Deploy specialized AI workers for customer service, data analysis, content creation, and more.",
-      benefits: ["Instant Availability", "Consistent Performance", "Cost Effective"]
-    },
-    {
-      icon: "🎯",
-      title: "Custom AI Solutions",
-      description: "Tailored AI implementations designed specifically for your industry and business requirements.",
-      benefits: ["Industry-Specific", "Seamless Integration", "Ongoing Support"]
-    },
-    {
-      icon: "📊",
-      title: "Data Intelligence",
-      description: "Transform raw data into actionable insights with advanced AI analytics and reporting.",
-      benefits: ["Real-time Analysis", "Predictive Insights", "Smart Reporting"]
+      icon: "📱",
+      title: "Responsive Design",
+      description: "Beautiful websites that work flawlessly on all devices, from mobile to desktop.",
+      benefits: ["Mobile-First", "Cross-Browser", "Touch Optimized"]
     },
     {
       icon: "🚀",
-      title: "Rapid Deployment",
-      description: "Get your AI solutions up and running quickly with our streamlined implementation process.",
-      benefits: ["Fast Setup", "Minimal Disruption", "Quick ROI"]
+      title: "Performance Optimization",
+      description: "Lightning-fast load times with advanced optimization techniques and CDN deployment.",
+      benefits: ["Sub-2s Load Time", "Core Web Vitals", "Global CDN"]
     },
     {
-      icon: "🔧",
-      title: "Ongoing Optimization",
-      description: "Continuous monitoring and improvement of your AI systems for maximum efficiency and results.",
-      benefits: ["Performance Monitoring", "Regular Updates", "Proactive Support"]
+      icon: "🔍",
+      title: "SEO & Analytics",
+      description: "Built-in SEO optimization with AI-powered recommendations and comprehensive analytics.",
+      benefits: ["On-Page SEO", "AI Recommendations", "Traffic Analytics"]
+    },
+    {
+      icon: "🛠️",
+      title: "Ongoing Maintenance",
+      description: "Keep your website running smoothly with regular updates, monitoring, and support.",
+      benefits: ["24/7 Monitoring", "Regular Updates", "Priority Support"]
     }
   ];
 
@@ -67,11 +67,11 @@ export default function Features() {
           transition={{ duration: prefersReducedMotion ? 0 : 0.8, delay: prefersReducedMotion ? 0 : 0.2 }}
         >
           <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-8 text-white leading-[0.85] tracking-tighter">
-            <span className="block">Complete AI</span>
-            <span className="text-transparent bg-gradient-to-r from-[#0066ff] to-cyan-400 bg-clip-text">Capabilities</span>
+            <span className="block">Complete Web</span>
+            <span className="text-transparent bg-gradient-to-r from-[#0066ff] to-cyan-400 bg-clip-text">Solutions</span>
           </h2>
           <p className="text-lg sm:text-xl lg:text-2xl text-zinc-400 font-light leading-relaxed max-w-4xl mx-auto">
-            Comprehensive artificial intelligence solutions designed to transform your business operations.
+            Comprehensive website development solutions enhanced with AI to transform your online presence.
           </p>
         </motion.div>
 
@@ -135,7 +135,7 @@ export default function Features() {
           transition={{ duration: prefersReducedMotion ? 0 : 0.8, delay: prefersReducedMotion ? 0 : 0.8 }}
         >
           <p className="text-zinc-500 font-light mb-6 sm:mb-8 text-sm sm:text-base">
-            Ready to transform your business with AI?
+            Ready to build your next website?
           </p>
           <motion.a
             href="#contact"

@@ -19,30 +19,30 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Executive AI Solutions - Your AI Workforce",
-  description: "Deploy AI employees that never sleep. Scale without limits. Practical AI solutions for businesses including workflow automation, landing page creation, and AI consulting.",
-  keywords: "AI automation, AI workforce, AI employees, workflow automation, AI consulting, landing page creation",
-  authors: [{ name: "Executive AI Solutions" }],
+  title: "Executive Web Solutions - Modern Websites Built with AI",
+  description: "We build fast, modern websites enhanced with AI features. Custom web development, e-commerce solutions, and intelligent web applications for businesses that want to grow.",
+  keywords: "web development, website design, custom websites, e-commerce development, web applications, AI-powered websites, responsive design",
+  authors: [{ name: "Executive Web Solutions" }],
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Executive AI",
+    title: "Executive Web",
   },
   formatDetection: {
     telephone: false, // Disable auto phone number detection
   },
   openGraph: {
-    title: "Executive AI Solutions - Your AI Workforce",
-    description: "Deploy AI employees that never sleep. Scale without limits.",
-    url: "https://executiveaisolutions.com",
-    siteName: "Executive AI Solutions",
+    title: "Executive Web Solutions - Modern Websites Built with AI",
+    description: "We build fast, modern websites enhanced with AI features for businesses that want to grow.",
+    url: "https://executivewebsolutions.com",
+    siteName: "Executive Web Solutions",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Executive AI Solutions - Your AI Workforce",
-    description: "Deploy AI employees that never sleep. Scale without limits.",
+    title: "Executive Web Solutions - Modern Websites Built with AI",
+    description: "We build fast, modern websites enhanced with AI features for businesses that want to grow.",
   },
 };
 

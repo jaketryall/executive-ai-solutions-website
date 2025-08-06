@@ -56,10 +56,10 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="#" className="flex items-center gap-3 group" aria-label="Executive AI Solutions Home">
+            <a href="#" className="flex items-center gap-3 group" aria-label="Executive Web Solutions Home">
               <Image 
                 src="/logo.png" 
-                alt="Executive AI Solutions Logo" 
+                alt="Executive Web Solutions Logo" 
                 width={822}
                 height={218}
                 priority
@@ -86,7 +86,7 @@ export default function Navbar() {
                 href="#contact"
                 onClick={handleContactClick}
                 className="inline-block bg-gradient-to-r from-[#0066ff] to-blue-600 text-white px-6 py-2.5 rounded-full font-light hover:shadow-lg hover:shadow-[#0066ff]/25 transition-all duration-300 text-sm cursor-pointer touch-target focus-visible"
-                aria-label="Get started with AI solutions"
+                aria-label="Get started with your website project"
               >
                 Get Started
               </a>
@@ -155,7 +155,7 @@ export default function Navbar() {
                   setIsMenuOpen(false);
                 }}
                 className="block w-full mt-4 bg-gradient-to-r from-[#0066ff] to-blue-600 text-white px-6 py-3 rounded-full font-light text-center hover:shadow-lg hover:shadow-[#0066ff]/25 transition-all duration-300 text-sm cursor-pointer touch-target focus-visible"
-                aria-label="Get started with AI solutions"
+                aria-label="Get started with your website project"
               >
                 Get Started
               </a>

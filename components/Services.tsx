@@ -6,59 +6,79 @@ export default function Services() {
     {
       icon: (
         <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-          <rect x="4" y="4" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="2"/>
-          <rect x="18" y="4" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="2"/>
-          <rect x="4" y="18" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="2"/>
-          <rect x="18" y="18" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="2"/>
+          <rect x="4" y="8" width="24" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+          <path d="M4 14H28" stroke="currentColor" strokeWidth="2"/>
+          <circle cx="8" cy="11" r="1" fill="currentColor"/>
+          <circle cx="12" cy="11" r="1" fill="currentColor"/>
+          <circle cx="16" cy="11" r="1" fill="currentColor"/>
         </svg>
       ),
-      title: "AI Process Automation",
-      description: "Modern, efficiency-focused solutions for workflows and operations.",
+      title: "Website Development",
+      description: "Modern, responsive websites built with the latest technologies.",
       tags: [
-        { icon: "📄", label: "Workflow design" },
-        { icon: "⚡", label: "SaaS integration" },
-        { icon: "🎯", label: "Process optimization" },
-        { icon: "🔄", label: "Automation setup" }
+        { icon: "⚡", label: "Next.js & React" },
+        { icon: "🎨", label: "Custom Design" },
+        { icon: "📱", label: "Mobile First" },
+        { icon: "🚀", label: "Fast Loading" }
       ],
-      dots: [true, false, false, false, false]
+      dots: [true, true, true, false, false]
     },
     {
       icon: (
         <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-          <path d="M16 4L4 12V20L16 28L28 20V12L16 4Z" stroke="currentColor" strokeWidth="2"/>
-          <path d="M16 28V20" stroke="currentColor" strokeWidth="2"/>
-          <path d="M4 12L16 20L28 12" stroke="currentColor" strokeWidth="2"/>
-          <path d="M10 9L16 12L22 9" stroke="currentColor" strokeWidth="2"/>
+          <rect x="6" y="6" width="20" height="20" rx="2" stroke="currentColor" strokeWidth="2"/>
+          <path d="M6 12H26" stroke="currentColor" strokeWidth="2"/>
+          <path d="M12 6V26" stroke="currentColor" strokeWidth="2"/>
+          <path d="M16 16L20 20M20 16L16 20" stroke="currentColor" strokeWidth="2"/>
         </svg>
       ),
-      title: "Custom AI Development",
-      description: "Perfect for enterprises, startups, and product launches.",
+      title: "E-commerce Solutions",
+      description: "Complete online stores with AI-powered recommendations.",
       tags: [
-        { icon: "🤖", label: "AI bots to Agents" },
-        { icon: "🔧", label: "CMS setup" },
-        { icon: "📱", label: "Animation" },
-        { icon: "🎯", label: "API optimization" }
+        { icon: "🛒", label: "Shopping Cart" },
+        { icon: "💳", label: "Payment Gateway" },
+        { icon: "🤖", label: "AI Recommendations" },
+        { icon: "📊", label: "Analytics" }
       ],
       dots: [true, true, false, true, false]
     },
     {
       icon: (
         <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-          <circle cx="8" cy="16" r="3" stroke="currentColor" strokeWidth="2"/>
-          <circle cx="24" cy="16" r="3" stroke="currentColor" strokeWidth="2"/>
-          <path d="M11 16H21" stroke="currentColor" strokeWidth="2"/>
-          <path d="M16 6V26" stroke="currentColor" strokeWidth="2"/>
+          <path d="M16 4L4 10V22L16 28L28 22V10L16 4Z" stroke="currentColor" strokeWidth="2"/>
+          <path d="M16 16L28 10" stroke="currentColor" strokeWidth="2"/>
+          <path d="M16 16L4 10" stroke="currentColor" strokeWidth="2"/>
+          <path d="M16 16V28" stroke="currentColor" strokeWidth="2"/>
         </svg>
       ),
-      title: "Brand Identity",
-      description: "Visual systems that make your brand memorable and cohesive.",
+      title: "Web Applications",
+      description: "Custom web apps with intelligent features and automation.",
       tags: [
-        { icon: "🎨", label: "Logo design" },
-        { icon: "🎨", label: "Color palette" },
-        { icon: "📋", label: "Guidelines" },
-        { icon: "📱", label: "Social branding" }
+        { icon: "⚙️", label: "SaaS Platforms" },
+        { icon: "🔐", label: "User Auth" },
+        { icon: "🎯", label: "Custom Logic" },
+        { icon: "📱", label: "Progressive Web" }
       ],
-      dots: [true, true, false, false, false]
+      dots: [true, true, true, false, false]
+    },
+    {
+      icon: (
+        <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
+          <rect x="4" y="10" width="24" height="16" rx="2" stroke="currentColor" strokeWidth="2"/>
+          <path d="M10 6L16 10L22 6" stroke="currentColor" strokeWidth="2"/>
+          <path d="M8 16H24" stroke="currentColor" strokeWidth="2"/>
+          <path d="M8 20H20" stroke="currentColor" strokeWidth="2"/>
+        </svg>
+      ),
+      title: "Landing Pages",
+      description: "High-converting pages optimized for your marketing campaigns.",
+      tags: [
+        { icon: "🎯", label: "A/B Testing" },
+        { icon: "📈", label: "Conversion Optimized" },
+        { icon: "⚡", label: "Fast Loading" },
+        { icon: "📱", label: "Mobile Ready" }
+      ],
+      dots: [true, false, true, true, false]
     },
     {
       icon: (
@@ -69,34 +89,15 @@ export default function Services() {
           <path d="M10 20H14" stroke="currentColor" strokeWidth="2"/>
         </svg>
       ),
-      title: "Marketing Graphics",
-      description: "Quick, polished visuals for daily content, campaigns, and launches.",
+      title: "CMS Integration",
+      description: "Headless CMS setup with AI content generation tools.",
       tags: [
-        { icon: "📱", label: "Social media posts" },
-        { icon: "📧", label: "Ad creatives" },
-        { icon: "📰", label: "Blog thumbnails" },
-        { icon: "✉️", label: "Email visuals" }
+        { icon: "📝", label: "Content Management" },
+        { icon: "🤖", label: "AI Writing Tools" },
+        { icon: "🔄", label: "Easy Updates" },
+        { icon: "👥", label: "Multi-user" }
       ],
-      dots: [true, true, true, true, false]
-    },
-    {
-      icon: (
-        <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-          <rect x="4" y="6" width="24" height="20" rx="2" stroke="currentColor" strokeWidth="2"/>
-          <circle cx="16" cy="16" r="4" stroke="currentColor" strokeWidth="2"/>
-          <path d="M4 10L12 16L4 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          <path d="M28 10L20 16L28 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-        </svg>
-      ),
-      title: "Pitch & Product Collateral",
-      description: "Assets that elevate your messaging and boost perception.",
-      tags: [
-        { icon: "🎯", label: "Pitch decks" },
-        { icon: "📊", label: "Case study" },
-        { icon: "📝", label: "One-pagers" },
-        { icon: "📸", label: "screenshots" }
-      ],
-      dots: [true, true, true, true, true]
+      dots: [true, true, false, false, true]
     }
   ];
 
@@ -164,7 +165,7 @@ export default function Services() {
                   Need Something Custom?
                 </h3>
                 <p className="text-zinc-400 mb-6">
-                  Let&apos;s discuss your unique AI requirements
+                  Let&apos;s discuss your unique website requirements
                 </p>
                 <a
                   href="#contact"
