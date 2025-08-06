@@ -1,11 +1,16 @@
 import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import Services from "@/components/Services";
-import HowItWorks from "@/components/HowItWorks";
-import UseCases from "@/components/UseCases";
-import About from "@/components/About";
-import Contact from "@/components/Contact";
-import Footer from "@/components/Footer";
+import EteryHero from "@/components/EteryHero";
+import EteryLogos from "@/components/EteryLogos";
+import EteryAbout from "@/components/EteryAbout";
+import EteryServices from "@/components/EteryServices";
+import EteryProcess from "@/components/EteryProcess";
+import EteryWhyUs from "@/components/EteryWhyUs";
+import EteryResults from "@/components/EteryResults";
+import EteryPricing from "@/components/EteryPricing";
+import EteryTeam from "@/components/EteryTeam";
+import EteryFAQ from "@/components/EteryFAQ";
+import EteryNews from "@/components/EteryNews";
+import EteryFooter from "@/components/EteryFooter";
 import SkipLink from "@/components/SkipLink";
 
 export default function Home() {
@@ -13,32 +18,61 @@ export default function Home() {
     <>
       <SkipLink />
       <Navbar />
-      {/* Overflow wrapper that doesn't affect sticky positioning */}
       <div className="overflow-x-clip">
-        {/* Move Hero outside of main to avoid overflow conflicts */}
-        <Hero />
-        {/* HowItWorks needs to be outside any parent with overflow hidden */}
+        {/* Hero Section */}
+        <EteryHero />
+        
+        {/* About Section */}
+        <EteryAbout />
+        
+        {/* Logo Showcase */}
+        <EteryLogos />
+        
+        {/* Main content sections */}
         <main id="main-content" className="relative" role="main">
+          {/* Services */}
           <section id="services" className="relative" aria-label="Our Services">
-            <Services />
+            <EteryServices />
+          </section>
+          
+          {/* Process */}
+          <section id="process" className="relative" aria-label="Our Process">
+            <EteryProcess />
+          </section>
+          
+          {/* Why Choose Us */}
+          <section id="why-us" className="relative" aria-label="Why Choose Us">
+            <EteryWhyUs />
+          </section>
+          
+          {/* Results */}
+          <section id="results" className="relative" aria-label="Our Results">
+            <EteryResults />
+          </section>
+          
+          {/* Pricing */}
+          <section id="pricing" className="relative" aria-label="Pricing Plans">
+            <EteryPricing />
+          </section>
+          
+          {/* Team */}
+          <section id="team" className="relative" aria-label="Our Team">
+            <EteryTeam />
+          </section>
+          
+          {/* FAQ */}
+          <section id="faq" className="relative" aria-label="Frequently Asked Questions">
+            <EteryFAQ />
+          </section>
+          
+          {/* News */}
+          <section id="news" className="relative" aria-label="Latest News">
+            <EteryNews />
           </section>
         </main>
-      </div>
-      {/* HowItWorks component placed at root level without any parent overflow constraints */}
-      <HowItWorks />
-      <div className="overflow-x-clip">
-        <main className="relative" role="main">
-          <section id="use-cases" className="relative" aria-label="Use Cases">
-            <UseCases />
-          </section>
-          <section id="about" className="relative" aria-label="About Executive AI">
-            <About />
-          </section>
-          <section id="contact" className="relative" aria-label="Contact Us">
-            <Contact />
-          </section>
-        </main>
-        <Footer />
+        
+        {/* Footer */}
+        <EteryFooter />
       </div>
     </>
   );
