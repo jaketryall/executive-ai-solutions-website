@@ -2,143 +2,160 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
+import { getPortfolioProjects } from "@/lib/sanity.queries";
+import { urlFor } from "@/lib/sanity";
+
+// Type definition for Portfolio Project
+interface PortfolioProject {
+  _id: string;
+  name: string;
+  slug: { current: string };
+  type: string;
+  url: string;
+  description: string;
+  previewImage: any;
+  color: string;
+  tech: string[];
+  features: string[];
+  stats: {
+    visitors: string;
+    conversion: string;
+    speed: string;
+  };
+  timeline: string;
+  featured: boolean;
+  order: number;
+}
+
+// Fallback data in case Sanity is not configured or has no data
+const fallbackProjects = [
+  {
+    name: "Elite Construction Co.",
+    type: "Construction Company",
+    url: "eliteconstructionpro.com",
+    previewImage: null,
+    description: "Full-service construction company website with project galleries and quote system",
+    tech: ["Next.js", "TypeScript", "Tailwind", "Sanity CMS"],
+    features: ["3D Project Gallery", "Instant Quote Calculator", "Client Portal", "Mobile Responsive"],
+    stats: { visitors: "15K+/mo", conversion: "8.2%", speed: "99/100" },
+    timeline: "4 weeks",
+    color: "#f39c12"
+  },
+  {
+    name: "Velocity Digital Agency",
+    type: "Marketing Agency",
+    url: "velocitydigital.agency",
+    previewImage: null,
+    description: "Modern agency site with case studies, team showcase, and service packages",
+    tech: ["React", "Node.js", "MongoDB", "Framer Motion"],
+    features: ["Interactive Case Studies", "Real-time Chat", "CRM Integration", "Analytics Dashboard"],
+    stats: { visitors: "25K+/mo", conversion: "6.5%", speed: "97/100" },
+    timeline: "4 weeks",
+    color: "#667eea"
+  },
+  {
+    name: "FreshBite Delivery",
+    type: "Food Delivery Platform",
+    url: "freshbite.delivery",
+    previewImage: null,
+    description: "Restaurant delivery platform with real-time tracking and multi-vendor support",
+    tech: ["Next.js", "PostgreSQL", "Redis", "Stripe"],
+    features: ["Live Order Tracking", "Multi-Restaurant Cart", "Loyalty Program", "Driver App"],
+    stats: { visitors: "85K+/mo", conversion: "12.3%", speed: "95/100" },
+    timeline: "6 weeks",
+    color: "#f5576c"
+  }
+];
 
 // Portfolio Showcase Component  
 function PortfolioShowcase() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
-  const rotateX = useTransform(scrollYProgress, [0, 0.5], [45, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
-  const opacity = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
-
   const [currentProject, setCurrentProject] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [projects, setProjects] = useState<PortfolioProject[]>(fallbackProjects as any);
+  const [loading, setLoading] = useState(true);
+  const [expandedProject, setExpandedProject] = useState<number | null>(null);
+
+  // Only initialize scroll animations after loading is complete
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 0.7", "center 0.4"] // Optimized for centering the portfolio in view
+  });
+
+  const rotateX = useTransform(scrollYProgress, [0, 0.8], [20, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.8], [0.92, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.4], [0, 1]);
+  // Fetch portfolio projects from Sanity
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const data = await getPortfolioProjects();
+        if (data && data.length > 0) {
+          setProjects(data);
+        } else {
+          // Use fallback data if no projects in CMS
+          setProjects(fallbackProjects as any);
+        }
+      } catch (error) {
+        console.error('Error fetching portfolio projects:', error);
+        // Use fallback data on error
+        setProjects(fallbackProjects as any);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchProjects();
+  }, []);
   
   // Auto-rotate projects
   useEffect(() => {
-    if (!isAutoPlaying) return;
+    // Skip auto-rotation if not playing or if a project is expanded
+    if (!isAutoPlaying || expandedProject !== null || projects.length === 0) return;
     
     const interval = setInterval(() => {
       setCurrentProject(prev => (prev + 1) % projects.length);
     }, 5000); // Change every 5 seconds
     
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, expandedProject, projects]);
   
   // Keyboard navigation
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
-        setCurrentProject(prev => prev > 0 ? prev - 1 : projects.length - 1);
+        setCurrentProject(prev => {
+          const projectsCount = projects.length || fallbackProjects.length;
+          return prev > 0 ? prev - 1 : projectsCount - 1;
+        });
         setIsAutoPlaying(false);
       } else if (e.key === 'ArrowRight') {
-        setCurrentProject(prev => (prev + 1) % projects.length);
+        setCurrentProject(prev => {
+          const projectsCount = projects.length || fallbackProjects.length;
+          return (prev + 1) % projectsCount;
+        });
         setIsAutoPlaying(false);
       }
     };
     
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, []);
+  }, [projects]);
 
-  const projects = [
-    {
-      name: "Elite Construction Co.",
-      type: "Construction Company",
-      url: "eliteconstructionpro.com",
-      image: "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)",
-      description: "Full-service construction company website with project galleries and quote system",
-      tech: ["Next.js", "TypeScript", "Tailwind", "Sanity CMS"],
-      features: ["3D Project Gallery", "Instant Quote Calculator", "Client Portal", "Mobile Responsive"],
-      stats: { visitors: "15K+/mo", conversion: "8.2%", speed: "99/100" },
-      color: "#f39c12"
-    },
-    {
-      name: "Velocity Digital Agency",
-      type: "Marketing Agency",
-      url: "velocitydigital.agency",
-      image: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      description: "Modern agency site with case studies, team showcase, and service packages",
-      tech: ["React", "Node.js", "MongoDB", "Framer Motion"],
-      features: ["Interactive Case Studies", "Real-time Chat", "CRM Integration", "Analytics Dashboard"],
-      stats: { visitors: "25K+/mo", conversion: "6.5%", speed: "97/100" },
-      color: "#667eea"
-    },
-    {
-      name: "FreshBite Delivery",
-      type: "Food Delivery Platform",
-      url: "freshbite.delivery",
-      image: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-      description: "Restaurant delivery platform with real-time tracking and multi-vendor support",
-      tech: ["Next.js", "PostgreSQL", "Redis", "Stripe"],
-      features: ["Live Order Tracking", "Multi-Restaurant Cart", "Loyalty Program", "Driver App"],
-      stats: { visitors: "85K+/mo", conversion: "12.3%", speed: "95/100" },
-      color: "#f5576c"
-    },
-    {
-      name: "MedConnect Health",
-      type: "Healthcare Portal",
-      url: "medconnecthealth.com",
-      image: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-      description: "Patient portal with appointment booking, telemedicine, and health records",
-      tech: ["React", "Express", "PostgreSQL", "WebRTC"],
-      features: ["Video Consultations", "Appointment Booking", "Secure Messaging", "E-Prescriptions"],
-      stats: { visitors: "40K+/mo", conversion: "9.8%", speed: "98/100" },
-      color: "#00f2fe"
-    },
-    {
-      name: "PropertyPro Real Estate",
-      type: "Real Estate Platform",
-      url: "propertypro.estate",
-      image: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
-      description: "Real estate listings with virtual tours, mortgage calculator, and agent matching",
-      tech: ["Vue.js", "Laravel", "MySQL", "Mapbox"],
-      features: ["360° Virtual Tours", "AI Property Matching", "Mortgage Calculator", "Agent Dashboard"],
-      stats: { visitors: "60K+/mo", conversion: "7.2%", speed: "96/100" },
-      color: "#43e97b"
-    },
-    {
-      name: "StreamLearn Academy",
-      type: "E-Learning Platform",
-      url: "streamlearn.academy",
-      image: "linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%)",
-      description: "Online learning platform with live classes, course marketplace, and certificates",
-      tech: ["Next.js", "Django", "PostgreSQL", "AWS"],
-      features: ["Live Classes", "Interactive Quizzes", "Progress Tracking", "Certificate Generation"],
-      stats: { visitors: "100K+/mo", conversion: "15.4%", speed: "94/100" },
-      color: "#ff6b6b"
-    },
-    {
-      name: "CryptoVault Exchange",
-      type: "Crypto Trading Platform",
-      url: "cryptovault.exchange",
-      image: "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)",
-      description: "Cryptocurrency exchange with advanced trading tools and wallet management",
-      tech: ["React", "Node.js", "MongoDB", "Web3.js"],
-      features: ["Real-time Trading", "Secure Wallets", "Advanced Charts", "Mobile App"],
-      stats: { visitors: "150K+/mo", conversion: "4.5%", speed: "99/100" },
-      color: "#2575fc"
-    },
-    {
-      name: "EventHub Conference",
-      type: "Event Management",
-      url: "eventhub.conference",
-      image: "linear-gradient(135deg, #fc5c7d 0%, #6a82fb 100%)",
-      description: "Event registration and management platform with ticketing and networking features",
-      tech: ["Vue.js", "FastAPI", "PostgreSQL", "Stripe"],
-      features: ["QR Ticketing", "Attendee Networking", "Live Streaming", "Sponsor Portal"],
-      stats: { visitors: "35K+/mo", conversion: "11.2%", speed: "97/100" },
-      color: "#fc5c7d"
-    }
-  ];
 
   return (
-    <div ref={containerRef} className="relative flex justify-center items-center min-h-[700px] py-12">
-      {/* MacBook Pro M3 Device Frame - Pixel Perfect */}
+    <div ref={containerRef} className="relative flex flex-col items-center min-h-[600px] py-20">
+      {loading ? (
+        <div className="flex items-center justify-center w-full">
+          <div className="text-white">Loading portfolio...</div>
+        </div>
+      ) : !projects.length ? (
+        <div className="flex items-center justify-center w-full">
+          <div className="text-gray-400">No projects available</div>
+        </div>
+      ) : (
+        <>
+      {/* Website Preview - Main Focus */}
       <motion.div
         style={{
           rotateX,
@@ -147,206 +164,236 @@ function PortfolioShowcase() {
           transformPerspective: "1200px",
           transformStyle: "preserve-3d"
         }}
-        className="relative"
+        className="relative w-full px-6"
       >
-        {/* Generic Laptop Frame */}
-        <div className="relative" style={{ width: 'min(1000px, 90vw)' }}>
-          {/* Screen Assembly */}
-          <div className="relative">
-            {/* Screen Housing */}
-            <div 
-              className="relative rounded-2xl shadow-2xl"
-              style={{
-                background: 'linear-gradient(180deg, #1a1a1d 0%, #2d2d30 100%)',
-                padding: '12px',
-              }}
-            >
-              {/* Screen */}
-              <div 
-                className="relative bg-black rounded-xl overflow-hidden"
-                style={{ aspectRatio: '16 / 10' }}
-              >
-                {/* Generic Browser Chrome */}
-                <div className="bg-[#2d2d30] border-b border-zinc-700">
-                  <div className="flex items-center gap-3 px-4 py-2">
-                    {/* Browser Controls */}
-                    <div className="flex items-center gap-2">
-                      <button className="w-3 h-3 rounded-full bg-zinc-600 hover:bg-zinc-500" />
-                      <button className="w-3 h-3 rounded-full bg-zinc-600 hover:bg-zinc-500" />
-                      <button className="w-3 h-3 rounded-full bg-zinc-600 hover:bg-zinc-500" />
-                    </div>
-                    
-                    {/* Navigation */}
-                    <div className="flex items-center gap-2">
-                      <button className="text-gray-400 hover:text-white">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                      </button>
-                      <button className="text-gray-400 hover:text-white">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </button>
-                    </div>
-                    
-                    {/* URL Bar */}
-                    <div className="flex-1 bg-[#1d1d1f] rounded-lg px-3 py-1.5 flex items-center gap-2">
-                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-gray-300 text-sm">https://{projects[currentProject].url}</span>
-                    </div>
-                    
-                    {/* Refresh Button */}
-                    <button className="text-gray-400 hover:text-white">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Website Content */}
-                <div className="relative h-[calc(100%-44px)] overflow-hidden bg-gray-900">
-                  {/* Project Display */}
-                  <motion.div
-                    key={currentProject}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                    className="h-full overflow-auto"
-                    style={{ background: projects[currentProject].image }}
-                  >
-                    <div className="p-8 min-h-full flex flex-col">
-                      {/* Main Project Card */}
-                      <div className="bg-black/40 backdrop-blur-md rounded-2xl p-6 mb-4">
-                        <div className="flex items-start justify-between mb-4">
-                          <div>
-                            <h3 className="text-white text-3xl font-bold mb-2">
-                              {projects[currentProject].name}
-                            </h3>
-                            <p className="text-white/80 text-lg">{projects[currentProject].type}</p>
-                          </div>
-                          <div 
-                            className="w-3 h-3 rounded-full animate-pulse"
-                            style={{ backgroundColor: projects[currentProject].color }}
-                          />
-                        </div>
-                        
-                        <p className="text-white/70 mb-6">{projects[currentProject].description}</p>
-                        
-                        {/* Tech Stack */}
-                        <div className="mb-6">
-                          <h4 className="text-white/60 text-sm mb-2">Tech Stack</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {projects[currentProject].tech.map((tech, idx) => (
-                              <span 
-                                key={idx}
-                                className="px-3 py-1 bg-white/10 text-white/90 rounded-full text-sm"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                        
-                        {/* Features Grid */}
-                        <div className="grid grid-cols-2 gap-3 mb-6">
-                          {projects[currentProject].features.map((feature, idx) => (
-                            <div key={idx} className="flex items-center gap-2">
-                              <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                              <span className="text-white/80 text-sm">{feature}</span>
-                            </div>
-                          ))}
-                        </div>
-                        
-                        {/* Stats */}
-                        <div className="grid grid-cols-3 gap-4 p-4 bg-black/30 rounded-xl">
-                          <div className="text-center">
-                            <p className="text-white/60 text-xs mb-1">Traffic</p>
-                            <p className="text-white font-bold text-lg">{projects[currentProject].stats.visitors}</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-white/60 text-xs mb-1">Conversion</p>
-                            <p className="text-white font-bold text-lg">{projects[currentProject].stats.conversion}</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-white/60 text-xs mb-1">Performance</p>
-                            <p className="text-white font-bold text-lg">{projects[currentProject].stats.speed}</p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* CTA Button */}
-                      <button className="w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors">
-                        View Live Site →
-                      </button>
-                    </div>
-                  </motion.div>
-
-                  {/* Navigation Controls */}
-                  <div className="absolute bottom-4 left-0 right-0 px-8">
-                    <div className="flex items-center justify-between">
-                      {/* Previous Button */}
-                      <button
-                        onClick={() => setCurrentProject(prev => prev > 0 ? prev - 1 : projects.length - 1)}
-                        className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
-                      >
-                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                      </button>
-                      
-                      {/* Project Counter */}
-                      <div className="flex items-center gap-2">
-                        <span className="text-white/60 text-sm">{currentProject + 1}</span>
-                        <span className="text-white/40">/</span>
-                        <span className="text-white/60 text-sm">{projects.length}</span>
-                      </div>
-                      
-                      {/* Next Button */}
-                      <button
-                        onClick={() => setCurrentProject(prev => prev < projects.length - 1 ? prev + 1 : 0)}
-                        className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
-                      >
-                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        {/* Blue glow effect behind screen */}
+        <div 
+          className="absolute inset-0 blur-3xl pointer-events-none scale-150"
+          style={{
+            background: 'radial-gradient(circle at center, rgba(0, 102, 255, 0.6), rgba(0, 102, 255, 0.3) 40%, transparent 70%)'
+          }}
+        />
+        <div 
+          className="absolute inset-0 blur-2xl pointer-events-none scale-125"
+          style={{
+            background: 'radial-gradient(circle at center, rgba(0, 153, 255, 0.4), rgba(0, 102, 255, 0.2) 50%, transparent 80%)'
+          }}
+        />
+        
+        <motion.div
+          key={currentProject}
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="group relative aspect-[16/10] rounded-2xl overflow-hidden bg-[#0d0d0d] cursor-pointer border-2 border-zinc-800 border-t-zinc-700 shadow-lg shadow-black/50 transition-all duration-500"
+          style={{ 
+            background: projects[currentProject].previewImage 
+              ? 'none'
+              : `linear-gradient(135deg, ${projects[currentProject].color}99 0%, ${projects[currentProject].color}66 100%)`
+          }}
+        >
+          {/* Actual Image or Gradient Fallback */}
+          {projects[currentProject].previewImage ? (
+            <img 
+              src={urlFor(projects[currentProject].previewImage).width(1920).height(1200).url()}
+              alt={projects[currentProject].name}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
+          )}
+          
+          {/* Simple mock browser UI when not hovering */}
+          <div className="absolute top-6 left-6 transition-opacity duration-300 group-hover:opacity-0">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-white/20" />
+              <div className="w-3 h-3 rounded-full bg-white/20" />
+              <div className="w-3 h-3 rounded-full bg-white/20" />
             </div>
-            
           </div>
 
-          {/* Side text */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="absolute -left-48 top-1/2 -translate-y-1/2 hidden lg:block"
+          {/* Mock website content placeholder */}
+          <div className="absolute inset-0 p-8 flex items-center justify-center transition-opacity duration-300 group-hover:opacity-0">
+            <div className="w-full max-w-3xl">
+              <div className="h-8 bg-white/10 rounded mb-4 w-2/3" />
+              <div className="space-y-3">
+                <div className="h-4 bg-white/5 rounded" />
+                <div className="h-4 bg-white/5 rounded w-5/6" />
+                <div className="h-4 bg-white/5 rounded w-4/6" />
+              </div>
+              <div className="grid grid-cols-3 gap-4 mt-8">
+                <div className="h-32 bg-white/5 rounded" />
+                <div className="h-32 bg-white/5 rounded" />
+                <div className="h-32 bg-white/5 rounded" />
+              </div>
+            </div>
+          </div>
+
+          {/* Expandable Info Panel - Dark Card Style */}
+          <div 
+            className={`absolute bottom-6 left-6 right-6 bg-[#0d0d0d]/90 backdrop-blur-sm border border-zinc-800 border-t-zinc-700 shadow-lg shadow-black/50 rounded-2xl overflow-hidden transition-all duration-500 ease-out origin-bottom ${
+              expandedProject === currentProject 
+                ? 'h-[calc(100%-3rem)]' 
+                : 'h-[90px] opacity-0 group-hover:opacity-100'
+            }`}
+            onClick={() => setExpandedProject(expandedProject === currentProject ? null : currentProject)}
           >
-            <p className="text-zinc-400 text-sm mb-2">Recent Work</p>
-            <p className="text-white text-lg font-semibold">250+ Sites Built</p>
-            <p className="text-zinc-500 text-sm mt-4">Click to explore →</p>
-          </motion.div>
-        </div>
+            <div className={`h-full flex flex-col ${expandedProject === currentProject ? 'p-8' : 'px-8 justify-center'}`}>
+              {/* Header Section - Always visible in collapsed state */}
+              {expandedProject !== currentProject && (
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-white font-semibold text-2xl">{projects[currentProject].name}</h3>
+                    <p className="text-zinc-400 text-lg">{projects[currentProject].type}</p>
+                  </div>
+                  <svg className="w-7 h-7 text-zinc-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              )}
+
+              {/* Expanded Content - Only visible when expanded */}
+              {expandedProject === currentProject && (
+                <div className="flex-1 flex flex-col">
+                  {/* Main Focus Area - Project Info */}
+                  <div className="bg-zinc-900/50 rounded-2xl p-6 mb-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-white font-bold text-3xl mb-2">{projects[currentProject].name}</h3>
+                        <p className="text-[#0066ff] text-lg font-medium">{projects[currentProject].type}</p>
+                      </div>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedProject(null);
+                        }}
+                        className="w-10 h-10 bg-zinc-800/50 hover:bg-zinc-700/50 rounded-xl flex items-center justify-center transition-colors"
+                      >
+                        <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                    <p className="text-zinc-300 text-base leading-relaxed">
+                      {projects[currentProject].description}
+                    </p>
+                  </div>
+
+                  {/* Key Metrics - Visual Focus */}
+                  <div className="grid grid-cols-3 gap-4 mb-6">
+                    <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 text-center">
+                      <p className="text-3xl font-bold text-green-400 mb-1">{projects[currentProject].stats.visitors}</p>
+                      <p className="text-xs text-zinc-400">Monthly Traffic</p>
+                    </div>
+                    <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
+                      <p className="text-3xl font-bold text-blue-400 mb-1">{projects[currentProject].stats.conversion}</p>
+                      <p className="text-xs text-zinc-400">Conversion Rate</p>
+                    </div>
+                    <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4 text-center">
+                      <p className="text-3xl font-bold text-purple-400 mb-1">{projects[currentProject].stats.speed}</p>
+                      <p className="text-xs text-zinc-400">Speed Score</p>
+                    </div>
+                  </div>
+
+                  {/* Secondary Info - Features and Tech */}
+                  <div className="flex-1 grid grid-cols-2 gap-6 mb-6">
+                    <div>
+                      <h4 className="text-zinc-500 text-xs uppercase tracking-wider mb-3">Key Features</h4>
+                      <div className="space-y-2">
+                        {projects[currentProject].features.map((feature, idx) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            <svg className="w-4 h-4 text-[#0066ff] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-zinc-400 text-sm">{feature}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-zinc-500 text-xs uppercase tracking-wider mb-3">Built With</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {projects[currentProject].tech.map((tech, idx) => (
+                          <span key={idx} className="px-3 py-1.5 bg-[#0066ff]/10 text-[#0066ff] rounded-lg text-sm font-medium">
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Primary CTA - Clear Action */}
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(`https://${projects[currentProject].url}`, '_blank');
+                    }}
+                    className="w-full py-4 bg-[#0066ff] hover:bg-[#0052cc] text-white rounded-2xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-[#0066ff]/20"
+                  >
+                    Visit Live Site
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
       </motion.div>
 
-      {/* Floating badges */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, delay: 1 }}
-        className="absolute -top-4 -right-4 bg-green-500 text-white text-xs px-3 py-1.5 rounded-full font-medium"
-      >
-        Live Projects
-      </motion.div>
+      {/* Navigation Controls */}
+      <div className="flex items-center gap-8 mt-8">
+        {/* Previous Button */}
+        <button
+          onClick={() => {
+            setCurrentProject(prev => prev > 0 ? prev - 1 : projects.length - 1);
+            setIsAutoPlaying(false);
+            setExpandedProject(null);
+          }}
+          className="p-2 text-gray-400 hover:text-white transition-colors"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        
+        {/* Project Dots Indicator */}
+        <div className="flex items-center gap-2">
+          {projects.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                setCurrentProject(idx);
+                setIsAutoPlaying(false);
+                setExpandedProject(null);
+              }}
+              className={`rounded-full transition-all ${
+                currentProject === idx 
+                  ? 'w-8 h-2 bg-[#0066ff]' 
+                  : 'w-2 h-2 bg-gray-600 hover:bg-gray-400'
+              }`}
+            />
+          ))}
+        </div>
+        
+        {/* Next Button */}
+        <button
+          onClick={() => {
+            setCurrentProject(prev => prev < projects.length - 1 ? prev + 1 : 0);
+            setIsAutoPlaying(false);
+            setExpandedProject(null);
+          }}
+          className="p-2 text-gray-400 hover:text-white transition-colors"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+      </>
+      )}
     </div>
   );
 }
@@ -376,7 +423,7 @@ export default function EteryHero() {
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[200px] h-[300px] bg-gradient-to-t from-cyan-400/40 to-transparent blur-xl" />
       </div>
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         {/* Top Tag */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -393,7 +440,7 @@ export default function EteryHero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="text-6xl sm:text-7xl lg:text-8xl font-bold text-white leading-[0.9] mb-6"
+          className="text-6xl sm:text-7xl lg:text-8xl font-bold text-white leading-[0.9] mb-4"
         >
           Beautiful<br />
           Websites That<br />
@@ -405,7 +452,7 @@ export default function EteryHero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-zinc-400 text-lg mb-12 max-w-md"
+          className="text-zinc-400 text-lg mb-8 max-w-md"
         >
           Custom-built websites tailored to your brand - designed to convert visitors into customers.
         </motion.p>
@@ -415,7 +462,7 @@ export default function EteryHero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex flex-wrap items-center gap-8 mb-20"
+          className="flex flex-wrap items-center gap-8 mb-12"
         >
           {/* Get Started Button */}
           <motion.button
@@ -465,7 +512,7 @@ export default function EteryHero() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="relative mb-16"
+          className="relative mb-8"
         >
           <PortfolioShowcase />
         </motion.div>

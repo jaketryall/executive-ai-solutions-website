@@ -41,8 +41,8 @@ export default function EteryFooter() {
           <div className="lg:col-span-1">
             <h3 className="text-2xl font-bold text-white mb-4">Executive AI Solutions</h3>
             <p className="text-zinc-400 mb-6 leading-relaxed">
-              Executive AI Solutions specializes in custom website development that converts visitors into customers.
-              Modern web technologies, unique designs, and intelligent AI automation.
+              Executive AI Solutions specializes in intelligent AI agents and automation systems that transform business operations.
+              Deploy custom AI solutions that work 24/7 to scale your business.
             </p>
             
             {/* Social Links */}

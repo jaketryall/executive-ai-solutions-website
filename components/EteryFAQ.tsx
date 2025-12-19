@@ -32,38 +32,38 @@ export default function EteryFAQ() {
         const fallbackFAQs = [
           {
             _id: '0',
-            question: "What does the membership include?",
-            answer: "Our membership includes full access to all AI tools, custom development support, unlimited consultations, real-time performance monitoring, priority support, and regular updates. You'll also get access to our exclusive AI resource library and community.",
+            question: "What types of AI agents can you build?",
+            answer: "We develop custom AI agents for any business function - customer service chatbots, sales automation agents, data analysis systems, content generation tools, predictive analytics models, and workflow automation solutions. Each agent is tailored to your specific needs and integrated with your existing systems.",
             order: 0
           },
           {
             _id: '1',
-            question: "How do I get started with your services?",
-            answer: "Getting started is simple. Book a consultation call with our team, we'll assess your needs, create a custom AI strategy, and begin implementation within 48 hours. Our onboarding process is designed to be smooth and efficient.",
+            question: "How quickly can AI agents be deployed?",
+            answer: "Simple AI agents can be deployed within 2-3 weeks. More complex enterprise solutions typically take 6-8 weeks from initial consultation to full deployment. We provide a detailed timeline during the assessment phase and can often start with a pilot program to deliver value quickly.",
             order: 1
           },
           {
             _id: '2',
-            question: "Can I cancel my membership anytime?",
-            answer: "Yes, you can cancel your membership at any time with no hidden fees or penalties. We believe in earning your business every month. Simply notify us 30 days before your next billing cycle.",
+            question: "Will AI replace my existing team?",
+            answer: "AI agents are designed to augment your team, not replace them. They handle repetitive tasks, provide instant responses, and work 24/7, allowing your human employees to focus on strategic, creative, and relationship-building activities that require human expertise.",
             order: 2
           },
           {
             _id: '3',
-            question: "Do I need technical expertise to use your tools?",
-            answer: "No technical expertise required. Our AI solutions are designed to be user-friendly and intuitive. We provide comprehensive training, documentation, and 24/7 support to ensure you can maximize the value of our tools.",
+            question: "How secure is your AI technology?",
+            answer: "Security is our top priority. All AI systems feature enterprise-grade encryption, SOC 2 compliance, GDPR adherence, and secure API connections. Your data never leaves your controlled environment, and we implement strict access controls and regular security audits.",
             order: 3
           },
           {
             _id: '4',
-            question: "Are there additional costs?",
-            answer: "Our transparent pricing includes everything you need. There are no hidden fees, setup costs, or surprise charges. Any optional add-ons or custom development beyond the scope of your plan will be clearly communicated upfront.",
+            question: "What's the ROI of AI automation?",
+            answer: "Our clients typically see 200-400% ROI within the first year. AI agents reduce operational costs by 40-60%, increase productivity by 3x, and improve customer satisfaction scores by 30%. We provide detailed ROI projections during the consultation phase.",
             order: 4
           },
           {
             _id: '5',
-            question: "How often do you release updates?",
-            answer: "We release updates continuously, with major feature updates quarterly and minor improvements weekly. All updates are automatically applied to your account, and we provide detailed release notes for transparency.",
+            question: "Do you provide ongoing support?",
+            answer: "Yes, we offer 24/7 monitoring and support for all deployed AI systems. This includes performance optimization, regular updates, troubleshooting, and continuous training of AI models to improve accuracy and effectiveness over time.",
             order: 5
           }
         ];

@@ -31,35 +31,35 @@ export default function EteryServices() {
         setServices([
           {
             _id: '1',
-            title: "Custom Website Development",
-            description: "We build stunning custom websites from scratch using modern frameworks like React, Next.js, and TypeScript for blazing-fast performance.",
-            slug: { current: 'custom-development' },
-            tags: ["React/Next.js", "Custom Design", "Mobile Responsive", "SEO Optimized"],
+            title: "Reduce Operational Costs by 40-60%",
+            description: "Deploy AI agents that work 24/7 without breaks, training, or overhead. Handle expert-level tasks at a fraction of the cost of human employees.",
+            slug: { current: 'ai-agent-development' },
+            tags: ["GPT-4/Claude", "Custom Training", "Multi-Modal AI", "Real-Time Processing"],
             isLarge: true,
             order: 1
           },
           {
             _id: '2',
-            title: "CMS & Platform Solutions",
-            description: "Content management systems and platform solutions including WordPress, Webflow, and headless CMS for easy content updates.",
-            slug: { current: 'cms-solutions' },
+            title: "Automate 40+ Hours of Work Weekly",
+            description: "Transform repetitive workflows into automated systems. What takes your team hours happens in seconds with zero errors.",
+            slug: { current: 'process-automation' },
             isLarge: false,
             order: 2
           },
           {
             _id: '3',
-            title: "E-commerce Solutions",
-            description: "Complete online stores with payment processing, inventory management, and AI-powered product recommendations.",
-            slug: { current: 'ecommerce-solutions' },
-            tags: ["Shopify/WooCommerce"],
+            title: "Make Decisions 100x Faster",
+            description: "Turn mountains of data into actionable insights instantly. Spot trends, predict outcomes, and react to changes in real-time.",
+            slug: { current: 'ai-analytics' },
+            tags: ["Predictive Analytics"],
             isLarge: false,
             order: 3
           },
           {
             _id: '4',
-            title: "Maintenance & AI Automation",
-            description: "Keep your site running smoothly with ongoing support, updates, and optional AI features like chatbots and content generation.",
-            slug: { current: 'maintenance-automation' },
+            title: "Scale Without Adding Headcount",
+            description: "Handle 10x more work with your existing team. Our enterprise AI grows with you, processing thousands of tasks simultaneously.",
+            slug: { current: 'enterprise-integration' },
             isLarge: true,
             order: 4
           }
@@ -105,11 +105,11 @@ export default function EteryServices() {
           className="text-center mb-16"
         >
           <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6">
-Full-Service Custom Web Development
+Real Problems, Smart Solutions
           </h2>
           <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-            Specializing in custom-built websites with modern technologies,
-            we create unique digital experiences that look amazing and drive real business results.
+            Stop losing money on repetitive tasks. Our AI handles the work that drains 
+            your team's time and budget, delivering ROI in weeks, not years.
           </p>
         </motion.div>
 
@@ -136,8 +136,8 @@ Full-Service Custom Web Development
               className="lg:col-span-2 bg-[#0d0d0d] border border-zinc-800 border-t-zinc-700 rounded-2xl p-8 cursor-pointer"
             >
               <div className="mb-6">
-                <h3 className="text-2xl font-bold text-white mb-3">Custom Website Development</h3>
-                <p className="text-zinc-400">We build stunning custom websites from scratch using modern frameworks like React, Next.js, and TypeScript for blazing-fast performance.</p>
+                <h3 className="text-2xl font-bold text-white mb-3">Reduce Operational Costs by 40-60%</h3>
+                <p className="text-zinc-400">Deploy AI agents that work 24/7 without breaks, training, or overhead. Handle expert-level tasks at a fraction of the cost of human employees.</p>
               </div>
 
               {firstRowServices[0]?.tags && (
@@ -170,20 +170,20 @@ Full-Service Custom Web Development
                   <span className="text-zinc-300 text-sm">Live Preview</span>
                 </div>
                 <div className="text-zinc-500 text-sm">
-                  Next.js 14 • TypeScript • 95+ PageSpeed
+                  GPT-4 Turbo • Claude 3 • 99.9% Uptime
                 </div>
               </motion.div>
               
               <div className="bg-zinc-900 rounded-xl p-4">
-                <p className="text-zinc-300 text-sm mb-2">Website Features:</p>
+                <p className="text-zinc-300 text-sm mb-2">Expected Business Impact:</p>
                 <p className="text-zinc-400 text-sm whitespace-pre-line">
-                  {`✓ Lightning-fast load times (under 2s)
-✓ Mobile-first responsive design
-✓ SEO optimized structure
-✓ Custom animations & interactions
-✓ CMS integration
-✓ Analytics dashboard
-✓ Optional AI chatbot integration`}
+                  {`✓ Save $10,000-15,000 monthly vs. hiring
+✓ Handle 1,000+ tasks daily automatically
+✓ Respond to customers in seconds, not hours
+✓ Work 168 hours/week (vs 40 for humans)
+✓ Zero sick days, vacation, or training time
+✓ Scale instantly during peak periods
+✓ 3-5x ROI within 6 months`}
                 </p>
               </div>
             </motion.div>
@@ -203,8 +203,8 @@ Full-Service Custom Web Development
               className="bg-[#0d0d0d] border border-zinc-800 border-t-zinc-700 rounded-2xl p-8 shadow-lg shadow-black/30 cursor-pointer"
             >
               <div className="mb-6">
-                <h3 className="text-2xl font-bold text-white mb-3">CMS & Platform Solutions</h3>
-                <p className="text-zinc-400">Content management systems and platform solutions including WordPress, Webflow, and headless CMS for easy content updates.</p>
+                <h3 className="text-2xl font-bold text-white mb-3">Automate 40+ Hours Weekly</h3>
+                <p className="text-zinc-400">Transform repetitive workflows into automated systems. Free your team from mind-numbing tasks so they can focus on growth.</p>
               </div>
 
               <div className="relative h-[200px] overflow-hidden">
@@ -226,7 +226,7 @@ Full-Service Custom Web Development
                   }}
                 >
                   {/* Double the items for seamless loop */}
-                  {['WordPress', 'Webflow', 'Sanity CMS', 'Strapi', 'WordPress', 'Webflow', 'Sanity CMS', 'Strapi'].map((platform, idx) => (
+                  {['Salesforce', 'HubSpot', 'Slack', 'Microsoft 365', 'Salesforce', 'HubSpot', 'Slack', 'Microsoft 365'].map((platform, idx) => (
                     <div 
                       key={idx} 
                       className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between"
@@ -239,7 +239,7 @@ Full-Service Custom Web Development
                         />
                         <span className="text-zinc-300 text-sm">{platform}</span>
                       </div>
-                      <span className="text-zinc-500 text-xs">Expert Level</span>
+                      <span className="text-zinc-500 text-xs">AI Integrated</span>
                     </div>
                   ))}
                 </motion.div>
@@ -259,17 +259,17 @@ Full-Service Custom Web Development
               whileTap={{ scale: 0.98 }}
             >
               <div className="mb-6">
-                <h3 className="text-2xl font-bold text-white mb-3">Performance & SEO</h3>
-                <p className="text-zinc-400">Lightning-fast websites optimized for search engines and maximum conversion rates.</p>
+                <h3 className="text-2xl font-bold text-white mb-3">Eliminate 95% of Errors</h3>
+                <p className="text-zinc-400">Human mistakes cost money. Our AI performs complex tasks with near-perfect accuracy, every time, 24/7.</p>
               </div>
 
               {/* Performance Metrics Animation */}
               <div className="space-y-4">
                 {[
-                  { label: "Page Speed", value: 98, color: "bg-green-400" },
-                  { label: "SEO Score", value: 100, color: "bg-[#0066ff]" },
-                  { label: "Accessibility", value: 95, color: "bg-cyan-400" },
-                  { label: "Best Practices", value: 92, color: "bg-purple-400" }
+                  { label: "Accuracy Rate", value: 98, color: "bg-green-400" },
+                  { label: "Response Time", value: 100, color: "bg-[#0066ff]" },
+                  { label: "Task Completion", value: 95, color: "bg-cyan-400" },
+                  { label: "Cost Reduction", value: 92, color: "bg-purple-400" }
                 ].map((metric, idx) => (
                   <div key={metric.label} className="space-y-2">
                     <div className="flex justify-between text-sm">
@@ -347,19 +347,19 @@ Full-Service Custom Web Development
               className="lg:col-span-2 bg-[#0d0d0d] border border-zinc-800 border-t-zinc-700 rounded-2xl p-8 shadow-lg shadow-black/30 cursor-pointer"
             >
               <div className="mb-6">
-                <h3 className="text-2xl font-bold text-white mb-3">Launch & Growth</h3>
-                <p className="text-zinc-400">From initial deployment to ongoing optimization, we ensure your website scales with your business growth.</p>
+                <h3 className="text-2xl font-bold text-white mb-3">Scale 10x Without Hiring</h3>
+                <p className="text-zinc-400">Handle explosive growth without the headcount headaches. Our AI scales instantly to meet demand, no recruitment needed.</p>
               </div>
 
               {/* Project Timeline Animation */}
               <div className="relative mb-6">
                 <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-zinc-800" />
                 {[
-                  { phase: "Discovery", time: "Week 1", status: "complete" },
-                  { phase: "Design", time: "Week 2-3", status: "complete" },
-                  { phase: "Development", time: "Week 4-6", status: "active" },
-                  { phase: "Testing", time: "Week 7", status: "upcoming" },
-                  { phase: "Launch", time: "Week 8", status: "upcoming" }
+                  { phase: "AI Assessment", time: "Week 1", status: "complete" },
+                  { phase: "Model Selection", time: "Week 2-3", status: "complete" },
+                  { phase: "Training & Development", time: "Week 4-6", status: "active" },
+                  { phase: "Integration Testing", time: "Week 7", status: "upcoming" },
+                  { phase: "Deployment", time: "Week 8", status: "upcoming" }
                 ].map((item, idx) => (
                   <motion.div
                     key={item.phase}
@@ -480,16 +480,16 @@ Full-Service Custom Web Development
             whileTap={{ scale: 0.98 }}
           >
             <h3 className="text-2xl font-semibold text-white mb-4">
-              Need Something Custom?
+              Stop Wasting Money on Repetitive Tasks
             </h3>
             <p className="text-zinc-400 mb-6">
-              Let&apos;s discuss your website project
+              See exactly how much you could save with AI automation
             </p>
             <a
               href="#contact"
               className="inline-flex items-center px-6 py-3 bg-[#0066ff] text-white font-medium rounded-full hover:bg-[#0052cc] transition-colors duration-300"
             >
-              Get Started
+              Calculate Your Savings
               <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

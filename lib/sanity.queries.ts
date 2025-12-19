@@ -77,3 +77,45 @@ export async function getFeaturedTestimonial() {
     }
   `)
 }
+
+// Portfolio queries
+export async function getPortfolioProjects() {
+  return await client.fetch(`
+    *[_type == "portfolio"] | order(order asc) {
+      _id,
+      name,
+      slug,
+      type,
+      url,
+      description,
+      previewImage,
+      color,
+      tech,
+      features,
+      stats,
+      timeline,
+      featured,
+      order
+    }
+  `)
+}
+
+export async function getFeaturedProjects() {
+  return await client.fetch(`
+    *[_type == "portfolio" && featured == true] | order(order asc) {
+      _id,
+      name,
+      slug,
+      type,
+      url,
+      description,
+      previewImage,
+      color,
+      tech,
+      features,
+      stats,
+      timeline,
+      order
+    }
+  `)
+}

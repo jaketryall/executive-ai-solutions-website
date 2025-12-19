@@ -8,14 +8,17 @@ export default function EteryLogos() {
   ];
 
   return (
-    <section className="pt-0 pb-2 bg-[#0a0a0a] overflow-hidden">
+    <section className="py-8 bg-gradient-to-b from-[#0a0a0a] via-[#0d1117] to-[#0a0a0a] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Add space at the top to push content lower */}
+        <div className="h-16" />
+        
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center text-white text-sm mb-4"
+          className="text-center text-white text-sm mb-8"
         >
           Trusted by 100+ companies worldwide
         </motion.p>

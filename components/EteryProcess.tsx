@@ -9,28 +9,28 @@ export default function EteryProcess() {
   const steps = [
     {
       number: "01",
-      title: "Evaluate",
-      description: "We identify where AI can bring the most value to your business.",
+      title: "Week 1-2: Identify High-Impact Automation Opportunities",
+      description: "We analyze your operations to identify where AI will deliver the biggest impact.",
       stats: {
-        revenue: { value: "+6%", label: "Revenue" },
-        productivity: { value: "+13%", label: "Productivity" },
-        sales: { value: "+2%", label: "Sales" },
-        costs: { value: "-5%", label: "Costs" }
+        timeSaved: { value: "20-30 hrs", label: "Weekly Savings" },
+        costReduction: { value: "$5-8K", label: "Monthly Savings" },
+        tasks: { value: "15-25", label: "Automatable Tasks" },
+        roi: { value: "2-3x", label: "Expected ROI" }
       },
       expandedContent: [
-        "AI chatbots",
-        "Email automation",
-        "Workflow automation",
-        "Predictive analytics",
-        "Content generation",
-        "Data analysis model",
-        "Email personalization"
+        "Customer service automation",
+        "Data entry elimination",
+        "Report generation",
+        "Invoice processing",
+        "Email management",
+        "Appointment scheduling",
+        "Lead qualification"
       ]
     },
     {
       number: "02",
-      title: "Develop",
-      description: "We develop custom AI solutions that fit right into your workflow.",
+      title: "Week 3-6: Build Your AI Workforce",
+      description: "We create AI agents tailored to your specific needs - no disruption to current operations.",
       features: [
         { icon: "📊", label: "Predictive analytics" },
         { icon: "✉️", label: "Email personalization" },
@@ -43,12 +43,12 @@ export default function EteryProcess() {
     },
     {
       number: "03",
-      title: "Growth",
-      description: "We optimize your AI solutions to maximize long-term impact.",
+      title: "Week 7-8: Measure & Optimize",
+      description: "Go live and start capturing value immediately - with continuous optimization for maximum impact.",
       metrics: {
-        revenue: { current: "78.2%", change: "+3.2%", label: "Revenue", period: "Up from past week" },
-        costs: { current: "$35,495", change: "+5.3%", label: "Costs", period: "Down from past week" },
-        sales: { current: "$52,889", change: "+3.3%", label: "Sales", period: "Down from past week" }
+        efficiency: { current: "70-80%", change: "Automation Rate", label: "Tasks Automated", period: "From day one" },
+        savings: { current: "$1,500+", change: "Weekly Value", label: "Cost Savings", period: "Immediate impact" },
+        scale: { current: "3-5x", change: "Capacity Boost", label: "Processing Power", period: "Without hiring" }
       }
     }
   ];
@@ -65,11 +65,11 @@ export default function EteryProcess() {
           className="mb-16"
         >
           <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6">
-            Our Process
+            ROI in 8 Weeks
           </h2>
           <p className="text-zinc-400 text-lg max-w-2xl">
-            From idea to automation — we follow a clear, proven path to deliver
-            tailored AI solutions that drive results.
+            No lengthy implementations. No disruption. Just a clear path from 
+            problem to profit in weeks, not months.
           </p>
         </motion.div>
 
@@ -95,7 +95,7 @@ export default function EteryProcess() {
               <p className="text-zinc-400 mb-6">{step.description}</p>
 
               {/* Step-specific content */}
-              {step.number === "01" && (
+              {step.number === "01" && step.stats && (
                 <div className="bg-zinc-900 rounded-xl p-4 mb-4">
                   <div className="grid grid-cols-2 gap-4">
                     {Object.entries(step.stats).map(([key, stat]) => (
@@ -108,7 +108,7 @@ export default function EteryProcess() {
                 </div>
               )}
 
-              {step.number === "02" && (
+              {step.number === "02" && step.features && (
                 <div className="grid grid-cols-2 gap-2 mb-4">
                   {step.features.slice(0, 4).map((feature, idx) => (
                     <div
@@ -122,7 +122,7 @@ export default function EteryProcess() {
                 </div>
               )}
 
-              {step.number === "03" && (
+              {step.number === "03" && step.metrics && (
                 <div className="space-y-3 mb-4">
                   {Object.entries(step.metrics).map(([key, metric]) => (
                     <div key={key} className="bg-zinc-900 rounded-lg p-3">
@@ -143,7 +143,7 @@ export default function EteryProcess() {
                 className="flex items-center gap-2 text-[#0066ff] hover:text-[#0052cc] transition-colors"
               >
                 <span className="text-sm">
-                  {expandedStep === index ? "Show less" : "Everything for your business"}
+                  {expandedStep === index ? "Show less" : "See the details"}
                 </span>
                 <motion.svg
                   animate={{ rotate: expandedStep === index ? 180 : 0 }}
@@ -166,7 +166,7 @@ export default function EteryProcess() {
                     transition={{ duration: 0.3 }}
                     className="mt-4 pt-4 border-t border-zinc-800"
                   >
-                    {step.number === "01" && (
+                    {step.number === "01" && Array.isArray(step.expandedContent) && (
                       <div className="space-y-2">
                         {step.expandedContent.map((item, idx) => (
                           <div key={idx} className="flex items-center gap-2">
@@ -176,7 +176,7 @@ export default function EteryProcess() {
                         ))}
                       </div>
                     )}
-                    {step.number === "02" && (
+                    {step.number === "02" && step.features && (
                       <div className="grid grid-cols-2 gap-2">
                         {step.features.map((feature, idx) => (
                           <div

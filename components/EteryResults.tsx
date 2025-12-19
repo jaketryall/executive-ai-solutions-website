@@ -5,24 +5,24 @@ import { motion } from "framer-motion";
 export default function EteryResults() {
   const results = [
     {
-      value: "150 +",
-      label: "Project success",
-      description: "Completed projects for clients in over 20 countries, from bold startups to top corporations."
+      value: "40-60%",
+      label: "Cost Reduction Potential",
+      description: "Industry studies show AI automation typically reduces operational costs by 40-60% within the first year."
     },
     {
-      value: "100 %",
-      label: "Client efficiency",
-      description: "Clients reporting enhanced efficiency with our custom strategies and advanced tech."
+      value: "40+ Hours",
+      label: "Weekly Time Savings",
+      description: "Average time saved per department when routine tasks are automated with AI agents."
     },
     {
-      value: "300 +",
-      label: "AI innovation",
-      description: "Hours spent crafting smart AI tools to optimize workflows across key industries."
+      value: "95%",
+      label: "Error Reduction",
+      description: "AI performs repetitive tasks with near-perfect accuracy, eliminating costly human errors."
     },
     {
-      value: "75 +",
-      label: "Industry recognition",
-      description: "Awarded for excellence in design, technology, and sustainability over the last five years."
+      value: "3-5x",
+      label: "Expected ROI",
+      description: "Typical return on investment within 12 months based on industry benchmarks."
     }
   ];
 
@@ -38,11 +38,11 @@ export default function EteryResults() {
           className="mb-16"
         >
           <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6">
-            Our Results
+            What AI Delivers
           </h2>
           <p className="text-zinc-400 text-lg max-w-2xl">
-            Tangible results, not empty claims — we build efficient AI tools that scale,
-            optimize, and save valuable hours.
+            Based on industry benchmarks and typical AI implementations, here's the 
+            impact you can expect when you automate with artificial intelligence.
           </p>
         </motion.div>
 
@@ -75,6 +75,17 @@ export default function EteryResults() {
             </motion.div>
           ))}
         </div>
+
+        {/* Disclaimer */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="text-center text-zinc-500 text-sm mt-12 italic"
+        >
+          *Results based on McKinsey, Gartner, and Accenture industry research. Actual results vary by implementation.
+        </motion.p>
 
         {/* Bottom Text */}
         <motion.h3

@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import MobileOptimizations from "@/components/MobileOptimizations";
-import "./output.css";
+import SmoothScroll from "@/components/SmoothScroll";
+import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,35 +14,34 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
-  viewportFit: "cover", // For iPhone X+ notch
-  themeColor: "#000000",
+  themeColor: "#0a0a0f",
 };
 
 export const metadata: Metadata = {
-  title: "Executive AI Solutions - Custom Website Development",
-  description: "We build stunning custom websites that convert. Specializing in modern web technologies, e-commerce solutions, and intelligent AI automation for businesses that want to grow.",
-  keywords: "custom website development, web development, custom web design, React developer, Next.js, e-commerce, AI automation, website builder",
-  authors: [{ name: "Executive AI Solutions" }],
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "Executive AI",
-  },
-  formatDetection: {
-    telephone: false, // Disable auto phone number detection
-  },
+  title: "Executive AI - Web Design Studio",
+  description:
+    "We create digital experiences that convert. Award-winning design studio crafting premium websites for ambitious brands.",
+  keywords:
+    "web design, website design, web development, UI/UX design, brand identity, e-commerce, digital agency",
+  authors: [{ name: "Executive AI" }],
   openGraph: {
-    title: "Executive AI Solutions - Custom Website Development",
-    description: "We build stunning custom websites that convert. Modern web technologies with intelligent AI automation.",
-    url: "https://executiveaisolutions.com",
-    siteName: "Executive AI Solutions",
+    title: "Executive AI - Web Design Studio",
+    description:
+      "We create digital experiences that convert. Award-winning design studio crafting premium websites for ambitious brands.",
+    url: "https://executiveai.com",
+    siteName: "Executive AI",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Executive AI Solutions - Custom Website Development",
-    description: "We build stunning custom websites that convert. Modern web technologies with intelligent AI automation.",
+    title: "Executive AI - Web Design Studio",
+    description:
+      "We create digital experiences that convert. Award-winning design studio crafting premium websites.",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -52,33 +51,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
-        {/* Mobile web app capable - modern syntax */}
-        <meta name="mobile-web-app-capable" content="yes" />
-        
-        {/* iOS specific optimizations */}
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        
-        {/* Prevent zoom on form inputs for iOS */}
-        <meta name="format-detection" content="telephone=no" />
-        
-        {/* Favicon - Multiple sizes for different contexts */}
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png?v=2" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=2" />
-        <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png?v=2" />
-        <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png?v=2" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png?v=2" />
-        <link rel="shortcut icon" href="/favicon.png?v=2" />
-        
-        {/* Preconnect to optimize font loading */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
       </head>
-      <body className={`${inter.className} relative`}>
-        <MobileOptimizations />
-        {children}
+      <body className={inter.className}>
+        <SmoothScroll>{children}</SmoothScroll>
         <SpeedInsights />
       </body>
     </html>

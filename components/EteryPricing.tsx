@@ -10,30 +10,30 @@ export default function EteryPricing() {
     {
       name: "Jesse Leigh",
       role: "CEO & Founder",
-      quote: "They built us an amazing website that increased our conversions by 150%. The design is beautiful and it loads incredibly fast.",
-      date: "increased our conversions by 150%"
+      quote: "Their AI agents handle 80% of our customer support tickets automatically. Response times dropped from hours to seconds.",
+      date: "80% automation achieved"
     },
     {
       name: "Michael Joseph",
-      role: "E-commerce Owner",
-      quote: "Our new Shopify store looks professional and works flawlessly. Sales have doubled since launch. Highly recommend!",
-      date: "Sales have doubled since launch"
+      role: "Operations Director",
+      quote: "We've automated our entire data analysis pipeline. What used to take weeks now happens in real-time with AI insights.",
+      date: "Reduced processing time by 95%"
     },
     {
       name: "Amy Louise",
-      role: "Marketing Director",
-      quote: "They handled everything from design to deployment. Our Squarespace site is exactly what we wanted and more.",
-      date: "exactly what we wanted and more"
+      role: "Head of Sales",
+      quote: "AI-powered lead qualification and nurturing increased our conversion rate by 3x. The ROI has been incredible.",
+      date: "3x conversion rate improvement"
     }
   ];
 
   const features = [
-    "Custom Website Design & Development",
-    "Mobile Responsive Design",
-    "SEO Optimization & Setup",
-    "CMS Integration (WordPress, Sanity, etc.)",
-    "3 Months Free Maintenance",
-    "Optional: AI Chatbot Integration"
+    "Handles 1,000+ tasks daily",
+    "Works with your existing tools",
+    "See ROI metrics in real-time",
+    "Zero sick days or vacation",
+    "Scales instantly with demand",
+    "Never needs training or breaks"
   ];
 
   return (
@@ -48,11 +48,11 @@ export default function EteryPricing() {
           className="text-center mb-16"
         >
           <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6">
-            Website Packages
+            Investment That Pays for Itself
           </h2>
           <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-            Transparent pricing for every project size. From simple landing pages
-            to complex web applications — we have a package that fits.
+            Compare the cost of AI to what you're spending now on manual work. 
+            Most clients see positive ROI within 2-3 months.
           </p>
         </motion.div>
 
@@ -67,7 +67,7 @@ export default function EteryPricing() {
             <div className="bg-[#0d0d0d] border border-zinc-800 rounded-2xl p-8 lg:p-10">
               {/* Plan Header */}
               <div className="mb-8">
-                <h3 className="text-2xl font-bold text-white mb-2">Website Development</h3>
+                <h3 className="text-2xl font-bold text-white mb-2">Your AI Workforce</h3>
                 
                 {/* Billing Toggle */}
                 <div className="flex items-center gap-4 mb-6">
@@ -87,8 +87,15 @@ export default function EteryPricing() {
 
                 {/* Price */}
                 <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-5xl font-bold text-white">$2,999</span>
-                  <span className="text-zinc-400">starting price</span>
+                  <span className="text-5xl font-bold text-white">$4,999</span>
+                  <span className="text-zinc-400">per agent/month</span>
+                </div>
+                
+                {/* ROI Comparison */}
+                <div className="bg-green-900/20 border border-green-800/30 rounded-lg p-3 mb-4">
+                  <p className="text-green-400 text-sm font-medium mb-1">vs. Hiring 2 Full-Time Employees:</p>
+                  <p className="text-white font-bold">Save $10,000-15,000/month</p>
+                  <p className="text-zinc-400 text-xs mt-1">AI works 168 hrs/week vs 40 hrs for humans</p>
                 </div>
                 
                 {/* CTA Button */}
@@ -97,7 +104,7 @@ export default function EteryPricing() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  Let&apos;s get started
+                  Calculate Your Savings
                 </motion.button>
               </div>
 

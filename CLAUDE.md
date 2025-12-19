@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Executive AI Solutions is a marketing website built with Next.js 15, TypeScript, Tailwind CSS v4, and Framer Motion. The site features a dark theme with electric blue (#0066ff) accents and modern glassmorphic design elements.
+Executive AI Solutions is a marketing website built with Next.js 16, TypeScript, Tailwind CSS v4, and Framer Motion. The site features a dark theme with electric blue (#0066ff) accents and modern glassmorphic design elements.
 
 ## Development Commands
 
 ```bash
-# Start development server
+# Start development server (uses Turbopack by default in Next.js 16)
 npm run dev
 
 # Build for production
@@ -20,34 +20,27 @@ npm start
 
 # Run linter
 npm run lint
-
-# Build CSS only (with watch mode)
-npm run build:css
-
-# Build CSS for production (minified)
-npm run build:css:prod
 ```
 
 ## Architecture & Key Technical Decisions
 
-### Tailwind CSS v4 CLI Setup
-This project uses Tailwind CSS v4 with a CLI build process instead of PostCSS:
-- `input.css` contains Tailwind imports and custom utilities
-- CSS is compiled to `app/output.css` using `@tailwindcss/cli`
-- The build process runs before Next.js starts
-- NO `postcss.config.mjs` file - Tailwind v4 uses CLI compilation instead
+### Tailwind CSS v4 with PostCSS
+This project uses Tailwind CSS v4 with the official PostCSS integration:
+- `app/globals.css` contains Tailwind imports and custom utilities
+- PostCSS handles CSS compilation automatically via `postcss.config.mjs`
+- NO separate CSS build step needed - Next.js handles it
 - NO `tailwind.config.js/ts` needed - Tailwind v4 auto-detects content
 
 **Critical Tailwind v4 Notes:**
 - Import syntax is `@import "tailwindcss";` NOT `@tailwind base/components/utilities`
-- The `@tailwindcss/postcss` package is installed but NOT used in postcss config
+- PostCSS config uses `@tailwindcss/postcss` plugin
 - Custom utilities must be defined in `@layer utilities {}` blocks
 - CSS custom properties (like `--primary-blue`) work directly without theme config
 - Arbitrary values like `bg-[#0066ff]` work without configuration
 - Content detection is automatic - no need to configure content paths
 
 ### Custom CSS Utilities
-The project defines several custom utilities in `input.css`:
+The project defines several custom utilities in `app/globals.css`:
 - `.bg-gradient-radial` - Radial blue gradient effect
 - `.text-glow-blue` - Blue text glow effect
 - `.border-glow-blue` - Blue border glow effect
@@ -70,14 +63,20 @@ All components use client-side rendering (`"use client"`) for Framer Motion anim
 - Blue glow effects on interactive elements
 
 ### Important Files
-- `input.css` - Source CSS with Tailwind imports and custom utilities
-- `app/output.css` - Compiled CSS (do not edit directly)
+- `app/globals.css` - Source CSS with Tailwind imports and custom utilities
+- `postcss.config.mjs` - PostCSS configuration with @tailwindcss/postcss
 - `app/layout.tsx` - Root layout with metadata and font configuration
 - `components/Icons.tsx` - Custom SVG icon components
 
-### Common Tailwind v4 Pitfalls to Avoid
+### Next.js 16 Notes
+- Turbopack is the default bundler (2-5x faster builds)
+- The `next lint` command has been replaced with direct `eslint .`
+- Dynamic Request APIs (params, searchParams, cookies, headers) require `await`
+- React 19.2 is used
+
+### Common Pitfalls to Avoid
 1. Do NOT use `@tailwind base; @tailwind components; @tailwind utilities;` - this is v3 syntax
-2. Do NOT create a `postcss.config.mjs` with tailwindcss plugin - use CLI instead
+2. Do NOT create separate CSS build scripts - PostCSS handles everything
 3. Do NOT expect `@apply` to work with custom utilities that aren't defined
-4. If styles aren't applying, check that CSS is being rebuilt: `npm run build:css`
-5. Remember that Tailwind v4 requires running the CLI to generate CSS - it doesn't work via PostCSS anymore
+4. CSS class names cannot start with a number (use `\33xl` escape for `3xl` prefix)
+5. When using TypeScript with union types, always add null/undefined checks
