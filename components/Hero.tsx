@@ -4,42 +4,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
-// Work items for bottom row
-export const workItems = [
-  {
-    title: "Desert Wings",
-    category: "Aviation",
-    description: "A modern, conversion-focused website for Arizona's premier flight training academy.",
-    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=80",
-    url: "https://desert-wings-nextjs.vercel.app/",
-    results: "3x increase in student inquiries",
-  },
-  {
-    title: "Meridian",
-    category: "Consulting",
-    description: "Professional consulting firm website emphasizing trust, expertise, and measurable outcomes.",
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80",
-    url: "#",
-    results: "40% improvement in lead quality",
-  },
-  {
-    title: "Apex Interiors",
-    category: "Design",
-    description: "Elegant portfolio showcasing luxury residential and commercial interior design projects.",
-    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80",
-    url: "#",
-    results: "Featured in Design Weekly",
-  },
-  {
-    title: "Northside",
-    category: "Healthcare",
-    description: "Modern healthcare platform focused on patient experience and accessibility.",
-    image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&q=80",
-    url: "#",
-    results: "50% faster appointment booking",
-  },
-];
+import { workItems } from "./Work";
 
 // Work thumbnail component
 function WorkThumbnail({
@@ -71,19 +36,14 @@ function WorkThumbnail({
         rel={item.url.startsWith("http") ? "noopener noreferrer" : undefined}
         className="block"
       >
-        <div className="relative w-[160px] h-[100px] md:w-[200px] md:h-[125px] rounded-xl overflow-hidden bg-zinc-900 shadow-2xl shadow-black/60">
-          {/* Image */}
+        <div className="relative w-[140px] h-[90px] md:w-[180px] md:h-[115px] rounded-xl overflow-hidden bg-zinc-900 shadow-2xl shadow-black/60">
           <Image
             src={item.image}
             alt={item.title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-110"
           />
-
-          {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-          {/* Hover overlay */}
           <motion.div
             className="absolute inset-0 bg-[#2563eb]/90 flex items-center justify-center"
             initial={{ opacity: 0 }}
@@ -92,8 +52,6 @@ function WorkThumbnail({
           >
             <span className="text-white text-sm font-medium">View →</span>
           </motion.div>
-
-          {/* Title at bottom */}
           <div className="absolute bottom-0 left-0 right-0 p-3">
             <h3 className="text-xs md:text-sm font-medium text-white">{item.title}</h3>
           </div>
@@ -139,7 +97,7 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex flex-col bg-[#0a0a0a] overflow-hidden cursor-none"
+      className="relative min-h-screen flex flex-col bg-[#0a0a0a] overflow-x-clip overflow-y-visible"
     >
       {/* Fluid Gradient Background with Parallax */}
       <motion.div className="absolute inset-0 z-0" style={{ y: backgroundY }}>
@@ -147,16 +105,16 @@ export default function Hero() {
 
         {/* Animated gradient blob 1 - Purple/Pink */}
         <motion.div
-          className="absolute w-[120%] h-[120%] opacity-50"
+          className="absolute w-[120%] h-[120%] opacity-40"
           style={{
             background: `conic-gradient(from 180deg at ${50 + mousePosition.x * 5}% ${50 + mousePosition.y * 5}%,
-              #0a0a0a 0deg,
+              transparent 0deg,
               #1a0a2e 45deg,
               #2d1b4e 90deg,
               #4a1942 135deg,
               #1a0a2e 180deg,
-              #0a0a0a 225deg,
-              #0a0a0a 360deg
+              transparent 225deg,
+              transparent 360deg
             )`,
             filter: "blur(80px)",
           }}
@@ -185,18 +143,16 @@ export default function Hero() {
 
         {/* Animated gradient blob 3 - Orange accent */}
         <motion.div
-          className="absolute w-[80%] h-[80%] left-[10%] top-[10%] opacity-30"
+          className="absolute w-[80%] h-[80%] left-[10%] top-[10%] opacity-25"
           style={{
             background: `conic-gradient(from 270deg at ${45 + mousePosition.x * 4}% ${55 - mousePosition.y * 4}%,
               transparent 0deg,
-              transparent 120deg,
-              #1a0a0a 150deg,
+              transparent 150deg,
               #3d1f0f 180deg,
               #ff6b35 210deg,
               #ff8c42 240deg,
               #3d1f0f 270deg,
-              #1a0a0a 300deg,
-              transparent 330deg,
+              transparent 300deg,
               transparent 360deg
             )`,
             filter: "blur(90px)",
@@ -215,44 +171,6 @@ export default function Hero() {
           </div>
         </motion.div>
       </motion.div>
-
-      {/* Hovered Work Background Image */}
-      <AnimatePresence>
-        {hoveredWork !== null && (
-          <motion.div
-            key={hoveredWork}
-            className="absolute inset-0 z-5"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <Image
-              src={workItems[hoveredWork].image.replace('w=600', 'w=1920')}
-              alt=""
-              fill
-              className="object-cover"
-            />
-            {/* Vignette overlay */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background: 'radial-gradient(ellipse at center, transparent 30%, rgba(10, 10, 10, 0.6) 100%)'
-              }}
-            />
-            {/* Project info */}
-            <motion.div
-              className="absolute bottom-32 left-1/2 -translate-x-1/2 text-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <p className="text-white text-2xl font-medium">{workItems[hoveredWork].title}</p>
-              <p className="text-white/60 text-sm mt-1">{workItems[hoveredWork].category}</p>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Main Content with Parallax */}
       <motion.div
@@ -316,26 +234,65 @@ export default function Hero() {
             <span>View Work</span>
           </Link>
         </motion.div>
+
       </motion.div>
+
+      {/* Hovered Work Background Image */}
+      <AnimatePresence>
+        {hoveredWork !== null && (
+          <motion.div
+            key={hoveredWork}
+            className="absolute inset-0 z-[1]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <Image
+              src={workItems[hoveredWork].image}
+              alt=""
+              fill
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-black/60" />
+            <motion.div
+              className="absolute bottom-32 left-1/2 -translate-x-1/2 text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <p className="text-white text-2xl font-medium">
+                {workItems[hoveredWork].title}
+              </p>
+              <p className="text-white/60 text-sm mt-1">
+                {workItems[hoveredWork].category}
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Work Thumbnails at Bottom with Parallax */}
       <motion.div
-        className="relative z-10 pb-8 md:pb-12"
+        className="relative z-10 mt-8 md:mt-16"
         style={{ y: thumbnailsY, opacity: contentOpacity }}
       >
-        <div className="flex justify-center items-end gap-3 md:gap-4 px-4 overflow-x-auto">
-          {workItems.map((item, index) => (
-            <WorkThumbnail
-              key={item.title}
-              item={item}
-              index={index}
-              onHover={() => setHoveredWork(index)}
-              onLeave={() => setHoveredWork(null)}
-              isHovered={hoveredWork === index}
-            />
-          ))}
+        <div className="pt-6 pb-8 md:pt-8 md:pb-12">
+          <div className="flex justify-center items-end gap-3 md:gap-4 px-4 overflow-x-auto">
+            {workItems.map((item, index) => (
+              <WorkThumbnail
+                key={item.title}
+                item={item}
+                index={index}
+                onHover={() => setHoveredWork(index)}
+                onLeave={() => setHoveredWork(null)}
+                isHovered={hoveredWork === index}
+              />
+            ))}
+          </div>
         </div>
       </motion.div>
+
     </section>
   );
 }

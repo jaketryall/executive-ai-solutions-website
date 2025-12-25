@@ -77,7 +77,7 @@ function FAQItem({ faq, index }: { faq: typeof faqs[0]; index: number }) {
 
 export default function FAQ() {
   return (
-    <section id="faq" className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a]">
+    <section id="faq" className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a] rounded-t-[2rem] -mt-8">
       <div className="max-w-4xl mx-auto">
         {/* Section header */}
         <motion.div

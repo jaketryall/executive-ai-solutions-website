@@ -23,17 +23,22 @@
     scroll-behavior: smooth;
   }
 
-  body {
+  html, body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    cursor: none;
+    cursor: none !important;
   }
 
   /* Hide cursor on all elements */
-  *, *::before, *::after {
+  html *, html *::before, html *::after {
+    cursor: none !important;
+  }
+
+  /* Ensure cursor is hidden on interactive elements */
+  a, button, input, textarea, select, [role="button"] {
     cursor: none !important;
   }
 

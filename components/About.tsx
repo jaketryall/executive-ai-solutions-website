@@ -10,7 +10,7 @@ export default function About() {
     <section
       id="about"
       ref={sectionRef}
-      className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a] overflow-hidden"
+      className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a] overflow-hidden rounded-t-[2rem] -mt-8"
     >
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section header */}
