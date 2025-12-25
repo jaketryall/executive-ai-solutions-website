@@ -1,7 +1,5 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Marquee from "@/components/Marquee";
-import LogoCloud from "@/components/LogoCloud";
 import Work from "@/components/Work";
 import Services from "@/components/Services";
 import Pricing from "@/components/Pricing";
@@ -20,8 +18,6 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
-        <Marquee />
-        <LogoCloud />
         <Work />
         <Services />
         <Pricing />

@@ -73,7 +73,7 @@ export default function Services() {
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              Services
+              Our <span className="font-serif italic text-[#2563eb]">services</span>
             </motion.h2>
           </div>
           <motion.p

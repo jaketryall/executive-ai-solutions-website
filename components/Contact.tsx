@@ -40,7 +40,7 @@ export default function Contact() {
             Get in Touch
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-white tracking-tight mb-6">
-            Let&apos;s Work Together
+            Let&apos;s work <span className="font-serif italic text-[#2563eb]">together</span>
           </h2>
           <p className="text-xl text-zinc-400 max-w-2xl">
             Have a project in mind? I&apos;d love to hear about it.

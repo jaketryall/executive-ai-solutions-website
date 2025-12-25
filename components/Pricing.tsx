@@ -84,7 +84,7 @@ export default function Pricing() {
             />
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-[#0a0a0a] tracking-tight mb-6">
-            Transparent Pricing
+            Transparent <span className="font-serif italic text-[#2563eb]">pricing</span>
           </h2>
           <p className="text-xl text-zinc-500 max-w-2xl mx-auto">
             No hidden fees. No surprises. Just honest pricing for quality work.

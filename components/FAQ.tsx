@@ -100,7 +100,7 @@ export default function FAQ() {
             </span>
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-white tracking-tight mb-6">
-            Common Questions
+            Common <span className="font-serif italic text-[#2563eb]">questions</span>
           </h2>
           <p className="text-xl text-zinc-400">
             Everything you need to know before we get started.

@@ -49,7 +49,7 @@ export default function Process() {
             How It Works
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-[#0a0a0a] tracking-tight mb-6">
-            Process
+            Our <span className="font-serif italic text-[#2563eb]">process</span>
           </h2>
           <p className="text-xl text-zinc-500 max-w-2xl">
             From first call to launch in as little as 2 weeks.

@@ -6,7 +6,15 @@ import Link from "next/link";
 import Image from "next/image";
 
 // Magnetic effect for nav items
-function MagneticLink({ children, href, className }: { children: React.ReactNode; href: string; className?: string }) {
+function MagneticLink({
+  children,
+  href,
+  className,
+}: {
+  children: React.ReactNode;
+  href: string;
+  className?: string;
+}) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -62,10 +70,9 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { href: "#work", label: "Work" },
-    { href: "#services", label: "Services" },
-    { href: "#process", label: "Process" },
+    { href: "#work", label: "Case Studies" },
     { href: "#about", label: "About" },
+    { href: "#services", label: "Services" },
   ];
 
   return (
@@ -79,37 +86,40 @@ export default function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <nav className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 py-3">
+      <nav className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 xl:px-24 py-5">
         <div className="flex items-center justify-between">
-          {/* Logo with hover effect */}
+          {/* Logo - text based like viral-sma */}
           <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="-my-12"
           >
-            <Link href="/">
+            <Link href="/" className="flex items-center gap-2">
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6 }}
-                className="relative w-32 h-32"
+                className="flex items-center gap-2"
               >
-                <Image
-                  src="/logo.png"
-                  alt="Executive AI Logo"
-                  fill
-                  className="object-contain"
-                />
+                {/* Logo */}
+                <div className="relative w-8 h-8">
+                  <Image
+                    src="/favicon.png"
+                    alt="Executive AI Solutions"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+                <span className="text-xl font-semibold text-white">exec</span>
               </motion.div>
             </Link>
           </motion.div>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - centered */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="hidden md:flex items-center gap-8"
+            className="hidden md:flex items-center gap-10"
           >
             {navLinks.map((link, index) => (
               <motion.div
@@ -126,22 +136,23 @@ export default function Navbar() {
                 </MagneticLink>
               </motion.div>
             ))}
+          </motion.div>
 
-            {/* CTA Button */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+          {/* CTA Button */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="hidden md:block"
+          >
+            <Link
+              href="#contact"
+              className="text-sm text-[#0a0a0a] bg-white px-5 py-2.5 rounded-full hover:bg-zinc-100 transition-colors font-medium"
             >
-              <Link
-                href="#contact"
-                className="text-sm text-[#0a0a0a] bg-white px-5 py-2.5 rounded-full hover:bg-zinc-100 transition-colors font-medium"
-              >
-                Get in Touch
-              </Link>
-            </motion.div>
+              Book a call
+            </Link>
           </motion.div>
 
           {/* Mobile Menu Button */}
@@ -213,16 +224,13 @@ export default function Navbar() {
                 transition={{ delay: 0.5, duration: 0.4 }}
                 className="mt-8"
               >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Link
                     href="#contact"
                     onClick={() => setIsOpen(false)}
                     className="inline-block text-lg font-medium text-[#0a0a0a] bg-white px-8 py-4 rounded-full"
                   >
-                    Get in Touch
+                    Book a call
                   </Link>
                 </motion.div>
               </motion.div>

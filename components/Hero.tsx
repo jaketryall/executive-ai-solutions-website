@@ -1,239 +1,340 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useInView, animate } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
-// Animated counter component
-function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
+// Work items for bottom row
+export const workItems = [
+  {
+    title: "Desert Wings",
+    category: "Aviation",
+    description: "A modern, conversion-focused website for Arizona's premier flight training academy.",
+    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=80",
+    url: "https://desert-wings-nextjs.vercel.app/",
+    results: "3x increase in student inquiries",
+  },
+  {
+    title: "Meridian",
+    category: "Consulting",
+    description: "Professional consulting firm website emphasizing trust, expertise, and measurable outcomes.",
+    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80",
+    url: "#",
+    results: "40% improvement in lead quality",
+  },
+  {
+    title: "Apex Interiors",
+    category: "Design",
+    description: "Elegant portfolio showcasing luxury residential and commercial interior design projects.",
+    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80",
+    url: "#",
+    results: "Featured in Design Weekly",
+  },
+  {
+    title: "Northside",
+    category: "Healthcare",
+    description: "Modern healthcare platform focused on patient experience and accessibility.",
+    image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&q=80",
+    url: "#",
+    results: "50% faster appointment booking",
+  },
+];
 
-  useEffect(() => {
-    if (isInView) {
-      const controls = animate(0, value, {
-        duration: 2,
-        ease: [0.25, 0.46, 0.45, 0.94],
-        onUpdate: (latest) => setCount(Math.round(latest)),
-      });
-      return () => controls.stop();
-    }
-  }, [isInView, value]);
-
-  return <span ref={ref}>{count}{suffix}</span>;
-}
-
-// Magnetic button component
-function MagneticButton({
-  children,
-  href,
-  className
+// Work thumbnail component
+function WorkThumbnail({
+  item,
+  index,
+  onHover,
+  onLeave,
+  isHovered,
 }: {
-  children: React.ReactNode;
-  href: string;
-  className: string;
+  item: (typeof workItems)[0];
+  index: number;
+  onHover: () => void;
+  onLeave: () => void;
+  isHovered: boolean;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const springConfig = { damping: 20, stiffness: 300 };
-  const springX = useSpring(x, springConfig);
-  const springY = useSpring(y, springConfig);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    x.set((e.clientX - centerX) * 0.3);
-    y.set((e.clientY - centerY) * 0.3);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
   return (
     <motion.div
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ x: springX, y: springY }}
-      className="inline-block"
+      className="relative group"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
+      data-cursor="View Project"
     >
-      <motion.div
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      <Link
+        href={item.url}
+        target={item.url.startsWith("http") ? "_blank" : undefined}
+        rel={item.url.startsWith("http") ? "noopener noreferrer" : undefined}
+        className="block"
       >
-        <Link href={href} className={className}>
-          {children}
-        </Link>
-      </motion.div>
+        <div className="relative w-[160px] h-[100px] md:w-[200px] md:h-[125px] rounded-xl overflow-hidden bg-zinc-900 shadow-2xl shadow-black/60">
+          {/* Image */}
+          <Image
+            src={item.image}
+            alt={item.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+          {/* Hover overlay */}
+          <motion.div
+            className="absolute inset-0 bg-[#2563eb]/90 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <span className="text-white text-sm font-medium">View →</span>
+          </motion.div>
+
+          {/* Title at bottom */}
+          <div className="absolute bottom-0 left-0 right-0 p-3">
+            <h3 className="text-xs md:text-sm font-medium text-white">{item.title}</h3>
+          </div>
+        </div>
+      </Link>
     </motion.div>
   );
 }
 
 export default function Hero() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [hoveredWork, setHoveredWork] = useState<number | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Parallax scroll effects
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  // Parallax transforms for different elements
+  const headlineY = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const subheadlineY = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  const ctaY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const thumbnailsY = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const faviconY = useTransform(scrollYProgress, [0, 1], [0, 250]);
+  const faviconScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.3]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth - 0.5) * 2,
+        y: (e.clientY / window.innerHeight - 0.5) * 2,
+      });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   return (
-    <section ref={containerRef} className="relative min-h-screen flex flex-col justify-center pt-32 bg-[#0a0a0a]">
-      {/* Main content */}
-      <div className="relative z-10 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto w-full">
-        {/* Overline with line animation */}
+    <section
+      ref={sectionRef}
+      className="relative min-h-screen flex flex-col bg-[#0a0a0a] overflow-hidden cursor-none"
+    >
+      {/* Fluid Gradient Background with Parallax */}
+      <motion.div className="absolute inset-0 z-0" style={{ y: backgroundY }}>
+        <div className="absolute inset-0 bg-[#0a0a0a]" />
+
+        {/* Animated gradient blob 1 - Purple/Pink */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          className="mb-8 flex items-center gap-4"
+          className="absolute w-[120%] h-[120%] opacity-50"
+          style={{
+            background: `conic-gradient(from 180deg at ${50 + mousePosition.x * 5}% ${50 + mousePosition.y * 5}%,
+              #0a0a0a 0deg,
+              #1a0a2e 45deg,
+              #2d1b4e 90deg,
+              #4a1942 135deg,
+              #1a0a2e 180deg,
+              #0a0a0a 225deg,
+              #0a0a0a 360deg
+            )`,
+            filter: "blur(80px)",
+          }}
+          animate={{ rotate: [0, 360] }}
+          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+        />
+
+        {/* Animated gradient blob 2 - Blue/Cyan */}
+        <motion.div
+          className="absolute w-full h-full opacity-40"
+          style={{
+            background: `conic-gradient(from 90deg at ${60 - mousePosition.x * 3}% ${40 + mousePosition.y * 3}%,
+              transparent 0deg,
+              #0a1628 60deg,
+              #0066ff 120deg,
+              #00a8ff 180deg,
+              #0066ff 240deg,
+              #0a1628 300deg,
+              transparent 360deg
+            )`,
+            filter: "blur(100px)",
+          }}
+          animate={{ rotate: [360, 0] }}
+          transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
+        />
+
+        {/* Animated gradient blob 3 - Orange accent */}
+        <motion.div
+          className="absolute w-[80%] h-[80%] left-[10%] top-[10%] opacity-30"
+          style={{
+            background: `conic-gradient(from 270deg at ${45 + mousePosition.x * 4}% ${55 - mousePosition.y * 4}%,
+              transparent 0deg,
+              transparent 120deg,
+              #1a0a0a 150deg,
+              #3d1f0f 180deg,
+              #ff6b35 210deg,
+              #ff8c42 240deg,
+              #3d1f0f 270deg,
+              #1a0a0a 300deg,
+              transparent 330deg,
+              transparent 360deg
+            )`,
+            filter: "blur(90px)",
+          }}
+          animate={{ rotate: [0, -360] }}
+          transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
+        />
+
+        {/* Oversized Favicon with Parallax */}
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03]"
+          style={{ y: faviconY, scale: faviconScale }}
         >
-          <motion.span
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: 0.4, duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="w-12 h-px bg-zinc-700 origin-left"
-          />
-          <span className="text-sm text-zinc-500 uppercase tracking-[0.2em]">
-            Web Design Studio
-          </span>
+          <div className="relative w-[70vw] h-[70vw] max-w-[700px] max-h-[700px]">
+            <Image src="/favicon.png" alt="" fill className="object-contain" priority />
+          </div>
         </motion.div>
+      </motion.div>
 
-        {/* Main headline with word-by-word stagger */}
-        <div className="mb-12">
-          <h1 className="text-[clamp(3rem,10vw,8rem)] font-semibold leading-[0.95] tracking-[-0.04em] text-white">
-            <span className="block overflow-hidden">
-              {"Crafting Digital".split(" ").map((word, i) => (
-                <motion.span
-                  key={i}
-                  className="inline-block mr-[0.25em]"
-                  initial={{ y: "100%" }}
-                  animate={{ y: 0 }}
-                  transition={{
-                    delay: 0.3 + i * 0.1,
-                    duration: 0.8,
-                    ease: [0.25, 0.46, 0.45, 0.94],
-                  }}
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </span>
-            <span className="block overflow-hidden">
-              <motion.span
-                className="inline-block text-[#2563eb]"
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                transition={{
-                  delay: 0.5,
-                  duration: 0.8,
-                  ease: [0.25, 0.46, 0.45, 0.94],
-                }}
-              >
-                Experiences
-              </motion.span>
-            </span>
-          </h1>
-        </div>
-
-        {/* Description and CTAs */}
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          className="text-lg md:text-xl text-zinc-400 max-w-xl leading-relaxed mb-8"
-        >
-          Beautiful, high-performance websites that help businesses stand out
-          and convert visitors into customers.
-        </motion.p>
-
-        {/* CTA buttons with magnetic effect */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.8 }}
-          className="flex flex-wrap gap-4"
-        >
-          <MagneticButton
-            href="#work"
-            className="group inline-flex items-center gap-3 px-8 py-4 bg-white text-[#0a0a0a] font-medium rounded-full transition-colors hover:bg-zinc-100"
+      {/* Hovered Work Background Image */}
+      <AnimatePresence>
+        {hoveredWork !== null && (
+          <motion.div
+            key={hoveredWork}
+            className="absolute inset-0 z-5"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
           >
-            <span>View Work</span>
-            <motion.span
-              className="inline-block"
-              initial={{ x: 0 }}
-              whileHover={{ x: 4 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            >
-              →
-            </motion.span>
-          </MagneticButton>
-
-          <MagneticButton
-            href="#contact"
-            className="inline-flex items-center gap-3 px-8 py-4 border border-zinc-800 text-white font-medium rounded-full hover:border-zinc-600 hover:bg-zinc-900/50 transition-all"
-          >
-            Get in Touch
-          </MagneticButton>
-        </motion.div>
-
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.8 }}
-          className="flex flex-wrap gap-12 md:gap-16 mt-16 pt-12 border-t border-zinc-800"
-        >
-          {[
-            { value: 50, suffix: "+", label: "Projects Delivered" },
-            { value: 100, suffix: "%", label: "Client Satisfaction" },
-            { value: 2, suffix: " Weeks", label: "Avg. Turnaround" },
-          ].map((stat, index) => (
+            <Image
+              src={workItems[hoveredWork].image.replace('w=600', 'w=1920')}
+              alt=""
+              fill
+              className="object-cover"
+            />
+            {/* Vignette overlay */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background: 'radial-gradient(ellipse at center, transparent 30%, rgba(10, 10, 10, 0.6) 100%)'
+              }}
+            />
+            {/* Project info */}
             <motion.div
-              key={stat.label}
+              className="absolute bottom-32 left-1/2 -translate-x-1/2 text-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2 + index * 0.1, duration: 0.6 }}
-              className="flex flex-col gap-1"
+              transition={{ delay: 0.2 }}
             >
-              <span className="text-2xl md:text-3xl font-semibold text-white">
-                <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-              </span>
-              <span className="text-sm text-zinc-500">
-                {stat.label}
-              </span>
+              <p className="text-white text-2xl font-medium">{workItems[hoveredWork].title}</p>
+              <p className="text-white/60 text-sm mt-1">{workItems[hoveredWork].category}</p>
             </motion.div>
-          ))}
-        </motion.div>
-      </div>
-
-      {/* Scroll indicator with pulse */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 lg:hidden"
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="flex flex-col items-center gap-2"
-        >
-          <motion.div
-            className="w-6 h-10 rounded-full border border-zinc-700 flex justify-center pt-2"
-            whileHover={{ borderColor: "#2563eb" }}
-            transition={{ duration: 0.2 }}
-          >
-            <motion.div
-              animate={{ y: [0, 12, 0], opacity: [1, 0.3, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-1.5 h-1.5 rounded-full bg-zinc-500"
-            />
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Main Content with Parallax */}
+      <motion.div
+        className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 text-center pt-24"
+        style={{ opacity: contentOpacity }}
+      >
+        {/* Tagline */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-zinc-500 text-xs uppercase tracking-[0.3em] mb-6"
+        >
+          Web Design Studio
+        </motion.p>
+
+        {/* Main Headline with Parallax */}
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          style={{ y: headlineY }}
+          className="text-5xl md:text-7xl lg:text-8xl font-medium text-white leading-[0.95] tracking-tight mb-8 max-w-5xl"
+        >
+          We design websites
+          <br />
+          <span className="text-zinc-500">that convert</span>
+        </motion.h1>
+
+        {/* Subheadline with Parallax */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          style={{ y: subheadlineY }}
+          className="text-zinc-400 text-lg md:text-xl max-w-xl mb-10 leading-relaxed"
+        >
+          Premium digital experiences for ambitious brands.
+          From strategy to launch, we build sites that drive results.
+        </motion.p>
+
+        {/* CTAs with Parallax */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
+          style={{ y: ctaY }}
+          className="flex flex-wrap items-center justify-center gap-4"
+        >
+          <Link
+            href="#contact"
+            className="group inline-flex items-center gap-3 px-8 py-4 bg-white text-[#0a0a0a] font-medium rounded-full hover:bg-zinc-100 transition-all"
+          >
+            <span>Start a Project</span>
+            <span className="group-hover:translate-x-1 transition-transform">→</span>
+          </Link>
+          <Link
+            href="#work"
+            className="inline-flex items-center gap-3 px-8 py-4 border border-zinc-700 text-white font-medium rounded-full hover:bg-white/5 transition-all"
+          >
+            <span>View Work</span>
+          </Link>
         </motion.div>
+      </motion.div>
+
+      {/* Work Thumbnails at Bottom with Parallax */}
+      <motion.div
+        className="relative z-10 pb-8 md:pb-12"
+        style={{ y: thumbnailsY, opacity: contentOpacity }}
+      >
+        <div className="flex justify-center items-end gap-3 md:gap-4 px-4 overflow-x-auto">
+          {workItems.map((item, index) => (
+            <WorkThumbnail
+              key={item.title}
+              item={item}
+              index={index}
+              onHover={() => setHoveredWork(index)}
+              onLeave={() => setHoveredWork(null)}
+              isHovered={hoveredWork === index}
+            />
+          ))}
+        </div>
       </motion.div>
     </section>
   );

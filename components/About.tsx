@@ -25,7 +25,7 @@ export default function About() {
             About
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-white tracking-tight">
-            The Story
+            The <span className="font-serif italic text-[#2563eb]">story</span>
           </h2>
         </motion.div>
 
