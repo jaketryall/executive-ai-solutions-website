@@ -206,17 +206,27 @@ function ScrollingContentCards({
                 {project.description}
               </p>
 
-              {/* Result badge */}
-              <div className="inline-flex items-center gap-3 px-4 py-2 bg-zinc-900/80 backdrop-blur-sm rounded-full border border-zinc-800 mb-8">
+              {/* Result badge with glow */}
+              <motion.div
+                className="inline-flex items-center gap-3 px-4 py-2 bg-zinc-900/80 backdrop-blur-sm rounded-full border border-zinc-800 mb-8 relative"
+                animate={{
+                  borderColor: isActive ? "rgba(37, 99, 235, 0.4)" : "rgb(39, 39, 42)",
+                  boxShadow: isActive ? "0 0 20px rgba(37, 99, 235, 0.15)" : "none",
+                }}
+                transition={{ duration: 0.5 }}
+              >
                 <span
                   className={`w-2 h-2 rounded-full bg-[#2563eb] ${
                     isActive ? "animate-pulse" : ""
                   }`}
+                  style={{
+                    boxShadow: isActive ? "0 0 10px rgba(37, 99, 235, 0.5)" : "none",
+                  }}
                 />
                 <span className="text-sm text-white font-medium">
                   {project.results}
                 </span>
-              </div>
+              </motion.div>
 
               {/* CTA */}
               <div>
@@ -231,14 +241,19 @@ function ScrollingContentCards({
                   className="group inline-flex items-center gap-3 text-white"
                   data-cursor="View Project"
                 >
-                  <span className="text-lg font-medium">View Project</span>
+                  <span className="text-lg font-medium group-hover:text-[#60a5fa] transition-colors duration-300">View Project</span>
                   <motion.div
-                    className="w-12 h-12 rounded-full border border-zinc-700 flex items-center justify-center group-hover:bg-[#2563eb] group-hover:border-[#2563eb] transition-colors duration-300"
+                    className="relative w-12 h-12 rounded-full border border-zinc-700 flex items-center justify-center group-hover:bg-[#2563eb] group-hover:border-[#2563eb] transition-all duration-300"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
+                    style={{
+                      boxShadow: "0 0 0 0 rgba(37, 99, 235, 0)",
+                    }}
                   >
+                    {/* Glow effect on hover */}
+                    <div className="absolute inset-0 rounded-full bg-[#2563eb] opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-300" />
                     <svg
-                      className="w-5 h-5 text-white transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      className="w-5 h-5 text-white transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 relative z-10"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -385,9 +400,22 @@ function PreviewCard({
           className="absolute inset-0 rounded-2xl md:rounded-3xl pointer-events-none"
           style={{
             boxShadow: isHovered
-              ? "inset 0 0 0 1px rgba(37, 99, 235, 0.3), 0 0 40px rgba(37, 99, 235, 0.15)"
-              : "inset 0 0 0 1px rgba(255,255,255,0.1)",
-            transition: "box-shadow 0.3s ease",
+              ? "inset 0 0 0 1px rgba(37, 99, 235, 0.5), 0 0 60px rgba(37, 99, 235, 0.25), 0 0 120px rgba(37, 99, 235, 0.1)"
+              : "inset 0 0 0 1px rgba(255,255,255,0.1), 0 0 30px rgba(37, 99, 235, 0.05)",
+            transition: "box-shadow 0.4s ease",
+          }}
+        />
+
+        {/* Ambient glow behind card */}
+        <motion.div
+          className="absolute -inset-4 rounded-3xl pointer-events-none -z-10"
+          animate={{
+            opacity: isHovered ? 0.6 : 0.2,
+          }}
+          transition={{ duration: 0.4 }}
+          style={{
+            background: "radial-gradient(ellipse at center, rgba(37, 99, 235, 0.15) 0%, transparent 70%)",
+            filter: "blur(40px)",
           }}
         />
 
@@ -463,12 +491,13 @@ export default function Work() {
       className="relative"
       style={{ height: `${(workItems.length + 1) * 100}vh` }}
     >
-      {/* Gradient background that blends with hero */}
-      <div className="absolute inset-0 -z-10">
+      {/* Gradient background - base layer */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute inset-0 bg-[#0a0a0a]" />
-        {/* Matching gradient from hero */}
-        <div
-          className="absolute top-0 left-0 right-0 h-[50vh] opacity-30"
+
+        {/* Top gradient blending from hero */}
+        <motion.div
+          className="absolute top-0 left-0 right-0 h-[60vh] opacity-40"
           style={{
             background: `conic-gradient(from 90deg at 60% 40%,
               transparent 0deg,
@@ -479,8 +508,73 @@ export default function Work() {
               #0a1628 300deg,
               transparent 360deg
             )`,
-            filter: "blur(100px)",
+            filter: "blur(120px)",
           }}
+          animate={{ rotate: [0, 360] }}
+          transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
+        />
+
+        {/* Subtle grid overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(37, 99, 235, 0.5) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(37, 99, 235, 0.5) 1px, transparent 1px)`,
+            backgroundSize: '80px 80px'
+          }}
+        />
+      </div>
+
+      {/* Fixed ambient glows - always visible behind content */}
+      <div className="fixed inset-0 pointer-events-none z-1 overflow-hidden">
+        {/* Floating blue orb - left side */}
+        <motion.div
+          className="absolute w-[600px] h-[600px] rounded-full opacity-20"
+          style={{
+            background: "radial-gradient(circle, #2563eb 0%, transparent 70%)",
+            filter: "blur(80px)",
+            left: "-10%",
+            top: "20%",
+          }}
+          animate={{
+            y: [0, -50, 0],
+            x: [0, 30, 0],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        />
+
+        {/* Floating purple orb - right side */}
+        <motion.div
+          className="absolute w-[500px] h-[500px] rounded-full opacity-15"
+          style={{
+            background: "radial-gradient(circle, #7c3aed 0%, transparent 70%)",
+            filter: "blur(80px)",
+            right: "-5%",
+            top: "40%",
+          }}
+          animate={{
+            y: [0, 40, 0],
+            x: [0, -20, 0],
+            scale: [1, 1.15, 1],
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        />
+
+        {/* Cyan accent glow - bottom center */}
+        <motion.div
+          className="absolute w-[800px] h-[400px] rounded-full opacity-10"
+          style={{
+            background: "radial-gradient(ellipse, #06b6d4 0%, transparent 70%)",
+            filter: "blur(100px)",
+            left: "20%",
+            bottom: "5%",
+          }}
+          animate={{
+            x: [0, 50, 0],
+            opacity: [0.1, 0.15, 0.1],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
         />
       </div>
 
@@ -584,54 +678,59 @@ export default function Work() {
         </div>
       </div>
 
-      {/* Stats Section - After scroll */}
-      <div className="absolute bottom-0 left-0 right-0 z-20 bg-[#0a0a0a] py-32">
-        <div className="px-6 md:px-12 lg:px-24">
-          <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-16 border-t border-zinc-800"
-            >
-              {[
-                { value: "50+", label: "Projects Delivered" },
-                { value: "98%", label: "Client Satisfaction" },
-                { value: "2x", label: "Average ROI" },
-                { value: "14", label: "Days Avg. Delivery" },
-              ].map((stat, i) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
-                  className="text-center"
-                >
-                  <p className="text-3xl md:text-4xl font-semibold text-white mb-2">
-                    {stat.value}
-                  </p>
-                  <p className="text-sm text-zinc-500">{stat.label}</p>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="px-6 md:px-12 lg:px-24 mt-20"
-        >
-          <div className="max-w-7xl mx-auto flex justify-center">
-            <AnimatedButton href="#contact" text="Start Your Project" showArrow />
-          </div>
-        </motion.div>
-      </div>
     </section>
+  );
+}
+
+// Stats section as a separate export to place after Work in page.tsx
+export function WorkStats() {
+  return (
+    <div className="relative z-20 bg-[#0a0a0a] py-32">
+      <div className="px-6 md:px-12 lg:px-24">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-16 border-t border-zinc-800"
+          >
+            {[
+              { value: "50+", label: "Projects Delivered" },
+              { value: "98%", label: "Client Satisfaction" },
+              { value: "2x", label: "Average ROI" },
+              { value: "14", label: "Days Avg. Delivery" },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="text-center"
+              >
+                <p className="text-3xl md:text-4xl font-semibold text-white mb-2">
+                  {stat.value}
+                </p>
+                <p className="text-sm text-zinc-500">{stat.label}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+
+      {/* CTA */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="px-6 md:px-12 lg:px-24 mt-20"
+      >
+        <div className="max-w-7xl mx-auto flex justify-center">
+          <AnimatedButton href="#contact" text="Start Your Project" showArrow />
+        </div>
+      </motion.div>
+    </div>
   );
 }
