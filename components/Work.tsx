@@ -1,7 +1,14 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValue,
+  useSpring,
+  AnimatePresence,
+} from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -12,7 +19,7 @@ export const workItems = [
     description:
       "A modern, conversion-focused website for Arizona's premier flight training academy.",
     image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1920&q=80",
-    url: "https://desert-wings-nextjs.vercel.app/",
+    url: "https://www.desertwingsflightschool.com",
     results: "3x increase in student inquiries",
     year: "2024",
     size: "large",
@@ -52,304 +59,504 @@ export const workItems = [
   },
 ];
 
+// Scrolling Content Cards Component
+function ScrollingContentCards({
+  scrollYProgress,
+  activeIndex,
+}: {
+  scrollYProgress: ReturnType<typeof useScroll>["scrollYProgress"];
+  activeIndex: number;
+}) {
+  // Cards scroll continuously through the full scroll range
+  const containerY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    ["0%", `-${(workItems.length - 1) * 100}%`]
+  );
+
+  return (
+    <motion.div
+      className="absolute inset-0 flex flex-col"
+      style={{ y: containerY }}
+    >
+      {workItems.map((project, index) => {
+        const isActive = index === activeIndex;
+
+        return (
+          <div
+            key={project.title}
+            className="h-screen flex items-center justify-center px-12 shrink-0"
+          >
+            <motion.div
+              className="max-w-lg"
+              animate={{
+                opacity: isActive ? 1 : 0.3,
+                scale: isActive ? 1 : 0.95,
+                filter: isActive ? "blur(0px)" : "blur(2px)",
+              }}
+              transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+            >
+              {/* Category & Year */}
+              <div className="flex items-center gap-4 mb-6">
+                <span className="text-xs font-mono text-[#2563eb]">
+                  0{index + 1}
+                </span>
+                <span className="w-8 h-px bg-zinc-700" />
+                <span className="text-xs text-zinc-400 uppercase tracking-wider">
+                  {project.category}
+                </span>
+                <span className="text-xs text-zinc-600">{project.year}</span>
+              </div>
+
+              {/* Title */}
+              <h3 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-white mb-6 tracking-tight">
+                {project.title}
+              </h3>
+
+              {/* Description */}
+              <p className="text-zinc-400 text-lg mb-8 leading-relaxed">
+                {project.description}
+              </p>
+
+              {/* Result badge */}
+              <div className="inline-flex items-center gap-3 px-4 py-2 bg-zinc-900/80 backdrop-blur-sm rounded-full border border-zinc-800 mb-8">
+                <span
+                  className={`w-2 h-2 rounded-full bg-[#2563eb] ${
+                    isActive ? "animate-pulse" : ""
+                  }`}
+                />
+                <span className="text-sm text-white font-medium">
+                  {project.results}
+                </span>
+              </div>
+
+              {/* CTA */}
+              <div>
+                <Link
+                  href={project.url}
+                  target={project.url.startsWith("http") ? "_blank" : undefined}
+                  rel={
+                    project.url.startsWith("http")
+                      ? "noopener noreferrer"
+                      : undefined
+                  }
+                  className="group inline-flex items-center gap-3 text-white"
+                  data-cursor="View Project"
+                >
+                  <span className="text-lg font-medium">View Project</span>
+                  <motion.div
+                    className="w-12 h-12 rounded-full border border-zinc-700 flex items-center justify-center group-hover:bg-[#2563eb] group-hover:border-[#2563eb] transition-colors duration-300"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <svg
+                      className="w-5 h-5 text-white transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M7 17L17 7M17 7H7M17 7V17"
+                      />
+                    </svg>
+                  </motion.div>
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        );
+      })}
+    </motion.div>
+  );
+}
+
+// 3D Preview Card Component
+function PreviewCard({
+  project,
+  index,
+}: {
+  project: (typeof workItems)[0];
+  index: number;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  // 3D Tilt effect
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  // Smooth spring animation for tilt (subtle)
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [5, -5]), {
+    stiffness: 300,
+    damping: 30,
+  });
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-5, 5]), {
+    stiffness: 300,
+    damping: 30,
+  });
+
+  // Glare effect position
+  const glareX = useSpring(useTransform(mouseX, [-0.5, 0.5], [0, 100]), {
+    stiffness: 300,
+    damping: 30,
+  });
+  const glareY = useSpring(useTransform(mouseY, [-0.5, 0.5], [0, 100]), {
+    stiffness: 300,
+    damping: 30,
+  });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, scale: 0.9, rotateY: -15 }}
+      animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+      exit={{ opacity: 0, scale: 0.9, rotateY: 15 }}
+      transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }}
+      className="relative w-full max-w-xl"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
+      style={{ perspective: 1000 }}
+    >
+      {/* Floating project number behind card */}
+      <motion.div
+        className="absolute -left-8 -bottom-8 pointer-events-none select-none z-0"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <span
+          className="text-[180px] font-bold text-transparent bg-clip-text bg-gradient-to-b from-zinc-800/50 to-transparent leading-none"
+          style={{ WebkitTextStroke: "1px rgba(255,255,255,0.05)" }}
+        >
+          0{index + 1}
+        </span>
+      </motion.div>
+
+      {/* The 3D Card */}
+      <motion.div
+        className="relative aspect-[4/3] rounded-2xl md:rounded-3xl overflow-hidden bg-zinc-900 shadow-2xl shadow-black/50"
+        style={{
+          rotateX: isHovered ? rotateX : 0,
+          rotateY: isHovered ? rotateY : 0,
+          transformStyle: "preserve-3d",
+        }}
+      >
+        {/* Show iframe for external URLs, image otherwise */}
+        {project.url.startsWith("http") ? (
+          <iframe
+            src={project.url}
+            className="absolute inset-0 w-full h-full bg-white border-0"
+            title={`Preview of ${project.title}`}
+            loading="lazy"
+          />
+        ) : (
+          <Image
+            src={project.image}
+            alt={project.title}
+            fill
+            className="object-cover"
+            priority
+          />
+        )}
+
+        {/* Subtle gradient overlay for non-iframe */}
+        {!project.url.startsWith("http") && (
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        )}
+
+        {/* 3D Glare effect */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-300"
+          style={{
+            opacity: isHovered ? 0.4 : 0,
+            background: `radial-gradient(circle at ${glareX.get()}% ${glareY.get()}%, rgba(255,255,255,0.25) 0%, transparent 50%)`,
+          }}
+        />
+
+        {/* Card border glow on hover */}
+        <motion.div
+          className="absolute inset-0 rounded-2xl md:rounded-3xl pointer-events-none"
+          style={{
+            boxShadow: isHovered
+              ? "inset 0 0 0 1px rgba(37, 99, 235, 0.3), 0 0 40px rgba(37, 99, 235, 0.15)"
+              : "inset 0 0 0 1px rgba(255,255,255,0.1)",
+            transition: "box-shadow 0.3s ease",
+          }}
+        />
+
+        {/* Category badge */}
+        <motion.div
+          className="absolute top-4 left-4 z-10"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <span className="px-3 py-1.5 bg-black/50 backdrop-blur-sm rounded-full text-xs text-white/80 border border-white/10">
+            {project.category}
+          </span>
+        </motion.div>
+
+        {/* View indicator on hover */}
+        <motion.div
+          className="absolute top-4 right-4 z-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isHovered ? 1 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <div className="w-10 h-10 rounded-full bg-[#2563eb] flex items-center justify-center">
+            <svg
+              className="w-4 h-4 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M7 17L17 7M17 7H7M17 7V17"
+              />
+            </svg>
+          </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function Work() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"],
+    offset: ["start start", "end end"],
   });
+
+  // Track which card is active based on scroll
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      // Cards spread across the full scroll range
+      const index = Math.min(
+        Math.floor(latest * workItems.length),
+        workItems.length - 1
+      );
+      if (index >= 0) {
+        setActiveIndex(index);
+      }
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress]);
 
   return (
     <section
       ref={containerRef}
       id="work"
-      className="relative py-32"
+      className="relative"
+      style={{ height: `${(workItems.length + 1) * 100}vh` }}
     >
-      {/* Background - solid to match hero */}
-      <div className="absolute inset-0 -z-10 bg-[#0a0a0a]" />
-      {/* Section header - sticky */}
-      <div className="sticky top-24 z-20 px-6 md:px-12 lg:px-24 mb-16">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="flex flex-col md:flex-row md:items-end md:justify-between gap-6"
-          >
-            <div>
-              <div className="flex items-center gap-4 mb-4">
-                <motion.div
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                  className="w-12 h-px bg-zinc-700 origin-left"
-                />
-                <span className="text-sm text-zinc-500 uppercase tracking-[0.2em]">
-                  Selected Work
-                </span>
-              </div>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-white tracking-tight">
-                Featured{" "}
-                <span className="font-serif italic text-[#2563eb]">projects</span>
-              </h2>
-            </div>
-            <p className="text-zinc-400 text-lg max-w-sm">
-              Crafting digital experiences that drive real results.
-            </p>
-          </motion.div>
-        </div>
+      {/* Gradient background that blends with hero */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[#0a0a0a]" />
+        {/* Matching gradient from hero */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[50vh] opacity-30"
+          style={{
+            background: `conic-gradient(from 90deg at 60% 40%,
+              transparent 0deg,
+              #0a1628 60deg,
+              #0066ff 120deg,
+              #00a8ff 180deg,
+              #0066ff 240deg,
+              #0a1628 300deg,
+              transparent 360deg
+            )`,
+            filter: "blur(100px)",
+          }}
+        />
       </div>
 
-      {/* Bento Grid */}
-      <div className="px-6 md:px-12 lg:px-24">
-        <div className="max-w-7xl mx-auto">
-          {/* Row 1: Large + Small stack */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
-            <BentoCard
-              project={workItems[0]}
-              index={0}
-              className="lg:col-span-8"
-              aspectRatio="aspect-[16/10]"
-              scrollYProgress={scrollYProgress}
-            />
-            <div className="lg:col-span-4 flex flex-col gap-6">
-              <BentoCard
-                project={workItems[1]}
-                index={1}
-                className="flex-1"
-                aspectRatio="aspect-square"
-                scrollYProgress={scrollYProgress}
-                compact
+      {/* Two Column Sticky Layout - with header integrated */}
+      <div ref={stickyRef} className="sticky top-0 h-screen flex z-10">
+        {/* Section header - positioned at top left within sticky */}
+        <div className="absolute top-8 left-0 right-0 z-20 px-6 md:px-12 lg:px-24">
+          <div className="max-w-7xl mx-auto w-full">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="flex items-center gap-4"
+            >
+              <motion.div
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="w-12 h-px bg-zinc-700 origin-left"
               />
-            </div>
+              <span className="text-sm text-zinc-500 uppercase tracking-[0.2em]">
+                Selected Work
+              </span>
+            </motion.div>
           </div>
-
-          {/* Row 2: Small stack + Large */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
-            <div className="lg:col-span-4 flex flex-col gap-6">
-              <BentoCard
-                project={workItems[2]}
-                index={2}
-                className="flex-1"
-                aspectRatio="aspect-square"
-                scrollYProgress={scrollYProgress}
-                compact
-              />
-            </div>
-            <BentoCard
-              project={workItems[3]}
-              index={3}
-              className="lg:col-span-8"
-              aspectRatio="aspect-[16/10]"
-              scrollYProgress={scrollYProgress}
-            />
-          </div>
-
-          {/* Stats row */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
+        </div>
+        {/* Left Column - 3D Preview Card */}
+        <div className="w-1/2 h-full relative flex flex-col items-center justify-center px-12">
+          {/* Featured Projects title above card */}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 pt-16 border-t border-zinc-800"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-3xl md:text-4xl lg:text-5xl font-semibold text-white tracking-tight mb-8 text-center"
           >
-            {[
-              { value: "50+", label: "Projects Delivered" },
-              { value: "98%", label: "Client Satisfaction" },
-              { value: "2x", label: "Average ROI" },
-              { value: "14", label: "Days Avg. Delivery" },
-            ].map((stat, i) => (
+            Featured{" "}
+            <span className="font-serif italic text-[#2563eb]">projects</span>
+          </motion.h2>
+
+          {/* Progress indicator */}
+          <div className="absolute left-8 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-3">
+            {workItems.map((_, i) => (
               <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="text-center"
+                key={i}
+                className="relative"
+                animate={{
+                  scale: i === activeIndex ? 1 : 0.8,
+                }}
+                transition={{ duration: 0.3 }}
               >
-                <p className="text-3xl md:text-4xl font-semibold text-white mb-2">
-                  {stat.value}
-                </p>
-                <p className="text-sm text-zinc-500">{stat.label}</p>
+                <div
+                  className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                    i === activeIndex ? "bg-[#2563eb]" : "bg-zinc-700"
+                  }`}
+                />
+                {i === activeIndex && (
+                  <motion.div
+                    layoutId="activeIndicator"
+                    className="absolute -inset-1 border border-[#2563eb] rounded-full"
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                )}
               </motion.div>
             ))}
+          </div>
+
+          {/* 3D Card Preview */}
+          <AnimatePresence mode="wait">
+            <PreviewCard
+              key={activeIndex}
+              project={workItems[activeIndex]}
+              index={activeIndex}
+            />
+          </AnimatePresence>
+        </div>
+
+        {/* Center divider line */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[60%] w-px bg-gradient-to-b from-transparent via-zinc-800 to-transparent" />
+
+        {/* Right Column - Continuously Scrolling Cards */}
+        <div className="w-1/2 h-full relative overflow-hidden">
+          {/* Intro text that fades as you scroll */}
+          <motion.div
+            className="absolute top-8 right-12 text-right z-10"
+            style={{
+              opacity: useTransform(scrollYProgress, [0, 0.15], [1, 0]),
+            }}
+          >
+            <p className="text-zinc-400 text-sm max-w-xs">
+              Crafting digital experiences that drive real results
+            </p>
           </motion.div>
+
+          <ScrollingContentCards
+            scrollYProgress={scrollYProgress}
+            activeIndex={activeIndex}
+          />
         </div>
       </div>
 
-      {/* CTA */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="px-6 md:px-12 lg:px-24 mt-20"
-      >
-        <div className="max-w-7xl mx-auto flex justify-center">
-          <Link
-            href="#contact"
-            className="group inline-flex items-center gap-4 px-8 py-4 bg-white text-[#0a0a0a] font-medium rounded-full hover:bg-zinc-100 transition-colors"
-            data-cursor="Let's Talk"
-          >
-            <span>Start Your Project</span>
-            <motion.span
-              className="inline-block"
-              whileHover={{ x: 4 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      {/* Stats Section - After scroll */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 bg-[#0a0a0a] py-32">
+        <div className="px-6 md:px-12 lg:px-24">
+          <div className="max-w-7xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-16 border-t border-zinc-800"
             >
-              →
-            </motion.span>
-          </Link>
-        </div>
-      </motion.div>
-    </section>
-  );
-}
-
-function BentoCard({
-  project,
-  index,
-  className = "",
-  aspectRatio = "aspect-video",
-  scrollYProgress,
-  compact = false,
-}: {
-  project: (typeof workItems)[0];
-  index: number;
-  className?: string;
-  aspectRatio?: string;
-  scrollYProgress: ReturnType<typeof useScroll>["scrollYProgress"];
-  compact?: boolean;
-}) {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress: cardScrollProgress } = useScroll({
-    target: cardRef,
-    offset: ["start end", "end start"],
-  });
-
-  // Parallax for image
-  const imageY = useTransform(cardScrollProgress, [0, 1], ["0%", "20%"]);
-  const imageScale = useTransform(cardScrollProgress, [0, 0.5, 1], [1.2, 1.1, 1.2]);
-
-  // Card reveal animation
-  const cardY = useTransform(cardScrollProgress, [0, 0.3], [100, 0]);
-  const cardOpacity = useTransform(cardScrollProgress, [0, 0.2], [0, 1]);
-
-  return (
-    <motion.div
-      ref={cardRef}
-      style={{ y: cardY, opacity: cardOpacity }}
-      className={`group relative ${className}`}
-    >
-      <Link
-        href={project.url}
-        target={project.url.startsWith("http") ? "_blank" : undefined}
-        rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
-        className="block"
-        data-cursor="View Project"
-      >
-        <div
-          className={`relative ${aspectRatio} rounded-2xl md:rounded-3xl overflow-hidden bg-zinc-900`}
-        >
-          {/* Image with parallax */}
-          <motion.div
-            className="absolute inset-0"
-            style={{ y: imageY, scale: imageScale }}
-          >
-            <Image
-              src={project.image}
-              alt={project.title}
-              fill
-              className="object-cover"
-            />
-          </motion.div>
-
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-
-          {/* Hover overlay */}
-          <div className="absolute inset-0 bg-[#2563eb]/0 group-hover:bg-[#2563eb]/80 transition-colors duration-500">
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                whileHover={{ scale: 1, opacity: 1 }}
-                className="flex items-center gap-2 text-white text-lg font-medium"
-              >
-                <span>View Project</span>
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              {[
+                { value: "50+", label: "Projects Delivered" },
+                { value: "98%", label: "Client Satisfaction" },
+                { value: "2x", label: "Average ROI" },
+                { value: "14", label: "Days Avg. Delivery" },
+              ].map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  className="text-center"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className={`absolute bottom-0 left-0 right-0 ${compact ? "p-5" : "p-6 md:p-8"}`}>
-            {/* Category & Year */}
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-xs font-mono text-zinc-400">0{index + 1}</span>
-              <span className="w-4 h-px bg-zinc-600" />
-              <span className="text-xs text-zinc-400 uppercase tracking-wider">
-                {project.category}
-              </span>
-            </div>
-
-            {/* Title */}
-            <h3
-              className={`font-semibold text-white mb-2 group-hover:text-white transition-colors ${
-                compact ? "text-xl md:text-2xl" : "text-2xl md:text-3xl lg:text-4xl"
-              }`}
-            >
-              {project.title}
-            </h3>
-
-            {/* Description - only on large cards */}
-            {!compact && (
-              <p className="text-zinc-400 text-sm md:text-base max-w-md mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                {project.description}
-              </p>
-            )}
-
-            {/* Result badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-zinc-900/80 backdrop-blur-sm rounded-full border border-zinc-800">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
-              <span className="text-xs text-white font-medium">{project.results}</span>
-            </div>
-          </div>
-
-          {/* Corner decoration */}
-          <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center">
-              <svg
-                className="w-4 h-4 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M7 17L17 7M17 7H7M17 7V17"
-                />
-              </svg>
-            </div>
+                  <p className="text-3xl md:text-4xl font-semibold text-white mb-2">
+                    {stat.value}
+                  </p>
+                  <p className="text-sm text-zinc-500">{stat.label}</p>
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
         </div>
-      </Link>
-    </motion.div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="px-6 md:px-12 lg:px-24 mt-20"
+        >
+          <div className="max-w-7xl mx-auto flex justify-center">
+            <Link
+              href="#contact"
+              className="group inline-flex items-center gap-4 px-8 py-4 bg-white text-[#0a0a0a] font-medium rounded-full hover:bg-zinc-100 transition-colors"
+              data-cursor="Let's Talk"
+            >
+              <span>Start Your Project</span>
+              <motion.span
+                className="inline-block"
+                whileHover={{ x: 4 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                →
+              </motion.span>
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    </section>
   );
 }
