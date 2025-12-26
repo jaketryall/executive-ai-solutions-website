@@ -3,6 +3,92 @@
 import { motion } from "framer-motion";
 import { useState, useRef } from "react";
 
+// Animated submit button with staggered text reveal
+function AnimatedSubmitButton({
+  isSubmitting,
+}: {
+  isSubmitting: boolean;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const text = "Send Message";
+  const characters = text.split("");
+
+  const getDelay = (index: number) => {
+    const baseDelay = 0.025;
+    const acceleration = 0.85;
+    let delay = 0;
+    for (let i = 0; i < index; i++) {
+      delay += baseDelay * Math.pow(acceleration, i);
+    }
+    return delay;
+  };
+
+  if (isSubmitting) {
+    return (
+      <button
+        type="submit"
+        disabled
+        className="w-full md:w-auto px-8 py-4 bg-white text-[#0a0a0a] font-medium rounded-full opacity-50 cursor-not-allowed mt-8"
+      >
+        <span className="flex items-center justify-center gap-2">
+          <span className="w-4 h-4 border-2 border-[#0a0a0a] border-t-transparent rounded-full animate-spin" />
+          Sending...
+        </span>
+      </button>
+    );
+  }
+
+  return (
+    <motion.button
+      type="submit"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="w-full md:w-auto px-8 py-4 bg-white text-[#0a0a0a] font-medium rounded-full hover:bg-zinc-100 transition-colors mt-8 flex items-center justify-center"
+      whileTap={{ scale: 0.98 }}
+    >
+      <span className="inline-flex items-center relative">
+        {characters.map((char, index) => (
+          <span
+            key={index}
+            className="inline-block overflow-hidden relative"
+            style={{
+              height: "1.2em",
+              lineHeight: "1.2em",
+            }}
+          >
+            <motion.span
+              className="inline-block"
+              animate={{
+                y: isHovered ? "-110%" : "0%",
+              }}
+              transition={{
+                duration: 0.25,
+                delay: getDelay(index),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+            <motion.span
+              className="inline-block absolute left-0 top-0"
+              animate={{
+                y: isHovered ? "0%" : "110%",
+              }}
+              transition={{
+                duration: 0.25,
+                delay: getDelay(index),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          </span>
+        ))}
+      </span>
+    </motion.button>
+  );
+}
+
 export default function Contact() {
   const sectionRef = useRef(null);
   const [formData, setFormData] = useState({
@@ -155,20 +241,7 @@ export default function Contact() {
                   />
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full md:w-auto px-8 py-4 bg-white text-[#0a0a0a] font-medium rounded-full hover:bg-zinc-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-8"
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <span className="w-4 h-4 border-2 border-[#0a0a0a] border-t-transparent rounded-full animate-spin" />
-                      Sending...
-                    </span>
-                  ) : (
-                    "Send Message"
-                  )}
-                </button>
+                <AnimatedSubmitButton isSubmitting={isSubmitting} />
               </form>
             )}
           </motion.div>

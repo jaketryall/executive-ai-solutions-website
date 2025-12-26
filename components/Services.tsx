@@ -1,8 +1,102 @@
 "use client";
 
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
-import Link from "next/link";
+
+// Animated button with staggered text reveal - supports variants
+function AnimatedButton({
+  text,
+  href,
+  showArrow = false,
+  variant = "blue"
+}: {
+  text: string;
+  href: string;
+  showArrow?: boolean;
+  variant?: "blue" | "dark";
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const characters = text.split("");
+
+  const getDelay = (index: number) => {
+    const baseDelay = 0.03;
+    const acceleration = 0.82;
+    let delay = 0;
+    for (let i = 0; i < index; i++) {
+      delay += baseDelay * Math.pow(acceleration, i);
+    }
+    return delay;
+  };
+
+  const isDark = variant === "dark";
+
+  return (
+    <motion.a
+      href={href}
+      className={`inline-flex items-center justify-center gap-3 px-6 md:px-8 py-3 md:py-4 font-medium rounded-full transition-colors shrink-0 ${
+        isDark
+          ? "bg-[#0a0a0a] text-white hover:bg-zinc-800"
+          : "bg-[#2563eb] text-white hover:bg-[#1d4ed8]"
+      }`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      whileTap={{ scale: 0.98 }}
+    >
+      <span className="inline-flex items-center relative">
+        {characters.map((char, index) => (
+          <span
+            key={index}
+            className="inline-block overflow-hidden relative"
+            style={{
+              height: "1.2em",
+              lineHeight: "1.2em",
+            }}
+          >
+            <motion.span
+              className="inline-block"
+              animate={{
+                y: isHovered ? "-110%" : "0%",
+              }}
+              transition={{
+                duration: 0.3,
+                delay: getDelay(index),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+            <motion.span
+              className="inline-block absolute left-0 top-0"
+              animate={{
+                y: isHovered ? "0%" : "110%",
+              }}
+              transition={{
+                duration: 0.3,
+                delay: getDelay(index),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          </span>
+        ))}
+      </span>
+      {showArrow && (
+        <motion.span
+          className="inline-block"
+          animate={isHovered ? { x: 4 } : { x: 0 }}
+          transition={{
+            duration: 0.25,
+            delay: 0.1,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        >
+          →
+        </motion.span>
+      )}
+    </motion.a>
+  );
+}
 
 const services = [
   {
@@ -53,7 +147,6 @@ function ServiceSlide({
   service,
   index,
   isActive,
-  progress
 }: {
   service: typeof services[0];
   index: number;
@@ -69,23 +162,23 @@ function ServiceSlide({
       animate={{ opacity: isActive ? 1 : 0.3 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Background number */}
+      {/* Background number - dark for light background */}
       <motion.div
         className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
-        style={{ opacity: 0.03 }}
+        style={{ opacity: 0.04 }}
       >
-        <span className="text-[40vw] font-black text-white leading-none">
+        <span className="text-[40vw] font-black text-[#0a0a0a] leading-none">
           {service.number}
         </span>
       </motion.div>
 
-      {/* Grid pattern overlay */}
+      {/* Subtle grid pattern - dark lines for light bg */}
       <div
-        className="absolute inset-0 opacity-[0.02]"
+        className="absolute inset-0 opacity-[0.03]"
         style={{
-          backgroundImage: `linear-gradient(rgba(37, 99, 235, 0.5) 1px, transparent 1px),
-                           linear-gradient(90deg, rgba(37, 99, 235, 0.5) 1px, transparent 1px)`,
-          backgroundSize: '50px 50px'
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4) 1px, transparent 1px),
+                           linear-gradient(90deg, rgba(0, 0, 0, 0.4) 1px, transparent 1px)`,
+          backgroundSize: '60px 60px'
         }}
       />
 
@@ -105,10 +198,10 @@ function ServiceSlide({
               <div className="w-8 md:w-16 h-px bg-[#2563eb]" />
             </motion.div>
 
-            {/* Main title */}
+            {/* Main title - dark text for light background */}
             <div className="overflow-hidden">
               <motion.h2
-                className="text-[15vw] md:text-[12vw] lg:text-[10vw] font-black text-white leading-[0.85] tracking-tighter"
+                className="text-[15vw] md:text-[12vw] lg:text-[10vw] font-black text-[#0a0a0a] leading-[0.85] tracking-tighter"
                 initial={{ y: "100%" }}
                 animate={{ y: isActive ? 0 : "100%" }}
                 transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -143,9 +236,9 @@ function ServiceSlide({
 
           {/* Right side - Details and stat */}
           <div className="lg:pl-8">
-            {/* Description */}
+            {/* Description - dark text for light background */}
             <motion.p
-              className="text-lg md:text-xl lg:text-2xl text-zinc-400 mb-8 max-w-md"
+              className="text-lg md:text-xl lg:text-2xl text-zinc-600 mb-8 max-w-md"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: isActive ? 1 : 0, y: isActive ? 0 : 20 }}
               transition={{ duration: 0.6, delay: 0.3 }}
@@ -153,7 +246,7 @@ function ServiceSlide({
               {service.description}
             </motion.p>
 
-            {/* Details list */}
+            {/* Details list - adjusted for light theme */}
             <motion.div
               className="space-y-3 mb-12"
               initial={{ opacity: 0 }}
@@ -169,14 +262,14 @@ function ServiceSlide({
                   transition={{ duration: 0.4, delay: 0.5 + i * 0.1 }}
                 >
                   <span className="w-2 h-2 rounded-full bg-[#2563eb] group-hover:scale-150 transition-transform" />
-                  <span className="text-sm md:text-base text-zinc-300 group-hover:text-white transition-colors">
+                  <span className="text-sm md:text-base text-zinc-700 group-hover:text-[#0a0a0a] transition-colors">
                     {detail}
                   </span>
                 </motion.div>
               ))}
             </motion.div>
 
-            {/* Stat card */}
+            {/* Stat card - adjusted for light theme */}
             <motion.div
               className="relative inline-block"
               initial={{ opacity: 0, scale: 0.9 }}
@@ -186,15 +279,15 @@ function ServiceSlide({
               onMouseLeave={() => setIsHovered(false)}
             >
               <motion.div
-                className="relative px-8 py-6 border border-zinc-800 rounded-2xl overflow-hidden cursor-pointer"
+                className="relative px-8 py-6 border border-zinc-200 rounded-2xl overflow-hidden cursor-pointer bg-white/60 backdrop-blur-sm"
                 animate={{
-                  borderColor: isHovered ? "#2563eb" : "rgb(39, 39, 42)"
+                  borderColor: isHovered ? "#2563eb" : "rgb(228, 228, 231)"
                 }}
                 transition={{ duration: 0.3 }}
               >
                 {/* Glow effect */}
                 <motion.div
-                  className="absolute inset-0 bg-[#2563eb]/10"
+                  className="absolute inset-0 bg-[#2563eb]/5"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: isHovered ? 1 : 0 }}
                   transition={{ duration: 0.3 }}
@@ -203,7 +296,7 @@ function ServiceSlide({
                   <span className="text-5xl md:text-6xl lg:text-7xl font-black text-[#2563eb]">
                     {service.stat}
                   </span>
-                  <p className="text-sm text-zinc-400 mt-2 uppercase tracking-wider">
+                  <p className="text-sm text-zinc-500 mt-2 uppercase tracking-wider">
                     {service.statLabel}
                   </p>
                 </div>
@@ -213,14 +306,14 @@ function ServiceSlide({
         </div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Scroll indicator - adjusted for light theme */}
       <motion.div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: isActive && index < services.length - 1 ? 1 : 0 }}
         transition={{ duration: 0.3 }}
       >
-        <span className="text-xs text-zinc-500 uppercase tracking-widest">Scroll</span>
+        <span className="text-xs text-zinc-400 uppercase tracking-widest">Scroll</span>
         <motion.div
           className="w-px h-8 bg-gradient-to-b from-[#2563eb] to-transparent"
           animate={{ scaleY: [1, 0.5, 1] }}
@@ -259,12 +352,12 @@ export default function Services() {
     <section
       id="services"
       ref={sectionRef}
-      className="relative bg-[#0a0a0a]"
+      className="relative bg-[#fafafa]"
       style={{ height: `${services.length * 100}vh` }}
     >
       {/* Section header - fixed while scrolling through services */}
       <div className="sticky top-0 h-screen overflow-hidden">
-        {/* Header badge */}
+        {/* Header badge - dark text for light background */}
         <motion.div
           className="absolute top-8 left-6 md:left-12 z-20"
           initial={{ opacity: 0, y: -20 }}
@@ -272,19 +365,19 @@ export default function Services() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <span className="text-xs md:text-sm text-zinc-500 uppercase tracking-[0.2em]">
+          <span className="text-xs md:text-sm text-zinc-400 uppercase tracking-[0.2em]">
             What We Offer
           </span>
         </motion.div>
 
-        {/* Progress indicator */}
+        {/* Progress indicator - adjusted for light background */}
         <div className="absolute top-1/2 -translate-y-1/2 right-6 md:right-12 z-20 flex flex-col gap-3">
           {services.map((_, index) => (
             <motion.button
               key={index}
-              className="relative w-3 h-3 rounded-full border border-zinc-700 transition-colors"
+              className="relative w-3 h-3 rounded-full border border-zinc-300 transition-colors"
               animate={{
-                borderColor: index === activeIndex ? "#2563eb" : "rgb(63, 63, 70)",
+                borderColor: index === activeIndex ? "#2563eb" : "rgb(212, 212, 216)",
                 backgroundColor: index === activeIndex ? "#2563eb" : "transparent"
               }}
               onClick={() => {
@@ -326,7 +419,7 @@ export default function Services() {
         </AnimatePresence>
       </div>
 
-      {/* Pricing CTA - appears after services */}
+      {/* Pricing CTA - dark card for contrast on light background */}
       <motion.div
         className="sticky bottom-0 left-0 right-0 z-30 pointer-events-none"
         initial={{ opacity: 0, y: 100 }}
@@ -338,8 +431,8 @@ export default function Services() {
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 pb-8">
           <motion.div
-            className="p-6 md:p-8 bg-zinc-900/90 backdrop-blur-xl border border-zinc-800 rounded-2xl pointer-events-auto"
-            whileHover={{ borderColor: "rgba(37, 99, 235, 0.3)" }}
+            className="p-6 md:p-8 bg-[#0a0a0a] border border-zinc-800 rounded-2xl pointer-events-auto"
+            whileHover={{ borderColor: "rgba(37, 99, 235, 0.5)" }}
             transition={{ duration: 0.3 }}
           >
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -352,26 +445,7 @@ export default function Services() {
                   Every project includes revisions and 30 days of support.
                 </p>
               </div>
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              >
-                <Link
-                  href="#contact"
-                  className="inline-flex items-center gap-3 px-6 md:px-8 py-3 md:py-4 bg-[#2563eb] text-white font-medium rounded-full hover:bg-[#1d4ed8] transition-colors shrink-0 group"
-                >
-                  <span>Get a Quote</span>
-                  <motion.span
-                    className="inline-block"
-                    initial={{ x: 0 }}
-                    whileHover={{ x: 4 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                  >
-                    →
-                  </motion.span>
-                </Link>
-              </motion.div>
+              <AnimatedButton href="#contact" text="Get a Quote" showArrow variant="blue" />
             </div>
           </motion.div>
         </div>

@@ -12,6 +12,94 @@ import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+// Animated button with staggered text reveal
+function AnimatedButton({
+  text,
+  href,
+  showArrow = false,
+}: {
+  text: string;
+  href: string;
+  showArrow?: boolean;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const characters = text.split("");
+
+  const getDelay = (index: number) => {
+    const baseDelay = 0.03;
+    const acceleration = 0.82;
+    let delay = 0;
+    for (let i = 0; i < index; i++) {
+      delay += baseDelay * Math.pow(acceleration, i);
+    }
+    return delay;
+  };
+
+  return (
+    <motion.a
+      href={href}
+      className="group inline-flex items-center justify-center gap-4 px-8 py-4 bg-white text-[#0a0a0a] font-medium rounded-full hover:bg-zinc-100 transition-colors"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      whileTap={{ scale: 0.98 }}
+      data-cursor="Let's Talk"
+    >
+      <span className="inline-flex items-center relative">
+        {characters.map((char, index) => (
+          <span
+            key={index}
+            className="inline-block overflow-hidden relative"
+            style={{
+              height: "1.2em",
+              lineHeight: "1.2em",
+            }}
+          >
+            <motion.span
+              className="inline-block"
+              animate={{
+                y: isHovered ? "-110%" : "0%",
+              }}
+              transition={{
+                duration: 0.3,
+                delay: getDelay(index),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+            <motion.span
+              className="inline-block absolute left-0 top-0"
+              animate={{
+                y: isHovered ? "0%" : "110%",
+              }}
+              transition={{
+                duration: 0.3,
+                delay: getDelay(index),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          </span>
+        ))}
+      </span>
+      {showArrow && (
+        <motion.span
+          className="inline-block"
+          animate={isHovered ? { x: 4 } : { x: 0 }}
+          transition={{
+            duration: 0.25,
+            delay: 0.1,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        >
+          →
+        </motion.span>
+      )}
+    </motion.a>
+  );
+}
+
 export const workItems = [
   {
     title: "Desert Wings",
@@ -540,20 +628,7 @@ export default function Work() {
           className="px-6 md:px-12 lg:px-24 mt-20"
         >
           <div className="max-w-7xl mx-auto flex justify-center">
-            <Link
-              href="#contact"
-              className="group inline-flex items-center gap-4 px-8 py-4 bg-white text-[#0a0a0a] font-medium rounded-full hover:bg-zinc-100 transition-colors"
-              data-cursor="Let's Talk"
-            >
-              <span>Start Your Project</span>
-              <motion.span
-                className="inline-block"
-                whileHover={{ x: 4 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              >
-                →
-              </motion.span>
-            </Link>
+            <AnimatedButton href="#contact" text="Start Your Project" showArrow />
           </div>
         </motion.div>
       </div>

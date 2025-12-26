@@ -1,7 +1,287 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import Link from "next/link";
+import { useState, useRef } from "react";
+
+// Animated button with staggered text reveal
+function AnimatedPricingButton({
+  text,
+  href,
+  variant = "dark",
+}: {
+  text: string;
+  href: string;
+  variant?: "dark" | "light";
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const characters = text.split("");
+
+  const getDelay = (index: number) => {
+    const baseDelay = 0.025;
+    const acceleration = 0.85;
+    let delay = 0;
+    for (let i = 0; i < index; i++) {
+      delay += baseDelay * Math.pow(acceleration, i);
+    }
+    return delay;
+  };
+
+  return (
+    <motion.a
+      href={href}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`flex items-center justify-center w-full py-4 text-center font-medium rounded-full transition-all ${
+        variant === "light"
+          ? "bg-white text-[#0a0a0a] hover:bg-zinc-100"
+          : "bg-[#0a0a0a] text-white hover:bg-zinc-800"
+      }`}
+      whileTap={{ scale: 0.98 }}
+    >
+      <span className="inline-flex items-center relative">
+        {characters.map((char, index) => (
+          <span
+            key={index}
+            className="inline-block overflow-hidden relative"
+            style={{
+              height: "1.2em",
+              lineHeight: "1.2em",
+            }}
+          >
+            <motion.span
+              className="inline-block"
+              animate={{
+                y: isHovered ? "-110%" : "0%",
+              }}
+              transition={{
+                duration: 0.25,
+                delay: getDelay(index),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+            <motion.span
+              className="inline-block absolute left-0 top-0"
+              animate={{
+                y: isHovered ? "0%" : "110%",
+              }}
+              transition={{
+                duration: 0.25,
+                delay: getDelay(index),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          </span>
+        ))}
+      </span>
+    </motion.a>
+  );
+}
+
+// Animated inline link with staggered text reveal
+function AnimatedInlineLink({
+  text,
+  href,
+}: {
+  text: string;
+  href: string;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const characters = text.split("");
+
+  const getDelay = (index: number) => {
+    const baseDelay = 0.02;
+    const acceleration = 0.88;
+    let delay = 0;
+    for (let i = 0; i < index; i++) {
+      delay += baseDelay * Math.pow(acceleration, i);
+    }
+    return delay;
+  };
+
+  return (
+    <Link
+      href={href}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="inline-block text-[#2563eb]"
+    >
+      <span className="inline-flex items-center relative">
+        {characters.map((char, index) => (
+          <span
+            key={index}
+            className="inline-block overflow-hidden relative"
+            style={{
+              height: "1.2em",
+              lineHeight: "1.2em",
+            }}
+          >
+            <motion.span
+              className="inline-block"
+              animate={{
+                y: isHovered ? "-110%" : "0%",
+              }}
+              transition={{
+                duration: 0.2,
+                delay: getDelay(index),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+            <motion.span
+              className="inline-block absolute left-0 top-0"
+              animate={{
+                y: isHovered ? "0%" : "110%",
+              }}
+              transition={{
+                duration: 0.2,
+                delay: getDelay(index),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          </span>
+        ))}
+      </span>
+    </Link>
+  );
+}
+
+// 3D Pricing card with subtle tilt effect
+function PricingCard({
+  plan,
+  index,
+}: {
+  plan: (typeof plans)[0];
+  index: number;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  // Smooth spring animation for tilt
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [4, -4]), {
+    stiffness: 300,
+    damping: 30,
+  });
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-4, 4]), {
+    stiffness: 300,
+    damping: 30,
+  });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
+      style={{ perspective: 1000 }}
+    >
+      <motion.div
+        className={`relative p-8 rounded-2xl border h-full ${
+          plan.popular
+            ? "border-[#2563eb] bg-[#0a0a0a] text-white"
+            : "border-zinc-200 bg-white"
+        }`}
+        style={{
+          rotateX: isHovered ? rotateX : 0,
+          rotateY: isHovered ? rotateY : 0,
+          transformStyle: "preserve-3d",
+        }}
+      >
+        {/* Subtle glow on hover */}
+        <motion.div
+          className="absolute inset-0 rounded-2xl pointer-events-none"
+          animate={{
+            boxShadow: isHovered
+              ? plan.popular
+                ? "0 20px 40px rgba(37, 99, 235, 0.2)"
+                : "0 20px 40px rgba(0, 0, 0, 0.1)"
+              : "0 0 0 rgba(0, 0, 0, 0)",
+          }}
+          transition={{ duration: 0.3 }}
+        />
+
+        {plan.popular && (
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+            <span className="px-4 py-1 bg-[#2563eb] text-white text-xs font-medium rounded-full uppercase tracking-wider">
+              Most Popular
+            </span>
+          </div>
+        )}
+
+        <div className="mb-6">
+          <h3 className={`text-xl font-semibold mb-2 ${plan.popular ? "text-white" : "text-[#0a0a0a]"}`}>
+            {plan.name}
+          </h3>
+          <p className={`text-sm ${plan.popular ? "text-zinc-400" : "text-zinc-500"}`}>
+            {plan.description}
+          </p>
+        </div>
+
+        <div className="mb-8">
+          <span className={`text-4xl md:text-5xl font-semibold ${plan.popular ? "text-white" : "text-[#0a0a0a]"}`}>
+            {plan.price}
+          </span>
+          {plan.price !== "Let's Talk" && (
+            <span className={`text-sm ${plan.popular ? "text-zinc-400" : "text-zinc-500"}`}> starting</span>
+          )}
+        </div>
+
+        <ul className="space-y-4 mb-8">
+          {plan.features.map((feature) => (
+            <li key={feature} className="flex items-start gap-3">
+              <svg
+                className="w-5 h-5 mt-0.5 shrink-0 text-[#2563eb]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span className={`text-sm ${plan.popular ? "text-zinc-300" : "text-zinc-600"}`}>
+                {feature}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        <AnimatedPricingButton
+          href="#contact"
+          text="Get Started"
+          variant={plan.popular ? "light" : "dark"}
+        />
+      </motion.div>
+    </motion.div>
+  );
+}
 
 const plans = [
   {
@@ -94,73 +374,7 @@ export default function Pricing() {
         {/* Pricing cards */}
         <div className="grid md:grid-cols-3 gap-8">
           {plans.map((plan, index) => (
-            <motion.div
-              key={plan.name}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className={`relative p-8 rounded-2xl border ${
-                plan.popular
-                  ? "border-[#2563eb] bg-[#0a0a0a] text-white"
-                  : "border-zinc-200 bg-white"
-              }`}
-            >
-              {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="px-4 py-1 bg-[#2563eb] text-white text-xs font-medium rounded-full uppercase tracking-wider">
-                    Most Popular
-                  </span>
-                </div>
-              )}
-
-              <div className="mb-6">
-                <h3 className={`text-xl font-semibold mb-2 ${plan.popular ? "text-white" : "text-[#0a0a0a]"}`}>
-                  {plan.name}
-                </h3>
-                <p className={`text-sm ${plan.popular ? "text-zinc-400" : "text-zinc-500"}`}>
-                  {plan.description}
-                </p>
-              </div>
-
-              <div className="mb-8">
-                <span className={`text-4xl md:text-5xl font-semibold ${plan.popular ? "text-white" : "text-[#0a0a0a]"}`}>
-                  {plan.price}
-                </span>
-                {plan.price !== "Let's Talk" && (
-                  <span className={`text-sm ${plan.popular ? "text-zinc-400" : "text-zinc-500"}`}> starting</span>
-                )}
-              </div>
-
-              <ul className="space-y-4 mb-8">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3">
-                    <svg
-                      className={`w-5 h-5 mt-0.5 flex-shrink-0 ${plan.popular ? "text-[#2563eb]" : "text-[#2563eb]"}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className={`text-sm ${plan.popular ? "text-zinc-300" : "text-zinc-600"}`}>
-                      {feature}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <Link
-                href="#contact"
-                className={`block w-full py-4 text-center font-medium rounded-full transition-all ${
-                  plan.popular
-                    ? "bg-white text-[#0a0a0a] hover:bg-zinc-100"
-                    : "bg-[#0a0a0a] text-white hover:bg-zinc-800"
-                }`}
-              >
-                Get Started
-              </Link>
-            </motion.div>
+            <PricingCard key={plan.name} plan={plan} index={index} />
           ))}
         </div>
 
@@ -174,9 +388,7 @@ export default function Pricing() {
         >
           <p className="text-zinc-500">
             All projects include a free 30-minute consultation.{" "}
-            <Link href="#contact" className="text-[#2563eb] hover:underline">
-              Let&apos;s discuss your project →
-            </Link>
+            <AnimatedInlineLink href="#contact" text="Let's discuss your project →" />
           </p>
         </motion.div>
       </div>

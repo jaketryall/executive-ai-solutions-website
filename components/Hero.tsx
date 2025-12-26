@@ -6,6 +6,164 @@ import Image from "next/image";
 import Link from "next/link";
 import { workItems } from "./Work";
 
+// Character-by-character text reveal animation
+function AnimatedText({
+  text,
+  delay = 0,
+  className = "",
+  staggerDelay = 0.03,
+}: {
+  text: string;
+  delay?: number;
+  className?: string;
+  staggerDelay?: number;
+}) {
+  const characters = text.split("");
+
+  const container = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: staggerDelay,
+        delayChildren: delay,
+      },
+    },
+  };
+
+  const child = {
+    hidden: {
+      y: "100%",
+      opacity: 0,
+    },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: [0.16, 1, 0.3, 1] as const,
+      },
+    },
+  };
+
+  return (
+    <motion.span
+      className={`inline-flex flex-wrap ${className}`}
+      variants={container}
+      initial="hidden"
+      animate="visible"
+    >
+      {characters.map((char, index) => (
+        <span key={index} className="inline-block overflow-hidden">
+          <motion.span
+            className="inline-block"
+            variants={child}
+            style={{ display: char === " " ? "inline" : "inline-block" }}
+          >
+            {char === " " ? "\u00A0" : char}
+          </motion.span>
+        </span>
+      ))}
+    </motion.span>
+  );
+}
+
+// Button with staggered text reveal on hover - two-line text swap effect
+function AnimatedButton({
+  text,
+  href,
+  variant = "primary",
+  showArrow = false,
+}: {
+  text: string;
+  href: string;
+  variant?: "primary" | "secondary";
+  showArrow?: boolean;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const characters = text.split("");
+
+  const baseStyles = variant === "primary"
+    ? "bg-white text-[#0a0a0a] hover:bg-zinc-100"
+    : "border border-zinc-700 text-white hover:bg-white/5";
+
+  // Calculate accelerating delay for each character
+  const getDelay = (index: number, reverse: boolean = false) => {
+    const baseDelay = 0.035;
+    const acceleration = 0.82;
+    let delay = 0;
+    const charIndex = reverse ? (characters.length - 1 - index) : index;
+    for (let i = 0; i < charIndex; i++) {
+      delay += baseDelay * Math.pow(acceleration, i);
+    }
+    return delay;
+  };
+
+  return (
+    <motion.a
+      href={href}
+      className={`group inline-flex items-center justify-center gap-3 px-8 py-4 font-medium rounded-full transition-colors ${baseStyles}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      whileTap={{ scale: 0.98 }}
+    >
+      <span className="inline-flex items-center relative">
+        {characters.map((char, index) => (
+          <span
+            key={index}
+            className="inline-block overflow-hidden relative"
+            style={{
+              height: "1.2em",
+              lineHeight: "1.2em",
+            }}
+          >
+            {/* Original text - slides up and out */}
+            <motion.span
+              className="inline-block"
+              animate={{
+                y: isHovered ? "-110%" : "0%",
+              }}
+              transition={{
+                duration: 0.3,
+                delay: getDelay(index, false),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+            {/* Duplicate text - slides up from below */}
+            <motion.span
+              className="inline-block absolute left-0 top-0"
+              animate={{
+                y: isHovered ? "0%" : "110%",
+              }}
+              transition={{
+                duration: 0.3,
+                delay: getDelay(index, false),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          </span>
+        ))}
+      </span>
+      {showArrow && (
+        <motion.span
+          className="inline-block"
+          animate={isHovered ? { x: 4 } : { x: 0 }}
+          transition={{
+            duration: 0.25,
+            delay: 0.1,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        >
+          →
+        </motion.span>
+      )}
+    </motion.a>
+  );
+}
+
 // Work thumbnail component
 function WorkThumbnail({
   item,
@@ -177,62 +335,85 @@ export default function Hero() {
         className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 text-center pt-24"
         style={{ opacity: contentOpacity }}
       >
-        {/* Tagline */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        {/* Tagline with staggered reveal */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-zinc-500 text-xs uppercase tracking-[0.3em] mb-6"
+          className="flex items-center gap-3 mb-8"
         >
-          Web Design Studio
-        </motion.p>
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="w-8 h-px bg-zinc-600 origin-right"
+          />
+          <span className="text-zinc-500 text-xs uppercase tracking-[0.3em]">
+            Web Design Studio
+          </span>
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="w-8 h-px bg-zinc-600 origin-left"
+          />
+        </motion.div>
 
-        {/* Main Headline with Parallax */}
+        {/* Main Headline with character-by-character reveal */}
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
           style={{ y: headlineY }}
           className="text-5xl md:text-7xl lg:text-8xl font-medium text-white leading-[0.95] tracking-tight mb-8 max-w-5xl"
         >
-          We design websites
+          <AnimatedText text="We design websites" delay={0.4} staggerDelay={0.025} />
           <br />
-          <span className="text-zinc-500">that convert</span>
+          <AnimatedText
+            text="that convert"
+            delay={0.8}
+            staggerDelay={0.03}
+            className="text-zinc-500"
+          />
         </motion.h1>
 
-        {/* Subheadline with Parallax */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+        {/* Subheadline with word-by-word reveal */}
+        <motion.div
           style={{ y: subheadlineY }}
-          className="text-zinc-400 text-lg md:text-xl max-w-xl mb-10 leading-relaxed"
+          className="text-zinc-400 text-lg md:text-xl max-w-xl mb-12 leading-relaxed"
         >
-          Premium digital experiences for ambitious brands.
-          From strategy to launch, we build sites that drive results.
-        </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          >
+            Premium digital experiences for ambitious brands.
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            From strategy to launch, we build sites that drive results.
+          </motion.p>
+        </motion.div>
 
-        {/* CTAs with Parallax */}
+        {/* CTAs with hover text animation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
+          transition={{ duration: 0.6, delay: 0.9 }}
           style={{ y: ctaY }}
           className="flex flex-wrap items-center justify-center gap-4"
         >
-          <Link
+          <AnimatedButton
             href="#contact"
-            className="group inline-flex items-center gap-3 px-8 py-4 bg-white text-[#0a0a0a] font-medium rounded-full hover:bg-zinc-100 transition-all"
-          >
-            <span>Start a Project</span>
-            <span className="group-hover:translate-x-1 transition-transform">→</span>
-          </Link>
-          <Link
+            text="Start a Project"
+            variant="primary"
+            showArrow
+          />
+          <AnimatedButton
             href="#work"
-            className="inline-flex items-center gap-3 px-8 py-4 border border-zinc-700 text-white font-medium rounded-full hover:bg-white/5 transition-all"
-          >
-            <span>View Work</span>
-          </Link>
+            text="View Work"
+            variant="secondary"
+          />
         </motion.div>
 
       </motion.div>

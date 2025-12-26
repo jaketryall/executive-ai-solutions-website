@@ -1,59 +1,155 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 
-// Magnetic effect for nav items
-function MagneticLink({
-  children,
+// Staggered text reveal on hover - same style as Hero buttons
+function AnimatedNavLink({
+  text,
   href,
   className,
 }: {
-  children: React.ReactNode;
+  text: string;
   href: string;
   className?: string;
 }) {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const characters = text.split("");
 
-  const springConfig = { damping: 25, stiffness: 400 };
-  const springX = useSpring(x, springConfig);
-  const springY = useSpring(y, springConfig);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    x.set((e.clientX - centerX) * 0.15);
-    y.set((e.clientY - centerY) * 0.15);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
+  // Calculate accelerating delay for each character
+  const getDelay = (index: number) => {
+    const baseDelay = 0.025;
+    const acceleration = 0.85;
+    let delay = 0;
+    for (let i = 0; i < index; i++) {
+      delay += baseDelay * Math.pow(acceleration, i);
+    }
+    return delay;
   };
 
   return (
-    <motion.div style={{ x: springX, y: springY }} className="inline-block">
-      <Link
-        href={href}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        className={`relative group ${className}`}
-      >
-        {children}
-        {/* Animated underline */}
-        <motion.span
-          className="absolute -bottom-1 left-0 h-px bg-white origin-left"
-          initial={{ scaleX: 0 }}
-          whileHover={{ scaleX: 1 }}
-          transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-          style={{ width: "100%" }}
-        />
-      </Link>
-    </motion.div>
+    <Link
+      href={href}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`relative inline-block ${className}`}
+    >
+      <span className="inline-flex items-center relative">
+        {characters.map((char, index) => (
+          <span
+            key={index}
+            className="inline-block overflow-hidden relative"
+            style={{
+              height: "1.2em",
+              lineHeight: "1.2em",
+            }}
+          >
+            {/* Original text - slides up and out */}
+            <motion.span
+              className="inline-block"
+              animate={{
+                y: isHovered ? "-110%" : "0%",
+              }}
+              transition={{
+                duration: 0.25,
+                delay: getDelay(index),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+            {/* Duplicate text - slides up from below */}
+            <motion.span
+              className="inline-block absolute left-0 top-0"
+              animate={{
+                y: isHovered ? "0%" : "110%",
+              }}
+              transition={{
+                duration: 0.25,
+                delay: getDelay(index),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          </span>
+        ))}
+      </span>
+    </Link>
+  );
+}
+
+// CTA Button with staggered text animation
+function AnimatedCTAButton({
+  text,
+  href,
+}: {
+  text: string;
+  href: string;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const characters = text.split("");
+
+  const getDelay = (index: number) => {
+    const baseDelay = 0.025;
+    const acceleration = 0.85;
+    let delay = 0;
+    for (let i = 0; i < index; i++) {
+      delay += baseDelay * Math.pow(acceleration, i);
+    }
+    return delay;
+  };
+
+  return (
+    <motion.a
+      href={href}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="inline-flex items-center justify-center px-5 py-2.5 bg-white text-[#0a0a0a] rounded-full font-medium text-sm hover:bg-zinc-100 transition-colors"
+      whileTap={{ scale: 0.98 }}
+    >
+      <span className="inline-flex items-center relative">
+        {characters.map((char, index) => (
+          <span
+            key={index}
+            className="inline-block overflow-hidden relative"
+            style={{
+              height: "1.2em",
+              lineHeight: "1.2em",
+            }}
+          >
+            <motion.span
+              className="inline-block"
+              animate={{
+                y: isHovered ? "-110%" : "0%",
+              }}
+              transition={{
+                duration: 0.25,
+                delay: getDelay(index),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+            <motion.span
+              className="inline-block absolute left-0 top-0"
+              animate={{
+                y: isHovered ? "0%" : "110%",
+              }}
+              transition={{
+                duration: 0.25,
+                delay: getDelay(index),
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          </span>
+        ))}
+      </span>
+    </motion.a>
   );
 }
 
@@ -128,12 +224,11 @@ export default function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.1 }}
               >
-                <MagneticLink
+                <AnimatedNavLink
                   href={link.href}
+                  text={link.label}
                   className="text-sm text-zinc-400 hover:text-white transition-colors py-2"
-                >
-                  {link.label}
-                </MagneticLink>
+                />
               </motion.div>
             ))}
           </motion.div>
@@ -143,16 +238,9 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
             className="hidden md:block"
           >
-            <Link
-              href="#contact"
-              className="text-sm text-[#0a0a0a] bg-white px-5 py-2.5 rounded-full hover:bg-zinc-100 transition-colors font-medium"
-            >
-              Book a call
-            </Link>
+            <AnimatedCTAButton href="#contact" text="Book a call" />
           </motion.div>
 
           {/* Mobile Menu Button */}
@@ -223,16 +311,9 @@ export default function Navbar() {
                 exit={{ opacity: 0, y: 30 }}
                 transition={{ delay: 0.5, duration: 0.4 }}
                 className="mt-8"
+                onClick={() => setIsOpen(false)}
               >
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link
-                    href="#contact"
-                    onClick={() => setIsOpen(false)}
-                    className="inline-block text-lg font-medium text-[#0a0a0a] bg-white px-8 py-4 rounded-full"
-                  >
-                    Book a call
-                  </Link>
-                </motion.div>
+                <AnimatedCTAButton href="#contact" text="Book a call" />
               </motion.div>
             </div>
           </motion.div>
