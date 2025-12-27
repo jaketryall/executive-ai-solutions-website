@@ -1,73 +1,11 @@
 "use client";
 
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { workItems } from "./Work";
 
-// Character-by-character text reveal animation
-function AnimatedText({
-  text,
-  delay = 0,
-  className = "",
-  staggerDelay = 0.03,
-}: {
-  text: string;
-  delay?: number;
-  className?: string;
-  staggerDelay?: number;
-}) {
-  const characters = text.split("");
-
-  const container = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: staggerDelay,
-        delayChildren: delay,
-      },
-    },
-  };
-
-  const child = {
-    hidden: {
-      y: "100%",
-      opacity: 0,
-    },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: [0.16, 1, 0.3, 1] as const,
-      },
-    },
-  };
-
-  return (
-    <motion.span
-      className={`inline-flex flex-wrap ${className}`}
-      variants={container}
-      initial="hidden"
-      animate="visible"
-    >
-      {characters.map((char, index) => (
-        <span key={index} className="inline-block overflow-hidden">
-          <motion.span
-            className="inline-block"
-            variants={child}
-            style={{ display: char === " " ? "inline" : "inline-block" }}
-          >
-            {char === " " ? "\u00A0" : char}
-          </motion.span>
-        </span>
-      ))}
-    </motion.span>
-  );
-}
-
-// Button with staggered text reveal on hover - two-line text swap effect
+// Button with staggered text reveal on hover
 function AnimatedButton({
   text,
   href,
@@ -86,13 +24,11 @@ function AnimatedButton({
     ? "bg-white text-[#0a0a0a] hover:bg-zinc-100"
     : "border border-zinc-700 text-white hover:bg-white/5";
 
-  // Calculate accelerating delay for each character
-  const getDelay = (index: number, reverse: boolean = false) => {
+  const getDelay = (index: number) => {
     const baseDelay = 0.035;
     const acceleration = 0.82;
     let delay = 0;
-    const charIndex = reverse ? (characters.length - 1 - index) : index;
-    for (let i = 0; i < charIndex; i++) {
+    for (let i = 0; i < index; i++) {
       delay += baseDelay * Math.pow(acceleration, i);
     }
     return delay;
@@ -101,7 +37,7 @@ function AnimatedButton({
   return (
     <motion.a
       href={href}
-      className={`group inline-flex items-center justify-center gap-3 px-8 py-4 font-medium rounded-full transition-colors ${baseStyles}`}
+      className={`group inline-flex items-center justify-center gap-3 px-6 py-3 text-sm font-medium rounded-full transition-colors ${baseStyles}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       whileTap={{ scale: 0.98 }}
@@ -116,7 +52,6 @@ function AnimatedButton({
               lineHeight: "1.2em",
             }}
           >
-            {/* Original text - slides up and out */}
             <motion.span
               className="inline-block"
               animate={{
@@ -124,13 +59,12 @@ function AnimatedButton({
               }}
               transition={{
                 duration: 0.3,
-                delay: getDelay(index, false),
+                delay: getDelay(index),
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
               {char === " " ? "\u00A0" : char}
             </motion.span>
-            {/* Duplicate text - slides up from below */}
             <motion.span
               className="inline-block absolute left-0 top-0"
               animate={{
@@ -138,7 +72,7 @@ function AnimatedButton({
               }}
               transition={{
                 duration: 0.3,
-                delay: getDelay(index, false),
+                delay: getDelay(index),
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
@@ -164,316 +98,401 @@ function AnimatedButton({
   );
 }
 
-// Work thumbnail component
-function WorkThumbnail({
-  item,
-  index,
-  onHover,
-  onLeave,
-  isHovered,
-}: {
-  item: (typeof workItems)[0];
-  index: number;
-  onHover: () => void;
-  onLeave: () => void;
-  isHovered: boolean;
-}) {
-  return (
-    <motion.div
-      className="relative group"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
-      onMouseEnter={onHover}
-      onMouseLeave={onLeave}
-      data-cursor="View Project"
-    >
-      <Link
-        href={item.url}
-        target={item.url.startsWith("http") ? "_blank" : undefined}
-        rel={item.url.startsWith("http") ? "noopener noreferrer" : undefined}
-        className="block"
-      >
-        <div className="relative w-[140px] h-[90px] md:w-[180px] md:h-[115px] rounded-xl overflow-hidden bg-zinc-900 shadow-2xl shadow-black/60">
-          <Image
-            src={item.image}
-            alt={item.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-          <motion.div
-            className="absolute inset-0 bg-[#2563eb]/90 flex items-center justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isHovered ? 1 : 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <span className="text-white text-sm font-medium">View →</span>
-          </motion.div>
-          <div className="absolute bottom-0 left-0 right-0 p-3">
-            <h3 className="text-xs md:text-sm font-medium text-white">{item.title}</h3>
-          </div>
-        </div>
-      </Link>
-    </motion.div>
-  );
-}
-
 export default function Hero() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [hoveredWork, setHoveredWork] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const [selectedWork, setSelectedWork] = useState(0);
 
-  // Parallax scroll effects
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
 
-  // Parallax transforms for different elements
-  const headlineY = useTransform(scrollYProgress, [0, 1], [0, 150]);
-  const subheadlineY = useTransform(scrollYProgress, [0, 1], [0, 100]);
-  const ctaY = useTransform(scrollYProgress, [0, 1], [0, 80]);
-  const thumbnailsY = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const faviconY = useTransform(scrollYProgress, [0, 1], [0, 250]);
-  const faviconScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.3]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
 
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth - 0.5) * 2,
-        y: (e.clientY / window.innerHeight - 0.5) * 2,
-      });
-    };
+  // Phone mockup scroll animations - these make it move!
+  const phoneY = useTransform(scrollYProgress, [0, 0.6], [0, 200]);
+  const phoneRotateY = useTransform(scrollYProgress, [0, 0.5], [-12, 0]);
+  const phoneRotateX = useTransform(scrollYProgress, [0, 0.5], [3, 0]);
+  const phoneScale = useTransform(scrollYProgress, [0, 0.4], [1, 1.15]);
 
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  // Work cards scroll animations
+  const cardsX = useTransform(scrollYProgress, [0, 0.5], [0, -100]);
+  const cardsOpacity = useTransform(scrollYProgress, [0.3, 0.5], [1, 0]);
+
+  const currentProject = workItems[selectedWork];
 
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex flex-col bg-[#0a0a0a] overflow-x-clip overflow-y-visible"
+      className="relative min-h-screen bg-[#0a0a0a] overflow-hidden"
     >
-      {/* Fluid Gradient Background with Parallax */}
-      <motion.div className="absolute inset-0 z-0" style={{ y: backgroundY }}>
-        <div className="absolute inset-0 bg-[#0a0a0a]" />
-
-        {/* Animated gradient blob 1 - Purple/Pink */}
-        <motion.div
-          className="absolute w-[120%] h-[120%] opacity-40"
-          style={{
-            background: `conic-gradient(from 180deg at ${50 + mousePosition.x * 5}% ${50 + mousePosition.y * 5}%,
-              transparent 0deg,
-              #1a0a2e 45deg,
-              #2d1b4e 90deg,
-              #4a1942 135deg,
-              #1a0a2e 180deg,
-              transparent 225deg,
-              transparent 360deg
-            )`,
-            filter: "blur(80px)",
-          }}
-          animate={{ rotate: [0, 360] }}
-          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-        />
-
-        {/* Animated gradient blob 2 - Blue/Cyan */}
-        <motion.div
-          className="absolute w-full h-full opacity-40"
-          style={{
-            background: `conic-gradient(from 90deg at ${60 - mousePosition.x * 3}% ${40 + mousePosition.y * 3}%,
-              transparent 0deg,
-              #0a1628 60deg,
-              #0066ff 120deg,
-              #00a8ff 180deg,
-              #0066ff 240deg,
-              #0a1628 300deg,
-              transparent 360deg
-            )`,
-            filter: "blur(100px)",
-          }}
-          animate={{ rotate: [360, 0] }}
-          transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
-        />
-
-        {/* Animated gradient blob 3 - Orange accent */}
-        <motion.div
-          className="absolute w-[80%] h-[80%] left-[10%] top-[10%] opacity-25"
-          style={{
-            background: `conic-gradient(from 270deg at ${45 + mousePosition.x * 4}% ${55 - mousePosition.y * 4}%,
-              transparent 0deg,
-              transparent 150deg,
-              #3d1f0f 180deg,
-              #ff6b35 210deg,
-              #ff8c42 240deg,
-              #3d1f0f 270deg,
-              transparent 300deg,
-              transparent 360deg
-            )`,
-            filter: "blur(90px)",
-          }}
-          animate={{ rotate: [0, -360] }}
-          transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-        />
-
-        {/* Oversized Favicon with Parallax */}
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03]"
-          style={{ y: faviconY, scale: faviconScale }}
-        >
-          <div className="relative w-[70vw] h-[70vw] max-w-[700px] max-h-[700px]">
-            <Image src="/favicon.png" alt="" fill className="object-contain" priority />
-          </div>
-        </motion.div>
-      </motion.div>
-
-      {/* Main Content with Parallax */}
+      {/* Content */}
       <motion.div
-        className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 text-center pt-24"
-        style={{ opacity: contentOpacity }}
+        className="relative z-10 min-h-screen flex items-center px-6 md:px-12 lg:px-16 py-24"
+        style={{ opacity: contentOpacity, y: contentY }}
       >
-        {/* Tagline with staggered reveal */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex items-center gap-3 mb-8"
-        >
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="w-8 h-px bg-zinc-600 origin-right"
-          />
-          <span className="text-zinc-500 text-xs uppercase tracking-[0.3em]">
-            Web Design Studio
-          </span>
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="w-8 h-px bg-zinc-600 origin-left"
-          />
-        </motion.div>
+        <div className="w-full max-w-[1600px] mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-8 lg:gap-4 items-center">
 
-        {/* Main Headline with character-by-character reveal */}
-        <motion.h1
-          style={{ y: headlineY }}
-          className="text-5xl md:text-7xl lg:text-8xl font-medium text-white leading-[0.95] tracking-tight mb-8 max-w-5xl"
-        >
-          <AnimatedText text="We design websites" delay={0.4} staggerDelay={0.025} />
-          <br />
-          <AnimatedText
-            text="that convert"
-            delay={0.8}
-            staggerDelay={0.03}
-            className="text-zinc-500"
-          />
-        </motion.h1>
-
-        {/* Subheadline with word-by-word reveal */}
-        <motion.div
-          style={{ y: subheadlineY }}
-          className="text-zinc-400 text-lg md:text-xl max-w-xl mb-12 leading-relaxed"
-        >
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          >
-            Premium digital experiences for ambitious brands.
-          </motion.p>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            From strategy to launch, we build sites that drive results.
-          </motion.p>
-        </motion.div>
-
-        {/* CTAs with hover text animation */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.9 }}
-          style={{ y: ctaY }}
-          className="flex flex-wrap items-center justify-center gap-4"
-        >
-          <AnimatedButton
-            href="#contact"
-            text="Start a Project"
-            variant="primary"
-            showArrow
-          />
-          <AnimatedButton
-            href="#work"
-            text="View Work"
-            variant="secondary"
-          />
-        </motion.div>
-
-      </motion.div>
-
-      {/* Hovered Work Background Image */}
-      <AnimatePresence>
-        {hoveredWork !== null && (
-          <motion.div
-            key={hoveredWork}
-            className="absolute inset-0 z-[1]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <Image
-              src={workItems[hoveredWork].image}
-              alt=""
-              fill
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-black/60" />
+            {/* Left Column - Work Thumbnails (3D tilted right) */}
             <motion.div
-              className="absolute bottom-32 left-1/2 -translate-x-1/2 text-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              className="relative flex flex-col gap-2 lg:gap-3"
+              style={{ x: cardsX, opacity: cardsOpacity }}
             >
-              <p className="text-white text-2xl font-medium">
-                {workItems[hoveredWork].title}
-              </p>
-              <p className="text-white/60 text-sm mt-1">
-                {workItems[hoveredWork].category}
-              </p>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              {/* Column label */}
+              <motion.div
+                className="flex items-center gap-3 mb-3"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              >
+                <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-medium">
+                  Selected Work
+                </span>
+                <div className="flex-1 h-px bg-zinc-800" />
+              </motion.div>
 
-      {/* Work Thumbnails at Bottom with Parallax */}
-      <motion.div
-        className="relative z-10 mt-8 md:mt-16"
-        style={{ y: thumbnailsY, opacity: contentOpacity }}
-      >
-        <div className="pt-6 pb-8 md:pt-8 md:pb-12">
-          <div className="flex justify-center items-end gap-3 md:gap-4 px-4 overflow-x-auto">
-            {workItems.map((item, index) => (
-              <WorkThumbnail
-                key={item.title}
-                item={item}
-                index={index}
-                onHover={() => setHoveredWork(index)}
-                onLeave={() => setHoveredWork(null)}
-                isHovered={hoveredWork === index}
-              />
-            ))}
+              {/* Grid of work cards - 2 columns for more items */}
+              <div className="grid grid-cols-2 gap-2 lg:gap-3">
+                {workItems.map((work, index) => (
+                  <motion.button
+                    key={work.title}
+                    onClick={() => setSelectedWork(index)}
+                    className="group relative block text-left"
+                    initial={{ opacity: 0, x: -30, y: 20 }}
+                    animate={{ opacity: 1, x: 0, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.15 + index * 0.06 }}
+                    style={{
+                      perspective: "1000px",
+                    }}
+                  >
+                    <motion.div
+                      className={`relative overflow-hidden transition-all duration-300 ${
+                        selectedWork === index
+                          ? "shadow-lg shadow-[#2563eb]/30 ring-2 ring-[#2563eb]"
+                          : "opacity-60 hover:opacity-100"
+                      }`}
+                      style={{
+                        transformStyle: "preserve-3d",
+                        transform: "rotateY(8deg) rotateX(-2deg)",
+                        borderRadius: "1rem",
+                      }}
+                      whileHover={{
+                        rotateY: 4,
+                        rotateX: -1,
+                        scale: 1.05,
+                      }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      <div className="relative aspect-[4/3] w-full">
+                        <Image
+                          src={work.image}
+                          alt={work.title}
+                          fill
+                          className="object-cover rounded-2xl"
+                        />
+                        {/* Gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent rounded-2xl" />
+
+                        {/* Project number badge */}
+                        <div className="absolute top-2 left-2">
+                          <span className="text-[9px] font-mono text-white/80 bg-black/40 backdrop-blur-sm px-1.5 py-0.5 rounded-lg">
+                            0{index + 1}
+                          </span>
+                        </div>
+
+                        {/* Title - always visible */}
+                        <div className="absolute bottom-2 left-2 right-2">
+                          <span className="text-[10px] font-medium text-white leading-tight line-clamp-1">
+                            {work.title}
+                          </span>
+                          <span className="text-[8px] text-zinc-400 uppercase tracking-wider">
+                            {work.category}
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Center - Title & Info */}
+            <div className="text-center px-4 lg:px-16 max-w-xl">
+              {/* Studio badge */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="flex items-center justify-center gap-4 mb-8"
+              >
+                <div className="w-12 h-px bg-gradient-to-r from-transparent to-zinc-600" />
+                <span className="text-zinc-400 text-[11px] uppercase tracking-[0.4em] font-medium">
+                  Design Studio
+                </span>
+                <div className="w-12 h-px bg-gradient-to-l from-transparent to-zinc-600" />
+              </motion.div>
+
+              {/* Main Title - Larger, more dramatic */}
+              <div className="mb-10">
+                <div className="overflow-hidden">
+                  <motion.h1
+                    className="text-5xl md:text-6xl lg:text-7xl font-semibold text-white leading-[0.9] tracking-[-0.02em]"
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  >
+                    Exceptional
+                  </motion.h1>
+                </div>
+                <div className="overflow-hidden">
+                  <motion.h1
+                    className="text-5xl md:text-6xl lg:text-7xl font-semibold leading-[0.9] tracking-[-0.02em]"
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  >
+                    <span className="bg-gradient-to-r from-[#2563eb] to-[#3b82f6] bg-clip-text text-transparent">Digital</span>
+                  </motion.h1>
+                </div>
+                <div className="overflow-hidden">
+                  <motion.h1
+                    className="text-5xl md:text-6xl lg:text-7xl font-semibold text-white leading-[0.9] tracking-[-0.02em]"
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  >
+                    Experiences
+                  </motion.h1>
+                </div>
+              </div>
+
+              {/* Decorative element */}
+              <motion.div
+                className="flex items-center justify-center gap-3 mb-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+              >
+                <div className="w-2 h-2 rounded-full bg-[#2563eb]" />
+                <div className="w-16 h-px bg-zinc-700" />
+                <div className="w-2 h-2 rounded-full bg-zinc-700" />
+              </motion.div>
+
+              {/* Selected Project Info - Better hierarchy */}
+              <motion.div
+                key={selectedWork}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="mb-10"
+              >
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <span className="text-[10px] text-[#2563eb] uppercase tracking-[0.2em] font-semibold">
+                    {currentProject.category}
+                  </span>
+                  <span className="text-zinc-600">•</span>
+                  <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em]">
+                    {currentProject.year}
+                  </span>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4 tracking-tight">
+                  {currentProject.title}
+                </h2>
+                <p className="text-zinc-400 text-sm leading-relaxed max-w-sm mx-auto mb-5">
+                  {currentProject.description}
+                </p>
+                <motion.div
+                  className="inline-flex items-center gap-2.5 px-4 py-2 bg-zinc-900/80 rounded-full border border-zinc-800/80 backdrop-blur-sm"
+                  whileHover={{ borderColor: "rgba(37, 99, 235, 0.3)" }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                  </span>
+                  <span className="text-xs text-zinc-300 font-medium">{currentProject.results}</span>
+                </motion.div>
+              </motion.div>
+
+              {/* CTAs - More prominent */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                className="flex flex-col sm:flex-row items-center justify-center gap-3"
+              >
+                <AnimatedButton
+                  href="#contact"
+                  text="Start a Project"
+                  variant="primary"
+                  showArrow
+                />
+                <AnimatedButton
+                  href="#work"
+                  text="View All Work"
+                  variant="secondary"
+                />
+              </motion.div>
+            </div>
+
+            {/* Right Column - Phone Mockup (3D tilted left) */}
+            <div className="relative flex flex-col items-center lg:items-end gap-4">
+              {/* Column label */}
+              <motion.div
+                className="flex items-center gap-3 w-full max-w-[280px] md:max-w-[300px]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              >
+                <div className="flex-1 h-px bg-zinc-800" />
+                <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-medium">
+                  Preview
+                </span>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                style={{
+                  perspective: "1200px",
+                }}
+              >
+                <motion.div
+                  className="relative"
+                  style={{
+                    transformStyle: "preserve-3d",
+                    transform: "rotateY(-12deg) rotateX(3deg)",
+                  }}
+                  animate={{
+                    rotateY: -12,
+                    rotateX: 3,
+                  }}
+                >
+                  {/* Phone Frame - More refined */}
+                  <div className="relative w-[260px] md:w-[280px] h-[520px] md:h-[560px] bg-zinc-900 rounded-[2.5rem] p-2.5 shadow-2xl shadow-black/60">
+                    {/* Phone bezel - subtle gradient */}
+                    <div
+                      className="absolute inset-0 rounded-[2.5rem] border border-zinc-700/50"
+                      style={{
+                        background: "linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 50%)",
+                      }}
+                    />
+
+                    {/* Dynamic Island style notch */}
+                    <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-full z-20 flex items-center justify-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-zinc-800" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-zinc-700" />
+                    </div>
+
+                    {/* Screen */}
+                    <div className="relative w-full h-full rounded-[2rem] overflow-hidden bg-black">
+                      {/* Project Preview in Phone */}
+                      <motion.div
+                        key={selectedWork}
+                        initial={{ opacity: 0, scale: 1.05 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        className="absolute inset-0"
+                      >
+                        <Image
+                          src={currentProject.image}
+                          alt={currentProject.title}
+                          fill
+                          className="object-cover"
+                        />
+                        {/* Overlay gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/30" />
+
+                        {/* Project info on phone - refined */}
+                        <motion.div
+                          className="absolute bottom-0 left-0 right-0 p-5"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.2 }}
+                        >
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
+                            <p className="text-[10px] text-zinc-400 uppercase tracking-widest">
+                              {currentProject.category}
+                            </p>
+                          </div>
+                          <h3 className="text-lg font-semibold text-white leading-tight">
+                            {currentProject.title}
+                          </h3>
+                        </motion.div>
+                      </motion.div>
+
+                      {/* Status bar - refined */}
+                      <div className="absolute top-7 left-5 right-5 flex justify-between items-center z-10">
+                        <span className="text-[11px] text-white/90 font-semibold tracking-tight">9:41</span>
+                        <div className="flex items-center gap-1.5">
+                          <div className="flex gap-0.5">
+                            <div className="w-1 h-1 rounded-full bg-white/80" />
+                            <div className="w-1 h-1 rounded-full bg-white/80" />
+                            <div className="w-1 h-1 rounded-full bg-white/80" />
+                            <div className="w-1 h-1 rounded-full bg-white/40" />
+                          </div>
+                          <div className="w-5 h-2.5 border border-white/80 rounded-sm ml-1">
+                            <div className="w-3/4 h-full bg-white/80 rounded-sm" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Phone reflection */}
+                    <div
+                      className="absolute inset-0 rounded-[2.5rem] pointer-events-none"
+                      style={{
+                        background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 40%)",
+                      }}
+                    />
+                  </div>
+
+                  {/* Glow effect beneath phone */}
+                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[180px] h-[30px] bg-[#2563eb]/25 blur-2xl rounded-full" />
+                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[120px] h-[20px] bg-[#2563eb]/40 blur-xl rounded-full" />
+                </motion.div>
+              </motion.div>
+            </div>
           </div>
         </div>
       </motion.div>
 
+      {/* Stats ticker at bottom */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.9 }}
+        className="absolute bottom-0 left-0 right-0 border-t border-zinc-800/30 bg-gradient-to-t from-[#0a0a0a] to-[#0a0a0a]/90 backdrop-blur-md"
+      >
+        <div className="py-5 overflow-hidden">
+          <motion.div
+            className="flex items-center gap-12 whitespace-nowrap"
+            animate={{ x: [0, -800] }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          >
+            {[...Array(3)].map((_, setIndex) => (
+              <div key={setIndex} className="flex items-center gap-12">
+                {[
+                  { value: "50+", label: "Projects" },
+                  { value: "98%", label: "Satisfaction" },
+                  { value: "14", label: "Day Delivery" },
+                  { value: "5★", label: "Reviews" },
+                ].map((stat, i) => (
+                  <div key={`${setIndex}-${i}`} className="flex items-center gap-3">
+                    <span className="text-sm font-semibold text-white">{stat.value}</span>
+                    <span className="text-xs text-zinc-500 uppercase tracking-wider">{stat.label}</span>
+                    <span className="w-1 h-1 rounded-full bg-zinc-700 ml-6" />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </motion.div>
     </section>
   );
 }
