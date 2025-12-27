@@ -1,6 +1,5 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import HeroWorkTransition from "@/components/HeroWorkTransition";
 import Work, { WorkStats } from "@/components/Work";
 import Services from "@/components/Services";
 import Pricing from "@/components/Pricing";
@@ -19,7 +18,6 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
-        <HeroWorkTransition />
         <Work />
         <WorkStats />
         <Services />

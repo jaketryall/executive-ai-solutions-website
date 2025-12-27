@@ -107,29 +107,150 @@ export default function Hero() {
     offset: ["start start", "end start"],
   });
 
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const contentY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
+  // Content fades immediately on scroll
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 0.2], [0, -80]);
 
-  // Phone mockup scroll animations - these make it move!
-  const phoneY = useTransform(scrollYProgress, [0, 0.6], [0, 200]);
-  const phoneRotateY = useTransform(scrollYProgress, [0, 0.5], [-12, 0]);
-  const phoneRotateX = useTransform(scrollYProgress, [0, 0.5], [3, 0]);
-  const phoneScale = useTransform(scrollYProgress, [0, 0.4], [1, 1.15]);
+  // Phone mockup scroll animations - morphs to first work card position
+  // Moves from right side to left side (where first work card will be)
+  const phoneX = useTransform(scrollYProgress, [0, 0.5], [0, -700]);
+  const phoneY = useTransform(scrollYProgress, [0, 0.5], [0, 0]);
+  const phoneRotateY = useTransform(scrollYProgress, [0, 0.3], [-12, 0]);
+  const phoneRotateX = useTransform(scrollYProgress, [0, 0.3], [3, 0]);
+  const phoneScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1]);
+  const phoneOpacity = useTransform(scrollYProgress, [0.6, 0.8], [1, 0]);
 
-  // Work cards scroll animations
-  const cardsX = useTransform(scrollYProgress, [0, 0.5], [0, -100]);
-  const cardsOpacity = useTransform(scrollYProgress, [0.3, 0.5], [1, 0]);
+  // Phone shape morphing - from phone (280x560) to card (4:3 aspect ~480x360)
+  const phoneWidth = useTransform(scrollYProgress, [0.2, 0.5], [280, 480]);
+  const phoneHeight = useTransform(scrollYProgress, [0.2, 0.5], [560, 360]);
+  const phoneBorderRadius = useTransform(scrollYProgress, [0.2, 0.5], [40, 24]);
+
+  // Work cards fade out immediately
+  const cardsX = useTransform(scrollYProgress, [0, 0.2], [0, -100]);
+  const cardsOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
+
+  // Center content fades out immediately
+  const centerOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
 
   const currentProject = workItems[selectedWork];
 
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen bg-[#0a0a0a] overflow-hidden"
+      className="relative bg-[#0a0a0a]"
+      style={{ minHeight: "200vh" }}
     >
-      {/* Content */}
+      {/* Sticky phone container - stays fixed as you scroll */}
+      <div className="sticky top-0 h-screen pointer-events-none z-20">
+        <motion.div
+          className="absolute right-[8%] lg:right-[12%] top-1/2 -translate-y-1/2 pointer-events-auto"
+          style={{
+            opacity: phoneOpacity,
+            scale: phoneScale,
+            x: phoneX,
+          }}
+        >
+          <motion.div
+            style={{
+              perspective: "1200px",
+            }}
+          >
+            <motion.div
+              className="relative"
+              style={{
+                transformStyle: "preserve-3d",
+                rotateY: phoneRotateY,
+                rotateX: phoneRotateX,
+              }}
+            >
+              {/* Phone Frame */}
+              <div className="relative w-[260px] md:w-[280px] h-[520px] md:h-[560px] bg-zinc-900 rounded-[2.5rem] p-2.5 shadow-2xl shadow-black/60">
+                {/* Phone bezel */}
+                <div
+                  className="absolute inset-0 rounded-[2.5rem] border border-zinc-700/50"
+                  style={{
+                    background: "linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 50%)",
+                  }}
+                />
+
+                {/* Dynamic Island */}
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-full z-20 flex items-center justify-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-zinc-800" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-zinc-700" />
+                </div>
+
+                {/* Screen */}
+                <div className="relative w-full h-full rounded-[2rem] overflow-hidden bg-black">
+                  <motion.div
+                    key={selectedWork}
+                    initial={{ opacity: 0, scale: 1.05 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    className="absolute inset-0"
+                  >
+                    <Image
+                      src={currentProject.image}
+                      alt={currentProject.title}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/30" />
+
+                    <motion.div
+                      className="absolute bottom-0 left-0 right-0 p-5"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.2 }}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
+                        <p className="text-[10px] text-zinc-400 uppercase tracking-widest">
+                          {currentProject.category}
+                        </p>
+                      </div>
+                      <h3 className="text-lg font-semibold text-white leading-tight">
+                        {currentProject.title}
+                      </h3>
+                    </motion.div>
+                  </motion.div>
+
+                  {/* Status bar */}
+                  <div className="absolute top-7 left-5 right-5 flex justify-between items-center z-10">
+                    <span className="text-[11px] text-white/90 font-semibold tracking-tight">9:41</span>
+                    <div className="flex items-center gap-1.5">
+                      <div className="flex gap-0.5">
+                        <div className="w-1 h-1 rounded-full bg-white/80" />
+                        <div className="w-1 h-1 rounded-full bg-white/80" />
+                        <div className="w-1 h-1 rounded-full bg-white/80" />
+                        <div className="w-1 h-1 rounded-full bg-white/40" />
+                      </div>
+                      <div className="w-5 h-2.5 border border-white/80 rounded-sm ml-1">
+                        <div className="w-3/4 h-full bg-white/80 rounded-sm" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Phone reflection */}
+                <div
+                  className="absolute inset-0 rounded-[2.5rem] pointer-events-none"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 40%)",
+                  }}
+                />
+              </div>
+
+              {/* Glow effect */}
+              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[180px] h-[30px] bg-[#2563eb]/25 blur-2xl rounded-full" />
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[120px] h-[20px] bg-[#2563eb]/40 blur-xl rounded-full" />
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Main content - scrolls normally */}
       <motion.div
-        className="relative z-10 min-h-screen flex items-center px-6 md:px-12 lg:px-16 py-24"
+        className="relative z-10 min-h-screen flex items-center px-6 md:px-12 lg:px-16 py-24 -mt-[100vh]"
         style={{ opacity: contentOpacity, y: contentY }}
       >
         <div className="w-full max-w-[1600px] mx-auto">
@@ -219,7 +340,7 @@ export default function Hero() {
             </motion.div>
 
             {/* Center - Title & Info */}
-            <div className="text-center px-4 lg:px-16 max-w-xl">
+            <motion.div className="text-center px-4 lg:px-16 max-w-xl" style={{ opacity: centerOpacity }}>
               {/* Studio badge */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -335,164 +456,14 @@ export default function Hero() {
                   variant="secondary"
                 />
               </motion.div>
-            </div>
+            </motion.div>
 
-            {/* Right Column - Phone Mockup (3D tilted left) */}
-            <div className="relative flex flex-col items-center lg:items-end gap-4">
-              {/* Column label */}
-              <motion.div
-                className="flex items-center gap-3 w-full max-w-[280px] md:max-w-[300px]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-              >
-                <div className="flex-1 h-px bg-zinc-800" />
-                <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-medium">
-                  Preview
-                </span>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                style={{
-                  perspective: "1200px",
-                }}
-              >
-                <motion.div
-                  className="relative"
-                  style={{
-                    transformStyle: "preserve-3d",
-                    transform: "rotateY(-12deg) rotateX(3deg)",
-                  }}
-                  animate={{
-                    rotateY: -12,
-                    rotateX: 3,
-                  }}
-                >
-                  {/* Phone Frame - More refined */}
-                  <div className="relative w-[260px] md:w-[280px] h-[520px] md:h-[560px] bg-zinc-900 rounded-[2.5rem] p-2.5 shadow-2xl shadow-black/60">
-                    {/* Phone bezel - subtle gradient */}
-                    <div
-                      className="absolute inset-0 rounded-[2.5rem] border border-zinc-700/50"
-                      style={{
-                        background: "linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 50%)",
-                      }}
-                    />
-
-                    {/* Dynamic Island style notch */}
-                    <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-full z-20 flex items-center justify-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-zinc-800" />
-                      <div className="w-1.5 h-1.5 rounded-full bg-zinc-700" />
-                    </div>
-
-                    {/* Screen */}
-                    <div className="relative w-full h-full rounded-[2rem] overflow-hidden bg-black">
-                      {/* Project Preview in Phone */}
-                      <motion.div
-                        key={selectedWork}
-                        initial={{ opacity: 0, scale: 1.05 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-                        className="absolute inset-0"
-                      >
-                        <Image
-                          src={currentProject.image}
-                          alt={currentProject.title}
-                          fill
-                          className="object-cover"
-                        />
-                        {/* Overlay gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/30" />
-
-                        {/* Project info on phone - refined */}
-                        <motion.div
-                          className="absolute bottom-0 left-0 right-0 p-5"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.4, delay: 0.2 }}
-                        >
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
-                            <p className="text-[10px] text-zinc-400 uppercase tracking-widest">
-                              {currentProject.category}
-                            </p>
-                          </div>
-                          <h3 className="text-lg font-semibold text-white leading-tight">
-                            {currentProject.title}
-                          </h3>
-                        </motion.div>
-                      </motion.div>
-
-                      {/* Status bar - refined */}
-                      <div className="absolute top-7 left-5 right-5 flex justify-between items-center z-10">
-                        <span className="text-[11px] text-white/90 font-semibold tracking-tight">9:41</span>
-                        <div className="flex items-center gap-1.5">
-                          <div className="flex gap-0.5">
-                            <div className="w-1 h-1 rounded-full bg-white/80" />
-                            <div className="w-1 h-1 rounded-full bg-white/80" />
-                            <div className="w-1 h-1 rounded-full bg-white/80" />
-                            <div className="w-1 h-1 rounded-full bg-white/40" />
-                          </div>
-                          <div className="w-5 h-2.5 border border-white/80 rounded-sm ml-1">
-                            <div className="w-3/4 h-full bg-white/80 rounded-sm" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Phone reflection */}
-                    <div
-                      className="absolute inset-0 rounded-[2.5rem] pointer-events-none"
-                      style={{
-                        background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 40%)",
-                      }}
-                    />
-                  </div>
-
-                  {/* Glow effect beneath phone */}
-                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[180px] h-[30px] bg-[#2563eb]/25 blur-2xl rounded-full" />
-                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[120px] h-[20px] bg-[#2563eb]/40 blur-xl rounded-full" />
-                </motion.div>
-              </motion.div>
-            </div>
+            {/* Right Column - Empty space for sticky phone */}
+            <div className="hidden lg:block w-[280px] md:w-[300px]" />
           </div>
         </div>
       </motion.div>
 
-      {/* Stats ticker at bottom */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.9 }}
-        className="absolute bottom-0 left-0 right-0 border-t border-zinc-800/30 bg-gradient-to-t from-[#0a0a0a] to-[#0a0a0a]/90 backdrop-blur-md"
-      >
-        <div className="py-5 overflow-hidden">
-          <motion.div
-            className="flex items-center gap-12 whitespace-nowrap"
-            animate={{ x: [0, -800] }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          >
-            {[...Array(3)].map((_, setIndex) => (
-              <div key={setIndex} className="flex items-center gap-12">
-                {[
-                  { value: "50+", label: "Projects" },
-                  { value: "98%", label: "Satisfaction" },
-                  { value: "14", label: "Day Delivery" },
-                  { value: "5★", label: "Reviews" },
-                ].map((stat, i) => (
-                  <div key={`${setIndex}-${i}`} className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-white">{stat.value}</span>
-                    <span className="text-xs text-zinc-500 uppercase tracking-wider">{stat.label}</span>
-                    <span className="w-1 h-1 rounded-full bg-zinc-700 ml-6" />
-                  </div>
-                ))}
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </motion.div>
     </section>
   );
 }

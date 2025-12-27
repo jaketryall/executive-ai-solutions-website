@@ -13,15 +13,16 @@ export default function HeroWorkTransition() {
     offset: ["start end", "end start"],
   });
 
-  // Phone morphs from tilted phone shape to flat expanded card
-  const phoneRotateY = useTransform(scrollYProgress, [0, 0.4], [-12, 0]);
-  const phoneRotateX = useTransform(scrollYProgress, [0, 0.4], [3, 0]);
-  const phoneScale = useTransform(scrollYProgress, [0, 0.5], [0.6, 1.2]);
-  const phoneWidth = useTransform(scrollYProgress, [0, 0.5], [280, 600]);
-  const phoneHeight = useTransform(scrollYProgress, [0, 0.5], [560, 400]);
-  const phoneBorderRadius = useTransform(scrollYProgress, [0, 0.5], [40, 24]);
-  const phoneY = useTransform(scrollYProgress, [0, 0.6], [0, -100]);
-  const phoneOpacity = useTransform(scrollYProgress, [0.5, 0.7], [1, 0]);
+  // Phone appears from where hero phone left off, then morphs to card
+  const phoneOpacity = useTransform(scrollYProgress, [0, 0.1, 0.5, 0.7], [0, 1, 1, 0]);
+  const phoneRotateY = useTransform(scrollYProgress, [0, 0.3], [0, 0]);
+  const phoneRotateX = useTransform(scrollYProgress, [0, 0.3], [0, 0]);
+  const phoneScale = useTransform(scrollYProgress, [0, 0.15, 0.5], [1.3, 1, 1.1]);
+  const phoneWidth = useTransform(scrollYProgress, [0.15, 0.5], [280, 550]);
+  const phoneHeight = useTransform(scrollYProgress, [0.15, 0.5], [560, 380]);
+  const phoneBorderRadius = useTransform(scrollYProgress, [0.15, 0.5], [40, 20]);
+  const phoneY = useTransform(scrollYProgress, [0, 0.5], [100, -50]);
+  const phoneX = useTransform(scrollYProgress, [0, 0.2], [150, 0]); // Starts from right side
 
   // Text reveals
   const textOpacity = useTransform(scrollYProgress, [0.2, 0.4], [0, 1]);
@@ -133,6 +134,7 @@ export default function HeroWorkTransition() {
           className="relative"
           style={{
             y: phoneY,
+            x: phoneX,
             opacity: phoneOpacity,
             perspective: 1200,
           }}
