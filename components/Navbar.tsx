@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -133,15 +133,13 @@ function AnimatedCTAButton({ text, href }: { text: string; href: string }) {
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const { scrollY } = useScroll();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setHasScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // Binary toggle - shrink immediately on any scroll
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setIsScrolled(latest > 10);
+  });
 
   const navLinks = [
     { href: "#work", label: "Work" },
@@ -152,33 +150,46 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Desktop Navbar - Floating Pill */}
+      {/* Desktop Navbar - Binary shrink on scroll */}
       <motion.header
-        initial={{ y: -100, opacity: 0 }}
+        initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="fixed top-6 left-1/2 -translate-x-1/2 z-50 hidden md:block"
+        transition={{ duration: 1, delay: 0.5, ease: [0.215, 0.61, 0.355, 1] }}
+        className="fixed top-0 left-0 right-0 z-50 hidden md:flex justify-center"
       >
         <motion.nav
-          className="relative"
+          className="relative mt-6"
           animate={{
-            backgroundColor: hasScrolled ? "rgba(10, 10, 10, 0.9)" : "rgba(10, 10, 10, 0.6)",
+            maxWidth: isScrolled ? "720px" : "900px",
+            backgroundColor: isScrolled ? "rgba(10, 10, 10, 0.95)" : "rgba(10, 10, 10, 0)",
+            borderColor: isScrolled ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0)",
+            boxShadow: isScrolled ? "0 8px 32px rgba(0, 0, 0, 0.4)" : "0 0 0 rgba(0,0,0,0)",
           }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
           style={{
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
+            width: "100%",
             borderRadius: "9999px",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            boxShadow: hasScrolled
-              ? "0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)"
-              : "0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
+            borderWidth: "1px",
+            borderStyle: "solid",
+            backdropFilter: isScrolled ? "blur(20px)" : "blur(0px)",
+            WebkitBackdropFilter: isScrolled ? "blur(20px)" : "blur(0px)",
           }}
         >
-          <div className="flex items-center gap-2 px-2 py-2">
+          <motion.div
+            className="flex items-center justify-between"
+            animate={{
+              padding: isScrolled ? "8px 16px" : "20px 16px",
+            }}
+            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+          >
             {/* Logo */}
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Link href="/" className="flex items-center gap-2 pl-3 pr-4">
+            <motion.div
+              animate={{ x: isScrolled ? 0 : -20 }}
+              transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Link href="/" className="flex items-center gap-2 px-3">
                 <div className="relative w-7 h-7">
                   <Image
                     src="/favicon.png"
@@ -187,28 +198,55 @@ export default function Navbar() {
                     className="object-contain"
                   />
                 </div>
-                <span className="text-base font-semibold text-white">exec</span>
+                <span className="text-base font-semibold text-white">
+                  exec
+                </span>
               </Link>
             </motion.div>
 
-            {/* Divider */}
-            <div className="w-px h-6 bg-zinc-700/50" />
+            {/* Center nav links */}
+            <div className="flex items-center">
+              {/* Divider - appears on scroll */}
+              <motion.div
+                className="w-px h-6 bg-zinc-700/50 mr-6"
+                animate={{
+                  opacity: isScrolled ? 1 : 0,
+                  scaleY: isScrolled ? 1 : 0,
+                }}
+                transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+              />
 
-            {/* Nav Links */}
-            <div className="flex items-center gap-6 px-4">
-              {navLinks.map((link) => (
-                <AnimatedNavLink key={link.href} href={link.href} text={link.label} />
-              ))}
+              {/* Nav Links */}
+              <motion.div
+                className="flex items-center"
+                animate={{ gap: isScrolled ? "24px" : "32px" }}
+                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              >
+                {navLinks.map((link) => (
+                  <AnimatedNavLink key={link.href} href={link.href} text={link.label} />
+                ))}
+              </motion.div>
+
+              {/* Divider - appears on scroll */}
+              <motion.div
+                className="w-px h-6 bg-zinc-700/50 ml-6"
+                animate={{
+                  opacity: isScrolled ? 1 : 0,
+                  scaleY: isScrolled ? 1 : 0,
+                }}
+                transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+              />
             </div>
-
-            {/* Divider */}
-            <div className="w-px h-6 bg-zinc-700/50" />
 
             {/* CTA Button */}
-            <div className="pl-2">
+            <motion.div
+              animate={{ x: isScrolled ? 0 : 20 }}
+              transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              className="px-2"
+            >
               <AnimatedCTAButton href="#contact" text="Let's Talk" />
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </motion.nav>
       </motion.header>
 
@@ -222,9 +260,9 @@ export default function Navbar() {
         <motion.nav
           className="relative rounded-full px-4 py-3"
           animate={{
-            backgroundColor: hasScrolled || isOpen ? "rgba(10, 10, 10, 0.95)" : "rgba(10, 10, 10, 0.6)",
+            backgroundColor: isOpen || isScrolled ? "rgba(10, 10, 10, 0.95)" : "rgba(10, 10, 10, 0.6)",
           }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.2 }}
           style={{
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
@@ -297,7 +335,7 @@ export default function Navbar() {
                   <Link
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="block text-4xl font-semibold text-white py-4 hover:text-[#2563eb] transition-colors"
+                    className="block text-4xl font-semibold text-white py-4 hover:text-blue-500 transition-colors"
                   >
                     <motion.span
                       whileHover={{ x: 10 }}

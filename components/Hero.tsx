@@ -1,469 +1,334 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import Link from "next/link";
 import Image from "next/image";
-import { workItems } from "./Work";
 
-// Button with staggered text reveal on hover
-function AnimatedButton({
-  text,
-  href,
-  variant = "primary",
-  showArrow = false,
+// Work items for the grid - 4 per row, 3 rows
+const workItems = [
+  // Row 1
+  {
+    id: 1,
+    title: "Desert Wings",
+    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80",
+  },
+  {
+    id: 2,
+    title: "Meridian",
+    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
+  },
+  {
+    id: 3,
+    title: "Apex Interiors",
+    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80",
+  },
+  {
+    id: 4,
+    title: "Northside",
+    image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&q=80",
+  },
+  // Row 2
+  {
+    id: 5,
+    title: "Vertex Labs",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
+  },
+  {
+    id: 6,
+    title: "CloudScale",
+    image: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&q=80",
+  },
+  {
+    id: 7,
+    title: "Elevate",
+    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80",
+  },
+  {
+    id: 8,
+    title: "Artisan",
+    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80",
+  },
+  // Row 3
+  {
+    id: 9,
+    title: "Nomad",
+    image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&q=80",
+  },
+  {
+    id: 10,
+    title: "Harvest",
+    image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
+  },
+  {
+    id: 11,
+    title: "Nexus",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
+  },
+  {
+    id: 12,
+    title: "Studio One",
+    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80",
+  },
+];
+
+// Grid card component - simple, high quality
+function GridCard({ item, index }: { item: typeof workItems[0]; index: number }) {
+  return (
+    <motion.div
+      className="relative aspect-[4/3] rounded-2xl overflow-hidden"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        duration: 0.6,
+        delay: 0.3 + index * 0.05,
+        ease: [0.215, 0.61, 0.355, 1],
+      }}
+      style={{
+        boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)",
+        border: "1px solid rgba(255,255,255,0.1)",
+      }}
+    >
+      <Image
+        src={item.image}
+        alt={item.title}
+        fill
+        className="object-cover"
+        sizes="300px"
+      />
+      {/* Subtle dark overlay */}
+      <div className="absolute inset-0 bg-black/30" />
+
+      {/* Subtle blue glow at bottom */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
+        style={{
+          background: "linear-gradient(to top, rgba(59, 130, 246, 0.1), transparent)",
+        }}
+      />
+    </motion.div>
+  );
+}
+
+// Single row with parallax
+function ParallaxRow({
+  items,
+  direction,
+  scrollYProgress,
 }: {
-  text: string;
-  href: string;
-  variant?: "primary" | "secondary";
-  showArrow?: boolean;
+  items: typeof workItems;
+  direction: "left" | "right";
+  scrollYProgress: ReturnType<typeof useTransform>;
 }) {
-  const [isHovered, setIsHovered] = useState(false);
-  const characters = text.split("");
-
-  const baseStyles = variant === "primary"
-    ? "bg-white text-[#0a0a0a] hover:bg-zinc-100"
-    : "border border-zinc-700 text-white hover:bg-white/5";
-
-  const getDelay = (index: number) => {
-    const baseDelay = 0.035;
-    const acceleration = 0.82;
-    let delay = 0;
-    for (let i = 0; i < index; i++) {
-      delay += baseDelay * Math.pow(acceleration, i);
-    }
-    return delay;
-  };
+  const x = useTransform(
+    scrollYProgress,
+    [0, 1],
+    direction === "left" ? [0, -200] : [0, 200]
+  );
 
   return (
-    <motion.a
-      href={href}
-      className={`group inline-flex items-center justify-center gap-3 px-6 py-3 text-sm font-medium rounded-full transition-colors ${baseStyles}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      whileTap={{ scale: 0.98 }}
+    <motion.div
+      className="flex gap-4 sm:gap-6 md:gap-8"
+      style={{ x }}
     >
-      <span className="inline-flex items-center relative">
-        {characters.map((char, index) => (
-          <span
-            key={index}
-            className="inline-block overflow-hidden relative"
-            style={{
-              height: "1.2em",
-              lineHeight: "1.2em",
-            }}
-          >
-            <motion.span
-              className="inline-block"
-              animate={{
-                y: isHovered ? "-110%" : "0%",
-              }}
-              transition={{
-                duration: 0.3,
-                delay: getDelay(index),
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            >
-              {char === " " ? "\u00A0" : char}
-            </motion.span>
-            <motion.span
-              className="inline-block absolute left-0 top-0"
-              animate={{
-                y: isHovered ? "0%" : "110%",
-              }}
-              transition={{
-                duration: 0.3,
-                delay: getDelay(index),
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            >
-              {char === " " ? "\u00A0" : char}
-            </motion.span>
-          </span>
-        ))}
-      </span>
-      {showArrow && (
-        <motion.span
-          className="inline-block"
-          animate={isHovered ? { x: 4 } : { x: 0 }}
-          transition={{
-            duration: 0.25,
-            delay: 0.1,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-        >
-          →
-        </motion.span>
-      )}
-    </motion.a>
+      {items.map((item, i) => (
+        <div key={item.id} className="w-48 sm:w-56 md:w-72 flex-shrink-0">
+          <GridCard item={item} index={i} />
+        </div>
+      ))}
+    </motion.div>
   );
 }
 
 export default function Hero() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [selectedWork, setSelectedWork] = useState(0);
+  const containerRef = useRef<HTMLElement>(null);
 
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: containerRef,
     offset: ["start start", "end start"],
   });
 
-  // Content fades immediately on scroll
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
-  const contentY = useTransform(scrollYProgress, [0, 0.2], [0, -80]);
+  // Parallax transforms for exit - text fades but grid continues
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
+  const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
+  const textY = useTransform(scrollYProgress, [0, 0.5], [0, -60]);
 
-  // Phone mockup scroll animations - morphs to first work card position
-  // Moves from right side to left side (where first work card will be)
-  const phoneX = useTransform(scrollYProgress, [0, 0.5], [0, -700]);
-  const phoneY = useTransform(scrollYProgress, [0, 0.5], [0, 0]);
-  const phoneRotateY = useTransform(scrollYProgress, [0, 0.3], [-12, 0]);
-  const phoneRotateX = useTransform(scrollYProgress, [0, 0.3], [3, 0]);
-  const phoneScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1]);
-  const phoneOpacity = useTransform(scrollYProgress, [0.6, 0.8], [1, 0]);
+  // Grid continues moving - doesn't fade as quickly
+  const gridOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const gridY = useTransform(scrollYProgress, [0, 1], [0, -200]);
 
-  // Phone shape morphing - from phone (280x560) to card (4:3 aspect ~480x360)
-  const phoneWidth = useTransform(scrollYProgress, [0.2, 0.5], [280, 480]);
-  const phoneHeight = useTransform(scrollYProgress, [0.2, 0.5], [560, 360]);
-  const phoneBorderRadius = useTransform(scrollYProgress, [0.2, 0.5], [40, 24]);
-
-  // Work cards fade out immediately
-  const cardsX = useTransform(scrollYProgress, [0, 0.2], [0, -100]);
-  const cardsOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
-
-  // Center content fades out immediately
-  const centerOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
-
-  const currentProject = workItems[selectedWork];
+  // Split items into 3 rows
+  const row1 = workItems.slice(0, 4);
+  const row2 = workItems.slice(4, 8);
+  const row3 = workItems.slice(8, 12);
 
   return (
     <section
-      ref={sectionRef}
-      className="relative bg-[#0a0a0a]"
-      style={{ minHeight: "200vh" }}
+      ref={containerRef}
+      className="relative min-h-[100vh] bg-[#0a0a0a] flex items-center justify-center overflow-hidden"
     >
-      {/* Sticky phone container - stays fixed as you scroll */}
-      <div className="sticky top-0 h-screen pointer-events-none z-20">
-        <motion.div
-          className="absolute right-[8%] lg:right-[12%] top-1/2 -translate-y-1/2 pointer-events-auto"
+      {/* Grid background with 3D perspective and alternating parallax */}
+      <motion.div
+        className="absolute inset-0 flex items-center justify-center overflow-visible"
+        style={{
+          opacity: gridOpacity,
+          y: gridY,
+          perspective: "1200px",
+        }}
+      >
+        <div
           style={{
-            opacity: phoneOpacity,
-            scale: phoneScale,
-            x: phoneX,
+            transform: "rotateX(30deg) rotateZ(-30deg) scale(1.5)",
+            transformStyle: "preserve-3d",
           }}
         >
-          <motion.div
-            style={{
-              perspective: "1200px",
-            }}
-          >
-            <motion.div
-              className="relative"
-              style={{
-                transformStyle: "preserve-3d",
-                rotateY: phoneRotateY,
-                rotateX: phoneRotateX,
-              }}
-            >
-              {/* Phone Frame */}
-              <div className="relative w-[260px] md:w-[280px] h-[520px] md:h-[560px] bg-zinc-900 rounded-[2.5rem] p-2.5 shadow-2xl shadow-black/60">
-                {/* Phone bezel */}
-                <div
-                  className="absolute inset-0 rounded-[2.5rem] border border-zinc-700/50"
-                  style={{
-                    background: "linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 50%)",
-                  }}
-                />
-
-                {/* Dynamic Island */}
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-full z-20 flex items-center justify-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-zinc-800" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-zinc-700" />
-                </div>
-
-                {/* Screen */}
-                <div className="relative w-full h-full rounded-[2rem] overflow-hidden bg-black">
-                  <motion.div
-                    key={selectedWork}
-                    initial={{ opacity: 0, scale: 1.05 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-                    className="absolute inset-0"
-                  >
-                    <Image
-                      src={currentProject.image}
-                      alt={currentProject.title}
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/30" />
-
-                    <motion.div
-                      className="absolute bottom-0 left-0 right-0 p-5"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: 0.2 }}
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
-                        <p className="text-[10px] text-zinc-400 uppercase tracking-widest">
-                          {currentProject.category}
-                        </p>
-                      </div>
-                      <h3 className="text-lg font-semibold text-white leading-tight">
-                        {currentProject.title}
-                      </h3>
-                    </motion.div>
-                  </motion.div>
-
-                  {/* Status bar */}
-                  <div className="absolute top-7 left-5 right-5 flex justify-between items-center z-10">
-                    <span className="text-[11px] text-white/90 font-semibold tracking-tight">9:41</span>
-                    <div className="flex items-center gap-1.5">
-                      <div className="flex gap-0.5">
-                        <div className="w-1 h-1 rounded-full bg-white/80" />
-                        <div className="w-1 h-1 rounded-full bg-white/80" />
-                        <div className="w-1 h-1 rounded-full bg-white/80" />
-                        <div className="w-1 h-1 rounded-full bg-white/40" />
-                      </div>
-                      <div className="w-5 h-2.5 border border-white/80 rounded-sm ml-1">
-                        <div className="w-3/4 h-full bg-white/80 rounded-sm" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Phone reflection */}
-                <div
-                  className="absolute inset-0 rounded-[2.5rem] pointer-events-none"
-                  style={{
-                    background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 40%)",
-                  }}
-                />
-              </div>
-
-              {/* Glow effect */}
-              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[180px] h-[30px] bg-[#2563eb]/25 blur-2xl rounded-full" />
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[120px] h-[20px] bg-[#2563eb]/40 blur-xl rounded-full" />
-            </motion.div>
-          </motion.div>
-        </motion.div>
-      </div>
-
-      {/* Main content - scrolls normally */}
-      <motion.div
-        className="relative z-10 min-h-screen flex items-center px-6 md:px-12 lg:px-16 py-24 -mt-[100vh]"
-        style={{ opacity: contentOpacity, y: contentY }}
-      >
-        <div className="w-full max-w-[1600px] mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-8 lg:gap-4 items-center">
-
-            {/* Left Column - Work Thumbnails (3D tilted right) */}
-            <motion.div
-              className="relative flex flex-col gap-2 lg:gap-3"
-              style={{ x: cardsX, opacity: cardsOpacity }}
-            >
-              {/* Column label */}
-              <motion.div
-                className="flex items-center gap-3 mb-3"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-              >
-                <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-medium">
-                  Selected Work
-                </span>
-                <div className="flex-1 h-px bg-zinc-800" />
-              </motion.div>
-
-              {/* Grid of work cards - 2 columns for more items */}
-              <div className="grid grid-cols-2 gap-2 lg:gap-3">
-                {workItems.map((work, index) => (
-                  <motion.button
-                    key={work.title}
-                    onClick={() => setSelectedWork(index)}
-                    className="group relative block text-left"
-                    initial={{ opacity: 0, x: -30, y: 20 }}
-                    animate={{ opacity: 1, x: 0, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.15 + index * 0.06 }}
-                    style={{
-                      perspective: "1000px",
-                    }}
-                  >
-                    <motion.div
-                      className={`relative overflow-hidden transition-all duration-300 ${
-                        selectedWork === index
-                          ? "shadow-lg shadow-[#2563eb]/30 ring-2 ring-[#2563eb]"
-                          : "opacity-60 hover:opacity-100"
-                      }`}
-                      style={{
-                        transformStyle: "preserve-3d",
-                        transform: "rotateY(8deg) rotateX(-2deg)",
-                        borderRadius: "1rem",
-                      }}
-                      whileHover={{
-                        rotateY: 4,
-                        rotateX: -1,
-                        scale: 1.05,
-                      }}
-                      transition={{ duration: 0.25 }}
-                    >
-                      <div className="relative aspect-[4/3] w-full">
-                        <Image
-                          src={work.image}
-                          alt={work.title}
-                          fill
-                          className="object-cover rounded-2xl"
-                        />
-                        {/* Gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent rounded-2xl" />
-
-                        {/* Project number badge */}
-                        <div className="absolute top-2 left-2">
-                          <span className="text-[9px] font-mono text-white/80 bg-black/40 backdrop-blur-sm px-1.5 py-0.5 rounded-lg">
-                            0{index + 1}
-                          </span>
-                        </div>
-
-                        {/* Title - always visible */}
-                        <div className="absolute bottom-2 left-2 right-2">
-                          <span className="text-[10px] font-medium text-white leading-tight line-clamp-1">
-                            {work.title}
-                          </span>
-                          <span className="text-[8px] text-zinc-400 uppercase tracking-wider">
-                            {work.category}
-                          </span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </motion.button>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Center - Title & Info */}
-            <motion.div className="text-center px-4 lg:px-16 max-w-xl" style={{ opacity: centerOpacity }}>
-              {/* Studio badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="flex items-center justify-center gap-4 mb-8"
-              >
-                <div className="w-12 h-px bg-gradient-to-r from-transparent to-zinc-600" />
-                <span className="text-zinc-400 text-[11px] uppercase tracking-[0.4em] font-medium">
-                  Design Studio
-                </span>
-                <div className="w-12 h-px bg-gradient-to-l from-transparent to-zinc-600" />
-              </motion.div>
-
-              {/* Main Title - Larger, more dramatic */}
-              <div className="mb-10">
-                <div className="overflow-hidden">
-                  <motion.h1
-                    className="text-5xl md:text-6xl lg:text-7xl font-semibold text-white leading-[0.9] tracking-[-0.02em]"
-                    initial={{ y: "100%" }}
-                    animate={{ y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  >
-                    Exceptional
-                  </motion.h1>
-                </div>
-                <div className="overflow-hidden">
-                  <motion.h1
-                    className="text-5xl md:text-6xl lg:text-7xl font-semibold leading-[0.9] tracking-[-0.02em]"
-                    initial={{ y: "100%" }}
-                    animate={{ y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  >
-                    <span className="bg-gradient-to-r from-[#2563eb] to-[#3b82f6] bg-clip-text text-transparent">Digital</span>
-                  </motion.h1>
-                </div>
-                <div className="overflow-hidden">
-                  <motion.h1
-                    className="text-5xl md:text-6xl lg:text-7xl font-semibold text-white leading-[0.9] tracking-[-0.02em]"
-                    initial={{ y: "100%" }}
-                    animate={{ y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  >
-                    Experiences
-                  </motion.h1>
-                </div>
-              </div>
-
-              {/* Decorative element */}
-              <motion.div
-                className="flex items-center justify-center gap-3 mb-8"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-              >
-                <div className="w-2 h-2 rounded-full bg-[#2563eb]" />
-                <div className="w-16 h-px bg-zinc-700" />
-                <div className="w-2 h-2 rounded-full bg-zinc-700" />
-              </motion.div>
-
-              {/* Selected Project Info - Better hierarchy */}
-              <motion.div
-                key={selectedWork}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className="mb-10"
-              >
-                <div className="flex items-center justify-center gap-2 mb-3">
-                  <span className="text-[10px] text-[#2563eb] uppercase tracking-[0.2em] font-semibold">
-                    {currentProject.category}
-                  </span>
-                  <span className="text-zinc-600">•</span>
-                  <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em]">
-                    {currentProject.year}
-                  </span>
-                </div>
-                <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4 tracking-tight">
-                  {currentProject.title}
-                </h2>
-                <p className="text-zinc-400 text-sm leading-relaxed max-w-sm mx-auto mb-5">
-                  {currentProject.description}
-                </p>
-                <motion.div
-                  className="inline-flex items-center gap-2.5 px-4 py-2 bg-zinc-900/80 rounded-full border border-zinc-800/80 backdrop-blur-sm"
-                  whileHover={{ borderColor: "rgba(37, 99, 235, 0.3)" }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
-                  </span>
-                  <span className="text-xs text-zinc-300 font-medium">{currentProject.results}</span>
-                </motion.div>
-              </motion.div>
-
-              {/* CTAs - More prominent */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.7 }}
-                className="flex flex-col sm:flex-row items-center justify-center gap-3"
-              >
-                <AnimatedButton
-                  href="#contact"
-                  text="Start a Project"
-                  variant="primary"
-                  showArrow
-                />
-                <AnimatedButton
-                  href="#work"
-                  text="View All Work"
-                  variant="secondary"
-                />
-              </motion.div>
-            </motion.div>
-
-            {/* Right Column - Empty space for sticky phone */}
-            <div className="hidden lg:block w-[280px] md:w-[300px]" />
+          {/* 3 rows with alternating horizontal parallax */}
+          <div className="flex flex-col gap-4 sm:gap-6 md:gap-8">
+            <ParallaxRow items={row1} direction="left" scrollYProgress={scrollYProgress} />
+            <ParallaxRow items={row2} direction="right" scrollYProgress={scrollYProgress} />
+            <ParallaxRow items={row3} direction="left" scrollYProgress={scrollYProgress} />
           </div>
+
+          {/* Ambient glow under the grid */}
+          <div
+            className="absolute -inset-64 -z-10"
+            style={{
+              background: "radial-gradient(ellipse at center, rgba(59, 130, 246, 0.15) 0%, transparent 60%)",
+              filter: "blur(80px)",
+            }}
+          />
         </div>
       </motion.div>
 
+      {/* Dark vignette overlay for text readability - fades at bottom to reveal grid */}
+      <div
+        className="absolute inset-0 pointer-events-none z-10"
+        style={{
+          background: "radial-gradient(ellipse at center, transparent 10%, #0a0a0a 60%), linear-gradient(to bottom, #0a0a0a 0%, transparent 15%, transparent 70%, transparent 100%)",
+        }}
+      />
+
+      {/* Centered content */}
+      <motion.div
+        className="relative z-30 text-center px-6 pointer-events-none"
+        style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
+      >
+        <motion.div style={{ y: textY }}>
+          {/* Tagline */}
+          <motion.p
+            className="text-zinc-500 text-sm md:text-base uppercase tracking-[0.3em] mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+          >
+            Web Design Studio
+          </motion.p>
+
+          {/* Main headline */}
+          <h1 className="text-[clamp(2.5rem,10vw,7rem)] font-bold leading-[0.9] tracking-[-0.04em] mb-6">
+            <div className="overflow-hidden">
+              <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                transition={{
+                  duration: 1,
+                  delay: 0.3,
+                  ease: [0.215, 0.61, 0.355, 1],
+                }}
+                className="text-white"
+              >
+                We build websites
+              </motion.div>
+            </div>
+            <div className="overflow-hidden">
+              <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                transition={{
+                  duration: 1,
+                  delay: 0.45,
+                  ease: [0.215, 0.61, 0.355, 1],
+                }}
+                className="text-white"
+              >
+                that <span className="text-blue-500">convert</span>
+              </motion.div>
+            </div>
+          </h1>
+
+          {/* Subtext */}
+          <motion.p
+            className="text-zinc-400 text-lg md:text-xl max-w-xl mx-auto mb-10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1 }}
+          >
+            Premium web design for ambitious brands.
+            <br className="hidden md:block" />
+            From concept to launch in 2 weeks.
+          </motion.p>
+
+          {/* CTA Buttons */}
+          <motion.div
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 pointer-events-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.2 }}
+          >
+            <Link href="#contact">
+              <motion.button
+                className="group relative px-8 py-4 bg-white text-black font-medium rounded-full overflow-hidden"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <span className="relative z-10 group-hover:text-white transition-colors duration-300">
+                  Start a Project
+                </span>
+                <motion.div
+                  className="absolute inset-0 bg-blue-500"
+                  initial={{ y: "100%" }}
+                  whileHover={{ y: 0 }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.button>
+            </Link>
+
+            <Link href="#work">
+              <motion.button
+                className="px-8 py-4 border border-zinc-700 text-white font-medium rounded-full hover:border-zinc-500 hover:bg-white/5 transition-all duration-300"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                View Our Work
+              </motion.button>
+            </Link>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2 }}
+        style={{ opacity: heroOpacity }}
+      >
+        <motion.div
+          className="flex flex-col items-center gap-2"
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <div className="w-5 h-8 border border-zinc-700 rounded-full flex justify-center pt-2">
+            <motion.div
+              className="w-1 h-1.5 bg-zinc-600 rounded-full"
+              animate={{ y: [0, 8, 0], opacity: [1, 0.3, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

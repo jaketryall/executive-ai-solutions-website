@@ -1,293 +1,14 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
+import { useState } from "react";
 import Link from "next/link";
-import { useState, useRef } from "react";
-
-// Animated button with staggered text reveal
-function AnimatedPricingButton({
-  text,
-  href,
-  variant = "dark",
-}: {
-  text: string;
-  href: string;
-  variant?: "dark" | "light";
-}) {
-  const [isHovered, setIsHovered] = useState(false);
-  const characters = text.split("");
-
-  const getDelay = (index: number) => {
-    const baseDelay = 0.025;
-    const acceleration = 0.85;
-    let delay = 0;
-    for (let i = 0; i < index; i++) {
-      delay += baseDelay * Math.pow(acceleration, i);
-    }
-    return delay;
-  };
-
-  return (
-    <motion.a
-      href={href}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={`flex items-center justify-center w-full py-4 text-center font-medium rounded-full transition-all ${
-        variant === "light"
-          ? "bg-white text-[#0a0a0a] hover:bg-zinc-100"
-          : "bg-[#0a0a0a] text-white hover:bg-zinc-800"
-      }`}
-      whileTap={{ scale: 0.98 }}
-    >
-      <span className="inline-flex items-center relative">
-        {characters.map((char, index) => (
-          <span
-            key={index}
-            className="inline-block overflow-hidden relative"
-            style={{
-              height: "1.2em",
-              lineHeight: "1.2em",
-            }}
-          >
-            <motion.span
-              className="inline-block"
-              animate={{
-                y: isHovered ? "-110%" : "0%",
-              }}
-              transition={{
-                duration: 0.25,
-                delay: getDelay(index),
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            >
-              {char === " " ? "\u00A0" : char}
-            </motion.span>
-            <motion.span
-              className="inline-block absolute left-0 top-0"
-              animate={{
-                y: isHovered ? "0%" : "110%",
-              }}
-              transition={{
-                duration: 0.25,
-                delay: getDelay(index),
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            >
-              {char === " " ? "\u00A0" : char}
-            </motion.span>
-          </span>
-        ))}
-      </span>
-    </motion.a>
-  );
-}
-
-// Animated inline link with staggered text reveal
-function AnimatedInlineLink({
-  text,
-  href,
-}: {
-  text: string;
-  href: string;
-}) {
-  const [isHovered, setIsHovered] = useState(false);
-  const characters = text.split("");
-
-  const getDelay = (index: number) => {
-    const baseDelay = 0.02;
-    const acceleration = 0.88;
-    let delay = 0;
-    for (let i = 0; i < index; i++) {
-      delay += baseDelay * Math.pow(acceleration, i);
-    }
-    return delay;
-  };
-
-  return (
-    <Link
-      href={href}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="inline-block text-[#2563eb]"
-    >
-      <span className="inline-flex items-center relative">
-        {characters.map((char, index) => (
-          <span
-            key={index}
-            className="inline-block overflow-hidden relative"
-            style={{
-              height: "1.2em",
-              lineHeight: "1.2em",
-            }}
-          >
-            <motion.span
-              className="inline-block"
-              animate={{
-                y: isHovered ? "-110%" : "0%",
-              }}
-              transition={{
-                duration: 0.2,
-                delay: getDelay(index),
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            >
-              {char === " " ? "\u00A0" : char}
-            </motion.span>
-            <motion.span
-              className="inline-block absolute left-0 top-0"
-              animate={{
-                y: isHovered ? "0%" : "110%",
-              }}
-              transition={{
-                duration: 0.2,
-                delay: getDelay(index),
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            >
-              {char === " " ? "\u00A0" : char}
-            </motion.span>
-          </span>
-        ))}
-      </span>
-    </Link>
-  );
-}
-
-// 3D Pricing card with subtle tilt effect
-function PricingCard({
-  plan,
-  index,
-}: {
-  plan: (typeof plans)[0];
-  index: number;
-}) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
-
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  // Smooth spring animation for tilt
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [4, -4]), {
-    stiffness: 300,
-    damping: 30,
-  });
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-4, 4]), {
-    stiffness: 300,
-    damping: 30,
-  });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    mouseX.set(x);
-    mouseY.set(y);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    mouseX.set(0);
-    mouseY.set(0);
-  };
-
-  return (
-    <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
-      onMouseMove={handleMouseMove}
-      style={{ perspective: 1000 }}
-    >
-      <motion.div
-        className={`relative p-8 rounded-2xl border h-full ${
-          plan.popular
-            ? "border-[#2563eb] bg-[#0a0a0a] text-white"
-            : "border-zinc-200 bg-white"
-        }`}
-        style={{
-          rotateX: isHovered ? rotateX : 0,
-          rotateY: isHovered ? rotateY : 0,
-          transformStyle: "preserve-3d",
-        }}
-      >
-        {/* Subtle glow on hover */}
-        <motion.div
-          className="absolute inset-0 rounded-2xl pointer-events-none"
-          animate={{
-            boxShadow: isHovered
-              ? plan.popular
-                ? "0 20px 40px rgba(37, 99, 235, 0.2)"
-                : "0 20px 40px rgba(0, 0, 0, 0.1)"
-              : "0 0 0 rgba(0, 0, 0, 0)",
-          }}
-          transition={{ duration: 0.3 }}
-        />
-
-        {plan.popular && (
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-            <span className="px-4 py-1 bg-[#2563eb] text-white text-xs font-medium rounded-full uppercase tracking-wider">
-              Most Popular
-            </span>
-          </div>
-        )}
-
-        <div className="mb-6">
-          <h3 className={`text-xl font-semibold mb-2 ${plan.popular ? "text-white" : "text-[#0a0a0a]"}`}>
-            {plan.name}
-          </h3>
-          <p className={`text-sm ${plan.popular ? "text-zinc-400" : "text-zinc-500"}`}>
-            {plan.description}
-          </p>
-        </div>
-
-        <div className="mb-8">
-          <span className={`text-4xl md:text-5xl font-semibold ${plan.popular ? "text-white" : "text-[#0a0a0a]"}`}>
-            {plan.price}
-          </span>
-          {plan.price !== "Let's Talk" && (
-            <span className={`text-sm ${plan.popular ? "text-zinc-400" : "text-zinc-500"}`}> starting</span>
-          )}
-        </div>
-
-        <ul className="space-y-4 mb-8">
-          {plan.features.map((feature) => (
-            <li key={feature} className="flex items-start gap-3">
-              <svg
-                className="w-5 h-5 mt-0.5 shrink-0 text-[#2563eb]"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span className={`text-sm ${plan.popular ? "text-zinc-300" : "text-zinc-600"}`}>
-                {feature}
-              </span>
-            </li>
-          ))}
-        </ul>
-
-        <AnimatedPricingButton
-          href="#contact"
-          text="Get Started"
-          variant={plan.popular ? "light" : "dark"}
-        />
-      </motion.div>
-    </motion.div>
-  );
-}
 
 const plans = [
   {
     name: "Landing Page",
     price: "$1,500",
-    description: "Perfect for startups and small businesses needing a strong online presence.",
+    description: "Perfect for startups needing a strong online presence.",
     features: [
       "Single page website",
       "Mobile responsive design",
@@ -301,7 +22,7 @@ const plans = [
   {
     name: "Business Site",
     price: "$3,500",
-    description: "Comprehensive website for established businesses ready to scale.",
+    description: "Comprehensive website for businesses ready to scale.",
     features: [
       "Up to 5 pages",
       "Custom design & animations",
@@ -317,7 +38,7 @@ const plans = [
   {
     name: "Custom Project",
     price: "Let's Talk",
-    description: "Complex projects, e-commerce, or unique requirements.",
+    description: "Complex projects with unique requirements.",
     features: [
       "Unlimited pages",
       "Custom functionality",
@@ -332,65 +53,239 @@ const plans = [
   },
 ];
 
+function PricingCard({
+  plan,
+  index,
+}: {
+  plan: typeof plans[0];
+  index: number;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 60 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      className={`relative ${plan.popular ? "lg:-mt-8 lg:mb-8" : ""}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <motion.div
+        className={`relative h-full rounded-3xl overflow-hidden ${
+          plan.popular
+            ? "bg-blue-500/10"
+            : "bg-zinc-900/50"
+        }`}
+        whileHover={{ y: -8 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+      >
+        {/* Border */}
+        <div
+          className={`absolute inset-0 rounded-3xl border ${
+            plan.popular ? "border-blue-500/30" : "border-zinc-800"
+          }`}
+        />
+
+        {/* Glow effect for popular */}
+        {plan.popular && (
+          <motion.div
+            className="absolute inset-0 rounded-3xl opacity-0"
+            style={{
+              boxShadow: "0 0 80px rgba(59, 130, 246, 0.2)",
+            }}
+            animate={{ opacity: isHovered ? 1 : 0.5 }}
+            transition={{ duration: 0.3 }}
+          />
+        )}
+
+        {/* Popular badge */}
+        {plan.popular && (
+          <div className="absolute -top-px left-1/2 -translate-x-1/2">
+            <motion.div
+              className="px-6 py-2 bg-blue-500 rounded-b-2xl"
+              initial={{ y: -40 }}
+              whileInView={{ y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <span className="text-sm font-semibold text-white uppercase tracking-wider">
+                Most Popular
+              </span>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Content */}
+        <div className="relative z-10 p-8 md:p-10">
+          {/* Header */}
+          <div className="mb-8 pt-4">
+            <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
+            <p className="text-zinc-400 text-sm">{plan.description}</p>
+          </div>
+
+          {/* Price */}
+          <div className="mb-8">
+            <motion.div
+              className="flex items-baseline gap-2"
+              animate={{ scale: isHovered ? 1.02 : 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <span className="text-5xl md:text-6xl font-bold text-blue-500">
+                {plan.price}
+              </span>
+              {plan.price !== "Let's Talk" && (
+                <span className="text-zinc-500 text-sm">starting</span>
+              )}
+            </motion.div>
+          </div>
+
+          {/* CTA Button */}
+          <div className="mb-8">
+            <Link href="#contact">
+              <motion.div
+                className={`relative w-full py-4 text-center font-semibold rounded-2xl overflow-hidden ${
+                  plan.popular
+                    ? "bg-blue-500 text-white hover:bg-blue-600"
+                    : "bg-zinc-800 text-white border border-zinc-700 hover:bg-zinc-700"
+                } transition-colors duration-300`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  Get Started
+                  <motion.span
+                    animate={{ x: isHovered ? 4 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    →
+                  </motion.span>
+                </span>
+              </motion.div>
+            </Link>
+          </div>
+
+          {/* Divider */}
+          <div className="h-px bg-zinc-800 mb-8" />
+
+          {/* Features */}
+          <div>
+            <p className="text-xs text-zinc-500 uppercase tracking-wider mb-4 font-medium">
+              What's included
+            </p>
+            <ul className="space-y-4">
+              {plan.features.map((feature, i) => (
+                <motion.li
+                  key={feature}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: 0.4 + i * 0.05 }}
+                  className="flex items-start gap-3"
+                >
+                  <motion.div
+                    className="mt-1 w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0"
+                    animate={{
+                      scale: isHovered ? 1.1 : 1,
+                    }}
+                    transition={{ duration: 0.2, delay: i * 0.02 }}
+                  >
+                    <svg
+                      className="w-3 h-3 text-blue-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={3}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </motion.div>
+                  <span className="text-zinc-300 text-sm">{feature}</span>
+                </motion.li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function Pricing() {
   return (
-    <section id="pricing" className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-white rounded-t-[2rem] -mt-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <motion.div
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
+    <section id="pricing" className="relative bg-[#0a0a0a] py-32">
+      <div className="px-6 md:px-12 lg:px-20">
+        <div className="max-w-[1400px] mx-auto">
+          {/* Section Header */}
+          <div className="text-center mb-20">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="w-12 h-px bg-zinc-300 origin-right"
-            />
-            <span className="text-sm text-zinc-500 uppercase tracking-[0.2em]">
+              transition={{ duration: 0.5 }}
+              className="text-blue-500 text-sm font-medium tracking-wider uppercase mb-4"
+            >
               Pricing
-            </span>
-            <motion.div
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
+            </motion.p>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="w-12 h-px bg-zinc-300 origin-left"
-            />
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6"
+            >
+              Transparent <span className="text-blue-500">Pricing</span>
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-xl text-zinc-400 max-w-2xl mx-auto"
+            >
+              No hidden fees. No surprises. Just honest pricing for quality work.
+            </motion.p>
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-[#0a0a0a] tracking-tight mb-6">
-            Transparent <span className="font-serif italic text-[#2563eb]">pricing</span>
-          </h2>
-          <p className="text-xl text-zinc-500 max-w-2xl mx-auto">
-            No hidden fees. No surprises. Just honest pricing for quality work.
-          </p>
-        </motion.div>
 
-        {/* Pricing cards */}
-        <div className="grid md:grid-cols-3 gap-8">
-          {plans.map((plan, index) => (
-            <PricingCard key={plan.name} plan={plan} index={index} />
-          ))}
+          {/* Pricing Cards */}
+          <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 mb-16">
+            {plans.map((plan, index) => (
+              <PricingCard key={plan.name} plan={plan} index={index} />
+            ))}
+          </div>
+
+          {/* Additional Info */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center"
+          >
+            <div className="inline-flex items-center gap-4 px-6 py-4 bg-zinc-900/50 border border-zinc-800 rounded-2xl">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                <span className="text-zinc-400 text-sm">
+                  All projects include a free 30-minute consultation
+                </span>
+              </div>
+              <div className="w-px h-4 bg-zinc-700" />
+              <Link
+                href="#contact"
+                className="text-blue-500 hover:text-blue-400 text-sm font-medium transition-colors"
+              >
+                Let's discuss your project →
+              </Link>
+            </div>
+          </motion.div>
         </div>
-
-        {/* Additional info */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mt-16 text-center"
-        >
-          <p className="text-zinc-500">
-            All projects include a free 30-minute consultation.{" "}
-            <AnimatedInlineLink href="#contact" text="Let's discuss your project →" />
-          </p>
-        </motion.div>
       </div>
     </section>
   );
