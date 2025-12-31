@@ -222,7 +222,7 @@ export default function Work() {
     <div ref={sectionRef} className="relative z-10 bg-[#0a0a0a]">
       <motion.section
         id="work"
-        className="relative bg-[#f5f5f0] py-32 overflow-hidden"
+        className="relative bg-[#f5f5f0] py-32"
         style={{
           scale,
           borderRadius,
@@ -233,50 +233,82 @@ export default function Work() {
 
       <div className="relative z-10 px-6 md:px-12 lg:px-20">
         <div className="max-w-[1400px] mx-auto">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
-            <div>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="text-blue-500 text-sm font-medium tracking-wider uppercase mb-4"
-              >
-                Selected Work
-              </motion.p>
-              <motion.h2
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-zinc-900"
-              >
-                Recent Projects
-              </motion.h2>
+          {/* Sticky sidebar layout */}
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
+            {/* Sticky sidebar */}
+            <div className="lg:w-[320px] lg:shrink-0">
+              <div className="lg:sticky lg:top-32">
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  className="text-blue-500 text-sm font-medium tracking-wider uppercase mb-4"
+                >
+                  Selected Work
+                </motion.p>
+                <motion.h2
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  className="text-4xl md:text-5xl lg:text-6xl font-light text-zinc-900 mb-6 tracking-tight uppercase"
+                >
+                  Recent Projects
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="text-zinc-600 mb-8 leading-relaxed"
+                >
+                  A selection of our favorite projects, crafted with care for clients who demand excellence.
+                </motion.p>
+
+                {/* Stats in sidebar */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="grid grid-cols-2 gap-6 mb-8"
+                >
+                  <div>
+                    <p className="text-3xl font-bold text-zinc-900">50+</p>
+                    <p className="text-sm text-zinc-500">Projects</p>
+                  </div>
+                  <div>
+                    <p className="text-3xl font-bold text-zinc-900">98%</p>
+                    <p className="text-sm text-zinc-500">Satisfaction</p>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  <Link
+                    href="#contact"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-900 text-white rounded-full hover:bg-zinc-800 transition-colors"
+                  >
+                    Start a project
+                    <span>→</span>
+                  </Link>
+                </motion.div>
+              </div>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <Link
-                href="#contact"
-                className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-900 transition-colors"
-              >
-                View all projects
-                <span>→</span>
-              </Link>
-            </motion.div>
-          </div>
-
-          {/* Projects grid */}
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-            {workItems.map((project, index) => (
-              <ProjectCard key={project.title} project={project} index={index} />
-            ))}
+            {/* Projects column */}
+            <div className="flex-1">
+              <div className="flex flex-col gap-12">
+                {workItems.map((project, index) => (
+                  <ProjectCard key={project.title} project={project} index={index} />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

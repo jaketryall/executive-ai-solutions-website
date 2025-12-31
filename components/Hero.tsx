@@ -142,6 +142,7 @@ function ParallaxRow({
 
 export default function Hero() {
   const containerRef = useRef<HTMLElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -177,7 +178,9 @@ export default function Hero() {
           perspective: "1200px",
         }}
       >
+
         <div
+          ref={gridRef}
           style={{
             transform: "rotateX(30deg) rotateZ(-30deg) scale(1.5)",
             transformStyle: "preserve-3d",
@@ -201,11 +204,11 @@ export default function Hero() {
         </div>
       </motion.div>
 
-      {/* Dark vignette overlay for text readability - fades at bottom to reveal grid */}
+      {/* Dark vignette overlay for text readability */}
       <div
         className="absolute inset-0 pointer-events-none z-10"
         style={{
-          background: "radial-gradient(ellipse at center, transparent 10%, #0a0a0a 60%), linear-gradient(to bottom, #0a0a0a 0%, transparent 15%, transparent 70%, transparent 100%)",
+          background: "radial-gradient(ellipse at center, rgba(10,10,10,0.7) 0%, #0a0a0a 70%)",
         }}
       />
 
@@ -226,7 +229,7 @@ export default function Hero() {
           </motion.p>
 
           {/* Main headline */}
-          <h1 className="text-[clamp(2.5rem,10vw,7rem)] font-bold leading-[0.9] tracking-[-0.04em] mb-6">
+          <h1 className="text-[clamp(2.5rem,10vw,7rem)] font-light leading-[1] tracking-[-0.02em] mb-6 uppercase">
             <div className="overflow-hidden">
               <motion.div
                 initial={{ y: "100%" }}
@@ -238,7 +241,7 @@ export default function Hero() {
                 }}
                 className="text-white"
               >
-                We build websites
+                We Build Websites
               </motion.div>
             </div>
             <div className="overflow-hidden">
@@ -252,7 +255,7 @@ export default function Hero() {
                 }}
                 className="text-white"
               >
-                that <span className="text-blue-500">convert</span>
+                That <span className="text-blue-500">Convert</span>
               </motion.div>
             </div>
           </h1>
