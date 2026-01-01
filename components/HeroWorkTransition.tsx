@@ -211,7 +211,7 @@ export default function HeroWorkTransition() {
               }}
             >
               <span className="text-xs text-[#2563eb] uppercase tracking-[0.3em] mb-4">
-                {currentProject.category} • {currentProject.year}
+                {currentProject.category}
               </span>
               <h3 className="text-3xl md:text-4xl font-semibold text-white mb-4">
                 {currentProject.title}

@@ -131,6 +131,16 @@
     }
   }
 
+  /* Shimmer animation for card borders */
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 200%;
+    }
+    100% {
+      background-position: -200% -200%;
+    }
+  }
+
   /* Hide scrollbar but allow scroll */
   .scrollbar-hide {
     -ms-overflow-style: none;
