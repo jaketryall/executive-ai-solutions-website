@@ -3,6 +3,9 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 
+// Smooth easing curve
+const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: "",
@@ -40,30 +43,41 @@ export default function Contact() {
           {/* Section Header */}
           <div className="text-center mb-20">
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.6, ease: smoothEase }}
               className="text-blue-500 text-sm font-medium tracking-wider uppercase mb-4"
             >
               Get in Touch
             </motion.p>
 
-            <motion.h2
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6"
-            >
-              Let's work <span className="text-blue-500">together</span>
-            </motion.h2>
+            <div className="overflow-hidden">
+              <motion.h2
+                initial={{ y: 80, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.1, ease: smoothEase }}
+                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6"
+              >
+                Let's work{" "}
+                <motion.span
+                  className="text-blue-500 inline-block"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.4, ease: smoothEase }}
+                >
+                  together
+                </motion.span>
+              </motion.h2>
+            </div>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.3, ease: smoothEase }}
               className="text-xl text-zinc-400 max-w-2xl mx-auto"
             >
               Have a project in mind? We'd love to hear about it.

@@ -3,6 +3,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
+// Smooth easing curve
+const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
 const faqs = [
   {
     question: "How long does a typical project take?",
@@ -80,32 +83,55 @@ export default function FAQ() {
     <section id="faq" className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a] rounded-t-[2rem] -mt-8">
       <div className="max-w-4xl mx-auto">
         {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mb-16"
-        >
+        <div className="mb-16">
           <div className="flex items-center gap-4 mb-6">
             <motion.div
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: smoothEase }}
               className="w-12 h-px bg-zinc-700 origin-left"
             />
-            <span className="text-sm text-zinc-500 uppercase tracking-[0.2em]">
+            <motion.span
+              initial={{ opacity: 0, x: -10 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3, ease: smoothEase }}
+              className="text-sm text-zinc-500 uppercase tracking-[0.2em]"
+            >
               FAQ
-            </span>
+            </motion.span>
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-white tracking-tight mb-6">
-            Common <span className="font-serif italic text-[#2563eb]">questions</span>
-          </h2>
-          <p className="text-xl text-zinc-400">
+          <div className="overflow-hidden">
+            <motion.h2
+              initial={{ y: 80, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.1, ease: smoothEase }}
+              className="text-4xl md:text-5xl lg:text-6xl font-semibold text-white tracking-tight mb-6"
+            >
+              Common{" "}
+              <motion.span
+                className="font-serif italic text-[#2563eb] inline-block"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4, ease: smoothEase }}
+              >
+                questions
+              </motion.span>
+            </motion.h2>
+          </div>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3, ease: smoothEase }}
+            className="text-xl text-zinc-400"
+          >
             Everything you need to know before we get started.
-          </p>
-        </motion.div>
+          </motion.p>
+        </div>
 
         {/* FAQ items */}
         <div className="border-t border-zinc-800">

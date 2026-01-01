@@ -1,9 +1,12 @@
 "use client";
 
-import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, MotionValue, useInView } from "framer-motion";
 import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+
+// Smooth easing curve
+const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export const workItems = [
   {
@@ -242,10 +245,10 @@ export default function Work() {
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
               <div>
                 <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.6, ease: smoothEase }}
                   className="text-blue-500 text-sm font-medium tracking-wider uppercase mb-4"
                 >
                   Selected Work
@@ -254,10 +257,19 @@ export default function Work() {
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
+                  transition={{ duration: 0.8, delay: 0.1, ease: smoothEase }}
                   className="text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight uppercase"
                 >
-                  Recent <span className="text-blue-600">Projects</span>
+                  Recent
+                </motion.h2>
+                <motion.h2
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.2, ease: smoothEase }}
+                  className="text-5xl md:text-6xl lg:text-7xl font-black text-blue-600 tracking-tight uppercase"
+                >
+                  Projects
                 </motion.h2>
               </div>
 
@@ -265,7 +277,7 @@ export default function Work() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+                transition={{ duration: 0.5, delay: 0.3, ease: smoothEase }}
               >
                 <Link
                   href="#contact"

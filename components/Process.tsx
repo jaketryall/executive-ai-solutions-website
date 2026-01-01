@@ -4,6 +4,9 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import Link from "next/link";
 
+// Smooth easing curve
+const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
 const steps = [
   {
     number: "01",
@@ -188,33 +191,46 @@ export default function Process() {
           {/* Section Header */}
           <div className="mb-20">
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.6, ease: smoothEase }}
               className="text-blue-500 text-sm font-medium tracking-wider uppercase mb-4"
             >
               How It Works
             </motion.p>
 
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-20">
-              <motion.h2
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white"
-              >
-                From idea
-                <br />
-                <span className="text-blue-500">to launch</span>
-              </motion.h2>
+              <div>
+                <div className="overflow-hidden">
+                  <motion.h2
+                    initial={{ y: 80, opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 0.1, ease: smoothEase }}
+                    className="text-4xl md:text-5xl lg:text-6xl font-bold text-white"
+                  >
+                    From idea
+                  </motion.h2>
+                </div>
+                <div className="overflow-hidden">
+                  <motion.h2
+                    initial={{ y: 80, opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 0.2, ease: smoothEase }}
+                    className="text-4xl md:text-5xl lg:text-6xl font-bold text-blue-500"
+                  >
+                    to launch
+                  </motion.h2>
+                </div>
+              </div>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2 }}
+                transition={{ duration: 0.6, delay: 0.3, ease: smoothEase }}
                 className="flex flex-col justify-end"
               >
                 <p className="text-xl text-zinc-400 leading-relaxed">

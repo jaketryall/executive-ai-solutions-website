@@ -1,9 +1,45 @@
 "use client";
 
-import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, MotionValue, useInView } from "framer-motion";
 import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+
+// Smooth easing curve
+const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+// Staggered letter animation component
+function AnimatedLetters({
+  text,
+  className = "",
+  delay = 0
+}: {
+  text: string;
+  className?: string;
+  delay?: number;
+}) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  return (
+    <motion.span ref={ref} className={`inline-flex ${className}`}>
+      {text.split("").map((char, i) => (
+        <motion.span
+          key={i}
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{
+            duration: 0.5,
+            delay: delay + i * 0.03,
+            ease: smoothEase,
+          }}
+        >
+          {char === " " ? "\u00A0" : char}
+        </motion.span>
+      ))}
+    </motion.span>
+  );
+}
 
 // Work items for the grid - 4 per row, 3 rows
 const workItems = [
@@ -218,26 +254,21 @@ export default function Hero() {
         style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
       >
         <motion.div style={{ y: textY }}>
-          {/* Tagline */}
-          <motion.p
-            className="text-zinc-500 text-sm md:text-base uppercase tracking-[0.3em] mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-          >
-            Web Design Studio
-          </motion.p>
+          {/* Tagline - letter by letter */}
+          <div className="text-zinc-500 text-sm md:text-base uppercase tracking-[0.3em] mb-6">
+            <AnimatedLetters text="Web Design Studio" delay={0.8} />
+          </div>
 
-          {/* Main headline */}
-          <h1 className="text-[clamp(2.5rem,10vw,7rem)] font-light leading-[1] tracking-[-0.02em] mb-6 uppercase">
+          {/* Main headline with staggered lines */}
+          <h1 className="text-[clamp(2.5rem,10vw,7rem)] font-black leading-[1] tracking-tight mb-6 uppercase">
             <div className="overflow-hidden">
               <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
                 transition={{
-                  duration: 1,
+                  duration: 0.8,
                   delay: 0.3,
-                  ease: [0.215, 0.61, 0.355, 1],
+                  ease: smoothEase,
                 }}
                 className="text-white"
               >
@@ -246,38 +277,55 @@ export default function Hero() {
             </div>
             <div className="overflow-hidden">
               <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
                 transition={{
-                  duration: 1,
+                  duration: 0.8,
                   delay: 0.45,
-                  ease: [0.215, 0.61, 0.355, 1],
+                  ease: smoothEase,
                 }}
                 className="text-white"
               >
-                That <span className="text-blue-500">Convert</span>
+                That{" "}
+                <motion.span
+                  className="text-blue-500 inline-block"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.7, ease: smoothEase }}
+                >
+                  Convert
+                </motion.span>
               </motion.div>
             </div>
           </h1>
 
-          {/* Subtext */}
-          <motion.p
-            className="text-zinc-400 text-lg md:text-xl max-w-xl mx-auto mb-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
-          >
-            Premium web design for ambitious brands.
+          {/* Subtext with staggered words */}
+          <div className="text-zinc-400 text-lg md:text-xl max-w-xl mx-auto mb-10">
+            <motion.span
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.9, ease: smoothEase }}
+              className="inline-block"
+            >
+              Premium web design for ambitious brands.
+            </motion.span>
             <br className="hidden md:block" />
-            From concept to launch in 2 weeks.
-          </motion.p>
+            <motion.span
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.0, ease: smoothEase }}
+              className="inline-block"
+            >
+              From concept to launch in 2 weeks.
+            </motion.span>
+          </div>
 
           {/* CTA Buttons */}
           <motion.div
             className="flex flex-col sm:flex-row items-center justify-center gap-4 pointer-events-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
+            transition={{ duration: 0.6, delay: 1.15, ease: smoothEase }}
           >
             <Link href="#contact">
               <motion.button

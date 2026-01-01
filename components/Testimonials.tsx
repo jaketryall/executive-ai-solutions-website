@@ -1,7 +1,10 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { useRef } from "react";
+
+// Smooth easing curve
+const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const testimonials = [
   {
@@ -130,43 +133,72 @@ export default function Testimonials() {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
               <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.6, ease: smoothEase }}
                 className="text-blue-500 text-sm font-medium tracking-wider uppercase mb-4"
               >
                 Testimonials
               </motion.p>
-              <motion.h2
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight uppercase"
-              >
-                Trusted By <span className="text-blue-500">Industry</span>
-                <br />
-                Leaders
-              </motion.h2>
+              <div className="overflow-hidden">
+                <motion.div
+                  initial={{ y: 80 }}
+                  whileInView={{ y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.1, ease: smoothEase }}
+                  className="text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight uppercase"
+                >
+                  Trusted By <span className="text-blue-500">Industry</span>
+                </motion.div>
+              </div>
+              <div className="overflow-hidden">
+                <motion.div
+                  initial={{ y: 80 }}
+                  whileInView={{ y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.2, ease: smoothEase }}
+                  className="text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight uppercase"
+                >
+                  Leaders
+                </motion.div>
+              </div>
             </div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.3, ease: smoothEase }}
               className="flex items-center gap-8"
             >
-              <div className="text-center">
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4, ease: smoothEase }}
+              >
                 <p className="text-4xl font-bold text-white">50+</p>
                 <p className="text-sm text-zinc-500">Happy Clients</p>
-              </div>
-              <div className="w-px h-12 bg-zinc-800" />
-              <div className="text-center">
+              </motion.div>
+              <motion.div
+                className="w-px h-12 bg-zinc-800"
+                initial={{ scaleY: 0 }}
+                whileInView={{ scaleY: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              />
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.6, ease: smoothEase }}
+              >
                 <p className="text-4xl font-bold text-white">5.0</p>
                 <p className="text-sm text-zinc-500">Avg Rating</p>
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>
