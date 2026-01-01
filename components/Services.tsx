@@ -399,318 +399,371 @@ function WebDesignSection() {
 
 // ============================================
 // SERVICE 3: UI/UX DESIGN
-// Continuous fluid morphing UI showcase
+// True element morphing - shapes transform into each other
 // ============================================
 
-// Fluid morphing component - elements continuously transform into each other
-function FluidMorphingShowcase({ isInView }: { isInView: boolean }) {
+function MorphingUIShowcase({ isInView }: { isInView: boolean }) {
   const [phase, setPhase] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Continuous animation loop
+  // Cycle through phases
   useEffect(() => {
     if (!isInView) return;
 
     const interval = setInterval(() => {
-      setPhase((prev) => (prev + 1) % 100);
-    }, 50); // 20fps for smooth animation
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setPhase((prev) => (prev + 1) % 4);
+        setIsTransitioning(false);
+      }, 800);
+    }, 3500);
 
     return () => clearInterval(interval);
   }, [isInView]);
 
-  // Calculate morph progress (0-1) for different elements
-  const cycleLength = 400; // Total frames for one complete cycle
-  const morphProgress = (phase * 5) % cycleLength;
-
-  // Each element has its own phase in the cycle
-  const getElementProgress = (offset: number) => {
-    const adjusted = (morphProgress + offset) % cycleLength;
-    return adjusted / cycleLength;
-  };
-
-  // Easing function for smooth morphing
-  const easeInOutCubic = (t: number) => {
-    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  };
-
-  // Breathing/pulsing effect
-  const breathe = Math.sin(phase * 0.05) * 0.5 + 0.5;
-
-  // Rotation for the whole container
-  const containerRotation = Math.sin(phase * 0.02) * 5;
+  // Container inner dimensions: 300x240 with 16px padding = 268x208 usable area
+  // Element configs: [phase0, phase1, phase2, phase3] for each property
+  const elements = [
+    {
+      // Element 0: Hero element - image area → primary button → email input → logo
+      id: 0,
+      x: [0, 34, 4, 0],
+      y: [0, 16, 0, 0],
+      width: [268, 200, 260, 32],
+      height: [90, 44, 40, 32],
+      borderRadius: [12, 22, 8, 8],
+      bg: ["rgba(139,92,246,0.15)", "linear-gradient(90deg, #8b5cf6, #3b82f6)", "rgba(39,39,42,0.8)", "linear-gradient(135deg, #8b5cf6, #3b82f6)"],
+      border: ["1px solid rgba(139,92,246,0.3)", "none", "1px solid rgba(113,113,122,0.5)", "none"],
+      shadow: ["none", "0 8px 32px rgba(139,92,246,0.4)", "none", "0 4px 20px rgba(139,92,246,0.3)"],
+    },
+    {
+      // Element 1: Title → secondary button → password input → nav item
+      id: 1,
+      x: [0, 34, 4, 46],
+      y: [104, 68, 52, 0],
+      width: [160, 200, 260, 70],
+      height: [14, 44, 40, 24],
+      borderRadius: [4, 22, 8, 6],
+      bg: ["rgba(255,255,255,0.9)", "rgba(255,255,255,0.08)", "rgba(39,39,42,0.8)", "rgba(255,255,255,0.1)"],
+      border: ["none", "1px solid rgba(255,255,255,0.15)", "1px solid rgba(139,92,246,0.5)", "1px solid rgba(255,255,255,0.1)"],
+      shadow: ["none", "none", "0 0 0 2px rgba(139,92,246,0.2)", "none"],
+    },
+    {
+      // Element 2: Price tag → ghost button → submit button → stat card 1
+      id: 2,
+      x: [0, 34, 4, 0],
+      y: [130, 120, 104, 44],
+      width: [60, 200, 260, 128],
+      height: [22, 44, 44, 64],
+      borderRadius: [6, 22, 8, 10],
+      bg: ["#8b5cf6", "transparent", "linear-gradient(90deg, #8b5cf6, #3b82f6)", "rgba(39,39,42,0.5)"],
+      border: ["none", "1px solid rgba(139,92,246,0.5)", "none", "1px solid rgba(255,255,255,0.05)"],
+      shadow: ["0 4px 12px rgba(139,92,246,0.3)", "none", "0 6px 24px rgba(139,92,246,0.35)", "none"],
+    },
+    {
+      // Element 3: Rating → hidden → hidden → stat card 2
+      id: 3,
+      x: [148, 268, 268, 140],
+      y: [130, 208, 208, 44],
+      width: [56, 0, 0, 128],
+      height: [14, 0, 0, 64],
+      borderRadius: [7, 0, 0, 10],
+      bg: ["rgba(255,255,255,0.2)", "transparent", "transparent", "rgba(139,92,246,0.1)"],
+      border: ["none", "none", "none", "1px solid rgba(139,92,246,0.3)"],
+      shadow: ["none", "none", "none", "none"],
+    },
+    {
+      // Element 4: Icon in image → hidden → indicator dot → chart area
+      id: 4,
+      x: [114, 268, 240, 0],
+      y: [30, 208, 64, 120],
+      width: [36, 0, 14, 268],
+      height: [36, 0, 14, 56],
+      borderRadius: [8, 0, 7, 8],
+      bg: ["linear-gradient(135deg, #8b5cf6, #3b82f6)", "transparent", "rgba(139,92,246,0.2)", "rgba(39,39,42,0.3)"],
+      border: ["none", "none", "none", "none"],
+      shadow: ["0 4px 16px rgba(139,92,246,0.4)", "none", "none", "none"],
+    },
+  ];
 
   return (
     <div
       className="relative h-[400px] md:h-[500px] flex items-center justify-center"
       style={{ perspective: "1200px" }}
     >
-      {/* Animated gradient background */}
+      {/* Ambient glow */}
       <motion.div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute w-96 h-96 rounded-full blur-3xl opacity-50"
         animate={{
           background: [
-            "radial-gradient(circle at 30% 40%, rgba(168, 85, 247, 0.15) 0%, transparent 50%)",
-            "radial-gradient(circle at 70% 60%, rgba(59, 130, 246, 0.15) 0%, transparent 50%)",
-            "radial-gradient(circle at 50% 30%, rgba(16, 185, 129, 0.15) 0%, transparent 50%)",
-            "radial-gradient(circle at 30% 40%, rgba(168, 85, 247, 0.15) 0%, transparent 50%)",
+            "radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 60%)",
+            "radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 60%)",
           ],
+          scale: [1, 1.1, 1],
         }}
-        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Main morphing container */}
+      {/* Main container */}
       <motion.div
-        className="relative w-80 h-80 md:w-96 md:h-96"
-        style={{
-          transformStyle: "preserve-3d",
-          rotateY: containerRotation,
-          rotateX: Math.sin(phase * 0.015) * 3,
-        }}
-        initial={{ opacity: 0, scale: 0.8 }}
+        className="relative"
+        initial={{ opacity: 0, scale: 0.9 }}
         animate={isInView ? { opacity: 1, scale: 1 } : {}}
-        transition={{ duration: 1, ease: smoothEase }}
+        transition={{ duration: 0.8, ease: smoothEase }}
+        style={{
+          width: 300,
+          height: 240,
+          transformStyle: "preserve-3d",
+        }}
       >
-        {/* Central morphing shape */}
+        {/* Background card that morphs */}
         <motion.div
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-          style={{
-            width: 180 + breathe * 40,
-            height: 180 + breathe * 40,
+          className="absolute inset-0 bg-zinc-900/90 backdrop-blur-xl overflow-hidden"
+          animate={{
+            borderRadius: [16, 20, 12, 16][phase],
+            boxShadow: isTransitioning
+              ? "0 30px 100px rgba(139, 92, 246, 0.4)"
+              : "0 25px 80px rgba(139, 92, 246, 0.25)",
           }}
-        >
-          {/* Primary morphing blob */}
+          transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
+          style={{
+            border: "1px solid rgba(255,255,255,0.1)",
+          }}
+        />
+
+        {/* Morphing elements */}
+        {elements.map((el) => (
           <motion.div
-            className="absolute inset-0 bg-gradient-to-br from-purple-500/30 to-blue-500/30 backdrop-blur-sm border border-white/10"
+            key={el.id}
+            className="absolute"
             animate={{
-              borderRadius: [
-                "60% 40% 30% 70% / 60% 30% 70% 40%",
-                "30% 60% 70% 40% / 50% 60% 30% 60%",
-                "40% 60% 60% 40% / 70% 30% 60% 40%",
-                "60% 40% 30% 70% / 60% 30% 70% 40%",
-              ],
-              rotate: [0, 90, 180, 270, 360],
-              scale: [1, 1.05, 0.95, 1.02, 1],
+              x: el.x[phase] + 16,
+              y: el.y[phase] + 16,
+              width: el.width[phase],
+              height: el.height[phase],
+              borderRadius: el.borderRadius[phase],
+              opacity: el.width[phase] === 0 ? 0 : 1,
             }}
             transition={{
-              duration: 12,
-              repeat: Infinity,
-              ease: "easeInOut",
+              duration: 0.8,
+              ease: [0.4, 0, 0.2, 1], // Smooth acceleration/deceleration
             }}
-          />
-
-          {/* Secondary morphing layer */}
-          <motion.div
-            className="absolute inset-2 bg-gradient-to-tr from-blue-500/20 to-purple-500/20 backdrop-blur-sm"
-            animate={{
-              borderRadius: [
-                "40% 60% 70% 30% / 40% 50% 60% 50%",
-                "70% 30% 50% 50% / 30% 30% 70% 70%",
-                "50% 50% 30% 70% / 50% 70% 30% 50%",
-                "40% 60% 70% 30% / 40% 50% 60% 50%",
-              ],
-              rotate: [360, 270, 180, 90, 0],
+            style={{
+              background: el.bg[phase],
+              border: el.border[phase],
+              boxShadow: el.shadow[phase],
             }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-
-          {/* Inner glow core */}
-          <motion.div
-            className="absolute inset-8 bg-gradient-to-br from-purple-400/40 to-blue-400/40 blur-sm"
-            animate={{
-              borderRadius: [
-                "50% 50% 50% 50%",
-                "60% 40% 60% 40%",
-                "40% 60% 40% 60%",
-                "50% 50% 50% 50%",
-              ],
-              scale: [1, 1.1, 0.9, 1],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-        </motion.div>
-
-        {/* Orbiting UI elements that morph as they move */}
-        {[0, 1, 2, 3, 4, 5].map((i) => {
-          const orbitProgress = getElementProgress(i * 66);
-          const angle = orbitProgress * Math.PI * 2;
-          const radius = 130 + Math.sin(phase * 0.03 + i) * 20;
-          const x = Math.cos(angle) * radius;
-          const y = Math.sin(angle) * radius * 0.6; // Elliptical orbit
-          const z = Math.sin(angle) * 50;
-          const scale = 0.7 + (Math.sin(angle) + 1) * 0.2;
-          const opacity = 0.4 + (Math.sin(angle) + 1) * 0.3;
-
-          // Morph between different shapes based on position
-          const morphPhase = (orbitProgress * 3) % 1;
-          const isButton = morphPhase < 0.33;
-          const isCard = morphPhase >= 0.33 && morphPhase < 0.66;
-
-          return (
-            <motion.div
-              key={i}
-              className="absolute left-1/2 top-1/2"
-              style={{
-                x: x - 30,
-                y: y - 20,
-                z,
-                scale,
-                opacity,
-                transformStyle: "preserve-3d",
-              }}
-            >
-              <motion.div
-                className="relative"
-                animate={{
-                  width: isButton ? 80 : isCard ? 60 : 40,
-                  height: isButton ? 36 : isCard ? 50 : 40,
-                  borderRadius: isButton ? 18 : isCard ? 12 : 20,
-                  backgroundColor: isButton
-                    ? `hsla(${220 + i * 20}, 70%, 55%, 0.9)`
-                    : isCard
-                    ? `hsla(${260 + i * 15}, 60%, 20%, 0.8)`
-                    : `hsla(${280 + i * 25}, 70%, 60%, 0.8)`,
-                }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
-                style={{
-                  boxShadow: `0 10px 40px hsla(${250 + i * 20}, 70%, 50%, 0.3)`,
-                  border: "1px solid rgba(255,255,255,0.1)",
-                }}
-              >
-                {/* Inner content that morphs */}
-                <motion.div
-                  className="absolute inset-0 flex items-center justify-center overflow-hidden"
-                  animate={{
-                    opacity: isButton ? 1 : 0.5,
-                  }}
+          >
+            {/* Inner content for specific phases */}
+            <AnimatePresence mode="wait">
+              {/* Primary button text */}
+              {el.id === 0 && phase === 1 && (
+                <motion.span
+                  key="btn-text"
+                  className="absolute inset-0 flex items-center justify-center text-white font-semibold text-sm"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.3, delay: 0.2 }}
                 >
-                  {isButton && (
-                    <motion.div
-                      className="w-8 h-1 bg-white/60 rounded-full"
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  )}
-                  {isCard && (
-                    <motion.div className="space-y-1 px-2 w-full">
-                      <motion.div
-                        className="h-1 bg-white/30 rounded-full"
-                        animate={{ width: ["0%", "80%"] }}
-                        transition={{ duration: 0.4 }}
-                      />
-                      <motion.div
-                        className="h-1 bg-white/20 rounded-full"
-                        animate={{ width: ["0%", "60%"] }}
-                        transition={{ duration: 0.4, delay: 0.1 }}
-                      />
-                    </motion.div>
-                  )}
-                  {!isButton && !isCard && (
-                    <motion.div
-                      className="w-4 h-4 rounded-full bg-white/40"
-                      animate={{ scale: [0.8, 1.2, 0.8] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                    />
-                  )}
+                  Get Started
+                </motion.span>
+              )}
+              {/* Email placeholder */}
+              {el.id === 0 && phase === 2 && (
+                <motion.div
+                  key="email"
+                  className="absolute inset-0 flex flex-col justify-center px-3"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, delay: 0.3 }}
+                >
+                  <span className="text-[10px] text-zinc-500 mb-1">Email</span>
+                  <span className="text-zinc-400 text-sm">hello@example.com</span>
                 </motion.div>
-              </motion.div>
-            </motion.div>
-          );
-        })}
+              )}
+              {/* Secondary button text */}
+              {el.id === 1 && phase === 1 && (
+                <motion.span
+                  key="learn-text"
+                  className="absolute inset-0 flex items-center justify-center text-white/80 font-medium text-sm"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, delay: 0.25 }}
+                >
+                  Learn More
+                </motion.span>
+              )}
+              {/* Password input */}
+              {el.id === 1 && phase === 2 && (
+                <motion.div
+                  key="password"
+                  className="absolute inset-0 flex flex-col justify-center px-3"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, delay: 0.35 }}
+                >
+                  <span className="text-[10px] text-zinc-500 mb-1">Password</span>
+                  <span className="text-zinc-500 text-sm">••••••••</span>
+                </motion.div>
+              )}
+              {/* Ghost button text */}
+              {el.id === 2 && phase === 1 && (
+                <motion.span
+                  key="contact-text"
+                  className="absolute inset-0 flex items-center justify-center text-purple-400 font-medium text-sm"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, delay: 0.3 }}
+                >
+                  Contact Us
+                </motion.span>
+              )}
+              {/* Submit button text */}
+              {el.id === 2 && phase === 2 && (
+                <motion.span
+                  key="submit-text"
+                  className="absolute inset-0 flex items-center justify-center text-white font-semibold text-sm"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, delay: 0.4 }}
+                >
+                  Sign In
+                </motion.span>
+              )}
+              {/* Stat card 1 content */}
+              {el.id === 2 && phase === 3 && (
+                <motion.div
+                  key="stat1"
+                  className="absolute inset-0 flex flex-col justify-center px-3"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, delay: 0.3 }}
+                >
+                  <span className="text-[10px] text-zinc-500">Revenue</span>
+                  <span className="text-white font-bold">$24.5k</span>
+                </motion.div>
+              )}
+              {/* Stat card 2 content */}
+              {el.id === 3 && phase === 3 && (
+                <motion.div
+                  key="stat2"
+                  className="absolute inset-0 flex flex-col justify-center px-3"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, delay: 0.35 }}
+                >
+                  <span className="text-[10px] text-purple-400">Growth</span>
+                  <span className="text-purple-400 font-bold">+42%</span>
+                </motion.div>
+              )}
+              {/* Chart bars */}
+              {el.id === 4 && phase === 3 && (
+                <motion.div
+                  key="chart"
+                  className="absolute inset-0 flex items-end justify-around px-2 pb-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, delay: 0.4 }}
+                >
+                  {[35, 55, 40, 70, 50, 85, 60].map((h, i) => (
+                    <motion.div
+                      key={i}
+                      className="w-5 rounded-t"
+                      initial={{ height: 0 }}
+                      animate={{ height: `${h}%` }}
+                      transition={{ duration: 0.5, delay: 0.5 + i * 0.05, ease: [0.4, 0, 0.2, 1] }}
+                      style={{
+                        background: i === 5 ? "linear-gradient(to top, #8b5cf6, #3b82f6)" : "rgba(255,255,255,0.1)",
+                      }}
+                    />
+                  ))}
+                </motion.div>
+              )}
+              {/* Indicator dot inner */}
+              {el.id === 4 && phase === 2 && (
+                <motion.div
+                  key="dot"
+                  className="absolute inset-2 rounded-full bg-purple-500"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  transition={{ duration: 0.3, delay: 0.4 }}
+                />
+              )}
+            </AnimatePresence>
+          </motion.div>
+        ))}
 
-        {/* Floating particles */}
-        {[...Array(12)].map((_, i) => {
-          const particleProgress = getElementProgress(i * 33);
-          const floatY = Math.sin(phase * 0.04 + i * 0.5) * 30;
-          const floatX = Math.cos(phase * 0.03 + i * 0.7) * 20;
+        {/* Shimmer effect */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none rounded-[16px] overflow-hidden"
+          style={{
+            background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.02) 45%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.02) 55%, transparent 60%)",
+            backgroundSize: "250% 100%",
+          }}
+          animate={{ backgroundPosition: ["200% 0%", "-100% 0%"] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+        />
+      </motion.div>
 
-          return (
+      {/* Phase indicators */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
+        {[0, 1, 2, 3].map((i) => (
+          <motion.button
+            key={i}
+            className="relative"
+            onClick={() => {
+              setIsTransitioning(true);
+              setTimeout(() => {
+                setPhase(i);
+                setIsTransitioning(false);
+              }, 100);
+            }}
+          >
             <motion.div
-              key={`particle-${i}`}
-              className="absolute rounded-full"
-              style={{
-                width: 4 + (i % 3) * 2,
-                height: 4 + (i % 3) * 2,
-                left: `${15 + (i * 7) % 70}%`,
-                top: `${10 + (i * 11) % 80}%`,
-                x: floatX,
-                y: floatY,
-                background: `hsla(${250 + i * 15}, 70%, 60%, ${0.3 + particleProgress * 0.4})`,
-                boxShadow: `0 0 10px hsla(${250 + i * 15}, 70%, 60%, 0.5)`,
-              }}
+              className="w-2 h-2 rounded-full"
               animate={{
-                scale: [1, 1.5, 1],
-                opacity: [0.3, 0.7, 0.3],
+                scale: phase === i ? 1.5 : 1,
+                backgroundColor: phase === i ? "#8b5cf6" : "#3f3f46",
               }}
-              transition={{
-                duration: 2 + i * 0.3,
-                repeat: Infinity,
-                delay: i * 0.2,
-                ease: "easeInOut",
-              }}
+              transition={{ duration: 0.3 }}
             />
-          );
-        })}
-
-        {/* Connecting lines between elements */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: "visible" }}>
-          <defs>
-            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(168, 85, 247, 0.3)" />
-              <stop offset="50%" stopColor="rgba(59, 130, 246, 0.5)" />
-              <stop offset="100%" stopColor="rgba(168, 85, 247, 0.3)" />
-            </linearGradient>
-          </defs>
-          {[0, 1, 2].map((i) => {
-            const progress1 = getElementProgress(i * 66);
-            const progress2 = getElementProgress((i + 1) * 66);
-            const angle1 = progress1 * Math.PI * 2;
-            const angle2 = progress2 * Math.PI * 2;
-            const radius = 130;
-            const cx = 192; // Center x (half of container)
-            const cy = 192; // Center y
-
-            return (
-              <motion.path
-                key={`line-${i}`}
-                d={`M ${cx + Math.cos(angle1) * radius} ${cy + Math.sin(angle1) * radius * 0.6}
-                    Q ${cx} ${cy}
-                    ${cx + Math.cos(angle2) * radius} ${cy + Math.sin(angle2) * radius * 0.6}`}
-                stroke="url(#lineGradient)"
-                strokeWidth="1"
-                fill="none"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{
-                  pathLength: [0, 1, 0],
-                  opacity: [0, 0.5, 0],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  delay: i * 1.3,
-                  ease: "easeInOut",
-                }}
+            {phase === i && (
+              <motion.div
+                className="absolute inset-0 rounded-full bg-purple-500/30"
+                initial={{ scale: 1 }}
+                animate={{ scale: 2.5, opacity: 0 }}
+                transition={{ duration: 1.5, repeat: Infinity }}
               />
-            );
-          })}
-        </svg>
-      </motion.div>
+            )}
+          </motion.button>
+        ))}
+      </div>
 
-      {/* Subtle label */}
-      <motion.div
-        className="absolute bottom-4 left-1/2 -translate-x-1/2 text-zinc-600 text-xs uppercase tracking-widest"
-        animate={{ opacity: [0.3, 0.6, 0.3] }}
-        transition={{ duration: 3, repeat: Infinity }}
-      >
-        Fluid Interface Design
-      </motion.div>
+      {/* Labels */}
+      <div className="absolute bottom-16 left-1/2 -translate-x-1/2">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={phase}
+            className="text-zinc-500 text-xs uppercase tracking-widest whitespace-nowrap"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 0.6, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.3 }}
+          >
+            {["Product Card", "Call to Action", "Sign In Form", "Dashboard"][phase]}
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
@@ -801,8 +854,8 @@ function UIUXSection() {
               </div>
             </div>
 
-            {/* Right - Fluid morphing UI showcase */}
-            <FluidMorphingShowcase isInView={isInView} />
+            {/* Right - Morphing UI showcase */}
+            <MorphingUIShowcase isInView={isInView} />
           </div>
         </div>
       </motion.div>
