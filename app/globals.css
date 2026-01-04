@@ -2,10 +2,10 @@
 
 @layer base {
   :root {
-    /* Igloo.inc Inspired Minimal Palette */
-    --bg-dark: #383e4e;
-    --bg-darker: #2d323f;
-    --bg-darkest: #252a36;
+    /* Dark theme palette */
+    --bg-dark: #000000;
+    --bg-darker: #0a0a0a;
+    --bg-darkest: #000000;
 
     /* Text colors */
     --text-primary: #b6bac5;
@@ -106,6 +106,33 @@
     }
     to {
       opacity: 1;
+    }
+  }
+
+  /* Kinetic typography marquee animations */
+  .kinetic-row-1 {
+    animation: marquee-left 30s linear infinite;
+  }
+
+  .kinetic-row-2 {
+    animation: marquee-right 35s linear infinite;
+  }
+
+  @keyframes marquee-left {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes marquee-right {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0);
     }
   }
 

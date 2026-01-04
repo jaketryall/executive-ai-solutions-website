@@ -42,33 +42,57 @@ export default function AnimatedLogo({
       style={{ width, height }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
     >
-      <svg
+      {/* Cyan glow background on hover */}
+      <motion.div
+        className="absolute inset-0 -z-10"
+        style={{
+          background: "radial-gradient(ellipse at center, rgba(0,240,255,0.3) 0%, transparent 70%)",
+          filter: "blur(15px)",
+        }}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{
+          opacity: isHovered ? 1 : 0,
+          scale: isHovered ? 1.2 : 0.8,
+        }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+      />
+
+      <motion.svg
         viewBox="280 40 680 640"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full"
         style={{ overflow: "visible" }}
+        animate={{
+          scale: isHovered ? 1.08 : 1,
+          y: isHovered ? -2 : 0,
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 400,
+          damping: 25,
+        }}
       >
-        {/* Background glow - pulses subtly */}
+        {/* Background glow - switches to cyan on hover */}
         <motion.path
           d={LOGO_PATH}
           fill="none"
-          stroke="#b6bac5"
           strokeWidth="16"
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{ filter: "blur(25px)" }}
           initial={{ opacity: 0, pathLength: 0 }}
           animate={isInView ? {
-            opacity: isHovered ? 0.4 : 0.15,
-            pathLength: 1
+            opacity: isHovered ? 0.6 : 0.15,
+            pathLength: 1,
+            stroke: isHovered ? "#00f0ff" : "#b6bac5",
           } : {}}
           transition={{
             pathLength: { duration: drawDuration, delay, ease: [0.65, 0, 0.35, 1] },
             opacity: { duration: 0.3 },
+            stroke: { duration: 0.3 },
           }}
         />
 
@@ -76,27 +100,28 @@ export default function AnimatedLogo({
         <motion.path
           d={LOGO_PATH}
           fill="none"
-          stroke="#b6bac5"
           strokeWidth="8"
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{ filter: "blur(10px)" }}
           initial={{ opacity: 0, pathLength: 0 }}
           animate={isInView ? {
-            opacity: isHovered ? 0.5 : 0.25,
-            pathLength: 1
+            opacity: isHovered ? 0.7 : 0.25,
+            pathLength: 1,
+            stroke: isHovered ? "#00f0ff" : "#b6bac5",
           } : {}}
           transition={{
             pathLength: { duration: drawDuration, delay: delay + 0.1, ease: [0.65, 0, 0.35, 1] },
             opacity: { duration: 0.3 },
+            stroke: { duration: 0.3 },
           }}
         />
 
-        {/* Main stroke - draws in with gradient */}
+        {/* Main stroke - draws in with gradient, brightens on hover */}
         <motion.path
           d={LOGO_PATH}
           fill="none"
-          stroke="url(#logoGradient)"
+          stroke={isHovered ? "url(#logoGradientHover)" : "url(#logoGradient)"}
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -111,7 +136,7 @@ export default function AnimatedLogo({
         {/* Fill - fades in after stroke completes */}
         <motion.path
           d={LOGO_PATH}
-          fill="url(#logoFillGradient)"
+          fill={isHovered ? "url(#logoFillGradientHover)" : "url(#logoFillGradient)"}
           stroke="none"
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
@@ -122,29 +147,9 @@ export default function AnimatedLogo({
           }}
         />
 
-        {/* Shimmer effect on hover */}
-        {isDrawn && (
-          <motion.path
-            d={LOGO_PATH}
-            fill="none"
-            stroke="rgba(255,255,255,0.6)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={isHovered ? {
-              pathLength: [0, 1],
-              opacity: [0, 0.8, 0],
-            } : { pathLength: 0, opacity: 0 }}
-            transition={{
-              duration: 0.8,
-              ease: "easeInOut",
-            }}
-          />
-        )}
-
         {/* Gradients */}
         <defs>
+          {/* Default gradients */}
           <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#b6bac5" />
             <stop offset="50%" stopColor="#ffffff" />
@@ -154,46 +159,18 @@ export default function AnimatedLogo({
             <stop offset="0%" stopColor="#b6bac5" />
             <stop offset="100%" stopColor="#8a8f9e" />
           </linearGradient>
+          {/* Hover gradients - brighter with cyan tint */}
+          <linearGradient id="logoGradientHover" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="50%" stopColor="#ffffff" />
+            <stop offset="100%" stopColor="#e0f7ff" />
+          </linearGradient>
+          <linearGradient id="logoFillGradientHover" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="100%" stopColor="#d0d4de" />
+          </linearGradient>
         </defs>
-      </svg>
-
-      {/* Floating particles on hover */}
-      {isHovered && isDrawn && (
-        <>
-          {[...Array(6)].map((_, i) => {
-            const angle = (i / 6) * Math.PI * 2;
-            const radius = 60;
-            return (
-              <motion.div
-                key={i}
-                className="absolute rounded-full bg-[#b6bac5]"
-                style={{
-                  width: 3,
-                  height: 3,
-                  left: "50%",
-                  top: "50%",
-                }}
-                initial={{
-                  x: 0,
-                  y: 0,
-                  opacity: 0,
-                }}
-                animate={{
-                  x: Math.cos(angle) * radius,
-                  y: Math.sin(angle) * radius,
-                  opacity: [0, 0.8, 0],
-                }}
-                transition={{
-                  duration: 1,
-                  delay: i * 0.08,
-                  repeat: Infinity,
-                  repeatDelay: 0.3,
-                }}
-              />
-            );
-          })}
-        </>
-      )}
+      </motion.svg>
     </motion.div>
   );
 }

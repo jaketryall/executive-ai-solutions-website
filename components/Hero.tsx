@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, useMotionTemplate } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionTemplate, useSpring } from "framer-motion";
 import { useRef } from "react";
 
 export default function Hero() {
@@ -11,7 +11,9 @@ export default function Hero() {
   });
 
   // Logo mask scale: starts small, grows to reveal full video
-  const maskSize = useTransform(scrollYProgress, [0, 0.4], [25, 250]);
+  // Use spring for smooth, fluid animation
+  const maskSizeRaw = useTransform(scrollYProgress, [0, 0.5], [20, 5000]);
+  const maskSize = useSpring(maskSizeRaw, { stiffness: 100, damping: 30, mass: 0.5 });
   const maskSizePercent = useMotionTemplate`${maskSize}%`;
 
   // Initial content fades out quickly
@@ -50,70 +52,89 @@ export default function Hero() {
           style={{ opacity: bgOpacity }}
         />
 
-        {/* Moving work images behind logo */}
+        {/* Moving work images behind logo - infinite marquee */}
         <motion.div
           className="absolute inset-0 pointer-events-none overflow-hidden"
           style={{ opacity: initialContentOpacity }}
         >
-          {/* Top row - moves left */}
-          <motion.div
-            className="absolute top-[5%] flex gap-8 whitespace-nowrap"
-            animate={{ x: [0, -1200] }}
-            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          >
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="w-[350px] h-[220px] rounded-lg overflow-hidden opacity-20 flex-shrink-0"
-              >
-                <img
-                  src={`https://images.unsplash.com/photo-${i % 2 === 0 ? '1436491865332-7a61a109cc05' : '1497366216548-37526070297c'}?w=600&q=60`}
-                  alt=""
-                  className="w-full h-full object-cover grayscale"
-                />
-              </div>
-            ))}
-          </motion.div>
+          {/* Top row - moves left continuously */}
+          <div className="absolute top-[5%] flex overflow-hidden">
+            <motion.div
+              className="flex gap-8 whitespace-nowrap"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            >
+              {/* Duplicate cards for seamless loop */}
+              {[...Array(12)].map((_, i) => (
+                <div
+                  key={i}
+                  className="w-[350px] h-[220px] rounded-lg overflow-hidden opacity-15 flex-shrink-0"
+                  style={{
+                    boxShadow: "0 0 40px rgba(255,250,240,0.1)",
+                  }}
+                >
+                  <img
+                    src={`https://images.unsplash.com/photo-${i % 2 === 0 ? '1436491865332-7a61a109cc05' : '1497366216548-37526070297c'}?w=600&q=60`}
+                    alt=""
+                    className="w-full h-full object-cover grayscale"
+                  />
+                </div>
+              ))}
+            </motion.div>
+          </div>
 
-          {/* Middle row - moves right */}
-          <motion.div
-            className="absolute top-[35%] flex gap-8 whitespace-nowrap"
-            animate={{ x: [-800, 400] }}
-            transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
-          >
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="w-[350px] h-[220px] rounded-lg overflow-hidden opacity-20 flex-shrink-0"
-              >
-                <img
-                  src={`https://images.unsplash.com/photo-${i % 2 === 0 ? '1618221195710-dd6b41faaea6' : '1460925895917-afdab827c52f'}?w=600&q=60`}
-                  alt=""
-                  className="w-full h-full object-cover grayscale"
-                />
-              </div>
-            ))}
-          </motion.div>
+          {/* Middle row - moves right continuously */}
+          <div className="absolute top-[35%] flex overflow-hidden">
+            <motion.div
+              className="flex gap-8 whitespace-nowrap"
+              initial={{ x: "-50%" }}
+              animate={{ x: "0%" }}
+              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            >
+              {/* Duplicate cards for seamless loop */}
+              {[...Array(12)].map((_, i) => (
+                <div
+                  key={i}
+                  className="w-[350px] h-[220px] rounded-lg overflow-hidden opacity-15 flex-shrink-0"
+                  style={{
+                    boxShadow: "0 0 40px rgba(255,250,240,0.1)",
+                  }}
+                >
+                  <img
+                    src={`https://images.unsplash.com/photo-${i % 2 === 0 ? '1618221195710-dd6b41faaea6' : '1460925895917-afdab827c52f'}?w=600&q=60`}
+                    alt=""
+                    className="w-full h-full object-cover grayscale"
+                  />
+                </div>
+              ))}
+            </motion.div>
+          </div>
 
           {/* Bottom row - moves left slower */}
-          <motion.div
-            className="absolute top-[65%] flex gap-8 whitespace-nowrap"
-            animate={{ x: [0, -1500] }}
-            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-          >
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="w-[350px] h-[220px] rounded-lg overflow-hidden opacity-20 flex-shrink-0"
-              >
-                <img
-                  src={`https://images.unsplash.com/photo-${i % 2 === 0 ? '1497366216548-37526070297c' : '1436491865332-7a61a109cc05'}?w=600&q=60`}
-                  alt=""
-                  className="w-full h-full object-cover grayscale"
-                />
-              </div>
-            ))}
-          </motion.div>
+          <div className="absolute top-[65%] flex overflow-hidden">
+            <motion.div
+              className="flex gap-8 whitespace-nowrap"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+            >
+              {/* Duplicate cards for seamless loop */}
+              {[...Array(12)].map((_, i) => (
+                <div
+                  key={i}
+                  className="w-[350px] h-[220px] rounded-lg overflow-hidden opacity-15 flex-shrink-0"
+                  style={{
+                    boxShadow: "0 0 40px rgba(255,250,240,0.1)",
+                  }}
+                >
+                  <img
+                    src={`https://images.unsplash.com/photo-${i % 2 === 0 ? '1497366216548-37526070297c' : '1436491865332-7a61a109cc05'}?w=600&q=60`}
+                    alt=""
+                    className="w-full h-full object-cover grayscale"
+                  />
+                </div>
+              ))}
+            </motion.div>
+          </div>
         </motion.div>
 
         {/* Video with logo-shaped mask that grows */}

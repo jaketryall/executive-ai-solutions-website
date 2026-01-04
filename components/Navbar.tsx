@@ -22,64 +22,73 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Desktop Navbar */}
+      {/* Desktop Navbar - Transforms from wide to floating pill */}
       <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="fixed top-0 left-0 right-0 z-50 hidden md:block"
+        className="fixed top-0 left-0 right-0 z-50 hidden md:flex justify-center pt-6"
       >
         <motion.nav
-          className="mx-6 lg:mx-12 mt-6 px-6 py-4"
+          className="flex items-center rounded-full overflow-hidden"
           animate={{
-            backgroundColor: isScrolled ? "rgba(0, 0, 0, 0.9)" : "rgba(0, 0, 0, 0)",
+            backgroundColor: isScrolled ? "rgba(0, 0, 0, 0.8)" : "rgba(0, 0, 0, 0)",
             backdropFilter: isScrolled ? "blur(20px)" : "blur(0px)",
+            paddingLeft: isScrolled ? "8px" : "48px",
+            paddingRight: isScrolled ? "8px" : "48px",
+            paddingTop: isScrolled ? "8px" : "16px",
+            paddingBottom: isScrolled ? "8px" : "16px",
+            gap: isScrolled ? "4px" : "48px",
           }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           style={{
             border: isScrolled ? "1px solid rgba(255,255,255,0.1)" : "1px solid transparent",
           }}
         >
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-3">
-              <AnimatedLogo width={40} height={24} drawDuration={1} delay={0.5} />
-              <span className="text-white font-bold text-sm uppercase tracking-[0.1em]">
-                Executive
-              </span>
-            </Link>
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 pl-2 pr-4">
+            <AnimatedLogo width={32} height={20} drawDuration={1} delay={0.5} />
+            <span className="text-white font-bold text-xs uppercase tracking-[0.1em]">
+              Executive
+            </span>
+          </Link>
 
-            {/* Nav Links */}
-            <div className="flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-white/60 hover:text-white text-xs uppercase tracking-[0.2em] transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
+          {/* Divider - only visible when scrolled */}
+          <motion.div
+            className="w-px h-6 bg-white/10"
+            animate={{ opacity: isScrolled ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
+          />
 
-            {/* CTA */}
-            <Link
-              href="#contact"
-              className="group relative px-6 py-2 overflow-hidden rounded-full"
-            >
-              <span className="absolute inset-0 border border-white/30 group-hover:border-[#00f0ff] transition-colors rounded-full" />
-              <motion.span
-                className="absolute inset-0 bg-[#00f0ff] rounded-full"
-                initial={{ scaleX: 0 }}
-                whileHover={{ scaleX: 1 }}
-                transition={{ duration: 0.3 }}
-                style={{ transformOrigin: "left" }}
-              />
-              <span className="relative z-10 text-white group-hover:text-black text-xs uppercase tracking-[0.2em] font-bold transition-colors">
-                Start Project
-              </span>
-            </Link>
+          {/* Nav Links */}
+          <div className="flex items-center">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-white/60 hover:text-white text-xs uppercase tracking-[0.15em] transition-colors px-4 py-2"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
+
+          {/* Divider - only visible when scrolled */}
+          <motion.div
+            className="w-px h-6 bg-white/10"
+            animate={{ opacity: isScrolled ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
+          />
+
+          {/* CTA */}
+          <Link
+            href="#contact"
+            className="group relative h-9 px-5 ml-1 overflow-hidden rounded-full inline-flex items-center justify-center bg-white/10 hover:bg-white transition-colors duration-300"
+          >
+            <span className="relative z-10 text-white group-hover:text-black text-xs uppercase tracking-[0.15em] font-semibold transition-colors duration-300">
+              Start Project
+            </span>
+          </Link>
         </motion.nav>
       </motion.header>
 

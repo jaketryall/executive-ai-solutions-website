@@ -9,19 +9,119 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+// Magnetic button component
+function MagneticButton({
+  children,
+  className = "",
+  disabled = false,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  disabled?: boolean;
+}) {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (disabled || !buttonRef.current) return;
+
+    const rect = buttonRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    const distanceX = e.clientX - centerX;
+    const distanceY = e.clientY - centerY;
+
+    // Magnetic pull - button moves toward cursor
+    setPosition({
+      x: distanceX * 0.3,
+      y: distanceY * 0.3,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setPosition({ x: 0, y: 0 });
+  };
+
+  return (
+    <motion.button
+      ref={buttonRef}
+      type="submit"
+      disabled={disabled}
+      className={className}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      animate={{
+        x: position.x,
+        y: position.y,
+      }}
+      transition={{
+        type: "spring",
+        stiffness: 150,
+        damping: 15,
+        mass: 0.1,
+      }}
+    >
+      {children}
+    </motion.button>
+  );
+}
+
+// Typewriter text component
+function TypewriterText({
+  text,
+  delay = 0,
+  className = "",
+}: {
+  text: string;
+  delay?: number;
+  className?: string;
+}) {
+  const [displayText, setDisplayText] = useState("");
+  const [isComplete, setIsComplete] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      let index = 0;
+      const interval = setInterval(() => {
+        if (index <= text.length) {
+          setDisplayText(text.slice(0, index));
+          index++;
+        } else {
+          clearInterval(interval);
+          setIsComplete(true);
+        }
+      }, 50);
+
+      return () => clearInterval(interval);
+    }, delay);
+
+    return () => clearTimeout(timeout);
+  }, [text, delay]);
+
+  return (
+    <span className={className}>
+      {displayText}
+      {!isComplete && <span className="animate-pulse">|</span>}
+    </span>
+  );
+}
+
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    budget: "",
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isRevealed, setIsRevealed] = useState(false);
 
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const connectionLinesRef = useRef<SVGSVGElement>(null);
 
   const useIsomorphicLayoutEffect =
     typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -30,108 +130,171 @@ export default function Contact() {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      // Section reveal with clip-path from top
-      if (sectionRef.current) {
+      // ===== BLUEPRINT GRID REVEAL =====
+      if (gridRef.current) {
         gsap.fromTo(
-          sectionRef.current,
-          { clipPath: "inset(0% 0% 100% 0%)" },
+          gridRef.current,
+          { opacity: 0, scale: 1.1 },
           {
-            clipPath: "inset(0% 0% 0% 0%)",
-            ease: "power3.out",
+            opacity: 0.08,
+            scale: 1,
+            ease: "power2.out",
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top bottom",
               end: "top 40%",
-              scrub: 1,
+              scrub: 0.5,
+              onEnter: () => setIsRevealed(true),
+              onLeaveBack: () => setIsRevealed(false),
             },
           }
         );
       }
 
-      // Header animations
+      // ===== HEADER - Comes toward you =====
       if (headerRef.current) {
-        const label = headerRef.current.querySelector(".contact-label");
-        const title = headerRef.current.querySelector(".contact-title");
+        const label = headerRef.current.querySelector(".section-label");
+        const title = headerRef.current.querySelector(".section-title");
 
-        if (label) {
-          gsap.fromTo(
-            label,
-            { y: 40, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.8,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: headerRef.current,
-                start: "top 80%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
-        }
+        // Title scales up toward camera
+        gsap.fromTo(
+          title,
+          { scale: 0.7, opacity: 0, y: 80 },
+          {
+            scale: 1,
+            opacity: 1,
+            y: 0,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top bottom",
+              end: "top 40%",
+              scrub: 0.5,
+            },
+          }
+        );
 
-        if (title) {
-          gsap.fromTo(
-            title,
-            { y: 80, opacity: 0, skewY: 4 },
-            {
-              y: 0,
-              opacity: 1,
-              skewY: 0,
-              duration: 1,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: headerRef.current,
-                start: "top 75%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
-        }
+        // Label fades in
+        gsap.fromTo(
+          label,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 80%",
+              end: "top 50%",
+              scrub: 0.3,
+            },
+          }
+        );
       }
 
-      // Content columns animation
+      // ===== CONTENT - Comes toward you with scrub =====
       if (contentRef.current) {
-        const leftCol = contentRef.current.querySelector(".contact-left");
-        const rightCol = contentRef.current.querySelector(".contact-right");
+        const infoSection = contentRef.current.querySelector(".contact-info");
+        const formSection = contentRef.current.querySelector(".contact-form");
+        const infoBlocks = contentRef.current.querySelectorAll(".info-block");
+        const formFields = contentRef.current.querySelectorAll(".form-field");
 
-        if (leftCol) {
+        // Info section comes toward camera
+        if (infoSection) {
           gsap.fromTo(
-            leftCol,
-            { x: -60, opacity: 0 },
+            infoSection,
+            { scale: 0.85, opacity: 0, y: 60 },
             {
-              x: 0,
+              scale: 1,
               opacity: 1,
-              duration: 1,
-              ease: "power3.out",
+              y: 0,
+              ease: "power2.out",
               scrollTrigger: {
                 trigger: contentRef.current,
-                start: "top 70%",
-                toggleActions: "play none none reverse",
+                start: "top bottom",
+                end: "top 50%",
+                scrub: 0.5,
               },
             }
           );
         }
 
-        if (rightCol) {
+        // Form section comes toward camera with slight delay
+        if (formSection) {
           gsap.fromTo(
-            rightCol,
-            { x: 60, opacity: 0 },
+            formSection,
+            { scale: 0.85, opacity: 0, y: 80 },
             {
-              x: 0,
+              scale: 1,
               opacity: 1,
-              duration: 1,
-              delay: 0.2,
-              ease: "power3.out",
+              y: 0,
+              ease: "power2.out",
               scrollTrigger: {
                 trigger: contentRef.current,
-                start: "top 70%",
-                toggleActions: "play none none reverse",
+                start: "top 90%",
+                end: "top 40%",
+                scrub: 0.6,
               },
             }
           );
         }
+
+        // Info blocks stagger in
+        infoBlocks.forEach((block, index) => {
+          gsap.fromTo(
+            block,
+            { opacity: 0, x: -20 },
+            {
+              opacity: 1,
+              x: 0,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: block,
+                start: "top bottom",
+                end: "top 70%",
+                scrub: 0.3,
+              },
+            }
+          );
+        });
+
+        // Form fields stagger in
+        formFields.forEach((field, index) => {
+          gsap.fromTo(
+            field,
+            { opacity: 0, y: 30 },
+            {
+              opacity: 1,
+              y: 0,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: field,
+                start: "top bottom",
+                end: "top 75%",
+                scrub: 0.3,
+              },
+            }
+          );
+
+          // Underline draws in with scrub
+          const underline = field.querySelector(".field-underline");
+          if (underline) {
+            gsap.fromTo(
+              underline,
+              { scaleX: 0, transformOrigin: "left center" },
+              {
+                scaleX: 1,
+                ease: "power2.out",
+                scrollTrigger: {
+                  trigger: field,
+                  start: "top 85%",
+                  end: "top 65%",
+                  scrub: 0.3,
+                },
+              }
+            );
+          }
+        });
       }
     });
 
@@ -146,182 +309,217 @@ export default function Contact() {
     setSubmitted(true);
   };
 
-  const budgetOptions = ["$5K - $10K", "$10K - $25K", "$25K - $50K", "$50K+"];
-
   return (
-    <section ref={sectionRef} id="contact" className="relative py-32 bg-neutral-950 overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#00f0ff]/5 rounded-full blur-[150px]" />
-      </div>
+    <section
+      ref={sectionRef}
+      id="contact"
+      className="relative py-32 bg-neutral-950 overflow-hidden"
+    >
+      {/* Blueprint grid background */}
+      <div
+        ref={gridRef}
+        className="absolute inset-0 pointer-events-none opacity-0"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(0,240,255,0.15) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,240,255,0.15) 1px, transparent 1px),
+            linear-gradient(rgba(0,240,255,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,240,255,0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: "100px 100px, 100px 100px, 20px 20px, 20px 20px",
+        }}
+      />
 
-      <div className="relative max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+      {/* Connection lines SVG */}
+      <svg
+        ref={connectionLinesRef}
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ opacity: isRevealed ? 0.3 : 0, transition: "opacity 0.5s" }}
+      >
+        <path
+          d="M 100 300 Q 200 300 200 400"
+          stroke="#00f0ff"
+          strokeWidth="1"
+          fill="none"
+        />
+        <path
+          d="M 100 400 Q 150 400 150 500"
+          stroke="#00f0ff"
+          strokeWidth="1"
+          fill="none"
+        />
+        <path
+          d="M 100 500 Q 180 500 180 600"
+          stroke="#00f0ff"
+          strokeWidth="1"
+          fill="none"
+        />
+      </svg>
+
+      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 relative">
         {/* Header */}
         <div ref={headerRef} className="mb-20">
-          <p className="contact-label text-white/40 text-sm uppercase tracking-[0.3em] mb-4">
-            Start a Project
+          <p className="section-label text-[#00f0ff]/60 text-sm uppercase tracking-[0.3em] mb-4">
+            Get in Touch
           </p>
-          <h2 className="contact-title text-[12vw] md:text-[8vw] font-black text-white leading-[0.9] tracking-[-0.02em]">
-            LET'S TALK
+          <h2 className="section-title text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+            Let's start a
+            <br />
+            <span className="text-white/40">conversation</span>
           </h2>
         </div>
 
         <div ref={contentRef} className="grid lg:grid-cols-2 gap-16 lg:gap-24">
           {/* Left side - Info */}
-          <div className="contact-left">
-            <p className="text-white/60 text-xl md:text-2xl leading-relaxed mb-12">
-              Ready to build something extraordinary? We partner with ambitious brands to create digital experiences that demand attention.
+          <div className="contact-info">
+            <p className="text-white/50 text-lg md:text-xl leading-relaxed mb-12">
+              Ready to bring your vision to life? We'd love to hear about your project and explore how we can help.
             </p>
 
             <div className="space-y-8">
-              <div>
-                <p className="text-white/40 text-xs uppercase tracking-[0.2em] mb-2">Email</p>
+              <div className="info-block relative pl-6 border-l border-[#00f0ff]/20">
+                <div className="absolute left-0 top-0 w-2 h-2 rounded-full bg-[#00f0ff]/50 -translate-x-[5px]" />
+                <p className="text-[#00f0ff]/40 text-xs uppercase tracking-[0.2em] mb-2">
+                  {isRevealed && <TypewriterText text="Email" delay={400} />}
+                </p>
                 <a
                   href="mailto:hello@executive.ai"
-                  className="text-white text-xl hover:text-[#00f0ff] transition-colors"
+                  className="text-white text-lg hover:text-[#00f0ff] transition-colors"
                 >
                   hello@executive.ai
                 </a>
               </div>
-              <div>
-                <p className="text-white/40 text-xs uppercase tracking-[0.2em] mb-2">Response Time</p>
-                <p className="text-white text-xl">Within 24 hours</p>
+
+              <div className="info-block relative pl-6 border-l border-[#00f0ff]/20">
+                <div className="absolute left-0 top-0 w-2 h-2 rounded-full bg-[#00f0ff]/50 -translate-x-[5px]" />
+                <p className="text-[#00f0ff]/40 text-xs uppercase tracking-[0.2em] mb-2">
+                  {isRevealed && <TypewriterText text="Response Time" delay={600} />}
+                </p>
+                <p className="text-white text-lg">Within 24 hours</p>
               </div>
-              <div>
-                <p className="text-white/40 text-xs uppercase tracking-[0.2em] mb-2">Status</p>
+
+              <div className="info-block relative pl-6 border-l border-[#00f0ff]/20">
+                <div className="absolute left-0 top-0 w-2 h-2 rounded-full bg-[#00f0ff]/50 -translate-x-[5px]" />
+                <p className="text-[#00f0ff]/40 text-xs uppercase tracking-[0.2em] mb-2">
+                  {isRevealed && <TypewriterText text="Status" delay={800} />}
+                </p>
                 <div className="flex items-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-[#00f0ff] animate-pulse" />
-                  <p className="text-white text-xl">Taking new projects</p>
+                  <motion.span
+                    className="w-2 h-2 rounded-full bg-emerald-500"
+                    animate={{
+                      boxShadow: [
+                        "0 0 0 0 rgba(16, 185, 129, 0.4)",
+                        "0 0 0 8px rgba(16, 185, 129, 0)",
+                      ],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeOut",
+                    }}
+                  />
+                  <p className="text-white text-lg">Available for projects</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Right side - Form */}
-          <div className="contact-right">
+          <div className="contact-form">
             {submitted ? (
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="h-full flex flex-col items-center justify-center text-center py-20"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="h-full flex flex-col items-start justify-center"
               >
                 <motion.div
+                  className="w-12 h-12 rounded-full border border-emerald-500/30 flex items-center justify-center mb-6"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ type: "spring", delay: 0.2 }}
-                  className="w-20 h-20 rounded-full border border-[#00f0ff] flex items-center justify-center mb-8"
+                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
                 >
-                  <svg className="w-10 h-10 text-[#00f0ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <svg className="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <motion.path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
+                    />
                   </svg>
                 </motion.div>
-                <h3 className="text-4xl font-black text-white mb-4">MESSAGE SENT</h3>
-                <p className="text-white/60 text-lg">We'll be in touch within 24 hours.</p>
+                <h3 className="text-2xl font-bold text-white mb-2">Message sent</h3>
+                <p className="text-white/50">We'll be in touch within 24 hours.</p>
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Name */}
-                <div>
-                  <label className="block text-white/40 text-xs uppercase tracking-[0.2em] mb-3">
-                    Name
+                <div className="form-field">
+                  <label className="block text-[#00f0ff]/40 text-xs uppercase tracking-[0.2em] mb-3">
+                    {isRevealed && <TypewriterText text="Name" delay={500} />}
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-transparent border-b border-white/20 py-4 text-white text-lg focus:border-[#00f0ff] focus:outline-none transition-colors placeholder:text-white/20"
+                    className="w-full bg-transparent border-b border-white/10 py-3 text-white focus:border-[#00f0ff]/50 focus:outline-none transition-colors placeholder:text-white/20"
                     placeholder="Your name"
                   />
+                  <div className="field-underline h-px bg-gradient-to-r from-[#00f0ff]/50 to-transparent mt-[-1px]" />
                 </div>
 
                 {/* Email */}
-                <div>
-                  <label className="block text-white/40 text-xs uppercase tracking-[0.2em] mb-3">
-                    Email
+                <div className="form-field">
+                  <label className="block text-[#00f0ff]/40 text-xs uppercase tracking-[0.2em] mb-3">
+                    {isRevealed && <TypewriterText text="Email" delay={600} />}
                   </label>
                   <input
                     type="email"
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-transparent border-b border-white/20 py-4 text-white text-lg focus:border-[#00f0ff] focus:outline-none transition-colors placeholder:text-white/20"
+                    className="w-full bg-transparent border-b border-white/10 py-3 text-white focus:border-[#00f0ff]/50 focus:outline-none transition-colors placeholder:text-white/20"
                     placeholder="you@company.com"
                   />
-                </div>
-
-                {/* Budget */}
-                <div>
-                  <label className="block text-white/40 text-xs uppercase tracking-[0.2em] mb-3">
-                    Budget
-                  </label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {budgetOptions.map((option) => (
-                      <button
-                        key={option}
-                        type="button"
-                        onClick={() => setFormData({ ...formData, budget: option })}
-                        className={`py-3 px-4 text-sm font-medium transition-all duration-300 rounded-full ${
-                          formData.budget === option
-                            ? "bg-[#00f0ff] text-black"
-                            : "border border-white/20 text-white/60 hover:border-white/40 hover:text-white"
-                        }`}
-                      >
-                        {option}
-                      </button>
-                    ))}
-                  </div>
+                  <div className="field-underline h-px bg-gradient-to-r from-[#00f0ff]/50 to-transparent mt-[-1px]" />
                 </div>
 
                 {/* Message */}
-                <div>
-                  <label className="block text-white/40 text-xs uppercase tracking-[0.2em] mb-3">
-                    Project Details
+                <div className="form-field">
+                  <label className="block text-[#00f0ff]/40 text-xs uppercase tracking-[0.2em] mb-3">
+                    {isRevealed && <TypewriterText text="Message" delay={700} />}
                   </label>
                   <textarea
                     required
                     rows={4}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full bg-transparent border-b border-white/20 py-4 text-white text-lg focus:border-[#00f0ff] focus:outline-none transition-colors resize-none placeholder:text-white/20"
+                    className="w-full bg-transparent border-b border-white/10 py-3 text-white focus:border-[#00f0ff]/50 focus:outline-none transition-colors resize-none placeholder:text-white/20"
                     placeholder="Tell us about your project..."
                   />
+                  <div className="field-underline h-px bg-gradient-to-r from-[#00f0ff]/50 to-transparent mt-[-1px]" />
                 </div>
 
-                {/* Submit */}
-                <motion.button
-                  type="submit"
+                {/* Submit - Magnetic Button */}
+                <MagneticButton
                   disabled={isSubmitting}
-                  className="group relative w-full py-5 text-white font-bold text-sm uppercase tracking-[0.2em] overflow-hidden rounded-full"
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
+                  className="group flex items-center gap-3 text-white text-sm uppercase tracking-[0.2em] font-medium hover:text-[#00f0ff] transition-colors disabled:opacity-50 py-4 px-8 border border-white/10 hover:border-[#00f0ff]/50 rounded-full"
                 >
-                  <span className="absolute inset-0 border border-white/30 group-hover:border-[#00f0ff] transition-colors duration-300 rounded-full" />
-                  <motion.span
-                    className="absolute inset-0 bg-[#00f0ff] rounded-full"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ transformOrigin: "left" }}
-                  />
-                  <span className="relative z-10 group-hover:text-black transition-colors duration-300 flex items-center justify-center gap-3">
-                    {isSubmitting ? (
-                      <>
-                        <motion.span
-                          className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        />
-                        Sending...
-                      </>
-                    ) : (
-                      <>
-                        Send Message
-                        <span className="group-hover:translate-x-1 transition-transform">→</span>
-                      </>
-                    )}
-                  </span>
-                </motion.button>
+                  {isSubmitting ? (
+                    <>
+                      <span className="w-4 h-4 border border-white/30 border-t-[#00f0ff] rounded-full animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      Send Message
+                      <span className="group-hover:translate-x-1 transition-transform">→</span>
+                    </>
+                  )}
+                </MagneticButton>
               </form>
             )}
           </div>

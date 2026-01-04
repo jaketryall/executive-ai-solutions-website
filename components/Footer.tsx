@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRef, useEffect, useLayoutEffect } from "react";
 import gsap from "gsap";
@@ -13,8 +12,12 @@ if (typeof window !== "undefined") {
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const footerRef = useRef<HTMLElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-  const linksRef = useRef<HTMLDivElement>(null);
+  const wordmarkRef = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const linksLeftRef = useRef<HTMLDivElement>(null);
+  const linksRightRef = useRef<HTMLDivElement>(null);
+  const copyrightRef = useRef<HTMLDivElement>(null);
 
   const useIsomorphicLayoutEffect =
     typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -23,106 +26,149 @@ export default function Footer() {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      // Footer reveal with scale
-      if (footerRef.current) {
+      // ===== FOOTER - Comes toward you =====
+      gsap.fromTo(
+        footerRef.current,
+        { opacity: 0, scale: 0.95 },
+        {
+          opacity: 1,
+          scale: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top bottom",
+            end: "top 60%",
+            scrub: 0.5,
+          },
+        }
+      );
+
+      // ===== LARGE WORDMARK - Parallax slower than scroll =====
+      if (wordmarkRef.current) {
+        // Wordmark comes toward you
         gsap.fromTo(
-          footerRef.current,
-          { opacity: 0.5, y: 50 },
+          wordmarkRef.current,
+          { opacity: 0, scale: 0.8, y: 80 },
           {
             opacity: 1,
+            scale: 1,
             y: 0,
             ease: "power2.out",
             scrollTrigger: {
               trigger: footerRef.current,
               start: "top bottom",
-              end: "top 70%",
+              end: "top 50%",
+              scrub: 0.6,
+            },
+          }
+        );
+
+        // Parallax effect - moves slower than scroll
+        gsap.to(wordmarkRef.current, {
+          y: -50,
+          ease: "none",
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top 50%",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
+
+        // Stroke width animation on scroll
+        gsap.fromTo(
+          wordmarkRef.current.querySelector(".wordmark-text"),
+          {
+            WebkitTextStrokeWidth: "1px",
+          },
+          {
+            WebkitTextStrokeWidth: "2px",
+            ease: "none",
+            scrollTrigger: {
+              trigger: footerRef.current,
+              start: "top 50%",
+              end: "bottom bottom",
               scrub: 1,
             },
           }
         );
       }
 
-      // CTA section animation
-      if (ctaRef.current) {
-        const label = ctaRef.current.querySelector(".footer-label");
-        const title = ctaRef.current.querySelector(".footer-title");
-        const button = ctaRef.current.querySelector(".footer-button");
-
-        if (label) {
-          gsap.fromTo(
-            label,
-            { y: 30, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.6,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: ctaRef.current,
-                start: "top 85%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
-        }
-
-        if (title) {
-          gsap.fromTo(
-            title,
-            { y: 60, opacity: 0, skewY: 3 },
-            {
-              y: 0,
-              opacity: 1,
-              skewY: 0,
-              duration: 0.8,
-              delay: 0.1,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: ctaRef.current,
-                start: "top 80%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
-        }
-
-        if (button) {
-          gsap.fromTo(
-            button,
-            { y: 30, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.6,
-              delay: 0.2,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: ctaRef.current,
-                start: "top 75%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
-        }
+      // ===== CENTER-EXPANDING LINE =====
+      if (lineRef.current) {
+        gsap.fromTo(
+          lineRef.current,
+          { scaleX: 0, transformOrigin: "center center" },
+          {
+            scaleX: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: lineRef.current,
+              start: "top bottom",
+              end: "top 70%",
+              scrub: 0.4,
+            },
+          }
+        );
       }
 
-      // Links grid stagger animation
-      if (linksRef.current) {
-        const columns = linksRef.current.querySelectorAll(".footer-col");
+      // ===== LINKS CASCADE FROM CENTER =====
+      if (linksLeftRef.current) {
+        const leftLinks = linksLeftRef.current.querySelectorAll(".footer-link");
+        leftLinks.forEach((link, index) => {
+          gsap.fromTo(
+            link,
+            { opacity: 0, x: 20 },
+            {
+              opacity: 1,
+              x: 0,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: linksLeftRef.current,
+                start: "top bottom",
+                end: "top 70%",
+                scrub: 0.3,
+              },
+            }
+          );
+        });
+      }
 
+      if (linksRightRef.current) {
+        const rightLinks = linksRightRef.current.querySelectorAll(".footer-link");
+        rightLinks.forEach((link, index) => {
+          gsap.fromTo(
+            link,
+            { opacity: 0, x: -20 },
+            {
+              opacity: 1,
+              x: 0,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: linksRightRef.current,
+                start: "top bottom",
+                end: "top 70%",
+                scrub: 0.3,
+              },
+            }
+          );
+        });
+      }
+
+      // ===== COPYRIGHT - Final frame =====
+      if (copyrightRef.current) {
         gsap.fromTo(
-          columns,
-          { y: 40, opacity: 0 },
+          copyrightRef.current,
+          { opacity: 0, y: 20 },
           {
-            y: 0,
             opacity: 1,
-            duration: 0.6,
-            stagger: 0.1,
-            ease: "power3.out",
+            y: 0,
+            ease: "power2.out",
             scrollTrigger: {
-              trigger: linksRef.current,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
+              trigger: copyrightRef.current,
+              start: "top bottom",
+              end: "top 80%",
+              scrub: 0.3,
             },
           }
         );
@@ -133,66 +179,53 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer ref={footerRef} className="relative py-24 bg-zinc-900 border-t border-white/10 overflow-hidden">
-      {/* Large background text */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+    <footer
+      ref={footerRef}
+      className="relative py-24 bg-black overflow-hidden"
+    >
+      {/* Large wordmark background */}
+      <div
+        ref={wordmarkRef}
+        className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden"
+      >
         <span
-          className="text-[30vw] font-black text-transparent tracking-[-0.02em] select-none"
+          className="wordmark-text text-[20vw] md:text-[18vw] lg:text-[15vw] font-black text-transparent tracking-[-0.04em] whitespace-nowrap select-none"
           style={{
-            WebkitTextStroke: "1px rgba(255,255,255,0.03)",
+            WebkitTextStroke: "1px rgba(255,255,255,0.08)",
           }}
         >
-          EXEC
+          EXECUTIVE
         </span>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
-        {/* Top section */}
-        <div ref={ctaRef} className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12 mb-20">
-          <div>
-            <p className="footer-label text-white/40 text-sm uppercase tracking-[0.3em] mb-4">
-              Ready to start?
-            </p>
-            <h3 className="footer-title text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[0.9]">
-              LET'S BUILD
-              <br />
-              <span className="text-[#00f0ff]">SOMETHING GREAT</span>
-            </h3>
-          </div>
-
-          <div className="footer-button">
-            <Link
-              href="#contact"
-              className="group relative inline-flex items-center gap-4 px-8 py-4 overflow-hidden rounded-full"
-            >
-              <span className="absolute inset-0 border border-white/30 group-hover:border-[#00f0ff] transition-colors rounded-full" />
-              <motion.span
-                className="absolute inset-0 bg-[#00f0ff] rounded-full"
-                initial={{ scaleX: 0 }}
-                whileHover={{ scaleX: 1 }}
-                transition={{ duration: 0.3 }}
-                style={{ transformOrigin: "left" }}
-              />
-              <span className="relative z-10 text-white group-hover:text-black text-sm uppercase tracking-[0.2em] font-bold transition-colors">
-                Get in Touch
-              </span>
-              <span className="relative z-10 text-white group-hover:text-black text-xl group-hover:translate-x-1 transition-all">
-                →
-              </span>
-            </Link>
-          </div>
+      <div ref={contentRef} className="relative max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+        {/* Top section with branding */}
+        <div className="text-center mb-20">
+          <Link href="/" className="inline-block text-white text-2xl font-bold tracking-tight hover:text-[#00f0ff] transition-colors">
+            EXECUTIVE
+          </Link>
+          <p className="text-white/30 text-sm mt-4 max-w-md mx-auto">
+            Building digital experiences for ambitious brands.
+          </p>
         </div>
 
-        {/* Links */}
-        <div ref={linksRef} className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20">
-          <div className="footer-col">
-            <p className="text-white/40 text-xs uppercase tracking-[0.2em] mb-4">Navigation</p>
+        {/* Center-expanding line */}
+        <div
+          ref={lineRef}
+          className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-16"
+        />
+
+        {/* Links grid - cascades from center */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20">
+          {/* Left - Navigation */}
+          <div ref={linksLeftRef} className="text-center md:text-left">
+            <p className="text-white/20 text-xs uppercase tracking-[0.2em] mb-6">Navigation</p>
             <div className="flex flex-col gap-3">
-              {["Work", "Services", "Contact"].map((link) => (
+              {["Work", "Services", "Contact"].map((link, index) => (
                 <Link
                   key={link}
                   href={`#${link.toLowerCase()}`}
-                  className="text-white/60 hover:text-white transition-colors text-sm"
+                  className="footer-link text-white/40 hover:text-white transition-colors text-sm inline-block"
                 >
                   {link}
                 </Link>
@@ -200,14 +233,15 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="footer-col">
-            <p className="text-white/40 text-xs uppercase tracking-[0.2em] mb-4">Social</p>
+          {/* Center - Social */}
+          <div className="text-center">
+            <p className="text-white/20 text-xs uppercase tracking-[0.2em] mb-6">Social</p>
             <div className="flex flex-col gap-3">
-              {["Twitter", "LinkedIn", "Dribbble", "Instagram"].map((link) => (
+              {["Twitter", "LinkedIn", "Dribbble"].map((link, index) => (
                 <a
                   key={link}
                   href="#"
-                  className="text-white/60 hover:text-white transition-colors text-sm"
+                  className="footer-link text-white/40 hover:text-white transition-colors text-sm inline-block"
                 >
                   {link}
                 </a>
@@ -215,37 +249,45 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="footer-col">
-            <p className="text-white/40 text-xs uppercase tracking-[0.2em] mb-4">Contact</p>
-            <div className="flex flex-col gap-3">
-              <a
-                href="mailto:hello@executive.ai"
-                className="text-white/60 hover:text-[#00f0ff] transition-colors text-sm"
-              >
-                hello@executive.ai
-              </a>
-            </div>
-          </div>
-
-          <div className="footer-col">
-            <p className="text-white/40 text-xs uppercase tracking-[0.2em] mb-4">Status</p>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#00f0ff] animate-pulse" />
-              <span className="text-white/60 text-sm">Available</span>
-            </div>
+          {/* Right - Contact */}
+          <div ref={linksRightRef} className="text-center md:text-right">
+            <p className="text-white/20 text-xs uppercase tracking-[0.2em] mb-6">Contact</p>
+            <a
+              href="mailto:hello@executive.ai"
+              className="footer-link text-white/40 hover:text-[#00f0ff] transition-colors text-sm inline-block"
+            >
+              hello@executive.ai
+            </a>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-white/10">
-          <p className="text-white/40 text-xs uppercase tracking-[0.2em]">
+        {/* Bottom bar - Copyright as final frame */}
+        <div
+          ref={copyrightRef}
+          className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4"
+        >
+          <p className="text-white/20 text-xs">
             © {currentYear} Executive AI Solutions
           </p>
-          <p className="text-white/40 text-xs">
-            Designed & Built with precision
+          <p className="text-white/20 text-xs flex items-center gap-2">
+            <span
+              className="inline-block w-1.5 h-1.5 rounded-full bg-[#00f0ff]/50"
+              style={{
+                boxShadow: "0 0 8px rgba(0,240,255,0.5)",
+              }}
+            />
+            Built with precision
           </p>
         </div>
       </div>
+
+      {/* Subtle vignette overlay for cinematic feel */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%)",
+        }}
+      />
     </footer>
   );
 }

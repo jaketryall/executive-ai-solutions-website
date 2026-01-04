@@ -1,7 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useRef, useEffect, useLayoutEffect } from "react";
+import { useRef, useEffect, useLayoutEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -12,34 +11,145 @@ if (typeof window !== "undefined") {
 const services = [
   {
     number: "01",
-    title: "STRATEGY",
+    title: "Strategy",
     description: "Brand positioning, market research, and digital roadmaps that set the foundation for success.",
-    size: "large",
   },
   {
     number: "02",
-    title: "DESIGN",
+    title: "Design",
     description: "Bold visual systems and interfaces that demand attention and drive engagement.",
-    size: "small",
   },
   {
     number: "03",
-    title: "DEVELOPMENT",
-    description: "Blazing-fast, custom-coded experiences. No templates. No compromises.",
-    size: "small",
+    title: "Development",
+    description: "Blazing-fast, custom-coded experiences built with modern technologies.",
   },
   {
     number: "04",
-    title: "MOTION",
+    title: "Motion",
     description: "Cinematic animations and micro-interactions that bring brands to life.",
-    size: "medium",
   },
 ];
+
+function ServiceItem({
+  service,
+  index,
+  isRevealed,
+}: {
+  service: typeof services[0];
+  index: number;
+  isRevealed: boolean;
+}) {
+  const itemRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [counter, setCounter] = useState("00");
+
+  // Animate counter when revealed
+  useEffect(() => {
+    if (isRevealed) {
+      let current = 0;
+      const target = parseInt(service.number);
+      const duration = 800;
+      const startTime = Date.now();
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        current = Math.floor(progress * target);
+        setCounter(String(current).padStart(2, "0"));
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+
+      const timeout = setTimeout(animate, index * 150);
+      return () => clearTimeout(timeout);
+    }
+  }, [isRevealed, service.number, index]);
+
+  return (
+    <div
+      ref={itemRef}
+      className="service-item group"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div
+        className="service-line h-px bg-white/10 origin-left"
+        style={{
+          transform: isRevealed ? "scaleX(1)" : "scaleX(0)",
+          transition: `transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.1}s`,
+        }}
+      />
+      <div
+        className="py-10 md:py-14 flex flex-col md:flex-row md:items-center gap-6 md:gap-12 cursor-pointer transition-all duration-500"
+        style={{
+          paddingLeft: isHovered ? "1rem" : "0",
+          paddingRight: isHovered ? "0" : "1rem",
+          background: isHovered
+            ? "linear-gradient(90deg, rgba(255,255,255,0.02) 0%, transparent 100%)"
+            : "transparent",
+        }}
+      >
+        {/* Number with counter animation */}
+        <span
+          className="text-[#00f0ff]/40 text-sm font-mono shrink-0 w-12 transition-colors duration-300"
+          style={{ color: isHovered ? "rgba(0,240,255,0.8)" : undefined }}
+        >
+          {counter}
+        </span>
+
+        {/* Title */}
+        <h3 className="flex-1 text-3xl md:text-4xl lg:text-5xl font-bold text-white group-hover:text-white/80 transition-colors duration-300">
+          {service.title}
+        </h3>
+
+        {/* Description */}
+        <p
+          className="text-white/40 text-base md:text-lg max-w-md leading-relaxed group-hover:text-white/60 transition-all duration-500"
+          style={{
+            opacity: isRevealed ? 1 : 0,
+            transform: isRevealed ? "translateY(0)" : "translateY(10px)",
+            transition: `all 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.1 + 0.3}s`,
+          }}
+        >
+          {service.description}
+        </p>
+
+        {/* Arrow with spring animation */}
+        <span
+          className="text-white/20 text-2xl group-hover:text-[#00f0ff] hidden md:block transition-all duration-300"
+          style={{
+            transform: isHovered ? "translateX(8px)" : "translateX(-20px)",
+            opacity: isHovered ? 1 : 0,
+          }}
+        >
+          →
+        </span>
+      </div>
+      {index === services.length - 1 && (
+        <div
+          className="service-line h-px bg-white/10 origin-left"
+          style={{
+            transform: isRevealed ? "scaleX(1)" : "scaleX(0)",
+            transition: `transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${(index + 1) * 0.1}s`,
+          }}
+        />
+      )}
+    </div>
+  );
+}
 
 export default function Services() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const scanLineRef = useRef<HTMLDivElement>(null);
+  const contentMaskRef = useRef<HTMLDivElement>(null);
+  const burstRef = useRef<HTMLDivElement>(null);
+  const linesContainerRef = useRef<HTMLDivElement>(null);
+  const [isRevealed, setIsRevealed] = useState(false);
 
   const useIsomorphicLayoutEffect =
     typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -48,89 +158,142 @@ export default function Services() {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      // Section reveal with scale
-      if (sectionRef.current) {
+      // ===== DRAMATIC ENTRANCE - Burst from darkness =====
+      if (burstRef.current) {
+        // Light burst radiates outward - visible in center of viewport
         gsap.fromTo(
-          sectionRef.current,
-          { scale: 0.95, opacity: 0.8 },
+          burstRef.current,
+          { scale: 0, opacity: 1 },
           {
-            scale: 1,
-            opacity: 1,
+            scale: 2.5,
+            opacity: 0,
             ease: "power2.out",
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: "top bottom",
-              end: "top 60%",
-              scrub: 1,
+              start: "top 80%",
+              end: "top 20%",
+              scrub: 0.3,
             },
           }
         );
       }
 
-      // Header animations
-      if (headerRef.current) {
-        const label = headerRef.current.querySelector(".services-label");
-        const title = headerRef.current.querySelector(".services-title");
-
-        if (label) {
+      // ===== SPEED LINES - Shoot down the screen =====
+      if (linesContainerRef.current) {
+        const lines = linesContainerRef.current.querySelectorAll(".speed-line");
+        lines.forEach((line, index) => {
+          // Stagger the lines slightly
           gsap.fromTo(
-            label,
-            { y: 50, opacity: 0 },
+            line,
+            { scaleY: 0, opacity: 0.8 },
             {
-              y: 0,
-              opacity: 1,
-              duration: 0.8,
-              ease: "power3.out",
+              scaleY: 1,
+              opacity: 0,
+              ease: "power2.out",
               scrollTrigger: {
-                trigger: headerRef.current,
+                trigger: sectionRef.current,
                 start: "top 85%",
-                toggleActions: "play none none reverse",
+                end: "top 25%",
+                scrub: 0.2,
               },
             }
           );
-        }
-
-        if (title) {
-          gsap.fromTo(
-            title,
-            { y: 80, opacity: 0, skewY: 3 },
-            {
-              y: 0,
-              opacity: 1,
-              skewY: 0,
-              duration: 1,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: headerRef.current,
-                start: "top 80%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
-        }
+        });
       }
 
-      // Cards stagger animation
-      if (cardsRef.current) {
-        const cards = cardsRef.current.querySelectorAll(".service-card");
+      // ===== SCAN LINE REVEAL =====
+      if (scanLineRef.current && contentMaskRef.current) {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+            end: "top 10%",
+            scrub: 0.3,
+            onEnter: () => setIsRevealed(true),
+            onLeaveBack: () => setIsRevealed(false),
+          },
+        });
 
+        // Scan line sweeps down with intensity
+        tl.fromTo(
+          scanLineRef.current,
+          { top: "-5%", opacity: 1, scaleX: 0.5 },
+          { top: "105%", opacity: 0, scaleX: 1, ease: "power1.in" }
+        );
+
+        // Content reveals behind scan line
+        tl.fromTo(
+          contentMaskRef.current,
+          { clipPath: "inset(0 0 100% 0)" },
+          { clipPath: "inset(0 0 0% 0)", ease: "none" },
+          0
+        );
+      }
+
+      // ===== HEADER - Explodes toward camera =====
+      if (headerRef.current) {
+        const label = headerRef.current.querySelector(".section-label");
+        const title = headerRef.current.querySelector(".section-title");
+
+        // Title BURSTS toward camera from far away
         gsap.fromTo(
-          cards,
-          { y: 100, opacity: 0, rotateX: 10 },
+          title,
+          { scale: 0.3, opacity: 0, y: 150, rotateX: 15 },
           {
-            y: 0,
+            scale: 1,
             opacity: 1,
+            y: 0,
             rotateX: 0,
-            duration: 0.8,
-            stagger: 0.15,
             ease: "power3.out",
             scrollTrigger: {
-              trigger: cardsRef.current,
-              start: "top 75%",
-              toggleActions: "play none none reverse",
+              trigger: sectionRef.current,
+              start: "top 85%",
+              end: "top 30%",
+              scrub: 0.6,
             },
           }
         );
+
+        // Label snaps in with delay
+        gsap.fromTo(
+          label,
+          { opacity: 0, y: 40, scale: 0.8 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 70%",
+              end: "top 40%",
+              scrub: 0.3,
+            },
+          }
+        );
+      }
+
+      // ===== SERVICE ITEMS - Cascade in from the void =====
+      if (listRef.current) {
+        const items = listRef.current.querySelectorAll(".service-item");
+        items.forEach((item, index) => {
+          gsap.fromTo(
+            item,
+            { y: 100 + index * 20, opacity: 0, scale: 0.9 },
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: item,
+                start: "top bottom",
+                end: "top 60%",
+                scrub: 0.4,
+              },
+            }
+          );
+        });
       }
     });
 
@@ -138,115 +301,91 @@ export default function Services() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="services" className="relative py-32 bg-zinc-900 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
-        {/* Header */}
-        <div ref={headerRef} className="mb-16">
-          <p className="services-label text-white/40 text-sm uppercase tracking-[0.3em] mb-4">
-            Capabilities
-          </p>
-          <h2 className="services-title text-[12vw] md:text-[8vw] font-black text-white leading-[0.9] tracking-[-0.02em]">
-            WHAT WE DO
-          </h2>
-        </div>
+    <section
+      ref={sectionRef}
+      id="services"
+      className="relative py-32 bg-neutral-950 overflow-hidden"
+      style={{ perspective: "1000px" }}
+    >
+      {/* Burst effect - fixed to viewport center */}
+      <div
+        ref={burstRef}
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vh] aspect-square pointer-events-none z-50"
+        style={{
+          background: "radial-gradient(circle, rgba(0,240,255,0.6) 0%, rgba(0,240,255,0.2) 25%, transparent 50%)",
+        }}
+      />
 
-        {/* Bento Grid */}
-        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Large card - Strategy */}
+      {/* Speed lines container - fixed to viewport */}
+      <div
+        ref={linesContainerRef}
+        className="fixed inset-0 pointer-events-none z-40 overflow-hidden"
+      >
+        {[...Array(16)].map((_, i) => (
           <div
-            className="service-card group relative md:col-span-2 lg:col-span-2 lg:row-span-2 bg-white/[0.03] border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-colors duration-500"
-          >
-            <div className="p-8 md:p-12 h-full min-h-[400px] lg:min-h-[500px] flex flex-col justify-between relative">
-              {/* Gradient orb */}
-              <div className="absolute top-0 right-0 w-80 h-80 bg-[#00f0ff]/10 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            key={i}
+            className="speed-line absolute w-[2px]"
+            style={{
+              left: `${5 + i * 6}%`,
+              top: "0",
+              height: "100vh",
+              background: "linear-gradient(to bottom, transparent 0%, #00f0ff 40%, #00f0ff 60%, transparent 100%)",
+              transformOrigin: "top center",
+              opacity: 0.8,
+            }}
+          />
+        ))}
+      </div>
 
-              <div>
-                <span className="text-[#00f0ff] text-sm font-mono mb-4 block">01</span>
-                <h3 className="text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-[-0.02em] group-hover:text-[#00f0ff] transition-colors duration-300">
-                  STRATEGY
-                </h3>
-              </div>
+      {/* Scan line effect - enhanced */}
+      <div
+        ref={scanLineRef}
+        className="absolute left-0 right-0 h-[2px] z-25 pointer-events-none"
+        style={{
+          background: "linear-gradient(90deg, transparent 5%, #00f0ff 50%, transparent 95%)",
+          boxShadow: "0 0 30px #00f0ff, 0 0 60px #00f0ff, 0 0 90px rgba(0,240,255,0.5)",
+        }}
+      />
 
-              <p className="text-white/50 text-lg md:text-xl max-w-md leading-relaxed group-hover:text-white/70 transition-colors duration-300">
-                Brand positioning, market research, and digital roadmaps that set the foundation for success.
-              </p>
-
-              <div
-                className="absolute bottom-8 right-8 text-white/20 text-3xl group-hover:text-[#00f0ff] group-hover:translate-x-2 transition-all duration-300"
-              >
-                →
-              </div>
-            </div>
+      {/* Content wrapper with clip mask */}
+      <div ref={contentMaskRef} className="relative">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+          {/* Header */}
+          <div ref={headerRef} className="mb-20">
+            <p className="section-label text-white/40 text-sm uppercase tracking-[0.3em] mb-4">
+              What We Do
+            </p>
+            <h2 className="section-title text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+              Services built for
+              <br />
+              <span className="text-white/40">ambitious brands</span>
+            </h2>
           </div>
 
-          {/* Small card - Design */}
-          <div
-            className="service-card group relative bg-white/[0.03] border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-colors duration-500"
-          >
-            <div className="p-8 h-full min-h-[240px] flex flex-col justify-between relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#00f0ff]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-              <div>
-                <span className="relative text-[#00f0ff] text-sm font-mono mb-3 block">02</span>
-                <h3 className="relative text-3xl md:text-4xl font-black text-white tracking-[-0.02em] group-hover:text-[#00f0ff] transition-colors duration-300">
-                  DESIGN
-                </h3>
-              </div>
-
-              <p className="relative text-white/50 text-sm leading-relaxed group-hover:text-white/70 transition-colors duration-300">
-                Bold visual systems and interfaces that demand attention.
-              </p>
-            </div>
-          </div>
-
-          {/* Small card - Development */}
-          <div
-            className="service-card group relative bg-white/[0.03] border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-colors duration-500"
-          >
-            <div className="p-8 h-full min-h-[240px] flex flex-col justify-between relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#00f0ff]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-              <div>
-                <span className="relative text-[#00f0ff] text-sm font-mono mb-3 block">03</span>
-                <h3 className="relative text-3xl md:text-4xl font-black text-white tracking-[-0.02em] group-hover:text-[#00f0ff] transition-colors duration-300">
-                  DEVELOPMENT
-                </h3>
-              </div>
-
-              <p className="relative text-white/50 text-sm leading-relaxed group-hover:text-white/70 transition-colors duration-300">
-                Blazing-fast, custom-coded experiences. No templates.
-              </p>
-            </div>
-          </div>
-
-          {/* Medium card - Motion */}
-          <div
-            className="service-card group relative md:col-span-2 lg:col-span-3 bg-white/[0.03] border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-colors duration-500"
-          >
-            <div className="p-8 md:p-12 h-full min-h-[200px] flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative">
-              {/* Animated gradient line */}
-              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00f0ff]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-              <div className="flex-1">
-                <span className="text-[#00f0ff] text-sm font-mono mb-3 block">04</span>
-                <h3 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-[-0.02em] group-hover:text-[#00f0ff] transition-colors duration-300">
-                  MOTION
-                </h3>
-              </div>
-
-              <p className="text-white/50 text-lg max-w-sm leading-relaxed group-hover:text-white/70 transition-colors duration-300 md:text-right">
-                Cinematic animations and micro-interactions that bring brands to life.
-              </p>
-
-              <div
-                className="absolute bottom-8 right-8 text-white/20 text-3xl group-hover:text-[#00f0ff] group-hover:translate-x-2 transition-all duration-300 hidden md:block"
-              >
-                →
-              </div>
-            </div>
+          {/* Services List */}
+          <div ref={listRef} className="space-y-0">
+            {services.map((service, index) => (
+              <ServiceItem
+                key={service.number}
+                service={service}
+                index={index}
+                isRevealed={isRevealed}
+              />
+            ))}
           </div>
         </div>
       </div>
+
+      {/* Background grid pattern that fades in with reveal */}
+      <div
+        className="absolute inset-0 pointer-events-none transition-opacity duration-1000"
+        style={{
+          opacity: isRevealed ? 0.05 : 0,
+          backgroundImage:
+            "linear-gradient(rgba(0,240,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.1) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+        }}
+      />
     </section>
   );
 }
