@@ -4,11 +4,13 @@ import { useState } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import Link from "next/link";
 import AnimatedLogo from "./AnimatedLogo";
+import { useSound } from "./SoundManager";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { scrollY } = useScroll();
+  const { play } = useSound();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 50);
@@ -67,6 +69,8 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 className="text-white/60 hover:text-white text-xs uppercase tracking-[0.15em] transition-colors px-4 py-2"
+                onMouseEnter={() => play("hover")}
+                onClick={() => play("click")}
               >
                 {link.label}
               </Link>
@@ -84,6 +88,8 @@ export default function Navbar() {
           <Link
             href="#contact"
             className="group relative h-9 px-5 ml-1 overflow-hidden rounded-full inline-flex items-center justify-center bg-white/10 hover:bg-white transition-colors duration-300"
+            onMouseEnter={() => play("hover", { volume: 0.08 })}
+            onClick={() => play("click")}
           >
             <span className="relative z-10 text-white group-hover:text-black text-xs uppercase tracking-[0.15em] font-semibold transition-colors duration-300">
               Start Project

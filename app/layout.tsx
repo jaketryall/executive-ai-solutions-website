@@ -3,6 +3,7 @@ import { Inter, Source_Serif_4 } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
+import { SoundProvider } from "@/components/SoundManager";
 import "./globals.css";
 
 const inter = Inter({
@@ -70,8 +71,10 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} ${sourceSerif.variable} font-sans`}>
-        <CustomCursor />
-        <SmoothScroll>{children}</SmoothScroll>
+        <SoundProvider>
+          <CustomCursor />
+          <SmoothScroll>{children}</SmoothScroll>
+        </SoundProvider>
         <SpeedInsights />
       </body>
     </html>

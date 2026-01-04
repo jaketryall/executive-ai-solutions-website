@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import { useRef } from "react";
 import Link from "next/link";
 
@@ -277,7 +277,7 @@ function TimelineStep({
 }: {
   step: (typeof steps)[0];
   index: number;
-  progress: ReturnType<typeof useTransform>;
+  progress: MotionValue<number>;
   stepStart: number;
   stepEnd: number;
 }) {

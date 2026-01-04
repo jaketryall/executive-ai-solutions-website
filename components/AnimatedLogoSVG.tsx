@@ -56,7 +56,7 @@ export default function AnimatedLogoSVG({
         pathLength: {
           duration: drawDuration,
           delay: delay,
-          ease: "easeInOut",
+          ease: "easeInOut" as const,
         },
         opacity: {
           duration: 0.5,
@@ -65,7 +65,7 @@ export default function AnimatedLogoSVG({
         fill: {
           duration: 1,
           delay: delay + drawDuration - 0.5,
-          ease: "easeInOut",
+          ease: "easeInOut" as const,
         },
       },
     },

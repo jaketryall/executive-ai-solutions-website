@@ -12,15 +12,30 @@ interface AnimatedLogoProps {
   height?: number;
   drawDuration?: number;
   delay?: number;
+  size?: "sm" | "md" | "lg" | "xl";
+  showGlow?: boolean;
 }
+
+const sizeMap = {
+  sm: { width: 100, height: 60 },
+  md: { width: 150, height: 90 },
+  lg: { width: 200, height: 120 },
+  xl: { width: 300, height: 180 },
+};
 
 export default function AnimatedLogo({
   className = "",
-  width = 200,
-  height = 120,
+  width,
+  height,
   drawDuration = 2.5,
   delay = 0.3,
+  size,
+  showGlow = false,
 }: AnimatedLogoProps) {
+  // Use size preset if provided, otherwise fall back to explicit dimensions
+  const dimensions = size ? sizeMap[size] : { width: width ?? 200, height: height ?? 120 };
+  const finalWidth = dimensions.width;
+  const finalHeight = dimensions.height;
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-50px" });
   const [isDrawn, setIsDrawn] = useState(false);
@@ -39,22 +54,22 @@ export default function AnimatedLogo({
     <motion.div
       ref={containerRef}
       className={`relative cursor-pointer ${className}`}
-      style={{ width, height }}
+      style={{ width: finalWidth, height: finalHeight }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       whileTap={{ scale: 0.98 }}
     >
-      {/* Cyan glow background on hover */}
+      {/* Cyan glow background on hover or when showGlow is true */}
       <motion.div
         className="absolute inset-0 -z-10"
         style={{
           background: "radial-gradient(ellipse at center, rgba(0,240,255,0.3) 0%, transparent 70%)",
           filter: "blur(15px)",
         }}
-        initial={{ opacity: 0, scale: 0.8 }}
+        initial={{ opacity: showGlow ? 0.5 : 0, scale: 0.8 }}
         animate={{
-          opacity: isHovered ? 1 : 0,
-          scale: isHovered ? 1.2 : 0.8,
+          opacity: isHovered || showGlow ? 1 : 0,
+          scale: isHovered || showGlow ? 1.2 : 0.8,
         }}
         transition={{ duration: 0.4, ease: "easeOut" }}
       />

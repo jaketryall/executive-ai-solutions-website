@@ -217,7 +217,7 @@ export default function HeroWorkTransition() {
                 {currentProject.title}
               </h3>
               <p className="text-zinc-400 text-sm max-w-xs">
-                {currentProject.description}
+                {currentProject.category}
               </p>
             </motion.div>
 

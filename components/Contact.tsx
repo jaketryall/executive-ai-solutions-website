@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SplitText from "./SplitText";
+import { useSound } from "./SoundManager";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -14,13 +16,18 @@ function MagneticButton({
   children,
   className = "",
   disabled = false,
+  onHover,
+  onClick,
 }: {
   children: React.ReactNode;
   className?: string;
   disabled?: boolean;
+  onHover?: () => void;
+  onClick?: () => void;
 }) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const hasEnteredRef = useRef(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (disabled || !buttonRef.current) return;
@@ -39,8 +46,20 @@ function MagneticButton({
     });
   };
 
+  const handleMouseEnter = () => {
+    if (!hasEnteredRef.current) {
+      hasEnteredRef.current = true;
+      onHover?.();
+    }
+  };
+
   const handleMouseLeave = () => {
     setPosition({ x: 0, y: 0 });
+    hasEnteredRef.current = false;
+  };
+
+  const handleClick = () => {
+    onClick?.();
   };
 
   return (
@@ -50,7 +69,9 @@ function MagneticButton({
       disabled={disabled}
       className={className}
       onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={handleClick}
       animate={{
         x: position.x,
         y: position.y,
@@ -116,6 +137,7 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
+  const { play } = useSound();
 
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -304,9 +326,11 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    play("whoosh");
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsSubmitting(false);
     setSubmitted(true);
+    play("success");
   };
 
   return (
@@ -314,6 +338,10 @@ export default function Contact() {
       ref={sectionRef}
       id="contact"
       className="relative py-32 bg-neutral-950 overflow-hidden"
+      style={{
+        zIndex: 10,
+        boxShadow: "0 50px 100px -20px rgba(0,0,0,0.8)",
+      }}
     >
       {/* Blueprint grid background */}
       <div
@@ -360,12 +388,20 @@ export default function Contact() {
         {/* Header */}
         <div ref={headerRef} className="mb-20">
           <p className="section-label text-[#00f0ff]/60 text-sm uppercase tracking-[0.3em] mb-4">
-            Get in Touch
+            <SplitText animation="chars" delay={0.2} stagger={0.03}>
+              Get in Touch
+            </SplitText>
           </p>
           <h2 className="section-title text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
-            Let's start a
+            <SplitText animation="words" delay={0.4} stagger={0.1}>
+              Let's start a
+            </SplitText>
             <br />
-            <span className="text-white/40">conversation</span>
+            <span className="text-white/40">
+              <SplitText animation="blur" delay={0.7} stagger={0.04}>
+                conversation
+              </SplitText>
+            </span>
           </h2>
         </div>
 
@@ -507,6 +543,8 @@ export default function Contact() {
                 <MagneticButton
                   disabled={isSubmitting}
                   className="group flex items-center gap-3 text-white text-sm uppercase tracking-[0.2em] font-medium hover:text-[#00f0ff] transition-colors disabled:opacity-50 py-4 px-8 border border-white/10 hover:border-[#00f0ff]/50 rounded-full"
+                  onHover={() => play("hover", { volume: 0.08 })}
+                  onClick={() => play("click")}
                 >
                   {isSubmitting ? (
                     <>

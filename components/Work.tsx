@@ -6,12 +6,14 @@ import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SplitText from "./SplitText";
+import { useSound } from "./SoundManager";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const workItems = [
+export const workItems = [
   {
     title: "DESERT WINGS",
     category: "Aviation",
@@ -46,6 +48,7 @@ function ProjectCard({ project, index }: { project: typeof workItems[0]; index: 
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const { play } = useSound();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -59,7 +62,10 @@ function ProjectCard({ project, index }: { project: typeof workItems[0]; index: 
     <motion.div
       ref={cardRef}
       className="project-card relative shrink-0 w-[80vw] md:w-[60vw] lg:w-[50vw] h-[70vh] group"
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={() => {
+        setIsHovered(true);
+        play("hover", { volume: 0.06 });
+      }}
       onMouseLeave={() => setIsHovered(false)}
       onMouseMove={handleMouseMove}
       style={{
@@ -152,11 +158,8 @@ export default function Work() {
   const progressGlowRef = useRef<HTMLDivElement>(null);
   const textRow1Ref = useRef<HTMLDivElement>(null);
   const textRow2Ref = useRef<HTMLDivElement>(null);
-  const transitionRef = useRef<HTMLDivElement>(null);
-  const flashRef = useRef<HTMLDivElement>(null);
-  const statementRef = useRef<HTMLDivElement>(null);
-  const lineTopRef = useRef<HTMLDivElement>(null);
-  const lineBottomRef = useRef<HTMLDivElement>(null);
+  const kineticToWorkRef = useRef<HTMLDivElement>(null);
+  const gradientOverlayRef = useRef<HTMLDivElement>(null);
 
   // Track scroll velocity for kinetic text
   const row1AnimRef = useRef<HTMLDivElement>(null);
@@ -264,6 +267,24 @@ export default function Work() {
         });
       }
 
+      // ===== KINETIC TO WORK TRANSITION - Gradient fade in =====
+      if (kineticToWorkRef.current && gradientOverlayRef.current) {
+        gsap.fromTo(
+          gradientOverlayRef.current,
+          { opacity: 0 },
+          {
+            opacity: 1,
+            ease: "power2.inOut",
+            scrollTrigger: {
+              trigger: kineticRef.current,
+              start: "center center",
+              end: "bottom 40%",
+              scrub: 0.5,
+            },
+          }
+        );
+      }
+
       // ===== HEADER - Comes toward you =====
       if (headerRef.current) {
         const headerLabel = headerRef.current.querySelector(".header-label");
@@ -333,63 +354,6 @@ export default function Work() {
         });
       }
 
-      // ===== DRAMATIC TRANSITION - Statement reveal =====
-      if (transitionRef.current && flashRef.current && statementRef.current) {
-        const transitionTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: transitionRef.current,
-            start: "top 70%",
-            end: "bottom 20%",
-            scrub: 0.3,
-          },
-        });
-
-        // Flash builds up
-        transitionTl.fromTo(
-          flashRef.current,
-          { opacity: 0, scale: 0.8 },
-          { opacity: 1, scale: 1.2, ease: "power2.in" },
-          0
-        );
-
-        // Statement bursts in from scale 0
-        transitionTl.fromTo(
-          statementRef.current,
-          { scale: 0.5, opacity: 0, rotateX: 20 },
-          { scale: 1, opacity: 1, rotateX: 0, ease: "power3.out" },
-          0.1
-        );
-
-        // Lines expand from center
-        if (lineTopRef.current && lineBottomRef.current) {
-          transitionTl.fromTo(
-            lineTopRef.current,
-            { scaleX: 0 },
-            { scaleX: 1, ease: "power2.out" },
-            0.15
-          );
-          transitionTl.fromTo(
-            lineBottomRef.current,
-            { scaleX: 0 },
-            { scaleX: 1, ease: "power2.out" },
-            0.2
-          );
-        }
-
-        // Flash fades and statement holds then scales past
-        transitionTl.to(
-          flashRef.current,
-          { opacity: 0, scale: 2, ease: "power2.out" },
-          0.4
-        );
-
-        // Statement continues scaling and fades as you scroll into Services
-        transitionTl.to(
-          statementRef.current,
-          { scale: 1.5, opacity: 0, y: -100, ease: "power2.in" },
-          0.6
-        );
-      }
     });
 
     return () => ctx.revert();
@@ -398,7 +362,7 @@ export default function Work() {
   return (
     <>
       {/* Kinetic Typography Intermission */}
-      <section ref={kineticRef} className="relative py-40 overflow-hidden bg-neutral-950">
+      <section ref={kineticRef} className="relative py-40 overflow-hidden bg-neutral-950" style={{ zIndex: 10 }}>
         {/* Animated background gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-950 via-neutral-900/50 to-neutral-950" />
 
@@ -452,18 +416,43 @@ export default function Work() {
             </div>
           </div>
         </div>
+        {/* Animated gradient overlay - sweeps down over kinetic section */}
+        <div
+          ref={kineticToWorkRef}
+          className="absolute inset-0 pointer-events-none z-10"
+        >
+          <div
+            ref={gradientOverlayRef}
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 20%, rgba(0,0,0,0.7) 50%, #000000 80%, #000000 100%)",
+            }}
+          />
+          {/* Subtle cyan glow line at the very bottom */}
+          <div
+            className="absolute left-0 right-0 h-[2px] bottom-0"
+            style={{
+              background: "linear-gradient(90deg, transparent 10%, rgba(0,240,255,0.4) 50%, transparent 90%)",
+              boxShadow: "0 0 20px rgba(0,240,255,0.3), 0 0 40px rgba(0,240,255,0.15)",
+            }}
+          />
+        </div>
       </section>
 
       {/* Work Section Container */}
-      <div className="relative bg-neutral-950">
+      <div className="relative bg-black" style={{ zIndex: 10 }}>
         {/* Section Header */}
-        <section ref={headerRef} className="pt-24 pb-12 px-6 md:px-12 lg:px-20 bg-neutral-950 overflow-hidden">
+        <section ref={headerRef} className="pt-24 pb-12 px-6 md:px-12 lg:px-20 overflow-hidden">
           <div className="max-w-7xl mx-auto">
             <p className="header-label text-white/40 text-sm uppercase tracking-[0.3em] mb-4">
-              Selected Work
+              <SplitText animation="chars" stagger={0.03} delay={0.1}>
+                Selected Work
+              </SplitText>
             </p>
             <h2 className="header-title text-[12vw] md:text-[8vw] font-black text-white leading-[0.9] tracking-[-0.02em]">
-              THE PROOF
+              <SplitText animation="chars" stagger={0.04} delay={0.3}>
+                THE PROOF
+              </SplitText>
             </h2>
           </div>
         </section>
@@ -471,7 +460,7 @@ export default function Work() {
         {/* Horizontal Scroll Gallery */}
         <section
           ref={galleryRef}
-          className="relative bg-neutral-950 h-screen"
+          className="relative h-screen"
           style={{ perspective: "1000px" }}
         >
           <div className="h-full flex items-center overflow-hidden">
@@ -519,78 +508,6 @@ export default function Work() {
             </div>
           </div>
         </section>
-      </div>
-
-      {/* Dramatic Transition Zone - Statement Reveal */}
-      <div
-        ref={transitionRef}
-        className="relative h-screen bg-neutral-950 overflow-hidden flex items-center justify-center"
-        style={{ perspective: "1000px" }}
-      >
-        {/* Cyan flash burst - fixed to viewport center */}
-        <div
-          ref={flashRef}
-          className="fixed inset-0 z-30 pointer-events-none"
-          style={{
-            background: "radial-gradient(ellipse at center, rgba(0,240,255,0.6) 0%, rgba(0,240,255,0.3) 20%, transparent 50%)",
-          }}
-        />
-
-        {/* Statement content */}
-        <div
-          ref={statementRef}
-          className="relative z-40 text-center px-6"
-          style={{ transformStyle: "preserve-3d" }}
-        >
-          {/* Top line */}
-          <div
-            ref={lineTopRef}
-            className="w-[60vw] max-w-2xl h-px mx-auto mb-8"
-            style={{
-              background: "linear-gradient(90deg, transparent, #00f0ff, transparent)",
-              boxShadow: "0 0 20px rgba(0,240,255,0.5)",
-              transformOrigin: "center",
-            }}
-          />
-
-          {/* Main statement */}
-          <p className="text-white/40 text-sm uppercase tracking-[0.3em] mb-4">
-            Now let's talk about
-          </p>
-          <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-[-0.02em] mb-4">
-            HOW WE
-            <br />
-            <span
-              className="text-transparent"
-              style={{
-                WebkitTextStroke: "2px #00f0ff",
-                filter: "drop-shadow(0 0 30px rgba(0,240,255,0.5))",
-              }}
-            >
-              DO IT
-            </span>
-          </h2>
-
-          {/* Bottom line */}
-          <div
-            ref={lineBottomRef}
-            className="w-[60vw] max-w-2xl h-px mx-auto mt-8"
-            style={{
-              background: "linear-gradient(90deg, transparent, #00f0ff, transparent)",
-              boxShadow: "0 0 20px rgba(0,240,255,0.5)",
-              transformOrigin: "center",
-            }}
-          />
-        </div>
-
-        {/* Subtle grid in background */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-5"
-          style={{
-            backgroundImage: "linear-gradient(rgba(0,240,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.3) 1px, transparent 1px)",
-            backgroundSize: "80px 80px",
-          }}
-        />
       </div>
     </>
   );

@@ -3,6 +3,8 @@
 import { useRef, useEffect, useLayoutEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SplitText from "./SplitText";
+import { useSound } from "./SoundManager";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -43,6 +45,7 @@ function ServiceItem({
   const itemRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [counter, setCounter] = useState("00");
+  const { play } = useSound();
 
   // Animate counter when revealed
   useEffect(() => {
@@ -72,7 +75,10 @@ function ServiceItem({
     <div
       ref={itemRef}
       className="service-item group"
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={() => {
+        setIsHovered(true);
+        play("hover", { volume: 0.05 });
+      }}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
@@ -170,8 +176,8 @@ export default function Services() {
             ease: "power2.out",
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: "top 80%",
-              end: "top 20%",
+              start: "top 50%",
+              end: "top -10%",
               scrub: 0.3,
             },
           }
@@ -192,8 +198,8 @@ export default function Services() {
               ease: "power2.out",
               scrollTrigger: {
                 trigger: sectionRef.current,
-                start: "top 85%",
-                end: "top 25%",
+                start: "top 55%",
+                end: "top -5%",
                 scrub: 0.2,
               },
             }
@@ -206,8 +212,8 @@ export default function Services() {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top 80%",
-            end: "top 10%",
+            start: "top 50%",
+            end: "top -20%",
             scrub: 0.3,
             onEnter: () => setIsRevealed(true),
             onLeaveBack: () => setIsRevealed(false),
@@ -247,8 +253,8 @@ export default function Services() {
             ease: "power3.out",
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: "top 85%",
-              end: "top 30%",
+              start: "top 55%",
+              end: "top 0%",
               scrub: 0.6,
             },
           }
@@ -265,8 +271,8 @@ export default function Services() {
             ease: "power2.out",
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: "top 70%",
-              end: "top 40%",
+              start: "top 40%",
+              end: "top 10%",
               scrub: 0.3,
             },
           }
@@ -305,7 +311,7 @@ export default function Services() {
       ref={sectionRef}
       id="services"
       className="relative py-32 bg-neutral-950 overflow-hidden"
-      style={{ perspective: "1000px" }}
+      style={{ perspective: "1000px", zIndex: 10 }}
     >
       {/* Burst effect - fixed to viewport center */}
       <div
@@ -353,12 +359,20 @@ export default function Services() {
           {/* Header */}
           <div ref={headerRef} className="mb-20">
             <p className="section-label text-white/40 text-sm uppercase tracking-[0.3em] mb-4">
-              What We Do
+              <SplitText animation="chars" stagger={0.04} delay={0.2}>
+                What We Do
+              </SplitText>
             </p>
             <h2 className="section-title text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
-              Services built for
+              <SplitText animation="words" stagger={0.1} delay={0.4}>
+                Services built for
+              </SplitText>
               <br />
-              <span className="text-white/40">ambitious brands</span>
+              <span className="text-white/40">
+                <SplitText animation="blur" stagger={0.05} delay={0.7}>
+                  ambitious brands
+                </SplitText>
+              </span>
             </h2>
           </div>
 

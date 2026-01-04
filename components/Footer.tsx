@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useEffect, useLayoutEffect } from "react";
+import { useRef, useEffect, useLayoutEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SplitText from "./SplitText";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -18,59 +19,37 @@ export default function Footer() {
   const linksLeftRef = useRef<HTMLDivElement>(null);
   const linksRightRef = useRef<HTMLDivElement>(null);
   const copyrightRef = useRef<HTMLDivElement>(null);
+  const [footerHeight, setFooterHeight] = useState(0);
 
   const useIsomorphicLayoutEffect =
     typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+  // Measure footer height for the spacer
+  useEffect(() => {
+    const updateHeight = () => {
+      if (footerRef.current) {
+        setFooterHeight(footerRef.current.offsetHeight);
+      }
+    };
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
 
   useIsomorphicLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      // ===== FOOTER - Comes toward you =====
-      gsap.fromTo(
-        footerRef.current,
-        { opacity: 0, scale: 0.95 },
-        {
-          opacity: 1,
-          scale: 1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: "top bottom",
-            end: "top 60%",
-            scrub: 0.5,
-          },
-        }
-      );
-
       // ===== LARGE WORDMARK - Parallax slower than scroll =====
       if (wordmarkRef.current) {
-        // Wordmark comes toward you
-        gsap.fromTo(
-          wordmarkRef.current,
-          { opacity: 0, scale: 0.8, y: 80 },
-          {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: footerRef.current,
-              start: "top bottom",
-              end: "top 50%",
-              scrub: 0.6,
-            },
-          }
-        );
-
         // Parallax effect - moves slower than scroll
         gsap.to(wordmarkRef.current, {
-          y: -50,
+          y: -30,
           ease: "none",
           scrollTrigger: {
             trigger: footerRef.current,
-            start: "top 50%",
-            end: "bottom top",
+            start: "top bottom",
+            end: "bottom bottom",
             scrub: 1,
           },
         });
@@ -86,7 +65,7 @@ export default function Footer() {
             ease: "none",
             scrollTrigger: {
               trigger: footerRef.current,
-              start: "top 50%",
+              start: "top bottom",
               end: "bottom bottom",
               scrub: 1,
             },
@@ -103,9 +82,9 @@ export default function Footer() {
             scaleX: 1,
             ease: "power2.out",
             scrollTrigger: {
-              trigger: lineRef.current,
+              trigger: footerRef.current,
               start: "top bottom",
-              end: "top 70%",
+              end: "top 50%",
               scrub: 0.4,
             },
           }
@@ -124,9 +103,9 @@ export default function Footer() {
               x: 0,
               ease: "power2.out",
               scrollTrigger: {
-                trigger: linksLeftRef.current,
-                start: "top bottom",
-                end: "top 70%",
+                trigger: footerRef.current,
+                start: "top 80%",
+                end: "top 40%",
                 scrub: 0.3,
               },
             }
@@ -145,9 +124,9 @@ export default function Footer() {
               x: 0,
               ease: "power2.out",
               scrollTrigger: {
-                trigger: linksRightRef.current,
-                start: "top bottom",
-                end: "top 70%",
+                trigger: footerRef.current,
+                start: "top 80%",
+                end: "top 40%",
                 scrub: 0.3,
               },
             }
@@ -165,9 +144,9 @@ export default function Footer() {
             y: 0,
             ease: "power2.out",
             scrollTrigger: {
-              trigger: copyrightRef.current,
-              start: "top bottom",
-              end: "top 80%",
+              trigger: footerRef.current,
+              start: "top 60%",
+              end: "top 30%",
               scrub: 0.3,
             },
           }
@@ -179,10 +158,15 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer
-      ref={footerRef}
-      className="relative py-24 bg-black overflow-hidden"
-    >
+    <>
+      {/* Spacer div - takes up space so content above can scroll over the fixed footer */}
+      <div style={{ height: footerHeight }} />
+
+      <footer
+        ref={footerRef}
+        className="fixed bottom-0 left-0 right-0 py-24 bg-black overflow-hidden"
+        style={{ zIndex: 0 }}
+      >
       {/* Large wordmark background */}
       <div
         ref={wordmarkRef}
@@ -202,10 +186,14 @@ export default function Footer() {
         {/* Top section with branding */}
         <div className="text-center mb-20">
           <Link href="/" className="inline-block text-white text-2xl font-bold tracking-tight hover:text-[#00f0ff] transition-colors">
-            EXECUTIVE
+            <SplitText animation="chars" stagger={0.05} delay={0.2}>
+              EXECUTIVE
+            </SplitText>
           </Link>
           <p className="text-white/30 text-sm mt-4 max-w-md mx-auto">
-            Building digital experiences for ambitious brands.
+            <SplitText animation="words" stagger={0.06} delay={0.5}>
+              Building digital experiences for ambitious brands.
+            </SplitText>
           </p>
         </div>
 
@@ -289,5 +277,6 @@ export default function Footer() {
         }}
       />
     </footer>
+    </>
   );
 }

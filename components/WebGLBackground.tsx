@@ -89,6 +89,7 @@ function Particles({ count = 300 }) {
           count={count}
           array={particlesPosition}
           itemSize={3}
+          args={[particlesPosition, 3]}
         />
       </bufferGeometry>
       <pointsMaterial
