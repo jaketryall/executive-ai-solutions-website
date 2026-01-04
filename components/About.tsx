@@ -2,6 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import AnimatedLogo from "./AnimatedLogo";
 
 // Smooth easing curve
 const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -13,7 +14,7 @@ export default function About() {
     <section
       id="about"
       ref={sectionRef}
-      className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a] overflow-hidden rounded-t-[2rem] -mt-8"
+      className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a] overflow-hidden rounded-t-[3rem] -mt-12 z-80 shadow-section-stack"
     >
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section header */}
@@ -37,7 +38,7 @@ export default function About() {
             >
               The{" "}
               <motion.span
-                className="font-serif italic text-[#2563eb] inline-block"
+                className="font-serif italic text-[#b89a5e] inline-block"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
@@ -47,6 +48,11 @@ export default function About() {
               </motion.span>
             </motion.h2>
           </div>
+        </div>
+
+        {/* Animated Logo Showcase */}
+        <div className="mb-24 flex justify-center">
+          <AnimatedLogo size="xl" showGlow={true} />
         </div>
 
         {/* Content grid */}
@@ -130,7 +136,7 @@ export default function About() {
           transition={{ delay: 0.3 }}
           className="flex items-center gap-3 mt-20 pt-8 border-t border-zinc-800"
         >
-          <span className="w-2 h-2 rounded-full bg-[#2563eb]" />
+          <span className="w-2 h-2 rounded-full bg-[#9a7b3c]" />
           <span className="text-zinc-500">Based in Arizona, working with clients worldwide</span>
         </motion.div>
       </div>

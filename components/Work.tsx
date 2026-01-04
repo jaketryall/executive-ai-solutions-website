@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform, MotionValue, useInView } from "framer-
 import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import ShineButton from "./ShineButton";
 
 // Smooth easing curve
 const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -122,7 +123,7 @@ function ProjectCard({
 
           {/* Hover overlay */}
           <motion.div
-            className="absolute inset-0 bg-blue-500/20"
+            className="absolute inset-0 bg-[#9a7b3c]/20"
             initial={{ opacity: 0 }}
             animate={{ opacity: isHovered ? 1 : 0 }}
             transition={{ duration: 0.3 }}
@@ -155,7 +156,7 @@ function ProjectCard({
 
         {/* Title & Description */}
         <motion.h3
-          className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight group-hover:text-blue-500 transition-colors duration-300 mb-2"
+          className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight group-hover:text-[#b89a5e] transition-colors duration-300 mb-2"
           animate={{ x: isHovered ? 4 : 0 }}
           transition={{ duration: 0.3 }}
         >
@@ -228,10 +229,10 @@ export default function Work() {
   const column2Items = [workItems[1], workItems[3], workItems[5], workItems[7]];
 
   return (
-    <div ref={sectionRef} className="relative z-10 bg-[#0a0a0a]">
+    <div ref={sectionRef} className="relative z-20 bg-[#0a0a0a]">
       <motion.section
         id="work"
-        className="relative bg-[#111111] py-24 md:py-32 overflow-hidden"
+        className="relative bg-[#111111] py-24 md:py-32 overflow-hidden shadow-section-stack"
         style={{
           scale,
           borderRadius,
@@ -249,7 +250,7 @@ export default function Work() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, ease: smoothEase }}
-                  className="text-blue-500 text-sm font-medium tracking-wider uppercase mb-4"
+                  className="text-[#b89a5e] text-sm font-medium tracking-wider uppercase mb-4"
                 >
                   Selected Work
                 </motion.p>
@@ -267,7 +268,7 @@ export default function Work() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: 0.2, ease: smoothEase }}
-                  className="text-5xl md:text-6xl lg:text-7xl font-black text-blue-600 tracking-tight uppercase"
+                  className="text-5xl md:text-6xl lg:text-7xl font-black text-[#b89a5e] tracking-tight uppercase"
                 >
                   Projects
                 </motion.h2>
@@ -279,13 +280,10 @@ export default function Work() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.3, ease: smoothEase }}
               >
-                <Link
-                  href="#contact"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-medium rounded-full hover:bg-blue-500 hover:text-white transition-colors duration-300"
-                >
+                <ShineButton href="#contact" className="px-6 py-3">
                   Start a project
                   <span>→</span>
-                </Link>
+                </ShineButton>
               </motion.div>
             </div>
           </div>

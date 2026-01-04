@@ -1,1068 +1,1068 @@
 "use client";
 
-import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
+import { motion, useScroll, AnimatePresence, useMotionValueEvent } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
+import ShineButton from "./ShineButton";
 
 // Smooth easing curves
 const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
-const springTransition = { type: "spring" as const, stiffness: 100, damping: 20 };
 
-// Reusable animated text component with stagger
-function AnimatedText({
-  children,
-  className = "",
-  delay = 0
-}: {
-  children: string;
-  className?: string;
-  delay?: number;
-}) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+// ============================================
+// SERVICE DATA
+// ============================================
+const services = [
+  {
+    id: 0,
+    number: "01",
+    title: ["Brand", "Identity"],
+    description: "Crafting bold, memorable brand identities from logos to full brand guidelines that set you apart.",
+    tags: ["Logo Design", "Color Systems", "Typography", "Brand Guidelines"],
+    color: "gold",
+    accent: "#9a7b3c",
+  },
+  {
+    id: 1,
+    number: "02",
+    title: ["Web", "Design"],
+    description: "High-performance websites with stunning visuals and seamless user experiences that convert.",
+    tags: ["Custom Design", "Responsive", "Motion Design", "SEO-Ready"],
+    color: "gold",
+    accent: "#7d6230",
+  },
+  {
+    id: 2,
+    number: "03",
+    title: ["UI/UX", "Design"],
+    description: "Intuitive digital experiences designed to enhance engagement and maximize conversions.",
+    tags: ["User Research", "Wireframing", "Prototyping", "Testing"],
+    color: "amber",
+    accent: "#f59e0b",
+  },
+  {
+    id: 3,
+    number: "04",
+    title: ["Develop", "ment"],
+    description: "Clean, scalable code that brings designs to life with modern technologies and best practices.",
+    tags: ["Next.js", "React", "CMS Integration", "Deployment"],
+    color: "orange",
+    accent: "#ea580c",
+  },
+];
 
+
+// ============================================
+// SHOWCASE COMPONENTS
+// ============================================
+
+// EA Logo SVG Component - accurate recreation of the Executive AI Solutions logo
+function EALogo({ className, pathClassName }: { className?: string; pathClassName?: string }) {
   return (
-    <motion.span
-      ref={ref}
+    <svg
+      viewBox="0 0 100 80"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       className={className}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, delay, ease: smoothEase }}
     >
-      {children}
-    </motion.span>
+      {/*
+        The logo is an interlocking E and A:
+        - Left side: E with rounded left edge and 3 prongs (top, middle, bottom)
+        - Right side: A that shares the vertical bar, with triangular cutout
+        - The E's middle prong extends into the A's counter space
+      */}
+      <path
+        className={pathClassName}
+        d="
+          M12 8
+          C5.4 8 0 13.4 0 20
+          L0 60
+          C0 66.6 5.4 72 12 72
+          L45 72
+          L45 58
+          L18 58
+          L18 44
+          L40 44
+          L40 36
+          L18 36
+          L18 22
+          L45 22
+          L45 8
+          L12 8
+          Z
+
+          M45 8
+          L45 72
+          L59 72
+          L59 50
+          L75 50
+          L75 72
+          L89 72
+          L89 20
+          C89 13.4 83.6 8 77 8
+          L45 8
+          Z
+
+          M59 22
+          L75 22
+          L75 36
+          L59 36
+          L59 22
+          Z
+        "
+        fill="currentColor"
+        fillRule="evenodd"
+      />
+    </svg>
   );
 }
 
-// Animated tag/pill component with hover
-function AnimatedTag({
-  children,
-  delay = 0,
-  variant = "dark"
-}: {
-  children: string;
-  delay?: number;
-  variant?: "dark" | "light";
-}) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
+// Brand Identity Showcase - Shape morphs into EA logo
+function BrandShowcase({ isActive }: { isActive: boolean }) {
+  const [phase, setPhase] = useState(0);
+
+  useEffect(() => {
+    if (!isActive) {
+      setPhase(0);
+      return;
+    }
+
+    // Phase timeline: 0 -> 1 -> 2 -> 3 -> loop back to 0
+    const delays = [2500, 2500, 2500, 2500];
+
+    const timeout = setTimeout(() => {
+      setPhase((prev) => (prev + 1) % 4);
+    }, delays[phase]);
+
+    return () => clearTimeout(timeout);
+  }, [isActive, phase]);
+
+  // Phase 0: Abstract shapes animate and converge
+  // Phase 1: Shapes morph into EA logo
+  // Phase 2: Typography reveals "EXECUTIVE AI SOLUTIONS"
+  // Phase 3: Color palette with full brand lockup
 
   return (
-    <motion.span
-      ref={ref}
-      className={`px-4 py-2 rounded-full text-sm cursor-default ${
-        variant === "dark"
-          ? "border border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-300"
-          : "border border-zinc-300 text-zinc-600 bg-white hover:border-zinc-400 hover:bg-zinc-50"
-      } transition-colors duration-300`}
-      initial={{ opacity: 0, y: 20, scale: 0.9 }}
-      animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-      transition={{ duration: 0.5, delay, ease: smoothEase }}
-      whileHover={{ y: -2 }}
-    >
-      {children}
-    </motion.span>
-  );
-}
-
-// ============================================
-// SERVICE 1: BRAND IDENTITY
-// Typography-focused with animated letters
-// ============================================
-function BrandIdentitySection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(contentRef, { once: true, margin: "-100px" });
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-
-  return (
-    <div
-      ref={ref}
-      className="min-h-screen flex items-center relative bg-[#0a0a0a] overflow-hidden py-20"
-    >
-      {/* Giant animated typography background */}
-      <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-        <motion.div
-          className="text-[20vw] md:text-[15vw] font-black text-zinc-900 uppercase leading-none select-none whitespace-nowrap"
-          style={{ x: useTransform(scrollYProgress, [0, 1], ["10%", "-10%"]) }}
-        >
-          BRAND
-        </motion.div>
-      </div>
-
-      {/* Floating letters */}
-      <div className="absolute inset-0 pointer-events-none">
-        {["A", "B", "C", "D"].map((letter, i) => (
-          <motion.span
-            key={letter}
-            className="absolute text-6xl md:text-8xl font-black text-blue-500/10"
-            style={{
-              left: `${20 + i * 20}%`,
-              top: `${30 + (i % 2) * 40}%`,
-              y: useTransform(scrollYProgress, [0, 1], [50 * (i + 1), -50 * (i + 1)]),
-              rotate: useTransform(scrollYProgress, [0, 1], [0, 15 * (i % 2 === 0 ? 1 : -1)]),
-            }}
-          >
-            {letter}
-          </motion.span>
-        ))}
-      </div>
-
-      {/* Content */}
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
       <motion.div
-        ref={contentRef}
-        className="relative z-10 px-6 md:px-12 lg:px-20 w-full"
-        style={{ y }}
+        className="relative w-[380px] h-[320px]"
+        initial={{ opacity: 0 }}
+        animate={isActive ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 0.6, ease: smoothEase }}
       >
-        <div className="max-w-[1400px] mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left - Info */}
-            <div>
-              <motion.span
-                className="text-blue-500 text-sm font-mono mb-4 block"
-                initial={{ opacity: 0, x: -20 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.6, ease: smoothEase }}
-              >
-                01
-              </motion.span>
-              <div className="overflow-hidden mb-6">
-                <motion.h3
-                  className="text-5xl md:text-6xl lg:text-7xl font-black text-white uppercase tracking-tight"
-                  initial={{ y: 100 }}
-                  animate={isInView ? { y: 0 } : {}}
-                  transition={{ duration: 0.8, ease: smoothEase, delay: 0.1 }}
-                >
-                  Brand
-                </motion.h3>
-                <motion.h3
-                  className="text-5xl md:text-6xl lg:text-7xl font-black text-white uppercase tracking-tight"
-                  initial={{ y: 100 }}
-                  animate={isInView ? { y: 0 } : {}}
-                  transition={{ duration: 0.8, ease: smoothEase, delay: 0.2 }}
-                >
-                  Identity
-                </motion.h3>
-              </div>
-              <motion.p
-                className="text-xl text-zinc-400 leading-relaxed mb-8 max-w-lg"
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, ease: smoothEase, delay: 0.4 }}
-              >
-                Crafting bold, memorable brand identities from logos to full brand guidelines that set you apart.
-              </motion.p>
-              <div className="flex flex-wrap gap-3">
-                {["Logo Design", "Color Systems", "Typography", "Brand Guidelines"].map((item, i) => (
-                  <AnimatedTag key={item} delay={0.5 + i * 0.1} variant="dark">
-                    {item}
-                  </AnimatedTag>
-                ))}
-              </div>
-            </div>
+        {/* Central canvas */}
+        <div className="absolute inset-0 flex items-center justify-center">
 
-            {/* Right - Visual showcase */}
-            <div className="relative h-[400px] md:h-[500px]">
-              {/* Stacked logo cards */}
+          {/* Phase 0: Abstract shapes that will converge */}
+          {phase === 0 && (
+            <>
+              {/* Floating circle */}
               <motion.div
-                className="absolute top-0 right-0 w-48 h-48 md:w-64 md:h-64 bg-zinc-900 rounded-2xl border border-zinc-800 flex items-center justify-center cursor-pointer"
-                style={{
-                  rotate: useTransform(scrollYProgress, [0.2, 0.8], [-5, 5]),
-                  y: useTransform(scrollYProgress, [0.2, 0.8], [0, -20]),
-                }}
-                initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-                animate={isInView ? { opacity: 1, scale: 1, rotate: 0 } : {}}
-                transition={{ duration: 0.8, ease: smoothEase, delay: 0.3 }}
-                whileHover={{ scale: 1.05, rotate: 2 }}
-              >
-                <span className="text-6xl md:text-8xl font-black text-white">Ex</span>
-              </motion.div>
+                className="absolute w-16 h-16 rounded-full bg-amber-500/30"
+                initial={{ x: -80, y: -60, scale: 0, opacity: 0 }}
+                animate={{ x: -40, y: -30, scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ duration: 0.8, ease: smoothEase }}
+              />
+              {/* Floating square */}
               <motion.div
-                className="absolute top-20 right-20 w-48 h-48 md:w-64 md:h-64 bg-blue-600 rounded-2xl flex items-center justify-center cursor-pointer shadow-xl shadow-blue-600/20"
-                style={{
-                  rotate: useTransform(scrollYProgress, [0.2, 0.8], [5, -5]),
-                  y: useTransform(scrollYProgress, [0.2, 0.8], [0, 20]),
-                }}
-                initial={{ opacity: 0, scale: 0.8, x: 50 }}
-                animate={isInView ? { opacity: 1, scale: 1, x: 0 } : {}}
-                transition={{ duration: 0.8, ease: smoothEase, delay: 0.5 }}
-                whileHover={{ scale: 1.05, y: -5 }}
-              >
-                <span className="text-6xl md:text-8xl font-black text-white">Ai</span>
-              </motion.div>
+                className="absolute w-12 h-12 rounded-lg bg-orange-500/30"
+                initial={{ x: 80, y: 40, scale: 0, opacity: 0 }}
+                animate={{ x: 50, y: 20, scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ duration: 0.8, delay: 0.1, ease: smoothEase }}
+              />
+              {/* Floating rectangle */}
               <motion.div
-                className="absolute top-40 right-40 w-48 h-48 md:w-64 md:h-64 bg-zinc-800 rounded-2xl border border-zinc-700 flex items-center justify-center cursor-pointer"
-                style={{
-                  rotate: useTransform(scrollYProgress, [0.2, 0.8], [-3, 3]),
+                className="absolute w-20 h-8 rounded-md bg-yellow-500/30"
+                initial={{ x: -60, y: 60, scale: 0, opacity: 0 }}
+                animate={{ x: -30, y: 40, scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ duration: 0.8, delay: 0.2, ease: smoothEase }}
+              />
+              {/* Center morphing shape */}
+              <motion.div
+                className="absolute bg-gradient-to-br from-amber-500 to-amber-600"
+                initial={{ width: 20, height: 20, borderRadius: 100 }}
+                animate={{
+                  width: [20, 60, 40],
+                  height: [20, 60, 60],
+                  borderRadius: [100, 16, 12],
+                  rotate: [0, 90, 0],
                 }}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ duration: 0.8, ease: smoothEase, delay: 0.7 }}
-                whileHover={{ scale: 1.05 }}
+                transition={{
+                  duration: 2,
+                  ease: "easeInOut",
+                  times: [0, 0.5, 1],
+                }}
+              />
+            </>
+          )}
+
+          {/* EA Logo - appears in phase 1+ */}
+          <motion.div
+            className="absolute"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{
+              scale: phase >= 1 ? (phase >= 2 ? 0.7 : 1.2) : 0,
+              opacity: phase >= 1 ? 1 : 0,
+              y: phase >= 2 ? -50 : 0,
+              x: phase >= 2 ? -60 : 0,
+            }}
+            transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+          >
+            {/* Glow effect behind logo */}
+            <motion.div
+              className="absolute inset-0 blur-2xl"
+              animate={{
+                opacity: phase === 1 ? [0.3, 0.6, 0.3] : 0.2,
+              }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <EALogo className="w-20 h-20 text-amber-500" />
+            </motion.div>
+
+            {/* Main logo with draw-in effect */}
+            <motion.div
+              initial={{ clipPath: "inset(0 100% 0 0)" }}
+              animate={phase >= 1 ? { clipPath: "inset(0 0% 0 0)" } : {}}
+              transition={{ duration: 0.8, delay: 0.2, ease: smoothEase }}
+            >
+              <EALogo className="w-20 h-20 text-white relative z-10" />
+            </motion.div>
+          </motion.div>
+
+          {/* Typography - Phase 2+ */}
+          <motion.div
+            className="absolute flex flex-col items-start"
+            animate={{
+              opacity: phase >= 2 ? 1 : 0,
+              x: phase >= 2 ? 10 : 0,
+              y: phase >= 2 ? -50 : 0,
+            }}
+            transition={{ duration: 0.6, ease: smoothEase }}
+          >
+            {/* EXECUTIVE */}
+            <div className="flex">
+              {"EXECUTIVE".split("").map((letter, i) => (
+                <motion.span
+                  key={`exec-${i}`}
+                  className="text-white font-bold text-2xl tracking-wide"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={phase >= 2 ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: phase >= 2 ? 0.3 + i * 0.03 : 0,
+                    ease: smoothEase,
+                  }}
+                >
+                  {letter}
+                </motion.span>
+              ))}
+            </div>
+            {/* AI SOLUTIONS */}
+            <div className="flex">
+              {"AI SOLUTIONS".split("").map((letter, i) => (
+                <motion.span
+                  key={`ai-${i}`}
+                  className="text-amber-400 font-bold text-2xl tracking-wide"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={phase >= 2 ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: phase >= 2 ? 0.5 + i * 0.03 : 0,
+                    ease: smoothEase,
+                  }}
+                >
+                  {letter === " " ? "\u00A0" : letter}
+                </motion.span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Color Palette - Phase 3 */}
+          <motion.div
+            className="absolute flex gap-3"
+            style={{ bottom: 50 }}
+            animate={{
+              opacity: phase >= 3 ? 1 : 0,
+              y: phase >= 3 ? 0 : 20,
+            }}
+            transition={{ duration: 0.6, ease: smoothEase }}
+          >
+            {[
+              { color: "#b89a5e", name: "Gold" },
+              { color: "#9a7b3c", name: "Bronze" },
+              { color: "#7d6230", name: "Dark" },
+              { color: "#5c4521", name: "Deep" },
+            ].map((swatch, i) => (
+              <motion.div
+                key={swatch.color}
+                className="flex flex-col items-center gap-2"
+                initial={{ scale: 0, y: 20 }}
+                animate={phase >= 3 ? { scale: 1, y: 0 } : { scale: 0, y: 20 }}
+                transition={{
+                  duration: 0.4,
+                  delay: 0.1 + i * 0.1,
+                  type: "spring",
+                  stiffness: 300,
+                }}
               >
                 <motion.div
-                  className="w-20 h-20 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-blue-500 to-purple-600"
-                  whileHover={{ scale: 1.1, rotate: 180 }}
-                  transition={{ duration: 0.6 }}
+                  className="w-10 h-10 rounded-xl"
+                  style={{
+                    backgroundColor: swatch.color,
+                    border: swatch.color === "#fef3c7" ? "1px solid rgba(255,255,255,0.2)" : "none",
+                    boxShadow: `0 4px 20px ${swatch.color}40`,
+                  }}
+                  animate={phase === 3 ? { scale: [1, 1.1, 1] } : {}}
+                  transition={{ duration: 0.6, delay: 0.6 + i * 0.1, ease: "easeInOut" }}
                 />
+                <span className="text-[9px] text-zinc-500 uppercase tracking-wider">{swatch.name}</span>
               </motion.div>
-            </div>
-          </div>
+            ))}
+          </motion.div>
+
+          {/* Decorative particles during phase 0 */}
+          {phase === 0 && (
+            <>
+              {[...Array(6)].map((_, i) => {
+                const angle = i * 60 * Math.PI / 180;
+                const x100 = Math.round(Math.cos(angle) * 100);
+                const y100 = Math.round(Math.sin(angle) * 100);
+                const x50 = Math.round(Math.cos(angle) * 50);
+                const y50 = Math.round(Math.sin(angle) * 50);
+                return (
+                  <motion.div
+                    key={i}
+                    className="absolute w-2 h-2 rounded-full bg-[#b89a5e]/50"
+                    initial={{
+                      x: x100,
+                      y: y100,
+                      scale: 0,
+                    }}
+                    animate={{
+                      x: [x100, x50, 0],
+                      y: [y100, y50, 0],
+                      scale: [0, 1, 0],
+                      opacity: [0, 1, 0],
+                    }}
+                    transition={{
+                      duration: 2,
+                      delay: i * 0.1,
+                      ease: "easeInOut",
+                    }}
+                  />
+                );
+              })}
+            </>
+          )}
         </div>
+
+        {/* Phase indicator */}
+        <motion.div
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isActive ? 1 : 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          {["Shapes", "Logo", "Typography", "Colors"].map((label, i) => (
+            <motion.div
+              key={label}
+              className="flex items-center gap-1.5"
+              animate={{ opacity: phase === i ? 1 : 0.4 }}
+              transition={{ duration: 0.3 }}
+            >
+              <motion.div
+                className="w-1.5 h-1.5 rounded-full"
+                animate={{
+                  backgroundColor: phase === i ? "#9a7b3c" : "#3f3f46",
+                  scale: phase === i ? 1.3 : 1,
+                }}
+                transition={{ duration: 0.3 }}
+              />
+              <span className="text-[9px] text-zinc-500">{label}</span>
+            </motion.div>
+          ))}
+        </motion.div>
       </motion.div>
     </div>
   );
 }
 
-// ============================================
-// SERVICE 2: WEB DESIGN
-// Browser mockup with floating elements
-// ============================================
-function WebDesignSection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(contentRef, { once: true, margin: "-100px" });
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-
+// Web Design Showcase - Shows a realistic website mockup in a browser
+function WebShowcase({ isActive }: { isActive: boolean }) {
   return (
-    <div
-      ref={ref}
-      className="min-h-screen flex items-center relative bg-[#f5f5f0] overflow-hidden py-20"
-    >
-      {/* Subtle grid pattern */}
-      <div
-        className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)`,
-          backgroundSize: '60px 60px',
-        }}
-      />
-
-      {/* Content */}
+    <div className="absolute inset-0 flex items-center justify-center">
       <motion.div
-        ref={contentRef}
-        className="relative z-10 px-6 md:px-12 lg:px-20 w-full"
-        style={{ y }}
+        className="relative"
+        initial={{ opacity: 0, y: 20 }}
+        animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.6, ease: smoothEase }}
       >
-        <div className="max-w-[1400px] mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left - Browser mockup */}
-            <div className="relative order-2 lg:order-1">
+        {/* Browser Window */}
+        <motion.div
+          className="relative w-[380px] rounded-2xl overflow-hidden"
+          style={{
+            background: "#0f0f14",
+            boxShadow: "0 25px 80px rgba(212, 165, 55, 0.2)",
+            border: "1px solid rgba(255,255,255,0.1)",
+          }}
+          whileHover={{ scale: 1.02 }}
+          transition={{ duration: 0.3 }}
+        >
+          {/* Browser Chrome */}
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5">
+            <div className="flex gap-1.5">
               <motion.div
-                className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-zinc-200 cursor-pointer"
-                style={{
-                  rotateY: useTransform(scrollYProgress, [0.2, 0.8], [-5, 5]),
-                  transformPerspective: 1000,
-                }}
-                initial={{ opacity: 0, y: 60, scale: 0.95 }}
-                animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-                transition={{ duration: 0.8, ease: smoothEase, delay: 0.2 }}
-                whileHover={{ y: -5, scale: 1.02 }}
-              >
-                {/* Browser bar */}
-                <div className="bg-zinc-100 px-4 py-3 flex items-center gap-2 border-b border-zinc-200">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-400" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                    <div className="w-3 h-3 rounded-full bg-green-400" />
-                  </div>
-                  <div className="flex-1 mx-4">
-                    <div className="bg-white rounded-md px-3 py-1.5 text-xs text-zinc-400 border border-zinc-200">
-                      yourwebsite.com
-                    </div>
-                  </div>
-                </div>
-                {/* Browser content */}
-                <div className="p-6 md:p-8 bg-gradient-to-br from-zinc-900 to-zinc-800 h-[300px] md:h-[350px] relative overflow-hidden">
-                  <motion.div
-                    className="h-8 w-32 bg-white/10 rounded mb-4"
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={isInView ? { opacity: 1, width: 128 } : {}}
-                    transition={{ duration: 0.6, delay: 0.5, ease: smoothEase }}
-                  />
-                  <motion.div
-                    className="h-4 w-48 bg-white/5 rounded mb-2"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ duration: 0.5, delay: 0.6, ease: smoothEase }}
-                  />
-                  <motion.div
-                    className="h-4 w-40 bg-white/5 rounded mb-6"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ duration: 0.5, delay: 0.7, ease: smoothEase }}
-                  />
-                  <div className="grid grid-cols-3 gap-3">
-                    {[0, 1, 2].map((i) => (
-                      <motion.div
-                        key={i}
-                        className={`h-20 rounded ${i === 1 ? 'bg-blue-500/20' : 'bg-white/5'}`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={isInView ? { opacity: 1, y: 0 } : {}}
-                        transition={{ duration: 0.5, delay: 0.8 + i * 0.1, ease: smoothEase }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Floating elements */}
+                className="w-2.5 h-2.5 rounded-full bg-red-500/80"
+                initial={{ scale: 0 }}
+                animate={isActive ? { scale: 1 } : { scale: 0 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
+              />
               <motion.div
-                className="absolute -top-4 -right-4 w-20 h-20 bg-blue-500 rounded-xl shadow-lg flex items-center justify-center cursor-pointer"
-                style={{
-                  y: useTransform(scrollYProgress, [0, 1], [20, -20]),
-                  rotate: useTransform(scrollYProgress, [0, 1], [0, 10]),
-                }}
-                initial={{ opacity: 0, scale: 0, rotate: -45 }}
-                animate={isInView ? { opacity: 1, scale: 1, rotate: 0 } : {}}
-                transition={{ duration: 0.6, ease: smoothEase, delay: 0.4 }}
-                whileHover={{ scale: 1.1, rotate: 15 }}
-              >
-                <span className="text-white text-2xl">✦</span>
-              </motion.div>
+                className="w-2.5 h-2.5 rounded-full bg-yellow-500/80"
+                initial={{ scale: 0 }}
+                animate={isActive ? { scale: 1 } : { scale: 0 }}
+                transition={{ duration: 0.3, delay: 0.25 }}
+              />
               <motion.div
-                className="absolute -bottom-4 -left-4 w-16 h-16 bg-zinc-900 rounded-xl shadow-lg flex items-center justify-center cursor-pointer"
-                style={{
-                  y: useTransform(scrollYProgress, [0, 1], [-20, 20]),
-                }}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ duration: 0.6, ease: smoothEase, delay: 0.5 }}
-                whileHover={{ scale: 1.1, y: -5 }}
-              >
-                <span className="text-white text-xl">◇</span>
-              </motion.div>
+                className="w-2.5 h-2.5 rounded-full bg-green-500/80"
+                initial={{ scale: 0 }}
+                animate={isActive ? { scale: 1 } : { scale: 0 }}
+                transition={{ duration: 0.3, delay: 0.3 }}
+              />
             </div>
-
-            {/* Right - Info */}
-            <div className="order-1 lg:order-2">
-              <motion.span
-                className="text-blue-600 text-sm font-mono mb-4 block"
-                initial={{ opacity: 0, x: -20 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.6, ease: smoothEase }}
-              >
-                02
-              </motion.span>
-              <div className="overflow-hidden mb-6">
-                <motion.h3
-                  className="text-5xl md:text-6xl lg:text-7xl font-black text-zinc-900 uppercase tracking-tight"
-                  initial={{ y: 100 }}
-                  animate={isInView ? { y: 0 } : {}}
-                  transition={{ duration: 0.8, ease: smoothEase, delay: 0.1 }}
-                >
-                  Web
-                </motion.h3>
-                <motion.h3
-                  className="text-5xl md:text-6xl lg:text-7xl font-black text-zinc-900 uppercase tracking-tight"
-                  initial={{ y: 100 }}
-                  animate={isInView ? { y: 0 } : {}}
-                  transition={{ duration: 0.8, ease: smoothEase, delay: 0.2 }}
-                >
-                  Design
-                </motion.h3>
-              </div>
-              <motion.p
-                className="text-xl text-zinc-600 leading-relaxed mb-8 max-w-lg"
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, ease: smoothEase, delay: 0.4 }}
-              >
-                High-performance websites with stunning visuals and seamless user experiences that convert.
-              </motion.p>
-              <div className="flex flex-wrap gap-3">
-                {["Custom Design", "Responsive", "Motion Design", "SEO-Ready"].map((item, i) => (
-                  <AnimatedTag key={item} delay={0.5 + i * 0.1} variant="light">
-                    {item}
-                  </AnimatedTag>
-                ))}
-              </div>
-            </div>
+            <motion.div
+              className="flex-1 h-5 bg-white/5 rounded-md flex items-center justify-center"
+              initial={{ opacity: 0 }}
+              animate={isActive ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.4, delay: 0.35 }}
+            >
+              <span className="text-[9px] text-zinc-500">yourbrand.com</span>
+            </motion.div>
           </div>
-        </div>
+
+          {/* Website Content */}
+          <div className="p-4 space-y-3">
+            {/* Navigation */}
+            <motion.div
+              className="flex items-center justify-between"
+              initial={{ opacity: 0, y: 10 }}
+              animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-md bg-gradient-to-br from-amber-500 to-orange-500" />
+                <span className="text-white text-xs font-medium">Brand</span>
+              </div>
+              <div className="flex gap-3">
+                <div className="w-8 h-1.5 bg-zinc-700 rounded" />
+                <div className="w-8 h-1.5 bg-zinc-700 rounded" />
+                <div className="w-8 h-1.5 bg-zinc-700 rounded" />
+              </div>
+            </motion.div>
+
+            {/* Hero Section */}
+            <motion.div
+              className="py-4"
+              initial={{ opacity: 0, y: 10 }}
+              animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+              transition={{ duration: 0.4, delay: 0.4 }}
+            >
+              <div className="w-32 h-2 bg-white rounded mb-2" />
+              <div className="w-40 h-2 bg-white/80 rounded mb-3" />
+              <div className="w-24 h-1.5 bg-zinc-600 rounded mb-4" />
+              <div className="w-20 h-6 rounded-full bg-gradient-to-r from-amber-500 to-orange-500" />
+            </motion.div>
+
+            {/* Feature Cards */}
+            <motion.div
+              className="grid grid-cols-3 gap-2"
+              initial={{ opacity: 0, y: 10 }}
+              animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+            >
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="p-2 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+                  <div className="w-4 h-4 rounded bg-amber-500/20 mb-2" />
+                  <div className="w-full h-1 bg-zinc-600 rounded mb-1" />
+                  <div className="w-3/4 h-1 bg-zinc-700 rounded" />
+                </div>
+              ))}
+            </motion.div>
+
+            {/* Image Section */}
+            <motion.div
+              className="h-16 rounded-lg bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/30 flex items-center justify-center"
+              initial={{ opacity: 0, y: 10 }}
+              animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+              transition={{ duration: 0.4, delay: 0.6 }}
+            >
+              <svg className="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Device Switcher */}
+        <motion.div
+          className="flex justify-center gap-2 mt-4"
+          initial={{ opacity: 0, y: 10 }}
+          animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+          transition={{ duration: 0.5, delay: 0.7 }}
+        >
+          {[
+            { label: "Desktop", active: true },
+            { label: "Tablet", active: false },
+            { label: "Mobile", active: false },
+          ].map((device) => (
+            <motion.div
+              key={device.label}
+              className={`px-3 py-1 rounded-full text-[10px] font-medium ${
+                device.active
+                  ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                  : "bg-zinc-800/50 text-zinc-500 border border-zinc-700/50"
+              }`}
+              whileHover={{ scale: 1.05 }}
+            >
+              {device.label}
+            </motion.div>
+          ))}
+        </motion.div>
       </motion.div>
     </div>
   );
 }
 
-// ============================================
-// SERVICE 3: UI/UX DESIGN
-// True element morphing - shapes transform into each other
-// ============================================
-
-function MorphingUIShowcase({ isInView }: { isInView: boolean }) {
+// UI/UX Showcase - Morphing UI components with smooth motion design transitions
+function UIUXShowcase({ isActive }: { isActive: boolean }) {
   const [phase, setPhase] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Cycle through phases
   useEffect(() => {
-    if (!isInView) return;
+    if (!isActive) return;
 
     const interval = setInterval(() => {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setPhase((prev) => (prev + 1) % 4);
-        setIsTransitioning(false);
-      }, 800);
-    }, 3500);
+      setPhase((prev) => (prev + 1) % 4);
+    }, 3000);
 
     return () => clearInterval(interval);
-  }, [isInView]);
+  }, [isActive]);
 
-  // Container inner dimensions: 300x240 with 16px padding = 268x208 usable area
-  // Element configs: [phase0, phase1, phase2, phase3] for each property
-  const elements = [
-    {
-      // Element 0: Hero element - image area → primary button → email input → logo
-      id: 0,
-      x: [0, 34, 4, 0],
-      y: [0, 16, 0, 0],
-      width: [268, 200, 260, 32],
-      height: [90, 44, 40, 32],
-      borderRadius: [12, 22, 8, 8],
-      bg: ["rgba(139,92,246,0.15)", "linear-gradient(90deg, #8b5cf6, #3b82f6)", "rgba(39,39,42,0.8)", "linear-gradient(135deg, #8b5cf6, #3b82f6)"],
-      border: ["1px solid rgba(139,92,246,0.3)", "none", "1px solid rgba(113,113,122,0.5)", "none"],
-      shadow: ["none", "0 8px 32px rgba(139,92,246,0.4)", "none", "0 4px 20px rgba(139,92,246,0.3)"],
-    },
-    {
-      // Element 1: Title → secondary button → password input → nav item
-      id: 1,
-      x: [0, 34, 4, 46],
-      y: [104, 68, 52, 0],
-      width: [160, 200, 260, 70],
-      height: [14, 44, 40, 24],
-      borderRadius: [4, 22, 8, 6],
-      bg: ["rgba(255,255,255,0.9)", "rgba(255,255,255,0.08)", "rgba(39,39,42,0.8)", "rgba(255,255,255,0.1)"],
-      border: ["none", "1px solid rgba(255,255,255,0.15)", "1px solid rgba(139,92,246,0.5)", "1px solid rgba(255,255,255,0.1)"],
-      shadow: ["none", "none", "0 0 0 2px rgba(139,92,246,0.2)", "none"],
-    },
-    {
-      // Element 2: Price tag → ghost button → submit button → stat card 1
-      id: 2,
-      x: [0, 34, 4, 0],
-      y: [130, 120, 104, 44],
-      width: [60, 200, 260, 128],
-      height: [22, 44, 44, 64],
-      borderRadius: [6, 22, 8, 10],
-      bg: ["#8b5cf6", "transparent", "linear-gradient(90deg, #8b5cf6, #3b82f6)", "rgba(39,39,42,0.5)"],
-      border: ["none", "1px solid rgba(139,92,246,0.5)", "none", "1px solid rgba(255,255,255,0.05)"],
-      shadow: ["0 4px 12px rgba(139,92,246,0.3)", "none", "0 6px 24px rgba(139,92,246,0.35)", "none"],
-    },
-    {
-      // Element 3: Rating → hidden → hidden → stat card 2
-      id: 3,
-      x: [148, 268, 268, 140],
-      y: [130, 208, 208, 44],
-      width: [56, 0, 0, 128],
-      height: [14, 0, 0, 64],
-      borderRadius: [7, 0, 0, 10],
-      bg: ["rgba(255,255,255,0.2)", "transparent", "transparent", "rgba(139,92,246,0.1)"],
-      border: ["none", "none", "none", "1px solid rgba(139,92,246,0.3)"],
-      shadow: ["none", "none", "none", "none"],
-    },
-    {
-      // Element 4: Icon in image → hidden → indicator dot → chart area
-      id: 4,
-      x: [114, 268, 240, 0],
-      y: [30, 208, 64, 120],
-      width: [36, 0, 14, 268],
-      height: [36, 0, 14, 56],
-      borderRadius: [8, 0, 7, 8],
-      bg: ["linear-gradient(135deg, #8b5cf6, #3b82f6)", "transparent", "rgba(139,92,246,0.2)", "rgba(39,39,42,0.3)"],
-      border: ["none", "none", "none", "none"],
-      shadow: ["0 4px 16px rgba(139,92,246,0.4)", "none", "none", "none"],
-    },
-  ];
+  // Morphing UI elements - each transforms smoothly between phases
+  // Phase 0: Card with image and text
+  // Phase 1: Button group / CTA
+  // Phase 2: Input form
+  // Phase 3: Stats dashboard
 
   return (
-    <div
-      className="relative h-[400px] md:h-[500px] flex items-center justify-center"
-      style={{ perspective: "1200px" }}
-    >
-      {/* Ambient glow */}
-      <motion.div
-        className="absolute w-96 h-96 rounded-full blur-3xl opacity-50"
-        animate={{
-          background: [
-            "radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 60%)",
-            "radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 60%)",
-          ],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-      />
-
-      {/* Main container */}
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
       <motion.div
         className="relative"
         initial={{ opacity: 0, scale: 0.9 }}
-        animate={isInView ? { opacity: 1, scale: 1 } : {}}
-        transition={{ duration: 0.8, ease: smoothEase }}
-        style={{
-          width: 300,
-          height: 240,
-          transformStyle: "preserve-3d",
-        }}
+        animate={isActive ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+        transition={{ duration: 0.6, ease: smoothEase }}
       >
-        {/* Background card that morphs */}
+        {/* Main card container */}
         <motion.div
-          className="absolute inset-0 bg-zinc-900/90 backdrop-blur-xl overflow-hidden"
-          animate={{
-            borderRadius: [16, 20, 12, 16][phase],
-            boxShadow: isTransitioning
-              ? "0 30px 100px rgba(139, 92, 246, 0.4)"
-              : "0 25px 80px rgba(139, 92, 246, 0.25)",
-          }}
-          transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
+          className="relative w-[340px] h-[240px] rounded-2xl overflow-hidden"
           style={{
-            border: "1px solid rgba(255,255,255,0.1)",
+            background: "linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%)",
+            border: "1px solid rgba(245,158,11,0.2)",
           }}
-        />
-
-        {/* Morphing elements */}
-        {elements.map((el) => (
+          animate={{
+            boxShadow: [
+              "0 25px 80px rgba(245, 158, 11, 0.2)",
+              "0 30px 100px rgba(245, 158, 11, 0.3)",
+              "0 25px 80px rgba(245, 158, 11, 0.2)",
+            ],
+          }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        >
+          {/* Element 1 - Header/Image area that morphs */}
           <motion.div
-            key={el.id}
-            className="absolute"
+            className="absolute bg-gradient-to-br from-amber-500/20 to-orange-500/20"
             animate={{
-              x: el.x[phase] + 16,
-              y: el.y[phase] + 16,
-              width: el.width[phase],
-              height: el.height[phase],
-              borderRadius: el.borderRadius[phase],
-              opacity: el.width[phase] === 0 ? 0 : 1,
+              x: [16, 16, 16, 16][phase],
+              y: [16, 16, 16, 16][phase],
+              width: [308, 308, 308, 150][phase],
+              height: [90, 48, 48, 100][phase],
+              borderRadius: [12, 24, 8, 12][phase],
             }}
-            transition={{
-              duration: 0.8,
-              ease: [0.4, 0, 0.2, 1], // Smooth acceleration/deceleration
-            }}
-            style={{
-              background: el.bg[phase],
-              border: el.border[phase],
-              boxShadow: el.shadow[phase],
-            }}
+            transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
           >
-            {/* Inner content for specific phases */}
+            {/* Inner content morphs per phase */}
             <AnimatePresence mode="wait">
-              {/* Primary button text */}
-              {el.id === 0 && phase === 1 && (
-                <motion.span
-                  key="btn-text"
-                  className="absolute inset-0 flex items-center justify-center text-white font-semibold text-sm"
+              {phase === 0 && (
+                <motion.div
+                  key="image"
+                  className="absolute inset-0 flex items-center justify-center"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <svg className="w-8 h-8 text-amber-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </motion.div>
+              )}
+              {phase === 1 && (
+                <motion.div
+                  key="button-primary"
+                  className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-amber-500 to-orange-500 rounded-full"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.3, delay: 0.2 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  Get Started
-                </motion.span>
-              )}
-              {/* Email placeholder */}
-              {el.id === 0 && phase === 2 && (
-                <motion.div
-                  key="email"
-                  className="absolute inset-0 flex flex-col justify-center px-3"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3, delay: 0.3 }}
-                >
-                  <span className="text-[10px] text-zinc-500 mb-1">Email</span>
-                  <span className="text-zinc-400 text-sm">hello@example.com</span>
+                  <span className="text-white text-sm font-medium">Get Started</span>
                 </motion.div>
               )}
-              {/* Secondary button text */}
-              {el.id === 1 && phase === 1 && (
-                <motion.span
-                  key="learn-text"
-                  className="absolute inset-0 flex items-center justify-center text-white/80 font-medium text-sm"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3, delay: 0.25 }}
-                >
-                  Learn More
-                </motion.span>
-              )}
-              {/* Password input */}
-              {el.id === 1 && phase === 2 && (
+              {phase === 2 && (
                 <motion.div
-                  key="password"
-                  className="absolute inset-0 flex flex-col justify-center px-3"
+                  key="input"
+                  className="absolute inset-0 flex items-center px-4 bg-zinc-800/80 border border-zinc-600 rounded-lg"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3, delay: 0.35 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <span className="text-[10px] text-zinc-500 mb-1">Password</span>
-                  <span className="text-zinc-500 text-sm">••••••••</span>
+                  <span className="text-zinc-400 text-sm">Enter your email...</span>
                 </motion.div>
               )}
-              {/* Ghost button text */}
-              {el.id === 2 && phase === 1 && (
-                <motion.span
-                  key="contact-text"
-                  className="absolute inset-0 flex items-center justify-center text-purple-400 font-medium text-sm"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3, delay: 0.3 }}
-                >
-                  Contact Us
-                </motion.span>
-              )}
-              {/* Submit button text */}
-              {el.id === 2 && phase === 2 && (
-                <motion.span
-                  key="submit-text"
-                  className="absolute inset-0 flex items-center justify-center text-white font-semibold text-sm"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3, delay: 0.4 }}
-                >
-                  Sign In
-                </motion.span>
-              )}
-              {/* Stat card 1 content */}
-              {el.id === 2 && phase === 3 && (
+              {phase === 3 && (
                 <motion.div
                   key="stat1"
-                  className="absolute inset-0 flex flex-col justify-center px-3"
+                  className="absolute inset-0 flex flex-col justify-center p-4 bg-zinc-800/50 border border-zinc-700/50 rounded-xl"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3, delay: 0.3 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <span className="text-[10px] text-zinc-500">Revenue</span>
-                  <span className="text-white font-bold">$24.5k</span>
+                  <span className="text-[10px] text-zinc-500 uppercase tracking-wider">Revenue</span>
+                  <span className="text-xl font-bold text-white">$24.5k</span>
+                  <span className="text-[10px] text-emerald-400">+12.5%</span>
                 </motion.div>
               )}
-              {/* Stat card 2 content */}
-              {el.id === 3 && phase === 3 && (
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Element 2 - Text/Secondary element */}
+          <motion.div
+            className="absolute"
+            animate={{
+              x: [16, 16, 16, 174][phase],
+              y: [118, 72, 72, 16][phase],
+              width: [200, 308, 308, 150][phase],
+              height: [12, 48, 48, 100][phase],
+              borderRadius: [4, 24, 8, 12][phase],
+              backgroundColor: [
+                "rgba(255,255,255,0.9)",
+                "rgba(255,255,255,0.08)",
+                "rgba(245,158,11,1)",
+                "rgba(39,39,42,0.5)",
+              ][phase],
+            }}
+            transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+          >
+            <AnimatePresence mode="wait">
+              {phase === 1 && (
+                <motion.div
+                  key="button-secondary"
+                  className="absolute inset-0 flex items-center justify-center border border-zinc-600 rounded-full"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <span className="text-zinc-300 text-sm">Learn More</span>
+                </motion.div>
+              )}
+              {phase === 2 && (
+                <motion.div
+                  key="submit"
+                  className="absolute inset-0 flex items-center justify-center rounded-lg"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <span className="text-white text-sm font-medium">Subscribe</span>
+                </motion.div>
+              )}
+              {phase === 3 && (
                 <motion.div
                   key="stat2"
-                  className="absolute inset-0 flex flex-col justify-center px-3"
+                  className="absolute inset-0 flex flex-col justify-center p-4 border border-amber-500/30 rounded-xl"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3, delay: 0.35 }}
                 >
-                  <span className="text-[10px] text-purple-400">Growth</span>
-                  <span className="text-purple-400 font-bold">+42%</span>
+                  <span className="text-[10px] text-zinc-500 uppercase tracking-wider">Users</span>
+                  <span className="text-xl font-bold text-amber-400">1,847</span>
+                  <span className="text-[10px] text-emerald-400">+8.2%</span>
                 </motion.div>
               )}
-              {/* Chart bars */}
-              {el.id === 4 && phase === 3 && (
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Element 3 - Description/tertiary */}
+          <motion.div
+            className="absolute bg-zinc-600"
+            animate={{
+              x: [16, 16, 16, 16][phase],
+              y: [140, 128, 128, 124][phase],
+              width: [140, 308, 110, 308][phase],
+              height: [10, 48, 44, 100][phase],
+              borderRadius: [4, 24, 22, 8][phase],
+              backgroundColor: [
+                "rgba(113,113,122,1)",
+                "rgba(245,158,11,0.15)",
+                "rgba(245,158,11,1)",
+                "rgba(39,39,42,0.3)",
+              ][phase],
+            }}
+            transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+          >
+            <AnimatePresence mode="wait">
+              {phase === 1 && (
                 <motion.div
-                  key="chart"
-                  className="absolute inset-0 flex items-end justify-around px-2 pb-2"
+                  key="contact"
+                  className="absolute inset-0 flex items-center justify-center border border-amber-500/50 rounded-full"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3, delay: 0.4 }}
                 >
-                  {[35, 55, 40, 70, 50, 85, 60].map((h, i) => (
+                  <span className="text-amber-400 text-sm">Contact Us</span>
+                </motion.div>
+              )}
+              {phase === 2 && (
+                <motion.div
+                  key="skip"
+                  className="absolute inset-0 flex items-center justify-center rounded-full"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <span className="text-white text-xs font-medium">Skip for now</span>
+                </motion.div>
+              )}
+              {phase === 3 && (
+                <motion.div
+                  key="chart"
+                  className="absolute inset-0 flex items-end justify-around p-3"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  {[30, 50, 35, 65, 45, 80, 55].map((h, i) => (
                     <motion.div
                       key={i}
-                      className="w-5 rounded-t"
+                      className="w-4 rounded-t"
                       initial={{ height: 0 }}
                       animate={{ height: `${h}%` }}
-                      transition={{ duration: 0.5, delay: 0.5 + i * 0.05, ease: [0.4, 0, 0.2, 1] }}
+                      transition={{ duration: 0.5, delay: 0.1 + i * 0.05, ease: [0.4, 0, 0.2, 1] }}
                       style={{
-                        background: i === 5 ? "linear-gradient(to top, #8b5cf6, #3b82f6)" : "rgba(255,255,255,0.1)",
+                        background: i === 5 ? "linear-gradient(to top, #9a7b3c, #b89a5e)" : "rgba(255,255,255,0.1)",
                       }}
                     />
                   ))}
                 </motion.div>
               )}
-              {/* Indicator dot inner */}
-              {el.id === 4 && phase === 2 && (
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Element 4 - Tags/small details */}
+          <motion.div
+            className="absolute"
+            animate={{
+              x: [16, 16, 134, 16][phase],
+              y: [160, 184, 128, 16][phase],
+              width: [80, 180, 190, 0][phase],
+              height: [10, 40, 44, 0][phase],
+              borderRadius: [4, 20, 22, 0][phase],
+              backgroundColor: [
+                "rgba(82,82,91,1)",
+                "rgba(82,82,91,0.5)",
+                "rgba(234,88,12,1)",
+                "transparent",
+              ][phase],
+              opacity: phase === 3 ? 0 : 1,
+            }}
+            transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+          >
+            <AnimatePresence mode="wait">
+              {phase === 2 && (
                 <motion.div
-                  key="dot"
-                  className="absolute inset-2 rounded-full bg-purple-500"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
-                  transition={{ duration: 0.3, delay: 0.4 }}
-                />
+                  key="terms"
+                  className="absolute inset-0 flex items-center justify-center rounded-full"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <span className="text-white text-[10px]">No spam, ever</span>
+                </motion.div>
               )}
             </AnimatePresence>
           </motion.div>
-        ))}
 
-        {/* Shimmer effect */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none rounded-[16px] overflow-hidden"
-          style={{
-            background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.02) 45%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.02) 55%, transparent 60%)",
-            backgroundSize: "250% 100%",
-          }}
-          animate={{ backgroundPosition: ["200% 0%", "-100% 0%"] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
-        />
-      </motion.div>
-
-      {/* Phase indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
-        {[0, 1, 2, 3].map((i) => (
-          <motion.button
-            key={i}
-            className="relative"
-            onClick={() => {
-              setIsTransitioning(true);
-              setTimeout(() => {
-                setPhase(i);
-                setIsTransitioning(false);
-              }, 100);
-            }}
-          >
-            <motion.div
-              className="w-2 h-2 rounded-full"
-              animate={{
-                scale: phase === i ? 1.5 : 1,
-                backgroundColor: phase === i ? "#8b5cf6" : "#3f3f46",
-              }}
-              transition={{ duration: 0.3 }}
-            />
-            {phase === i && (
-              <motion.div
-                className="absolute inset-0 rounded-full bg-purple-500/30"
-                initial={{ scale: 1 }}
-                animate={{ scale: 2.5, opacity: 0 }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              />
-            )}
-          </motion.button>
-        ))}
-      </div>
-
-      {/* Labels */}
-      <div className="absolute bottom-16 left-1/2 -translate-x-1/2">
-        <AnimatePresence mode="wait">
+          {/* Shimmer effect */}
           <motion.div
-            key={phase}
-            className="text-zinc-500 text-xs uppercase tracking-widest whitespace-nowrap"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 0.6, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.3 }}
-          >
-            {["Product Card", "Call to Action", "Sign In Form", "Dashboard"][phase]}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </div>
-  );
-}
-
-function UIUXSection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(contentRef, { once: true, margin: "-100px" });
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-
-  return (
-    <div
-      ref={ref}
-      className="min-h-screen flex items-center relative bg-[#0a0a0a] overflow-hidden py-20"
-    >
-      {/* Gradient orbs */}
-      <div className="absolute inset-0">
-        <motion.div
-          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-3xl"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 1.2, ease: smoothEase }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-3xl"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 1.2, ease: smoothEase, delay: 0.2 }}
-        />
-      </div>
-
-      {/* Content */}
-      <motion.div
-        ref={contentRef}
-        className="relative z-10 px-6 md:px-12 lg:px-20 w-full"
-        style={{ y }}
-      >
-        <div className="max-w-[1400px] mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left - Info */}
-            <div>
-              <motion.span
-                className="text-purple-500 text-sm font-mono mb-4 block"
-                initial={{ opacity: 0, x: -20 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.6, ease: smoothEase }}
-              >
-                03
-              </motion.span>
-              <div className="overflow-hidden mb-6">
-                <motion.h3
-                  className="text-5xl md:text-6xl lg:text-7xl font-black text-white uppercase tracking-tight"
-                  initial={{ y: 100 }}
-                  animate={isInView ? { y: 0 } : {}}
-                  transition={{ duration: 0.8, ease: smoothEase, delay: 0.1 }}
-                >
-                  UI/UX
-                </motion.h3>
-                <motion.h3
-                  className="text-5xl md:text-6xl lg:text-7xl font-black text-white uppercase tracking-tight"
-                  initial={{ y: 100 }}
-                  animate={isInView ? { y: 0 } : {}}
-                  transition={{ duration: 0.8, ease: smoothEase, delay: 0.2 }}
-                >
-                  Design
-                </motion.h3>
-              </div>
-              <motion.p
-                className="text-xl text-zinc-400 leading-relaxed mb-8 max-w-lg"
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, ease: smoothEase, delay: 0.4 }}
-              >
-                Intuitive digital experiences designed to enhance engagement and maximize conversions.
-              </motion.p>
-              <div className="flex flex-wrap gap-3">
-                {["User Research", "Wireframing", "Prototyping", "Testing"].map((item, i) => (
-                  <AnimatedTag key={item} delay={0.5 + i * 0.1} variant="dark">
-                    {item}
-                  </AnimatedTag>
-                ))}
-              </div>
-            </div>
-
-            {/* Right - Morphing UI showcase */}
-            <MorphingUIShowcase isInView={isInView} />
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
-// ============================================
-// SERVICE 4: DEVELOPMENT
-// Code/terminal aesthetic
-// ============================================
-function DevelopmentSection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(contentRef, { once: true, margin: "-100px" });
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-
-  const codeLines = [
-    { indent: 0, content: "const website = {", color: "text-purple-400" },
-    { indent: 1, content: "framework: 'Next.js',", color: "text-zinc-400" },
-    { indent: 1, content: "styling: 'Tailwind CSS',", color: "text-zinc-400" },
-    { indent: 1, content: "animations: 'Framer Motion',", color: "text-zinc-400" },
-    { indent: 1, content: "deploy: async () => {", color: "text-blue-400" },
-    { indent: 2, content: "await vercel.deploy();", color: "text-emerald-400" },
-    { indent: 2, content: "return '🚀 Live!';", color: "text-emerald-400" },
-    { indent: 1, content: "}", color: "text-blue-400" },
-    { indent: 0, content: "};", color: "text-purple-400" },
-  ];
-
-  return (
-    <div
-      ref={ref}
-      className="min-h-screen flex items-center relative bg-[#0d1117] overflow-hidden py-20"
-    >
-      {/* Matrix-like background effect - using deterministic pattern */}
-      <div className="absolute inset-0 opacity-5">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute text-emerald-500 font-mono text-xs"
+            className="absolute inset-0 pointer-events-none"
             style={{
-              left: `${i * 5}%`,
-              top: 0,
-              y: useTransform(scrollYProgress, [0, 1], [0, 200 + i * 20]),
+              background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.02) 45%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.02) 55%, transparent 60%)",
+              backgroundSize: "250% 100%",
             }}
-          >
-            {Array.from({ length: 20 }).map((_, j) => (
-              <div key={j}>{(i + j) % 2 === 0 ? "1" : "0"}</div>
-            ))}
-          </motion.div>
-        ))}
-      </div>
+            animate={{ backgroundPosition: ["200% 0%", "-100% 0%"] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+          />
+        </motion.div>
 
-      {/* Content */}
-      <motion.div
-        ref={contentRef}
-        className="relative z-10 px-6 md:px-12 lg:px-20 w-full"
-        style={{ y }}
-      >
-        <div className="max-w-[1400px] mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left - Code editor */}
-            <div className="order-2 lg:order-1">
+        {/* Phase indicator */}
+        <motion.div
+          className="flex justify-center gap-2 mt-5"
+          initial={{ opacity: 0 }}
+          animate={isActive ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          {["Card", "Buttons", "Form", "Dashboard"].map((label, i) => (
+            <motion.div
+              key={label}
+              className="flex items-center gap-1.5"
+              animate={{ opacity: phase === i ? 1 : 0.4 }}
+              transition={{ duration: 0.3 }}
+            >
               <motion.div
-                className="bg-[#161b22] rounded-xl border border-[#30363d] overflow-hidden shadow-2xl cursor-pointer"
-                style={{
-                  rotateY: useTransform(scrollYProgress, [0.2, 0.8], [5, -5]),
-                  transformPerspective: 1000,
+                className="w-1.5 h-1.5 rounded-full"
+                animate={{
+                  backgroundColor: phase === i ? "#f59e0b" : "#3f3f46",
+                  scale: phase === i ? 1.3 : 1,
                 }}
-                initial={{ opacity: 0, y: 60, scale: 0.95 }}
-                animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-                transition={{ duration: 0.8, ease: smoothEase, delay: 0.2 }}
-                whileHover={{ y: -5, scale: 1.02 }}
-              >
-                {/* Editor header */}
-                <div className="bg-[#21262d] px-4 py-3 flex items-center gap-3 border-b border-[#30363d]">
-                  <div className="flex gap-1.5">
-                    <motion.div
-                      className="w-3 h-3 rounded-full bg-[#f85149]"
-                      initial={{ scale: 0 }}
-                      animate={isInView ? { scale: 1 } : {}}
-                      transition={{ duration: 0.3, delay: 0.4, type: "spring" }}
-                    />
-                    <motion.div
-                      className="w-3 h-3 rounded-full bg-[#f0883e]"
-                      initial={{ scale: 0 }}
-                      animate={isInView ? { scale: 1 } : {}}
-                      transition={{ duration: 0.3, delay: 0.5, type: "spring" }}
-                    />
-                    <motion.div
-                      className="w-3 h-3 rounded-full bg-[#3fb950]"
-                      initial={{ scale: 0 }}
-                      animate={isInView ? { scale: 1 } : {}}
-                      transition={{ duration: 0.3, delay: 0.6, type: "spring" }}
-                    />
-                  </div>
-                  <motion.span
-                    className="text-[#8b949e] text-sm font-mono"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ duration: 0.4, delay: 0.5, ease: smoothEase }}
-                  >
-                    website.config.ts
-                  </motion.span>
-                </div>
-                {/* Code content */}
-                <div className="p-6 font-mono text-sm">
-                  {codeLines.map((line, i) => (
-                    <motion.div
-                      key={i}
-                      className="flex"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={isInView ? { opacity: 1, x: 0 } : {}}
-                      transition={{ duration: 0.4, delay: 0.6 + i * 0.08, ease: smoothEase }}
-                    >
-                      <span className="text-[#6e7681] w-8 select-none">{i + 1}</span>
-                      <motion.span
-                        style={{ paddingLeft: `${line.indent * 1.5}rem` }}
-                        className={line.color}
-                        whileHover={{ x: 4, color: "#ffffff" }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {line.content}
-                      </motion.span>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* Floating tech badges */}
-              <div className="flex flex-wrap gap-3 mt-6 justify-center lg:justify-start">
-                {["Next.js", "React", "TypeScript", "Node.js"].map((tech, i) => (
-                  <motion.span
-                    key={tech}
-                    className="px-3 py-1.5 bg-[#21262d] border border-[#30363d] rounded-full text-xs text-[#8b949e] font-mono cursor-pointer"
-                    initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                    animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-                    transition={{ duration: 0.4, delay: 1.2 + i * 0.1, ease: smoothEase }}
-                    whileHover={{ y: -3, scale: 1.05, borderColor: "#3fb950", color: "#3fb950" }}
-                  >
-                    {tech}
-                  </motion.span>
-                ))}
-              </div>
-            </div>
-
-            {/* Right - Info */}
-            <div className="order-1 lg:order-2">
-              <motion.span
-                className="text-emerald-500 text-sm font-mono mb-4 block"
-                initial={{ opacity: 0, x: -20 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.6, ease: smoothEase }}
-              >
-                04
-              </motion.span>
-              <div className="overflow-hidden mb-6">
-                <motion.h3
-                  className="text-5xl md:text-6xl lg:text-7xl font-black text-white uppercase tracking-tight"
-                  initial={{ y: 100 }}
-                  animate={isInView ? { y: 0 } : {}}
-                  transition={{ duration: 0.8, ease: smoothEase, delay: 0.1 }}
-                >
-                  Develop
-                </motion.h3>
-                <motion.h3
-                  className="text-5xl md:text-6xl lg:text-7xl font-black text-white uppercase tracking-tight"
-                  initial={{ y: 100 }}
-                  animate={isInView ? { y: 0 } : {}}
-                  transition={{ duration: 0.8, ease: smoothEase, delay: 0.2 }}
-                >
-                  ment
-                </motion.h3>
-              </div>
-              <motion.p
-                className="text-xl text-[#8b949e] leading-relaxed mb-8 max-w-lg"
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, ease: smoothEase, delay: 0.4 }}
-              >
-                Clean, scalable code that brings designs to life with modern technologies and best practices.
-              </motion.p>
-              <div className="flex flex-wrap gap-3">
-                {["Next.js", "React", "CMS Integration", "Deployment"].map((item, i) => (
-                  <motion.span
-                    key={item}
-                    className="px-4 py-2 border border-[#30363d] rounded-full text-sm text-[#8b949e] cursor-pointer transition-colors duration-300 hover:border-emerald-500/50 hover:text-emerald-400"
-                    initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                    animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-                    transition={{ duration: 0.5, delay: 0.5 + i * 0.1, ease: smoothEase }}
-                    whileHover={{ y: -2 }}
-                  >
-                    {item}
-                  </motion.span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+                transition={{ duration: 0.3 }}
+              />
+              <span className="text-[9px] text-zinc-500">{label}</span>
+            </motion.div>
+          ))}
+        </motion.div>
       </motion.div>
     </div>
+  );
+}
+
+// Development Showcase - Shows a code editor with tech stack
+function DevShowcase({ isActive }: { isActive: boolean }) {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <motion.div
+        className="relative"
+        initial={{ opacity: 0, y: 20 }}
+        animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.6, ease: smoothEase }}
+      >
+        {/* Code Editor */}
+        <motion.div
+          className="relative w-[380px] rounded-2xl overflow-hidden"
+          style={{
+            background: "#0d1117",
+            boxShadow: "0 25px 80px rgba(234, 88, 12, 0.2)",
+            border: "1px solid rgba(48, 54, 61, 0.8)",
+          }}
+          whileHover={{ scale: 1.02 }}
+          transition={{ duration: 0.3 }}
+        >
+          {/* Editor Header */}
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-[#30363d]">
+            <div className="flex gap-1.5">
+              <motion.div
+                className="w-2.5 h-2.5 rounded-full bg-[#f85149]"
+                initial={{ scale: 0 }}
+                animate={isActive ? { scale: 1 } : { scale: 0 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
+              />
+              <motion.div
+                className="w-2.5 h-2.5 rounded-full bg-[#f0883e]"
+                initial={{ scale: 0 }}
+                animate={isActive ? { scale: 1 } : { scale: 0 }}
+                transition={{ duration: 0.3, delay: 0.25 }}
+              />
+              <motion.div
+                className="w-2.5 h-2.5 rounded-full bg-[#3fb950]"
+                initial={{ scale: 0 }}
+                animate={isActive ? { scale: 1 } : { scale: 0 }}
+                transition={{ duration: 0.3, delay: 0.3 }}
+              />
+            </div>
+            <motion.span
+              className="text-[10px] text-[#8b949e] font-mono ml-2"
+              initial={{ opacity: 0 }}
+              animate={isActive ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.4, delay: 0.35 }}
+            >
+              page.tsx
+            </motion.span>
+          </div>
+
+          {/* Code Content */}
+          <div className="p-4 font-mono text-[11px] leading-5">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={isActive ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+            >
+              <div className="flex">
+                <span className="text-[#6e7681] w-6 select-none">1</span>
+                <span><span className="text-[#ff7b72]">export default</span> <span className="text-[#d2a8ff]">function</span> <span className="text-[#ffa657]">Home</span>() {"{"}</span>
+              </div>
+              <div className="flex">
+                <span className="text-[#6e7681] w-6 select-none">2</span>
+                <span className="text-[#8b949e]">  return (</span>
+              </div>
+              <div className="flex">
+                <span className="text-[#6e7681] w-6 select-none">3</span>
+                <span>    <span className="text-[#7ee787]">&lt;main</span> <span className="text-[#79c0ff]">className</span>=<span className="text-[#a5d6ff]">"container"</span><span className="text-[#7ee787]">&gt;</span></span>
+              </div>
+              <div className="flex">
+                <span className="text-[#6e7681] w-6 select-none">4</span>
+                <span>      <span className="text-[#7ee787]">&lt;Hero</span> <span className="text-[#7ee787]">/&gt;</span></span>
+              </div>
+              <div className="flex">
+                <span className="text-[#6e7681] w-6 select-none">5</span>
+                <span>      <span className="text-[#7ee787]">&lt;Services</span> <span className="text-[#7ee787]">/&gt;</span></span>
+              </div>
+              <div className="flex">
+                <span className="text-[#6e7681] w-6 select-none">6</span>
+                <span>      <span className="text-[#7ee787]">&lt;Contact</span> <span className="text-[#7ee787]">/&gt;</span></span>
+              </div>
+              <div className="flex">
+                <span className="text-[#6e7681] w-6 select-none">7</span>
+                <span>    <span className="text-[#7ee787]">&lt;/main&gt;</span></span>
+              </div>
+              <div className="flex">
+                <span className="text-[#6e7681] w-6 select-none">8</span>
+                <span className="text-[#8b949e]">  );</span>
+              </div>
+              <div className="flex">
+                <span className="text-[#6e7681] w-6 select-none">9</span>
+                <span>{"}"}</span>
+              </div>
+            </motion.div>
+
+            {/* Blinking cursor */}
+            <motion.span
+              className="inline-block w-[2px] h-3 bg-emerald-400 ml-6"
+              animate={{ opacity: [1, 0] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+            />
+          </div>
+        </motion.div>
+
+        {/* Tech Stack */}
+        <motion.div
+          className="flex justify-center gap-2 mt-4"
+          initial={{ opacity: 0, y: 10 }}
+          animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          {[
+            { name: "Next.js", color: "#ffffff" },
+            { name: "React", color: "#61dafb" },
+            { name: "TypeScript", color: "#3178c6" },
+            { name: "Tailwind", color: "#38bdf8" },
+          ].map((tech) => (
+            <motion.div
+              key={tech.name}
+              className="px-2.5 py-1 rounded-md bg-zinc-800/80 border border-zinc-700/50 flex items-center gap-1.5"
+              whileHover={{ scale: 1.05, y: -2 }}
+            >
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: tech.color }} />
+              <span className="text-[9px] text-zinc-400 font-medium">{tech.name}</span>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+}
+
+// ============================================
+// SERVICE CONTENT ITEM
+// ============================================
+function ServiceContent({
+  service,
+  index,
+  isActive
+}: {
+  service: typeof services[0];
+  index: number;
+  isActive: boolean;
+}) {
+  const colorMap: Record<string, string> = {
+    gold: "text-[#b89a5e]",
+    amber: "text-[#9a7b3c]",
+    orange: "text-orange-500",
+  };
+
+  return (
+    <motion.div
+      className="min-h-screen flex items-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isActive ? 1 : 0.3 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="w-full">
+        <motion.span
+          className={`${colorMap[service.color]} text-sm font-mono mb-4 block`}
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: smoothEase }}
+        >
+          {service.number}
+        </motion.span>
+        <div className="overflow-hidden mb-6">
+          <motion.h3
+            className="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight"
+            initial={{ y: 80 }}
+            whileInView={{ y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: smoothEase, delay: 0.1 }}
+          >
+            {service.title[0]}
+          </motion.h3>
+          <motion.h3
+            className="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight"
+            initial={{ y: 80 }}
+            whileInView={{ y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: smoothEase, delay: 0.2 }}
+          >
+            {service.title[1]}
+          </motion.h3>
+        </div>
+        <motion.p
+          className="text-lg text-zinc-400 leading-relaxed mb-8 max-w-md"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: smoothEase, delay: 0.4 }}
+        >
+          {service.description}
+        </motion.p>
+        <div className="flex flex-wrap gap-3">
+          {service.tags.map((tag, i) => (
+            <motion.span
+              key={tag}
+              className="px-4 py-2 rounded-full text-sm border border-zinc-800 text-zinc-400"
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.5 + i * 0.1, ease: smoothEase }}
+            >
+              {tag}
+            </motion.span>
+          ))}
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -1070,16 +1070,38 @@ function DevelopmentSection() {
 // MAIN SERVICES COMPONENT
 // ============================================
 export default function Services() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Update active index based on scroll progress
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    const index = Math.min(3, Math.floor(latest * 4));
+    setActiveIndex(index);
+  });
+
+  const showcases = [
+    <BrandShowcase key="brand" isActive={activeIndex === 0} />,
+    <WebShowcase key="web" isActive={activeIndex === 1} />,
+    <UIUXShowcase key="uiux" isActive={activeIndex === 2} />,
+    <DevShowcase key="dev" isActive={activeIndex === 3} />,
+  ];
+
   return (
-    <section id="services" className="relative">
+    <section id="services" className="relative bg-[#111114] rounded-t-[3rem] -mt-12 z-40 shadow-section-stack">
+
       {/* Section header */}
-      <div className="bg-[#0a0a0a] py-32 text-center">
+      <div className="relative pt-16 pb-4 text-center">
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-blue-500 text-sm font-medium tracking-wider uppercase mb-4"
+          className="text-[#b89a5e] text-sm font-medium tracking-wider uppercase mb-3"
         >
           What We Do
         </motion.p>
@@ -1094,14 +1116,71 @@ export default function Services() {
         </motion.h2>
       </div>
 
-      {/* Individual service sections */}
-      <BrandIdentitySection />
-      <WebDesignSection />
-      <UIUXSection />
-      <DevelopmentSection />
+      {/* Sticky scroll container */}
+      <div ref={containerRef} className="relative">
+        <div className="flex">
+          {/* Left - Scrolling content */}
+          <div className="w-full lg:w-1/2 px-6 md:px-12 lg:px-20">
+            {services.map((service, index) => (
+              <ServiceContent
+                key={service.id}
+                service={service}
+                index={index}
+                isActive={activeIndex === index}
+              />
+            ))}
+          </div>
+
+          {/* Right - Sticky showcase (hidden on mobile) */}
+          <div className="hidden lg:block w-1/2 relative">
+            <div className="sticky top-0 h-screen flex items-center justify-center pr-12">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeIndex}
+                  className="relative flex items-center justify-center"
+                  style={{ width: 420, height: 400 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.5, ease: smoothEase }}
+                >
+                  {showcases[activeIndex]}
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Progress indicators */}
+              <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col gap-3">
+                {services.map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="w-2 h-2 rounded-full"
+                    animate={{
+                      scale: activeIndex === i ? 1.5 : 1,
+                      backgroundColor: activeIndex === i ? "#9a7b3c" : "#3f3f46",
+                    }}
+                    transition={{ duration: 0.3 }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile: Show showcase inline for each section */}
+        <div className="lg:hidden">
+          {services.map((_, index) => (
+            <div key={index} className="h-[50vh] flex items-center justify-center px-6">
+              {index === 0 && <BrandShowcase isActive={true} />}
+              {index === 1 && <WebShowcase isActive={true} />}
+              {index === 2 && <UIUXShowcase isActive={true} />}
+              {index === 3 && <DevShowcase isActive={true} />}
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Bottom CTA */}
-      <div className="bg-[#0a0a0a] py-32 text-center">
+      <div className="py-20 text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -1114,13 +1193,10 @@ export default function Services() {
           <p className="text-zinc-500 text-lg mb-8 max-w-md mx-auto">
             Every project includes unlimited revisions and 30 days of support.
           </p>
-          <Link
-            href="#contact"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-medium rounded-full hover:bg-blue-500 hover:text-white transition-colors duration-300"
-          >
+          <ShineButton href="#contact">
             Start Your Project
             <span>→</span>
-          </Link>
+          </ShineButton>
         </motion.div>
       </div>
     </section>

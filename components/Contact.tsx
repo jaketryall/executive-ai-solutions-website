@@ -33,11 +33,11 @@ export default function Contact() {
   ];
 
   const inputClasses = `w-full px-5 py-4 bg-zinc-900/50 border border-zinc-800 rounded-2xl text-white placeholder-zinc-500
-    focus:border-blue-500/50 focus:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20
+    focus:border-amber-500/50 focus:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-amber-500/20
     transition-all duration-300`;
 
   return (
-    <section id="contact" className="relative bg-[#0a0a0a] py-32">
+    <section id="contact" className="relative bg-[#0a0a0a] py-32 rounded-t-[3rem] -mt-12 z-90 shadow-section-stack">
       <div className="px-6 md:px-12 lg:px-20">
         <div className="max-w-[1400px] mx-auto">
           {/* Section Header */}
@@ -47,7 +47,7 @@ export default function Contact() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, ease: smoothEase }}
-              className="text-blue-500 text-sm font-medium tracking-wider uppercase mb-4"
+              className="text-amber-500 text-sm font-medium tracking-wider uppercase mb-4"
             >
               Get in Touch
             </motion.p>
@@ -62,7 +62,7 @@ export default function Contact() {
               >
                 Let's work{" "}
                 <motion.span
-                  className="text-blue-500 inline-block"
+                  className="text-amber-500 inline-block"
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
@@ -116,7 +116,7 @@ export default function Contact() {
                 },
                 {
                   icon: (
-                    <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse" />
+                    <div className="w-3 h-3 rounded-full bg-amber-500 animate-pulse" />
                   ),
                   label: "Availability",
                   value: "Taking new projects",
@@ -132,7 +132,7 @@ export default function Contact() {
                 >
                   <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all duration-300">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0 text-blue-500">
+                      <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0 text-amber-500">
                         {item.icon}
                       </div>
                       <div>
@@ -142,7 +142,7 @@ export default function Contact() {
                         {item.href ? (
                           <a
                             href={item.href}
-                            className="text-lg text-white hover:text-blue-500 transition-colors"
+                            className="text-lg text-white hover:text-amber-500 transition-colors"
                           >
                             {item.value}
                           </a>
@@ -189,8 +189,8 @@ export default function Contact() {
               className="lg:col-span-3"
             >
               <div className="relative p-8 md:p-12 rounded-3xl bg-zinc-900/50 border border-zinc-800 overflow-hidden">
-                {/* Blue accent line */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500" />
+                {/* Gold accent line */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-amber-500" />
 
                 {submitted ? (
                   <motion.div
@@ -202,10 +202,10 @@ export default function Contact() {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: "spring", delay: 0.2 }}
-                      className="w-24 h-24 bg-blue-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8"
+                      className="w-24 h-24 bg-amber-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8"
                     >
                       <motion.svg
-                        className="w-12 h-12 text-blue-500"
+                        className="w-12 h-12 text-amber-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -286,7 +286,7 @@ export default function Contact() {
                             onClick={() => setFormData({ ...formData, budget: option.value })}
                             className={`px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
                               formData.budget === option.value
-                                ? "bg-blue-500 text-white border-blue-500"
+                                ? "bg-amber-500 text-white border-amber-500"
                                 : "bg-zinc-900/50 text-zinc-400 border border-zinc-800 hover:bg-zinc-800 hover:text-white"
                             }`}
                             whileHover={{ scale: 1.02 }}
@@ -322,7 +322,7 @@ export default function Contact() {
                         className={`w-full py-4 font-semibold rounded-2xl transition-all duration-300 ${
                           isSubmitting
                             ? "bg-zinc-800 text-zinc-400 cursor-not-allowed"
-                            : "bg-blue-500 text-white hover:bg-blue-600"
+                            : "bg-amber-500 text-white hover:bg-amber-600"
                         }`}
                         whileHover={!isSubmitting ? { scale: 1.01 } : {}}
                         whileTap={!isSubmitting ? { scale: 0.99 } : {}}

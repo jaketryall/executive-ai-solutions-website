@@ -48,13 +48,13 @@ function FAQItem({ faq, index }: { faq: typeof faqs[0]; index: number }) {
         onClick={() => setIsOpen(!isOpen)}
         className="w-full py-6 flex items-center justify-between text-left group"
       >
-        <span className="text-lg md:text-xl font-medium text-white group-hover:text-[#2563eb] transition-colors pr-8">
+        <span className="text-lg md:text-xl font-medium text-white group-hover:text-[#b89a5e] transition-colors pr-8">
           {faq.question}
         </span>
         <motion.span
           animate={{ rotate: isOpen ? 45 : 0 }}
           transition={{ duration: 0.2 }}
-          className="text-2xl text-zinc-500 group-hover:text-[#2563eb] transition-colors flex-shrink-0"
+          className="text-2xl text-zinc-500 group-hover:text-[#b89a5e] transition-colors flex-shrink-0"
         >
           +
         </motion.span>
@@ -80,7 +80,7 @@ function FAQItem({ faq, index }: { faq: typeof faqs[0]; index: number }) {
 
 export default function FAQ() {
   return (
-    <section id="faq" className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a] rounded-t-[2rem] -mt-8">
+    <section id="faq" className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a] rounded-t-[3rem] -mt-12 z-70 shadow-section-stack">
       <div className="max-w-4xl mx-auto">
         {/* Section header */}
         <div className="mb-16">
@@ -112,7 +112,7 @@ export default function FAQ() {
             >
               Common{" "}
               <motion.span
-                className="font-serif italic text-[#2563eb] inline-block"
+                className="font-serif italic text-[#b89a5e] inline-block"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
@@ -151,7 +151,7 @@ export default function FAQ() {
           <p className="text-zinc-400 mb-4">Still have questions?</p>
           <a
             href="#contact"
-            className="inline-flex items-center gap-2 text-white font-medium hover:text-[#2563eb] transition-colors"
+            className="inline-flex items-center gap-2 text-white font-medium hover:text-[#b89a5e] transition-colors"
           >
             Get in touch
             <span>→</span>

@@ -106,7 +106,7 @@ function ProcessStep({
           }}
           transition={{ duration: 0.3 }}
         >
-          <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center relative z-10 text-blue-500">
+          <div className="w-14 h-14 rounded-2xl bg-[#9a7b3c]/10 flex items-center justify-center relative z-10 text-[#b89a5e]">
             {step.icon}
           </div>
 
@@ -114,14 +114,14 @@ function ProcessStep({
           <motion.div
             className="absolute inset-0 rounded-2xl"
             style={{
-              boxShadow: "0 0 30px rgba(59, 130, 246, 0.3)",
+              boxShadow: "0 0 30px rgba(154, 123, 60, 0.3)",
             }}
             animate={{ opacity: isActive ? 1 : 0 }}
             transition={{ duration: 0.3 }}
           />
 
           {/* Step number badge */}
-          <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-xs font-bold text-white">
+          <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#9a7b3c] flex items-center justify-center text-xs font-bold text-white">
             {index + 1}
           </div>
         </motion.div>
@@ -130,8 +130,8 @@ function ProcessStep({
         <motion.div
           className="flex-1 p-8 rounded-3xl bg-zinc-900/50 border border-zinc-800"
           animate={{
-            borderColor: isActive ? "rgba(59, 130, 246, 0.3)" : "rgba(39, 39, 42, 1)",
-            backgroundColor: isActive ? "rgba(59, 130, 246, 0.05)" : "rgba(24, 24, 27, 0.5)",
+            borderColor: isActive ? "rgba(154, 123, 60, 0.3)" : "rgba(39, 39, 42, 1)",
+            backgroundColor: isActive ? "rgba(154, 123, 60, 0.05)" : "rgba(24, 24, 27, 0.5)",
           }}
           transition={{ duration: 0.3 }}
         >
@@ -139,12 +139,12 @@ function ProcessStep({
           <div className="flex items-center justify-between mb-4">
             <motion.h3
               className="text-2xl md:text-3xl font-bold text-white"
-              animate={{ color: isActive ? "#3B82F6" : "#ffffff" }}
+              animate={{ color: isActive ? "#b89a5e" : "#ffffff" }}
               transition={{ duration: 0.3 }}
             >
               {step.title}
             </motion.h3>
-            <span className="px-4 py-1.5 rounded-full text-sm font-medium bg-blue-500/10 text-blue-500">
+            <span className="px-4 py-1.5 rounded-full text-sm font-medium bg-[#9a7b3c]/10 text-[#b89a5e]">
               {step.duration}
             </span>
           </div>
@@ -170,7 +170,7 @@ function ProcessStep({
                 }}
                 transition={{ duration: 0.2, delay: i * 0.05 }}
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#9a7b3c]" />
                 <span className="text-sm text-zinc-400">{detail}</span>
               </motion.div>
             ))}
@@ -185,7 +185,7 @@ export default function Process() {
   const [activeStep, setActiveStep] = useState<number | null>(null);
 
   return (
-    <section id="process" className="relative bg-[#0a0a0a] py-32">
+    <section id="process" className="relative bg-[#0a0a0a] py-32 rounded-t-[3rem] -mt-12 z-60 shadow-section-stack">
       <div className="px-6 md:px-12 lg:px-20">
         <div className="max-w-[1200px] mx-auto">
           {/* Section Header */}
@@ -195,7 +195,7 @@ export default function Process() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, ease: smoothEase }}
-              className="text-blue-500 text-sm font-medium tracking-wider uppercase mb-4"
+              className="text-[#b89a5e] text-sm font-medium tracking-wider uppercase mb-4"
             >
               How It Works
             </motion.p>
@@ -219,7 +219,7 @@ export default function Process() {
                     whileInView={{ y: 0, opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, delay: 0.2, ease: smoothEase }}
-                    className="text-4xl md:text-5xl lg:text-6xl font-bold text-blue-500"
+                    className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#b89a5e]"
                   >
                     to launch
                   </motion.h2>
@@ -275,7 +275,7 @@ export default function Process() {
 
                 <Link href="#contact">
                   <motion.button
-                    className="px-8 py-4 bg-blue-500 text-white font-medium rounded-full hover:bg-blue-600 transition-colors duration-300"
+                    className="px-8 py-4 bg-[#9a7b3c] text-white font-medium rounded-full hover:bg-[#7d6230] transition-colors duration-300"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >

@@ -1,7 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 
 // Smooth easing curve
 const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -45,21 +44,17 @@ const testimonials = [
   },
 ];
 
-function TestimonialCard({ testimonial, index }: { testimonial: typeof testimonials[0]; index: number }) {
+function TestimonialCard({ testimonial }: { testimonial: typeof testimonials[0] }) {
   return (
-    <motion.div
+    <div
       className="flex-shrink-0 w-[400px] md:w-[500px] p-8 rounded-2xl bg-zinc-900/50 border border-zinc-800"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
     >
       {/* Stars */}
       <div className="flex gap-1 mb-6">
         {[...Array(5)].map((_, i) => (
           <svg
             key={i}
-            className="w-5 h-5 text-blue-500"
+            className="w-5 h-5 text-[#b89a5e]"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -75,7 +70,7 @@ function TestimonialCard({ testimonial, index }: { testimonial: typeof testimoni
 
       {/* Author */}
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-sm font-bold text-white">
+        <div className="w-12 h-12 rounded-full bg-[#9a7b3c] flex items-center justify-center text-sm font-bold text-white">
           {testimonial.initials}
         </div>
         <div>
@@ -83,135 +78,106 @@ function TestimonialCard({ testimonial, index }: { testimonial: typeof testimoni
           <p className="text-sm text-zinc-500">{testimonial.role}</p>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
-// Infinite scroll row
-function MarqueeRow({ direction = "left", speed = 30 }: { direction?: "left" | "right"; speed?: number }) {
+// Infinite scroll row using CSS animation
+function MarqueeRow({ direction = "left", speed = 40 }: { direction?: "left" | "right"; speed?: number }) {
   const items = [...testimonials, ...testimonials]; // Duplicate for seamless loop
+  const animationClass = direction === "left" ? "animate-marquee-left" : "animate-marquee-right";
 
   return (
     <div className="flex overflow-hidden">
-      <motion.div
-        className="flex gap-6"
-        animate={{
-          x: direction === "left" ? [0, -50 * testimonials.length + "%"] : [-50 * testimonials.length + "%", 0],
-        }}
-        transition={{
-          x: {
-            duration: speed,
-            repeat: Infinity,
-            ease: "linear",
-          },
-        }}
+      <div
+        className={`flex gap-6 pr-6 ${animationClass}`}
+        style={{ "--marquee-duration": `${speed}s` } as React.CSSProperties}
       >
         {items.map((testimonial, index) => (
-          <TestimonialCard key={`${testimonial.author}-${index}`} testimonial={testimonial} index={0} />
+          <TestimonialCard key={`${testimonial.author}-${index}`} testimonial={testimonial} />
         ))}
-      </motion.div>
+      </div>
+      {/* Duplicate track for seamless loop */}
+      <div
+        className={`flex gap-6 pr-6 ${animationClass}`}
+        style={{ "--marquee-duration": `${speed}s` } as React.CSSProperties}
+      >
+        {items.map((testimonial, index) => (
+          <TestimonialCard key={`${testimonial.author}-dup-${index}`} testimonial={testimonial} />
+        ))}
+      </div>
     </div>
   );
 }
 
 export default function Testimonials() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  const y1 = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [-50, 50]);
-
   return (
-    <section ref={sectionRef} className="relative bg-[#0a0a0a] py-24 md:py-32 overflow-hidden">
-      {/* Header */}
-      <div className="px-6 md:px-12 lg:px-20 mb-12 md:mb-16">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <div>
-              <motion.p
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, ease: smoothEase }}
-                className="text-blue-500 text-sm font-medium tracking-wider uppercase mb-4"
-              >
-                Testimonials
-              </motion.p>
-              <div className="overflow-hidden">
-                <motion.div
-                  initial={{ y: 80 }}
-                  whileInView={{ y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.1, ease: smoothEase }}
-                  className="text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight uppercase"
-                >
-                  Trusted By <span className="text-blue-500">Industry</span>
-                </motion.div>
-              </div>
-              <div className="overflow-hidden">
-                <motion.div
-                  initial={{ y: 80 }}
-                  whileInView={{ y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.2, ease: smoothEase }}
-                  className="text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight uppercase"
-                >
-                  Leaders
-                </motion.div>
-              </div>
-            </div>
+    <section className="relative bg-[#0a0a0a] py-24 md:py-32 overflow-hidden rounded-t-[3rem] -mt-12 z-30 shadow-section-stack">
+      {/* Animated border shine effect - rotating conic gradient */}
+      <div className="absolute inset-0 rounded-t-[3rem] pointer-events-none overflow-hidden">
+        {/* Rotating gradient border */}
+        <motion.div
+          className="absolute -inset-[1px] rounded-t-[3rem]"
+          style={{
+            background: "conic-gradient(from 0deg, transparent 0deg, transparent 340deg, rgba(255, 200, 150, 0.4) 350deg, rgba(255, 220, 180, 0.9) 355deg, rgba(255, 200, 150, 0.4) 360deg)",
+            filter: "blur(1px)",
+          }}
+          animate={{
+            rotate: [0, 360],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3, ease: smoothEase }}
-              className="flex items-center gap-8"
-            >
-              <motion.div
-                className="text-center"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.4, ease: smoothEase }}
-              >
-                <p className="text-4xl font-bold text-white">50+</p>
-                <p className="text-sm text-zinc-500">Happy Clients</p>
-              </motion.div>
-              <motion.div
-                className="w-px h-12 bg-zinc-800"
-                initial={{ scaleY: 0 }}
-                whileInView={{ scaleY: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-              />
-              <motion.div
-                className="text-center"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.6, ease: smoothEase }}
-              >
-                <p className="text-4xl font-bold text-white">5.0</p>
-                <p className="text-sm text-zinc-500">Avg Rating</p>
-              </motion.div>
-            </motion.div>
-          </div>
+        {/* Inner mask to show only the border */}
+        <div
+          className="absolute inset-[1px] rounded-t-[calc(3rem-1px)] bg-[#0a0a0a]"
+        />
+
+        {/* Static border on top */}
+        <div className="absolute inset-0 rounded-t-[3rem] border-t border-l border-r border-zinc-800/50" />
+      </div>
+
+      {/* Header */}
+      <div className="relative z-10 px-6 md:px-12 lg:px-20 mb-12 md:mb-16">
+        <div className="max-w-[1400px] mx-auto">
+          <motion.p
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: smoothEase }}
+            className="text-[#b89a5e] text-sm font-medium tracking-wider uppercase mb-4"
+          >
+            Testimonials
+          </motion.p>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1, ease: smoothEase }}
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
+          >
+            Trusted By <span className="text-[#b89a5e]">Industry</span>
+          </motion.h2>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2, ease: smoothEase }}
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
+          >
+            Leaders
+          </motion.h2>
         </div>
       </div>
 
       {/* Marquee Rows */}
-      <div className="space-y-6">
-        <motion.div style={{ x: y1 }}>
-          <MarqueeRow direction="left" speed={40} />
-        </motion.div>
-        <motion.div style={{ x: y2 }}>
-          <MarqueeRow direction="right" speed={35} />
-        </motion.div>
+      <div className="relative z-10 space-y-6">
+        <MarqueeRow direction="left" speed={40} />
+        <MarqueeRow direction="right" speed={35} />
       </div>
 
       {/* Gradient overlays for fade effect */}

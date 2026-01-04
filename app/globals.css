@@ -7,7 +7,19 @@
     --bg-secondary: #0d0d14;
     --bg-tertiary: #12121a;
     --accent: #1a1a2e;
-    --accent-blue: #1e3a5f;
+    --accent-gold: #9a7b3c;
+
+    /* Metallic Bronze-Gold Palette */
+    --gold-50: #f5f0e6;
+    --gold-100: #e8dcc8;
+    --gold-200: #d4c4a8;
+    --gold-300: #c4ad84;
+    --gold-400: #b89a5e;
+    --gold-500: #9a7b3c;
+    --gold-600: #7d6230;
+    --gold-700: #5c4521;
+    --gold-800: #453318;
+    --gold-900: #2e2210;
 
     /* Text */
     --text-primary: #ffffff;
@@ -43,7 +55,7 @@
   }
 
   ::selection {
-    background-color: var(--accent-blue);
+    background-color: var(--accent-gold);
     color: var(--text-primary);
   }
 
@@ -153,7 +165,70 @@
 
   /* Focus styles */
   .focus-ring:focus-visible {
-    outline: 2px solid var(--accent-blue);
+    outline: 2px solid var(--accent-gold);
     outline-offset: 2px;
+  }
+
+  /* Marquee animations for testimonials */
+  @keyframes marquee-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes marquee-right {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  .animate-marquee-left {
+    animation: marquee-left var(--marquee-duration, 40s) linear infinite;
+  }
+
+  .animate-marquee-right {
+    animation: marquee-right var(--marquee-duration, 40s) linear infinite;
+  }
+
+  /* Section stacking shadow - dramatic upward shadow with warm gold glow */
+  .shadow-section-stack {
+    box-shadow:
+      0 -20px 60px rgba(154, 123, 60, 0.15),
+      0 -8px 30px rgba(184, 154, 94, 0.1),
+      0 -4px 12px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 220, 180, 0.08);
+  }
+
+  /* Metallic gold text effect */
+  .text-metallic-gold {
+    background: linear-gradient(
+      135deg,
+      #5c4521 0%,
+      #9a7b3c 25%,
+      #b89a5e 45%,
+      #b89a5e 55%,
+      #9a7b3c 75%,
+      #5c4521 100%
+    );
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: metallic-shimmer 6s ease-in-out infinite;
+  }
+
+  @keyframes metallic-shimmer {
+    0%, 100% {
+      background-position: 100% 50%;
+    }
+    50% {
+      background-position: 0% 50%;
+    }
   }
 }
