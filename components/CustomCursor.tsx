@@ -1,18 +1,21 @@
 "use client";
 
-import { motion, useMotionValue } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState } from "react";
 
-type CursorVariant = "default" | "text" | "link" | "button" | "card" | "drag";
+type CursorVariant = "default" | "text" | "link" | "button" | "card";
 
 export default function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false);
   const [variant, setVariant] = useState<CursorVariant>("default");
-  const [hoverText, setHoverText] = useState("View");
 
-  // Direct motion values - no spring, instant response
   const cursorX = useMotionValue(0);
   const cursorY = useMotionValue(0);
+
+  // Smooth spring for outer ring
+  const springConfig = { damping: 25, stiffness: 300 };
+  const ringX = useSpring(cursorX, springConfig);
+  const ringY = useSpring(cursorY, springConfig);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -24,41 +27,19 @@ export default function CustomCursor() {
     const handleMouseEnter = () => setIsVisible(true);
     const handleMouseLeave = () => setIsVisible(false);
 
-    // Enhanced hover detection
     const handleElementHover = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
 
-      // Check for data-cursor attribute for custom text
-      const cursorElement = target.closest('[data-cursor]');
-      if (cursorElement) {
-        const cursorText = cursorElement.getAttribute('data-cursor');
-        const cursorType = cursorElement.getAttribute('data-cursor-type') as CursorVariant | null;
-        setHoverText(cursorText || "View");
-        setVariant(cursorType || "link");
-        return;
-      }
-
       // Check for card elements
-      const isCard = target.closest('[data-card], .card-hover');
-      if (isCard) {
+      const isCard = target.closest('[data-card], .card-hover, .group');
+      if (isCard && target.closest('a')) {
         setVariant("card");
-        setHoverText("Explore");
-        return;
-      }
-
-      // Check for draggable elements
-      const isDraggable = target.closest('[data-draggable]');
-      if (isDraggable) {
-        setVariant("drag");
-        setHoverText("Drag");
         return;
       }
 
       // Check for buttons
-      const isButton = target.closest('button, [role="button"], .btn');
+      const isButton = target.closest('button, [role="button"]');
       if (isButton) {
-        const buttonText = isButton.getAttribute('data-cursor') || "Click";
-        setHoverText(buttonText);
         setVariant("button");
         return;
       }
@@ -66,8 +47,6 @@ export default function CustomCursor() {
       // Check for links
       const isLink = target.closest('a');
       if (isLink) {
-        const linkText = isLink.getAttribute('data-cursor') || "View";
-        setHoverText(linkText);
         setVariant("link");
         return;
       }
@@ -79,7 +58,6 @@ export default function CustomCursor() {
         return;
       }
 
-      // Default state
       setVariant("default");
     };
 
@@ -96,28 +74,37 @@ export default function CustomCursor() {
     };
   }, [isVisible, cursorX, cursorY]);
 
-  const isExpanded = variant === "link" || variant === "button" || variant === "card" || variant === "drag";
-  const showText = variant === "link" || variant === "button" || variant === "card" || variant === "drag";
-
-  // Variant-specific styles
-  const getVariantStyles = () => {
-    switch (variant) {
-      case "card":
-        return "bg-[#9a7b3c] text-white";
-      case "drag":
-        return "bg-zinc-900 text-white border border-zinc-700";
-      case "button":
-        return "bg-white text-black";
-      default:
-        return "bg-white text-black";
-    }
-  };
+  const isExpanded = variant === "link" || variant === "button" || variant === "card";
 
   return (
     <>
-      {/* Main cursor dot */}
+      {/* Large outer ring - hollow circle with invert effect */}
       <motion.div
-        className="fixed pointer-events-none z-[99999]"
+        className="fixed pointer-events-none z-[99999] hidden md:block"
+        style={{
+          left: 0,
+          top: 0,
+          x: ringX,
+          y: ringY,
+        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isVisible ? 1 : 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        <motion.div
+          className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 mix-blend-difference"
+          animate={{
+            width: isExpanded ? 80 : 40,
+            height: isExpanded ? 80 : 40,
+            borderColor: variant === "card" ? "#00f0ff" : "white",
+          }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+        />
+      </motion.div>
+
+      {/* Inner dot - instant follow */}
+      <motion.div
+        className="fixed pointer-events-none z-[99999] hidden md:block"
         style={{
           left: 0,
           top: 0,
@@ -128,35 +115,38 @@ export default function CustomCursor() {
         animate={{ opacity: isVisible ? 1 : 0 }}
         transition={{ duration: 0.15 }}
       >
-        {/* Default cursor dot */}
         <motion.div
-          className="absolute -translate-x-1/2 -translate-y-1/2"
+          className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-white mix-blend-difference"
           animate={{
-            scale: isExpanded ? 0 : 1,
-            opacity: isExpanded ? 0 : 1,
+            width: isExpanded ? 8 : 6,
+            height: isExpanded ? 8 : 6,
+            scale: variant === "text" ? 2 : 1,
           }}
-          transition={{ duration: 0.05 }}
-        >
-          <div className="w-2.5 h-2.5 bg-white rounded-full mix-blend-difference" />
-        </motion.div>
+          transition={{ duration: 0.15 }}
+        />
 
-        {/* Expanded cursor with text */}
-        <motion.div
-          className="absolute -translate-x-1/2 -translate-y-1/2"
-          animate={{
-            scale: showText ? 1 : 0.5,
-            opacity: showText ? 1 : 0,
-          }}
-          transition={{ duration: 0.05 }}
-        >
-          <div
-            className={`text-xs font-medium px-3 py-1.5 rounded-full whitespace-nowrap shadow-lg ${getVariantStyles()}`}
+        {/* View text for cards */}
+        {variant === "card" && (
+          <motion.div
+            className="absolute -translate-x-1/2 -translate-y-1/2 text-white text-xs font-bold uppercase tracking-wider"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            style={{ mixBlendMode: "difference" }}
           >
-            {hoverText}
-          </div>
-        </motion.div>
+            View
+          </motion.div>
+        )}
       </motion.div>
 
+      {/* Hide default cursor */}
+      <style jsx global>{`
+        @media (min-width: 768px) {
+          * {
+            cursor: none !important;
+          }
+        }
+      `}</style>
     </>
   );
 }

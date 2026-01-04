@@ -1,340 +1,316 @@
 "use client";
 
-import { motion, useScroll, useTransform, MotionValue, useInView } from "framer-motion";
-import { useState, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import ShineButton from "./ShineButton";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Smooth easing curve
-const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
-export const workItems = [
+const workItems = [
   {
-    title: "Desert Wings",
+    title: "DESERT WINGS",
     category: "Aviation",
-    description: "A modern, conversion-focused website for Arizona's premier flight training academy.",
     image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&q=80",
-    url: "https://www.desertwingsflightschool.com",
+    url: "#",
+    year: "2024",
   },
   {
-    title: "Meridian",
+    title: "MERIDIAN",
     category: "Consulting",
-    description: "Professional consulting firm website emphasizing trust and expertise.",
     image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80",
     url: "#",
+    year: "2024",
   },
   {
-    title: "Apex Interiors",
+    title: "APEX",
     category: "Design",
-    description: "Elegant portfolio showcasing luxury interior design projects.",
     image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200&q=80",
     url: "#",
+    year: "2023",
   },
   {
-    title: "Northside",
-    category: "Healthcare",
-    description: "Modern healthcare platform focused on patient experience.",
-    image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1200&q=80",
-    url: "#",
-  },
-  {
-    title: "Vertex Labs",
+    title: "VERTEX",
     category: "Technology",
-    description: "Cutting-edge tech startup showcasing innovation and growth.",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80",
     url: "#",
-  },
-  {
-    title: "CloudScale",
-    category: "SaaS",
-    description: "Enterprise SaaS platform with seamless functionality and intelligent UX.",
-    image: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200&q=80",
-    url: "#",
+    year: "2023",
   },
 ];
 
-// Project card with hover effects and subtle glow
-function ProjectCard({
-  project,
-  index,
-  aspectRatio = "4/5"
-}: {
-  project: typeof workItems[0];
-  index: number;
-  aspectRatio?: string;
-}) {
-  const [isHovered, setIsHovered] = useState(false);
+function ProjectCard({ project, index }: { project: typeof workItems[0]; index: number }) {
+  const cardRef = useRef<HTMLDivElement>(null);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.6, delay: index * 0.05 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="group"
+    <div
+      ref={cardRef}
+      className="project-card relative shrink-0 w-[80vw] md:w-[60vw] lg:w-[50vw] h-[70vh] group"
     >
-      <Link
-        href={project.url}
-        target={project.url.startsWith("http") ? "_blank" : undefined}
-        rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
-        className="block"
-      >
-        {/* Image container with glow and border */}
-        <div
-          className="relative overflow-hidden rounded-xl bg-zinc-900 border border-zinc-700 mb-4"
-          style={{
-            aspectRatio,
-            boxShadow: "0 0 60px 10px rgba(255, 220, 180, 0.09)",
-          }}
-        >
-            <motion.div
-            className="absolute inset-0"
-            animate={{ scale: isHovered ? 1.05 : 1 }}
-            transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-          >
-            <Image
-              src={project.image}
-              alt={project.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-          </motion.div>
-
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0" />
-
-          {/* Hover overlay */}
-          <motion.div
-            className="absolute inset-0 bg-[#9a7b3c]/20"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isHovered ? 1 : 0 }}
-            transition={{ duration: 0.3 }}
+      <Link href={project.url} className="block w-full h-full relative">
+        <div className="absolute inset-0 overflow-hidden rounded-2xl">
+          <Image
+            src={project.image}
+            alt={project.title}
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            sizes="60vw"
           />
+          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500" />
+        </div>
 
-          {/* Category badge */}
-          <div className="absolute top-4 left-4">
-            <span className="px-3 py-1.5 bg-white/10 backdrop-blur-md text-white text-xs uppercase tracking-wider rounded-full">
+        <div className="absolute top-6 left-6 text-white/30 text-sm font-mono">
+          {String(index + 1).padStart(2, "0")}
+        </div>
+
+        <div className="absolute top-6 right-6 text-white/30 text-sm font-mono">
+          {project.year}
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 p-8">
+          <h3
+            className="project-title text-[15vw] md:text-[10vw] lg:text-[8vw] font-black text-white leading-[0.85] tracking-[-0.02em]"
+            style={{
+              WebkitTextStroke: "1px rgba(255,255,255,0.2)",
+            }}
+          >
+            {project.title}
+          </h3>
+          <div className="flex items-center gap-4 mt-4">
+            <span className="text-white/60 text-sm uppercase tracking-[0.2em]">
               {project.category}
             </span>
+            <span className="text-white/60 group-hover:text-white group-hover:translate-x-2 transition-all duration-300">
+              →
+            </span>
           </div>
-
-          {/* View indicator */}
-          <motion.div
-            className="absolute bottom-4 right-4"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{
-              opacity: isHovered ? 1 : 0,
-              scale: isHovered ? 1 : 0.8
-            }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
-              <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M17 7H7M17 7V17" />
-              </svg>
-            </div>
-          </motion.div>
         </div>
 
-        {/* Title & Description */}
-        <motion.h3
-          className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight group-hover:text-[#b89a5e] transition-colors duration-300 mb-2"
-          animate={{ x: isHovered ? 4 : 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {project.title}
-        </motion.h3>
-        <p className="text-zinc-400 text-sm md:text-base leading-relaxed">
-          {project.description}
-        </p>
-      </Link>
-    </motion.div>
-  );
-}
-
-// Parallax column component
-function ParallaxColumn({
-  items,
-  yOffset,
-  startIndex = 0
-}: {
-  items: typeof workItems;
-  yOffset: MotionValue<number>;
-  startIndex?: number;
-}) {
-  // Alternate aspect ratios for visual interest
-  const aspectRatios = ["4/5", "3/4", "4/5", "3/4"];
-
-  return (
-    <motion.div
-      className="flex flex-col gap-6 md:gap-8"
-      style={{ y: yOffset }}
-    >
-      {items.map((item, i) => (
-        <ProjectCard
-          key={item.title}
-          project={item}
-          index={startIndex + i}
-          aspectRatio={aspectRatios[i % aspectRatios.length]}
+        <div
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300"
+          style={{
+            background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,240,255,0.03) 2px, rgba(0,240,255,0.03) 4px)",
+          }}
         />
-      ))}
-    </motion.div>
-  );
-}
-
-export default function Work() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Section entrance animation
-  const { scrollYProgress: entranceProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "start start"],
-  });
-
-  const scale = useTransform(entranceProgress, [0, 1], [0.92, 1]);
-  const borderRadius = useTransform(entranceProgress, [0, 1], [48, 0]);
-  const margin = useTransform(entranceProgress, [0, 1], [32, 0]);
-
-  // Parallax for columns
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
-
-  // Columns scroll in opposite directions at same speed
-  const col1Y = useTransform(scrollYProgress, [0, 1], [0, 300]); // moves down
-  const col2Y = useTransform(scrollYProgress, [0, 1], [0, -300]); // moves up
-
-  // Split items into two columns (3 each)
-  const column1Items = [workItems[0], workItems[2], workItems[4]];
-  const column2Items = [workItems[1], workItems[3], workItems[5]];
-
-  return (
-    <div ref={sectionRef} className="relative z-20 bg-[#0a0a0a]">
-      <motion.section
-        id="work"
-        className="relative bg-[#111111] py-24 md:py-32 overflow-hidden shadow-section-stack"
-        style={{
-          scale,
-          borderRadius,
-          marginLeft: margin,
-          marginRight: margin,
-        }}
-      >
-        {/* Header */}
-        <div className="px-6 md:px-12 lg:px-20 mb-8 md:mb-12">
-          <div className="max-w-[1400px] mx-auto">
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-              <div>
-                <motion.p
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, ease: smoothEase }}
-                  className="text-[#b89a5e] text-sm font-medium tracking-wider uppercase mb-4"
-                >
-                  Selected Work
-                </motion.p>
-                <motion.h2
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.1, ease: smoothEase }}
-                  className="text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight uppercase"
-                >
-                  Recent
-                </motion.h2>
-                <motion.h2
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.2, ease: smoothEase }}
-                  className="text-5xl md:text-6xl lg:text-7xl font-black text-[#b89a5e] tracking-tight uppercase"
-                >
-                  Projects
-                </motion.h2>
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3, ease: smoothEase }}
-              >
-                <ShineButton href="#contact" className="px-6 py-3">
-                  Start a project
-                  <span>→</span>
-                </ShineButton>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-
-        {/* Parallax Grid */}
-        <div ref={containerRef} className="px-6 md:px-12 lg:px-20">
-          <div className="max-w-[1400px] mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-12">
-              {/* Column 1 - moves down */}
-              <ParallaxColumn
-                items={column1Items}
-                yOffset={col1Y}
-                startIndex={0}
-              />
-
-              {/* Column 2 - moves up, starts offset for visual interest */}
-              <div className="md:mt-24">
-                <ParallaxColumn
-                  items={column2Items}
-                  yOffset={col2Y}
-                  startIndex={4}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </motion.section>
+      </Link>
     </div>
   );
 }
 
-// Stats section - exported separately
-export function WorkStats() {
-  const stats = [
-    { value: "50+", label: "Projects Delivered" },
-    { value: "98%", label: "Client Satisfaction" },
-    { value: "2x", label: "Average ROI" },
-    { value: "14", label: "Days Avg. Delivery" },
-  ];
+export default function Work() {
+  const containerRef = useRef<HTMLElement>(null);
+  const kineticRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+  const galleryRef = useRef<HTMLElement>(null);
+  const horizontalRef = useRef<HTMLDivElement>(null);
+
+  const useIsomorphicLayoutEffect =
+    typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+  useIsomorphicLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      // Kinetic section - reveal with clip path
+      if (kineticRef.current) {
+        gsap.fromTo(
+          kineticRef.current,
+          { clipPath: "inset(100% 0% 0% 0%)" },
+          {
+            clipPath: "inset(0% 0% 0% 0%)",
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: kineticRef.current,
+              start: "top bottom",
+              end: "top 30%",
+              scrub: 1,
+            },
+          }
+        );
+      }
+
+      // Header section - text reveal with stagger
+      if (headerRef.current) {
+        const headerLabel = headerRef.current.querySelector(".header-label");
+        const headerTitle = headerRef.current.querySelector(".header-title");
+
+        if (headerLabel) {
+          gsap.fromTo(
+            headerLabel,
+            { y: 60, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 1,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: headerRef.current,
+                start: "top 80%",
+                toggleActions: "play none none reverse",
+              },
+            }
+          );
+        }
+
+        if (headerTitle) {
+          gsap.fromTo(
+            headerTitle,
+            { y: 100, opacity: 0, skewY: 5 },
+            {
+              y: 0,
+              opacity: 1,
+              skewY: 0,
+              duration: 1.2,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: headerRef.current,
+                start: "top 75%",
+                toggleActions: "play none none reverse",
+              },
+            }
+          );
+        }
+      }
+
+      // Gallery - horizontal scroll with GSAP
+      if (galleryRef.current && horizontalRef.current) {
+        const cards = horizontalRef.current.querySelectorAll(".project-card");
+
+        // Initial state for cards
+        gsap.set(cards, { opacity: 0, x: 100, rotateY: 15 });
+
+        // Animate cards in as they come into view
+        cards.forEach((card, i) => {
+          gsap.to(card, {
+            opacity: 1,
+            x: 0,
+            rotateY: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: galleryRef.current,
+              start: `top+=${i * 15}% center`,
+              toggleActions: "play none none reverse",
+            },
+          });
+        });
+
+        // Horizontal scroll
+        const totalWidth = horizontalRef.current.scrollWidth - window.innerWidth;
+
+        gsap.to(horizontalRef.current, {
+          x: -totalWidth,
+          ease: "none",
+          scrollTrigger: {
+            trigger: galleryRef.current,
+            start: "top top",
+            end: () => `+=${totalWidth}`,
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1,
+          },
+        });
+      }
+    });
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section className="relative bg-[#0a0a0a] py-20 border-t border-zinc-800">
-      <div className="px-6 md:px-12 lg:px-20">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="text-center"
+    <>
+      {/* Kinetic Typography Intermission */}
+      <section ref={kineticRef} className="relative py-40 overflow-hidden bg-zinc-900">
+        <div className="flex flex-col gap-8">
+          <motion.div
+            className="flex whitespace-nowrap"
+            animate={{ x: [0, -1500] }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          >
+            {[...Array(4)].map((_, i) => (
+              <span
+                key={i}
+                className="text-[12vw] font-black text-white tracking-[-0.03em] mx-6"
               >
-                <p className="text-4xl md:text-5xl font-bold text-white mb-2">
-                  {stat.value}
-                </p>
-                <p className="text-sm text-zinc-500">{stat.label}</p>
-              </motion.div>
+                NO TEMPLATES • NO LIMITS • JUST RESULTS •
+              </span>
             ))}
+          </motion.div>
+          <motion.div
+            className="flex whitespace-nowrap"
+            animate={{ x: [-800, 700] }}
+            transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+          >
+            {[...Array(4)].map((_, i) => (
+              <span
+                key={i}
+                className="text-[12vw] font-black text-transparent tracking-[-0.03em] mx-6"
+                style={{
+                  WebkitTextStroke: "2px rgba(255,255,255,0.4)",
+                }}
+              >
+                CUSTOM BUILT • PIXEL PERFECT • PERFORMANCE FIRST •
+              </span>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Section Header */}
+      <section ref={headerRef} className="pt-16 pb-8 px-6 md:px-12 lg:px-20 bg-neutral-950 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <p className="header-label text-white/40 text-sm uppercase tracking-[0.3em] mb-4">
+            Selected Work
+          </p>
+          <h2 className="header-title text-[12vw] md:text-[8vw] font-black text-white leading-[0.9] tracking-[-0.02em]">
+            THE PROOF
+          </h2>
+        </div>
+      </section>
+
+      {/* Horizontal Scroll Gallery */}
+      <section
+        ref={galleryRef}
+        className="relative bg-neutral-950 h-screen"
+      >
+        <div className="h-full flex items-center overflow-hidden">
+          <div
+            ref={horizontalRef}
+            className="flex gap-8 pl-[10vw] pr-[20vw]"
+          >
+            {workItems.map((project, index) => (
+              <ProjectCard key={project.title} project={project} index={index} />
+            ))}
+
+            {/* End card */}
+            <div className="project-card shrink-0 w-[40vw] h-[70vh] flex items-center justify-center">
+              <div className="text-center">
+                <p className="text-white/40 text-sm uppercase tracking-[0.3em] mb-4">
+                  Want to be next?
+                </p>
+                <Link href="#contact">
+                  <motion.span
+                    className="text-4xl md:text-6xl font-black text-white hover:text-[#00f0ff] transition-colors cursor-pointer"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    LET'S TALK →
+                  </motion.span>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+
+        {/* Progress indicator */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-4">
+          <span className="text-white/40 text-xs font-mono">SCROLL</span>
+          <div className="w-32 h-px bg-white/20 relative overflow-hidden">
+            <div className="progress-bar absolute inset-y-0 left-0 bg-white w-0" />
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
