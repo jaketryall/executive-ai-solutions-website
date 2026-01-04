@@ -34,7 +34,7 @@ export function CardSection({
   magnetic = false,
   background,
   glow = false,
-  glowColor = "#2563eb",
+  glowColor = "#d4a537",
   noPadding = false,
   animateOnScroll = true,
 }: CardSectionProps) {

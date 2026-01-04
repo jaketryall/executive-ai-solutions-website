@@ -192,7 +192,7 @@ export default function Navbar() {
               <Link href="/" className="flex items-center gap-2 px-3">
                 <div className="relative w-7 h-7">
                   <Image
-                    src="/favicon.png"
+                    src="/Executive Ai Solutions Logo.png"
                     alt="Executive AI"
                     fill
                     className="object-contain"
@@ -275,7 +275,7 @@ export default function Navbar() {
             <Link href="/" className="flex items-center gap-2">
               <div className="relative w-6 h-6">
                 <Image
-                  src="/favicon.png"
+                  src="/Executive Ai Solutions Logo.png"
                   alt="Executive AI"
                   fill
                   className="object-contain"
@@ -335,7 +335,7 @@ export default function Navbar() {
                   <Link
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="block text-4xl font-semibold text-white py-4 hover:text-blue-500 transition-colors"
+                    className="block text-4xl font-semibold text-white py-4 hover:text-amber-500 transition-colors"
                   >
                     <motion.span
                       whileHover={{ x: 10 }}

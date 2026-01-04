@@ -359,7 +359,7 @@ export default function PageLoader() {
                       transition={{ duration: 0.4, delay: 0.2 }}
                     >
                       <Image
-                        src="/icon.png"
+                        src="/Executive Ai Solutions Logo.png"
                         alt="Executive AI Logo"
                         fill
                         className="object-contain"

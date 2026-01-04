@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 // Smooth easing curve
 const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -111,36 +112,28 @@ function MarqueeRow({ direction = "left", speed = 40 }: { direction?: "left" | "
 }
 
 export default function Testimonials() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Section entry animation
+  const { scrollYProgress: entryProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "start 0.3"],
+  });
+
+  const entryScale = useTransform(entryProgress, [0, 1], [0.92, 1]);
+  const entryOpacity = useTransform(entryProgress, [0, 0.5], [0, 1]);
+  const entryBorderRadius = useTransform(entryProgress, [0, 1], [48, 0]);
+
   return (
-    <section className="relative bg-[#0a0a0a] py-24 md:py-32 overflow-hidden rounded-t-[3rem] -mt-12 z-30 shadow-section-stack">
-      {/* Animated border shine effect - rotating conic gradient */}
-      <div className="absolute inset-0 rounded-t-[3rem] pointer-events-none overflow-hidden">
-        {/* Rotating gradient border */}
-        <motion.div
-          className="absolute -inset-[1px] rounded-t-[3rem]"
-          style={{
-            background: "conic-gradient(from 0deg, transparent 0deg, transparent 340deg, rgba(255, 200, 150, 0.4) 350deg, rgba(255, 220, 180, 0.9) 355deg, rgba(255, 200, 150, 0.4) 360deg)",
-            filter: "blur(1px)",
-          }}
-          animate={{
-            rotate: [0, 360],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-
-        {/* Inner mask to show only the border */}
-        <div
-          className="absolute inset-[1px] rounded-t-[calc(3rem-1px)] bg-[#0a0a0a]"
-        />
-
-        {/* Static border on top */}
-        <div className="absolute inset-0 rounded-t-[3rem] border-t border-l border-r border-zinc-800/50" />
-      </div>
-
+    <motion.section
+      ref={sectionRef}
+      className="relative py-24 md:py-32 overflow-hidden bg-[#0a0a0a] z-40 shadow-section-stack"
+      style={{
+        scale: entryScale,
+        opacity: entryOpacity,
+        borderRadius: entryBorderRadius,
+      }}
+    >
       {/* Header */}
       <div className="relative z-10 px-6 md:px-12 lg:px-20 mb-12 md:mb-16">
         <div className="max-w-[1400px] mx-auto">
@@ -149,7 +142,7 @@ export default function Testimonials() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: smoothEase }}
-            className="text-[#b89a5e] text-sm font-medium tracking-wider uppercase mb-4"
+            className="text-sm font-medium tracking-wider uppercase mb-4 text-[#b89a5e]"
           >
             Testimonials
           </motion.p>
@@ -158,7 +151,7 @@ export default function Testimonials() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.1, ease: smoothEase }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white"
           >
             Trusted By <span className="text-[#b89a5e]">Industry</span>
           </motion.h2>
@@ -167,7 +160,7 @@ export default function Testimonials() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2, ease: smoothEase }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white"
           >
             Leaders
           </motion.h2>
@@ -181,8 +174,18 @@ export default function Testimonials() {
       </div>
 
       {/* Gradient overlays for fade effect */}
-      <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#0a0a0a] to-transparent pointer-events-none z-10" />
-      <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#0a0a0a] to-transparent pointer-events-none z-10" />
-    </section>
+      <div
+        className="absolute inset-y-0 left-0 w-32 pointer-events-none z-10"
+        style={{
+          background: "linear-gradient(to right, #0a0a0a, transparent)",
+        }}
+      />
+      <div
+        className="absolute inset-y-0 right-0 w-32 pointer-events-none z-10"
+        style={{
+          background: "linear-gradient(to left, #0a0a0a, transparent)",
+        }}
+      />
+    </motion.section>
   );
 }

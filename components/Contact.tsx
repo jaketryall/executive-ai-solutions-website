@@ -1,12 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useState, useRef } from "react";
 
 // Smooth easing curve
 const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export default function Contact() {
+  const sectionRef = useRef<HTMLElement>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -36,8 +37,29 @@ export default function Contact() {
     focus:border-amber-500/50 focus:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-amber-500/20
     transition-all duration-300`;
 
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "start 0.2"],
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 1], [0.92, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+  const y = useTransform(scrollYProgress, [0, 1], [80, 0]);
+  const borderRadius = useTransform(scrollYProgress, [0, 1], ["4rem", "3rem"]);
+
   return (
-    <section id="contact" className="relative bg-[#0a0a0a] py-32 rounded-t-[3rem] -mt-12 z-90 shadow-section-stack">
+    <motion.section
+      ref={sectionRef}
+      id="contact"
+      className="relative bg-[#0a0a0a] py-32 -mt-12 z-90 shadow-section-stack"
+      style={{
+        scale,
+        opacity,
+        y,
+        borderTopLeftRadius: borderRadius,
+        borderTopRightRadius: borderRadius,
+      }}
+    >
       <div className="px-6 md:px-12 lg:px-20">
         <div className="max-w-[1400px] mx-auto">
           {/* Section Header */}
@@ -351,6 +373,6 @@ export default function Contact() {
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

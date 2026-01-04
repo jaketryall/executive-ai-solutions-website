@@ -103,7 +103,7 @@ export default function CustomCursor() {
   const getVariantStyles = () => {
     switch (variant) {
       case "card":
-        return "bg-[#2563eb] text-white";
+        return "bg-[#9a7b3c] text-white";
       case "drag":
         return "bg-zinc-900 text-white border border-zinc-700";
       case "button":

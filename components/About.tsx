@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import AnimatedLogo from "./AnimatedLogo";
 
@@ -8,13 +8,30 @@ import AnimatedLogo from "./AnimatedLogo";
 const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export default function About() {
-  const sectionRef = useRef(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "start 0.2"],
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 1], [0.92, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+  const y = useTransform(scrollYProgress, [0, 1], [80, 0]);
+  const borderRadius = useTransform(scrollYProgress, [0, 1], ["4rem", "3rem"]);
 
   return (
-    <section
+    <motion.section
       id="about"
       ref={sectionRef}
-      className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a] overflow-hidden rounded-t-[3rem] -mt-12 z-80 shadow-section-stack"
+      className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a] overflow-hidden -mt-12 z-80 shadow-section-stack"
+      style={{
+        scale,
+        opacity,
+        y,
+        borderTopLeftRadius: borderRadius,
+        borderTopRightRadius: borderRadius,
+      }}
     >
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section header */}
@@ -140,6 +157,6 @@ export default function About() {
           <span className="text-zinc-500">Based in Arizona, working with clients worldwide</span>
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }

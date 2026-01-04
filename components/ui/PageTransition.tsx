@@ -146,7 +146,7 @@ export function OverlayTransition({ children }: PageTransitionProps) {
             transition={{ duration: 0.3 }}
           >
             <span className="text-2xl font-semibold text-white tracking-tight">
-              Executive<span className="text-[#2563eb]">AI</span>
+              Executive<span className="text-[#d4a537]">AI</span>
             </span>
           </motion.div>
         </motion.div>

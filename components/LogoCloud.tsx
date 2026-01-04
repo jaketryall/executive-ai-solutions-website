@@ -33,13 +33,13 @@ export default function LogoCloud() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ scale: 1.1, color: "#2563eb" }}
+              whileHover={{ scale: 1.1, color: "#b89a5e" }}
               className="group cursor-pointer"
             >
               <div className="flex flex-col items-center gap-3">
                 <svg
                   viewBox="0 0 24 24"
-                  className="w-8 h-8 md:w-10 md:h-10 text-zinc-500 group-hover:text-[#2563eb] transition-colors duration-300"
+                  className="w-8 h-8 md:w-10 md:h-10 text-zinc-500 group-hover:text-[#b89a5e] transition-colors duration-300"
                   fill="currentColor"
                 >
                   <path d={logo.svg} />

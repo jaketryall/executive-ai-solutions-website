@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform, MotionValue, useInView } from "framer-
 import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import ShineButton from "./ShineButton";
 
 // Smooth easing curve
 const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -135,11 +136,11 @@ function GridCard({ item, index }: { item: typeof workItems[0]; index: number })
       {/* Subtle dark overlay */}
       <div className="absolute inset-0 bg-black/30" />
 
-      {/* Subtle blue glow at bottom */}
+      {/* Subtle gold glow at bottom */}
       <div
         className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
         style={{
-          background: "linear-gradient(to top, rgba(59, 130, 246, 0.1), transparent)",
+          background: "linear-gradient(to top, rgba(154, 123, 60, 0.1), transparent)",
         }}
       />
     </motion.div>
@@ -233,7 +234,7 @@ export default function Hero() {
           <div
             className="absolute -inset-64 -z-10"
             style={{
-              background: "radial-gradient(ellipse at center, rgba(59, 130, 246, 0.15) 0%, transparent 60%)",
+              background: "radial-gradient(ellipse at center, rgba(154, 123, 60, 0.2) 0%, transparent 60%)",
               filter: "blur(80px)",
             }}
           />
@@ -288,7 +289,7 @@ export default function Hero() {
               >
                 That{" "}
                 <motion.span
-                  className="text-blue-500 inline-block"
+                  className="inline-block text-metallic-gold"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.6, delay: 0.7, ease: smoothEase }}
@@ -327,23 +328,9 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.15, ease: smoothEase }}
           >
-            <Link href="#contact">
-              <motion.button
-                className="group relative px-8 py-4 bg-white text-black font-medium rounded-full overflow-hidden"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span className="relative z-10 group-hover:text-white transition-colors duration-300">
-                  Start a Project
-                </span>
-                <motion.div
-                  className="absolute inset-0 bg-blue-500"
-                  initial={{ y: "100%" }}
-                  whileHover={{ y: 0 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.button>
-            </Link>
+            <ShineButton href="#contact">
+              Start a Project
+            </ShineButton>
 
             <Link href="#work">
               <motion.button

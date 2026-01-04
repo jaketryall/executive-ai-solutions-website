@@ -52,20 +52,6 @@ export const workItems = [
     image: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200&q=80",
     url: "#",
   },
-  {
-    title: "Elevate Fitness",
-    category: "Wellness",
-    description: "Premium fitness brand with vibrant design and creative content.",
-    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=80",
-    url: "#",
-  },
-  {
-    title: "Artisan Coffee",
-    category: "Hospitality",
-    description: "Transforming a local coffee brand with premium design.",
-    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80",
-    url: "#",
-  },
 ];
 
 // Project card with hover effects and subtle glow
@@ -224,9 +210,9 @@ export default function Work() {
   const col1Y = useTransform(scrollYProgress, [0, 1], [0, 300]); // moves down
   const col2Y = useTransform(scrollYProgress, [0, 1], [0, -300]); // moves up
 
-  // Split items into two columns
-  const column1Items = [workItems[0], workItems[2], workItems[4], workItems[6]];
-  const column2Items = [workItems[1], workItems[3], workItems[5], workItems[7]];
+  // Split items into two columns (3 each)
+  const column1Items = [workItems[0], workItems[2], workItems[4]];
+  const column2Items = [workItems[1], workItems[3], workItems[5]];
 
   return (
     <div ref={sectionRef} className="relative z-20 bg-[#0a0a0a]">

@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Work, { WorkStats } from "@/components/Work";
+import Work from "@/components/Work";
+import SocialProof from "@/components/SocialProof";
 import Services from "@/components/Services";
 import Pricing from "@/components/Pricing";
 import Testimonials from "@/components/Testimonials";
@@ -19,8 +20,8 @@ export default function Home() {
       <main>
         <Hero />
         <Work />
+        <SocialProof />
         <Testimonials />
-        <WorkStats />
         <Services />
         <Pricing />
         <Process />

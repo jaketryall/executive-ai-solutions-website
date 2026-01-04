@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { useState, useRef } from "react";
 
 // Smooth easing curve
 const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -79,8 +79,31 @@ function FAQItem({ faq, index }: { faq: typeof faqs[0]; index: number }) {
 }
 
 export default function FAQ() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "start 0.2"],
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 1], [0.92, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+  const y = useTransform(scrollYProgress, [0, 1], [80, 0]);
+  const borderRadius = useTransform(scrollYProgress, [0, 1], ["4rem", "3rem"]);
+
   return (
-    <section id="faq" className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a] rounded-t-[3rem] -mt-12 z-70 shadow-section-stack">
+    <motion.section
+      ref={sectionRef}
+      id="faq"
+      className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a] -mt-12 z-70 shadow-section-stack"
+      style={{
+        scale,
+        opacity,
+        y,
+        borderTopLeftRadius: borderRadius,
+        borderTopRightRadius: borderRadius,
+      }}
+    >
       <div className="max-w-4xl mx-auto">
         {/* Section header */}
         <div className="mb-16">
@@ -158,6 +181,6 @@ export default function FAQ() {
           </a>
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }

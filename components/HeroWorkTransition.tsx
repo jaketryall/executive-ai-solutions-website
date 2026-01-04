@@ -193,7 +193,7 @@ export default function HeroWorkTransition() {
               }}
             >
               <div className="flex items-center gap-2 mb-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#9a7b3c]" />
                 <p className="text-[10px] text-zinc-400 uppercase tracking-widest">
                   {currentProject.category}
                 </p>
@@ -210,7 +210,7 @@ export default function HeroWorkTransition() {
                 opacity: useTransform(scrollYProgress, [0.35, 0.5], [0, 1]),
               }}
             >
-              <span className="text-xs text-[#2563eb] uppercase tracking-[0.3em] mb-4">
+              <span className="text-xs text-[#b89a5e] uppercase tracking-[0.3em] mb-4">
                 {currentProject.category}
               </span>
               <h3 className="text-3xl md:text-4xl font-semibold text-white mb-4">
@@ -223,7 +223,7 @@ export default function HeroWorkTransition() {
 
             {/* Blue glow effect */}
             <motion.div
-              className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[200px] h-[40px] bg-[#2563eb]/30 blur-2xl rounded-full"
+              className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[200px] h-[40px] bg-[#9a7b3c]/30 blur-2xl rounded-full"
               style={{
                 opacity: useTransform(scrollYProgress, [0, 0.3], [1, 0.5]),
               }}
@@ -252,7 +252,7 @@ export default function HeroWorkTransition() {
 
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-white tracking-tight">
             Selected{" "}
-            <span className="bg-gradient-to-r from-[#2563eb] to-[#3b82f6] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#9a7b3c] to-[#b89a5e] bg-clip-text text-transparent">
               Work
             </span>
           </h2>
@@ -269,7 +269,7 @@ export default function HeroWorkTransition() {
             Scroll to explore
           </span>
           <motion.div
-            className="w-px h-12 bg-gradient-to-b from-[#2563eb] to-transparent"
+            className="w-px h-12 bg-gradient-to-b from-[#9a7b3c] to-transparent"
             animate={{ scaleY: [1, 0.5, 1] }}
             transition={{ duration: 1.5, repeat: Infinity }}
           />
