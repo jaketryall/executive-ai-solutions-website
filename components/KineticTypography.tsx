@@ -185,14 +185,6 @@ export default function KineticTypography() {
               "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 20%, rgba(0,0,0,0.7) 50%, #000000 80%, #000000 100%)",
           }}
         />
-        <div
-          className="absolute left-0 right-0 h-[2px] bottom-0"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent 10%, rgba(0,240,255,0.4) 50%, transparent 90%)",
-            boxShadow: "0 0 20px rgba(0,240,255,0.3), 0 0 40px rgba(0,240,255,0.15)",
-          }}
-        />
       </div>
     </section>
   );

@@ -10,6 +10,10 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+// Cinematic warm color palette
+const accentColor = "rgba(255, 200, 150, 1)";
+const accentColorMuted = "rgba(255, 200, 150, 0.6)";
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const footerRef = useRef<HTMLElement>(null);
@@ -185,7 +189,12 @@ export default function Footer() {
       <div ref={contentRef} className="relative max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
         {/* Top section with branding */}
         <div className="text-center mb-20">
-          <Link href="/" className="inline-block text-white text-2xl font-bold tracking-tight hover:text-[#00f0ff] transition-colors">
+          <Link
+            href="/"
+            className="inline-block text-white text-2xl font-bold tracking-tight transition-colors"
+            onMouseEnter={(e) => (e.currentTarget.style.color = accentColor)}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "white")}
+          >
             <SplitText animation="chars" stagger={0.05} delay={0.2}>
               EXECUTIVE
             </SplitText>
@@ -242,7 +251,9 @@ export default function Footer() {
             <p className="text-white/20 text-xs uppercase tracking-[0.2em] mb-6">Contact</p>
             <a
               href="mailto:hello@executive.ai"
-              className="footer-link text-white/40 hover:text-[#00f0ff] transition-colors text-sm inline-block"
+              className="footer-link text-white/40 transition-colors text-sm inline-block"
+              onMouseEnter={(e) => (e.currentTarget.style.color = accentColor)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}
             >
               hello@executive.ai
             </a>
@@ -259,9 +270,10 @@ export default function Footer() {
           </p>
           <p className="text-white/20 text-xs flex items-center gap-2">
             <span
-              className="inline-block w-1.5 h-1.5 rounded-full bg-[#00f0ff]/50"
+              className="inline-block w-1.5 h-1.5 rounded-full"
               style={{
-                boxShadow: "0 0 8px rgba(0,240,255,0.5)",
+                backgroundColor: accentColorMuted,
+                boxShadow: `0 0 8px ${accentColorMuted}`,
               }}
             />
             Built with precision

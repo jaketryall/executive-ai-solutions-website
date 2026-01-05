@@ -11,6 +11,11 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+// Cinematic warm color palette
+const accentColor = "rgba(255, 200, 150, 1)";
+const accentColorMuted = "rgba(255, 200, 150, 0.6)";
+const accentColorFaint = "rgba(255, 200, 150, 0.15)";
+
 // Magnetic button component
 function MagneticButton({
   children,
@@ -343,18 +348,12 @@ export default function Contact() {
         boxShadow: "0 50px 100px -20px rgba(0,0,0,0.8)",
       }}
     >
-      {/* Blueprint grid background */}
+      {/* Warm ambient glow background */}
       <div
         ref={gridRef}
         className="absolute inset-0 pointer-events-none opacity-0"
         style={{
-          backgroundImage: `
-            linear-gradient(rgba(0,240,255,0.15) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,240,255,0.15) 1px, transparent 1px),
-            linear-gradient(rgba(0,240,255,0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,240,255,0.05) 1px, transparent 1px)
-          `,
-          backgroundSize: "100px 100px, 100px 100px, 20px 20px, 20px 20px",
+          background: `radial-gradient(ellipse 80% 60% at 50% 30%, ${accentColorFaint} 0%, transparent 60%)`,
         }}
       />
 
@@ -362,23 +361,23 @@ export default function Contact() {
       <svg
         ref={connectionLinesRef}
         className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{ opacity: isRevealed ? 0.3 : 0, transition: "opacity 0.5s" }}
+        style={{ opacity: isRevealed ? 0.2 : 0, transition: "opacity 0.5s" }}
       >
         <path
           d="M 100 300 Q 200 300 200 400"
-          stroke="#00f0ff"
+          stroke={accentColorMuted}
           strokeWidth="1"
           fill="none"
         />
         <path
           d="M 100 400 Q 150 400 150 500"
-          stroke="#00f0ff"
+          stroke={accentColorMuted}
           strokeWidth="1"
           fill="none"
         />
         <path
           d="M 100 500 Q 180 500 180 600"
-          stroke="#00f0ff"
+          stroke={accentColorMuted}
           strokeWidth="1"
           fill="none"
         />
@@ -387,19 +386,22 @@ export default function Contact() {
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 relative">
         {/* Header */}
         <div ref={headerRef} className="mb-20">
-          <p className="section-label text-[#00f0ff]/60 text-sm uppercase tracking-[0.3em] mb-4">
+          <p
+            className="section-label text-sm uppercase tracking-[0.3em] mb-4"
+            style={{ color: accentColorMuted }}
+          >
             <SplitText animation="chars" delay={0.2} stagger={0.03}>
               Get in Touch
             </SplitText>
           </p>
-          <h2 className="section-title text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+          <h2 className="section-title text-5xl md:text-6xl lg:text-8xl font-black text-white leading-[0.9] tracking-[-0.03em]">
             <SplitText animation="words" delay={0.4} stagger={0.1}>
-              Let's start a
+              LET'S START
             </SplitText>
             <br />
-            <span className="text-white/40">
+            <span className="text-white/30">
               <SplitText animation="blur" delay={0.7} stagger={0.04}>
-                conversation
+                SOMETHING
               </SplitText>
             </span>
           </h2>
@@ -413,30 +415,60 @@ export default function Contact() {
             </p>
 
             <div className="space-y-8">
-              <div className="info-block relative pl-6 border-l border-[#00f0ff]/20">
-                <div className="absolute left-0 top-0 w-2 h-2 rounded-full bg-[#00f0ff]/50 -translate-x-[5px]" />
-                <p className="text-[#00f0ff]/40 text-xs uppercase tracking-[0.2em] mb-2">
+              <div
+                className="info-block relative pl-6 border-l"
+                style={{ borderColor: accentColorFaint }}
+              >
+                <div
+                  className="absolute left-0 top-0 w-2 h-2 rounded-full -translate-x-[5px]"
+                  style={{ backgroundColor: accentColorMuted }}
+                />
+                <p
+                  className="text-xs uppercase tracking-[0.2em] mb-2"
+                  style={{ color: accentColorMuted }}
+                >
                   {isRevealed && <TypewriterText text="Email" delay={400} />}
                 </p>
                 <a
                   href="mailto:hello@executive.ai"
-                  className="text-white text-lg hover:text-[#00f0ff] transition-colors"
+                  className="text-white text-lg transition-colors"
+                  style={{ ["--tw-hover-color" as string]: accentColor }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = accentColor)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "white")}
                 >
                   hello@executive.ai
                 </a>
               </div>
 
-              <div className="info-block relative pl-6 border-l border-[#00f0ff]/20">
-                <div className="absolute left-0 top-0 w-2 h-2 rounded-full bg-[#00f0ff]/50 -translate-x-[5px]" />
-                <p className="text-[#00f0ff]/40 text-xs uppercase tracking-[0.2em] mb-2">
+              <div
+                className="info-block relative pl-6 border-l"
+                style={{ borderColor: accentColorFaint }}
+              >
+                <div
+                  className="absolute left-0 top-0 w-2 h-2 rounded-full -translate-x-[5px]"
+                  style={{ backgroundColor: accentColorMuted }}
+                />
+                <p
+                  className="text-xs uppercase tracking-[0.2em] mb-2"
+                  style={{ color: accentColorMuted }}
+                >
                   {isRevealed && <TypewriterText text="Response Time" delay={600} />}
                 </p>
                 <p className="text-white text-lg">Within 24 hours</p>
               </div>
 
-              <div className="info-block relative pl-6 border-l border-[#00f0ff]/20">
-                <div className="absolute left-0 top-0 w-2 h-2 rounded-full bg-[#00f0ff]/50 -translate-x-[5px]" />
-                <p className="text-[#00f0ff]/40 text-xs uppercase tracking-[0.2em] mb-2">
+              <div
+                className="info-block relative pl-6 border-l"
+                style={{ borderColor: accentColorFaint }}
+              >
+                <div
+                  className="absolute left-0 top-0 w-2 h-2 rounded-full -translate-x-[5px]"
+                  style={{ backgroundColor: accentColorMuted }}
+                />
+                <p
+                  className="text-xs uppercase tracking-[0.2em] mb-2"
+                  style={{ color: accentColorMuted }}
+                >
                   {isRevealed && <TypewriterText text="Status" delay={800} />}
                 </p>
                 <div className="flex items-center gap-3">
@@ -493,7 +525,10 @@ export default function Contact() {
               <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Name */}
                 <div className="form-field">
-                  <label className="block text-[#00f0ff]/40 text-xs uppercase tracking-[0.2em] mb-3">
+                  <label
+                    className="block text-xs uppercase tracking-[0.2em] mb-3"
+                    style={{ color: accentColorMuted }}
+                  >
                     {isRevealed && <TypewriterText text="Name" delay={500} />}
                   </label>
                   <input
@@ -501,15 +536,24 @@ export default function Contact() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-transparent border-b border-white/10 py-3 text-white focus:border-[#00f0ff]/50 focus:outline-none transition-colors placeholder:text-white/20"
+                    className="w-full bg-transparent border-b border-white/10 py-3 text-white focus:outline-none transition-colors placeholder:text-white/20"
+                    style={{ ["--focus-border" as string]: accentColorMuted }}
+                    onFocus={(e) => (e.currentTarget.style.borderColor = accentColorMuted)}
+                    onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
                     placeholder="Your name"
                   />
-                  <div className="field-underline h-px bg-gradient-to-r from-[#00f0ff]/50 to-transparent mt-[-1px]" />
+                  <div
+                    className="field-underline h-px mt-[-1px]"
+                    style={{ background: `linear-gradient(to right, ${accentColorMuted}, transparent)` }}
+                  />
                 </div>
 
                 {/* Email */}
                 <div className="form-field">
-                  <label className="block text-[#00f0ff]/40 text-xs uppercase tracking-[0.2em] mb-3">
+                  <label
+                    className="block text-xs uppercase tracking-[0.2em] mb-3"
+                    style={{ color: accentColorMuted }}
+                  >
                     {isRevealed && <TypewriterText text="Email" delay={600} />}
                   </label>
                   <input
@@ -517,15 +561,23 @@ export default function Contact() {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-transparent border-b border-white/10 py-3 text-white focus:border-[#00f0ff]/50 focus:outline-none transition-colors placeholder:text-white/20"
+                    className="w-full bg-transparent border-b border-white/10 py-3 text-white focus:outline-none transition-colors placeholder:text-white/20"
+                    onFocus={(e) => (e.currentTarget.style.borderColor = accentColorMuted)}
+                    onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
                     placeholder="you@company.com"
                   />
-                  <div className="field-underline h-px bg-gradient-to-r from-[#00f0ff]/50 to-transparent mt-[-1px]" />
+                  <div
+                    className="field-underline h-px mt-[-1px]"
+                    style={{ background: `linear-gradient(to right, ${accentColorMuted}, transparent)` }}
+                  />
                 </div>
 
                 {/* Message */}
                 <div className="form-field">
-                  <label className="block text-[#00f0ff]/40 text-xs uppercase tracking-[0.2em] mb-3">
+                  <label
+                    className="block text-xs uppercase tracking-[0.2em] mb-3"
+                    style={{ color: accentColorMuted }}
+                  >
                     {isRevealed && <TypewriterText text="Message" delay={700} />}
                   </label>
                   <textarea
@@ -533,28 +585,36 @@ export default function Contact() {
                     rows={4}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full bg-transparent border-b border-white/10 py-3 text-white focus:border-[#00f0ff]/50 focus:outline-none transition-colors resize-none placeholder:text-white/20"
+                    className="w-full bg-transparent border-b border-white/10 py-3 text-white focus:outline-none transition-colors resize-none placeholder:text-white/20"
+                    onFocus={(e) => (e.currentTarget.style.borderColor = accentColorMuted)}
+                    onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
                     placeholder="Tell us about your project..."
                   />
-                  <div className="field-underline h-px bg-gradient-to-r from-[#00f0ff]/50 to-transparent mt-[-1px]" />
+                  <div
+                    className="field-underline h-px mt-[-1px]"
+                    style={{ background: `linear-gradient(to right, ${accentColorMuted}, transparent)` }}
+                  />
                 </div>
 
                 {/* Submit - Magnetic Button */}
                 <MagneticButton
                   disabled={isSubmitting}
-                  className="group flex items-center gap-3 text-white text-sm uppercase tracking-[0.2em] font-medium hover:text-[#00f0ff] transition-colors disabled:opacity-50 py-4 px-8 border border-white/10 hover:border-[#00f0ff]/50 rounded-full"
+                  className="group flex items-center gap-3 text-white text-sm uppercase tracking-[0.2em] font-medium transition-colors disabled:opacity-50 py-4 px-8 border border-white/10 rounded-full"
                   onHover={() => play("hover", { volume: 0.08 })}
                   onClick={() => play("click")}
                 >
                   {isSubmitting ? (
                     <>
-                      <span className="w-4 h-4 border border-white/30 border-t-[#00f0ff] rounded-full animate-spin" />
+                      <span
+                        className="w-4 h-4 border border-white/30 rounded-full animate-spin"
+                        style={{ borderTopColor: accentColor }}
+                      />
                       Sending...
                     </>
                   ) : (
                     <>
-                      Send Message
-                      <span className="group-hover:translate-x-1 transition-transform">→</span>
+                      <span style={{ color: accentColor }}>Send Message</span>
+                      <span className="group-hover:translate-x-1 transition-transform" style={{ color: accentColor }}>→</span>
                     </>
                   )}
                 </MagneticButton>
