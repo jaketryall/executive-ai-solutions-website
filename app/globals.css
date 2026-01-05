@@ -151,4 +151,25 @@
     outline: 2px solid var(--text-primary);
     outline-offset: 2px;
   }
+
+  /* Writing mode vertical for progress scrubber */
+  .writing-mode-vertical {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  /* Smooth number transition */
+  .number-transition {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .number-transition-enter {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .number-transition-active {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

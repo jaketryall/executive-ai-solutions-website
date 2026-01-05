@@ -76,6 +76,40 @@ function ProjectCard({ project, index }: { project: typeof workItems[0]; index: 
         transition: "transform 0.3s ease-out",
       }}
     >
+      {/* Warm ambient glow behind card - large outer glow */}
+      <div
+        className="absolute rounded-[40px] pointer-events-none"
+        style={{
+          inset: "-80px",
+          background: "radial-gradient(ellipse at center, rgba(255,140,50,0.5) 0%, rgba(255,100,30,0.3) 40%, rgba(255,80,20,0.15) 60%, transparent 80%)",
+          filter: "blur(60px)",
+          opacity: isHovered ? 1 : 0.7,
+          transform: isHovered ? "scale(1.1)" : "scale(1)",
+          transition: "all 0.5s ease-out",
+        }}
+      />
+      {/* Secondary warm glow - tighter, more intense */}
+      <div
+        className="absolute rounded-3xl pointer-events-none"
+        style={{
+          inset: "-40px",
+          background: "radial-gradient(ellipse at center, rgba(255,180,80,0.4) 0%, rgba(255,140,60,0.2) 50%, transparent 70%)",
+          filter: "blur(35px)",
+          opacity: isHovered ? 0.95 : 0.6,
+          transition: "all 0.4s ease-out",
+        }}
+      />
+      {/* Inner warm accent glow */}
+      <div
+        className="absolute -inset-4 rounded-2xl pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse at center, rgba(255,200,120,0.3) 0%, transparent 60%)",
+          filter: "blur(20px)",
+          opacity: isHovered ? 0.9 : 0.4,
+          transition: "opacity 0.3s ease-out",
+        }}
+      />
+
       <Link href={project.url} className="block w-full h-full relative">
         <div className="card-image absolute inset-0 overflow-hidden rounded-2xl">
           <Image
@@ -441,8 +475,96 @@ export default function Work() {
 
       {/* Work Section Container */}
       <div className="relative bg-black" style={{ zIndex: 10 }}>
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Gradient orbs */}
+          <motion.div
+            className="absolute w-[800px] h-[800px] rounded-full opacity-[0.03]"
+            style={{
+              background: "radial-gradient(circle, #00f0ff 0%, transparent 70%)",
+              left: "-200px",
+              top: "20%",
+            }}
+            animate={{
+              x: [0, 50, 0],
+              y: [0, 30, 0],
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute w-[600px] h-[600px] rounded-full opacity-[0.02]"
+            style={{
+              background: "radial-gradient(circle, #ffffff 0%, transparent 70%)",
+              right: "-100px",
+              top: "50%",
+            }}
+            animate={{
+              x: [0, -30, 0],
+              y: [0, -40, 0],
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          />
+
+          {/* Floating grid lines */}
+          <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="work-grid" width="100" height="100" patternUnits="userSpaceOnUse">
+                <path d="M 100 0 L 0 0 0 100" fill="none" stroke="white" strokeWidth="0.5" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#work-grid)" />
+          </svg>
+
+          {/* Diagonal accent lines */}
+          <motion.div
+            className="absolute h-px bg-gradient-to-r from-transparent via-[#00f0ff]/20 to-transparent"
+            style={{
+              width: "150%",
+              left: "-25%",
+              top: "30%",
+              transform: "rotate(-5deg)",
+            }}
+            animate={{ opacity: [0.1, 0.3, 0.1] }}
+            transition={{ duration: 8, repeat: Infinity }}
+          />
+          <motion.div
+            className="absolute h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"
+            style={{
+              width: "120%",
+              left: "-10%",
+              top: "70%",
+              transform: "rotate(3deg)",
+            }}
+            animate={{ opacity: [0.05, 0.15, 0.05] }}
+            transition={{ duration: 10, repeat: Infinity, delay: 2 }}
+          />
+
+          {/* Floating particles */}
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 rounded-full bg-white/20"
+              style={{
+                left: `${15 + i * 15}%`,
+                top: `${20 + (i % 3) * 25}%`,
+              }}
+              animate={{
+                y: [0, -30, 0],
+                opacity: [0.1, 0.4, 0.1],
+              }}
+              transition={{
+                duration: 5 + i,
+                repeat: Infinity,
+                delay: i * 0.8,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+
+        </div>
+
         {/* Section Header */}
-        <section ref={headerRef} className="pt-24 pb-12 px-6 md:px-12 lg:px-20 overflow-hidden">
+        <section ref={headerRef} className="pt-24 pb-12 px-6 md:px-12 lg:px-20 overflow-hidden relative z-10">
           <div className="max-w-7xl mx-auto">
             <p className="header-label text-white/40 text-sm uppercase tracking-[0.3em] mb-4">
               <SplitText animation="chars" stagger={0.03} delay={0.1}>
