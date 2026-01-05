@@ -1,14 +1,24 @@
 "use client";
 
 import { motion, useScroll, useTransform, useMotionTemplate, useSpring } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
+
+  // Hide fixed container when section is out of view
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (value) => {
+      setIsVisible(value < 1);
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress]);
 
   // Logo mask scale: starts small, grows to reveal full video
   // Use spring for smooth, fluid animation
@@ -30,8 +40,15 @@ export default function Hero() {
       ref={sectionRef}
       className="relative h-[200vh]"
     >
-      {/* Fixed container */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      {/* Fixed container - hidden when scrolled past */}
+      <div
+        className="fixed top-0 left-0 right-0 h-screen w-full overflow-hidden bg-black"
+        style={{
+          zIndex: 5,
+          visibility: isVisible ? "visible" : "hidden",
+          pointerEvents: isVisible ? "auto" : "none",
+        }}
+      >
 
         {/* Video layer - sits behind everything */}
         <div className="absolute inset-0">

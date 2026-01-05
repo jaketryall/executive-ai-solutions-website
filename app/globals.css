@@ -28,6 +28,7 @@
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
   }
 
   ::selection {
@@ -156,6 +157,34 @@
   .writing-mode-vertical {
     writing-mode: vertical-rl;
     text-orientation: mixed;
+  }
+
+  /* Text scramble glitch effect */
+  .animate-glitch {
+    animation: glitch 0.2s ease-in-out;
+  }
+
+  @keyframes glitch {
+    0%, 100% {
+      transform: translate(0);
+      opacity: 1;
+    }
+    20% {
+      transform: translate(-2px, 1px);
+      opacity: 0.8;
+    }
+    40% {
+      transform: translate(2px, -1px);
+      opacity: 0.9;
+    }
+    60% {
+      transform: translate(-1px, -1px);
+      opacity: 0.7;
+    }
+    80% {
+      transform: translate(1px, 2px);
+      opacity: 0.85;
+    }
   }
 
   /* Smooth number transition */

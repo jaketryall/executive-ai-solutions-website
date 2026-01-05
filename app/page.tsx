@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import KineticTypography from "@/components/KineticTypography";
 import Work from "@/components/Work";
 import Services from "@/components/Services";
 import Contact from "@/components/Contact";
@@ -18,8 +19,9 @@ export default function Home() {
       {!isLoaded && <PageLoader onComplete={() => setIsLoaded(true)} />}
       <CustomCursor />
       <Navbar />
-      <main className="relative" style={{ zIndex: 1 }}>
+      <main className="relative" style={{ zIndex: 10 }}>
         <Hero />
+        <KineticTypography />
         <Work />
         <Services />
         <Contact />
