@@ -613,8 +613,12 @@ export default function Contact() {
                     </>
                   ) : (
                     <>
-                      <span style={{ color: accentColor }}>Send Message</span>
-                      <span className="group-hover:translate-x-1 transition-transform" style={{ color: accentColor }}>→</span>
+                      <span style={{ color: accentColor }}>Get in Touch</span>
+                      {/* Arrow with diagonal slide on hover */}
+                      <span className="relative w-5 h-5 overflow-hidden inline-block">
+                        <span className="absolute inset-0 flex items-center justify-center transition-all duration-300 group-hover:translate-x-full group-hover:-translate-y-full" style={{ color: accentColor }}>→</span>
+                        <span className="absolute inset-0 flex items-center justify-center -translate-x-full translate-y-full transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0" style={{ color: accentColor }}>→</span>
+                      </span>
                     </>
                   )}
                 </MagneticButton>

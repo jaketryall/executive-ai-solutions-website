@@ -110,7 +110,6 @@ const services = [
       "Conversion-focused experience design",
       "Strategic narrative development",
     ],
-    color: "rgba(255, 220, 180, 0.08)",
   },
   {
     number: "02",
@@ -122,7 +121,6 @@ const services = [
       "Performance-first development",
       "Seamless interactions",
     ],
-    color: "rgba(255, 200, 150, 0.08)",
   },
   {
     number: "03",
@@ -134,130 +132,123 @@ const services = [
       "Scalable architecture",
       "Continuous refinement",
     ],
-    color: "rgba(255, 180, 120, 0.08)",
   },
 ];
 
-// Service Item Component - Always expanded
-function ServiceItem({
+// Service Section within the card
+function ServiceSection({
   service,
   index,
+  isLast,
+  scrollYProgress,
 }: {
   service: typeof services[0];
   index: number;
+  isLast: boolean;
+  scrollYProgress: import("framer-motion").MotionValue<number>;
 }) {
+  // Staggered scroll-driven transforms for each section
+  const sectionStart = 0.1 + index * 0.15;
+  const numberY = useTransform(scrollYProgress, [sectionStart, sectionStart + 0.2], [30, 0]);
+  const numberOpacity = useTransform(scrollYProgress, [sectionStart, sectionStart + 0.15], [0, 1]);
+  const contentY = useTransform(scrollYProgress, [sectionStart + 0.05, sectionStart + 0.25], [20, 0]);
+  const contentOpacity = useTransform(scrollYProgress, [sectionStart + 0.05, sectionStart + 0.2], [0, 1]);
+
   return (
-    <motion.div
-      className="relative overflow-hidden border-t border-white/10"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-    >
-      {/* Warm ambient glow */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `radial-gradient(ellipse 120% 80% at 50% 20%, ${service.color} 0%, transparent 60%)`,
-        }}
-      />
-
-      {/* Warm accent bar */}
-      <div
-        className="absolute left-0 top-0 bottom-0 w-[3px]"
-        style={{
-          background: `linear-gradient(to bottom, ${accentColor}, ${accentColorMuted})`,
-          opacity: 0.8,
-        }}
-      />
-
-      {/* Header */}
-      <div className="relative w-full py-10 md:py-12 flex items-center px-8 md:px-16">
-        {/* Left side - Number and Title */}
-        <div className="flex items-center gap-8 md:gap-16">
-          {/* Number */}
-          <span
-            className="text-5xl md:text-7xl font-black"
-            style={{ color: accentColor }}
+    <div className={`relative ${!isLast ? "border-b border-white/5" : ""}`}>
+      {/* Section content */}
+      <div className="py-10 md:py-14 px-8 md:px-12">
+        <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-start">
+          {/* Left - Number */}
+          <motion.div
+            className="md:col-span-2"
+            style={{ y: numberY, opacity: numberOpacity }}
           >
-            {service.number}
-          </span>
+            <span
+              className="text-5xl md:text-6xl font-black"
+              style={{ color: accentColor }}
+            >
+              {service.number}
+            </span>
+          </motion.div>
 
-          {/* Title */}
-          <div className="text-left">
-            <h3 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-[-0.03em] text-white">
+          {/* Middle - Title & Description */}
+          <motion.div
+            className="md:col-span-5"
+            style={{ y: contentY, opacity: contentOpacity }}
+          >
+            <h3 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-[-0.02em] text-white mb-2">
               {service.title}
             </h3>
             <p
-              className="text-sm md:text-base uppercase tracking-[0.2em] mt-2"
+              className="text-xs md:text-sm uppercase tracking-[0.2em] mb-6"
               style={{ color: accentColorMuted }}
             >
               {service.subtitle}
             </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Content - Always visible */}
-      <div className="px-8 md:px-16 pb-12 md:pb-16">
-        <div className="grid md:grid-cols-2 gap-10 md:gap-24">
-          {/* Left - Description */}
-          <div className="md:pl-[calc(5rem+64px)]">
-            <p className="text-white/70 text-lg md:text-xl lg:text-2xl leading-relaxed mb-8 font-light">
+            <p className="text-white/60 text-base md:text-lg leading-relaxed">
               {service.description}
             </p>
-
-            {/* CTA */}
-            <motion.a
-              href="#contact"
-              className="inline-flex items-center gap-4 text-lg tracking-wide group"
-              style={{ color: accentColor }}
-              whileHover={{ x: 8 }}
-            >
-              <span>Start a project</span>
-              <span className="inline-block transition-transform group-hover:translate-x-1">
-                →
-              </span>
-            </motion.a>
-          </div>
+          </motion.div>
 
           {/* Right - Details */}
-          <div className="space-y-5">
-            {service.details.map((detail, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-5"
-              >
-                <span
-                  className="text-2xl font-light mt-0.5"
-                  style={{ color: accentColorMuted }}
+          <motion.div
+            className="md:col-span-5"
+            style={{ y: contentY, opacity: contentOpacity }}
+          >
+            <div className="space-y-4">
+              {service.details.map((detail, i) => (
+                <div
+                  key={i}
+                  className="flex items-start gap-4"
                 >
-                  —
-                </span>
-                <span className="text-white/60 text-base md:text-lg lg:text-xl tracking-wide">
-                  {detail}
-                </span>
-              </div>
-            ))}
-          </div>
+                  <span
+                    className="text-lg font-light mt-0.5"
+                    style={{ color: accentColorMuted }}
+                  >
+                    —
+                  </span>
+                  <span className="text-white/50 text-sm md:text-base tracking-wide">
+                    {detail}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 export default function Services() {
+  const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress: headerScrollProgress } = useScroll({
     target: headerRef,
     offset: ["start end", "end start"],
   });
 
+  const { scrollYProgress: cardScrollProgress } = useScroll({
+    target: cardRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Card entrance animation
+  const cardY = useTransform(cardScrollProgress, [0, 0.3], [60, 0]);
+  const cardOpacity = useTransform(cardScrollProgress, [0, 0.2], [0, 1]);
+
   return (
     <section
+      ref={sectionRef}
       id="services"
-      className="relative bg-black py-24 md:py-32"
-      style={{ zIndex: 10 }}
+      className="relative py-24 md:py-32"
+      style={{
+        zIndex: 10,
+        background: "linear-gradient(180deg, #0a0908 0%, #0d0b09 50%, #0a0908 100%)",
+      }}
     >
       {/* Header */}
       <div ref={headerRef} className="px-8 md:px-16 mb-16 md:mb-20">
@@ -274,28 +265,70 @@ export default function Services() {
         <h2 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.85] tracking-[-0.04em]">
           <ScrollRevealText
             text="WHAT WE"
-            scrollYProgress={scrollYProgress}
+            scrollYProgress={headerScrollProgress}
             startOffset={0}
           />
           <br />
           <ScrollRevealText
             text="CREATE"
-            scrollYProgress={scrollYProgress}
+            scrollYProgress={headerScrollProgress}
             startOffset={0.15}
             dimmed
           />
         </h2>
       </div>
 
-      {/* Services List */}
-      <div className="border-b border-white/10">
-        {services.map((service, index) => (
-          <ServiceItem
-            key={service.number}
-            service={service}
-            index={index}
+      {/* Services Card */}
+      <div className="px-6 md:px-12 lg:px-16">
+        <motion.div
+          ref={cardRef}
+          className="relative rounded-2xl md:rounded-3xl overflow-hidden"
+          style={{
+            y: cardY,
+            opacity: cardOpacity,
+            background: "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)",
+          }}
+        >
+          {/* Warm ambient glow */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 200, 150, 0.06) 0%, transparent 60%)`,
+            }}
           />
-        ))}
+
+          {/* Card content */}
+          <div className="relative">
+            {services.map((service, index) => (
+              <ServiceSection
+                key={service.number}
+                service={service}
+                index={index}
+                isLast={index === services.length - 1}
+                scrollYProgress={cardScrollProgress}
+              />
+            ))}
+          </div>
+
+          {/* Bottom CTA */}
+          <div className="relative border-t border-white/5 px-8 md:px-12 py-8 md:py-10">
+            <motion.a
+              href="#contact"
+              className="inline-flex items-center gap-4 text-lg tracking-wide group"
+              style={{ color: accentColor }}
+              whileHover={{ x: 8 }}
+            >
+              <span>Start a project</span>
+              {/* Arrow with diagonal slide on hover */}
+              <span className="relative w-5 h-5 overflow-hidden inline-block">
+                <span className="absolute inset-0 flex items-center justify-center transition-all duration-300 group-hover:translate-x-full group-hover:-translate-y-full">→</span>
+                <span className="absolute inset-0 flex items-center justify-center -translate-x-full translate-y-full transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0">→</span>
+              </span>
+            </motion.a>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

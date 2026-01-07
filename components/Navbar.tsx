@@ -87,12 +87,17 @@ export default function Navbar() {
           {/* CTA */}
           <Link
             href="#contact"
-            className="group relative h-9 px-5 ml-1 overflow-hidden rounded-full inline-flex items-center justify-center bg-white/10 hover:bg-white transition-colors duration-300"
+            className="group relative h-9 px-5 ml-1 overflow-hidden rounded-full inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white transition-colors duration-300"
             onMouseEnter={() => play("hover", { volume: 0.08 })}
             onClick={() => play("click")}
           >
             <span className="relative z-10 text-white group-hover:text-black text-xs uppercase tracking-[0.15em] font-semibold transition-colors duration-300">
               Start Project
+            </span>
+            {/* Arrow with diagonal slide on hover */}
+            <span className="relative w-4 h-4 overflow-hidden">
+              <span className="absolute inset-0 flex items-center justify-center text-white/60 group-hover:text-black transition-all duration-300 group-hover:translate-x-full group-hover:-translate-y-full text-xs">→</span>
+              <span className="absolute inset-0 flex items-center justify-center -translate-x-full translate-y-full text-white/60 group-hover:text-black transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 text-xs">→</span>
             </span>
           </Link>
         </motion.nav>

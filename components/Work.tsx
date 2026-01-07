@@ -116,7 +116,7 @@ function ProjectPanel({
         {/* Left: Project info - Cinematic style */}
         <div className="flex-1 max-w-xl">
           {/* Number - large, warm accent */}
-          <div className="flex items-center gap-6 mb-8">
+          <div className="panel-number flex items-center gap-6 mb-8">
             <span
               className="text-7xl md:text-9xl font-black"
               style={{ color: accentColorMuted }}
@@ -124,36 +124,36 @@ function ProjectPanel({
               {String(index + 1).padStart(2, "0")}
             </span>
             <div
-              className="h-px flex-1 max-w-32"
+              className="panel-line h-px flex-1 max-w-32"
               style={{ background: `linear-gradient(to right, ${accentColorMuted}, transparent)` }}
             />
           </div>
 
           {/* Category - elegant, not monospace */}
           <p
-            className="text-sm uppercase tracking-[0.25em] mb-4"
+            className="panel-category text-sm uppercase tracking-[0.25em] mb-4"
             style={{ color: accentColorMuted }}
           >
             {project.category}
           </p>
 
           {/* Title */}
-          <h2 className="text-5xl md:text-7xl font-black text-white leading-[0.9] tracking-[-0.03em] mb-4">
+          <h2 className="panel-title text-5xl md:text-7xl font-black text-white leading-[0.9] tracking-[-0.03em] mb-4">
             {project.title}
           </h2>
 
           {/* Tagline */}
-          <p className="text-white/40 text-xl italic mb-8">
+          <p className="panel-tagline text-white/40 text-xl italic mb-8">
             {project.tagline}
           </p>
 
           {/* Description */}
-          <p className="text-white/60 text-lg leading-relaxed mb-10">
+          <p className="panel-description text-white/60 text-lg leading-relaxed mb-10">
             {project.description}
           </p>
 
           {/* Result - warm accent */}
-          <div className="mb-10">
+          <div className="panel-result mb-10">
             <p className="text-white/30 text-sm uppercase tracking-[0.2em] mb-2">
               The Result
             </p>
@@ -166,7 +166,7 @@ function ProjectPanel({
           </div>
 
           {/* CTA Button - elegant */}
-          <Link href={project.url}>
+          <Link href={project.url} className="panel-cta inline-block">
             <motion.button
               className="group inline-flex items-center gap-4 text-lg tracking-wide"
               style={{ color: accentColor }}
@@ -182,7 +182,7 @@ function ProjectPanel({
 
         {/* Right: Image - Cinematic presentation */}
         <div
-          className="hidden lg:block flex-1 max-w-2xl"
+          className="panel-image hidden lg:block flex-1 max-w-2xl"
           onMouseEnter={() => {
             setIsHovered(true);
             play("hover", { volume: 0.06 });
@@ -439,20 +439,20 @@ export default function Work() {
         const introContent = introPanel.querySelector(".intro-content");
         const introGlow = introPanel.querySelector(".intro-glow");
         const introLabel = introPanel.querySelector(".intro-label");
-        const introTitleLines = introPanel.querySelectorAll(".intro-title-line");
+        const introTitleLetters = introPanel.querySelectorAll(".intro-letter");
         const introHint = introPanel.querySelector(".intro-hint");
 
         // Set initial states
         gsap.set([introLabel, introHint], { opacity: 0, y: 30 });
-        gsap.set(introTitleLines, { opacity: 0, y: 60 });
+        gsap.set(introTitleLetters, { y: "100%", opacity: 0 });
         gsap.set(introGlow, { opacity: 0, scale: 0.8 });
 
         // Entrance animation timeline
         const introEnterTl = gsap.timeline({
           scrollTrigger: {
             trigger: wrapperRef.current,
-            start: "top 80%",
-            end: "top 20%",
+            start: "top 60%",
+            end: "top 10%",
             scrub: 1,
           },
         });
@@ -460,8 +460,8 @@ export default function Work() {
         introEnterTl
           .to(introGlow, { opacity: 1, scale: 1, duration: 0.5 })
           .to(introLabel, { opacity: 1, y: 0, duration: 0.3 }, "-=0.3")
-          .to(introTitleLines, { opacity: 1, y: 0, duration: 0.4, stagger: 0.1 }, "-=0.2")
-          .to(introHint, { opacity: 1, y: 0, duration: 0.3 }, "-=0.2");
+          .to(introTitleLetters, { y: "0%", opacity: 1, duration: 0.6, stagger: 0.03, ease: "power3.out" }, "-=0.2")
+          .to(introHint, { opacity: 1, y: 0, duration: 0.3 }, "-=0.3");
 
         // Exit animation - fade out and scale as scrolling to first project
         gsap.to(introContent, {
@@ -495,6 +495,47 @@ export default function Work() {
       panels.forEach((panel) => {
         const backLayer = panel.querySelector(".parallax-back");
         const frontLayer = panel.querySelector(".parallax-front");
+
+        // Element entrance animations
+        const panelNumber = panel.querySelector(".panel-number");
+        const panelLine = panel.querySelector(".panel-line");
+        const panelCategory = panel.querySelector(".panel-category");
+        const panelTitle = panel.querySelector(".panel-title");
+        const panelTagline = panel.querySelector(".panel-tagline");
+        const panelDescription = panel.querySelector(".panel-description");
+        const panelResult = panel.querySelector(".panel-result");
+        const panelCta = panel.querySelector(".panel-cta");
+        const panelImage = panel.querySelector(".panel-image");
+
+        // Set initial states
+        gsap.set([panelNumber, panelCategory, panelTitle, panelTagline, panelDescription, panelResult, panelCta], {
+          opacity: 0,
+          y: 30,
+        });
+        gsap.set(panelLine, { scaleX: 0, transformOrigin: "left center" });
+        gsap.set(panelImage, { opacity: 0, x: 50, scale: 0.95 });
+
+        // Staggered entrance timeline
+        const panelEnterTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: panel,
+            containerAnimation: horizontalTween,
+            start: "left 80%",
+            end: "left 30%",
+            scrub: 0.5,
+          },
+        });
+
+        panelEnterTl
+          .to(panelNumber, { opacity: 1, y: 0, duration: 0.4 })
+          .to(panelLine, { scaleX: 1, duration: 0.3 }, "-=0.2")
+          .to(panelCategory, { opacity: 1, y: 0, duration: 0.3 }, "-=0.2")
+          .to(panelTitle, { opacity: 1, y: 0, duration: 0.4 }, "-=0.2")
+          .to(panelTagline, { opacity: 1, y: 0, duration: 0.3 }, "-=0.3")
+          .to(panelDescription, { opacity: 1, y: 0, duration: 0.3 }, "-=0.2")
+          .to(panelResult, { opacity: 1, y: 0, duration: 0.3 }, "-=0.2")
+          .to(panelCta, { opacity: 1, y: 0, duration: 0.3 }, "-=0.2")
+          .to(panelImage, { opacity: 1, x: 0, scale: 1, duration: 0.5 }, "-=0.6");
 
         if (backLayer) {
           gsap.to(backLayer, {
@@ -565,9 +606,23 @@ export default function Work() {
                 >
                   Selected Work
                 </p>
-                <h2 className="intro-title text-[15vw] md:text-[12vw] font-black text-white leading-[0.85] tracking-[-0.04em]">
-                  <span className="intro-title-line block">THE</span>
-                  <span className="intro-title-line block text-white/30">PROOF</span>
+                <h2 className="intro-title text-[15vw] md:text-[12vw] font-black leading-[0.85] tracking-[-0.04em]">
+                  {/* THE - with staggered letter reveal */}
+                  <span className="block">
+                    {"THE".split("").map((letter, i) => (
+                      <span key={i} className="inline-block overflow-hidden relative">
+                        <span className="intro-letter inline-block text-white">{letter}</span>
+                      </span>
+                    ))}
+                  </span>
+                  {/* PROOF - dimmed with staggered letter reveal */}
+                  <span className="block">
+                    {"PROOF".split("").map((letter, i) => (
+                      <span key={i} className="inline-block overflow-hidden relative">
+                        <span className="intro-letter inline-block text-white/30">{letter}</span>
+                      </span>
+                    ))}
+                  </span>
                 </h2>
                 <p className="intro-hint text-white/30 text-lg mt-12 tracking-wide">
                   Scroll to explore →
