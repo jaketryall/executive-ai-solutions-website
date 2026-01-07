@@ -242,9 +242,12 @@ function ProjectPanel({
 }
 
 // Progress indicator - minimal, warm
-function HorizontalProgress({ progress }: { progress: number }) {
+function HorizontalProgress({ progress, isVisible }: { progress: number; isVisible: boolean }) {
   return (
-    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 flex items-center gap-8">
+    <div
+      className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 flex items-center gap-8 transition-opacity duration-300"
+      style={{ opacity: isVisible ? 1 : 0, pointerEvents: isVisible ? "auto" : "none" }}
+    >
       {/* Progress bar */}
       <div className="w-48 h-px bg-white/10 relative overflow-hidden">
         <motion.div
@@ -390,6 +393,7 @@ export default function Work() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [isInView, setIsInView] = useState(false);
 
   const useIsomorphicLayoutEffect =
     typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -418,10 +422,14 @@ export default function Work() {
           trigger: wrapperRef.current,
           pin: true,
           scrub: 1.5,
-          end: () => `+=${totalWidth * 1.5}`,
+          end: () => `+=${totalWidth * 0.85}`,
           onUpdate: (self) => {
             setScrollProgress(self.progress);
           },
+          onEnter: () => setIsInView(true),
+          onLeave: () => setIsInView(false),
+          onEnterBack: () => setIsInView(true),
+          onLeaveBack: () => setIsInView(false),
         },
       });
 
@@ -572,10 +580,13 @@ export default function Work() {
             ))}
           </div>
 
-          <HorizontalProgress progress={scrollProgress} />
+          <HorizontalProgress progress={scrollProgress} isVisible={isInView} />
 
           {/* Side labels - elegant */}
-          <div className="fixed top-1/2 left-8 -translate-y-1/2 z-50">
+          <div
+            className="fixed top-1/2 left-8 -translate-y-1/2 z-50 transition-opacity duration-300"
+            style={{ opacity: isInView ? 1 : 0 }}
+          >
             <span
               className="text-white/15 text-xs tracking-[0.3em] uppercase"
               style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
@@ -584,7 +595,10 @@ export default function Work() {
             </span>
           </div>
 
-          <div className="fixed top-1/2 right-8 -translate-y-1/2 z-50">
+          <div
+            className="fixed top-1/2 right-8 -translate-y-1/2 z-50 transition-opacity duration-300"
+            style={{ opacity: isInView ? 1 : 0 }}
+          >
             <span
               className="text-white/15 text-xs tracking-[0.3em] uppercase"
               style={{ writingMode: "vertical-rl" }}
