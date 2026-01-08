@@ -414,15 +414,19 @@ export default function Work() {
     const panels = container.querySelectorAll(".project-panel");
     const totalWidth = container.scrollWidth - window.innerWidth;
 
+    // Calculate panel count (intro + projects + hold panel)
+    const panelCount = workItems.length + 2;
+
     const ctx = gsap.context(() => {
+      // Create the horizontal scroll tween
       const horizontalTween = gsap.to(container, {
         x: -totalWidth,
         ease: "none",
         scrollTrigger: {
           trigger: wrapperRef.current,
           pin: true,
-          scrub: 1.5,
-          end: () => `+=${totalWidth * 0.85}`,
+          scrub: 1,
+          end: () => `+=${totalWidth}`,
           onUpdate: (self) => {
             setScrollProgress(self.progress);
           },
@@ -565,6 +569,7 @@ export default function Work() {
           });
         }
       });
+
     });
 
     return () => ctx.revert();
@@ -574,19 +579,18 @@ export default function Work() {
     <section
       id="work"
       className="relative bg-black overflow-x-hidden"
-      style={{ zIndex: 10, maxWidth: "100vw" }}
+      style={{ zIndex: 5, maxWidth: "100vw" }}
     >
-      {/* Desktop: Horizontal Gallery */}
-      {!isMobile && (
-        <div
-          ref={wrapperRef}
-          className="hidden md:block relative overflow-hidden"
-          style={{ height: "100vh", maxWidth: "100vw", overflowX: "hidden" }}
-        >
+      {/* Desktop: Horizontal Gallery - Always rendered, hidden on mobile via CSS */}
+      <div
+        ref={wrapperRef}
+        className="hidden md:block relative overflow-hidden"
+        style={{ height: "100vh", maxWidth: "100vw", overflowX: "hidden" }}
+      >
           <div
             ref={containerRef}
             className="flex h-full"
-            style={{ width: `${(workItems.length + 1) * 100}vw` }}
+            style={{ width: `${(workItems.length + 2) * 100}vw` }}
           >
             {/* Intro Panel */}
             <div className="intro-panel relative w-screen h-screen flex items-center justify-center shrink-0 overflow-hidden">
@@ -633,6 +637,9 @@ export default function Work() {
             {workItems.map((project, index) => (
               <ProjectPanel key={project.title} project={project} index={index} />
             ))}
+
+            {/* Empty hold panel - gives time for Services to overlap */}
+            <div className="hold-panel relative w-screen h-screen shrink-0" />
           </div>
 
           <HorizontalProgress progress={scrollProgress} isVisible={isInView} />
@@ -662,9 +669,9 @@ export default function Work() {
             </span>
           </div>
         </div>
-      )}
 
-      {isMobile && <MobileWork />}
+      {/* Mobile: Always render but hidden on desktop via CSS */}
+      <MobileWork />
     </section>
   );
 }

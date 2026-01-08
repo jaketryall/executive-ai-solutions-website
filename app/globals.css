@@ -2,10 +2,10 @@
 
 @layer base {
   :root {
-    /* Dark theme palette */
-    --bg-dark: #000000;
-    --bg-darker: #0a0a0a;
-    --bg-darkest: #000000;
+    /* Dark theme palette - matches page backgrounds */
+    --bg-dark: #0a0908;
+    --bg-darker: #0a0908;
+    --bg-darkest: #0a0908;
 
     /* Text colors */
     --text-primary: #b6bac5;

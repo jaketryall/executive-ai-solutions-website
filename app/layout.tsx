@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
 import { SoundProvider } from "@/components/SoundManager";
+import { PageTransitionProvider } from "@/components/PageTransition";
 import "./globals.css";
 
 const inter = Inter({
@@ -72,8 +73,10 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} ${sourceSerif.variable} font-sans`}>
         <SoundProvider>
-          <CustomCursor />
-          <SmoothScroll>{children}</SmoothScroll>
+          <PageTransitionProvider>
+            <CustomCursor />
+            <SmoothScroll>{children}</SmoothScroll>
+          </PageTransitionProvider>
         </SoundProvider>
         <SpeedInsights />
       </body>

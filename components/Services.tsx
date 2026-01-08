@@ -244,10 +244,11 @@ export default function Services() {
     <section
       ref={sectionRef}
       id="services"
-      className="relative py-24 md:py-32"
+      className="relative py-24 md:py-32 rounded-3xl md:rounded-[3rem] md:-mt-[100vh]"
       style={{
-        zIndex: 10,
+        zIndex: 20,
         background: "linear-gradient(180deg, #0a0908 0%, #0d0b09 50%, #0a0908 100%)",
+        boxShadow: "0 -50px 100px -20px rgba(0,0,0,0.8)",
       }}
     >
       {/* Header */}
@@ -330,6 +331,7 @@ export default function Services() {
           </div>
         </motion.div>
       </div>
+
     </section>
   );
 }

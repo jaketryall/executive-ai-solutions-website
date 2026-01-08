@@ -2,25 +2,37 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import Link from "next/link";
+import { usePathname } from "next/navigation";
 import AnimatedLogo from "./AnimatedLogo";
 import { useSound } from "./SoundManager";
+import { TransitionLink } from "./PageTransition";
+
+// Warm cinematic color palette
+const accentColor = "rgba(255, 200, 150, 1)";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { scrollY } = useScroll();
   const { play } = useSound();
+  const pathname = usePathname();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 50);
   });
 
+  // Navigation links - all dedicated pages now
   const navLinks = [
-    { href: "#work", label: "Work" },
-    { href: "#services", label: "Services" },
-    { href: "#contact", label: "Contact" },
+    { href: "/about", label: "About" },
+    { href: "/work", label: "Work" },
+    { href: "/contact", label: "Contact" },
   ];
+
+  // Check if link is active
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
 
   return (
     <>
@@ -48,12 +60,12 @@ export default function Navbar() {
           }}
         >
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 pl-2 pr-4">
+          <TransitionLink href="/" className="flex items-center gap-2 pl-2 pr-4">
             <AnimatedLogo width={32} height={20} drawDuration={1} delay={0.5} />
             <span className="text-white font-bold text-xs uppercase tracking-[0.1em]">
               Executive
             </span>
-          </Link>
+          </TransitionLink>
 
           {/* Divider - only visible when scrolled */}
           <motion.div
@@ -65,15 +77,30 @@ export default function Navbar() {
           {/* Nav Links */}
           <div className="flex items-center">
             {navLinks.map((link) => (
-              <Link
+              <TransitionLink
                 key={link.href}
                 href={link.href}
-                className="text-white/60 hover:text-white text-xs uppercase tracking-[0.15em] transition-colors px-4 py-2"
+                className="text-xs uppercase tracking-[0.15em] transition-colors px-4 py-2"
+                style={{
+                  color: isActive(link.href) ? accentColor : "rgba(255,255,255,0.6)",
+                }}
                 onMouseEnter={() => play("hover")}
                 onClick={() => play("click")}
               >
-                {link.label}
-              </Link>
+                <motion.span
+                  className="relative"
+                  whileHover={{ color: "#fff" }}
+                >
+                  {link.label}
+                  {isActive(link.href) && (
+                    <motion.span
+                      className="absolute -bottom-1 left-0 right-0 h-px"
+                      style={{ backgroundColor: accentColor }}
+                      layoutId="navbar-underline"
+                    />
+                  )}
+                </motion.span>
+              </TransitionLink>
             ))}
           </div>
 
@@ -85,8 +112,8 @@ export default function Navbar() {
           />
 
           {/* CTA */}
-          <Link
-            href="#contact"
+          <TransitionLink
+            href="/contact"
             className="group relative h-9 px-5 ml-1 overflow-hidden rounded-full inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white transition-colors duration-300"
             onMouseEnter={() => play("hover", { volume: 0.08 })}
             onClick={() => play("click")}
@@ -99,7 +126,7 @@ export default function Navbar() {
               <span className="absolute inset-0 flex items-center justify-center text-white/60 group-hover:text-black transition-all duration-300 group-hover:translate-x-full group-hover:-translate-y-full text-xs">→</span>
               <span className="absolute inset-0 flex items-center justify-center -translate-x-full translate-y-full text-white/60 group-hover:text-black transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 text-xs">→</span>
             </span>
-          </Link>
+          </TransitionLink>
         </motion.nav>
       </motion.header>
 
@@ -113,9 +140,9 @@ export default function Navbar() {
         <nav className="mx-4 mt-4 px-4 py-3 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="text-white font-bold text-sm uppercase tracking-[0.1em]">
+            <TransitionLink href="/" className="text-white font-bold text-sm uppercase tracking-[0.1em]">
               Executive
-            </Link>
+            </TransitionLink>
 
             {/* Menu Button */}
             <button
@@ -161,13 +188,19 @@ export default function Navbar() {
                   exit={{ opacity: 0, y: 30 }}
                   transition={{ delay: 0.1 + index * 0.1 }}
                 >
-                  <Link
+                  <TransitionLink
                     href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="block text-5xl font-black text-white py-4 hover:text-[#00f0ff] transition-colors uppercase"
+                    onClick={() => {
+                      play("click");
+                      setIsOpen(false);
+                    }}
+                    className="block text-5xl font-black py-4 transition-colors uppercase"
+                    style={{
+                      color: isActive(link.href) ? accentColor : "#fff",
+                    }}
                   >
                     {link.label}
-                  </Link>
+                  </TransitionLink>
                 </motion.div>
               ))}
               <motion.div
@@ -177,13 +210,17 @@ export default function Navbar() {
                 transition={{ delay: 0.4 }}
                 className="mt-12"
               >
-                <Link
-                  href="#contact"
-                  onClick={() => setIsOpen(false)}
-                  className="px-8 py-4 bg-[#00f0ff] text-black font-bold text-sm uppercase tracking-[0.2em] rounded-full"
+                <TransitionLink
+                  href="/contact"
+                  onClick={() => {
+                    play("click");
+                    setIsOpen(false);
+                  }}
+                  className="px-8 py-4 text-black font-bold text-sm uppercase tracking-[0.2em] rounded-full inline-block"
+                  style={{ backgroundColor: accentColor }}
                 >
                   Start Project
-                </Link>
+                </TransitionLink>
               </motion.div>
             </div>
           </motion.div>

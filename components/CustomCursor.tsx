@@ -96,7 +96,7 @@ export default function CustomCursor() {
           animate={{
             width: isExpanded ? 80 : 40,
             height: isExpanded ? 80 : 40,
-            borderColor: variant === "card" ? "#00f0ff" : "white",
+            borderColor: variant === "card" ? "#00f0ff" : "#ffffff",
           }}
           transition={{ duration: 0.2, ease: "easeOut" }}
         />
@@ -125,18 +125,18 @@ export default function CustomCursor() {
           transition={{ duration: 0.15 }}
         />
 
-        {/* View text for cards */}
-        {variant === "card" && (
-          <motion.div
-            className="absolute -translate-x-1/2 -translate-y-1/2 text-white text-xs font-bold uppercase tracking-wider"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            style={{ mixBlendMode: "difference" }}
-          >
-            View
-          </motion.div>
-        )}
+        {/* View text for cards - always rendered to avoid reconciliation issues */}
+        <motion.div
+          className="absolute -translate-x-1/2 -translate-y-1/2 text-white text-xs font-bold uppercase tracking-wider"
+          animate={{
+            opacity: variant === "card" ? 1 : 0,
+            scale: variant === "card" ? 1 : 0.8
+          }}
+          transition={{ duration: 0.15 }}
+          style={{ mixBlendMode: "difference" }}
+        >
+          View
+        </motion.div>
       </motion.div>
 
       {/* Hide default cursor */}

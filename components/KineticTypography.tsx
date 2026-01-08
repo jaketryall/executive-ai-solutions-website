@@ -133,7 +133,7 @@ export default function KineticTypography() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-40 overflow-hidden bg-neutral-950"
+      className="relative py-40 overflow-hidden bg-neutral-950 rounded-t-4xl"
       style={{ zIndex: 10 }}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-neutral-950 via-neutral-900/50 to-neutral-950" />

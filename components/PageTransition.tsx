@@ -2,57 +2,130 @@
 
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { useSound } from "./SoundManager";
 
-// Context for managing transitions
+// Warm accent color to match the site
+const accentColor = "rgba(255, 200, 150, 1)";
+
+// Context for managing page route transitions
+interface PageTransitionContextType {
+  isPageTransitioning: boolean;
+  navigateTo: (href: string) => void;
+}
+
+const PageTransitionContext = createContext<PageTransitionContextType>({
+  isPageTransitioning: false,
+  navigateTo: () => {},
+});
+
+export const usePageTransition = () => useContext(PageTransitionContext);
+
+
+// Provider for page route transitions
+export function PageTransitionProvider({ children }: { children: ReactNode }) {
+  const [isPageTransitioning, setIsPageTransitioning] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const { play } = useSound();
+
+  const navigateTo = useCallback(
+    (href: string) => {
+      // Don't transition if already on the page
+      if (href === pathname) return;
+
+      // Play transition sound and navigate immediately
+      // The template.tsx handles the slide-up animation
+      play("transition");
+      setIsPageTransitioning(true);
+      router.push(href);
+    },
+    [pathname, play, router]
+  );
+
+  // Reset transition state when pathname changes
+  useEffect(() => {
+    setIsPageTransitioning(false);
+  }, [pathname]);
+
+  return (
+    <PageTransitionContext.Provider value={{ isPageTransitioning, navigateTo }}>
+      {children}
+    </PageTransitionContext.Provider>
+  );
+}
+
+// TransitionLink - use this instead of next/link for animated transitions
+export function TransitionLink({
+  href,
+  children,
+  className,
+  style,
+  onMouseEnter,
+  onClick: externalOnClick,
+  ...props
+}: {
+  href: string;
+  children: ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+  onMouseEnter?: () => void;
+  onClick?: () => void;
+  [key: string]: unknown;
+}) {
+  const { navigateTo, isPageTransitioning } = usePageTransition();
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isPageTransitioning) return;
+
+    // Call external onClick if provided (for sounds, etc.)
+    if (externalOnClick) externalOnClick();
+
+    navigateTo(href);
+  };
+
+  return (
+    <a
+      href={href}
+      onClick={handleClick}
+      onMouseEnter={onMouseEnter}
+      className={className}
+      style={style}
+      {...props}
+    >
+      {children}
+    </a>
+  );
+}
+
+// Context for managing section transitions (within same page)
 interface TransitionContextType {
   isTransitioning: boolean;
   currentSection: string;
+  targetSection: string;
   triggerTransition: (to: string) => void;
 }
 
 const TransitionContext = createContext<TransitionContextType | null>(null);
 
-// Transition overlay component
-function TransitionOverlay({ isActive }: { isActive: boolean }) {
+// Clean slide-up transition - new page rises from bottom
+function TransitionOverlay({ isActive }: { isActive: boolean; targetLabel: string }) {
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isActive && (
         <motion.div
-          className="fixed inset-0 z-[100] pointer-events-none"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-[100] pointer-events-none overflow-hidden"
         >
-          {/* Horizontal wipe effect */}
+          {/* Simple slide-up panel */}
           <motion.div
-            className="absolute inset-0 bg-black"
-            initial={{ scaleX: 0, originX: 0 }}
-            animate={{ scaleX: [0, 1, 1, 0], originX: [0, 0, 1, 1] }}
+            className="absolute inset-0 bg-[#0a0908]"
+            initial={{ y: "100%" }}
+            animate={{ y: "0%" }}
+            exit={{ y: "-100%" }}
             transition={{
-              duration: 0.8,
-              times: [0, 0.4, 0.6, 1],
-              ease: [0.645, 0.045, 0.355, 1],
-            }}
-          />
-
-          {/* Cyan accent line */}
-          <motion.div
-            className="absolute top-1/2 left-0 right-0 h-[2px] -translate-y-1/2"
-            style={{
-              background: "linear-gradient(90deg, transparent, #00f0ff, transparent)",
-              boxShadow: "0 0 20px #00f0ff, 0 0 40px #00f0ff",
-            }}
-            initial={{ scaleX: 0, opacity: 0 }}
-            animate={{
-              scaleX: [0, 1, 1, 0],
-              opacity: [0, 1, 1, 0],
-            }}
-            transition={{
-              duration: 0.8,
-              times: [0, 0.3, 0.7, 1],
-              ease: "easeInOut",
+              duration: 0.6,
+              ease: [0.76, 0, 0.24, 1],
             }}
           />
         </motion.div>
@@ -202,10 +275,19 @@ export function SectionReveal({ children, id, className = "", delay = 0 }: Secti
   );
 }
 
+// Section label mapping
+const sectionLabels: Record<string, string> = {
+  hero: "Home",
+  work: "Work",
+  services: "Services",
+  contact: "Contact",
+};
+
 // Provider component
 export function TransitionProvider({ children }: { children: ReactNode }) {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [currentSection, setCurrentSection] = useState("hero");
+  const [targetSection, setTargetSection] = useState("");
   const { play } = useSound();
   const { scrollY } = useScroll();
   const lastSectionRef = useRef("hero");
@@ -238,23 +320,36 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
   });
 
   const triggerTransition = useCallback((to: string) => {
+    // Don't transition to current section
+    if (to === lastSectionRef.current) {
+      const element = document.getElementById(to);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+      return;
+    }
+
+    setTargetSection(to);
     setIsTransitioning(true);
     play("transition");
 
-    // Scroll to section
-    const element = document.getElementById(to);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+    // Scroll to section when panel covers screen
+    setTimeout(() => {
+      const element = document.getElementById(to);
+      if (element) {
+        element.scrollIntoView({ behavior: "instant" });
+      }
+    }, 300); // Midpoint of 0.6s animation
 
     setTimeout(() => {
       setIsTransitioning(false);
-    }, 800);
+      setTargetSection("");
+    }, 600);
   }, [play]);
 
   return (
-    <TransitionContext.Provider value={{ isTransitioning, currentSection, triggerTransition }}>
-      <TransitionOverlay isActive={isTransitioning} />
+    <TransitionContext.Provider value={{ isTransitioning, currentSection, targetSection, triggerTransition }}>
+      <TransitionOverlay isActive={isTransitioning} targetLabel={sectionLabels[targetSection] || targetSection} />
       {children}
     </TransitionContext.Provider>
   );
@@ -267,6 +362,7 @@ export function useTransition() {
     return {
       isTransitioning: false,
       currentSection: "hero",
+      targetSection: "",
       triggerTransition: () => {},
     };
   }

@@ -75,11 +75,12 @@ export default function Hero() {
           style={{ opacity: initialContentOpacity }}
         >
           {/* Top row - moves left continuously */}
-          <div className="absolute top-[5%] flex overflow-hidden">
-            <motion.div
-              className="flex gap-8 whitespace-nowrap"
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          <div className="absolute top-[5%] flex overflow-hidden w-full">
+            <div
+              className="flex gap-8 whitespace-nowrap will-change-transform"
+              style={{
+                animation: "marquee-left 25s linear infinite",
+              }}
             >
               {/* Duplicate cards for seamless loop */}
               {[...Array(12)].map((_, i) => (
@@ -97,16 +98,16 @@ export default function Hero() {
                   />
                 </div>
               ))}
-            </motion.div>
+            </div>
           </div>
 
           {/* Middle row - moves right continuously */}
-          <div className="absolute top-[35%] flex overflow-hidden">
-            <motion.div
-              className="flex gap-8 whitespace-nowrap"
-              initial={{ x: "-50%" }}
-              animate={{ x: "0%" }}
-              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+          <div className="absolute top-[35%] flex overflow-hidden w-full">
+            <div
+              className="flex gap-8 whitespace-nowrap will-change-transform"
+              style={{
+                animation: "marquee-right 30s linear infinite",
+              }}
             >
               {/* Duplicate cards for seamless loop */}
               {[...Array(12)].map((_, i) => (
@@ -124,15 +125,16 @@ export default function Hero() {
                   />
                 </div>
               ))}
-            </motion.div>
+            </div>
           </div>
 
           {/* Bottom row - moves left slower */}
-          <div className="absolute top-[65%] flex overflow-hidden">
-            <motion.div
-              className="flex gap-8 whitespace-nowrap"
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+          <div className="absolute top-[65%] flex overflow-hidden w-full">
+            <div
+              className="flex gap-8 whitespace-nowrap will-change-transform"
+              style={{
+                animation: "marquee-left 35s linear infinite",
+              }}
             >
               {/* Duplicate cards for seamless loop */}
               {[...Array(12)].map((_, i) => (
@@ -150,7 +152,7 @@ export default function Hero() {
                   />
                 </div>
               ))}
-            </motion.div>
+            </div>
           </div>
         </motion.div>
 
