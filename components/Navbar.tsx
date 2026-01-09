@@ -10,6 +10,126 @@ import { TransitionLink } from "./PageTransition";
 // Warm cinematic color palette
 const accentColor = "rgba(255, 200, 150, 1)";
 
+// Staggered text hover component - letters animate up on hover
+function StaggeredText({ text, isHovered }: { text: string; isHovered: boolean }) {
+  const letters = text.split("");
+
+  return (
+    <span className="relative inline-flex overflow-hidden">
+      {/* Hidden text for sizing */}
+      <span className="invisible">{text}</span>
+
+      {/* Primary text - moves up on hover */}
+      <span className="absolute inset-0 flex">
+        {letters.map((letter, i) => (
+          <motion.span
+            key={`primary-${i}`}
+            initial={{ y: 0 }}
+            animate={{ y: isHovered ? "-100%" : "0%" }}
+            transition={{
+              duration: 0.25,
+              delay: i * 0.02,
+              ease: [0.76, 0, 0.24, 1],
+            }}
+          >
+            {letter === " " ? "\u00A0" : letter}
+          </motion.span>
+        ))}
+      </span>
+
+      {/* Secondary text - comes up from below */}
+      <span className="absolute inset-0 flex">
+        {letters.map((letter, i) => (
+          <motion.span
+            key={`secondary-${i}`}
+            initial={{ y: "100%" }}
+            animate={{ y: isHovered ? "0%" : "100%" }}
+            transition={{
+              duration: 0.25,
+              delay: i * 0.02,
+              ease: [0.76, 0, 0.24, 1],
+            }}
+          >
+            {letter === " " ? "\u00A0" : letter}
+          </motion.span>
+        ))}
+      </span>
+    </span>
+  );
+}
+
+// CTA Button with staggered text
+function CTAButton() {
+  const [isHovered, setIsHovered] = useState(false);
+  const { play } = useSound();
+
+  return (
+    <TransitionLink
+      href="/contact"
+      className="group relative h-11 px-6 ml-1 overflow-hidden rounded-full inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white transition-colors duration-300"
+      onMouseEnter={() => {
+        setIsHovered(true);
+        play("hover", { volume: 0.08 });
+      }}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={() => play("click")}
+    >
+      <span className="relative z-10 text-white group-hover:text-black text-sm uppercase tracking-[0.12em] font-semibold transition-colors duration-300">
+        <StaggeredText text="Start Project" isHovered={isHovered} />
+      </span>
+      {/* Arrow with diagonal slide on hover */}
+      <span className="relative w-5 h-5 overflow-hidden">
+        <span className="absolute inset-0 flex items-center justify-center text-white/60 group-hover:text-black transition-all duration-300 group-hover:translate-x-full group-hover:-translate-y-full text-sm">→</span>
+        <span className="absolute inset-0 flex items-center justify-center -translate-x-full translate-y-full text-white/60 group-hover:text-black transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 text-sm">→</span>
+      </span>
+    </TransitionLink>
+  );
+}
+
+// Nav link with staggered hover effect
+function NavLink({
+  href,
+  label,
+  isActive,
+  onHover,
+  onClick,
+}: {
+  href: string;
+  label: string;
+  isActive: boolean;
+  onHover: () => void;
+  onClick: () => void;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <TransitionLink
+      href={href}
+      className="relative px-5 py-3"
+      onMouseEnter={() => {
+        setIsHovered(true);
+        onHover();
+      }}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={onClick}
+    >
+      <span
+        className="text-sm font-medium uppercase tracking-[0.15em]"
+        style={{ color: isActive ? accentColor : isHovered ? "#fff" : "rgba(255,255,255,0.7)" }}
+      >
+        <StaggeredText text={label} isHovered={isHovered} />
+      </span>
+      {isActive && (
+        <motion.span
+          className="absolute -bottom-0 left-5 right-5 h-[2px]"
+          style={{ backgroundColor: accentColor }}
+          layoutId="navbar-underline"
+        />
+      )}
+    </TransitionLink>
+  );
+}
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -41,18 +161,18 @@ export default function Navbar() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="fixed top-0 left-0 right-0 z-50 hidden md:flex justify-center pt-6"
+        className="fixed top-0 left-0 right-0 z-50 hidden md:flex justify-center pt-8"
       >
         <motion.nav
           className="flex items-center rounded-full overflow-hidden"
           animate={{
-            backgroundColor: isScrolled ? "rgba(0, 0, 0, 0.8)" : "rgba(0, 0, 0, 0)",
+            backgroundColor: isScrolled ? "rgba(0, 0, 0, 0.85)" : "rgba(0, 0, 0, 0)",
             backdropFilter: isScrolled ? "blur(20px)" : "blur(0px)",
-            paddingLeft: isScrolled ? "8px" : "48px",
-            paddingRight: isScrolled ? "8px" : "48px",
-            paddingTop: isScrolled ? "8px" : "16px",
-            paddingBottom: isScrolled ? "8px" : "16px",
-            gap: isScrolled ? "4px" : "48px",
+            paddingLeft: isScrolled ? "12px" : "48px",
+            paddingRight: isScrolled ? "12px" : "48px",
+            paddingTop: isScrolled ? "10px" : "20px",
+            paddingBottom: isScrolled ? "10px" : "20px",
+            gap: isScrolled ? "8px" : "40px",
           }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           style={{
@@ -60,16 +180,16 @@ export default function Navbar() {
           }}
         >
           {/* Logo */}
-          <TransitionLink href="/" className="flex items-center gap-2 pl-2 pr-4">
-            <AnimatedLogo width={32} height={20} drawDuration={1} delay={0.5} />
-            <span className="text-white font-bold text-xs uppercase tracking-[0.1em]">
-              Executive
+          <TransitionLink href="/" className="flex items-center gap-3 pl-2 pr-4">
+            <AnimatedLogo width={36} height={24} drawDuration={1} delay={0.5} />
+            <span className="text-white font-bold text-sm uppercase tracking-[0.1em]">
+              Executive AI
             </span>
           </TransitionLink>
 
           {/* Divider - only visible when scrolled */}
           <motion.div
-            className="w-px h-6 bg-white/10"
+            className="w-px h-8 bg-white/10"
             animate={{ opacity: isScrolled ? 1 : 0 }}
             transition={{ duration: 0.3 }}
           />
@@ -77,56 +197,26 @@ export default function Navbar() {
           {/* Nav Links */}
           <div className="flex items-center">
             {navLinks.map((link) => (
-              <TransitionLink
+              <NavLink
                 key={link.href}
                 href={link.href}
-                className="text-xs uppercase tracking-[0.15em] transition-colors px-4 py-2"
-                style={{
-                  color: isActive(link.href) ? accentColor : "rgba(255,255,255,0.6)",
-                }}
-                onMouseEnter={() => play("hover")}
+                label={link.label}
+                isActive={isActive(link.href)}
+                onHover={() => play("hover")}
                 onClick={() => play("click")}
-              >
-                <motion.span
-                  className="relative"
-                  whileHover={{ color: "#fff" }}
-                >
-                  {link.label}
-                  {isActive(link.href) && (
-                    <motion.span
-                      className="absolute -bottom-1 left-0 right-0 h-px"
-                      style={{ backgroundColor: accentColor }}
-                      layoutId="navbar-underline"
-                    />
-                  )}
-                </motion.span>
-              </TransitionLink>
+              />
             ))}
           </div>
 
           {/* Divider - only visible when scrolled */}
           <motion.div
-            className="w-px h-6 bg-white/10"
+            className="w-px h-8 bg-white/10"
             animate={{ opacity: isScrolled ? 1 : 0 }}
             transition={{ duration: 0.3 }}
           />
 
           {/* CTA */}
-          <TransitionLink
-            href="/contact"
-            className="group relative h-9 px-5 ml-1 overflow-hidden rounded-full inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white transition-colors duration-300"
-            onMouseEnter={() => play("hover", { volume: 0.08 })}
-            onClick={() => play("click")}
-          >
-            <span className="relative z-10 text-white group-hover:text-black text-xs uppercase tracking-[0.15em] font-semibold transition-colors duration-300">
-              Start Project
-            </span>
-            {/* Arrow with diagonal slide on hover */}
-            <span className="relative w-4 h-4 overflow-hidden">
-              <span className="absolute inset-0 flex items-center justify-center text-white/60 group-hover:text-black transition-all duration-300 group-hover:translate-x-full group-hover:-translate-y-full text-xs">→</span>
-              <span className="absolute inset-0 flex items-center justify-center -translate-x-full translate-y-full text-white/60 group-hover:text-black transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 text-xs">→</span>
-            </span>
-          </TransitionLink>
+          <CTAButton />
         </motion.nav>
       </motion.header>
 
@@ -137,11 +227,11 @@ export default function Navbar() {
         transition={{ duration: 0.6 }}
         className="fixed top-0 left-0 right-0 z-50 md:hidden"
       >
-        <nav className="mx-4 mt-4 px-4 py-3 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl">
+        <nav className="mx-4 mt-4 px-5 py-4 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <TransitionLink href="/" className="text-white font-bold text-sm uppercase tracking-[0.1em]">
-              Executive
+            <TransitionLink href="/" className="text-white font-bold text-base uppercase tracking-[0.1em]">
+              Executive AI
             </TransitionLink>
 
             {/* Menu Button */}

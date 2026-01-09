@@ -1,7 +1,8 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import Image from "next/image";
 
 // Cinematic warm color palette
 const accentColor = "rgba(255, 200, 150, 1)"; // Warm champagne
@@ -27,9 +28,9 @@ function ScrollRevealText({
   return (
     <span className={`inline-flex flex-wrap ${className || ""}`}>
       {letters.map((letter, index) => {
-        // Each letter reveals at a staggered scroll position
-        const letterStart = startOffset + (index / totalLetters) * 0.4;
-        const letterEnd = letterStart + 0.15;
+        // Each letter reveals at a staggered scroll position - faster animation
+        const letterStart = startOffset + (index / totalLetters) * 0.25;
+        const letterEnd = letterStart + 0.08;
 
         return (
           <ScrollLetter
@@ -102,143 +103,159 @@ function ScrollLetter({
 const services = [
   {
     number: "01",
-    title: "STRATEGY",
-    subtitle: "The Blueprint",
-    description: "Every frame tells a story. We architect digital experiences that captivate from the first moment.",
-    details: [
-      "Audience psychology & journey mapping",
-      "Conversion-focused experience design",
-      "Strategic narrative development",
+    title: "Brand Strategy",
+    description: "Helping businesses uncover their brand's purpose and uniqueness — and the game plan to deliver it to win their customers' devotion.",
+    tags: [
+      "Research & Insights",
+      "Brand Strategy",
+      "Competitive Study",
+      "Voice & Tone",
+      "Naming & Copywriting",
     ],
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
   },
   {
     number: "02",
-    title: "CRAFT",
-    subtitle: "The Production",
-    description: "Where vision meets execution. Custom-built systems engineered for performance and polish.",
-    details: [
-      "Bespoke animation systems",
-      "Performance-first development",
-      "Seamless interactions",
+    title: "Digital Design",
+    description: "Designing engaging digital experiences that combine brand strategy and creativity with UX insights to deliver functionality and ease of use.",
+    tags: [
+      "Identity Design",
+      "Product Design",
+      "Web Design",
+      "Motion Design",
+      "Design Systems",
     ],
+    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80",
   },
   {
     number: "03",
-    title: "LEGACY",
-    subtitle: "The Premiere",
-    description: "A website is a living story. We ensure your digital presence evolves with your ambitions.",
-    details: [
-      "Strategic visibility",
-      "Scalable architecture",
-      "Continuous refinement",
+    title: "Development",
+    description: "Building performant, scalable digital products with modern technologies. From marketing sites to complex web applications.",
+    tags: [
+      "Frontend Development",
+      "Backend Systems",
+      "CMS Integration",
+      "Performance",
+      "Accessibility",
     ],
+    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80",
   },
 ];
 
-// Service Section within the card
-function ServiceSection({
+// Service Row Component - Jason Zubiate style
+function ServiceRow({
   service,
   index,
   isLast,
-  scrollYProgress,
 }: {
   service: typeof services[0];
   index: number;
   isLast: boolean;
-  scrollYProgress: import("framer-motion").MotionValue<number>;
 }) {
-  // Staggered scroll-driven transforms for each section
-  const sectionStart = 0.1 + index * 0.15;
-  const numberY = useTransform(scrollYProgress, [sectionStart, sectionStart + 0.2], [30, 0]);
-  const numberOpacity = useTransform(scrollYProgress, [sectionStart, sectionStart + 0.15], [0, 1]);
-  const contentY = useTransform(scrollYProgress, [sectionStart + 0.05, sectionStart + 0.25], [20, 0]);
-  const contentOpacity = useTransform(scrollYProgress, [sectionStart + 0.05, sectionStart + 0.2], [0, 1]);
+  const [isHovered, setIsHovered] = useState(false);
+  const rowRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: rowRef,
+    offset: ["start end", "center center"],
+  });
+
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+  const y = useTransform(scrollYProgress, [0, 0.5], [40, 0]);
 
   return (
-    <div className={`relative ${!isLast ? "border-b border-white/5" : ""}`}>
-      {/* Section content */}
-      <div className="py-10 md:py-14 px-8 md:px-12">
-        <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-start">
-          {/* Left - Number */}
-          <motion.div
-            className="md:col-span-2"
-            style={{ y: numberY, opacity: numberOpacity }}
-          >
-            <span
-              className="text-5xl md:text-6xl font-black"
-              style={{ color: accentColor }}
-            >
+    <motion.div
+      ref={rowRef}
+      className={`relative ${!isLast ? "border-b border-white/10" : ""}`}
+      style={{ opacity, y }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Hover background */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+        style={{
+          background: `radial-gradient(ellipse 100% 100% at 80% 50%, rgba(255, 200, 150, 0.04) 0%, transparent 70%)`,
+        }}
+      />
+
+      {/* Row content */}
+      <div className="relative py-12 md:py-16 px-8 md:px-12">
+        <div className="grid grid-cols-12 gap-6 md:gap-8 items-start">
+          {/* Number */}
+          <div className="col-span-12 md:col-span-1">
+            <span className="text-white/30 text-sm font-medium">
               {service.number}
             </span>
-          </motion.div>
+          </div>
 
-          {/* Middle - Title & Description */}
-          <motion.div
-            className="md:col-span-5"
-            style={{ y: contentY, opacity: contentOpacity }}
-          >
-            <h3 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-[-0.02em] text-white mb-2">
+          {/* Title & Description */}
+          <div className="col-span-12 md:col-span-5">
+            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-[-0.02em] text-white mb-4">
               {service.title}
             </h3>
-            <p
-              className="text-xs md:text-sm uppercase tracking-[0.2em] mb-6"
-              style={{ color: accentColorMuted }}
-            >
-              {service.subtitle}
-            </p>
-            <p className="text-white/60 text-base md:text-lg leading-relaxed">
+            <p className="text-white/50 text-base md:text-lg leading-relaxed">
               {service.description}
             </p>
-          </motion.div>
+          </div>
 
-          {/* Right - Details */}
-          <motion.div
-            className="md:col-span-5"
-            style={{ y: contentY, opacity: contentOpacity }}
-          >
-            <div className="space-y-4">
-              {service.details.map((detail, i) => (
-                <div
+          {/* Tags */}
+          <div className="col-span-8 md:col-span-4">
+            <div className="flex flex-wrap gap-2">
+              {service.tags.map((tag, i) => (
+                <span
                   key={i}
-                  className="flex items-start gap-4"
+                  className="inline-block px-3 py-1.5 text-xs uppercase tracking-wider text-white/70 bg-white/5 border border-white/15 rounded-sm hover:bg-white/10 hover:border-white/25 hover:text-white transition-colors cursor-default"
                 >
-                  <span
-                    className="text-lg font-light mt-0.5"
-                    style={{ color: accentColorMuted }}
-                  >
-                    —
-                  </span>
-                  <span className="text-white/50 text-sm md:text-base tracking-wide">
-                    {detail}
-                  </span>
-                </div>
+                  {tag}
+                </span>
               ))}
             </div>
-          </motion.div>
+          </div>
+
+          {/* Image */}
+          <div className="col-span-4 md:col-span-2 flex justify-end">
+            <motion.div
+              className="relative w-full max-w-[160px] aspect-[4/3] overflow-hidden rounded-sm"
+              animate={{
+                scale: isHovered ? 1.05 : 1,
+              }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <Image
+                src={service.image}
+                alt={service.title}
+                fill
+                className="object-cover"
+                sizes="160px"
+              />
+              {/* Warm overlay on hover */}
+              <motion.div
+                className="absolute inset-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isHovered ? 0.2 : 0 }}
+                transition={{ duration: 0.3 }}
+                style={{ backgroundColor: accentColor }}
+              />
+            </motion.div>
+          </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 export default function Services() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress: headerScrollProgress } = useScroll({
     target: headerRef,
     offset: ["start end", "end start"],
   });
-
-  const { scrollYProgress: cardScrollProgress } = useScroll({
-    target: cardRef,
-    offset: ["start end", "end start"],
-  });
-
-  // Card entrance animation
-  const cardY = useTransform(cardScrollProgress, [0, 0.3], [60, 0]);
-  const cardOpacity = useTransform(cardScrollProgress, [0, 0.2], [0, 1]);
 
   return (
     <section
@@ -273,42 +290,37 @@ export default function Services() {
           <ScrollRevealText
             text="CREATE"
             scrollYProgress={headerScrollProgress}
-            startOffset={0.15}
+            startOffset={0.1}
             dimmed
           />
         </h2>
       </div>
 
-      {/* Services Card */}
-      <div className="px-6 md:px-12 lg:px-16">
-        <motion.div
-          ref={cardRef}
+      {/* Services List */}
+      <div className="mx-6 md:mx-12 lg:mx-16">
+        <div
           className="relative rounded-2xl md:rounded-3xl overflow-hidden"
           style={{
-            y: cardY,
-            opacity: cardOpacity,
             background: "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)",
             border: "1px solid rgba(255,255,255,0.08)",
-            boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)",
           }}
         >
           {/* Warm ambient glow */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: `radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 200, 150, 0.06) 0%, transparent 60%)`,
+              background: `radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 200, 150, 0.04) 0%, transparent 60%)`,
             }}
           />
 
-          {/* Card content */}
+          {/* Service rows */}
           <div className="relative">
             {services.map((service, index) => (
-              <ServiceSection
+              <ServiceRow
                 key={service.number}
                 service={service}
                 index={index}
                 isLast={index === services.length - 1}
-                scrollYProgress={cardScrollProgress}
               />
             ))}
           </div>
@@ -329,9 +341,8 @@ export default function Services() {
               </span>
             </motion.a>
           </div>
-        </motion.div>
+        </div>
       </div>
-
     </section>
   );
 }
