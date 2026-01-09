@@ -70,6 +70,8 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
       const tl = gsap.timeline({
         onComplete: () => {
           isAnimatingRef.current = false;
+          // Remove the class that hides the footer
+          document.body.classList.remove("page-transitioning");
         }
       });
       timelineRef.current = tl;
@@ -163,6 +165,9 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
 
       // Set target page name for display
       setTargetPage(pageNames[href] || href.replace("/", "") || "Home");
+
+      // Add class to body to hide footer via CSS - persists through navigation
+      document.body.classList.add("page-transitioning");
 
       // Play transition sound and start transition
       play("transition");

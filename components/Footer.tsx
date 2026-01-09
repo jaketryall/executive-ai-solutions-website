@@ -346,6 +346,7 @@ export default function Footer() {
 
       <footer
         ref={footerRef}
+        id="site-footer"
         className="fixed bottom-0 left-0 right-0 bg-[#050505] overflow-hidden"
         style={{ zIndex: 0 }}
       >
