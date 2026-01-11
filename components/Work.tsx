@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useEffect, useLayoutEffect, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
@@ -25,10 +25,11 @@ export const workItems = [
     image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&q=80",
     year: "2024",
     tagline: "Where luxury meets the horizon",
-    description: "A complete digital transformation for a premium charter service, replacing dated systems with an experience as refined as the journey itself.",
-    result: "340% increase in bookings",
+    description: "A complete digital transformation for a premium charter service.",
+    result: "340%",
+    resultLabel: "increase in bookings",
     color: "#2a3f5f",
-    warmColor: "rgba(255, 200, 150, 0.12)",
+    warmColor: "rgba(255, 200, 150, 0.15)",
   },
   {
     slug: "meridian",
@@ -37,10 +38,11 @@ export const workItems = [
     image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80",
     year: "2024",
     tagline: "Presence that commands the room",
-    description: "Crafting an executive digital presence that reflects the caliber of counsel within. Every interaction designed to build trust.",
-    result: "87% more qualified leads",
+    description: "Crafting an executive digital presence that reflects caliber.",
+    result: "87%",
+    resultLabel: "more qualified leads",
     color: "#3d2c1f",
-    warmColor: "rgba(255, 180, 120, 0.15)",
+    warmColor: "rgba(255, 180, 120, 0.18)",
   },
   {
     slug: "apex",
@@ -49,10 +51,11 @@ export const workItems = [
     image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200&q=80",
     year: "2023",
     tagline: "Art demands attention",
-    description: "An immersive gallery experience for a creative studio, letting their work speak through considered presentation.",
-    result: "4.2x project inquiries",
+    description: "An immersive gallery experience for a creative studio.",
+    result: "4.2x",
+    resultLabel: "project inquiries",
     color: "#2d1f3d",
-    warmColor: "rgba(255, 190, 140, 0.12)",
+    warmColor: "rgba(255, 190, 140, 0.15)",
   },
   {
     slug: "vertex",
@@ -61,353 +64,393 @@ export const workItems = [
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80",
     year: "2023",
     tagline: "Clarity in complexity",
-    description: "Distilling sophisticated technology into an experience that resonates. Making the complex feel intuitive.",
-    result: "156% more demos",
+    description: "Distilling sophisticated technology into intuitive experience.",
+    result: "156%",
+    resultLabel: "more demos booked",
     color: "#1f2d3d",
-    warmColor: "rgba(255, 200, 160, 0.12)",
+    warmColor: "rgba(255, 200, 160, 0.15)",
   },
 ];
 
-// Horizontal Project Panel - Cinematic Style
-function ProjectPanel({
+// Flying project card with multi-layer parallax
+function FlyingProjectCard({
   project,
   index,
+  containerRef,
 }: {
   project: (typeof workItems)[0];
   index: number;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 }) {
+  const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const { play } = useSound();
 
+  // Stagger the starting positions
+  const startOffset = index * 0.15;
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Multi-layer parallax - different speeds for different elements
+  // Cards fly up from below at different rates
+  const cardY = useTransform(
+    scrollYProgress,
+    [startOffset, startOffset + 0.4, 1],
+    ["120vh", "0vh", "-100vh"]
+  );
+
+  // Image moves slower than card (parallax within card)
+  const imageY = useTransform(
+    scrollYProgress,
+    [startOffset, startOffset + 0.4, 1],
+    ["30%", "0%", "-20%"]
+  );
+
+  // Title flies faster (whoosh effect)
+  const titleX = useTransform(
+    scrollYProgress,
+    [startOffset, startOffset + 0.3, startOffset + 0.5],
+    ["-100%", "0%", "0%"]
+  );
+
+  const titleOpacity = useTransform(
+    scrollYProgress,
+    [startOffset, startOffset + 0.25, startOffset + 0.6, startOffset + 0.75],
+    [0, 1, 1, 0]
+  );
+
+  // Scale and rotation for dramatic entry
+  const cardScale = useTransform(
+    scrollYProgress,
+    [startOffset, startOffset + 0.3, startOffset + 0.6, 1],
+    [0.8, 1, 1, 0.9]
+  );
+
+  const cardRotate = useTransform(
+    scrollYProgress,
+    [startOffset, startOffset + 0.3],
+    [5, 0]
+  );
+
+  // Glow intensity based on position
+  const glowOpacity = useTransform(
+    scrollYProgress,
+    [startOffset + 0.2, startOffset + 0.4, startOffset + 0.6],
+    [0, 1, 0]
+  );
+
+  // Alternating left/right positions
+  const isLeft = index % 2 === 0;
+  const xPosition = isLeft ? "5%" : "45%";
+
   return (
-    <div
-      className="project-panel relative w-screen h-screen flex items-center justify-center shrink-0 overflow-hidden"
-      data-index={index}
+    <motion.div
+      ref={cardRef}
+      className="fixed w-[50vw] max-w-2xl pointer-events-auto"
+      style={{
+        y: cardY,
+        scale: cardScale,
+        rotate: cardRotate,
+        left: xPosition,
+        top: "15vh",
+        zIndex: 10 + index,
+      }}
     >
-      {/* Warm ambient light */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `radial-gradient(ellipse 100% 80% at 50% 30%, ${project.warmColor} 0%, transparent 60%)`,
-        }}
-      />
-
-      {/* Massive outlined background text */}
-      <div
-        className="parallax-back absolute inset-0 flex items-center justify-center pointer-events-none"
-        style={{ willChange: "transform" }}
-      >
-        <span
-          className="text-[18vw] font-black tracking-[-0.04em] select-none"
-          style={{
-            WebkitTextStroke: "1px rgba(255,255,255,0.04)",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          {project.title}
-        </span>
-      </div>
-
-      {/* Content container */}
-      <div
-        className="parallax-front relative z-10 flex items-center gap-20 px-12 lg:px-24 max-w-7xl w-full"
-        style={{ willChange: "transform" }}
-      >
-        {/* Left: Project info - Cinematic style */}
-        <div className="flex-1 max-w-xl">
-          {/* Number - large, warm accent */}
-          <div className="panel-number flex items-center gap-6 mb-8">
-            <span
-              className="text-7xl md:text-9xl font-black"
-              style={{ color: accentColorMuted }}
-            >
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <div
-              className="panel-line h-px flex-1 max-w-32"
-              style={{ background: `linear-gradient(to right, ${accentColorMuted}, transparent)` }}
-            />
-          </div>
-
-          {/* Category - elegant, not monospace */}
-          <p
-            className="panel-category text-sm uppercase tracking-[0.25em] mb-4"
-            style={{ color: accentColorMuted }}
-          >
-            {project.category}
-          </p>
-
-          {/* Title */}
-          <h2 className="panel-title text-5xl md:text-7xl font-black text-white leading-[0.9] tracking-[-0.03em] mb-4">
-            {project.title}
-          </h2>
-
-          {/* Tagline */}
-          <p className="panel-tagline text-white/40 text-xl italic mb-8">
-            {project.tagline}
-          </p>
-
-          {/* Description */}
-          <p className="panel-description text-white/60 text-lg leading-relaxed mb-10">
-            {project.description}
-          </p>
-
-          {/* Result - warm accent */}
-          <div className="panel-result mb-10">
-            <p className="text-white/30 text-sm uppercase tracking-[0.2em] mb-2">
-              The Result
-            </p>
-            <p
-              className="text-2xl font-bold"
-              style={{ color: accentColor }}
-            >
-              {project.result}
-            </p>
-          </div>
-
-          {/* CTA Button - elegant */}
-          <TransitionLink href={`/work/${project.slug}`} className="panel-cta inline-block">
-            <motion.button
-              className="group inline-flex items-center gap-4 text-lg tracking-wide"
-              style={{ color: accentColor }}
-              whileHover={{ x: 8 }}
-              transition={{ duration: 0.3 }}
-              onMouseEnter={() => play("hover", { volume: 0.06 })}
-            >
-              <span>View Project</span>
-              <span className="transition-transform group-hover:translate-x-1">→</span>
-            </motion.button>
-          </TransitionLink>
-        </div>
-
-        {/* Right: Image - Cinematic presentation */}
+      <TransitionLink href={`/work/${project.slug}`}>
         <div
-          className="panel-image hidden lg:block flex-1 max-w-2xl"
+          className="group relative cursor-pointer"
           onMouseEnter={() => {
             setIsHovered(true);
             play("hover", { volume: 0.06 });
           }}
           onMouseLeave={() => setIsHovered(false)}
         >
-          <div className="relative aspect-[4/3] overflow-hidden rounded-sm group cursor-pointer">
-            {/* Warm ambient glow behind image */}
-            <div
-              className="absolute -inset-20 rounded-3xl pointer-events-none -z-10"
-              style={{
-                background: `radial-gradient(ellipse at center, ${project.warmColor.replace('0.12', '0.4')} 0%, transparent 60%)`,
-                filter: "blur(80px)",
-                opacity: isHovered ? 1 : 0.5,
-                transform: isHovered ? "scale(1.15)" : "scale(1)",
-                transition: "all 0.8s ease-out",
-              }}
-            />
+          {/* Glow layer - moves independently */}
+          <motion.div
+            className="absolute -inset-20 -z-10 rounded-3xl pointer-events-none"
+            style={{
+              background: `radial-gradient(ellipse at center, ${project.warmColor} 0%, transparent 70%)`,
+              filter: "blur(40px)",
+              opacity: glowOpacity,
+            }}
+          />
 
-            <Image
-              src={project.image}
-              alt={project.title}
-              fill
-              className="object-cover transition-transform duration-1000 group-hover:scale-105"
-              sizes="50vw"
-            />
-
-            {/* Cinematic gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
-
-            {/* Letterbox bars on hover for cinematic feel */}
+          {/* Main card */}
+          <div className="relative overflow-hidden rounded-xl aspect-[16/10]">
+            {/* Background image with parallax */}
             <motion.div
-              className="absolute top-0 left-0 right-0 bg-black"
-              initial={{ height: 0 }}
-              animate={{ height: isHovered ? 24 : 0 }}
-              transition={{ duration: 0.4 }}
-            />
-            <motion.div
-              className="absolute bottom-0 left-0 right-0 bg-black"
-              initial={{ height: 0 }}
-              animate={{ height: isHovered ? 24 : 0 }}
-              transition={{ duration: 0.4 }}
-            />
-
-            {/* Year badge - elegant */}
-            <div
-              className="absolute top-8 right-8 text-sm tracking-widest"
-              style={{ color: "rgba(255,255,255,0.4)" }}
+              className="absolute inset-0 overflow-hidden rounded-xl"
+              style={{ y: imageY, scale: 1.2 }}
             >
-              {project.year}
+              <Image
+                src={project.image}
+                alt={project.title}
+                fill
+                className="object-cover rounded-xl"
+                sizes="50vw"
+              />
+            </motion.div>
+
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent" />
+
+            {/* Hover color wash */}
+            <motion.div
+              className="absolute inset-0"
+              style={{ backgroundColor: project.warmColor.replace("0.15", "0.3") }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: isHovered ? 0.2 : 0 }}
+              transition={{ duration: 0.3 }}
+            />
+
+            {/* Content */}
+            <div className="absolute inset-0 p-8 flex flex-col justify-end">
+              {/* Flying title - comes from the side */}
+              <motion.div style={{ x: titleX, opacity: titleOpacity }}>
+                <p
+                  className="text-xs uppercase tracking-[0.3em] mb-2"
+                  style={{ color: accentColor }}
+                >
+                  {project.category} • {project.year}
+                </p>
+                <h3 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-[-0.03em] mb-2">
+                  {project.title}
+                </h3>
+                <p className="text-white/50 text-sm md:text-base max-w-md">
+                  {project.tagline}
+                </p>
+              </motion.div>
+
+              {/* Result badge */}
+              <motion.div
+                className="absolute top-6 right-6 text-right"
+                animate={{ scale: isHovered ? 1.05 : 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <p
+                  className="text-3xl md:text-4xl font-black"
+                  style={{ color: accentColor }}
+                >
+                  {project.result}
+                </p>
+                <p className="text-white/40 text-xs uppercase tracking-wider">
+                  {project.resultLabel}
+                </p>
+              </motion.div>
+
+              {/* View indicator */}
+              <motion.div
+                className="absolute bottom-6 right-6 flex items-center gap-2"
+                animate={{ x: isHovered ? 8 : 0, opacity: isHovered ? 1 : 0.6 }}
+                transition={{ duration: 0.3 }}
+              >
+                <span className="text-white/60 text-sm">View Project</span>
+                <motion.span
+                  className="text-lg"
+                  style={{ color: accentColor }}
+                  animate={{ x: isHovered ? 4 : 0 }}
+                >
+                  →
+                </motion.span>
+              </motion.div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </TransitionLink>
+    </motion.div>
   );
 }
 
-// Progress indicator - minimal, warm
-function HorizontalProgress({ progress, isVisible }: { progress: number; isVisible: boolean }) {
+// Flying title text that whooshes by
+function FlyingTitle({
+  text,
+  index,
+  containerRef,
+  direction = "left",
+}: {
+  text: string;
+  index: number;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  direction?: "left" | "right";
+}) {
+  const startOffset = index * 0.15 + 0.1;
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Title flies across screen
+  const x = useTransform(
+    scrollYProgress,
+    [startOffset, startOffset + 0.2, startOffset + 0.4],
+    direction === "left" ? ["100vw", "0vw", "-100vw"] : ["-100vw", "0vw", "100vw"]
+  );
+
+  const opacity = useTransform(
+    scrollYProgress,
+    [startOffset, startOffset + 0.15, startOffset + 0.3, startOffset + 0.4],
+    [0, 0.15, 0.15, 0]
+  );
+
   return (
-    <div
-      className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 flex items-center gap-8 transition-opacity duration-300"
-      style={{ opacity: isVisible ? 1 : 0, pointerEvents: isVisible ? "auto" : "none" }}
+    <motion.div
+      className="fixed top-1/2 -translate-y-1/2 whitespace-nowrap pointer-events-none"
+      style={{
+        x,
+        opacity,
+        zIndex: 5,
+      }}
     >
-      {/* Progress bar */}
-      <div className="w-48 h-px bg-white/10 relative overflow-hidden">
-        <motion.div
-          className="absolute inset-y-0 left-0"
-          style={{
-            width: `${progress * 100}%`,
-            background: `linear-gradient(to right, ${accentColor}, ${accentColorMuted})`,
-          }}
-        />
-      </div>
-
-      {/* Dots */}
-      <div className="flex gap-4">
-        {workItems.map((_, i) => (
-          <motion.div
-            key={i}
-            className="w-2 h-2 rounded-full transition-all duration-500"
-            style={{
-              backgroundColor: progress > i / workItems.length ? accentColor : "rgba(255,255,255,0.15)",
-              transform: progress > i / workItems.length ? "scale(1.3)" : "scale(1)",
-            }}
-          />
-        ))}
-      </div>
-    </div>
+      <span
+        className="text-[20vw] font-black tracking-[-0.04em]"
+        style={{
+          WebkitTextStroke: "1px rgba(255,200,150,0.15)",
+          WebkitTextFillColor: "transparent",
+        }}
+      >
+        {text}
+      </span>
+    </motion.div>
   );
 }
 
-// Mobile layout - Cinematic
+// Mobile layout
 function MobileWork() {
   const { play } = useSound();
 
   return (
-    <div className="md:hidden">
+    <div className="md:hidden px-6 py-24">
       {/* Header */}
-      <div className="px-6 pt-24 pb-16">
+      <div className="mb-16 text-center">
         <p
           className="text-sm uppercase tracking-[0.25em] mb-4"
           style={{ color: accentColorMuted }}
         >
           Selected Work
         </p>
-        <h2 className="text-[15vw] font-black text-white leading-[0.85] tracking-[-0.03em]">
+        <h2 className="text-[18vw] font-black text-white leading-[0.85] tracking-[-0.03em]">
           THE
           <br />
-          <span className="text-white/30">PROOF</span>
+          <span className="text-white/20">PROOF</span>
         </h2>
       </div>
 
-      {workItems.map((project, index) => (
-        <div
-          key={project.title}
-          className="min-h-screen flex flex-col justify-center px-6 py-20 relative overflow-hidden"
-        >
-          {/* Warm ambient glow */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: `radial-gradient(ellipse at center, ${project.warmColor} 0%, transparent 60%)`,
-            }}
-          />
-
-          {/* Background number */}
-          <span
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[40vw] font-black pointer-events-none select-none"
-            style={{
-              WebkitTextStroke: "1px rgba(255,255,255,0.03)",
-              WebkitTextFillColor: "transparent",
-            }}
+      {/* Project Cards */}
+      <div className="space-y-10">
+        {workItems.map((project, index) => (
+          <motion.div
+            key={project.slug}
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={{ duration: 0.7, delay: index * 0.1 }}
           >
-            {String(index + 1).padStart(2, "0")}
-          </span>
-
-          <div className="relative z-10">
-            {/* Number */}
-            <div className="flex items-center gap-4 mb-6">
-              <span
-                className="text-5xl font-black"
-                style={{ color: accentColorMuted }}
-              >
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <div className="h-px flex-1 bg-white/10" />
-            </div>
-
-            {/* Image */}
-            <div className="relative aspect-[16/10] overflow-hidden rounded-sm mb-8">
-              <Image
-                src={project.image}
-                alt={project.title}
-                fill
-                className="object-cover"
-                sizes="100vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <div
-                className="absolute top-4 right-4 text-sm tracking-widest"
-                style={{ color: "rgba(255,255,255,0.4)" }}
-              >
-                {project.year}
-              </div>
-            </div>
-
-            {/* Category */}
-            <p
-              className="text-sm uppercase tracking-[0.25em] mb-3"
-              style={{ color: accentColorMuted }}
-            >
-              {project.category}
-            </p>
-
-            {/* Title */}
-            <h3 className="text-4xl font-black text-white tracking-[-0.02em] mb-3">
-              {project.title}
-            </h3>
-
-            {/* Tagline */}
-            <p className="text-white/40 text-lg italic mb-6">
-              {project.tagline}
-            </p>
-
-            {/* Description */}
-            <p className="text-white/60 text-base leading-relaxed mb-8">
-              {project.description}
-            </p>
-
-            {/* Result */}
-            <p
-              className="text-xl font-bold mb-6"
-              style={{ color: accentColor }}
-            >
-              {project.result}
-            </p>
-
-            {/* CTA Button */}
             <TransitionLink href={`/work/${project.slug}`}>
-              <motion.button
-                className="group inline-flex items-center gap-3 text-base tracking-wide"
-                style={{ color: accentColor }}
-                whileHover={{ x: 4 }}
-                transition={{ duration: 0.3 }}
-                onMouseEnter={() => play("hover", { volume: 0.06 })}
-              >
-                <span>View Project</span>
-                <span className="transition-transform group-hover:translate-x-1">→</span>
-              </motion.button>
+              <div className="group relative">
+                {/* Image */}
+                <div className="relative aspect-[16/10] overflow-hidden rounded-xl mb-4">
+                  <Image
+                    src={project.image}
+                    alt={project.title}
+                    fill
+                    className="object-cover transition-transform duration-700 group-active:scale-105 rounded-xl"
+                    sizes="100vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+                  {/* Result badge */}
+                  <div className="absolute top-4 right-4 text-right">
+                    <p
+                      className="text-2xl font-black"
+                      style={{ color: accentColor }}
+                    >
+                      {project.result}
+                    </p>
+                    <p className="text-white/40 text-[10px] uppercase tracking-wider">
+                      {project.resultLabel}
+                    </p>
+                  </div>
+
+                  {/* Title overlay */}
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <p
+                      className="text-xs uppercase tracking-[0.2em] mb-1"
+                      style={{ color: accentColor }}
+                    >
+                      {project.category}
+                    </p>
+                    <h3 className="text-2xl font-black text-white tracking-[-0.02em]">
+                      {project.title}
+                    </h3>
+                  </div>
+                </div>
+
+                {/* Info below */}
+                <div className="flex items-center justify-between px-1">
+                  <p className="text-white/50 text-sm">{project.tagline}</p>
+                  <span
+                    className="text-sm tracking-wide"
+                    style={{ color: accentColorMuted }}
+                  >
+                    View →
+                  </span>
+                </div>
+              </div>
             </TransitionLink>
-          </div>
-        </div>
-      ))}
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 }
 
 export default function Work() {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [isInView, setIsInView] = useState(false);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Track when section is in viewport to show/hide fixed elements
+  // Use scroll position check: only show when Work section top is at or above viewport top
+  useEffect(() => {
+    if (!sectionRef.current || isMobile) return;
+
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+
+      const rect = sectionRef.current.getBoundingClientRect();
+      const sectionTop = rect.top;
+      const sectionBottom = rect.bottom;
+
+      // Only show fixed elements when:
+      // 1. Section top has scrolled past the viewport top (sectionTop <= 0)
+      // 2. Section bottom is still below viewport top (sectionBottom > 0)
+      const shouldShow = sectionTop <= 0 && sectionBottom > 0;
+      setIsInView(shouldShow);
+    };
+
+    // Initial check
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isMobile]);
+
+  // Center title fades as you scroll
+  const centerTitleOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [1, 1, 1, 0]);
+  const centerTitleScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.05, 1.1]);
+
+  // Scroll indicator opacity
+  const scrollIndicatorOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [1, 0.3, 0.3, 0]);
 
   const useIsomorphicLayoutEffect =
     typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -420,171 +463,46 @@ export default function Work() {
   }, []);
 
   useIsomorphicLayoutEffect(() => {
-    if (isMobile || !containerRef.current || !wrapperRef.current) return;
+    if (isMobile || !sectionRef.current) return;
 
     gsap.registerPlugin(ScrollTrigger);
 
-    const container = containerRef.current;
-    const panels = container.querySelectorAll(".project-panel");
-    const totalWidth = container.scrollWidth - window.innerWidth;
-
-    // Calculate panel count (intro + projects + hold panel)
-    const panelCount = workItems.length + 2;
-
     const ctx = gsap.context(() => {
-      // Create the horizontal scroll tween
-      const horizontalTween = gsap.to(container, {
-        x: -totalWidth,
-        ease: "none",
+      // Animate the center title letters
+      const titleLetters = document.querySelectorAll(".center-title-letter");
+      gsap.set(titleLetters, { y: "100%", opacity: 0 });
+
+      gsap.to(titleLetters, {
+        y: "0%",
+        opacity: 1,
+        stagger: 0.05,
+        duration: 1,
+        ease: "power3.out",
         scrollTrigger: {
-          trigger: wrapperRef.current,
-          pin: true,
+          trigger: sectionRef.current,
+          start: "top 80%",
+          end: "top 30%",
           scrub: 1,
-          end: () => `+=${totalWidth}`,
-          onUpdate: (self) => {
-            setScrollProgress(self.progress);
-          },
-          onEnter: () => setIsInView(true),
-          onLeave: () => setIsInView(false),
-          onEnterBack: () => setIsInView(true),
-          onLeaveBack: () => setIsInView(false),
         },
       });
 
-      // Intro panel animations
-      const introPanel = container.querySelector(".intro-panel");
-      if (introPanel) {
-        const introContent = introPanel.querySelector(".intro-content");
-        const introGlow = introPanel.querySelector(".intro-glow");
-        const introLabel = introPanel.querySelector(".intro-label");
-        const introTitleLetters = introPanel.querySelectorAll(".intro-letter");
-        const introHint = introPanel.querySelector(".intro-hint");
-
-        // Set initial states
-        gsap.set([introLabel, introHint], { opacity: 0, y: 30 });
-        gsap.set(introTitleLetters, { y: "100%", opacity: 0 });
-        gsap.set(introGlow, { opacity: 0, scale: 0.8 });
-
-        // Entrance animation timeline
-        const introEnterTl = gsap.timeline({
+      // Decorative elements animation
+      gsap.fromTo(
+        ".work-decor-line",
+        { scaleX: 0 },
+        {
+          scaleX: 1,
+          duration: 1.5,
+          ease: "power2.out",
           scrollTrigger: {
-            trigger: wrapperRef.current,
+            trigger: sectionRef.current,
             start: "top 60%",
-            end: "top 10%",
-            scrub: 1,
+            toggleActions: "play none none reverse",
           },
-        });
-
-        introEnterTl
-          .to(introGlow, { opacity: 1, scale: 1, duration: 0.5 })
-          .to(introLabel, { opacity: 1, y: 0, duration: 0.3 }, "-=0.3")
-          .to(introTitleLetters, { y: "0%", opacity: 1, duration: 0.6, stagger: 0.03, ease: "power3.out" }, "-=0.2")
-          .to(introHint, { opacity: 1, y: 0, duration: 0.3 }, "-=0.3");
-
-        // Exit animation - fade out and scale as scrolling to first project
-        gsap.to(introContent, {
-          opacity: 0,
-          scale: 0.9,
-          x: "-20%",
-          ease: "power2.in",
-          scrollTrigger: {
-            trigger: introPanel,
-            containerAnimation: horizontalTween,
-            start: "center center",
-            end: "right center",
-            scrub: true,
-          },
-        });
-
-        gsap.to(introGlow, {
-          opacity: 0,
-          scale: 1.2,
-          ease: "power2.in",
-          scrollTrigger: {
-            trigger: introPanel,
-            containerAnimation: horizontalTween,
-            start: "center center",
-            end: "right center",
-            scrub: true,
-          },
-        });
-      }
-
-      panels.forEach((panel) => {
-        const backLayer = panel.querySelector(".parallax-back");
-        const frontLayer = panel.querySelector(".parallax-front");
-
-        // Element entrance animations
-        const panelNumber = panel.querySelector(".panel-number");
-        const panelLine = panel.querySelector(".panel-line");
-        const panelCategory = panel.querySelector(".panel-category");
-        const panelTitle = panel.querySelector(".panel-title");
-        const panelTagline = panel.querySelector(".panel-tagline");
-        const panelDescription = panel.querySelector(".panel-description");
-        const panelResult = panel.querySelector(".panel-result");
-        const panelCta = panel.querySelector(".panel-cta");
-        const panelImage = panel.querySelector(".panel-image");
-
-        // Set initial states
-        gsap.set([panelNumber, panelCategory, panelTitle, panelTagline, panelDescription, panelResult, panelCta], {
-          opacity: 0,
-          y: 30,
-        });
-        gsap.set(panelLine, { scaleX: 0, transformOrigin: "left center" });
-        gsap.set(panelImage, { opacity: 0, x: 50, scale: 0.95 });
-
-        // Staggered entrance timeline
-        const panelEnterTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: panel,
-            containerAnimation: horizontalTween,
-            start: "left 80%",
-            end: "left 30%",
-            scrub: 0.5,
-          },
-        });
-
-        panelEnterTl
-          .to(panelNumber, { opacity: 1, y: 0, duration: 0.4 })
-          .to(panelLine, { scaleX: 1, duration: 0.3 }, "-=0.2")
-          .to(panelCategory, { opacity: 1, y: 0, duration: 0.3 }, "-=0.2")
-          .to(panelTitle, { opacity: 1, y: 0, duration: 0.4 }, "-=0.2")
-          .to(panelTagline, { opacity: 1, y: 0, duration: 0.3 }, "-=0.3")
-          .to(panelDescription, { opacity: 1, y: 0, duration: 0.3 }, "-=0.2")
-          .to(panelResult, { opacity: 1, y: 0, duration: 0.3 }, "-=0.2")
-          .to(panelCta, { opacity: 1, y: 0, duration: 0.3 }, "-=0.2")
-          .to(panelImage, { opacity: 1, x: 0, scale: 1, duration: 0.5 }, "-=0.6");
-
-        if (backLayer) {
-          gsap.to(backLayer, {
-            x: "20%",
-            ease: "none",
-            scrollTrigger: {
-              trigger: panel,
-              containerAnimation: horizontalTween,
-              start: "left right",
-              end: "right left",
-              scrub: true,
-            },
-          });
         }
+      );
 
-        if (frontLayer) {
-          gsap.to(frontLayer, {
-            x: "-5%",
-            ease: "none",
-            scrollTrigger: {
-              trigger: panel,
-              containerAnimation: horizontalTween,
-              start: "left right",
-              end: "right left",
-              scrub: true,
-            },
-          });
-        }
-      });
-
-    });
+    }, sectionRef);
 
     return () => ctx.revert();
   }, [isMobile]);
@@ -592,99 +510,127 @@ export default function Work() {
   return (
     <section
       id="work"
-      className="relative bg-black overflow-x-hidden"
-      style={{ zIndex: 5, maxWidth: "100vw" }}
+      ref={sectionRef}
+      className="relative bg-black"
+      style={{
+        zIndex: 5,
+        // Height determines scroll length - more height = more scroll time for animations
+        height: isMobile ? "auto" : "400vh",
+      }}
     >
-      {/* Desktop: Horizontal Gallery - Always rendered, hidden on mobile via CSS */}
-      <div
-        ref={wrapperRef}
-        className="hidden md:block relative overflow-hidden"
-        style={{ height: "100vh", maxWidth: "100vw", overflowX: "hidden" }}
-      >
-          <div
-            ref={containerRef}
-            className="flex h-full"
-            style={{ width: `${(workItems.length + 2) * 100}vw` }}
+      {/* Desktop Layout - Fixed elements only visible when section is in view */}
+      {!isMobile && isInView && (
+        <>
+          {/* Fixed center title */}
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center pointer-events-none"
+            style={{
+              opacity: centerTitleOpacity,
+              scale: centerTitleScale,
+              zIndex: 1,
+            }}
           >
-            {/* Intro Panel */}
-            <div className="intro-panel relative w-screen h-screen flex items-center justify-center shrink-0 overflow-hidden">
-              {/* Warm ambient glow */}
-              <div
-                className="intro-glow absolute inset-0 pointer-events-none"
-                style={{
-                  background: `radial-gradient(ellipse 80% 60% at 50% 40%, rgba(255, 200, 150, 0.08) 0%, transparent 60%)`,
-                }}
-              />
+            {/* Background ambient glow */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background: `radial-gradient(ellipse 60% 40% at 50% 50%, rgba(255, 200, 150, 0.06) 0%, transparent 60%)`,
+              }}
+            />
 
-              {/* Content */}
-              <div className="intro-content relative z-10 text-center px-8">
-                <p
-                  className="intro-label text-sm md:text-base uppercase tracking-[0.3em] mb-8"
-                  style={{ color: accentColorMuted }}
-                >
-                  Selected Work
-                </p>
-                <h2 className="intro-title text-[15vw] md:text-[12vw] font-black leading-[0.85] tracking-[-0.04em]">
-                  {/* THE - with staggered letter reveal */}
-                  <span className="block">
-                    {"THE".split("").map((letter, i) => (
-                      <span key={i} className="inline-block overflow-hidden relative">
-                        <span className="intro-letter inline-block text-white">{letter}</span>
+            <div className="text-center relative">
+              {/* Label */}
+              <p
+                className="text-sm uppercase tracking-[0.4em] mb-8"
+                style={{ color: accentColorMuted }}
+              >
+                Selected Work
+              </p>
+
+              {/* Big centered title */}
+              <h2 className="text-[18vw] font-black leading-[0.8] tracking-[-0.04em]">
+                <span className="block overflow-hidden">
+                  {"THE".split("").map((letter, i) => (
+                    <span key={i} className="inline-block overflow-hidden">
+                      <span className="center-title-letter inline-block text-white">
+                        {letter}
                       </span>
-                    ))}
-                  </span>
-                  {/* PROOF - dimmed with staggered letter reveal */}
-                  <span className="block">
-                    {"PROOF".split("").map((letter, i) => (
-                      <span key={i} className="inline-block overflow-hidden relative">
-                        <span className="intro-letter inline-block text-white/30">{letter}</span>
+                    </span>
+                  ))}
+                </span>
+                <span className="block overflow-hidden">
+                  {"PROOF".split("").map((letter, i) => (
+                    <span key={i} className="inline-block overflow-hidden">
+                      <span className="center-title-letter inline-block text-white/15">
+                        {letter}
                       </span>
-                    ))}
-                  </span>
-                </h2>
-                <p className="intro-hint text-white/30 text-lg mt-12 tracking-wide">
-                  Scroll to explore →
-                </p>
+                    </span>
+                  ))}
+                </span>
+              </h2>
+
+              {/* Decorative lines */}
+              <div className="flex items-center justify-center gap-8 mt-8">
+                <div
+                  className="work-decor-line h-px w-24 origin-right"
+                  style={{
+                    background: `linear-gradient(to left, ${accentColorMuted}, transparent)`,
+                  }}
+                />
+                <span className="text-white/20 text-sm tracking-widest">
+                  {workItems.length} PROJECTS
+                </span>
+                <div
+                  className="work-decor-line h-px w-24 origin-left"
+                  style={{
+                    background: `linear-gradient(to right, ${accentColorMuted}, transparent)`,
+                  }}
+                />
               </div>
             </div>
+          </motion.div>
 
-            {workItems.map((project, index) => (
-              <ProjectPanel key={project.title} project={project} index={index} />
-            ))}
+          {/* Flying title texts (background layer) */}
+          {workItems.map((project, index) => (
+            <FlyingTitle
+              key={`title-${project.slug}`}
+              text={project.title}
+              index={index}
+              containerRef={sectionRef}
+              direction={index % 2 === 0 ? "left" : "right"}
+            />
+          ))}
 
-            {/* Empty hold panel - gives time for Services to overlap */}
-            <div className="hold-panel relative w-screen h-screen shrink-0" />
-          </div>
+          {/* Flying project cards */}
+          {workItems.map((project, index) => (
+            <FlyingProjectCard
+              key={project.slug}
+              project={project}
+              index={index}
+              containerRef={sectionRef}
+            />
+          ))}
 
-          <HorizontalProgress progress={scrollProgress} isVisible={isInView} />
-
-          {/* Side labels - elegant */}
-          <div
-            className="fixed top-1/2 left-8 -translate-y-1/2 z-50 transition-opacity duration-300"
-            style={{ opacity: isInView ? 1 : 0 }}
+          {/* Scroll indicator */}
+          <motion.div
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+            style={{
+              opacity: scrollIndicatorOpacity,
+              zIndex: 20,
+            }}
           >
-            <span
-              className="text-white/15 text-xs tracking-[0.3em] uppercase"
-              style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-            >
-              Selected Work
-            </span>
-          </div>
+            <span className="text-white/30 text-xs tracking-widest uppercase">Scroll</span>
+            <motion.div
+              className="w-px h-8"
+              style={{ background: `linear-gradient(to bottom, ${accentColorMuted}, transparent)` }}
+              animate={{ scaleY: [1, 0.5, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            />
+          </motion.div>
+        </>
+      )}
 
-          <div
-            className="fixed top-1/2 right-8 -translate-y-1/2 z-50 transition-opacity duration-300"
-            style={{ opacity: isInView ? 1 : 0 }}
-          >
-            <span
-              className="text-white/15 text-xs tracking-[0.3em] uppercase"
-              style={{ writingMode: "vertical-rl" }}
-            >
-              Scroll to explore
-            </span>
-          </div>
-        </div>
-
-      {/* Mobile: Always render but hidden on desktop via CSS */}
+      {/* Mobile Layout */}
       <MobileWork />
     </section>
   );

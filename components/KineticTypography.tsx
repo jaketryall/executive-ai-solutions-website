@@ -12,16 +12,13 @@ if (typeof window !== "undefined") {
 export default function KineticTypography() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const textRow1Ref = useRef<HTMLDivElement>(null);
-  const textRow2Ref = useRef<HTMLDivElement>(null);
   const row1AnimRef = useRef<HTMLDivElement>(null);
-  const row2AnimRef = useRef<HTMLDivElement>(null);
   const gradientOverlayRef = useRef<HTMLDivElement>(null);
 
   // Track scroll velocity for kinetic text
   const { scrollY } = useScroll();
   const lastScrollY = useRef(0);
   const row1Pos = useRef(0);
-  const row2Pos = useRef(0);
   const scrollDirection = useRef<"down" | "up">("down");
   const rafId = useRef<number>(0);
 
@@ -42,31 +39,18 @@ export default function KineticTypography() {
       const width = row1AnimRef.current.scrollWidth / 2;
       row1Pos.current = -width / 2;
     }
-    if (row2AnimRef.current) {
-      const width = row2AnimRef.current.scrollWidth / 2;
-      row2Pos.current = -width / 2;
-    }
 
     const animate = () => {
       const direction = scrollDirection.current === "down" ? 1 : -1;
       const row1Vel = -0.5 * direction;
-      const row2Vel = 0.4 * direction;
 
       row1Pos.current += row1Vel;
-      row2Pos.current += row2Vel;
 
       if (row1AnimRef.current) {
         const width = row1AnimRef.current.scrollWidth / 2;
         if (row1Pos.current <= -width) row1Pos.current += width;
         else if (row1Pos.current >= 0) row1Pos.current -= width;
         row1AnimRef.current.style.transform = `translateX(${row1Pos.current}px)`;
-      }
-
-      if (row2AnimRef.current) {
-        const width = row2AnimRef.current.scrollWidth / 2;
-        if (row2Pos.current <= -width) row2Pos.current += width;
-        else if (row2Pos.current >= 0) row2Pos.current -= width;
-        row2AnimRef.current.style.transform = `translateX(${row2Pos.current}px)`;
       }
 
       rafId.current = requestAnimationFrame(animate);
@@ -84,20 +68,9 @@ export default function KineticTypography() {
 
     const ctx = gsap.context(() => {
       // Kinetic parallax
-      if (textRow1Ref.current && textRow2Ref.current) {
+      if (textRow1Ref.current) {
         gsap.to(textRow1Ref.current, {
-          x: "-15%",
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 1,
-          },
-        });
-
-        gsap.to(textRow2Ref.current, {
-          x: "10%",
+          x: "-10%",
           ease: "none",
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -147,30 +120,15 @@ export default function KineticTypography() {
         }}
       />
 
-      <div className="relative flex flex-col gap-8">
+      <div className="relative flex flex-col items-center justify-center">
         <div ref={textRow1Ref} className="flex whitespace-nowrap overflow-hidden">
           <div ref={row1AnimRef} className="flex">
             {[...Array(8)].map((_, i) => (
               <span
                 key={i}
-                className="text-[12vw] font-black text-white tracking-[-0.03em] mx-6 shrink-0"
+                className="text-[18vw] font-black text-white tracking-[-0.04em] mx-8 shrink-0"
               >
-                NO TEMPLATES • NO LIMITS • JUST RESULTS •
-              </span>
-            ))}
-          </div>
-        </div>
-        <div ref={textRow2Ref} className="flex whitespace-nowrap overflow-hidden">
-          <div ref={row2AnimRef} className="flex">
-            {[...Array(8)].map((_, i) => (
-              <span
-                key={i}
-                className="text-[12vw] font-black tracking-[-0.03em] mx-6 shrink-0"
-                style={{
-                  color: "rgba(255,255,255,0.15)",
-                }}
-              >
-                CUSTOM BUILT • PIXEL PERFECT • PERFORMANCE FIRST •
+                STAND OUT • BE SEEN • GET CHOSEN •
               </span>
             ))}
           </div>
