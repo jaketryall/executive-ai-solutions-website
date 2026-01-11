@@ -411,6 +411,7 @@ function MobileWork() {
 
 export default function Work() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [isInView, setIsInView] = useState(false);
 
@@ -486,27 +487,15 @@ export default function Work() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Animate title elements when they come into view
+  // Animate decorative elements when they come into view
   useEffect(() => {
     if (isMobile || !isInView) return;
 
     // Small delay to ensure DOM elements are rendered
     const timer = setTimeout(() => {
-      const titleLetters = document.querySelectorAll(".center-title-letter");
       const workLabel = document.querySelector(".work-label");
       const workCount = document.querySelector(".work-count");
       const decorLines = document.querySelectorAll(".work-decor-line");
-
-      if (titleLetters.length === 0) return;
-
-      // Animate title letters (initial state set via inline CSS)
-      gsap.to(titleLetters, {
-        y: "0%",
-        opacity: 1,
-        stagger: 0.04,
-        duration: 0.8,
-        ease: "power3.out",
-      });
 
       // Animate label
       if (workLabel) {
@@ -584,30 +573,8 @@ export default function Work() {
 
               {/* Big centered title */}
               <h2 className="text-[18vw] font-black leading-[0.8] tracking-[-0.04em]">
-                <span className="block overflow-hidden">
-                  {"THE".split("").map((letter, i) => (
-                    <span key={i} className="inline-block overflow-hidden">
-                      <span
-                        className="center-title-letter inline-block text-white"
-                        style={{ transform: "translateY(100%)", opacity: 0 }}
-                      >
-                        {letter}
-                      </span>
-                    </span>
-                  ))}
-                </span>
-                <span className="block overflow-hidden">
-                  {"PROOF".split("").map((letter, i) => (
-                    <span key={i} className="inline-block overflow-hidden">
-                      <span
-                        className="center-title-letter inline-block text-white/15"
-                        style={{ transform: "translateY(100%)", opacity: 0 }}
-                      >
-                        {letter}
-                      </span>
-                    </span>
-                  ))}
-                </span>
+                <span className="block text-white">THE</span>
+                <span className="block text-white/20">PROOF</span>
               </h2>
 
               {/* Decorative lines */}
