@@ -86,67 +86,72 @@ function FlyingProjectCard({
   const [isHovered, setIsHovered] = useState(false);
   const { play } = useSound();
 
-  // Stagger the starting positions
-  const startOffset = index * 0.15;
+  // Stagger the starting positions - cards overlap each other
+  // Tighter spacing (0.12) means next card enters while previous is still visible
+  const startOffset = index * 0.12;
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
 
-  // Multi-layer parallax - cards fly up from below then exit upward
-  const settlePoint = startOffset + 0.4;
+  // Multi-layer parallax - cards continuously move upward
+  // Settle point is when card reaches center, exit completes at end of its animation window
+  const settlePoint = startOffset + 0.25;
+  const exitPoint = Math.min(startOffset + 0.55, 1); // Ensure we don't go past 1
+
   const cardY = useTransform(
     scrollYProgress,
-    [startOffset, settlePoint, 1],
+    [startOffset, settlePoint, exitPoint],
     ["100vh", "0vh", "-100vh"]
   );
 
   // Image moves slower than card (parallax within card)
   const imageY = useTransform(
     scrollYProgress,
-    [startOffset, startOffset + 0.4, 1],
+    [startOffset, settlePoint, exitPoint],
     ["30%", "0%", "-20%"]
   );
 
   // Title flies faster (whoosh effect)
   const titleX = useTransform(
     scrollYProgress,
-    [startOffset, startOffset + 0.3, startOffset + 0.5],
+    [startOffset, startOffset + 0.15, startOffset + 0.3],
     ["-100%", "0%", "0%"]
   );
 
   const titleOpacity = useTransform(
     scrollYProgress,
-    [startOffset, startOffset + 0.25, startOffset + 0.6, startOffset + 0.75],
+    [startOffset, startOffset + 0.1, startOffset + 0.35, startOffset + 0.45],
     [0, 1, 1, 0]
   );
 
   // Scale and rotation for dramatic entry
   const cardScale = useTransform(
     scrollYProgress,
-    [startOffset, startOffset + 0.3, startOffset + 0.6, 1],
+    [startOffset, startOffset + 0.15, startOffset + 0.4, exitPoint],
     [0.8, 1, 1, 0.9]
   );
 
   const cardRotate = useTransform(
     scrollYProgress,
-    [startOffset, startOffset + 0.3],
+    [startOffset, startOffset + 0.15],
     [5, 0]
   );
 
   // Glow intensity based on position
   const glowOpacity = useTransform(
     scrollYProgress,
-    [startOffset + 0.2, startOffset + 0.4, startOffset + 0.6],
+    [startOffset + 0.1, startOffset + 0.25, startOffset + 0.4],
     [0, 1, 0]
   );
 
-  // Card opacity - fully hidden until scroll triggers it, then fades out at end
-  // Using a small buffer before startOffset to ensure card is invisible initially
+  // Card opacity - fully hidden until scroll triggers it, then fades out before exit completes
+  const fadeOutStart = Math.min(startOffset + 0.4, 0.85);
+  const fadeOutEnd = Math.min(startOffset + 0.5, 0.95);
   const cardOpacity = useTransform(
     scrollYProgress,
-    [0, startOffset, startOffset + 0.08, startOffset + 0.7, startOffset + 0.85],
+    [0, startOffset, startOffset + 0.05, fadeOutStart, fadeOutEnd],
     [0, 0, 1, 1, 0]
   );
 
@@ -279,23 +284,24 @@ function FlyingTitle({
   containerRef: React.RefObject<HTMLDivElement | null>;
   direction?: "left" | "right";
 }) {
-  const startOffset = index * 0.15 + 0.1;
+  // Match card timing: each card starts 0.12 apart
+  const startOffset = index * 0.12 + 0.05;
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
 
-  // Title flies across screen
+  // Title flies across screen - faster to match compressed timing
   const x = useTransform(
     scrollYProgress,
-    [startOffset, startOffset + 0.2, startOffset + 0.4],
+    [startOffset, startOffset + 0.15, startOffset + 0.3],
     direction === "left" ? ["100vw", "0vw", "-100vw"] : ["-100vw", "0vw", "100vw"]
   );
 
   const opacity = useTransform(
     scrollYProgress,
-    [startOffset, startOffset + 0.15, startOffset + 0.3, startOffset + 0.4],
+    [startOffset, startOffset + 0.08, startOffset + 0.22, startOffset + 0.3],
     [0, 0.15, 0.15, 0]
   );
 
@@ -547,7 +553,8 @@ export default function Work() {
       style={{
         zIndex: 5,
         // Height determines scroll length - more height = more scroll time for animations
-        height: isMobile ? "auto" : "400vh",
+        // With 0.12 spacing, cards complete around 90% of scroll, so 300vh is sufficient
+        height: isMobile ? "auto" : "300vh",
       }}
     >
       {/* Desktop Layout - Fixed elements only visible when section is in view */}
