@@ -142,6 +142,14 @@ function FlyingProjectCard({
     [0, 1, 0]
   );
 
+  // Card opacity - fully hidden until scroll triggers it, then fades out at end
+  // Using a small buffer before startOffset to ensure card is invisible initially
+  const cardOpacity = useTransform(
+    scrollYProgress,
+    [0, startOffset, startOffset + 0.08, startOffset + 0.7, startOffset + 0.85],
+    [0, 0, 1, 1, 0]
+  );
+
   // Alternating left/right positions
   const isLeft = index % 2 === 0;
   const xPosition = isLeft ? "5%" : "45%";
@@ -154,58 +162,52 @@ function FlyingProjectCard({
         y: cardY,
         scale: cardScale,
         rotate: cardRotate,
+        opacity: cardOpacity,
         left: xPosition,
         top: "15vh",
         zIndex: 10 + index,
       }}
     >
+      {/* Glow layer - outside the clipped container */}
+      <motion.div
+        className="absolute -inset-20 -z-10 rounded-3xl pointer-events-none"
+        style={{
+          background: `radial-gradient(ellipse at center, ${project.warmColor} 0%, transparent 70%)`,
+          filter: "blur(40px)",
+          opacity: glowOpacity,
+        }}
+      />
+
       <TransitionLink href={`/work/${project.slug}`}>
         <div
-          className="group relative cursor-pointer"
+          className="group relative cursor-pointer rounded-xl overflow-hidden"
+          style={{ isolation: "isolate" }}
           onMouseEnter={() => {
             setIsHovered(true);
             play("hover", { volume: 0.06 });
           }}
           onMouseLeave={() => setIsHovered(false)}
         >
-          {/* Glow layer - moves independently */}
-          <motion.div
-            className="absolute -inset-20 -z-10 rounded-3xl pointer-events-none"
-            style={{
-              background: `radial-gradient(ellipse at center, ${project.warmColor} 0%, transparent 70%)`,
-              filter: "blur(40px)",
-              opacity: glowOpacity,
-            }}
-          />
-
-          {/* Main card */}
-          <div className="relative overflow-hidden rounded-xl aspect-[16/10]">
-            {/* Background image with parallax */}
+          {/* Main card content */}
+          <div className="relative aspect-16/10">
+            {/* Image wrapper for parallax */}
             <motion.div
               className="absolute inset-0 overflow-hidden rounded-xl"
-              style={{ y: imageY, scale: 1.2 }}
+              style={{ y: imageY }}
             >
-              <Image
-                src={project.image}
-                alt={project.title}
-                fill
-                className="object-cover rounded-xl"
-                sizes="50vw"
-              />
+              {/* Oversized image for parallax movement */}
+              <div className="absolute -inset-[20%]">
+                <Image
+                  src={project.image}
+                  alt={project.title}
+                  fill
+                  className="object-cover"
+                  sizes="50vw"
+                  priority={index < 2}
+                />
+              </div>
             </motion.div>
 
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent" />
-
-            {/* Hover color wash */}
-            <motion.div
-              className="absolute inset-0"
-              style={{ backgroundColor: project.warmColor.replace("0.15", "0.3") }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isHovered ? 0.2 : 0 }}
-              transition={{ duration: 0.3 }}
-            />
 
             {/* Content */}
             <div className="absolute inset-0 p-8 flex flex-col justify-end">
