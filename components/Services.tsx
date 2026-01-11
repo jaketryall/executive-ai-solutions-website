@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import Image from "next/image";
+import { TransitionLink } from "@/components/PageTransition";
 
 // Cinematic warm color palette
 const accentColor = "rgba(255, 200, 150, 1)"; // Warm champagne
@@ -102,41 +103,44 @@ function ScrollLetter({
 
 const services = [
   {
+    slug: "website-design",
     number: "01",
-    title: "Brand Strategy",
-    description: "Helping businesses uncover their brand's purpose and uniqueness — and the game plan to deliver it to win their customers' devotion.",
+    title: "Website Design & Development",
+    description: "High-converting websites built to grow your business. From stunning landing pages to full-scale platforms, we craft digital experiences that turn visitors into customers.",
     tags: [
-      "Research & Insights",
-      "Brand Strategy",
-      "Competitive Study",
-      "Voice & Tone",
-      "Naming & Copywriting",
+      "Custom Design",
+      "Responsive Development",
+      "E-commerce",
+      "Landing Pages",
+      "Performance Optimization",
     ],
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
   },
   {
+    slug: "seo",
     number: "02",
-    title: "Digital Design",
-    description: "Designing engaging digital experiences that combine brand strategy and creativity with UX insights to deliver functionality and ease of use.",
+    title: "Search Engine Optimization",
+    description: "Get found by the people who matter most. We build data-driven SEO strategies that drive organic traffic, improve rankings, and deliver measurable results.",
     tags: [
-      "Identity Design",
-      "Product Design",
-      "Web Design",
-      "Motion Design",
-      "Design Systems",
+      "Technical SEO",
+      "Content Strategy",
+      "Local SEO",
+      "Analytics & Reporting",
+      "Keyword Research",
     ],
     image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80",
   },
   {
+    slug: "custom-solutions",
     number: "03",
-    title: "Development",
-    description: "Building performant, scalable digital products with modern technologies. From marketing sites to complex web applications.",
+    title: "Custom Business Solutions",
+    description: "Streamline your operations with tailored software solutions. From CRM systems to workflow automation, we build the tools your business needs to scale efficiently.",
     tags: [
-      "Frontend Development",
-      "Backend Systems",
-      "CMS Integration",
-      "Performance",
-      "Accessibility",
+      "CRM Development",
+      "Workflow Automation",
+      "API Integrations",
+      "Database Design",
+      "Business Intelligence",
     ],
     image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80",
   },
@@ -197,9 +201,22 @@ function ServiceRow({
             <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-[-0.02em] text-white mb-4">
               {service.title}
             </h3>
-            <p className="text-white/50 text-base md:text-lg leading-relaxed">
+            <p className="text-white/50 text-base md:text-lg leading-relaxed mb-4">
               {service.description}
             </p>
+            <TransitionLink href={`/services/${service.slug}`}>
+              <motion.span
+                className="inline-flex items-center gap-2 text-sm tracking-wide group/link cursor-pointer"
+                style={{ color: accentColor }}
+                whileHover={{ x: 4 }}
+              >
+                <span>Learn more</span>
+                <span className="relative w-4 h-4 overflow-hidden inline-block">
+                  <span className="absolute inset-0 flex items-center justify-center transition-all duration-300 group-hover/link:translate-x-full group-hover/link:-translate-y-full">→</span>
+                  <span className="absolute inset-0 flex items-center justify-center -translate-x-full translate-y-full transition-all duration-300 group-hover/link:translate-x-0 group-hover/link:translate-y-0">→</span>
+                </span>
+              </motion.span>
+            </TransitionLink>
           </div>
 
           {/* Tags */}
@@ -219,7 +236,7 @@ function ServiceRow({
           {/* Image */}
           <div className="col-span-4 md:col-span-2 flex justify-end">
             <motion.div
-              className="relative w-full max-w-[160px] aspect-[4/3] overflow-hidden rounded-sm"
+              className="relative w-full max-w-[160px] aspect-4/3 overflow-hidden rounded-sm"
               animate={{
                 scale: isHovered ? 1.05 : 1,
               }}

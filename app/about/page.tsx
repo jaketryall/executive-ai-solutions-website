@@ -52,16 +52,24 @@ const stats = [
 function RevealText({
   children,
   delay = 0,
+  useInView = false,
 }: {
   children: React.ReactNode;
   delay?: number;
+  useInView?: boolean;
 }) {
   return (
     <motion.span
       className="inline-block"
       initial={{ y: "100%", opacity: 0 }}
-      whileInView={{ y: "0%", opacity: 1 }}
-      viewport={{ once: true, margin: "-10%" }}
+      {...(useInView
+        ? {
+            whileInView: { y: "0%", opacity: 1 },
+            viewport: { once: true, margin: "-10%" },
+          }
+        : {
+            animate: { y: "0%", opacity: 1 },
+          })}
       transition={{
         duration: 0.8,
         delay,

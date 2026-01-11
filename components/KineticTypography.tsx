@@ -165,8 +165,10 @@ export default function KineticTypography() {
             {[...Array(8)].map((_, i) => (
               <span
                 key={i}
-                className="text-[12vw] font-black text-transparent tracking-[-0.03em] mx-6 shrink-0"
-                style={{ WebkitTextStroke: "2px rgba(255,255,255,0.4)" }}
+                className="text-[12vw] font-black tracking-[-0.03em] mx-6 shrink-0"
+                style={{
+                  color: "rgba(255,255,255,0.15)",
+                }}
               >
                 CUSTOM BUILT • PIXEL PERFECT • PERFORMANCE FIRST •
               </span>

@@ -40,16 +40,23 @@ const pageNames: Record<string, string> = {
 };
 
 // Logo Portal Transition
-// Black panel with logo cutout that scales massively to reveal content
+// Three-phase: logo scales DOWN, fills white, then scales UP to reveal
 function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const blackPanelRef = useRef<HTMLDivElement>(null);
+  const logoLayerRef = useRef<HTMLDivElement>(null);
+  const solidLogoRef = useRef<HTMLDivElement>(null);
   const maskScaleRef = useRef({ value: 1 });
+  const logoOpacityRef = useRef({ value: 0 });
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const isAnimatingRef = useRef(false);
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    const blackPanel = blackPanelRef.current;
+    const logoLayer = logoLayerRef.current;
+    const solidLogo = solidLogoRef.current;
+    if (!container || !blackPanel || !logoLayer || !solidLogo) return;
 
     // Only start animation when isActive becomes true, ignore when it becomes false
     if (isActive && !isAnimatingRef.current) {
@@ -60,34 +67,80 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
         timelineRef.current.kill();
       }
 
-      // Show container immediately
-      gsap.set(container, { display: "block", pointerEvents: "auto", opacity: 1 });
+      // Initial state: container visible, logo layer starts visible with large cutout
+      gsap.set(container, { display: "block", pointerEvents: "auto" });
+      gsap.set(blackPanel, { opacity: 0 });
+      gsap.set(logoLayer, { opacity: 1 });
+      gsap.set(solidLogo, { opacity: 0 });
 
-      // Reset mask scale
-      maskScaleRef.current.value = 1;
-      updateMask(container, 1);
+      // Start with large scale (logo cutout fills most of screen showing content behind)
+      maskScaleRef.current.value = 80;
+      logoOpacityRef.current.value = 0;
+      updateMask(logoLayer, 80, 0);
+      updateSolidLogo(solidLogo, 1); // Solid logo stays at scale 1
 
       const tl = gsap.timeline({
         onComplete: () => {
           isAnimatingRef.current = false;
-          // Remove the class that hides the footer
           document.body.classList.remove("page-transitioning");
         }
       });
       timelineRef.current = tl;
 
-      // Hold on the logo for a moment, then scale up massively
+      // Phase 1: Scale logo DOWN from large to small while fading in the glow
       tl.to(maskScaleRef.current, {
-        value: 500,
-        duration: 1.2,
-        delay: 0.5, // Hold on initial logo
+        value: 1,
+        duration: 1.0,
         ease: "power2.inOut",
         onUpdate: () => {
-          updateMask(container, maskScaleRef.current.value);
+          // Fade in logo glow as it shrinks
+          const progress = 1 - (maskScaleRef.current.value - 1) / 79;
+          logoOpacityRef.current.value = progress;
+          updateMask(logoLayer, maskScaleRef.current.value, logoOpacityRef.current.value);
         },
       });
 
-      // Fade out the overlay at the end
+      // Phase 2: Fade in solid white logo (fills in the cutout)
+      tl.to(solidLogo, {
+        opacity: 1,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+
+      // Brief hold with solid logo visible
+      tl.to({}, { duration: 0.3 });
+
+      // Phase 3: Fade out solid white logo first
+      tl.to(solidLogo, {
+        opacity: 0,
+        duration: 0.3,
+        ease: "power2.in",
+      });
+
+      // Brief pause to show transparent cutout before scaling
+      tl.to({}, { duration: 0.2 });
+
+      // Phase 4: Scale cutout UP to reveal new page
+      tl.to(maskScaleRef.current, {
+        value: 500,
+        duration: 1.0,
+        ease: "power2.inOut",
+        onUpdate: () => {
+          updateMask(logoLayer, maskScaleRef.current.value, logoOpacityRef.current.value);
+        },
+      });
+
+      // Fade out glow as it expands
+      tl.to(logoOpacityRef.current, {
+        value: 0,
+        duration: 0.5,
+        ease: "power2.out",
+        onUpdate: () => {
+          updateMask(logoLayer, maskScaleRef.current.value, logoOpacityRef.current.value);
+        },
+      }, "<");
+
+      // Fade out the entire overlay
       tl.to(container, {
         opacity: 0,
         duration: 0.3,
@@ -99,19 +152,30 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
     }
   }, [isActive]);
 
-  // Update the CSS mask with the scaled logo
-  const updateMask = (container: HTMLDivElement, scale: number) => {
+  // Update the logo layer with scaled logo mask and glow
+  const updateMask = (logoLayer: HTMLDivElement, scale: number, glowOpacity: number) => {
     // Calculate the size of the mask based on scale
     // Start with logo at ~150px centered, scale it up
     const baseSize = 150;
     const size = baseSize * scale;
     const halfSize = size / 2;
 
-    // Create an SVG data URL for the mask
-    // White = visible (the black panel), Black = transparent (logo cutout)
-    const svgMask = `
+    // Calculate glow parameters
+    const glowBlur = Math.max(2, 15 - scale * 0.3);
+    const strokeWidth = Math.max(1, 4 - scale * 0.1);
+
+    // Create an SVG with the logo cutout mask and glowing border
+    const svgContent = `
       <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 ${window.innerWidth} ${window.innerHeight}">
         <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="${glowBlur}" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
           <mask id="logoMask">
             <rect width="100%" height="100%" fill="white"/>
             <g transform="translate(${window.innerWidth / 2 - halfSize}, ${window.innerHeight / 2 - halfSize}) scale(${size / 500})">
@@ -120,12 +184,34 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
           </mask>
         </defs>
         <rect width="100%" height="100%" fill="black" mask="url(#logoMask)"/>
+        <g transform="translate(${window.innerWidth / 2 - halfSize}, ${window.innerHeight / 2 - halfSize}) scale(${size / 500})" filter="url(#glow)" opacity="${glowOpacity}">
+          <path d="${LOGO_PATH}" fill="none" stroke="rgba(255, 200, 150, 0.9)" stroke-width="${strokeWidth}"/>
+        </g>
       </svg>
     `;
 
-    const encodedSvg = encodeURIComponent(svgMask);
-    container.style.backgroundImage = `url("data:image/svg+xml,${encodedSvg}")`;
-    container.style.backgroundSize = "100% 100%";
+    const encodedSvg = encodeURIComponent(svgContent);
+    logoLayer.style.backgroundImage = `url("data:image/svg+xml,${encodedSvg}")`;
+    logoLayer.style.backgroundSize = "100% 100%";
+  };
+
+  // Update the solid black logo (centered, fixed size)
+  const updateSolidLogo = (solidLogo: HTMLDivElement, scale: number) => {
+    const baseSize = 150;
+    const size = baseSize * scale;
+    const halfSize = size / 2;
+
+    const svgContent = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 ${window.innerWidth} ${window.innerHeight}">
+        <g transform="translate(${window.innerWidth / 2 - halfSize}, ${window.innerHeight / 2 - halfSize}) scale(${size / 500})">
+          <path d="${LOGO_PATH}" fill="black"/>
+        </g>
+      </svg>
+    `;
+
+    const encodedSvg = encodeURIComponent(svgContent);
+    solidLogo.style.backgroundImage = `url("data:image/svg+xml,${encodedSvg}")`;
+    solidLogo.style.backgroundSize = "100% 100%";
   };
 
   return (
@@ -136,9 +222,27 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
         zIndex: 9999,
         display: "none",
         pointerEvents: "none",
-        backgroundColor: "transparent",
       }}
-    />
+    >
+      {/* Black panel (unused but kept for potential future use) */}
+      <div
+        ref={blackPanelRef}
+        className="absolute inset-0"
+        style={{ backgroundColor: "black", opacity: 0 }}
+      />
+      {/* Logo layer with mask and glow */}
+      <div
+        ref={logoLayerRef}
+        className="absolute inset-0"
+        style={{ opacity: 0 }}
+      />
+      {/* Solid black logo that fills in during hold phase */}
+      <div
+        ref={solidLogoRef}
+        className="absolute inset-0"
+        style={{ opacity: 0 }}
+      />
+    </div>
   );
 }
 
@@ -173,11 +277,11 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
       play("transition");
       setIsPageTransitioning(true);
 
-      // Navigate during the hold phase (before scale starts)
-      // This ensures the new page is visible through the logo cutout when it scales
+      // Navigate during the solid logo phase (after scale down, during white fill)
+      // Timeline: 1.0s scale down + 0.3s fade in + 0.3s hold = ~1.6s
       setTimeout(() => {
         router.push(href);
-      }, 200);
+      }, 1600);
     },
     [pathname, play, router]
   );

@@ -3,10 +3,10 @@
 import { motion } from "framer-motion";
 import { useRef, useEffect, useLayoutEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useSound } from "./SoundManager";
+import { TransitionLink } from "@/components/PageTransition";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -19,10 +19,10 @@ const accentColorMuted = "rgba(255, 200, 150, 0.6)";
 // Work items with cinematic descriptions
 export const workItems = [
   {
+    slug: "desert-wings",
     title: "DESERT WINGS",
     category: "Aviation",
     image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&q=80",
-    url: "#",
     year: "2024",
     tagline: "Where luxury meets the horizon",
     description: "A complete digital transformation for a premium charter service, replacing dated systems with an experience as refined as the journey itself.",
@@ -31,10 +31,10 @@ export const workItems = [
     warmColor: "rgba(255, 200, 150, 0.12)",
   },
   {
+    slug: "meridian",
     title: "MERIDIAN",
     category: "Consulting",
     image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80",
-    url: "#",
     year: "2024",
     tagline: "Presence that commands the room",
     description: "Crafting an executive digital presence that reflects the caliber of counsel within. Every interaction designed to build trust.",
@@ -43,10 +43,10 @@ export const workItems = [
     warmColor: "rgba(255, 180, 120, 0.15)",
   },
   {
+    slug: "apex",
     title: "APEX",
     category: "Design Studio",
     image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200&q=80",
-    url: "#",
     year: "2023",
     tagline: "Art demands attention",
     description: "An immersive gallery experience for a creative studio, letting their work speak through considered presentation.",
@@ -55,10 +55,10 @@ export const workItems = [
     warmColor: "rgba(255, 190, 140, 0.12)",
   },
   {
+    slug: "vertex",
     title: "VERTEX",
     category: "Technology",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80",
-    url: "#",
     year: "2023",
     tagline: "Clarity in complexity",
     description: "Distilling sophisticated technology into an experience that resonates. Making the complex feel intuitive.",
@@ -166,7 +166,7 @@ function ProjectPanel({
           </div>
 
           {/* CTA Button - elegant */}
-          <Link href={project.url} className="panel-cta inline-block">
+          <TransitionLink href={`/work/${project.slug}`} className="panel-cta inline-block">
             <motion.button
               className="group inline-flex items-center gap-4 text-lg tracking-wide"
               style={{ color: accentColor }}
@@ -177,7 +177,7 @@ function ProjectPanel({
               <span>View Project</span>
               <span className="transition-transform group-hover:translate-x-1">→</span>
             </motion.button>
-          </Link>
+          </TransitionLink>
         </div>
 
         {/* Right: Image - Cinematic presentation */}
@@ -376,11 +376,25 @@ function MobileWork() {
 
             {/* Result */}
             <p
-              className="text-xl font-bold"
+              className="text-xl font-bold mb-6"
               style={{ color: accentColor }}
             >
               {project.result}
             </p>
+
+            {/* CTA Button */}
+            <TransitionLink href={`/work/${project.slug}`}>
+              <motion.button
+                className="group inline-flex items-center gap-3 text-base tracking-wide"
+                style={{ color: accentColor }}
+                whileHover={{ x: 4 }}
+                transition={{ duration: 0.3 }}
+                onMouseEnter={() => play("hover", { volume: 0.06 })}
+              >
+                <span>View Project</span>
+                <span className="transition-transform group-hover:translate-x-1">→</span>
+              </motion.button>
+            </TransitionLink>
           </div>
         </div>
       ))}

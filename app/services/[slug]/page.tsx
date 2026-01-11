@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, use } from "react";
+import { useRef, use, useEffect, useState } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
@@ -9,6 +9,7 @@ import { TransitionLink } from "@/components/PageTransition";
 import Footer from "@/components/Footer";
 import { useSound } from "@/components/SoundManager";
 import { services, getServiceBySlug, getRelatedProjects } from "@/lib/data";
+import gsap from "gsap";
 
 // Warm cinematic color palette
 const accentColor = "rgba(255, 200, 150, 1)";
@@ -35,6 +36,468 @@ function Section({
       {children}
     </motion.section>
   );
+}
+
+// ============================================================================
+// UNIQUE GSAP HERO EXPERIENCES
+// ============================================================================
+
+// Website Design - Floating code blocks and design grid
+function WebsiteDesignHero() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const blocksRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Animate floating code blocks
+      blocksRef.current.forEach((block, i) => {
+        if (!block) return;
+
+        // Initial animation
+        gsap.fromTo(
+          block,
+          {
+            y: 100,
+            opacity: 0,
+            scale: 0.8,
+            rotateX: 45,
+          },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            rotateX: 0,
+            duration: 1.2,
+            delay: 0.8 + i * 0.15,
+            ease: "power3.out",
+          }
+        );
+
+        // Floating animation
+        gsap.to(block, {
+          y: "random(-20, 20)",
+          x: "random(-10, 10)",
+          rotation: "random(-3, 3)",
+          duration: "random(3, 5)",
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: i * 0.3,
+        });
+      });
+
+      // Grid lines animation
+      gsap.fromTo(
+        ".grid-line-h",
+        { scaleX: 0, transformOrigin: "left" },
+        { scaleX: 1, duration: 1.5, stagger: 0.1, ease: "power2.out", delay: 0.5 }
+      );
+      gsap.fromTo(
+        ".grid-line-v",
+        { scaleY: 0, transformOrigin: "top" },
+        { scaleY: 1, duration: 1.5, stagger: 0.1, ease: "power2.out", delay: 0.5 }
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const codeBlocks = [
+    { code: "<div>", color: accentColor, x: "15%", y: "20%", size: "text-sm" },
+    { code: "{ style }", color: "#ffffff", x: "75%", y: "30%", size: "text-xs" },
+    { code: "function()", color: accentColorMuted, x: "25%", y: "65%", size: "text-sm" },
+    { code: "</html>", color: "#ffffff80", x: "70%", y: "70%", size: "text-xs" },
+    { code: "const ui", color: accentColor, x: "55%", y: "15%", size: "text-sm" },
+  ];
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Animated Grid */}
+      <div className="absolute inset-0" style={{ perspective: "1000px" }}>
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={`h-${i}`}
+            className="grid-line-h absolute left-0 right-0 h-px"
+            style={{
+              top: `${15 + i * 15}%`,
+              background: `linear-gradient(to right, transparent, rgba(255,200,150,0.1), transparent)`,
+            }}
+          />
+        ))}
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={`v-${i}`}
+            className="grid-line-v absolute top-0 bottom-0 w-px"
+            style={{
+              left: `${10 + i * 12}%`,
+              background: `linear-gradient(to bottom, transparent, rgba(255,200,150,0.08), transparent)`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Floating Code Blocks */}
+      {codeBlocks.map((block, i) => (
+        <div
+          key={i}
+          ref={(el) => { blocksRef.current[i] = el; }}
+          className={`absolute px-4 py-2 rounded-md backdrop-blur-sm ${block.size}`}
+          style={{
+            left: block.x,
+            top: block.y,
+            color: block.color,
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            fontFamily: "monospace",
+            boxShadow: `0 4px 30px rgba(255,200,150,0.05)`,
+          }}
+        >
+          {block.code}
+        </div>
+      ))}
+
+      {/* Cursor following dot */}
+      <div
+        className="absolute w-3 h-3 rounded-full"
+        style={{
+          left: "45%",
+          top: "45%",
+          background: accentColor,
+          boxShadow: `0 0 20px ${accentColor}, 0 0 40px ${accentColorMuted}`,
+        }}
+      />
+    </div>
+  );
+}
+
+// SEO - Search ranking bars and analytics visualization
+function SEOHero() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const barsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [rankings] = useState([85, 92, 78, 95, 88, 72, 90]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Animate ranking bars
+      barsRef.current.forEach((bar, i) => {
+        if (!bar) return;
+
+        gsap.fromTo(
+          bar,
+          { scaleY: 0, transformOrigin: "bottom" },
+          {
+            scaleY: 1,
+            duration: 1,
+            delay: 1 + i * 0.12,
+            ease: "power3.out",
+          }
+        );
+
+        // Pulse animation
+        gsap.to(bar, {
+          scaleY: 1.02,
+          duration: 2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: i * 0.2,
+        });
+      });
+
+      // Search icon animation
+      gsap.fromTo(
+        ".search-icon",
+        { scale: 0, rotation: -180 },
+        { scale: 1, rotation: 0, duration: 1, delay: 0.5, ease: "back.out(1.7)" }
+      );
+
+      // Rising arrow animation
+      gsap.fromTo(
+        ".rising-arrow",
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, delay: 1.5, ease: "power2.out" }
+      );
+
+      // Data points floating
+      gsap.to(".data-point", {
+        y: "random(-15, 15)",
+        x: "random(-10, 10)",
+        duration: "random(2, 4)",
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        stagger: 0.2,
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Ranking Bars */}
+      <div className="absolute right-[10%] bottom-[20%] flex items-end gap-3 h-40">
+        {rankings.map((height, i) => (
+          <div
+            key={i}
+            ref={(el) => { barsRef.current[i] = el; }}
+            className="w-6 rounded-t-sm"
+            style={{
+              height: `${height}%`,
+              background: i === 3
+                ? `linear-gradient(to top, ${accentColor}, ${accentColorMuted})`
+                : `linear-gradient(to top, rgba(255,255,255,0.2), rgba(255,255,255,0.05))`,
+              boxShadow: i === 3 ? `0 0 20px ${accentColorMuted}` : "none",
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Search Icon */}
+      <div
+        className="search-icon absolute left-[15%] top-[25%] w-20 h-20 rounded-full flex items-center justify-center"
+        style={{
+          background: "rgba(255,255,255,0.03)",
+          border: `2px solid ${accentColorMuted}`,
+        }}
+      >
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2">
+          <circle cx="11" cy="11" r="8" />
+          <path d="M21 21l-4.35-4.35" />
+        </svg>
+      </div>
+
+      {/* Rising Arrow */}
+      <div className="rising-arrow absolute left-[55%] top-[30%]">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <path
+            d="M20 60 L40 20 L60 35"
+            stroke={accentColor}
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+          <polygon
+            points="60,35 52,38 55,30"
+            fill={accentColor}
+          />
+        </svg>
+      </div>
+
+      {/* Floating Data Points */}
+      {[...Array(5)].map((_, i) => (
+        <div
+          key={i}
+          className="data-point absolute w-2 h-2 rounded-full"
+          style={{
+            left: `${20 + i * 15}%`,
+            top: `${40 + (i % 3) * 15}%`,
+            background: i % 2 === 0 ? accentColor : "rgba(255,255,255,0.3)",
+            boxShadow: i % 2 === 0 ? `0 0 10px ${accentColor}` : "none",
+          }}
+        />
+      ))}
+
+      {/* Keywords floating */}
+      <div
+        className="absolute right-[25%] top-[20%] px-3 py-1 rounded text-xs"
+        style={{
+          background: "rgba(255,200,150,0.1)",
+          border: "1px solid rgba(255,200,150,0.2)",
+          color: accentColor,
+        }}
+      >
+        #1 Ranking
+      </div>
+    </div>
+  );
+}
+
+// Custom Solutions - Interconnected gears and data flow
+function CustomSolutionsHero() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const gearsRef = useRef<(SVGSVGElement | null)[]>([]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Animate gears rotating
+      gearsRef.current.forEach((gear, i) => {
+        if (!gear) return;
+
+        // Entry animation
+        gsap.fromTo(
+          gear,
+          { scale: 0, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.8,
+            delay: 0.8 + i * 0.2,
+            ease: "back.out(1.7)",
+          }
+        );
+
+        // Continuous rotation
+        gsap.to(gear, {
+          rotation: i % 2 === 0 ? 360 : -360,
+          duration: 8 + i * 2,
+          repeat: -1,
+          ease: "none",
+          transformOrigin: "center center",
+        });
+      });
+
+      // Data flow lines
+      gsap.fromTo(
+        ".data-flow",
+        { strokeDashoffset: 100 },
+        {
+          strokeDashoffset: 0,
+          duration: 2,
+          repeat: -1,
+          ease: "none",
+          stagger: 0.5,
+        }
+      );
+
+      // Connection nodes pulse
+      gsap.to(".connection-node", {
+        scale: 1.3,
+        opacity: 0.5,
+        duration: 1,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        stagger: 0.2,
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const gearPositions = [
+    { x: "20%", y: "30%", size: 80 },
+    { x: "35%", y: "55%", size: 60 },
+    { x: "70%", y: "25%", size: 70 },
+    { x: "75%", y: "60%", size: 50 },
+  ];
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Connection Lines SVG */}
+      <svg className="absolute inset-0 w-full h-full">
+        <defs>
+          <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="transparent" />
+            <stop offset="50%" stopColor={accentColor} />
+            <stop offset="100%" stopColor="transparent" />
+          </linearGradient>
+        </defs>
+
+        {/* Data flow paths */}
+        <path
+          className="data-flow"
+          d="M 150 200 Q 300 150 400 300"
+          stroke="url(#flowGradient)"
+          strokeWidth="2"
+          fill="none"
+          strokeDasharray="10 5"
+        />
+        <path
+          className="data-flow"
+          d="M 400 300 Q 500 250 600 350"
+          stroke="url(#flowGradient)"
+          strokeWidth="2"
+          fill="none"
+          strokeDasharray="10 5"
+        />
+      </svg>
+
+      {/* Gears */}
+      {gearPositions.map((pos, i) => (
+        <svg
+          key={i}
+          ref={(el) => { gearsRef.current[i] = el; }}
+          className="absolute"
+          style={{ left: pos.x, top: pos.y }}
+          width={pos.size}
+          height={pos.size}
+          viewBox="0 0 100 100"
+        >
+          <path
+            d="M50 10 L54 25 L65 20 L60 35 L75 40 L60 50 L75 60 L60 65 L65 80 L54 75 L50 90 L46 75 L35 80 L40 65 L25 60 L40 50 L25 40 L40 35 L35 20 L46 25 Z"
+            fill="none"
+            stroke={i === 0 ? accentColor : "rgba(255,255,255,0.2)"}
+            strokeWidth="2"
+          />
+          <circle
+            cx="50"
+            cy="50"
+            r="15"
+            fill="none"
+            stroke={i === 0 ? accentColor : "rgba(255,255,255,0.15)"}
+            strokeWidth="2"
+          />
+        </svg>
+      ))}
+
+      {/* Connection Nodes */}
+      {[...Array(4)].map((_, i) => (
+        <div
+          key={i}
+          className="connection-node absolute w-3 h-3 rounded-full"
+          style={{
+            left: `${30 + i * 15}%`,
+            top: `${45 + (i % 2) * 15}%`,
+            background: accentColor,
+            boxShadow: `0 0 15px ${accentColor}`,
+          }}
+        />
+      ))}
+
+      {/* Database icon */}
+      <div
+        className="absolute right-[15%] bottom-[25%] p-4 rounded-lg"
+        style={{
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,200,150,0.2)",
+        }}
+      >
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="1.5">
+          <ellipse cx="12" cy="5" rx="9" ry="3" />
+          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+        </svg>
+      </div>
+
+      {/* API label */}
+      <div
+        className="absolute left-[50%] top-[15%] px-3 py-1 rounded text-xs font-mono"
+        style={{
+          background: "rgba(255,200,150,0.1)",
+          border: "1px solid rgba(255,200,150,0.2)",
+          color: accentColor,
+        }}
+      >
+        API Connected
+      </div>
+    </div>
+  );
+}
+
+// Hero selector based on slug
+function ServiceHeroExperience({ slug }: { slug: string }) {
+  switch (slug) {
+    case "website-design":
+      return <WebsiteDesignHero />;
+    case "seo":
+      return <SEOHero />;
+    case "custom-solutions":
+      return <CustomSolutionsHero />;
+    default:
+      return null;
+  }
 }
 
 export default function ServicePage({
@@ -83,6 +546,9 @@ export default function ServicePage({
             background: `radial-gradient(ellipse 80% 50% at 50% 30%, rgba(255, 200, 150, 0.08) 0%, transparent 60%)`,
           }}
         />
+
+        {/* Unique GSAP Hero Experience */}
+        <ServiceHeroExperience slug={slug} />
 
         {/* Large background number */}
         <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none overflow-hidden">
@@ -301,7 +767,7 @@ export default function ServicePage({
               {relatedProjects.map((project, index) => (
                 <TransitionLink key={project.slug} href={`/work/${project.slug}`}>
                   <motion.div
-                    className="group relative aspect-[16/10] overflow-hidden rounded-sm cursor-pointer"
+                    className="group relative aspect-16/10 overflow-hidden rounded-sm cursor-pointer"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -315,7 +781,7 @@ export default function ServicePage({
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0908] via-[#0a0908]/50 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-[#0a0908] via-[#0a0908]/50 to-transparent" />
 
                     <div className="absolute bottom-6 left-6 right-6">
                       <p
