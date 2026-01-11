@@ -471,6 +471,12 @@ export default function Work() {
   const centerTitleScrollOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [1, 1, 1, 0]);
   const centerTitleScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.05, 1.1]);
 
+  // Title entrance animation - slides down with fade (no harsh clip)
+  const titleLineOneY = useTransform(titleFadeOpacity, [0, 1], ["-40%", "0%"]);
+  const titleLineOneOpacity = useTransform(titleFadeOpacity, [0, 0.6], [0, 1]);
+  const titleLineTwoY = useTransform(titleFadeOpacity, [0, 0.4, 1], ["-40%", "-40%", "0%"]);
+  const titleLineTwoOpacity = useTransform(titleFadeOpacity, [0.3, 0.8], [0, 1]);
+
   // Combined opacity: fade-in (titleFadeOpacity) * fade-during-scroll (centerTitleScrollOpacity)
   const combinedTitleOpacity = useTransform(
     [titleFadeOpacity, centerTitleScrollOpacity],
@@ -571,10 +577,20 @@ export default function Work() {
                 Selected Work
               </p>
 
-              {/* Big centered title */}
+              {/* Big centered title - slides in from top with fade */}
               <h2 className="text-[18vw] font-black leading-[0.8] tracking-[-0.04em]">
-                <span className="block text-white">THE</span>
-                <span className="block text-white/20">PROOF</span>
+                <motion.span
+                  className="block text-white"
+                  style={{ y: titleLineOneY, opacity: titleLineOneOpacity }}
+                >
+                  THE
+                </motion.span>
+                <motion.span
+                  className="block text-white/20"
+                  style={{ y: titleLineTwoY, opacity: titleLineTwoOpacity }}
+                >
+                  PROOF
+                </motion.span>
               </h2>
 
               {/* Decorative lines */}
