@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useEffect, useLayoutEffect, useState } from "react";
+import { motion, useScroll, useTransform, useMotionValue } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -420,7 +420,9 @@ export default function Work() {
   });
 
   // Track when section is in viewport to show/hide fixed elements
-  // Use scroll position check: only show when Work section top is at or above viewport top
+  // We'll use a fade-in opacity value instead of binary show/hide
+  const titleFadeOpacity = useMotionValue(0);
+
   useEffect(() => {
     if (!sectionRef.current || isMobile) return;
 
@@ -430,12 +432,31 @@ export default function Work() {
       const rect = sectionRef.current.getBoundingClientRect();
       const sectionTop = rect.top;
       const sectionBottom = rect.bottom;
+      const viewportHeight = window.innerHeight;
 
-      // Only show fixed elements when:
-      // 1. Section top has scrolled past the viewport top (sectionTop <= 0)
-      // 2. Section bottom is still below viewport top (sectionBottom > 0)
-      const shouldShow = sectionTop <= 0 && sectionBottom > 0;
-      setIsInView(shouldShow);
+      // Start fading in when the section is within 0.4 viewport height of entering
+      // Fully visible when section top reaches 15% from top
+      const fadeStart = viewportHeight * 0.4; // Start fading when section top is 0.4vh away
+      const fadeEnd = viewportHeight * 0.15; // Fully visible when 15% from top
+
+      if (sectionTop > fadeStart) {
+        // Not yet in fade zone
+        setIsInView(false);
+        titleFadeOpacity.set(0);
+      } else if (sectionTop <= fadeStart && sectionTop > fadeEnd) {
+        // In the fade zone - calculate opacity
+        setIsInView(true);
+        const progress = (fadeStart - sectionTop) / (fadeStart - fadeEnd);
+        titleFadeOpacity.set(Math.min(1, Math.max(0, progress)));
+      } else if (sectionBottom > 0) {
+        // Fully in view
+        setIsInView(true);
+        titleFadeOpacity.set(1);
+      } else {
+        // Scrolled past
+        setIsInView(false);
+        titleFadeOpacity.set(0);
+      }
     };
 
     // Initial check
@@ -443,17 +464,20 @@ export default function Work() {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isMobile]);
+  }, [isMobile, titleFadeOpacity]);
 
-  // Center title fades as you scroll
-  const centerTitleOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [1, 1, 1, 0]);
+  // Center title fades as you scroll through the section
+  const centerTitleScrollOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [1, 1, 1, 0]);
   const centerTitleScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.05, 1.1]);
+
+  // Combined opacity: fade-in (titleFadeOpacity) * fade-during-scroll (centerTitleScrollOpacity)
+  const combinedTitleOpacity = useTransform(
+    [titleFadeOpacity, centerTitleScrollOpacity],
+    ([fadeIn, scrollOpacity]) => (fadeIn as number) * (scrollOpacity as number)
+  );
 
   // Scroll indicator opacity
   const scrollIndicatorOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [1, 0.3, 0.3, 0]);
-
-  const useIsomorphicLayoutEffect =
-    typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -462,50 +486,61 @@ export default function Work() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  useIsomorphicLayoutEffect(() => {
-    if (isMobile || !sectionRef.current) return;
+  // Animate title elements when they come into view
+  useEffect(() => {
+    if (isMobile || !isInView) return;
 
-    gsap.registerPlugin(ScrollTrigger);
-
-    const ctx = gsap.context(() => {
-      // Animate the center title letters
+    // Small delay to ensure DOM elements are rendered
+    const timer = setTimeout(() => {
       const titleLetters = document.querySelectorAll(".center-title-letter");
-      gsap.set(titleLetters, { y: "100%", opacity: 0 });
+      const workLabel = document.querySelector(".work-label");
+      const workCount = document.querySelector(".work-count");
+      const decorLines = document.querySelectorAll(".work-decor-line");
 
+      if (titleLetters.length === 0) return;
+
+      // Animate title letters (initial state set via inline CSS)
       gsap.to(titleLetters, {
         y: "0%",
         opacity: 1,
-        stagger: 0.05,
-        duration: 1,
+        stagger: 0.04,
+        duration: 0.8,
         ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-          end: "top 30%",
-          scrub: 1,
-        },
       });
 
-      // Decorative elements animation
-      gsap.fromTo(
-        ".work-decor-line",
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          duration: 1.5,
+      // Animate label
+      if (workLabel) {
+        gsap.to(workLabel, {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
           ease: "power2.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 60%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
+        });
+      }
 
-    }, sectionRef);
+      // Animate count
+      if (workCount) {
+        gsap.to(workCount, {
+          opacity: 1,
+          duration: 0.8,
+          delay: 0.3,
+          ease: "power2.out",
+        });
+      }
 
-    return () => ctx.revert();
-  }, [isMobile]);
+      // Animate decorative lines
+      if (decorLines.length > 0) {
+        gsap.to(decorLines, {
+          scaleX: 1,
+          duration: 1,
+          delay: 0.2,
+          ease: "power2.out",
+        });
+      }
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [isMobile, isInView]);
 
   return (
     <section
@@ -525,7 +560,7 @@ export default function Work() {
           <motion.div
             className="fixed inset-0 flex items-center justify-center pointer-events-none"
             style={{
-              opacity: centerTitleOpacity,
+              opacity: combinedTitleOpacity,
               scale: centerTitleScale,
               zIndex: 1,
             }}
@@ -541,8 +576,8 @@ export default function Work() {
             <div className="text-center relative">
               {/* Label */}
               <p
-                className="text-sm uppercase tracking-[0.4em] mb-8"
-                style={{ color: accentColorMuted }}
+                className="work-label text-sm uppercase tracking-[0.4em] mb-8"
+                style={{ color: accentColorMuted, opacity: 0, transform: "translateY(20px)" }}
               >
                 Selected Work
               </p>
@@ -552,7 +587,10 @@ export default function Work() {
                 <span className="block overflow-hidden">
                   {"THE".split("").map((letter, i) => (
                     <span key={i} className="inline-block overflow-hidden">
-                      <span className="center-title-letter inline-block text-white">
+                      <span
+                        className="center-title-letter inline-block text-white"
+                        style={{ transform: "translateY(100%)", opacity: 0 }}
+                      >
                         {letter}
                       </span>
                     </span>
@@ -561,7 +599,10 @@ export default function Work() {
                 <span className="block overflow-hidden">
                   {"PROOF".split("").map((letter, i) => (
                     <span key={i} className="inline-block overflow-hidden">
-                      <span className="center-title-letter inline-block text-white/15">
+                      <span
+                        className="center-title-letter inline-block text-white/15"
+                        style={{ transform: "translateY(100%)", opacity: 0 }}
+                      >
                         {letter}
                       </span>
                     </span>
@@ -575,15 +616,20 @@ export default function Work() {
                   className="work-decor-line h-px w-24 origin-right"
                   style={{
                     background: `linear-gradient(to left, ${accentColorMuted}, transparent)`,
+                    transform: "scaleX(0)",
                   }}
                 />
-                <span className="text-white/20 text-sm tracking-widest">
+                <span
+                  className="work-count text-white/20 text-sm tracking-widest"
+                  style={{ opacity: 0 }}
+                >
                   {workItems.length} PROJECTS
                 </span>
                 <div
                   className="work-decor-line h-px w-24 origin-left"
                   style={{
                     background: `linear-gradient(to right, ${accentColorMuted}, transparent)`,
+                    transform: "scaleX(0)",
                   }}
                 />
               </div>

@@ -42,7 +42,7 @@ export default function KineticTypography() {
 
     const animate = () => {
       const direction = scrollDirection.current === "down" ? 1 : -1;
-      const row1Vel = -0.5 * direction;
+      const row1Vel = -0.15 * direction;
 
       row1Pos.current += row1Vel;
 

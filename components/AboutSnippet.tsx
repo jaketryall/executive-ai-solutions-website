@@ -79,7 +79,7 @@ export default function AboutSnippet() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-black py-48 md:py-64 overflow-hidden"
+      className="relative bg-black py-24 md:py-32 overflow-hidden"
       style={{ zIndex: 5 }}
     >
       {/* Subtle background gradient */}
@@ -132,15 +132,6 @@ export default function AboutSnippet() {
           </motion.h2>
         </div>
 
-        {/* Decorative line */}
-        <motion.div
-          className="mt-16 mx-auto w-px h-16 origin-top"
-          style={{
-            background: `linear-gradient(to bottom, ${accentColorMuted}, transparent)`,
-            scaleY: lineScale,
-            opacity: lineOpacity,
-          }}
-        />
       </motion.div>
     </section>
   );
