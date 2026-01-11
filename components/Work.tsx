@@ -94,12 +94,12 @@ function FlyingProjectCard({
     offset: ["start start", "end end"],
   });
 
-  // Multi-layer parallax - different speeds for different elements
-  // Cards fly up from below at different rates
+  // Multi-layer parallax - cards fly up from below then exit upward
+  const settlePoint = startOffset + 0.4;
   const cardY = useTransform(
     scrollYProgress,
-    [startOffset, startOffset + 0.4, 1],
-    ["120vh", "0vh", "-100vh"]
+    [startOffset, settlePoint, 1],
+    ["100vh", "0vh", "-100vh"]
   );
 
   // Image moves slower than card (parallax within card)

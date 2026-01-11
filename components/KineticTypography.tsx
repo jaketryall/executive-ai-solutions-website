@@ -19,18 +19,22 @@ export default function KineticTypography() {
   const { scrollY } = useScroll();
   const lastScrollY = useRef(0);
   const row1Pos = useRef(0);
-  const scrollDirection = useRef<"down" | "up">("down");
+  const scrollVelocity = useRef(0);
+  const baseDirection = useRef(-1); // -1 = left, 1 = right
   const rafId = useRef<number>(0);
 
-  // Track scroll direction
+  // Track scroll velocity and update base direction
   useMotionValueEvent(scrollY, "change", (latest) => {
     const delta = latest - lastScrollY.current;
-    if (delta > 0) {
-      scrollDirection.current = "down";
-    } else if (delta < 0) {
-      scrollDirection.current = "up";
-    }
+    scrollVelocity.current = delta;
     lastScrollY.current = latest;
+
+    // Change base direction based on scroll direction
+    if (delta > 2) {
+      baseDirection.current = -1; // Scrolling down = move left
+    } else if (delta < -2) {
+      baseDirection.current = 1; // Scrolling up = move right
+    }
   });
 
   // Continuous animation loop for kinetic text
@@ -41,8 +45,12 @@ export default function KineticTypography() {
     }
 
     const animate = () => {
-      const direction = scrollDirection.current === "down" ? 1 : -1;
-      const row1Vel = -0.4 * direction;
+      // Base velocity in current direction plus scroll-driven boost
+      const baseVel = 1.2 * baseDirection.current;
+      const row1Vel = baseVel;
+
+      // Decay the scroll velocity for smooth deceleration
+      scrollVelocity.current *= 0.95;
 
       row1Pos.current += row1Vel;
 
@@ -67,10 +75,10 @@ export default function KineticTypography() {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      // Kinetic parallax - subtle movement with responsive scrub
+      // Kinetic parallax - immediate response
       if (textRow1Ref.current) {
         gsap.to(textRow1Ref.current, {
-          x: "-3%",
+          x: "-2%",
           ease: "none",
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -128,7 +136,7 @@ export default function KineticTypography() {
                 key={i}
                 className="text-[18vw] font-black text-white tracking-[-0.04em] mx-8 shrink-0"
               >
-                STAND OUT • BE SEEN • GET CHOSEN •
+                MORE LEADS • MORE SALES • MORE GROWTH •
               </span>
             ))}
           </div>

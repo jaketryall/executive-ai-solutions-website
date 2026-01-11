@@ -60,13 +60,13 @@ export default function AboutSnippet() {
   // Parallax effect - gentler
   const y = useTransform(scrollYProgress, [0, 0.5, 1], [40, 0, -20]);
 
-  // Title animation - scroll-driven reveal from underneath (starts first)
+  // Title animation - scroll-driven reveal from underneath (starts first), fades out as it leaves
   const titleY = useTransform(scrollYProgress, [0, 0.1], [40, 0]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.1, 0.5, 0.75], [0, 1, 1, 0]);
 
-  // Paragraph container animation - slides up after title completes
+  // Paragraph container animation - slides up after title completes, fades out as it leaves
   const paragraphY = useTransform(scrollYProgress, [0.08, 0.2], [50, 0]);
-  const paragraphOpacity = useTransform(scrollYProgress, [0.08, 0.2], [0, 1]);
+  const paragraphOpacity = useTransform(scrollYProgress, [0.08, 0.2, 0.5, 0.75], [0, 1, 1, 0]);
 
   // Line animation - comes in last
   const lineScale = useTransform(scrollYProgress, [0.18, 0.3], [0, 1]);
