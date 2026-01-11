@@ -42,7 +42,7 @@ export default function KineticTypography() {
 
     const animate = () => {
       const direction = scrollDirection.current === "down" ? 1 : -1;
-      const row1Vel = -0.15 * direction;
+      const row1Vel = -0.4 * direction;
 
       row1Pos.current += row1Vel;
 
@@ -67,16 +67,16 @@ export default function KineticTypography() {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      // Kinetic parallax
+      // Kinetic parallax - subtle movement with responsive scrub
       if (textRow1Ref.current) {
         gsap.to(textRow1Ref.current, {
-          x: "-10%",
+          x: "-3%",
           ease: "none",
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1,
+            scrub: 0.5,
           },
         });
       }
