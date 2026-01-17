@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, useMotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue, MotionValue } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
@@ -272,6 +272,33 @@ function FlyingProjectCard({
   );
 }
 
+// Individual letter component for scroll-linked reveal
+function RevealLetter({
+  letter,
+  scrollYProgress,
+  revealAt,
+  className,
+}: {
+  letter: string;
+  scrollYProgress: MotionValue<number>;
+  revealAt: number;
+  className: string;
+}) {
+  // Letters start visible, dip down as you scroll, then return
+  // No opacity change - just position
+  const y = useTransform(
+    scrollYProgress,
+    [0, revealAt, revealAt + 0.04, revealAt + 0.08],
+    ["0%", "0%", "12%", "0%"]
+  );
+
+  return (
+    <motion.span className={`inline-block ${className}`} style={{ y }}>
+      {letter}
+    </motion.span>
+  );
+}
+
 // Flying title text that whooshes by
 function FlyingTitle({
   text,
@@ -475,21 +502,11 @@ export default function Work() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isMobile, titleFadeOpacity]);
 
-  // Center title fades as you scroll through the section
-  const centerTitleScrollOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [1, 1, 1, 0]);
+  // Center title only fades out at the end of the section, stays solid otherwise
+  const centerTitleScrollOpacity = useTransform(scrollYProgress, [0, 0.9, 1], [1, 1, 0]);
   const centerTitleScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.05, 1.1]);
 
-  // Title entrance animation - slides down with fade (no harsh clip)
-  const titleLineOneY = useTransform(titleFadeOpacity, [0, 1], ["-40%", "0%"]);
-  const titleLineOneOpacity = useTransform(titleFadeOpacity, [0, 0.6], [0, 1]);
-  const titleLineTwoY = useTransform(titleFadeOpacity, [0, 0.4, 1], ["-40%", "-40%", "0%"]);
-  const titleLineTwoOpacity = useTransform(titleFadeOpacity, [0.3, 0.8], [0, 1]);
-
-  // Combined opacity: fade-in (titleFadeOpacity) * fade-during-scroll (centerTitleScrollOpacity)
-  const combinedTitleOpacity = useTransform(
-    [titleFadeOpacity, centerTitleScrollOpacity],
-    ([fadeIn, scrollOpacity]) => (fadeIn as number) * (scrollOpacity as number)
-  );
+  // Title entrance uses stagger effect controlled by isInView state
 
   // Scroll indicator opacity
   const scrollIndicatorOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [1, 0.3, 0.3, 0]);
@@ -557,14 +574,17 @@ export default function Work() {
         height: isMobile ? "auto" : "300vh",
       }}
     >
-      {/* Desktop Layout - Fixed elements only visible when section is in view */}
-      {!isMobile && isInView && (
-        <>
+      {/* Desktop Layout - Fixed elements with smooth entrance/exit */}
+      {!isMobile && (
+        <motion.div
+          className="fixed inset-0 pointer-events-none"
+          style={{ opacity: titleFadeOpacity, zIndex: 10 }}
+        >
           {/* Fixed center title */}
           <motion.div
             className="fixed inset-0 flex items-center justify-center pointer-events-none"
             style={{
-              opacity: combinedTitleOpacity,
+              opacity: centerTitleScrollOpacity,
               scale: centerTitleScale,
               zIndex: 1,
             }}
@@ -586,20 +606,10 @@ export default function Work() {
                 Selected Work
               </p>
 
-              {/* Big centered title - slides in from top with fade */}
+              {/* Big centered title */}
               <h2 className="text-[18vw] font-black leading-[0.8] tracking-[-0.04em]">
-                <motion.span
-                  className="block text-white"
-                  style={{ y: titleLineOneY, opacity: titleLineOneOpacity }}
-                >
-                  THE
-                </motion.span>
-                <motion.span
-                  className="block text-white/20"
-                  style={{ y: titleLineTwoY, opacity: titleLineTwoOpacity }}
-                >
-                  PROOF
-                </motion.span>
+                <span className="block text-white">THE</span>
+                <span className="block text-white/20">PROOF</span>
               </h2>
 
               {/* Decorative lines */}
@@ -665,7 +675,7 @@ export default function Work() {
               transition={{ duration: 1.5, repeat: Infinity }}
             />
           </motion.div>
-        </>
+        </motion.div>
       )}
 
       {/* Mobile Layout */}

@@ -339,16 +339,43 @@ export default function Contact() {
     play("success");
   };
 
+  // Simple section entrance - just slides up smoothly
+  const { scrollYProgress: sectionScrollProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "start 0.4"],
+  });
+
+  // Simple smooth slide up
+  const sectionY = useTransform(sectionScrollProgress, [0, 1], ["8%", "0%"]);
+  const sectionOpacity = useTransform(sectionScrollProgress, [0, 0.5], [0, 1]);
+
+  // Content follows slightly behind
+  const contentY = useTransform(sectionScrollProgress, [0.1, 1], [40, 0]);
+  const contentOpacity = useTransform(sectionScrollProgress, [0.1, 0.6], [0, 1]);
+
   return (
     <section
       ref={sectionRef}
       id="contact"
-      className="relative py-32 bg-neutral-950 overflow-hidden"
+      className="relative py-32 overflow-hidden"
       style={{
         zIndex: 10,
-        boxShadow: "0 50px 100px -20px rgba(0,0,0,0.8)",
       }}
     >
+      {/* Static background to fill any gaps - matches Services */}
+      <div
+        className="absolute inset-0"
+        style={{ background: "linear-gradient(180deg, #0a0908 0%, #0d0b09 50%, #0a0908 100%)" }}
+      />
+
+      {/* Animated background that slides up */}
+      <motion.div
+        className="absolute inset-0 bg-neutral-950 rounded-t-[3rem]"
+        style={{
+          y: sectionY,
+          opacity: sectionOpacity,
+        }}
+      />
       {/* Warm ambient glow background */}
       <div
         ref={gridRef}
@@ -384,7 +411,10 @@ export default function Contact() {
         />
       </svg>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 relative">
+      <motion.div
+        className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 relative"
+        style={{ y: contentY, opacity: contentOpacity }}
+      >
         {/* Header */}
         <div ref={headerRef} className="mb-20">
           <p
@@ -627,7 +657,7 @@ export default function Contact() {
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
