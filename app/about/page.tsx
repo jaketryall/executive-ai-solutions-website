@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import { TransitionLink } from "@/components/PageTransition";
@@ -15,433 +15,435 @@ const accentColorMuted = "rgba(255, 200, 150, 0.6)";
 // Values data
 const values = [
   {
-    number: "01",
-    title: "Craft Over Speed",
-    description:
-      "We take the time to do things right. Every pixel, every line of code, every interaction is considered and refined.",
+    title: "Design-First",
+    description: "Every project starts with understanding your brand and goals before a single line of code.",
   },
   {
-    number: "02",
-    title: "Strategy First",
-    description:
-      "Beautiful design without purpose is decoration. We start with understanding before we start creating.",
+    title: "Direct Access",
+    description: "You work with me directly. No account managers, no junior handoffs, no telephone game.",
   },
   {
-    number: "03",
-    title: "Lasting Impact",
-    description:
-      "We build for the long term. Our work should still be relevant, performant, and effective years from now.",
-  },
-  {
-    number: "04",
-    title: "True Partnership",
-    description:
-      "We're not vendors. We're collaborators invested in your success, treating your business as our own.",
+    title: "Built to Last",
+    description: "Modern tech stack, clean code, fast performance. Your site will still be great years from now.",
   },
 ];
 
-// Stats data
-const stats = [
-  { value: "50+", label: "Projects Delivered" },
-  { value: "8", label: "Years Experience" },
-  { value: "96%", label: "Client Retention" },
-  { value: "12", label: "Industry Awards" },
+// Approach steps
+const approach = [
+  { number: "01", title: "Discovery", desc: "Understanding your business, goals, and what success looks like." },
+  { number: "02", title: "Strategy", desc: "Planning the approach, architecture, and user experience." },
+  { number: "03", title: "Design", desc: "Creating visuals that capture your brand and convert visitors." },
+  { number: "04", title: "Build", desc: "Developing with modern tools for speed and scalability." },
+  { number: "05", title: "Launch", desc: "Testing, optimizing, and going live with confidence." },
 ];
 
-// Text reveal animation component
-function RevealText({
-  children,
-  delay = 0,
-  useInView = false,
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  useInView?: boolean;
-}) {
-  return (
-    <motion.span
-      className="inline-block"
-      initial={{ y: "100%", opacity: 0 }}
-      {...(useInView
-        ? {
-            whileInView: { y: "0%", opacity: 1 },
-            viewport: { once: true, margin: "-10%" },
-          }
-        : {
-            animate: { y: "0%", opacity: 1 },
-          })}
-      transition={{
-        duration: 0.8,
-        delay,
-        ease: [0.76, 0, 0.24, 1],
-      }}
-    >
-      {children}
-    </motion.span>
-  );
-}
-
-// Section component with reveal animation
-function Section({
+// Bento card wrapper - only interactive cards get hover effects
+function BentoCard({
   children,
   className = "",
+  gridClassName = "",
+  delay = 0,
+  href,
 }: {
   children: React.ReactNode;
   className?: string;
+  gridClassName?: string;
+  delay?: number;
+  href?: string;
 }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const { play } = useSound();
+
+  const baseStyles = {
+    background: "rgba(255,255,255,0.02)",
+    border: "1px solid rgba(255,255,255,0.05)",
+  };
+
+  // Only interactive (linked) cards get hover effects
+  if (href) {
+    return (
+      <TransitionLink href={href} className={gridClassName}>
+        <motion.div
+          className={`relative rounded-2xl md:rounded-3xl overflow-hidden h-full ${className}`}
+          style={baseStyles}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-5%" }}
+          transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] as const }}
+          onMouseEnter={() => {
+            setIsHovered(true);
+            play("hover", { volume: 0.04 });
+          }}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {/* Hover glow - only for interactive cards */}
+          <motion.div
+            className="absolute inset-0 pointer-events-none rounded-2xl md:rounded-3xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.4 }}
+            style={{
+              boxShadow: `inset 0 0 0 1px ${accentColorMuted}, 0 0 40px -10px ${accentColorMuted}`,
+            }}
+          />
+          {children}
+        </motion.div>
+      </TransitionLink>
+    );
+  }
+
+  // Non-interactive cards - no hover effects
   return (
-    <motion.section
-      className={className}
+    <motion.div
+      className={`relative rounded-2xl md:rounded-3xl overflow-hidden ${className} ${gridClassName}`}
+      style={baseStyles}
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-10%" }}
-      transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+      viewport={{ once: true, margin: "-5%" }}
+      transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] as const }}
     >
       {children}
-    </motion.section>
+    </motion.div>
   );
 }
 
 export default function AboutPage() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
+  const heroRef = useRef<HTMLElement>(null);
   const { play } = useSound();
 
-  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+  const { scrollYProgress: heroProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+
+  const heroY = useTransform(heroProgress, [0, 1], ["0%", "30%"]);
+  const heroOpacity = useTransform(heroProgress, [0, 0.5], [1, 0]);
 
   return (
     <>
       <Navbar />
       <main ref={containerRef} className="relative bg-[#0a0908]" style={{ zIndex: 10 }}>
-        {/* Hero Section */}
-      <motion.section
-        className="relative h-screen flex items-center justify-center overflow-hidden"
-        style={{ y: heroY, opacity: heroOpacity }}
-      >
-        {/* Background gradient */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse 80% 50% at 50% 30%, rgba(255, 200, 150, 0.08) 0%, transparent 60%)`,
-          }}
-        />
 
-        {/* Content */}
-        <div className="relative z-10 text-center px-6 max-w-5xl">
-          <motion.p
-            className="text-xs uppercase tracking-[0.4em] mb-8"
-            style={{ color: accentColorMuted }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            About Us
-          </motion.p>
+        {/* Hero - Minimal, asymmetric */}
+        <motion.section
+          ref={heroRef}
+          className="relative min-h-[80vh] flex items-end pb-20 md:pb-32 overflow-hidden"
+          style={{ y: heroY, opacity: heroOpacity }}
+        >
+          {/* Background gradient */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `radial-gradient(ellipse 60% 40% at 30% 40%, rgba(255, 200, 150, 0.06) 0%, transparent 60%)`,
+            }}
+          />
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-[-0.03em] mb-8">
-            <span className="block overflow-hidden">
-              <RevealText delay={0.3}>We build digital</RevealText>
-            </span>
-            <span className="block overflow-hidden">
-              <RevealText delay={0.4}>
-                experiences that{" "}
-                <span style={{ color: accentColor }}>matter</span>
-              </RevealText>
-            </span>
-          </h1>
-
-          <motion.p
-            className="text-white/50 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
-            We're a team of strategists, designers, and developers who believe
-            that exceptional digital experiences can transform businesses.
-          </motion.p>
-
-          {/* Scroll indicator */}
-          <motion.div
-            className="absolute bottom-12 left-1/2 -translate-x-1/2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-          >
-            <motion.div
-              className="w-6 h-10 rounded-full border border-white/20 flex items-start justify-center p-2"
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              <div
-                className="w-1 h-2 rounded-full"
-                style={{ backgroundColor: accentColor }}
-              />
-            </motion.div>
-          </motion.div>
-        </div>
-      </motion.section>
-
-      {/* Story Section */}
-      <Section className="py-32 px-6 md:px-12 lg:px-20">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            {/* Image */}
-            <motion.div
-              className="relative aspect-[4/5] overflow-hidden rounded-sm"
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <Image
-                src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80"
-                alt="Our team at work"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0908] via-transparent to-transparent" />
-
-              {/* Decorative corner */}
-              <div
-                className="absolute top-4 left-4 w-12 h-12"
-                style={{ borderTop: `1px solid ${accentColorMuted}`, borderLeft: `1px solid ${accentColorMuted}` }}
-              />
-            </motion.div>
-
-            {/* Text */}
-            <div>
+          <div className="relative z-10 w-full px-6 md:px-12 lg:px-20">
+            <div className="max-w-7xl mx-auto">
+              {/* Small label */}
               <motion.p
-                className="text-xs uppercase tracking-[0.3em] mb-4"
+                className="text-xs uppercase tracking-[0.4em] mb-6"
                 style={{ color: accentColorMuted }}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
               >
-                Our Story
+                About
               </motion.p>
 
-              <h2 className="text-3xl md:text-4xl font-black text-white tracking-[-0.02em] mb-8 leading-tight">
-                Started with a simple belief: digital should feel human.
-              </h2>
+              {/* Large asymmetric title */}
+              <div className="grid md:grid-cols-12 gap-8 items-end">
+                <div className="md:col-span-8">
+                  <motion.h1
+                    className="text-[12vw] md:text-[8vw] font-black text-white leading-[0.85] tracking-[-0.04em]"
+                    initial={{ opacity: 0, y: 60 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    I BUILD
+                    <br />
+                    <span style={{ color: accentColor }}>WEBSITES</span>
+                    <br />
+                    THAT WORK
+                  </motion.h1>
+                </div>
 
-              <div className="space-y-6 text-white/60 leading-relaxed">
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.1 }}
+                <motion.div
+                  className="md:col-span-4 pb-4"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
                 >
-                  In a world of template-driven, cookie-cutter websites, we saw
-                  an opportunity to do something different. We believed that
-                  digital experiences could be both beautiful and effective,
-                  both innovative and accessible.
-                </motion.p>
-
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2 }}
-                >
-                  Today, we're a team of curious minds who obsess over the
-                  details that others overlook. We've helped businesses across
-                  industries transform their digital presence and, in doing so,
-                  transform their results.
-                </motion.p>
-
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 }}
-                >
-                  We're not here to churn out projects. We're here to build
-                  digital legacies that stand the test of time.
-                </motion.p>
+                  <p className="text-white/50 text-lg leading-relaxed">
+                    Not just pretty pages—sites that convert visitors into customers and rank on Google.
+                  </p>
+                </motion.div>
               </div>
             </div>
           </div>
-        </div>
-      </Section>
 
-      {/* Values Section */}
-      <Section className="py-32 px-6 md:px-12 lg:px-20 relative">
-        {/* Background accent */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse 60% 40% at 70% 50%, rgba(255, 200, 150, 0.04) 0%, transparent 60%)`,
-          }}
-        />
+        </motion.section>
 
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="text-center mb-20">
-            <motion.p
-              className="text-xs uppercase tracking-[0.3em] mb-4"
-              style={{ color: accentColorMuted }}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-            >
-              Our Values
-            </motion.p>
+        {/* Bento Grid Section */}
+        <section className="relative py-20 md:py-32 px-6 md:px-12 lg:px-20">
+          {/* Ambient glow */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `radial-gradient(ellipse 50% 30% at 70% 20%, rgba(255, 200, 150, 0.04) 0%, transparent 60%)`,
+            }}
+          />
 
-            <h2 className="text-4xl md:text-5xl font-black text-white tracking-[-0.03em]">
-              What guides us
-            </h2>
-          </div>
+          <div className="max-w-7xl mx-auto relative z-10">
+            {/* Main Bento Grid - Asymmetric */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {values.map((value, index) => (
+              {/* Story Card - Large, spans 7 cols */}
+              <BentoCard className="p-8 md:p-12" gridClassName="md:col-span-7" delay={0}>
+                <p
+                  className="text-xs uppercase tracking-[0.3em] mb-6"
+                  style={{ color: accentColorMuted }}
+                >
+                  The Story
+                </p>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight mb-6">
+                  I got into this because I love seeing businesses succeed online.
+                </h2>
+                <div className="space-y-4 text-white/50 leading-relaxed">
+                  <p>
+                    There's nothing better than launching a website and watching it bring in
+                    new customers, leads, and opportunities. That's what drives me.
+                  </p>
+                  <p>
+                    I've always been drawn to the craft of creating something beautiful
+                    that actually works. Not just looks good—performs.
+                  </p>
+                </div>
+              </BentoCard>
+
+              {/* Quick Facts - Tall, 5 cols */}
+              <BentoCard className="p-8 md:p-10 flex flex-col justify-between min-h-[400px]" gridClassName="md:col-span-5" delay={0.1}>
+                <div>
+                  <p
+                    className="text-xs uppercase tracking-[0.3em] mb-8"
+                    style={{ color: accentColorMuted }}
+                  >
+                    Quick Facts
+                  </p>
+
+                  <div className="space-y-6">
+                    <div>
+                      <span className="text-4xl md:text-5xl font-black" style={{ color: accentColor }}>
+                        4+
+                      </span>
+                      <p className="text-white/40 text-sm mt-1">Years building for the web</p>
+                    </div>
+                    <div>
+                      <span className="text-4xl md:text-5xl font-black" style={{ color: accentColor }}>
+                        24hr
+                      </span>
+                      <p className="text-white/40 text-sm mt-1">Typical response time</p>
+                    </div>
+                    <div>
+                      <span className="text-4xl md:text-5xl font-black" style={{ color: accentColor }}>
+                        100%
+                      </span>
+                      <p className="text-white/40 text-sm mt-1">Direct access to me</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 mt-8 pt-6 border-t border-white/5">
+                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: accentColor }} />
+                  <span className="text-white/40 text-sm">Based in Arizona</span>
+                </div>
+              </BentoCard>
+
+              {/* Values - Row of 3 smaller cards */}
+              {values.map((value, index) => (
+                <BentoCard
+                  key={value.title}
+                  className="p-6 md:p-8 min-h-[220px] flex flex-col"
+                  gridClassName="md:col-span-4"
+                  delay={0.15 + index * 0.05}
+                >
+                  <h3 className="text-xl font-bold text-white mb-3">{value.title}</h3>
+                  <p className="text-white/40 text-sm leading-relaxed flex-1">
+                    {value.description}
+                  </p>
+
+                  {/* Corner accent */}
+                  <div className="absolute top-4 right-4 w-8 h-8">
+                    <div className="absolute top-0 right-0 w-4 h-px" style={{ backgroundColor: accentColorMuted }} />
+                    <div className="absolute top-0 right-0 w-px h-4" style={{ backgroundColor: accentColorMuted }} />
+                  </div>
+                </BentoCard>
+              ))}
+
+              {/* Featured Project - Wide card */}
+              <BentoCard
+                className="relative overflow-hidden group cursor-pointer min-h-[350px]"
+                gridClassName="md:col-span-8"
+                delay={0.3}
+                href="/work"
+              >
+                {/* Background image */}
+                <div className="absolute inset-0">
+                  <Image
+                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80"
+                    alt="Featured project"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: "linear-gradient(to right, rgba(10,9,8,0.95) 0%, rgba(10,9,8,0.7) 50%, rgba(10,9,8,0.4) 100%)",
+                    }}
+                  />
+                </div>
+
+                <div className="relative z-10 p-8 md:p-12 h-full flex flex-col justify-between">
+                  <p
+                    className="text-xs uppercase tracking-[0.3em]"
+                    style={{ color: accentColorMuted }}
+                  >
+                    Featured Work
+                  </p>
+
+                  <div>
+                    <h3 className="text-3xl md:text-4xl font-black text-white mb-2">
+                      See What I've Built
+                    </h3>
+                    <p className="text-white/50 mb-4 max-w-md">
+                      Real projects with real results. Take a look at recent work.
+                    </p>
+                    <span
+                      className="inline-flex items-center gap-2 text-sm font-medium transition-all group-hover:gap-3"
+                      style={{ color: accentColor }}
+                    >
+                      View Projects
+                      <span>→</span>
+                    </span>
+                  </div>
+                </div>
+              </BentoCard>
+
+              {/* Philosophy Quote - Tall card */}
+              <BentoCard className="p-8 md:p-10 flex flex-col justify-center min-h-[350px]" gridClassName="md:col-span-4" delay={0.35}>
+                <blockquote className="text-xl md:text-2xl font-medium text-white leading-snug mb-6">
+                  "Good design isn't decoration—it's the reason people trust you, stay on your site, and become customers."
+                </blockquote>
+                <div
+                  className="w-12 h-px"
+                  style={{ backgroundColor: accentColorMuted }}
+                />
+              </BentoCard>
+
+            </div>
+
+            {/* Approach Section - Horizontal scroll feel */}
+            <div className="mt-20 md:mt-32">
               <motion.div
-                key={value.number}
-                className="group relative p-8 rounded-sm border border-white/5 hover:border-white/10 transition-colors"
-                style={{
-                  background: "rgba(255,255,255,0.02)",
-                }}
+                className="mb-12"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                onMouseEnter={() => play("hover", { volume: 0.05 })}
+                transition={{ duration: 0.7 }}
               >
-                {/* Number */}
-                <span
-                  className="text-6xl font-black block mb-4"
-                  style={{ color: accentColorMuted, opacity: 0.3 }}
+                <p
+                  className="text-xs uppercase tracking-[0.3em] mb-4"
+                  style={{ color: accentColorMuted }}
                 >
-                  {value.number}
-                </span>
-
-                <h3 className="text-xl font-bold text-white mb-3">
-                  {value.title}
-                </h3>
-
-                <p className="text-white/50 leading-relaxed">
-                  {value.description}
+                  How I Work
                 </p>
-
-                {/* Hover accent line */}
-                <motion.div
-                  className="absolute bottom-0 left-0 h-px"
-                  style={{ backgroundColor: accentColor }}
-                  initial={{ width: 0 }}
-                  whileHover={{ width: "100%" }}
-                  transition={{ duration: 0.3 }}
-                />
+                <h2 className="text-4xl md:text-5xl font-black text-white tracking-[-0.03em]">
+                  THE PROCESS
+                </h2>
               </motion.div>
-            ))}
+
+              {/* Approach steps - asymmetric grid */}
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                {approach.map((step, index) => (
+                  <motion.div
+                    key={step.number}
+                    className="relative p-6 rounded-2xl border border-white/5 bg-white/[0.02]"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.08 }}
+                  >
+                    <span
+                      className="text-5xl font-black block mb-4"
+                      style={{
+                        WebkitTextStroke: `1px ${accentColorMuted}`,
+                        WebkitTextFillColor: "transparent",
+                        opacity: 0.5,
+                      }}
+                    >
+                      {step.number}
+                    </span>
+                    <h4 className="text-lg font-bold text-white mb-2">{step.title}</h4>
+                    <p className="text-white/40 text-sm leading-relaxed">{step.desc}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      </Section>
+        </section>
 
-      {/* Stats Section */}
-      <Section className="py-32 px-6 md:px-12 lg:px-20 border-y border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                className="text-center"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <span
-                  className="text-5xl md:text-6xl font-black block mb-2"
-                  style={{ color: accentColor }}
-                >
-                  {stat.value}
-                </span>
-                <span className="text-white/40 text-sm uppercase tracking-wider">
-                  {stat.label}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      {/* Philosophy Section */}
-      <Section className="py-32 px-6 md:px-12 lg:px-20">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.p
-            className="text-xs uppercase tracking-[0.3em] mb-8"
-            style={{ color: accentColorMuted }}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-          >
-            Our Philosophy
-          </motion.p>
-
-          <motion.blockquote
-            className="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight tracking-[-0.02em] mb-8"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            "The best digital experiences are the ones that feel{" "}
-            <span style={{ color: accentColor }}>inevitable</span>—where every
-            element earns its place."
-          </motion.blockquote>
-
-          <motion.div
-            className="w-16 h-px mx-auto"
-            style={{ backgroundColor: accentColorMuted }}
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-          />
-        </div>
-      </Section>
-
-      {/* CTA Section */}
-      <Section className="py-32 px-6 md:px-12 lg:px-20">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-black text-white tracking-[-0.03em] mb-6">
-            Ready to start your project?
-          </h2>
-
-          <p className="text-white/50 text-lg mb-10 max-w-xl mx-auto">
-            We're always looking for ambitious projects and great people to work
-            with. Let's create something remarkable together.
-          </p>
-
-          <TransitionLink href="/contact">
-            <motion.button
-              className="group inline-flex items-center gap-4 px-8 py-4 rounded-full border border-white/10 hover:border-white/20 transition-colors"
-              style={{ background: "rgba(255,255,255,0.03)" }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onMouseEnter={() => play("hover", { volume: 0.06 })}
-              onClick={() => play("click")}
+        {/* CTA Section */}
+        <section className="py-32 px-6 md:px-12 lg:px-20 border-t border-white/5">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.h2
+              className="text-4xl md:text-6xl font-black text-white tracking-[-0.03em] mb-6"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
             >
-              <span className="text-white font-medium">Get in touch</span>
-              <span
-                className="w-8 h-8 rounded-full flex items-center justify-center transition-transform group-hover:translate-x-1"
-                style={{ backgroundColor: accentColor }}
+              Ready to start?
+            </motion.h2>
+
+            <motion.p
+              className="text-white/50 text-lg mb-10 max-w-xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+            >
+              Let's talk about your project and see if we're a good fit.
+            </motion.p>
+
+            <TransitionLink href="/contact">
+              <motion.button
+                className="group inline-flex items-center gap-4 px-8 py-4 rounded-full border border-white/10 hover:border-white/20 transition-colors"
+                style={{ background: "rgba(255,255,255,0.03)" }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onMouseEnter={() => play("hover", { volume: 0.06 })}
+                onClick={() => play("click")}
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="black"
-                  strokeWidth="2"
+                <span className="text-white font-medium">Get in touch</span>
+                <span
+                  className="w-8 h-8 rounded-full flex items-center justify-center transition-transform group-hover:translate-x-1"
+                  style={{ backgroundColor: accentColor }}
                 >
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </span>
-            </motion.button>
-          </TransitionLink>
-        </div>
-      </Section>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="black"
+                    strokeWidth="2"
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </motion.button>
+            </TransitionLink>
+          </div>
+        </section>
       </main>
       <Footer />
     </>

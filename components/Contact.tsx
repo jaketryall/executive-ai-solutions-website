@@ -461,13 +461,13 @@ export default function Contact() {
                   {isRevealed && <TypewriterText text="Email" delay={400} />}
                 </p>
                 <a
-                  href="mailto:hello@executive.ai"
+                  href="mailto:jaker@executiveaisolutions.com"
                   className="text-white text-lg transition-colors"
                   style={{ ["--tw-hover-color" as string]: accentColor }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = accentColor)}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "white")}
                 >
-                  hello@executive.ai
+                  jaker@executiveaisolutions.com
                 </a>
               </div>
 

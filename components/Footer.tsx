@@ -415,7 +415,7 @@ export default function Footer() {
             {/* Big CTA Button with 3D effect */}
             <TiltCard className="perspective-1000">
               <motion.a
-                href="mailto:hello@executive.ai"
+                href="mailto:jaker@executiveaisolutions.com"
                 className="group relative inline-flex items-center gap-4 px-8 py-4 rounded-full overflow-hidden"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -430,7 +430,7 @@ export default function Footer() {
                 <div className="absolute inset-0 border border-white/10 rounded-full group-hover:border-white/20 transition-colors" />
 
                 <span className="relative z-10 text-lg md:text-xl text-white/80 group-hover:text-white transition-colors">
-                  hello@executive.ai
+                  jaker@executiveaisolutions.com
                 </span>
 
                 <motion.span
@@ -549,8 +549,8 @@ export default function Footer() {
                     Get in Touch
                   </p>
                   <div className="flex flex-col gap-2 text-white/50">
-                    <a href="mailto:hello@executive.ai" className="hover:text-white transition-colors">
-                      hello@executive.ai
+                    <a href="mailto:jaker@executiveaisolutions.com" className="hover:text-white transition-colors">
+                      jaker@executiveaisolutions.com
                     </a>
                     <span>Available Worldwide</span>
                   </div>

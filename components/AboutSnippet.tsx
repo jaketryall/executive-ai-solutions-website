@@ -19,11 +19,11 @@ function ScrollFillWord({
   scrollYProgress: ReturnType<typeof useScroll>["scrollYProgress"];
 }) {
   // Calculate when this word should start and end filling
-  // Start filling right after the paragraph appears and complete while still on screen
-  const scrollRange = 0.25;
+  // Slower fill - spread across more scroll distance
+  const scrollRange = 0.45;
   const wordDuration = scrollRange / totalWords;
-  const wordStart = 0.18 + index * wordDuration;
-  const wordEnd = wordStart + wordDuration * 0.95;
+  const wordStart = 0.15 + index * wordDuration;
+  const wordEnd = wordStart + wordDuration * 1.2;
 
   const fillProgress = useTransform(
     scrollYProgress,
@@ -54,23 +54,19 @@ export default function AboutSnippet() {
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start center", "end start"],
+    offset: ["start 80%", "end 20%"],
   });
 
   // Parallax effect - gentler
-  const y = useTransform(scrollYProgress, [0, 0.5, 1], [40, 0, -20]);
+  const y = useTransform(scrollYProgress, [0, 0.5, 1], [30, 0, -15]);
 
   // Title animation - scroll-driven reveal from underneath (starts first), fades out as it leaves
-  const titleY = useTransform(scrollYProgress, [0, 0.1], [40, 0]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.1, 0.5, 0.75], [0, 1, 1, 0]);
+  const titleY = useTransform(scrollYProgress, [0, 0.08], [30, 0]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.08, 0.7, 0.9], [0, 1, 1, 0]);
 
   // Paragraph container animation - slides up after title completes, fades out as it leaves
-  const paragraphY = useTransform(scrollYProgress, [0.08, 0.2], [50, 0]);
-  const paragraphOpacity = useTransform(scrollYProgress, [0.08, 0.2, 0.5, 0.75], [0, 1, 1, 0]);
-
-  // Line animation - comes in last
-  const lineScale = useTransform(scrollYProgress, [0.18, 0.3], [0, 1]);
-  const lineOpacity = useTransform(scrollYProgress, [0.18, 0.3], [0, 1]);
+  const paragraphY = useTransform(scrollYProgress, [0.05, 0.15], [40, 0]);
+  const paragraphOpacity = useTransform(scrollYProgress, [0.05, 0.15, 0.7, 0.9], [0, 1, 1, 0]);
 
   // Main text - split into words
   const mainText = "We design websites that convert, build tools that scale, and craft strategies that get you found.";

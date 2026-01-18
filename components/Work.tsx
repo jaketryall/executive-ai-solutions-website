@@ -570,8 +570,8 @@ export default function Work() {
       style={{
         zIndex: 5,
         // Height determines scroll length - more height = more scroll time for animations
-        // With 0.12 spacing, cards complete around 90% of scroll, so 300vh is sufficient
-        height: isMobile ? "auto" : "300vh",
+        // Increased for slower scrolling pace
+        height: isMobile ? "auto" : "500vh",
       }}
     >
       {/* Desktop Layout - Fixed elements with smooth entrance/exit */}

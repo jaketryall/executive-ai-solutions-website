@@ -15,19 +15,75 @@ import gsap from "gsap";
 const accentColor = "rgba(255, 200, 150, 1)";
 const accentColorMuted = "rgba(255, 200, 150, 0.6)";
 
+// Moving background orbs
+function MovingBackground() {
+  return (
+    <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+      {/* Large floating orbs */}
+      <div
+        className="absolute w-[600px] h-[600px] rounded-full opacity-30"
+        style={{
+          background: `radial-gradient(circle, ${accentColor}15 0%, transparent 70%)`,
+          left: "10%",
+          top: "20%",
+          animation: "float1 20s ease-in-out infinite",
+        }}
+      />
+      <div
+        className="absolute w-[500px] h-[500px] rounded-full opacity-20"
+        style={{
+          background: `radial-gradient(circle, ${accentColor}10 0%, transparent 70%)`,
+          right: "5%",
+          top: "50%",
+          animation: "float2 25s ease-in-out infinite",
+        }}
+      />
+      <div
+        className="absolute w-[400px] h-[400px] rounded-full opacity-25"
+        style={{
+          background: `radial-gradient(circle, rgba(255, 180, 120, 0.1) 0%, transparent 70%)`,
+          left: "50%",
+          bottom: "10%",
+          animation: "float3 18s ease-in-out infinite",
+        }}
+      />
+
+      <style jsx>{`
+        @keyframes float1 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -30px) scale(1.05); }
+          66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+        @keyframes float2 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(-40px, 20px) scale(1.1); }
+          66% { transform: translate(30px, -40px) scale(0.9); }
+        }
+        @keyframes float3 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(40px, -20px) scale(1.05); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 // Section reveal component
 function Section({
   children,
   className = "",
   delay = 0,
+  style,
 }: {
   children: React.ReactNode;
   className?: string;
   delay?: number;
+  style?: React.CSSProperties;
 }) {
   return (
     <motion.section
       className={className}
+      style={style}
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10%" }}
@@ -532,6 +588,7 @@ export default function ServicePage({
 
   return (
     <>
+      <MovingBackground />
       <Navbar />
       <main ref={containerRef} className="relative bg-[#0a0908]" style={{ zIndex: 10 }}>
         {/* Hero Section */}

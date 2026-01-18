@@ -190,7 +190,10 @@ function HorizontalGallery({ images, title }: { images: string[]; title: string 
         {images.map((image, index) => (
           <div
             key={image}
-            className="gallery-item shrink-0 w-[60vw] h-[70vh] rounded-sm overflow-hidden relative group"
+            className="gallery-item shrink-0 w-[60vw] h-[70vh] rounded-xl overflow-hidden relative group"
+            style={{
+              border: `1px solid ${accentColorMuted}`,
+            }}
           >
             <Image
               src={image}
@@ -202,7 +205,7 @@ function HorizontalGallery({ images, title }: { images: string[]; title: string 
             {/* Subtle warm overlay on hover */}
             <div
               className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              style={{ background: `linear-gradient(to top, rgba(255, 200, 150, 0.1), transparent)` }}
+              style={{ background: `linear-gradient(to top, rgba(255, 200, 150, 0.15), transparent)` }}
             />
             {/* Number overlay */}
             <div className="absolute bottom-6 left-6">
@@ -287,12 +290,15 @@ function StickyRevealSection({
       <div className="max-w-6xl mx-auto">
         {/* Challenge */}
         <div ref={challengeRef} className="mb-32 md:mb-48">
-          <p
-            className="text-xs uppercase tracking-[0.3em] mb-8"
-            style={{ color: accentColorMuted }}
-          >
-            The Challenge
-          </p>
+          <div className="flex items-center gap-4 mb-8">
+            <p
+              className="text-xs uppercase tracking-[0.3em]"
+              style={{ color: accentColor }}
+            >
+              The Challenge
+            </p>
+            <div className="h-px flex-1 max-w-32" style={{ background: `linear-gradient(to right, ${accentColorMuted}, transparent)` }} />
+          </div>
           <p className="text-2xl md:text-3xl lg:text-4xl font-medium text-white leading-[1.4] tracking-[-0.01em]">
             {splitIntoWords(challenge, "challenge-word")}
           </p>
@@ -300,12 +306,15 @@ function StickyRevealSection({
 
         {/* Solution */}
         <div ref={solutionRef}>
-          <p
-            className="text-xs uppercase tracking-[0.3em] mb-8"
-            style={{ color: accentColorMuted }}
-          >
-            The Solution
-          </p>
+          <div className="flex items-center gap-4 mb-8">
+            <p
+              className="text-xs uppercase tracking-[0.3em]"
+              style={{ color: accentColor }}
+            >
+              The Solution
+            </p>
+            <div className="h-px flex-1 max-w-32" style={{ background: `linear-gradient(to right, ${accentColorMuted}, transparent)` }} />
+          </div>
           <p className="text-2xl md:text-3xl lg:text-4xl font-medium text-white leading-[1.4] tracking-[-0.01em]">
             {splitIntoWords(solution, "solution-word")}
           </p>
@@ -376,7 +385,7 @@ function ResultsSection({ result, metrics }: { result: string; metrics: { label:
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(ellipse 80% 60% at 50% 50%, rgba(255, 200, 150, 0.06) 0%, transparent 60%)`,
+          background: `radial-gradient(ellipse 80% 60% at 50% 50%, rgba(255, 200, 150, 0.08) 0%, transparent 60%)`,
         }}
       />
 
@@ -397,17 +406,24 @@ function ResultsSection({ result, metrics }: { result: string; metrics: { label:
           </h2>
         </div>
 
-        {/* Metrics grid */}
-        <div className="metrics-grid grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+        {/* Metrics grid - card style */}
+        <div className="metrics-grid grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {metrics.map((metric, index) => (
-            <div key={metric.label} className="metric-item text-center">
+            <div
+              key={metric.label}
+              className="metric-item text-center p-6 md:p-8 rounded-xl"
+              style={{
+                background: "rgba(255, 255, 255, 0.02)",
+                border: `1px solid ${accentColorMuted}`,
+              }}
+            >
               <span
-                className="text-3xl md:text-4xl lg:text-5xl font-black block mb-2"
+                className="text-3xl md:text-4xl lg:text-5xl font-black block mb-3"
                 style={{ color: accentColor }}
               >
                 <AnimatedCounter value={metric.value} delay={index * 0.1} />
               </span>
-              <span className="text-white/40 text-xs uppercase tracking-wider">
+              <span className="text-white/50 text-xs uppercase tracking-wider">
                 {metric.label}
               </span>
             </div>
@@ -484,12 +500,19 @@ function TestimonialSection({ quote, author, role }: { quote: string; author: st
   }, []);
 
   return (
-    <div ref={containerRef} className="py-32 md:py-48 px-6 md:px-12 lg:px-20 border-y border-white/5">
+    <div
+      ref={containerRef}
+      className="py-32 md:py-48 px-6 md:px-12 lg:px-20"
+      style={{
+        borderTop: `1px solid rgba(255, 200, 150, 0.2)`,
+        borderBottom: `1px solid rgba(255, 200, 150, 0.2)`,
+      }}
+    >
       <div className="max-w-5xl mx-auto text-center relative">
         {/* Large quote mark */}
         <div
           className="quote-mark absolute -top-8 left-1/2 -translate-x-1/2 text-[200px] md:text-[300px] font-serif leading-none pointer-events-none select-none"
-          style={{ color: "rgba(255, 200, 150, 0.05)" }}
+          style={{ color: "rgba(255, 200, 150, 0.08)" }}
         >
           "
         </div>
@@ -499,7 +522,7 @@ function TestimonialSection({ quote, author, role }: { quote: string; author: st
         </blockquote>
 
         <div className="quote-author">
-          <p className="text-white font-medium text-lg">{author}</p>
+          <p className="text-white font-medium text-lg" style={{ color: accentColor }}>{author}</p>
           <p className="text-white/40 text-sm mt-1">{role}</p>
         </div>
       </div>
@@ -572,12 +595,16 @@ function NextProjectSection({ project }: { project: ReturnType<typeof getNextPro
               <p className="text-white/40 italic text-lg mb-8">{project.tagline}</p>
 
               <motion.div
-                className="inline-flex items-center gap-4"
-                style={{ color: accentColor }}
+                className="inline-flex items-center gap-4 px-6 py-3 rounded-full"
+                style={{
+                  color: accentColor,
+                  border: `1px solid ${accentColorMuted}`,
+                  background: isHovered ? "rgba(255, 200, 150, 0.1)" : "transparent",
+                }}
                 animate={{ x: isHovered ? 10 : 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <span className="text-lg tracking-wide">View Project</span>
+                <span className="text-sm font-medium tracking-wide">View Project</span>
                 <motion.span
                   animate={{ x: isHovered ? 5 : 0 }}
                   transition={{ duration: 0.3 }}
@@ -590,7 +617,10 @@ function NextProjectSection({ project }: { project: ReturnType<typeof getNextPro
             {/* Image */}
             <div
               ref={imageRef}
-              className="relative aspect-[4/3] overflow-hidden rounded-sm"
+              className="relative aspect-4/3 overflow-hidden rounded-xl"
+              style={{
+                border: `1px solid ${accentColorMuted}`,
+              }}
             >
               <motion.div
                 className="absolute inset-0"
@@ -612,6 +642,16 @@ function NextProjectSection({ project }: { project: ReturnType<typeof getNextPro
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isHovered ? 0.15 : 0 }}
                 transition={{ duration: 0.3 }}
+              />
+              {/* Glow on hover */}
+              <motion.div
+                className="absolute inset-0 rounded-xl pointer-events-none"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isHovered ? 1 : 0 }}
+                transition={{ duration: 0.3 }}
+                style={{
+                  boxShadow: `0 0 30px ${accentColorMuted}`,
+                }}
               />
             </div>
           </div>
@@ -693,8 +733,64 @@ export default function CaseStudyPage({
 
   return (
     <>
+      {/* CSS for floating background animation */}
+      <style jsx global>{`
+        @keyframes float {
+          0%, 100% {
+            transform: translate(0, 0) rotate(0deg);
+          }
+          25% {
+            transform: translate(10%, 5%) rotate(1deg);
+          }
+          50% {
+            transform: translate(5%, 10%) rotate(-1deg);
+          }
+          75% {
+            transform: translate(-5%, 5%) rotate(0.5deg);
+          }
+        }
+      `}</style>
+
       <Navbar />
-      <main ref={containerRef} className="relative bg-[#0a0908]" style={{ zIndex: 10 }}>
+      <main ref={containerRef} className="relative bg-[#0a0908] overflow-hidden" style={{ zIndex: 10 }}>
+        {/* Moving background elements */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+          {/* Large gradient orb 1 */}
+          <div
+            className="absolute w-[800px] h-[800px] rounded-full opacity-20"
+            style={{
+              background: `radial-gradient(circle, ${accentColorMuted} 0%, transparent 70%)`,
+              top: "-20%",
+              right: "-10%",
+              filter: "blur(80px)",
+              animation: "float 20s ease-in-out infinite",
+            }}
+          />
+          {/* Large gradient orb 2 */}
+          <div
+            className="absolute w-[600px] h-[600px] rounded-full opacity-15"
+            style={{
+              background: `radial-gradient(circle, rgba(255, 180, 120, 0.4) 0%, transparent 70%)`,
+              bottom: "10%",
+              left: "-15%",
+              filter: "blur(60px)",
+              animation: "float 25s ease-in-out infinite reverse",
+            }}
+          />
+          {/* Smaller accent orb */}
+          <div
+            className="absolute w-[400px] h-[400px] rounded-full opacity-10"
+            style={{
+              background: `radial-gradient(circle, ${accentColor} 0%, transparent 70%)`,
+              top: "40%",
+              left: "60%",
+              filter: "blur(100px)",
+              animation: "float 18s ease-in-out infinite",
+              animationDelay: "-5s",
+            }}
+          />
+        </div>
+
         {/* Hero Section */}
         <motion.section
           ref={heroRef}
@@ -780,13 +876,13 @@ export default function CaseStudyPage({
               <span className="text-white/40 text-[10px] uppercase tracking-[0.3em]">
                 Scroll
               </span>
-              <div className="w-px h-16 bg-gradient-to-b from-white/40 to-transparent" />
+              <div className="w-px h-16" style={{ background: `linear-gradient(to bottom, ${accentColorMuted}, transparent)` }} />
             </motion.div>
           </motion.div>
         </motion.section>
 
         {/* Overview Section */}
-        <section className="py-32 md:py-48 px-6 md:px-12 lg:px-20">
+        <section className="py-32 md:py-48 px-6 md:px-12 lg:px-20 relative z-10">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
@@ -794,12 +890,15 @@ export default function CaseStudyPage({
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <p
-                className="text-xs uppercase tracking-[0.3em] mb-6"
-                style={{ color: accentColorMuted }}
-              >
-                Overview
-              </p>
+              <div className="flex items-center gap-4 mb-8">
+                <p
+                  className="text-xs uppercase tracking-[0.3em]"
+                  style={{ color: accentColor }}
+                >
+                  Overview
+                </p>
+                <div className="h-px flex-1 max-w-32" style={{ background: `linear-gradient(to right, ${accentColorMuted}, transparent)` }} />
+              </div>
               <p className="text-2xl md:text-3xl lg:text-4xl text-white/80 leading-relaxed max-w-4xl">
                 {project.description}
               </p>
@@ -808,23 +907,33 @@ export default function CaseStudyPage({
         </section>
 
         {/* Challenge & Solution with scroll reveal */}
-        <StickyRevealSection challenge={project.challenge} solution={project.solution} />
+        <div className="relative z-10">
+          <StickyRevealSection challenge={project.challenge} solution={project.solution} />
+        </div>
 
         {/* Horizontal Gallery */}
-        <HorizontalGallery images={project.gallery} title={project.title} />
+        <div className="relative z-10">
+          <HorizontalGallery images={project.gallery} title={project.title} />
+        </div>
 
         {/* Results Section */}
-        <ResultsSection result={project.result} metrics={project.metrics} />
+        <div className="relative z-10">
+          <ResultsSection result={project.result} metrics={project.metrics} />
+        </div>
 
         {/* Testimonial */}
-        <TestimonialSection
-          quote={project.testimonial.quote}
-          author={project.testimonial.author}
-          role={project.testimonial.role}
-        />
+        <div className="relative z-10">
+          <TestimonialSection
+            quote={project.testimonial.quote}
+            author={project.testimonial.author}
+            role={project.testimonial.role}
+          />
+        </div>
 
         {/* Next Project */}
-        <NextProjectSection project={nextProject} />
+        <div className="relative z-10">
+          <NextProjectSection project={nextProject} />
+        </div>
       </main>
       <Footer />
     </>
