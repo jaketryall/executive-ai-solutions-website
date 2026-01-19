@@ -130,6 +130,189 @@ function NavLink({
   );
 }
 
+// Services dropdown with dynamic reveal
+function ServicesDropdown({
+  isActive,
+  onHover,
+  onClick,
+}: {
+  isActive: boolean;
+  onHover: () => void;
+  onClick: () => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const services = [
+    { href: "/services/website-design", label: "Website Design", description: "High-converting sites that grow your business" },
+    { href: "/services/seo", label: "SEO", description: "Get found by the people who matter" },
+    { href: "/services/custom-solutions", label: "Custom Solutions", description: "Tailored tools built for your workflow" },
+  ];
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => {
+        setIsOpen(true);
+        setIsHovered(true);
+        onHover();
+      }}
+      onMouseLeave={() => {
+        setIsOpen(false);
+        setIsHovered(false);
+        setHoveredIndex(null);
+      }}
+    >
+      {/* Trigger */}
+      <button className="relative px-5 py-3 flex items-center gap-1.5">
+        <span
+          className="text-sm font-medium uppercase tracking-[0.15em]"
+          style={{ color: isActive ? accentColor : isHovered ? "#fff" : "rgba(255,255,255,0.7)" }}
+        >
+          <StaggeredText text="Services" isHovered={isHovered} />
+        </span>
+        <motion.svg
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: [0.76, 0, 0.24, 1] }}
+          style={{ color: isActive ? accentColor : isHovered ? "#fff" : "rgba(255,255,255,0.5)" }}
+        >
+          <path d="M2 4L5 7L8 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </motion.svg>
+        {isActive && (
+          <motion.span
+            className="absolute -bottom-0 left-5 right-5 h-[2px]"
+            style={{ backgroundColor: accentColor }}
+            layoutId="navbar-underline"
+          />
+        )}
+      </button>
+
+      {/* Dropdown */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: [0.76, 0, 0.24, 1] }}
+            className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72"
+          >
+            {/* Glowing border effect */}
+            <div
+              className="absolute -inset-px rounded-2xl opacity-50"
+              style={{
+                background: `linear-gradient(135deg, ${accentColor}40, transparent, ${accentColor}20)`,
+              }}
+            />
+
+            <div className="relative bg-black/95 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
+              {/* Animated background gradient */}
+              <motion.div
+                className="absolute inset-0 opacity-30"
+                animate={{
+                  background: hoveredIndex !== null
+                    ? `radial-gradient(circle at ${50}% ${(hoveredIndex + 0.5) * 33}%, ${accentColor}20, transparent 70%)`
+                    : `radial-gradient(circle at 50% 50%, transparent, transparent)`,
+                }}
+                transition={{ duration: 0.3 }}
+              />
+
+              <div className="relative p-2">
+                {services.map((service, index) => (
+                  <TransitionLink
+                    key={service.href}
+                    href={service.href}
+                    onClick={onClick}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                    className="group relative block"
+                  >
+                    <motion.div
+                      className="relative px-4 py-3 rounded-xl overflow-hidden"
+                      initial={false}
+                      animate={{
+                        backgroundColor: hoveredIndex === index ? "rgba(255, 200, 150, 0.1)" : "transparent",
+                      }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {/* Sliding highlight bar */}
+                      <motion.div
+                        className="absolute left-0 top-1/2 -translate-y-1/2 w-1 rounded-full"
+                        style={{ backgroundColor: accentColor }}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{
+                          height: hoveredIndex === index ? 24 : 0,
+                          opacity: hoveredIndex === index ? 1 : 0,
+                        }}
+                        transition={{ duration: 0.2, ease: [0.76, 0, 0.24, 1] }}
+                      />
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <motion.p
+                            className="text-sm font-medium"
+                            animate={{
+                              color: hoveredIndex === index ? "#fff" : "rgba(255,255,255,0.8)",
+                              x: hoveredIndex === index ? 8 : 0,
+                            }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            {service.label}
+                          </motion.p>
+                          <motion.p
+                            className="text-xs mt-0.5"
+                            animate={{
+                              color: hoveredIndex === index ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.4)",
+                              x: hoveredIndex === index ? 8 : 0,
+                            }}
+                            transition={{ duration: 0.2, delay: 0.02 }}
+                          >
+                            {service.description}
+                          </motion.p>
+                        </div>
+
+                        {/* Arrow that slides in */}
+                        <motion.span
+                          className="text-sm"
+                          style={{ color: accentColor }}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{
+                            opacity: hoveredIndex === index ? 1 : 0,
+                            x: hoveredIndex === index ? 0 : -10,
+                          }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          →
+                        </motion.span>
+                      </div>
+                    </motion.div>
+                  </TransitionLink>
+                ))}
+              </div>
+
+              {/* Bottom accent line */}
+              <motion.div
+                className="h-px"
+                style={{
+                  background: `linear-gradient(90deg, transparent, ${accentColor}40, transparent)`,
+                }}
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -164,7 +347,7 @@ export default function Navbar() {
         className="fixed top-0 left-0 right-0 z-50 hidden md:flex justify-center pt-8"
       >
         <motion.nav
-          className="flex items-center rounded-full overflow-hidden"
+          className="flex items-center rounded-full"
           animate={{
             backgroundColor: isScrolled ? "rgba(0, 0, 0, 0.85)" : "rgba(0, 0, 0, 0)",
             backdropFilter: isScrolled ? "blur(20px)" : "blur(0px)",
@@ -206,6 +389,11 @@ export default function Navbar() {
                 onClick={() => play("click")}
               />
             ))}
+            <ServicesDropdown
+              isActive={pathname.startsWith("/services")}
+              onHover={() => play("hover")}
+              onClick={() => play("click")}
+            />
           </div>
 
           {/* Divider - only visible when scrolled */}
@@ -293,11 +481,48 @@ export default function Navbar() {
                   </TransitionLink>
                 </motion.div>
               ))}
+              {/* Services Section */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 30 }}
                 transition={{ delay: 0.4 }}
+                className="text-center"
+              >
+                <p
+                  className="text-5xl font-black py-4 uppercase"
+                  style={{ color: pathname.startsWith("/services") ? accentColor : "#fff" }}
+                >
+                  Services
+                </p>
+                <div className="flex gap-6 mt-2">
+                  {[
+                    { href: "/services/website-design", label: "Web" },
+                    { href: "/services/seo", label: "SEO" },
+                    { href: "/services/custom-solutions", label: "Custom" },
+                  ].map((service) => (
+                    <TransitionLink
+                      key={service.href}
+                      href={service.href}
+                      onClick={() => {
+                        play("click");
+                        setIsOpen(false);
+                      }}
+                      className="text-lg font-medium transition-colors"
+                      style={{
+                        color: pathname === service.href ? accentColor : "rgba(255,255,255,0.6)",
+                      }}
+                    >
+                      {service.label}
+                    </TransitionLink>
+                  ))}
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 30 }}
+                transition={{ delay: 0.5 }}
                 className="mt-12"
               >
                 <TransitionLink

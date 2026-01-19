@@ -523,9 +523,9 @@ export default function Footer() {
                   </p>
                   <div className="flex flex-col gap-2">
                     {[
-                      { label: "Strategy", href: "/services/strategy" },
-                      { label: "Craft", href: "/services/craft" },
-                      { label: "Legacy", href: "/services/legacy" },
+                      { label: "Website Design", href: "/services/website-design" },
+                      { label: "SEO", href: "/services/seo" },
+                      { label: "Custom Solutions", href: "/services/custom-solutions" },
                     ].map((item) => (
                       <TransitionLink
                         key={item.href}

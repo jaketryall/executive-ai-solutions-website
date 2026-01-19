@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, use, useEffect, useState } from "react";
+import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
+import { useRef, use, useEffect, useState, useLayoutEffect } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
@@ -10,976 +10,1087 @@ import Footer from "@/components/Footer";
 import { useSound } from "@/components/SoundManager";
 import { services, getServiceBySlug, getRelatedProjects } from "@/lib/data";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 // Warm cinematic color palette
 const accentColor = "rgba(255, 200, 150, 1)";
 const accentColorMuted = "rgba(255, 200, 150, 0.6)";
 
-// Moving background orbs
-function MovingBackground() {
-  return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-      {/* Large floating orbs */}
-      <div
-        className="absolute w-[600px] h-[600px] rounded-full opacity-30"
-        style={{
-          background: `radial-gradient(circle, ${accentColor}15 0%, transparent 70%)`,
-          left: "10%",
-          top: "20%",
-          animation: "float1 20s ease-in-out infinite",
-        }}
-      />
-      <div
-        className="absolute w-[500px] h-[500px] rounded-full opacity-20"
-        style={{
-          background: `radial-gradient(circle, ${accentColor}10 0%, transparent 70%)`,
-          right: "5%",
-          top: "50%",
-          animation: "float2 25s ease-in-out infinite",
-        }}
-      />
-      <div
-        className="absolute w-[400px] h-[400px] rounded-full opacity-25"
-        style={{
-          background: `radial-gradient(circle, rgba(255, 180, 120, 0.1) 0%, transparent 70%)`,
-          left: "50%",
-          bottom: "10%",
-          animation: "float3 18s ease-in-out infinite",
-        }}
-      />
+// Isomorphic layout effect
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-      <style jsx>{`
-        @keyframes float1 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -30px) scale(1.05); }
-          66% { transform: translate(-20px, 20px) scale(0.95); }
+// ============================================================================
+// KINETIC TEXT MARQUEE - Solid fill version for services pages
+// ============================================================================
+function KineticMarquee({ text, direction = -1 }: { text: string; direction?: number }) {
+  const animRef = useRef<HTMLDivElement>(null);
+  const posRef = useRef(0);
+  const rafId = useRef<number>(0);
+
+  useEffect(() => {
+    if (animRef.current) {
+      const width = animRef.current.scrollWidth / 2;
+      posRef.current = direction === -1 ? 0 : -width;
+    }
+
+    const animate = () => {
+      const vel = 0.8 * direction;
+      posRef.current += vel;
+
+      if (animRef.current) {
+        const width = animRef.current.scrollWidth / 2;
+        if (direction === -1) {
+          if (posRef.current <= -width) posRef.current += width;
+        } else {
+          if (posRef.current >= 0) posRef.current -= width;
         }
-        @keyframes float2 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(-40px, 20px) scale(1.1); }
-          66% { transform: translate(30px, -40px) scale(0.9); }
-        }
-        @keyframes float3 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(40px, -20px) scale(1.05); }
-        }
-      `}</style>
+        animRef.current.style.transform = `translateX(${posRef.current}px)`;
+      }
+
+      rafId.current = requestAnimationFrame(animate);
+    };
+
+    rafId.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafId.current);
+  }, [direction]);
+
+  return (
+    <div className="flex whitespace-nowrap overflow-hidden">
+      <div ref={animRef} className="flex">
+        {[...Array(6)].map((_, i) => (
+          <span
+            key={i}
+            className="text-[18vw] md:text-[12vw] font-black tracking-[-0.04em] mx-6 md:mx-12 shrink-0 text-white/10"
+          >
+            {text}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
 
-// Section reveal component
-function Section({
-  children,
-  className = "",
-  delay = 0,
-  style,
+// ============================================================================
+// CINEMATIC HERO SECTION
+// ============================================================================
+function CinematicHero({
+  service,
+  relatedProject,
 }: {
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-  style?: React.CSSProperties;
+  service: NonNullable<ReturnType<typeof getServiceBySlug>>;
+  relatedProject?: ReturnType<typeof getRelatedProjects>[0];
 }) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  const imageY = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], [0.6, 0.9]);
+
+  useIsomorphicLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // Title reveal animation
+      if (titleRef.current) {
+        gsap.fromTo(
+          titleRef.current,
+          { y: 100, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.2,
+            ease: "power3.out",
+            delay: 0.3,
+          }
+        );
+      }
+
+      // Subtitle reveal
+      if (subtitleRef.current) {
+        gsap.fromTo(
+          subtitleRef.current,
+          { y: 60, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            ease: "power3.out",
+            delay: 0.5,
+          }
+        );
+      }
+
+      // Image scale on load
+      if (imageRef.current) {
+        gsap.fromTo(
+          imageRef.current,
+          { scale: 1.2, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 1.5,
+            ease: "power2.out",
+          }
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const heroImage = relatedProject?.heroImage || "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=2000&q=90";
+
   return (
-    <motion.section
-      className={className}
-      style={style}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-10%" }}
-      transition={{ duration: 0.8, delay, ease: [0.76, 0, 0.24, 1] }}
-    >
-      {children}
-    </motion.section>
+    <section ref={sectionRef} className="relative h-[100vh] overflow-hidden">
+      {/* Background Image with Parallax */}
+      <motion.div
+        ref={imageRef}
+        className="absolute inset-0"
+        style={{ y: imageY, scale: imageScale }}
+      >
+        <Image
+          src={heroImage}
+          alt={service.title}
+          fill
+          className="object-cover"
+          priority
+          sizes="100vw"
+        />
+      </motion.div>
+
+      {/* Gradient Overlays */}
+      <motion.div
+        ref={overlayRef}
+        className="absolute inset-0 bg-black"
+        style={{ opacity: overlayOpacity }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `linear-gradient(to top, #0a0908 0%, transparent 50%), linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 30%)`,
+        }}
+      />
+
+      {/* Content */}
+      <motion.div
+        className="relative h-full flex flex-col justify-end px-6 md:px-12 lg:px-20 pb-20 md:pb-32"
+        style={{ y: contentY }}
+      >
+        <div className="max-w-7xl mx-auto w-full">
+          {/* Service number */}
+          <motion.span
+            className="inline-block text-sm md:text-base uppercase tracking-[0.3em] mb-4 md:mb-6"
+            style={{ color: accentColor }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+          >
+            Service {service.number}
+          </motion.span>
+
+          {/* Title */}
+          <h1
+            ref={titleRef}
+            className="text-5xl md:text-7xl lg:text-9xl font-black text-white tracking-[-0.04em] leading-[0.9] mb-4 md:mb-6"
+          >
+            {service.title.split(" ").map((word, i) => (
+              <span key={i} className="block">
+                {word}
+              </span>
+            ))}
+          </h1>
+
+          {/* Subtitle */}
+          <p
+            ref={subtitleRef}
+            className="text-xl md:text-2xl lg:text-3xl text-white/60 font-light max-w-2xl"
+          >
+            {service.subtitle}
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2 }}
+      >
+        <motion.div
+          className="flex flex-col items-center gap-3"
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <span className="text-white/40 text-[10px] uppercase tracking-[0.3em]">
+            Scroll
+          </span>
+          <div className="w-px h-10 bg-gradient-to-b from-white/30 to-transparent" />
+        </motion.div>
+      </motion.div>
+    </section>
   );
 }
 
 // ============================================================================
-// UNIQUE GSAP HERO EXPERIENCES
+// DESCRIPTION SECTION WITH SPLIT TEXT REVEAL
+// ============================================================================
+function DescriptionSection({
+  service,
+}: {
+  service: NonNullable<ReturnType<typeof getServiceBySlug>>;
+}) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  useIsomorphicLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // Split text animation
+      if (textRef.current) {
+        const words = textRef.current.querySelectorAll(".word");
+        gsap.fromTo(
+          words,
+          { opacity: 0.1 },
+          {
+            opacity: 1,
+            duration: 0.5,
+            stagger: 0.02,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 70%",
+              end: "center center",
+              scrub: 1,
+            },
+          }
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // Split long description into words
+  const words = service.longDescription.split(" ");
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative py-32 md:py-48 px-6 md:px-12 lg:px-20 bg-[#0a0908]"
+    >
+      <div className="max-w-5xl mx-auto">
+        <p
+          ref={textRef}
+          className="text-2xl md:text-4xl lg:text-5xl font-light text-white leading-[1.4] tracking-[-0.02em]"
+        >
+          {words.map((word, i) => (
+            <span key={i} className="word inline-block mr-[0.3em]">
+              {word}
+            </span>
+          ))}
+        </p>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// VERTICAL TIMELINE PROCESS SECTION WITH GLOWING LINE
+// ============================================================================
+function VerticalTimelineSection({
+  service,
+}: {
+  service: NonNullable<ReturnType<typeof getServiceBySlug>>;
+}) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+  const glowLineRef = useRef<HTMLDivElement>(null);
+
+  // Process step icons
+  const processIcons: Record<string, React.ReactNode> = {
+    "Discovery": <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>,
+    "Strategy": <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
+    "Design": <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>,
+    "Development": <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
+    "Launch & Optimize": <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>,
+    "Audit": <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
+    "Research": <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+    "Technical Fix": <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+    "Content Strategy": <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+    "Monitor & Adapt": <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
+    "Analysis": <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
+    "Architecture": <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>,
+    "Integration": <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>,
+    "Training & Support": <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>,
+  };
+
+  useIsomorphicLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // Animate the glowing line to fill as user scrolls
+      if (glowLineRef.current && sectionRef.current) {
+        gsap.fromTo(
+          glowLineRef.current,
+          { scaleY: 0 },
+          {
+            scaleY: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 60%",
+              end: "bottom 40%",
+              scrub: 0.5,
+            },
+          }
+        );
+      }
+
+      // Animate each timeline item
+      const items = timelineRef.current?.querySelectorAll(".timeline-item");
+      if (items) {
+        items.forEach((item, i) => {
+          // Card reveal
+          gsap.fromTo(
+            item.querySelector(".timeline-card"),
+            {
+              opacity: 0,
+              x: i % 2 === 0 ? -60 : 60,
+              scale: 0.95
+            },
+            {
+              opacity: 1,
+              x: 0,
+              scale: 1,
+              duration: 0.8,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: item,
+                start: "top 75%",
+                end: "top 45%",
+                toggleActions: "play none none reverse",
+              },
+            }
+          );
+
+          // Node glow effect
+          gsap.fromTo(
+            item.querySelector(".timeline-node"),
+            { scale: 0.5, opacity: 0 },
+            {
+              scale: 1,
+              opacity: 1,
+              duration: 0.5,
+              ease: "back.out(2)",
+              scrollTrigger: {
+                trigger: item,
+                start: "top 70%",
+                toggleActions: "play none none reverse",
+              },
+            }
+          );
+        });
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [service.process.length]);
+
+  return (
+    <section ref={sectionRef} className="relative py-32 md:py-48 bg-[#0a0908]">
+      {/* Background glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(ellipse 40% 50% at 50% 50%, ${accentColor}06, transparent)`,
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+        {/* Section header */}
+        <div className="text-center mb-20 md:mb-32">
+          <motion.span
+            className="text-xs uppercase tracking-[0.3em] mb-4 block"
+            style={{ color: accentColorMuted }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            How We Work
+          </motion.span>
+          <motion.h2
+            className="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-[-0.04em]"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            The Process
+          </motion.h2>
+        </div>
+
+        {/* Timeline container */}
+        <div ref={timelineRef} className="relative">
+          {/* Center line (background) */}
+          <div
+            ref={lineRef}
+            className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 hidden md:block"
+            style={{ background: "rgba(255,255,255,0.08)" }}
+          />
+
+          {/* Glowing line (fills on scroll) */}
+          <div
+            ref={glowLineRef}
+            className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 origin-top hidden md:block"
+            style={{
+              background: `linear-gradient(180deg, ${accentColor}, ${accentColorMuted})`,
+              boxShadow: `0 0 20px ${accentColor}80, 0 0 40px ${accentColor}40, 0 0 60px ${accentColor}20`,
+            }}
+          />
+
+          {/* Mobile line (left side) */}
+          <div
+            className="absolute left-6 top-0 bottom-0 w-px md:hidden"
+            style={{ background: "rgba(255,255,255,0.08)" }}
+          />
+          <div
+            className="absolute left-6 top-0 bottom-0 w-px origin-top md:hidden"
+            style={{
+              background: `linear-gradient(180deg, ${accentColor}, ${accentColorMuted})`,
+              boxShadow: `0 0 15px ${accentColor}60`,
+              transform: "scaleY(var(--mobile-progress, 0))",
+            }}
+          />
+
+          {/* Timeline items */}
+          <div className="relative space-y-16 md:space-y-24">
+            {service.process.map((step, i) => (
+              <div
+                key={i}
+                className={`timeline-item relative flex items-center ${
+                  i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
+                }`}
+              >
+                {/* Timeline node (center dot) */}
+                <div
+                  className={`timeline-node absolute left-6 md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full z-10`}
+                  style={{
+                    background: accentColor,
+                    boxShadow: `0 0 20px ${accentColor}80, 0 0 40px ${accentColor}40`,
+                  }}
+                >
+                  {/* Pulse ring */}
+                  <div
+                    className="absolute inset-0 rounded-full animate-ping"
+                    style={{
+                      background: accentColor,
+                      opacity: 0.3,
+                      animationDuration: "2s",
+                    }}
+                  />
+                </div>
+
+                {/* Card */}
+                <div
+                  className={`timeline-card ml-16 md:ml-0 md:w-[calc(50%-40px)] ${
+                    i % 2 === 0 ? "md:pr-12" : "md:pl-12"
+                  }`}
+                >
+                  <div
+                    className="relative p-8 md:p-10 rounded-2xl overflow-hidden group"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                    }}
+                  >
+                    {/* Step number watermark */}
+                    <div
+                      className="absolute -right-4 -top-4 text-[120px] md:text-[160px] font-black leading-none pointer-events-none select-none"
+                      style={{
+                        WebkitTextStroke: `1px rgba(255,200,150,0.08)`,
+                        WebkitTextFillColor: "transparent",
+                      }}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </div>
+
+                    {/* Icon and step indicator */}
+                    <div className="flex items-center gap-4 mb-6">
+                      <div
+                        className="w-12 h-12 rounded-xl flex items-center justify-center"
+                        style={{
+                          background: `linear-gradient(135deg, ${accentColor}20, transparent)`,
+                          border: `1px solid ${accentColor}30`,
+                          color: accentColor,
+                        }}
+                      >
+                        {processIcons[step.step] || (
+                          <span className="text-lg font-black">{i + 1}</span>
+                        )}
+                      </div>
+                      <span
+                        className="text-xs uppercase tracking-[0.2em]"
+                        style={{ color: accentColorMuted }}
+                      >
+                        Step {String(i + 1).padStart(2, "0")}
+                      </span>
+                    </div>
+
+                    {/* Content */}
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                      {step.step}
+                    </h3>
+                    <p className="text-white/50 text-base md:text-lg leading-relaxed">
+                      {step.description}
+                    </p>
+
+                    {/* Hover glow */}
+                    <div
+                      className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                      style={{
+                        background: `radial-gradient(circle at 50% 100%, ${accentColor}10, transparent 70%)`,
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Empty space for opposite side */}
+                <div className="hidden md:block md:w-[calc(50%-40px)]" />
+              </div>
+            ))}
+          </div>
+
+          {/* End node */}
+          <div
+            className="absolute left-6 md:left-1/2 md:-translate-x-1/2 -bottom-4 w-6 h-6 rounded-full flex items-center justify-center"
+            style={{
+              background: `linear-gradient(135deg, ${accentColor}, rgba(255,180,120,1))`,
+              boxShadow: `0 0 30px ${accentColor}60`,
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="3">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// BENTO-STYLE BENEFITS SECTION
 // ============================================================================
 
-// Website Design - Floating code blocks and design grid
-function WebsiteDesignHero() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const blocksRef = useRef<(HTMLDivElement | null)[]>([]);
+// Benefit icons mapping
+const benefitIcons: Record<number, React.ReactNode> = {
+  0: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>,
+  1: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+  2: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
+  3: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
+  4: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+  5: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>,
+};
 
-  useEffect(() => {
+// Secondary descriptive text for benefits
+const benefitSubtext: string[] = [
+  "Measurable impact from day one",
+  "Optimized for peak efficiency",
+  "Enterprise-grade protection",
+  "Continuous improvement built-in",
+  "Expert guidance at every step",
+  "Ready for tomorrow's challenges",
+];
+
+function BenefitsSection({
+  service,
+}: {
+  service: NonNullable<ReturnType<typeof getServiceBySlug>>;
+}) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+
+  useIsomorphicLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      // Animate floating code blocks
-      blocksRef.current.forEach((block, i) => {
-        if (!block) return;
-
-        // Initial animation
+      const cards = cardsRef.current?.querySelectorAll(".bento-card");
+      if (cards) {
         gsap.fromTo(
-          block,
-          {
-            y: 100,
-            opacity: 0,
-            scale: 0.8,
-            rotateX: 45,
-          },
+          cards,
+          { y: 60, opacity: 0, scale: 0.95 },
           {
             y: 0,
             opacity: 1,
             scale: 1,
-            rotateX: 0,
-            duration: 1.2,
-            delay: 0.8 + i * 0.15,
+            duration: 0.7,
+            stagger: {
+              each: 0.08,
+              from: "start",
+            },
             ease: "power3.out",
+            scrollTrigger: {
+              trigger: cardsRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
           }
         );
-
-        // Floating animation
-        gsap.to(block, {
-          y: "random(-20, 20)",
-          x: "random(-10, 10)",
-          rotation: "random(-3, 3)",
-          duration: "random(3, 5)",
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: i * 0.3,
-        });
-      });
-
-      // Grid lines animation
-      gsap.fromTo(
-        ".grid-line-h",
-        { scaleX: 0, transformOrigin: "left" },
-        { scaleX: 1, duration: 1.5, stagger: 0.1, ease: "power2.out", delay: 0.5 }
-      );
-      gsap.fromTo(
-        ".grid-line-v",
-        { scaleY: 0, transformOrigin: "top" },
-        { scaleY: 1, duration: 1.5, stagger: 0.1, ease: "power2.out", delay: 0.5 }
-      );
-    }, containerRef);
+      }
+    }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  const codeBlocks = [
-    { code: "<div>", color: accentColor, x: "15%", y: "20%", size: "text-sm" },
-    { code: "{ style }", color: "#ffffff", x: "75%", y: "30%", size: "text-xs" },
-    { code: "function()", color: accentColorMuted, x: "25%", y: "65%", size: "text-sm" },
-    { code: "</html>", color: "#ffffff80", x: "70%", y: "70%", size: "text-xs" },
-    { code: "const ui", color: accentColor, x: "55%", y: "15%", size: "text-sm" },
-  ];
+  // Determine bento grid layout pattern based on number of benefits
+  const getBentoClass = (index: number, total: number): string => {
+    // For 6 items (most common), create an interesting asymmetric layout
+    if (total === 6) {
+      // Row 1: Large card (2 cols) + Small card
+      if (index === 0) return "md:col-span-2 md:row-span-2";
+      if (index === 1) return "md:col-span-1";
+      // Row 2: Small card spans under first
+      if (index === 2) return "md:col-span-1";
+      // Row 3: Small + Large (2 cols)
+      if (index === 3) return "md:col-span-1";
+      if (index === 4) return "md:col-span-2 md:row-span-1";
+      if (index === 5) return "md:col-span-1";
+    }
+    // Default: uniform grid
+    return "md:col-span-1";
+  };
+
+  const isLargeCard = (index: number, total: number): boolean => {
+    if (total === 6) {
+      return index === 0 || index === 4;
+    }
+    return false;
+  };
 
   return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Animated Grid */}
-      <div className="absolute inset-0" style={{ perspective: "1000px" }}>
-        {[...Array(6)].map((_, i) => (
-          <div
-            key={`h-${i}`}
-            className="grid-line-h absolute left-0 right-0 h-px"
-            style={{
-              top: `${15 + i * 15}%`,
-              background: `linear-gradient(to right, transparent, rgba(255,200,150,0.1), transparent)`,
-            }}
-          />
-        ))}
-        {[...Array(8)].map((_, i) => (
-          <div
-            key={`v-${i}`}
-            className="grid-line-v absolute top-0 bottom-0 w-px"
-            style={{
-              left: `${10 + i * 12}%`,
-              background: `linear-gradient(to bottom, transparent, rgba(255,200,150,0.08), transparent)`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Floating Code Blocks */}
-      {codeBlocks.map((block, i) => (
-        <div
-          key={i}
-          ref={(el) => { blocksRef.current[i] = el; }}
-          className={`absolute px-4 py-2 rounded-md backdrop-blur-sm ${block.size}`}
-          style={{
-            left: block.x,
-            top: block.y,
-            color: block.color,
-            background: "rgba(255,255,255,0.03)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            fontFamily: "monospace",
-            boxShadow: `0 4px 30px rgba(255,200,150,0.05)`,
-          }}
-        >
-          {block.code}
-        </div>
-      ))}
-
-      {/* Cursor following dot */}
+    <section ref={sectionRef} className="relative py-32 md:py-48 bg-[#0a0908]">
+      {/* Ambient glow */}
       <div
-        className="absolute w-3 h-3 rounded-full"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          left: "45%",
-          top: "45%",
-          background: accentColor,
-          boxShadow: `0 0 20px ${accentColor}, 0 0 40px ${accentColorMuted}`,
+          background: `radial-gradient(ellipse 60% 40% at 50% 0%, ${accentColor}08, transparent)`,
         }}
       />
-    </div>
-  );
-}
 
-// SEO - Search ranking bars and analytics visualization
-function SEOHero() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const barsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const [rankings] = useState([85, 92, 78, 95, 88, 72, 90]);
+      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+        {/* Section header */}
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-16 md:mb-20 gap-6">
+          <div>
+            <motion.span
+              className="text-xs uppercase tracking-[0.3em] mb-4 block"
+              style={{ color: accentColorMuted }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              What You Get
+            </motion.span>
+            <motion.h2
+              className="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-[-0.04em]"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+            >
+              Benefits
+            </motion.h2>
+          </div>
+          <motion.p
+            className="text-white/40 text-lg md:text-xl max-w-md"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            Everything you need to transform your digital presence and drive real results.
+          </motion.p>
+        </div>
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Animate ranking bars
-      barsRef.current.forEach((bar, i) => {
-        if (!bar) return;
-
-        gsap.fromTo(
-          bar,
-          { scaleY: 0, transformOrigin: "bottom" },
-          {
-            scaleY: 1,
-            duration: 1,
-            delay: 1 + i * 0.12,
-            ease: "power3.out",
-          }
-        );
-
-        // Pulse animation
-        gsap.to(bar, {
-          scaleY: 1.02,
-          duration: 2,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: i * 0.2,
-        });
-      });
-
-      // Search icon animation
-      gsap.fromTo(
-        ".search-icon",
-        { scale: 0, rotation: -180 },
-        { scale: 1, rotation: 0, duration: 1, delay: 0.5, ease: "back.out(1.7)" }
-      );
-
-      // Rising arrow animation
-      gsap.fromTo(
-        ".rising-arrow",
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, delay: 1.5, ease: "power2.out" }
-      );
-
-      // Data points floating
-      gsap.to(".data-point", {
-        y: "random(-15, 15)",
-        x: "random(-10, 10)",
-        duration: "random(2, 4)",
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        stagger: 0.2,
-      });
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Ranking Bars */}
-      <div className="absolute right-[10%] bottom-[20%] flex items-end gap-3 h-40">
-        {rankings.map((height, i) => (
-          <div
-            key={i}
-            ref={(el) => { barsRef.current[i] = el; }}
-            className="w-6 rounded-t-sm"
-            style={{
-              height: `${height}%`,
-              background: i === 3
-                ? `linear-gradient(to top, ${accentColor}, ${accentColorMuted})`
-                : `linear-gradient(to top, rgba(255,255,255,0.2), rgba(255,255,255,0.05))`,
-              boxShadow: i === 3 ? `0 0 20px ${accentColorMuted}` : "none",
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Search Icon */}
-      <div
-        className="search-icon absolute left-[15%] top-[25%] w-20 h-20 rounded-full flex items-center justify-center"
-        style={{
-          background: "rgba(255,255,255,0.03)",
-          border: `2px solid ${accentColorMuted}`,
-        }}
-      >
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2">
-          <circle cx="11" cy="11" r="8" />
-          <path d="M21 21l-4.35-4.35" />
-        </svg>
-      </div>
-
-      {/* Rising Arrow */}
-      <div className="rising-arrow absolute left-[55%] top-[30%]">
-        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-          <path
-            d="M20 60 L40 20 L60 35"
-            stroke={accentColor}
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-          <polygon
-            points="60,35 52,38 55,30"
-            fill={accentColor}
-          />
-        </svg>
-      </div>
-
-      {/* Floating Data Points */}
-      {[...Array(5)].map((_, i) => (
+        {/* Bento Grid */}
         <div
-          key={i}
-          className="data-point absolute w-2 h-2 rounded-full"
-          style={{
-            left: `${20 + i * 15}%`,
-            top: `${40 + (i % 3) * 15}%`,
-            background: i % 2 === 0 ? accentColor : "rgba(255,255,255,0.3)",
-            boxShadow: i % 2 === 0 ? `0 0 10px ${accentColor}` : "none",
-          }}
-        />
-      ))}
-
-      {/* Keywords floating */}
-      <div
-        className="absolute right-[25%] top-[20%] px-3 py-1 rounded text-xs"
-        style={{
-          background: "rgba(255,200,150,0.1)",
-          border: "1px solid rgba(255,200,150,0.2)",
-          color: accentColor,
-        }}
-      >
-        #1 Ranking
-      </div>
-    </div>
-  );
-}
-
-// Custom Solutions - Interconnected gears and data flow
-function CustomSolutionsHero() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const gearsRef = useRef<(SVGSVGElement | null)[]>([]);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Animate gears rotating
-      gearsRef.current.forEach((gear, i) => {
-        if (!gear) return;
-
-        // Entry animation
-        gsap.fromTo(
-          gear,
-          { scale: 0, opacity: 0 },
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 0.8,
-            delay: 0.8 + i * 0.2,
-            ease: "back.out(1.7)",
-          }
-        );
-
-        // Continuous rotation
-        gsap.to(gear, {
-          rotation: i % 2 === 0 ? 360 : -360,
-          duration: 8 + i * 2,
-          repeat: -1,
-          ease: "none",
-          transformOrigin: "center center",
-        });
-      });
-
-      // Data flow lines
-      gsap.fromTo(
-        ".data-flow",
-        { strokeDashoffset: 100 },
-        {
-          strokeDashoffset: 0,
-          duration: 2,
-          repeat: -1,
-          ease: "none",
-          stagger: 0.5,
-        }
-      );
-
-      // Connection nodes pulse
-      gsap.to(".connection-node", {
-        scale: 1.3,
-        opacity: 0.5,
-        duration: 1,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        stagger: 0.2,
-      });
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  const gearPositions = [
-    { x: "20%", y: "30%", size: 80 },
-    { x: "35%", y: "55%", size: 60 },
-    { x: "70%", y: "25%", size: 70 },
-    { x: "75%", y: "60%", size: 50 },
-  ];
-
-  return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Connection Lines SVG */}
-      <svg className="absolute inset-0 w-full h-full">
-        <defs>
-          <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="transparent" />
-            <stop offset="50%" stopColor={accentColor} />
-            <stop offset="100%" stopColor="transparent" />
-          </linearGradient>
-        </defs>
-
-        {/* Data flow paths */}
-        <path
-          className="data-flow"
-          d="M 150 200 Q 300 150 400 300"
-          stroke="url(#flowGradient)"
-          strokeWidth="2"
-          fill="none"
-          strokeDasharray="10 5"
-        />
-        <path
-          className="data-flow"
-          d="M 400 300 Q 500 250 600 350"
-          stroke="url(#flowGradient)"
-          strokeWidth="2"
-          fill="none"
-          strokeDasharray="10 5"
-        />
-      </svg>
-
-      {/* Gears */}
-      {gearPositions.map((pos, i) => (
-        <svg
-          key={i}
-          ref={(el) => { gearsRef.current[i] = el; }}
-          className="absolute"
-          style={{ left: pos.x, top: pos.y }}
-          width={pos.size}
-          height={pos.size}
-          viewBox="0 0 100 100"
+          ref={cardsRef}
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 auto-rows-fr"
         >
-          <path
-            d="M50 10 L54 25 L65 20 L60 35 L75 40 L60 50 L75 60 L60 65 L65 80 L54 75 L50 90 L46 75 L35 80 L40 65 L25 60 L40 50 L25 40 L40 35 L35 20 L46 25 Z"
-            fill="none"
-            stroke={i === 0 ? accentColor : "rgba(255,255,255,0.2)"}
-            strokeWidth="2"
-          />
-          <circle
-            cx="50"
-            cy="50"
-            r="15"
-            fill="none"
-            stroke={i === 0 ? accentColor : "rgba(255,255,255,0.15)"}
-            strokeWidth="2"
-          />
-        </svg>
-      ))}
+          {service.benefits.map((benefit, i) => {
+            const large = isLargeCard(i, service.benefits.length);
+            return (
+              <div
+                key={i}
+                className={`bento-card group relative rounded-2xl md:rounded-3xl overflow-hidden ${getBentoClass(i, service.benefits.length)}`}
+                style={{
+                  background: "linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  minHeight: large ? "280px" : "200px",
+                }}
+              >
+                {/* Background number */}
+                <div
+                  className={`absolute font-black leading-none pointer-events-none select-none ${
+                    large ? "-right-6 -bottom-10 text-[200px] md:text-[280px]" : "-right-4 -bottom-6 text-[120px] md:text-[160px]"
+                  }`}
+                  style={{
+                    WebkitTextStroke: `1px rgba(255,200,150,0.06)`,
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </div>
 
-      {/* Connection Nodes */}
-      {[...Array(4)].map((_, i) => (
-        <div
-          key={i}
-          className="connection-node absolute w-3 h-3 rounded-full"
-          style={{
-            left: `${30 + i * 15}%`,
-            top: `${45 + (i % 2) * 15}%`,
-            background: accentColor,
-            boxShadow: `0 0 15px ${accentColor}`,
-          }}
-        />
-      ))}
+                {/* Content */}
+                <div className={`relative h-full flex flex-col ${large ? "p-8 md:p-10" : "p-6 md:p-8"}`}>
+                  {/* Icon */}
+                  <div
+                    className={`${large ? "w-14 h-14" : "w-12 h-12"} rounded-xl flex items-center justify-center mb-auto`}
+                    style={{
+                      background: `linear-gradient(135deg, ${accentColor}15, ${accentColor}05)`,
+                      border: `1px solid ${accentColor}25`,
+                      color: accentColor,
+                    }}
+                  >
+                    {benefitIcons[i % 6]}
+                  </div>
 
-      {/* Database icon */}
-      <div
-        className="absolute right-[15%] bottom-[25%] p-4 rounded-lg"
-        style={{
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,200,150,0.2)",
-        }}
-      >
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="1.5">
-          <ellipse cx="12" cy="5" rx="9" ry="3" />
-          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-        </svg>
+                  {/* Text content */}
+                  <div className="mt-auto">
+                    {/* Subtext label */}
+                    <span
+                      className="text-[10px] uppercase tracking-[0.2em] mb-2 block"
+                      style={{ color: accentColorMuted }}
+                    >
+                      {benefitSubtext[i % 6]}
+                    </span>
+
+                    {/* Main benefit */}
+                    <p className={`text-white font-medium leading-snug ${large ? "text-xl md:text-2xl" : "text-base md:text-lg"}`}>
+                      {benefit}
+                    </p>
+
+                    {/* Large card extra content */}
+                    {large && (
+                      <div className="mt-6 flex items-center gap-3">
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center"
+                          style={{
+                            background: `${accentColor}20`,
+                            border: `1px solid ${accentColor}30`,
+                          }}
+                        >
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke={accentColor}
+                            strokeWidth="2.5"
+                          >
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </div>
+                        <span className="text-white/40 text-sm">Included in all plans</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Decorative corner accent for large cards */}
+                {large && (
+                  <div
+                    className="absolute top-0 right-0 w-32 h-32 pointer-events-none"
+                    style={{
+                      background: `radial-gradient(circle at 100% 0%, ${accentColor}10, transparent 70%)`,
+                    }}
+                  />
+                )}
+
+                {/* Hover glow */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{
+                    background: `radial-gradient(circle at 50% 100%, ${accentColor}12, transparent 60%)`,
+                  }}
+                />
+
+                {/* Border glow on hover */}
+                <div
+                  className="absolute inset-0 rounded-2xl md:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{
+                    boxShadow: `inset 0 0 0 1px ${accentColor}30`,
+                  }}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
-
-      {/* API label */}
-      <div
-        className="absolute left-[50%] top-[15%] px-3 py-1 rounded text-xs font-mono"
-        style={{
-          background: "rgba(255,200,150,0.1)",
-          border: "1px solid rgba(255,200,150,0.2)",
-          color: accentColor,
-        }}
-      >
-        API Connected
-      </div>
-    </div>
+    </section>
   );
 }
 
-// Hero selector based on slug
-function ServiceHeroExperience({ slug }: { slug: string }) {
-  switch (slug) {
-    case "website-design":
-      return <WebsiteDesignHero />;
-    case "seo":
-      return <SEOHero />;
-    case "custom-solutions":
-      return <CustomSolutionsHero />;
-    default:
-      return null;
-  }
+// ============================================================================
+// RELATED PROJECTS SECTION
+// ============================================================================
+function RelatedProjectsSection({
+  relatedProjects,
+}: {
+  relatedProjects: ReturnType<typeof getRelatedProjects>;
+}) {
+  const { play } = useSound();
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  if (relatedProjects.length === 0) return null;
+
+  return (
+    <section className="relative py-32 md:py-48 bg-[#0a0908]">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+        {/* Section header */}
+        <div className="flex items-end justify-between mb-12 md:mb-16">
+          <div>
+            <span
+              className="text-xs uppercase tracking-[0.3em] mb-4 block"
+              style={{ color: accentColorMuted }}
+            >
+              Related Work
+            </span>
+            <h2 className="text-4xl md:text-5xl font-black text-white tracking-[-0.04em]">
+              See It In Action
+            </h2>
+          </div>
+          <TransitionLink
+            href="/work"
+            className="hidden md:flex items-center gap-2 text-sm uppercase tracking-wider group"
+            style={{ color: accentColor }}
+          >
+            <span>View All</span>
+            <span className="group-hover:translate-x-1 transition-transform">→</span>
+          </TransitionLink>
+        </div>
+
+        {/* Projects grid */}
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+          {relatedProjects.slice(0, 2).map((project, i) => (
+            <motion.div
+              key={project.slug}
+              onMouseEnter={() => {
+                setHoveredIndex(i);
+                play("hover", { volume: 0.05 });
+              }}
+              onMouseLeave={() => setHoveredIndex(null)}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+            >
+              <TransitionLink
+                href={`/work/${project.slug}`}
+                className="block relative aspect-[4/3] rounded-2xl overflow-hidden group"
+              >
+                {/* Image */}
+                <Image
+                  src={project.image}
+                  alt={project.title}
+                  fill
+                  className="object-cover transition-transform duration-700"
+                  style={{
+                    transform: hoveredIndex === i ? "scale(1.05)" : "scale(1)",
+                  }}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+
+                {/* Overlay */}
+                <div
+                  className="absolute inset-0 transition-opacity duration-500"
+                  style={{
+                    background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)",
+                    opacity: hoveredIndex === i ? 0.6 : 1,
+                  }}
+                />
+
+                {/* Border glow */}
+                <motion.div
+                  className="absolute inset-0 rounded-2xl pointer-events-none"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: hoveredIndex === i ? 1 : 0 }}
+                  style={{
+                    boxShadow: `inset 0 0 0 1px ${accentColorMuted}`,
+                  }}
+                />
+
+                {/* Content */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                  <span className="text-xs uppercase tracking-wider text-white/50 mb-2 block">
+                    {project.category}
+                  </span>
+                  <h3 className="text-2xl md:text-3xl font-bold text-white">
+                    {project.title}
+                  </h3>
+                </div>
+              </TransitionLink>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Mobile view all link */}
+        <div className="mt-8 md:hidden">
+          <TransitionLink
+            href="/work"
+            className="flex items-center justify-center gap-2 text-sm uppercase tracking-wider"
+            style={{ color: accentColor }}
+          >
+            <span>View All Work</span>
+            <span>→</span>
+          </TransitionLink>
+        </div>
+      </div>
+    </section>
+  );
 }
 
+// ============================================================================
+// CTA SECTION
+// ============================================================================
+function CTASection() {
+  const { play } = useSound();
+
+  return (
+    <section className="relative py-32 md:py-48 bg-[#0a0908] overflow-hidden">
+      {/* Background effect */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(ellipse 60% 60% at 50% 100%, ${accentColor}10, transparent)`,
+        }}
+      />
+
+      <div className="max-w-4xl mx-auto px-6 md:px-12 lg:px-20 text-center relative z-10">
+        <motion.h2
+          className="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-[-0.04em] mb-6"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          Ready to Start?
+        </motion.h2>
+        <motion.p
+          className="text-xl md:text-2xl text-white/50 mb-12 max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
+        >
+          Let&apos;s discuss how we can help transform your digital presence.
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+        >
+          <TransitionLink href="/contact">
+            <motion.button
+              className="group relative inline-flex items-center gap-4 px-10 py-5 rounded-full overflow-hidden"
+              style={{
+                background: `linear-gradient(135deg, ${accentColor}, rgba(255, 180, 120, 1))`,
+              }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onMouseEnter={() => play("hover")}
+              onClick={() => play("click")}
+            >
+              {/* Shimmer effect */}
+              <motion.div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)",
+                }}
+                animate={{
+                  x: ["-100%", "100%"],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatDelay: 3,
+                  ease: "easeInOut",
+                }}
+              />
+              <span className="relative z-10 text-black font-semibold text-lg">
+                Get in Touch
+              </span>
+              <span className="relative z-10 w-10 h-10 rounded-full bg-black/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </span>
+            </motion.button>
+          </TransitionLink>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// MAIN PAGE COMPONENT
+// ============================================================================
 export default function ServicePage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = use(params);
-  const service = getServiceBySlug(slug);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { play } = useSound();
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+  const resolvedParams = use(params);
+  const service = getServiceBySlug(resolvedParams.slug);
 
   if (!service) {
     notFound();
   }
 
   const relatedProjects = getRelatedProjects(service.relatedProjects);
-
-  // Get next and prev services
-  const currentIndex = services.findIndex((s) => s.slug === slug);
-  const prevService = currentIndex > 0 ? services[currentIndex - 1] : null;
-  const nextService =
-    currentIndex < services.length - 1 ? services[currentIndex + 1] : null;
+  const primaryProject = relatedProjects[0];
 
   return (
     <>
-      <MovingBackground />
       <Navbar />
-      <main ref={containerRef} className="relative bg-[#0a0908]" style={{ zIndex: 10 }}>
-        {/* Hero Section */}
-      <motion.section
-        className="relative h-[80vh] flex items-center overflow-hidden"
-        style={{ y: heroY, opacity: heroOpacity }}
-      >
-        {/* Background gradient */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse 80% 50% at 50% 30%, rgba(255, 200, 150, 0.08) 0%, transparent 60%)`,
-          }}
-        />
+      <main className="relative bg-[#0a0908]" style={{ zIndex: 10 }}>
+        {/* Cinematic Hero */}
+        <CinematicHero service={service} relatedProject={primaryProject} />
 
-        {/* Unique GSAP Hero Experience */}
-        <ServiceHeroExperience slug={slug} />
+        {/* Kinetic Marquee */}
+        <section className="py-16 md:py-24 bg-[#0a0908] overflow-hidden">
+          <KineticMarquee text={`${service.title} •`} />
+        </section>
 
-        {/* Large background number */}
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none overflow-hidden">
-          <motion.span
-            className="text-[40vw] font-black leading-none select-none"
-            style={{
-              WebkitTextStroke: "1px rgba(255,255,255,0.03)",
-              WebkitTextFillColor: "transparent",
-            }}
-            initial={{ x: 100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 1, delay: 0.3 }}
-          >
-            {service.number}
-          </motion.span>
-        </div>
+        {/* Description with word reveal */}
+        <DescriptionSection service={service} />
 
-        {/* Content */}
-        <div className="relative z-10 px-6 md:px-12 lg:px-20 max-w-4xl">
-          {/* Service number */}
-          <motion.div
-            className="flex items-center gap-4 mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <span
-              className="text-6xl font-black"
-              style={{ color: accentColor }}
-            >
-              {service.number}
-            </span>
-            <div
-              className="h-px flex-1 max-w-32"
-              style={{
-                background: `linear-gradient(to right, ${accentColorMuted}, transparent)`,
-              }}
-            />
-          </motion.div>
+        {/* Vertical Timeline Process */}
+        <VerticalTimelineSection service={service} />
 
-          {/* Title */}
-          <motion.h1
-            className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-[-0.03em] mb-4"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          >
-            {service.title}
-          </motion.h1>
+        {/* Benefits */}
+        <BenefitsSection service={service} />
 
-          {/* Subtitle */}
-          <motion.p
-            className="text-xl md:text-2xl text-white/40 italic mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            {service.subtitle}
-          </motion.p>
+        {/* Kinetic Marquee 2 */}
+        <section className="py-16 md:py-24 bg-[#0a0908] overflow-hidden">
+          <KineticMarquee text="MORE LEADS • MORE SALES • MORE GROWTH •" direction={1} />
+        </section>
 
-          {/* Short description */}
-          <motion.p
-            className="text-white/60 text-lg max-w-xl leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-          >
-            {service.description}
-          </motion.p>
-        </div>
-      </motion.section>
+        {/* Related Projects */}
+        <RelatedProjectsSection relatedProjects={relatedProjects} />
 
-      {/* Long Description */}
-      <Section className="py-32 px-6 md:px-12 lg:px-20">
-        <div className="max-w-4xl mx-auto">
-          <p
-            className="text-xs uppercase tracking-[0.3em] mb-8"
-            style={{ color: accentColorMuted }}
-          >
-            What We Do
-          </p>
-          <p className="text-2xl md:text-3xl text-white/80 leading-relaxed">
-            {service.longDescription}
-          </p>
-        </div>
-      </Section>
-
-      {/* Benefits */}
-      <Section className="py-32 px-6 md:px-12 lg:px-20 border-y border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16">
-            <div>
-              <p
-                className="text-xs uppercase tracking-[0.3em] mb-4"
-                style={{ color: accentColorMuted }}
-              >
-                What You Get
-              </p>
-              <h2 className="text-3xl md:text-4xl font-black text-white tracking-[-0.02em]">
-                Benefits
-              </h2>
-            </div>
-
-            <div className="space-y-6">
-              {service.benefits.map((benefit, index) => (
-                <motion.div
-                  key={benefit}
-                  className="flex items-start gap-4"
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <span
-                    className="w-2 h-2 rounded-full mt-2 shrink-0"
-                    style={{ backgroundColor: accentColor }}
-                  />
-                  <p className="text-white/70 text-lg">{benefit}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      {/* Process */}
-      <Section className="py-32 px-6 md:px-12 lg:px-20">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20">
-            <p
-              className="text-xs uppercase tracking-[0.3em] mb-4"
-              style={{ color: accentColorMuted }}
-            >
-              How We Work
-            </p>
-            <h2 className="text-4xl md:text-5xl font-black text-white tracking-[-0.03em]">
-              The Process
-            </h2>
-          </div>
-
-          <div className="relative">
-            {/* Connecting line */}
-            <div
-              className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px hidden md:block"
-              style={{
-                background: `linear-gradient(to bottom, transparent, ${accentColorMuted}, transparent)`,
-              }}
-            />
-
-            <div className="space-y-16">
-              {service.process.map((step, index) => (
-                <motion.div
-                  key={step.step}
-                  className={`relative grid md:grid-cols-2 gap-8 ${
-                    index % 2 === 0 ? "" : "md:direction-rtl"
-                  }`}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  {/* Step indicator */}
-                  <div
-                    className="absolute left-8 md:left-1/2 top-0 w-4 h-4 rounded-full -translate-x-1/2 hidden md:block"
-                    style={{
-                      backgroundColor: accentColor,
-                      boxShadow: `0 0 20px ${accentColor}`,
-                    }}
-                  />
-
-                  {/* Content */}
-                  <div
-                    className={`${
-                      index % 2 === 0
-                        ? "md:text-right md:pr-16"
-                        : "md:col-start-2 md:pl-16"
-                    }`}
-                  >
-                    <span
-                      className="text-5xl font-black block mb-2"
-                      style={{ color: accentColorMuted, opacity: 0.3 }}
-                    >
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <h3 className="text-2xl font-bold text-white mb-3">
-                      {step.step}
-                    </h3>
-                    <p className="text-white/50 leading-relaxed">
-                      {step.description}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      {/* Related Projects */}
-      {relatedProjects.length > 0 && (
-        <Section className="py-32 px-6 md:px-12 lg:px-20 border-t border-white/5">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <p
-                className="text-xs uppercase tracking-[0.3em] mb-4"
-                style={{ color: accentColorMuted }}
-              >
-                See It In Action
-              </p>
-              <h2 className="text-3xl md:text-4xl font-black text-white tracking-[-0.02em]">
-                Related Work
-              </h2>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              {relatedProjects.map((project, index) => (
-                <TransitionLink key={project.slug} href={`/work/${project.slug}`}>
-                  <motion.div
-                    className="group relative aspect-16/10 overflow-hidden rounded-sm cursor-pointer"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ y: -8 }}
-                    onMouseEnter={() => play("hover", { volume: 0.05 })}
-                  >
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-linear-to-t from-[#0a0908] via-[#0a0908]/50 to-transparent" />
-
-                    <div className="absolute bottom-6 left-6 right-6">
-                      <p
-                        className="text-xs uppercase tracking-wider mb-2"
-                        style={{ color: accentColor }}
-                      >
-                        {project.category}
-                      </p>
-                      <h3 className="text-2xl font-black text-white">
-                        {project.title}
-                      </h3>
-                    </div>
-                  </motion.div>
-                </TransitionLink>
-              ))}
-            </div>
-          </div>
-        </Section>
-      )}
-
-      {/* Service Navigation */}
-      <Section className="py-16 px-6 md:px-12 lg:px-20 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex justify-between items-center">
-            {/* Prev */}
-            {prevService ? (
-              <TransitionLink href={`/services/${prevService.slug}`}>
-                <motion.div
-                  className="group flex items-center gap-4"
-                  whileHover={{ x: -8 }}
-                  onMouseEnter={() => play("hover", { volume: 0.05 })}
-                >
-                  <span
-                    className="w-10 h-10 rounded-full flex items-center justify-center border border-white/10 group-hover:border-white/20 transition-colors"
-                    style={{ background: "rgba(255,255,255,0.03)" }}
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="white"
-                      strokeWidth="2"
-                    >
-                      <path d="M19 12H5M12 19l-7-7 7-7" />
-                    </svg>
-                  </span>
-                  <div>
-                    <p className="text-white/40 text-xs uppercase tracking-wider">
-                      Previous
-                    </p>
-                    <p className="text-white font-medium">
-                      {prevService.title}
-                    </p>
-                  </div>
-                </motion.div>
-              </TransitionLink>
-            ) : (
-              <div />
-            )}
-
-            {/* Next */}
-            {nextService ? (
-              <TransitionLink href={`/services/${nextService.slug}`}>
-                <motion.div
-                  className="group flex items-center gap-4"
-                  whileHover={{ x: 8 }}
-                  onMouseEnter={() => play("hover", { volume: 0.05 })}
-                >
-                  <div className="text-right">
-                    <p className="text-white/40 text-xs uppercase tracking-wider">
-                      Next
-                    </p>
-                    <p className="text-white font-medium">
-                      {nextService.title}
-                    </p>
-                  </div>
-                  <span
-                    className="w-10 h-10 rounded-full flex items-center justify-center border border-white/10 group-hover:border-white/20 transition-colors"
-                    style={{ background: "rgba(255,255,255,0.03)" }}
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="white"
-                      strokeWidth="2"
-                    >
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </span>
-                </motion.div>
-              </TransitionLink>
-            ) : (
-              <div />
-            )}
-          </div>
-        </div>
-      </Section>
-
-      {/* CTA */}
-      <Section className="py-32 px-6 md:px-12 lg:px-20">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-black text-white tracking-[-0.02em] mb-6">
-            Ready to get started?
-          </h2>
-          <p className="text-white/50 text-lg mb-10 max-w-xl mx-auto">
-            Let's discuss how our {service.title.toLowerCase()} services can
-            help transform your digital presence.
-          </p>
-
-          <TransitionLink href="/contact">
-            <motion.button
-              className="group inline-flex items-center gap-4 px-8 py-4 rounded-full border border-white/10 hover:border-white/20 transition-colors"
-              style={{ background: "rgba(255,255,255,0.03)" }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onMouseEnter={() => play("hover", { volume: 0.06 })}
-              onClick={() => play("click")}
-            >
-              <span className="text-white font-medium">Start a project</span>
-              <span
-                className="w-8 h-8 rounded-full flex items-center justify-center transition-transform group-hover:translate-x-1"
-                style={{ backgroundColor: accentColor }}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="black"
-                  strokeWidth="2"
-                >
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </span>
-            </motion.button>
-          </TransitionLink>
-        </div>
-      </Section>
+        {/* CTA */}
+        <CTASection />
       </main>
       <Footer />
     </>
