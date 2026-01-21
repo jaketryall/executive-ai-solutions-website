@@ -164,9 +164,16 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
     const glowBlur = Math.max(2, 15 - scale * 0.3);
     const strokeWidth = Math.max(1, 4 - scale * 0.1);
 
+    // Add padding to ensure full coverage (matches the container's -10px inset)
+    const padding = 20;
+    const width = window.innerWidth + padding;
+    const height = window.innerHeight + padding;
+    const centerX = width / 2;
+    const centerY = height / 2;
+
     // Create an SVG with the logo cutout mask and glowing border
     const svgContent = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 ${window.innerWidth} ${window.innerHeight}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 ${width} ${height}">
         <defs>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="${glowBlur}" result="coloredBlur"/>
@@ -178,13 +185,13 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
           </filter>
           <mask id="logoMask">
             <rect width="100%" height="100%" fill="white"/>
-            <g transform="translate(${window.innerWidth / 2 - halfSize}, ${window.innerHeight / 2 - halfSize}) scale(${size / 500})">
+            <g transform="translate(${centerX - halfSize}, ${centerY - halfSize}) scale(${size / 500})">
               <path d="${LOGO_PATH}" fill="black"/>
             </g>
           </mask>
         </defs>
         <rect width="100%" height="100%" fill="black" mask="url(#logoMask)"/>
-        <g transform="translate(${window.innerWidth / 2 - halfSize}, ${window.innerHeight / 2 - halfSize}) scale(${size / 500})" filter="url(#glow)" opacity="${glowOpacity}">
+        <g transform="translate(${centerX - halfSize}, ${centerY - halfSize}) scale(${size / 500})" filter="url(#glow)" opacity="${glowOpacity}">
           <path d="${LOGO_PATH}" fill="none" stroke="rgba(255, 200, 150, 0.9)" stroke-width="${strokeWidth}"/>
         </g>
       </svg>
@@ -201,9 +208,16 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
     const size = baseSize * scale;
     const halfSize = size / 2;
 
+    // Add padding to match the container's -10px inset
+    const padding = 20;
+    const width = window.innerWidth + padding;
+    const height = window.innerHeight + padding;
+    const centerX = width / 2;
+    const centerY = height / 2;
+
     const svgContent = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 ${window.innerWidth} ${window.innerHeight}">
-        <g transform="translate(${window.innerWidth / 2 - halfSize}, ${window.innerHeight / 2 - halfSize}) scale(${size / 500})">
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 ${width} ${height}">
+        <g transform="translate(${centerX - halfSize}, ${centerY - halfSize}) scale(${size / 500})">
           <path d="${LOGO_PATH}" fill="black"/>
         </g>
       </svg>
@@ -217,30 +231,53 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0"
+      className="fixed"
       style={{
         zIndex: 9999,
         display: "none",
         pointerEvents: "none",
+        top: "-10px",
+        left: "-10px",
+        right: "-10px",
+        bottom: "-10px",
       }}
     >
       {/* Black panel (unused but kept for potential future use) */}
       <div
         ref={blackPanelRef}
-        className="absolute inset-0"
-        style={{ backgroundColor: "black", opacity: 0 }}
+        className="absolute"
+        style={{
+          backgroundColor: "black",
+          opacity: 0,
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+        }}
       />
       {/* Logo layer with mask and glow */}
       <div
         ref={logoLayerRef}
-        className="absolute inset-0"
-        style={{ opacity: 0 }}
+        className="absolute"
+        style={{
+          opacity: 0,
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+        }}
       />
       {/* Solid black logo that fills in during hold phase */}
       <div
         ref={solidLogoRef}
-        className="absolute inset-0"
-        style={{ opacity: 0 }}
+        className="absolute"
+        style={{
+          opacity: 0,
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+        }}
       />
     </div>
   );

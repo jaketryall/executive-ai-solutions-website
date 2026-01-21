@@ -59,11 +59,11 @@ export default function AnimatedLogo({
       onMouseLeave={() => setIsHovered(false)}
       whileTap={{ scale: 0.98 }}
     >
-      {/* Cyan glow background on hover or when showGlow is true */}
+      {/* Warm glow background on hover or when showGlow is true */}
       <motion.div
         className="absolute inset-0 -z-10"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(0,240,255,0.3) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse at center, rgba(255,200,150,0.3) 0%, transparent 70%)",
           filter: "blur(15px)",
         }}
         initial={{ opacity: showGlow ? 0.5 : 0, scale: 0.8 }}
@@ -90,7 +90,7 @@ export default function AnimatedLogo({
           damping: 25,
         }}
       >
-        {/* Background glow - switches to cyan on hover */}
+        {/* Background glow - switches to warm white on hover */}
         <motion.path
           d={LOGO_PATH}
           fill="none"
@@ -102,7 +102,7 @@ export default function AnimatedLogo({
           animate={isInView ? {
             opacity: isHovered ? 0.6 : 0.15,
             pathLength: 1,
-            stroke: isHovered ? "#00f0ff" : "#b6bac5",
+            stroke: isHovered ? "#ffc896" : "#b6bac5",
           } : {}}
           transition={{
             pathLength: { duration: drawDuration, delay, ease: [0.65, 0, 0.35, 1] },
@@ -123,7 +123,7 @@ export default function AnimatedLogo({
           animate={isInView ? {
             opacity: isHovered ? 0.7 : 0.25,
             pathLength: 1,
-            stroke: isHovered ? "#00f0ff" : "#b6bac5",
+            stroke: isHovered ? "#ffc896" : "#b6bac5",
           } : {}}
           transition={{
             pathLength: { duration: drawDuration, delay: delay + 0.1, ease: [0.65, 0, 0.35, 1] },
@@ -174,11 +174,11 @@ export default function AnimatedLogo({
             <stop offset="0%" stopColor="#b6bac5" />
             <stop offset="100%" stopColor="#8a8f9e" />
           </linearGradient>
-          {/* Hover gradients - brighter with cyan tint */}
+          {/* Hover gradients - brighter with warm tint */}
           <linearGradient id="logoGradientHover" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#ffffff" />
             <stop offset="50%" stopColor="#ffffff" />
-            <stop offset="100%" stopColor="#e0f7ff" />
+            <stop offset="100%" stopColor="#fff0e0" />
           </linearGradient>
           <linearGradient id="logoFillGradientHover" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#ffffff" />
