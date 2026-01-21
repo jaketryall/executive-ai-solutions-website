@@ -76,7 +76,7 @@ function ProjectCard({
             {/* Animated border on hover */}
             <AnimatedBorder isHovered={isHovered} />
             {/* Image container */}
-            <div className="relative aspect-4/3 overflow-hidden">
+            <div className="relative overflow-hidden aspect-4/3">
               {/* Year badge - top right */}
               <div className="absolute top-5 right-6 z-20">
                 <span className="text-white/40 text-sm font-medium tracking-wide">
@@ -94,7 +94,7 @@ function ProjectCard({
                   src={project.image}
                   alt={project.title}
                   fill
-                  className="object-cover"
+                  className={project.image.includes("Mockup") ? "object-cover object-top" : "object-cover"}
                   sizes="(max-width: 768px) 100vw, 50vw"
                   priority={index < 2}
                 />

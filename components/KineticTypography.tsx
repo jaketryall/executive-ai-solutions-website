@@ -119,6 +119,7 @@ export default function KineticTypography() {
     >
       <div className="absolute inset-0 bg-gradient-to-b from-neutral-950 via-neutral-900/50 to-neutral-950" />
 
+
       <div
         className="absolute inset-0 opacity-10"
         style={{

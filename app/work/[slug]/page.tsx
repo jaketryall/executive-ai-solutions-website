@@ -199,7 +199,7 @@ function HorizontalGallery({ images, title }: { images: string[]; title: string 
               src={image}
               alt={`${title} - Image ${index + 1}`}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className={`${image.includes("Mockup") ? "object-cover object-top" : "object-cover"} transition-transform duration-700 group-hover:scale-105`}
               sizes="60vw"
             />
             {/* Subtle warm overlay on hover */}
@@ -631,7 +631,7 @@ function NextProjectSection({ project }: { project: ReturnType<typeof getNextPro
                   src={project.image}
                   alt={project.title}
                   fill
-                  className="object-cover"
+                  className={project.image.includes("Mockup") ? "object-cover object-top" : "object-cover"}
                   sizes="50vw"
                 />
               </motion.div>
@@ -791,72 +791,64 @@ export default function CaseStudyPage({
           />
         </div>
 
-        {/* Hero Section */}
+        {/* Hero Section - Larger to show more of laptop */}
         <motion.section
           ref={heroRef}
-          className="relative h-[120vh] overflow-hidden"
+          className="relative h-[140vh] overflow-hidden"
         >
           {/* Background image with parallax */}
           <motion.div
             className="absolute inset-0"
             style={{ y: heroY, scale: heroScale }}
           >
-            <div className="hero-image absolute inset-0">
-              <Image
-                src={project.heroImage}
-                alt={project.title}
-                fill
-                className="object-cover"
-                priority
-              />
+            <div className="hero-image absolute inset-0 overflow-hidden">
+              {project.heroImage.includes("Mockup") ? (
+                /* Wrapper to position mockup images - uses heroOffset from project data */
+                <div
+                  className="absolute inset-x-0 bottom-0"
+                  style={{ top: project.heroOffset || "-13%" }}
+                >
+                  <Image
+                    src={project.heroImage}
+                    alt={project.title}
+                    fill
+                    className="object-contain object-top"
+                    priority
+                  />
+                </div>
+              ) : (
+                <Image
+                  src={project.heroImage}
+                  alt={project.title}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              )}
             </div>
-            <div className="hero-gradient absolute inset-0 bg-gradient-to-t from-[#0a0908] via-[#0a0908]/60 to-transparent" />
-            <div className="hero-gradient absolute inset-0 bg-gradient-to-r from-[#0a0908]/80 via-transparent to-transparent" />
+            <div className="hero-gradient absolute inset-0 bg-gradient-to-t from-[#0a0908] via-[#0a0908]/40 to-[#0a0908]/20" />
+            <div className="hero-gradient absolute inset-0 bg-gradient-to-r from-[#0a0908]/60 via-transparent to-transparent" />
           </motion.div>
 
-          {/* Content */}
+          {/* Category badge at top */}
           <motion.div
-            className="relative z-10 h-full flex flex-col justify-end pb-24 md:pb-32 px-6 md:px-12 lg:px-20"
-            style={{ opacity: heroOpacity, y: titleY }}
+            className="absolute top-32 left-6 md:left-12 lg:left-20 z-10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
           >
-            <div className="max-w-5xl">
-              {/* Category and year */}
-              <motion.div
-                className="flex items-center gap-4 mb-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
+            <div className="flex items-center gap-4">
+              <span
+                className="text-xs uppercase tracking-[0.3em]"
+                style={{ color: accentColor }}
               >
-                <span
-                  className="text-xs uppercase tracking-[0.3em]"
-                  style={{ color: accentColor }}
-                >
-                  {project.category}
-                </span>
-                <div
-                  className="category-line h-px w-16 origin-left"
-                  style={{ backgroundColor: accentColorMuted }}
-                />
-                <span className="text-white/50 text-sm">{project.year}</span>
-              </motion.div>
-
-              {/* Title with split text animation */}
-              <h1
-                ref={titleRef}
-                className="text-5xl md:text-7xl lg:text-9xl font-black text-white leading-[0.85] tracking-[-0.04em] mb-8 overflow-hidden"
-              >
-                <SplitText delay={0.7}>{project.title}</SplitText>
-              </h1>
-
-              {/* Tagline */}
-              <motion.p
-                className="text-xl md:text-2xl lg:text-3xl text-white/60 italic max-w-2xl"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 1.2 }}
-              >
-                {project.tagline}
-              </motion.p>
+                {project.category}
+              </span>
+              <div
+                className="category-line h-px w-16 origin-left"
+                style={{ backgroundColor: accentColorMuted }}
+              />
+              <span className="text-white/50 text-sm">{project.year}</span>
             </div>
           </motion.div>
 
@@ -881,35 +873,110 @@ export default function CaseStudyPage({
           </motion.div>
         </motion.section>
 
-        {/* Overview Section */}
-        <section className="py-32 md:py-48 px-6 md:px-12 lg:px-20 relative z-10">
-          <div className="max-w-6xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="flex items-center gap-4 mb-8">
-                <p
-                  className="text-xs uppercase tracking-[0.3em]"
-                  style={{ color: accentColor }}
+        {/* Unified content section with glassmorphic effect - includes Overview and Challenge/Solution */}
+        <section
+          className="relative z-10 -mt-24 rounded-t-4xl md:rounded-t-[3rem] overflow-hidden backdrop-blur-xl"
+          style={{
+            backgroundColor: "rgba(10, 9, 8, 0.85)",
+            borderTop: "1px solid rgba(255, 200, 150, 0.15)",
+            boxShadow: "0 -20px 80px rgba(0, 0, 0, 0.5)",
+          }}
+        >
+          {/* Gradient orbs inside the section */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Large gradient orb - top right */}
+            <div
+              className="absolute w-[600px] h-[600px] rounded-full"
+              style={{
+                background: `radial-gradient(circle, rgba(255, 200, 150, 0.12) 0%, transparent 70%)`,
+                top: "-10%",
+                right: "-10%",
+                filter: "blur(60px)",
+              }}
+            />
+            {/* Large gradient orb - bottom left */}
+            <div
+              className="absolute w-[500px] h-[500px] rounded-full"
+              style={{
+                background: `radial-gradient(circle, rgba(255, 180, 120, 0.1) 0%, transparent 70%)`,
+                bottom: "20%",
+                left: "-15%",
+                filter: "blur(50px)",
+              }}
+            />
+            {/* Center accent glow */}
+            <div
+              className="absolute w-[400px] h-[400px] rounded-full"
+              style={{
+                background: `radial-gradient(circle, rgba(255, 200, 150, 0.08) 0%, transparent 70%)`,
+                top: "40%",
+                left: "50%",
+                transform: "translateX(-50%)",
+                filter: "blur(80px)",
+              }}
+            />
+          </div>
+
+          {/* Subtle gradient overlay for depth at top */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: "linear-gradient(to bottom, rgba(255, 200, 150, 0.03) 0%, transparent 20%)",
+            }}
+          />
+
+          {/* Title and Overview */}
+          <div className="pt-16 md:pt-24 pb-16 md:pb-24 px-6 md:px-12 lg:px-20">
+            <div className="max-w-6xl mx-auto relative z-10">
+              {/* Project Title */}
+              <motion.div
+                className="mb-16 md:mb-24"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+              >
+                <h1
+                  ref={titleRef}
+                  className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-[-0.04em] mb-6"
                 >
-                  Overview
+                  <SplitText delay={0.2}>{project.title}</SplitText>
+                </h1>
+                <p
+                  className="text-xl md:text-2xl text-white/50 italic max-w-2xl"
+                >
+                  {project.tagline}
                 </p>
-                <div className="h-px flex-1 max-w-32" style={{ background: `linear-gradient(to right, ${accentColorMuted}, transparent)` }} />
-              </div>
-              <p className="text-2xl md:text-3xl lg:text-4xl text-white/80 leading-relaxed max-w-4xl">
-                {project.description}
-              </p>
-            </motion.div>
+              </motion.div>
+
+              {/* Overview content */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <div className="flex items-center gap-4 mb-8">
+                  <p
+                    className="text-xs uppercase tracking-[0.3em]"
+                    style={{ color: accentColor }}
+                  >
+                    Overview
+                  </p>
+                  <div className="h-px flex-1 max-w-32" style={{ background: `linear-gradient(to right, ${accentColorMuted}, transparent)` }} />
+                </div>
+                <p className="text-2xl md:text-3xl lg:text-4xl text-white/80 leading-relaxed max-w-4xl">
+                  {project.description}
+                </p>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Challenge & Solution - inside the same glassmorphic container */}
+          <div className="relative z-10">
+            <StickyRevealSection challenge={project.challenge} solution={project.solution} />
           </div>
         </section>
-
-        {/* Challenge & Solution with scroll reveal */}
-        <div className="relative z-10">
-          <StickyRevealSection challenge={project.challenge} solution={project.solution} />
-        </div>
 
         {/* Horizontal Gallery */}
         <div className="relative z-10">

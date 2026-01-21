@@ -78,13 +78,6 @@ export default function AboutSnippet() {
       className="relative bg-black py-24 md:py-32 overflow-hidden"
       style={{ zIndex: 5 }}
     >
-      {/* Subtle background gradient */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `radial-gradient(ellipse 80% 50% at 50% 50%, rgba(255, 200, 150, 0.03) 0%, transparent 60%)`,
-        }}
-      />
 
       {/* Content */}
       <motion.div

@@ -288,7 +288,7 @@ function DescriptionSection({
   return (
     <section
       ref={sectionRef}
-      className="relative py-32 md:py-48 px-6 md:px-12 lg:px-20 bg-[#0a0908]"
+      className="relative py-32 md:py-48 px-6 md:px-12 lg:px-20 bg-transparent"
     >
       <div className="max-w-5xl mx-auto">
         <p
@@ -408,7 +408,7 @@ function VerticalTimelineSection({
   }, [service.process.length]);
 
   return (
-    <section ref={sectionRef} className="relative py-32 md:py-48 bg-[#0a0908]">
+    <section ref={sectionRef} className="relative py-32 md:py-48 bg-transparent">
       {/* Background glow */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -677,7 +677,7 @@ function BenefitsSection({
   };
 
   return (
-    <section ref={sectionRef} className="relative py-32 md:py-48 bg-[#0a0908]">
+    <section ref={sectionRef} className="relative py-32 md:py-48 bg-transparent">
       {/* Ambient glow */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -854,7 +854,7 @@ function RelatedProjectsSection({
   if (relatedProjects.length === 0) return null;
 
   return (
-    <section className="relative py-32 md:py-48 bg-[#0a0908]">
+    <section className="relative py-32 md:py-48 bg-transparent">
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
         {/* Section header */}
         <div className="flex items-end justify-between mb-12 md:mb-16">
@@ -966,7 +966,7 @@ function CTASection() {
   const { play } = useSound();
 
   return (
-    <section className="relative py-32 md:py-48 bg-[#0a0908] overflow-hidden">
+    <section className="relative py-32 md:py-48 bg-transparent overflow-hidden">
       {/* Background effect */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -1062,13 +1062,93 @@ export default function ServicePage({
 
   return (
     <>
+      {/* CSS for floating background animation */}
+      <style jsx global>{`
+        @keyframes float {
+          0%, 100% {
+            transform: translate(0, 0) rotate(0deg);
+          }
+          25% {
+            transform: translate(10%, 5%) rotate(1deg);
+          }
+          50% {
+            transform: translate(5%, 10%) rotate(-1deg);
+          }
+          75% {
+            transform: translate(-5%, 5%) rotate(0.5deg);
+          }
+        }
+        @keyframes float-reverse {
+          0%, 100% {
+            transform: translate(0, 0) rotate(0deg);
+          }
+          25% {
+            transform: translate(-8%, 8%) rotate(-1deg);
+          }
+          50% {
+            transform: translate(-3%, -5%) rotate(1deg);
+          }
+          75% {
+            transform: translate(5%, -3%) rotate(-0.5deg);
+          }
+        }
+        @keyframes pulse-glow {
+          0%, 100% {
+            opacity: 0.3;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.5;
+            transform: scale(1.1);
+          }
+        }
+      `}</style>
+
       <Navbar />
-      <main className="relative bg-[#0a0908]" style={{ zIndex: 10 }}>
+
+      <main className="relative bg-[#0a0908] overflow-hidden" style={{ zIndex: 10 }}>
+        {/* Moving background elements - fixed but contained by main's z-index */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+          {/* Large gradient orb 1 */}
+          <div
+            className="absolute w-[800px] h-[800px] rounded-full opacity-30"
+            style={{
+              background: `radial-gradient(circle, ${accentColorMuted} 0%, transparent 70%)`,
+              top: "-20%",
+              right: "-10%",
+              filter: "blur(80px)",
+              animation: "float 20s ease-in-out infinite",
+            }}
+          />
+          {/* Large gradient orb 2 */}
+          <div
+            className="absolute w-[600px] h-[600px] rounded-full opacity-20"
+            style={{
+              background: "radial-gradient(circle, rgba(255, 180, 120, 0.4) 0%, transparent 70%)",
+              bottom: "10%",
+              left: "-15%",
+              filter: "blur(60px)",
+              animation: "float 25s ease-in-out infinite reverse",
+            }}
+          />
+          {/* Smaller accent orb */}
+          <div
+            className="absolute w-[400px] h-[400px] rounded-full opacity-15"
+            style={{
+              background: `radial-gradient(circle, ${accentColor} 0%, transparent 70%)`,
+              top: "40%",
+              left: "60%",
+              filter: "blur(100px)",
+              animation: "float 18s ease-in-out infinite",
+              animationDelay: "-5s",
+            }}
+          />
+        </div>
         {/* Cinematic Hero */}
         <CinematicHero service={service} relatedProject={primaryProject} />
 
-        {/* Kinetic Marquee */}
-        <section className="py-16 md:py-24 bg-[#0a0908] overflow-hidden">
+        {/* Kinetic Marquee - transparent to show glassmorphic background */}
+        <section className="py-16 md:py-24 overflow-hidden bg-transparent relative">
           <KineticMarquee text={`${service.title} •`} />
         </section>
 
@@ -1081,8 +1161,8 @@ export default function ServicePage({
         {/* Benefits */}
         <BenefitsSection service={service} />
 
-        {/* Kinetic Marquee 2 */}
-        <section className="py-16 md:py-24 bg-[#0a0908] overflow-hidden">
+        {/* Kinetic Marquee 2 - transparent to show glassmorphic background */}
+        <section className="py-16 md:py-24 overflow-hidden bg-transparent relative">
           <KineticMarquee text="MORE LEADS • MORE SALES • MORE GROWTH •" direction={1} />
         </section>
 
@@ -1092,6 +1172,7 @@ export default function ServicePage({
         {/* CTA */}
         <CTASection />
       </main>
+
       <Footer />
     </>
   );

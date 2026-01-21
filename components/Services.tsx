@@ -17,7 +17,7 @@ const services = [
     title: "DESIGN",
     subtitle: "& Development",
     description: "High-converting websites that turn visitors into customers.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80",
+    image: "/Celestial Laptop Mockup.png",
     size: "large", // Takes up 2 rows
   },
   {
@@ -26,7 +26,7 @@ const services = [
     title: "SEO",
     subtitle: "& Strategy",
     description: "Data-driven strategies that drive organic traffic and rankings.",
-    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1611926653458-09294b3142bf?w=1200&q=80",
     size: "medium",
   },
   {
@@ -34,8 +34,8 @@ const services = [
     number: "03",
     title: "CUSTOM",
     subtitle: "Solutions",
-    description: "Tailored software that scales with your business.",
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&q=80",
+    description: "Tailored CRM systems that scale with your business.",
+    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
     size: "medium",
   },
 ];

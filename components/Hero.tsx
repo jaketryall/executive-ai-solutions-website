@@ -74,86 +74,97 @@ export default function Hero() {
           className="absolute inset-0 pointer-events-none overflow-hidden"
           style={{ opacity: initialContentOpacity }}
         >
-          {/* Top row - moves left continuously */}
-          <div className="absolute top-[5%] flex overflow-hidden w-full">
-            <div
-              className="flex gap-8 whitespace-nowrap will-change-transform"
-              style={{
-                animation: "marquee-left 25s linear infinite",
-              }}
-            >
-              {/* Duplicate cards for seamless loop */}
-              {[...Array(12)].map((_, i) => (
-                <div
-                  key={i}
-                  className="w-[350px] h-[220px] rounded-lg overflow-hidden opacity-15 flex-shrink-0"
-                  style={{
-                    boxShadow: "0 0 40px rgba(255,250,240,0.1)",
-                  }}
-                >
-                  <img
-                    src={`https://images.unsplash.com/photo-${i % 2 === 0 ? '1436491865332-7a61a109cc05' : '1497366216548-37526070297c'}?w=600&q=60`}
-                    alt=""
-                    className="w-full h-full object-cover grayscale"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* Project images array - alternating laptop/phone pattern */}
+          {(() => {
+            const projectImages = [
+              "/Celestial Laptop Mockup.png",    // Laptop
+              "/Celestial iPhone Mockup.png",   // Phone
+              "/Elegant Black Laptop Mockup.png", // Laptop
+              "/Rubber iPhone Mockup.png",      // Phone
+            ];
 
-          {/* Middle row - moves right continuously */}
-          <div className="absolute top-[35%] flex overflow-hidden w-full">
-            <div
-              className="flex gap-8 whitespace-nowrap will-change-transform"
-              style={{
-                animation: "marquee-right 30s linear infinite",
-              }}
-            >
-              {/* Duplicate cards for seamless loop */}
-              {[...Array(12)].map((_, i) => (
-                <div
-                  key={i}
-                  className="w-[350px] h-[220px] rounded-lg overflow-hidden opacity-15 flex-shrink-0"
-                  style={{
-                    boxShadow: "0 0 40px rgba(255,250,240,0.1)",
-                  }}
-                >
-                  <img
-                    src={`https://images.unsplash.com/photo-${i % 2 === 0 ? '1618221195710-dd6b41faaea6' : '1460925895917-afdab827c52f'}?w=600&q=60`}
-                    alt=""
-                    className="w-full h-full object-cover grayscale"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+            // Card dimensions
+            const cardWidth = 350;
+            const gapWidth = 32; // gap-8 = 2rem = 32px
+            const cardCount = 8;
+            // Total width of one set of cards (including gaps between cards, but not after last)
+            const setWidth = cardCount * cardWidth + (cardCount - 1) * gapWidth;
+            // Add one more gap for the space between sets
+            const translateDistance = setWidth + gapWidth;
 
-          {/* Bottom row - moves left slower */}
-          <div className="absolute top-[65%] flex overflow-hidden w-full">
-            <div
-              className="flex gap-8 whitespace-nowrap will-change-transform"
-              style={{
-                animation: "marquee-left 35s linear infinite",
-              }}
-            >
-              {/* Duplicate cards for seamless loop */}
-              {[...Array(12)].map((_, i) => (
+            // Helper to render a set of cards
+            const renderCards = (offset: number, keyPrefix: string) =>
+              [...Array(cardCount)].map((_, i) => (
                 <div
-                  key={i}
-                  className="w-[350px] h-[220px] rounded-lg overflow-hidden opacity-15 flex-shrink-0"
+                  key={`${keyPrefix}-${i}`}
+                  className="w-[350px] h-[220px] rounded-lg overflow-hidden opacity-20 shrink-0"
                   style={{
                     boxShadow: "0 0 40px rgba(255,250,240,0.1)",
                   }}
                 >
                   <img
-                    src={`https://images.unsplash.com/photo-${i % 2 === 0 ? '1497366216548-37526070297c' : '1436491865332-7a61a109cc05'}?w=600&q=60`}
+                    src={projectImages[(i + offset) % projectImages.length]}
                     alt=""
-                    className="w-full h-full object-cover grayscale"
+                    className="w-full h-full object-cover object-top"
                   />
                 </div>
-              ))}
-            </div>
-          </div>
+              ));
+
+            return (
+              <>
+                {/* Inline keyframes for precise pixel-based animation */}
+                <style>{`
+                  @keyframes marquee-scroll-left {
+                    from { transform: translateX(0); }
+                    to { transform: translateX(-${translateDistance}px); }
+                  }
+                  @keyframes marquee-scroll-right {
+                    from { transform: translateX(-${translateDistance}px); }
+                    to { transform: translateX(0); }
+                  }
+                `}</style>
+
+                {/* Top row - moves left continuously */}
+                <div className="absolute top-[5%] flex overflow-hidden w-full">
+                  <div
+                    className="flex gap-8 whitespace-nowrap will-change-transform"
+                    style={{
+                      animation: "marquee-scroll-left 40s linear infinite",
+                    }}
+                  >
+                    {renderCards(0, "top-a")}
+                    {renderCards(0, "top-b")}
+                  </div>
+                </div>
+
+                {/* Middle row - moves right continuously */}
+                <div className="absolute top-[35%] flex overflow-hidden w-full">
+                  <div
+                    className="flex gap-8 whitespace-nowrap will-change-transform"
+                    style={{
+                      animation: "marquee-scroll-right 45s linear infinite",
+                    }}
+                  >
+                    {renderCards(2, "mid-a")}
+                    {renderCards(2, "mid-b")}
+                  </div>
+                </div>
+
+                {/* Bottom row - moves left slower */}
+                <div className="absolute top-[65%] flex overflow-hidden w-full">
+                  <div
+                    className="flex gap-8 whitespace-nowrap will-change-transform"
+                    style={{
+                      animation: "marquee-scroll-left 50s linear infinite",
+                    }}
+                  >
+                    {renderCards(1, "bot-a")}
+                    {renderCards(1, "bot-b")}
+                  </div>
+                </div>
+              </>
+            );
+          })()}
         </motion.div>
 
         {/* Video with logo-shaped mask that grows */}

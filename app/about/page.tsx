@@ -128,7 +128,7 @@ export default function AboutPage() {
         {/* Hero - Minimal, asymmetric */}
         <motion.section
           ref={heroRef}
-          className="relative min-h-[80vh] flex items-end pb-20 md:pb-32 overflow-hidden"
+          className="relative min-h-[90vh] flex items-end pb-20 md:pb-32 pt-32 md:pt-40 overflow-hidden"
           style={{ y: heroY, opacity: heroOpacity }}
         >
           {/* Background gradient */}
@@ -154,7 +154,7 @@ export default function AboutPage() {
 
               {/* Large asymmetric title */}
               <div className="grid md:grid-cols-12 gap-8 items-end">
-                <div className="md:col-span-8">
+                <div className="md:col-span-7">
                   <motion.h1
                     className="text-[12vw] md:text-[8vw] font-black text-white leading-[0.85] tracking-[-0.04em]"
                     initial={{ opacity: 0, y: 60 }}
@@ -167,17 +167,63 @@ export default function AboutPage() {
                     <br />
                     THAT WORK
                   </motion.h1>
+
+                  <motion.p
+                    className="text-white/50 text-lg leading-relaxed mt-8 max-w-lg"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.5 }}
+                  >
+                    Not just pretty pages—sites that convert visitors into customers and rank on Google.
+                  </motion.p>
                 </div>
 
+                {/* Photo */}
                 <motion.div
-                  className="md:col-span-4 pb-4"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.5 }}
+                  className="md:col-span-5 relative self-end"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <p className="text-white/50 text-lg leading-relaxed">
-                    Not just pretty pages—sites that convert visitors into customers and rank on Google.
-                  </p>
+                  <div className="relative aspect-[4/3] md:aspect-[5/4] max-h-[400px] rounded-2xl md:rounded-3xl overflow-hidden">
+                    {/* Replace with your photo */}
+                    <Image
+                      src="/headshot.jpg"
+                      alt="Jake Ryall"
+                      fill
+                      className="object-cover"
+                      priority
+                    />
+                    {/* Subtle gradient overlay */}
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background: "linear-gradient(to top, rgba(10,9,8,0.4) 0%, transparent 50%)",
+                      }}
+                    />
+                    {/* Border glow */}
+                    <div
+                      className="absolute inset-0 rounded-2xl md:rounded-3xl pointer-events-none"
+                      style={{
+                        boxShadow: `inset 0 0 0 1px rgba(255,200,150,0.1)`,
+                      }}
+                    />
+                  </div>
+
+                  {/* Name label */}
+                  <motion.div
+                    className="absolute -bottom-4 left-4 md:left-6 px-4 py-2 rounded-full"
+                    style={{
+                      background: "rgba(10,9,8,0.9)",
+                      border: "1px solid rgba(255,200,150,0.2)",
+                    }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.7 }}
+                  >
+                    <span className="text-sm font-medium text-white">Jake Ryall</span>
+                    <span className="text-white/40 text-sm ml-2">• Founder</span>
+                  </motion.div>
                 </motion.div>
               </div>
             </div>
@@ -283,23 +329,23 @@ export default function AboutPage() {
 
               {/* Featured Project - Wide card */}
               <BentoCard
-                className="relative overflow-hidden group cursor-pointer min-h-[350px]"
+                className="relative overflow-hidden group cursor-pointer min-h-[350px] bg-black!"
                 gridClassName="md:col-span-8"
                 delay={0.3}
                 href="/work"
               >
                 {/* Background image */}
-                <div className="absolute inset-0">
+                <div className="absolute inset-0 bg-black">
                   <Image
-                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80"
+                    src="/Elegant Black Laptop Mockup.png"
                     alt="Featured project"
                     fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="object-contain object-right translate-x-8 transition-transform duration-700 group-hover:scale-105"
                   />
                   <div
                     className="absolute inset-0"
                     style={{
-                      background: "linear-gradient(to right, rgba(10,9,8,0.95) 0%, rgba(10,9,8,0.7) 50%, rgba(10,9,8,0.4) 100%)",
+                      background: "linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 35%, rgba(0,0,0,0.4) 60%, transparent 100%)",
                     }}
                   />
                 </div>

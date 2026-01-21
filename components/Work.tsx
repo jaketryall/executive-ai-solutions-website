@@ -21,54 +21,54 @@ export const workItems = [
   {
     slug: "desert-wings",
     title: "DESERT WINGS",
-    category: "Aviation",
-    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&q=80",
-    year: "2024",
-    tagline: "Where luxury meets the horizon",
-    description: "A complete digital transformation for a premium charter service.",
-    result: "340%",
-    resultLabel: "increase in bookings",
+    category: "Flight School",
+    image: "/Celestial Laptop Mockup.png",
+    year: "2025",
+    tagline: "Where pilots are born",
+    description: "A premium digital presence for Arizona's newest flight school.",
+    result: "7+",
+    resultLabel: "programs featured",
     color: "#2a3f5f",
     warmColor: "rgba(255, 200, 150, 0.15)",
   },
   {
-    slug: "meridian",
-    title: "MERIDIAN",
-    category: "Consulting",
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80",
-    year: "2024",
-    tagline: "Presence that commands the room",
-    description: "Crafting an executive digital presence that reflects caliber.",
-    result: "87%",
-    resultLabel: "more qualified leads",
-    color: "#3d2c1f",
-    warmColor: "rgba(255, 180, 120, 0.18)",
+    slug: "riled-up",
+    title: "RILED UP",
+    category: "Pickleball Coaching",
+    image: "/Celestial iPhone Mockup.png",
+    year: "2025",
+    tagline: "Stop losing to players you should beat",
+    description: "A results-driven coaching platform for pickleball players.",
+    result: "3x",
+    resultLabel: "booking rate",
+    color: "#2d3f2a",
+    warmColor: "rgba(200, 255, 150, 0.15)",
   },
   {
-    slug: "apex",
-    title: "APEX",
-    category: "Design Studio",
-    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200&q=80",
-    year: "2023",
-    tagline: "Art demands attention",
-    description: "An immersive gallery experience for a creative studio.",
-    result: "4.2x",
-    resultLabel: "project inquiries",
-    color: "#2d1f3d",
-    warmColor: "rgba(255, 190, 140, 0.15)",
+    slug: "wings-n-wheels",
+    title: "WINGS N WHEELS",
+    category: "Detailing",
+    image: "/Rubber iPhone Mockup.png",
+    year: "2025",
+    tagline: "Restored to showroom glory",
+    description: "Premium detailing for aircraft, autos, and marine vessels.",
+    result: "2000+",
+    resultLabel: "vehicles detailed",
+    color: "#2d2d3f",
+    warmColor: "rgba(180, 200, 255, 0.15)",
   },
   {
-    slug: "vertex",
-    title: "VERTEX",
-    category: "Technology",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80",
-    year: "2023",
-    tagline: "Clarity in complexity",
-    description: "Distilling sophisticated technology into intuitive experience.",
-    result: "156%",
-    resultLabel: "more demos booked",
-    color: "#1f2d3d",
-    warmColor: "rgba(255, 200, 160, 0.15)",
+    slug: "adventure-air",
+    title: "ADVENTURE AIR",
+    category: "Gyrocopter Tours",
+    image: "/Elegant Black Laptop Mockup.png",
+    year: "2025",
+    tagline: "See Arizona from above",
+    description: "Thrilling gyrocopter tours over Arizona's landscapes.",
+    result: "Soaring",
+    resultLabel: "bookings",
+    color: "#3f2d1f",
+    warmColor: "rgba(255, 180, 120, 0.15)",
   },
 ];
 
@@ -175,17 +175,17 @@ function FlyingProjectCard({
     >
       {/* Glow layer - outside the clipped container */}
       <motion.div
-        className="absolute -inset-20 -z-10 rounded-3xl pointer-events-none"
+        className="absolute -inset-16 -z-10 rounded-3xl pointer-events-none"
         style={{
-          background: `radial-gradient(ellipse at center, ${project.warmColor} 0%, transparent 70%)`,
-          filter: "blur(40px)",
+          background: `radial-gradient(ellipse at center, ${project.warmColor.replace("0.15", "0.08")} 0%, transparent 60%)`,
+          filter: "blur(30px)",
           opacity: glowOpacity,
         }}
       />
 
       <TransitionLink href={`/work/${project.slug}`}>
         <div
-          className="group relative cursor-pointer rounded-xl overflow-hidden"
+          className="group relative cursor-pointer"
           style={{ isolation: "isolate" }}
           onMouseEnter={() => {
             setIsHovered(true);
@@ -193,30 +193,49 @@ function FlyingProjectCard({
           }}
           onMouseLeave={() => setIsHovered(false)}
         >
-          {/* Main card content */}
-          <div className="relative aspect-16/10">
+          {/* Card - clean mockup with hover reveal */}
+          <div className="relative aspect-4/3 overflow-hidden rounded-xl">
             {/* Image wrapper for parallax */}
             <motion.div
-              className="absolute inset-0 overflow-hidden rounded-xl"
+              className="absolute inset-0"
               style={{ y: imageY }}
             >
               {/* Oversized image for parallax movement */}
-              <div className="absolute -inset-[20%]">
+              <div className="absolute -inset-[15%]">
                 <Image
                   src={project.image}
                   alt={project.title}
                   fill
-                  className="object-cover"
+                  className={project.image.includes("Laptop") ? "object-contain" : "object-cover object-top"}
                   sizes="50vw"
                   priority={index < 2}
                 />
               </div>
             </motion.div>
 
+            {/* Gradient overlay - fades in on hover */}
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              initial={false}
+              animate={{
+                opacity: isHovered ? 1 : 0,
+              }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              style={{
+                background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)",
+              }}
+            />
 
-            {/* Content */}
-            <div className="absolute inset-0 p-8 flex flex-col justify-end">
-              {/* Flying title - comes from the side */}
+            {/* Content - slides up on hover */}
+            <motion.div
+              className="absolute inset-0 p-6 flex flex-col justify-end"
+              initial={false}
+              animate={{
+                y: isHovered ? 0 : 20,
+                opacity: isHovered ? 1 : 0,
+              }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
               <motion.div style={{ x: titleX, opacity: titleOpacity }}>
                 <p
                   className="text-xs uppercase tracking-[0.3em] mb-2"
@@ -224,47 +243,46 @@ function FlyingProjectCard({
                 >
                   {project.category} • {project.year}
                 </p>
-                <h3 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-[-0.03em] mb-2">
+                <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-[-0.03em] mb-2">
                   {project.title}
                 </h3>
-                <p className="text-white/50 text-sm md:text-base max-w-md">
+                <p className="text-white/60 text-sm md:text-base max-w-md">
                   {project.tagline}
                 </p>
               </motion.div>
+            </motion.div>
 
-              {/* Result badge */}
-              <motion.div
-                className="absolute top-6 right-6 text-right"
-                animate={{ scale: isHovered ? 1.05 : 1 }}
+            {/* View indicator - always visible, transforms on hover */}
+            <motion.div
+              className="absolute bottom-4 right-4 flex items-center gap-2 z-10 px-3 py-1.5 rounded-full"
+              style={{
+                background: "rgba(0,0,0,0.5)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}
+              animate={{
+                scale: isHovered ? 1.05 : 1,
+                background: isHovered ? "rgba(255, 200, 150, 0.15)" : "rgba(0,0,0,0.5)",
+                borderColor: isHovered ? "rgba(255, 200, 150, 0.3)" : "rgba(255,255,255,0.1)",
+              }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              <motion.span
+                className="text-xs font-medium"
+                animate={{ color: isHovered ? "rgba(255, 200, 150, 1)" : "rgba(255,255,255,0.7)" }}
                 transition={{ duration: 0.3 }}
               >
-                <p
-                  className="text-3xl md:text-4xl font-black"
-                  style={{ color: accentColor }}
-                >
-                  {project.result}
-                </p>
-                <p className="text-white/40 text-xs uppercase tracking-wider">
-                  {project.resultLabel}
-                </p>
-              </motion.div>
-
-              {/* View indicator */}
-              <motion.div
-                className="absolute bottom-6 right-6 flex items-center gap-2"
-                animate={{ x: isHovered ? 8 : 0, opacity: isHovered ? 1 : 0.6 }}
+                View
+              </motion.span>
+              <motion.span
+                className="text-sm"
+                style={{ color: accentColor }}
+                animate={{ x: isHovered ? 3 : 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <span className="text-white/60 text-sm">View Project</span>
-                <motion.span
-                  className="text-lg"
-                  style={{ color: accentColor }}
-                  animate={{ x: isHovered ? 4 : 0 }}
-                >
-                  →
-                </motion.span>
-              </motion.div>
-            </div>
+                →
+              </motion.span>
+            </motion.div>
           </div>
         </div>
       </TransitionLink>
@@ -387,53 +405,47 @@ function MobileWork() {
           >
             <TransitionLink href={`/work/${project.slug}`}>
               <div className="group relative">
-                {/* Image */}
-                <div className="relative aspect-[16/10] overflow-hidden rounded-xl mb-4">
+                {/* Clean mockup image */}
+                <div className="relative overflow-hidden rounded-xl aspect-4/3 mb-3">
                   <Image
                     src={project.image}
                     alt={project.title}
                     fill
-                    className="object-cover transition-transform duration-700 group-active:scale-105 rounded-xl"
+                    className={`${project.image.includes("Laptop") ? "object-contain" : "object-cover object-top"} transition-transform duration-700 group-active:scale-105`}
                     sizes="100vw"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-                  {/* Result badge */}
-                  <div className="absolute top-4 right-4 text-right">
-                    <p
-                      className="text-2xl font-black"
-                      style={{ color: accentColor }}
-                    >
-                      {project.result}
-                    </p>
-                    <p className="text-white/40 text-[10px] uppercase tracking-wider">
-                      {project.resultLabel}
-                    </p>
-                  </div>
+                  {/* Subtle vignette */}
+                  <div className="absolute inset-0 pointer-events-none" style={{
+                    background: "radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.2) 100%)"
+                  }} />
 
-                  {/* Title overlay */}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <p
-                      className="text-xs uppercase tracking-[0.2em] mb-1"
-                      style={{ color: accentColor }}
-                    >
-                      {project.category}
-                    </p>
-                    <h3 className="text-2xl font-black text-white tracking-[-0.02em]">
-                      {project.title}
-                    </h3>
+                  {/* View indicator */}
+                  <div
+                    className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all duration-300 group-active:scale-105"
+                    style={{
+                      background: "rgba(0,0,0,0.5)",
+                      backdropFilter: "blur(8px)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                    }}
+                  >
+                    <span className="text-white/70 text-xs font-medium group-active:text-[rgba(255,200,150,1)] transition-colors">View</span>
+                    <span className="text-sm transition-transform group-active:translate-x-0.5" style={{ color: accentColor }}>→</span>
                   </div>
                 </div>
 
-                {/* Info below */}
-                <div className="flex items-center justify-between px-1">
-                  <p className="text-white/50 text-sm">{project.tagline}</p>
-                  <span
-                    className="text-sm tracking-wide"
-                    style={{ color: accentColorMuted }}
+                {/* Content below image on mobile */}
+                <div className="px-1">
+                  <p
+                    className="text-xs uppercase tracking-[0.2em] mb-1"
+                    style={{ color: accentColor }}
                   >
-                    View →
-                  </span>
+                    {project.category} • {project.year}
+                  </p>
+                  <h3 className="text-xl font-black text-white tracking-[-0.02em] mb-0.5">
+                    {project.title}
+                  </h3>
+                  <p className="text-white/50 text-sm">{project.tagline}</p>
                 </div>
               </div>
             </TransitionLink>
@@ -570,10 +582,10 @@ export default function Work() {
       style={{
         zIndex: 5,
         // Height determines scroll length - more height = more scroll time for animations
-        // Increased for slower scrolling pace
         height: isMobile ? "auto" : "500vh",
       }}
     >
+
       {/* Desktop Layout - Fixed elements with smooth entrance/exit */}
       {!isMobile && (
         <motion.div
@@ -664,7 +676,7 @@ export default function Work() {
             className="fixed bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
             style={{
               opacity: scrollIndicatorOpacity,
-              zIndex: 20,
+              zIndex: 2,
             }}
           >
             <span className="text-white/30 text-xs tracking-widest uppercase">Scroll</span>
