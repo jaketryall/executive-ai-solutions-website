@@ -50,6 +50,8 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
   const logoOpacityRef = useRef({ value: 0 });
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const isAnimatingRef = useRef(false);
+  // Cache viewport dimensions to prevent jitter from layout changes during navigation
+  const viewportRef = useRef({ width: 0, height: 0 });
 
   useEffect(() => {
     const container = containerRef.current;
@@ -61,6 +63,12 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
     // Only start animation when isActive becomes true, ignore when it becomes false
     if (isActive && !isAnimatingRef.current) {
       isAnimatingRef.current = true;
+
+      // Cache viewport dimensions at animation start to prevent jitter
+      viewportRef.current = {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
 
       // Kill any existing timeline
       if (timelineRef.current) {
@@ -166,10 +174,17 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
 
     // Add padding to ensure full coverage (matches the container's -10px inset)
     const padding = 20;
-    const width = window.innerWidth + padding;
-    const height = window.innerHeight + padding;
-    const centerX = width / 2;
-    const centerY = height / 2;
+    // Use cached viewport dimensions to prevent jitter from layout changes
+    const cachedWidth = viewportRef.current.width || window.innerWidth;
+    const cachedHeight = viewportRef.current.height || window.innerHeight;
+    const width = cachedWidth + padding;
+    const height = cachedHeight + padding;
+    // Round to prevent sub-pixel jitter during animation
+    const centerX = Math.round(width / 2);
+    const centerY = Math.round(height / 2);
+    const translateX = Math.round(centerX - halfSize);
+    const translateY = Math.round(centerY - halfSize);
+    const logoScale = size / 500;
 
     // Create an SVG with the logo cutout mask and glowing border
     const svgContent = `
@@ -185,13 +200,13 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
           </filter>
           <mask id="logoMask">
             <rect width="100%" height="100%" fill="white"/>
-            <g transform="translate(${centerX - halfSize}, ${centerY - halfSize}) scale(${size / 500})">
+            <g transform="translate(${translateX}, ${translateY}) scale(${logoScale})">
               <path d="${LOGO_PATH}" fill="black"/>
             </g>
           </mask>
         </defs>
         <rect width="100%" height="100%" fill="black" mask="url(#logoMask)"/>
-        <g transform="translate(${centerX - halfSize}, ${centerY - halfSize}) scale(${size / 500})" filter="url(#glow)" opacity="${glowOpacity}">
+        <g transform="translate(${translateX}, ${translateY}) scale(${logoScale})" filter="url(#glow)" opacity="${glowOpacity}">
           <path d="${LOGO_PATH}" fill="none" stroke="rgba(255, 200, 150, 0.9)" stroke-width="${strokeWidth}"/>
         </g>
       </svg>
@@ -210,14 +225,21 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
 
     // Add padding to match the container's -10px inset
     const padding = 20;
-    const width = window.innerWidth + padding;
-    const height = window.innerHeight + padding;
-    const centerX = width / 2;
-    const centerY = height / 2;
+    // Use cached viewport dimensions to prevent jitter from layout changes
+    const cachedWidth = viewportRef.current.width || window.innerWidth;
+    const cachedHeight = viewportRef.current.height || window.innerHeight;
+    const width = cachedWidth + padding;
+    const height = cachedHeight + padding;
+    // Round to prevent sub-pixel jitter
+    const centerX = Math.round(width / 2);
+    const centerY = Math.round(height / 2);
+    const translateX = Math.round(centerX - halfSize);
+    const translateY = Math.round(centerY - halfSize);
+    const logoScale = size / 500;
 
     const svgContent = `
       <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 ${width} ${height}">
-        <g transform="translate(${centerX - halfSize}, ${centerY - halfSize}) scale(${size / 500})">
+        <g transform="translate(${translateX}, ${translateY}) scale(${logoScale})">
           <path d="${LOGO_PATH}" fill="black"/>
         </g>
       </svg>
@@ -265,6 +287,8 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
           left: 0,
           right: 0,
           bottom: 0,
+          willChange: "opacity, background-image",
+          backfaceVisibility: "hidden",
         }}
       />
       {/* Solid black logo that fills in during hold phase */}
@@ -277,6 +301,8 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
           left: 0,
           right: 0,
           bottom: 0,
+          willChange: "opacity",
+          backfaceVisibility: "hidden",
         }}
       />
     </div>
