@@ -168,7 +168,7 @@ export default function WorkPage() {
 
   return (
     <>
-      {/* CSS for floating background animation */}
+      {/* CSS for animations */}
       <style jsx global>{`
         @keyframes float {
           0%, 100% {
@@ -184,10 +184,25 @@ export default function WorkPage() {
             transform: translate(-5%, 5%) rotate(0.5deg);
           }
         }
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out forwards;
+        }
       `}</style>
 
       <Navbar />
-      <main ref={containerRef} className="relative bg-[#0a0908] overflow-hidden" style={{ zIndex: 10 }}>
+      <main
+        ref={containerRef}
+        className="relative bg-[#0a0908] overflow-hidden animate-fade-in"
+        style={{ zIndex: 10 }}
+      >
         {/* Moving background elements */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
           {/* Large gradient orb 1 */}
@@ -242,7 +257,7 @@ export default function WorkPage() {
 
             {/* Title */}
             <motion.h1
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[0.95] tracking-[-0.03em]"
+              className="text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[0.95] tracking-[-0.03em]"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}

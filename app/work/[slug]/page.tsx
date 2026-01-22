@@ -244,27 +244,26 @@ function LaptopFrame({ url, title }: { url: string; title: string }) {
   );
 }
 
-// Phone device frame component - iPhone 17 Pro exact proportions
+// Phone device frame component - iPhone style
 function PhoneFrame({ url, title }: { url: string; title: string }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Phone frame dimensions - sized to fit within 70vh gallery container
+  // Phone frame dimensions
   const bodyWidth = 240;
   const padding = 7;
-  const screenWidth = bodyWidth - padding * 2; // 226px
-  const screenHeight = Math.round(screenWidth * (19.5 / 9)); // iPhone aspect ratio ~2.17:1 = 490px
+  const screenWidth = bodyWidth - padding * 2;
+  const screenHeight = Math.round(screenWidth * (19.5 / 9));
 
   // Iframe renders at standard mobile viewport, scaled to fit
-  const iframeWidth = 390; // iPhone 14/15 viewport width
-  const iframeHeight = 844; // iPhone 14/15 viewport height
-  const scale = screenWidth / iframeWidth; // 226 / 390 ≈ 0.58
+  const iframeWidth = 390;
+  const iframeHeight = 844;
+  const scale = screenWidth / iframeWidth;
 
-  // Total body height based on screen + padding
   const bodyHeight = screenHeight + padding * 2;
 
   return (
     <div className="relative mx-auto" style={{ width: `${bodyWidth}px`, height: `${bodyHeight}px` }}>
-      {/* Phone body - iPhone style aluminum frame */}
+      {/* Phone body */}
       <div
         className="relative"
         style={{
@@ -306,7 +305,7 @@ function PhoneFrame({ url, title }: { url: string; title: string }) {
             </div>
           )}
 
-          {/* Iframe wrapper - clips the scaled iframe */}
+          {/* Iframe wrapper */}
           <div className="absolute inset-0" style={{ overflow: "hidden" }}>
             <iframe
               src={url}
@@ -338,120 +337,18 @@ function PhoneFrame({ url, title }: { url: string; title: string }) {
   );
 }
 
-// Mobile gallery - mockup image + phone frame with live site
-function MobileGallery({ images, title, liveUrl }: { images: string[]; title: string; liveUrl?: string }) {
-  return (
-    <div className="py-16 px-6 bg-[#0a0908]">
-      {/* Title */}
-      <div className="mb-8">
-        <p
-          className="text-xs uppercase tracking-[0.3em] mb-4"
-          style={{ color: accentColorMuted }}
-        >
-          Project Gallery
-        </p>
-        <h2 className="text-3xl font-black text-white tracking-[-0.03em]">
-          Visual <span className="text-white/30">Journey</span>
-        </h2>
-      </div>
-
-      <div className="space-y-6">
-        {/* First item: Static mockup image */}
-        <div
-          className="relative aspect-4/3 rounded-xl overflow-hidden"
-          style={{ border: `1px solid ${accentColorMuted}` }}
-        >
-          <Image
-            src={images[0]}
-            alt={`${title} - Mockup`}
-            fill
-            className={images[0].includes("Mockup") ? "object-cover object-top" : "object-cover"}
-            sizes="100vw"
-          />
-          <div className="absolute bottom-4 left-4">
-            <span className="text-4xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>
-              01
-            </span>
-          </div>
-        </div>
-
-        {/* Second item: Phone frame with live site */}
-        {liveUrl && (
-          <div
-            className="relative rounded-xl overflow-hidden py-8 flex flex-col items-center justify-center"
-            style={{
-              border: `1px solid ${accentColorMuted}`,
-              background: "radial-gradient(ellipse at center, rgba(255, 200, 150, 0.05) 0%, transparent 70%)",
-            }}
-          >
-            <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(255, 200, 150, 0.1)", border: `1px solid ${accentColorMuted}` }}>
-              <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-[10px] text-white/70">Live Site</span>
-            </div>
-            <PhoneFrame url={liveUrl} title={title} />
-            <div className="absolute bottom-4 left-4">
-              <span className="text-4xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>
-                02
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* CTA button */}
-      {liveUrl && (
-        <div className="mt-8 text-center">
-          <a
-            href={liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 px-6 py-3 rounded-full"
-            style={{
-              background: accentColor,
-              color: "#0a0908",
-            }}
-          >
-            <span className="font-semibold">Visit Live Site</span>
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </a>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Horizontal gallery section with GSAP - now with interactive device frames (desktop only)
+// Horizontal gallery section with GSAP
 function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title: string; liveUrl?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
-  // Start with null to prevent hydration mismatch flash
-  const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-  // Check for mobile on mount
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  // Calculate total gallery width based on actual item widths
-  // Title: 40vw, Mockup: 60vw, Laptop: 70vw, Phone: 50vw, CTA: 40vw = 260vw
-  // Plus padding (px-16 = ~2vw each side) and gaps (gap-8 = ~2vw * 4 gaps = ~8vw)
+  // Calculate gallery width based on content
   const galleryWidth = liveUrl ? 280 : (images.length * 65 + 50);
 
   useIsomorphicLayoutEffect(() => {
-    if (!containerRef.current || !galleryRef.current || isMobile !== false) return;
+    if (!containerRef.current || !galleryRef.current) return;
 
     const ctx = gsap.context(() => {
       const gallery = galleryRef.current;
@@ -473,28 +370,8 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
       });
     });
 
-    return () => {
-      try {
-        ctx.revert();
-      } catch {
-        // Element was already removed from DOM
-      }
-    };
-  }, [isMobile]);
-
-  // Show minimal loading state until we know the device type
-  if (isMobile === null) {
-    return (
-      <div className="py-16 md:h-screen bg-[#0a0908] flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: `${accentColor} transparent transparent transparent` }} />
-      </div>
-    );
-  }
-
-  // Show mobile gallery on small screens
-  if (isMobile) {
-    return <MobileGallery images={images} title={title} liveUrl={liveUrl} />;
-  }
+    return () => ctx.revert();
+  }, []);
 
   return (
     <div ref={containerRef} className="relative overflow-hidden bg-[#0a0908]">
@@ -579,7 +456,7 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
               </div>
             </div>
 
-            {/* Closing card: Visit live site CTA */}
+            {/* CTA card: Visit live site */}
             <div
               className="gallery-item shrink-0 w-[40vw] h-[70vh] rounded-xl overflow-hidden relative flex flex-col items-center justify-center p-12"
               style={{
@@ -638,12 +515,17 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
                 className={`${image.includes("Mockup") ? "object-cover object-top" : "object-cover"} transition-transform duration-700 group-hover:scale-105`}
                 sizes="60vw"
               />
+              {/* Subtle warm overlay on hover */}
               <div
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                 style={{ background: `linear-gradient(to top, rgba(255, 200, 150, 0.15), transparent)` }}
               />
+              {/* Number overlay */}
               <div className="absolute bottom-6 left-6">
-                <span className="text-6xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>
+                <span
+                  className="text-6xl font-black"
+                  style={{ color: "rgba(255,255,255,0.1)" }}
+                >
                   {String(index + 1).padStart(2, "0")}
                 </span>
               </div>
@@ -831,7 +713,7 @@ function ResultsSection({ result, metrics }: { result: string; metrics: { label:
             The Result
           </p>
           <h2
-            className="text-5xl md:text-7xl lg:text-9xl xl:text-[12rem] font-black tracking-[-0.04em] leading-none"
+            className="text-7xl md:text-9xl lg:text-[12rem] font-black tracking-[-0.04em] leading-none"
             style={{ color: accentColor }}
           >
             {result}
@@ -943,7 +825,7 @@ function TestimonialSection({ quote, author, role }: { quote: string; author: st
       <div className="max-w-5xl mx-auto text-center relative">
         {/* Large quote mark */}
         <div
-          className="quote-mark absolute -top-8 left-1/2 -translate-x-1/2 text-[80px] md:text-[200px] lg:text-[300px] font-serif leading-none pointer-events-none select-none"
+          className="quote-mark absolute -top-8 left-1/2 -translate-x-1/2 text-[200px] md:text-[300px] font-serif leading-none pointer-events-none select-none"
           style={{ color: "rgba(255, 200, 150, 0.08)" }}
         >
           "
@@ -1165,7 +1047,7 @@ export default function CaseStudyPage({
 
   return (
     <>
-      {/* CSS for floating background animation */}
+      {/* CSS for animations */}
       <style jsx global>{`
         @keyframes float {
           0%, 100% {
@@ -1181,10 +1063,25 @@ export default function CaseStudyPage({
             transform: translate(-5%, 5%) rotate(0.5deg);
           }
         }
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out forwards;
+        }
       `}</style>
 
       <Navbar />
-      <main ref={containerRef} className="relative bg-[#0a0908] overflow-hidden" style={{ zIndex: 10 }}>
+      <main
+        ref={containerRef}
+        className="relative bg-[#0a0908] overflow-hidden animate-fade-in"
+        style={{ zIndex: 10 }}
+      >
         {/* Moving background elements */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
           {/* Large gradient orb 1 */}
@@ -1223,10 +1120,10 @@ export default function CaseStudyPage({
           />
         </div>
 
-        {/* Hero Section - Shorter on mobile to avoid empty space */}
+        {/* Hero Section - Larger to show more of laptop */}
         <motion.section
           ref={heroRef}
-          className="relative h-[60vh] md:h-[140vh] overflow-hidden"
+          className="relative h-[140vh] overflow-hidden"
         >
           {/* Background image with parallax */}
           <motion.div
@@ -1234,22 +1131,29 @@ export default function CaseStudyPage({
             style={{ y: heroY, scale: heroScale }}
           >
             <div className="hero-image absolute inset-0 overflow-hidden">
-              <Image
-                src={project.heroImage}
-                alt={project.title}
-                fill
-                className={
-                  project.heroImage.includes("Mockup")
-                    ? "object-cover object-top"
-                    : "object-cover"
-                }
-                style={
-                  project.heroImage.includes("Mockup")
-                    ? { objectPosition: `center ${project.heroOffset || "-13%"}` }
-                    : undefined
-                }
-                priority
-              />
+              {project.heroImage.includes("Mockup") ? (
+                /* Wrapper to position mockup images - uses heroOffset from project data */
+                <div
+                  className="absolute inset-x-0 bottom-0"
+                  style={{ top: project.heroOffset || "-13%" }}
+                >
+                  <Image
+                    src={project.heroImage}
+                    alt={project.title}
+                    fill
+                    className="object-contain object-top"
+                    priority
+                  />
+                </div>
+              ) : (
+                <Image
+                  src={project.heroImage}
+                  alt={project.title}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              )}
             </div>
             <div className="hero-gradient absolute inset-0 bg-gradient-to-t from-[#0a0908] via-[#0a0908]/40 to-[#0a0908]/20" />
             <div className="hero-gradient absolute inset-0 bg-gradient-to-r from-[#0a0908]/60 via-transparent to-transparent" />
@@ -1277,9 +1181,9 @@ export default function CaseStudyPage({
             </div>
           </motion.div>
 
-          {/* Scroll indicator - hidden on mobile */}
+          {/* Scroll indicator */}
           <motion.div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 hidden md:block"
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5 }}
@@ -1300,7 +1204,7 @@ export default function CaseStudyPage({
 
         {/* Unified content section with glassmorphic effect - includes Overview and Challenge/Solution */}
         <section
-          className="relative z-10 -mt-12 md:-mt-24 rounded-t-3xl md:rounded-t-[3rem] overflow-hidden backdrop-blur-xl"
+          className="relative z-10 -mt-24 rounded-t-4xl md:rounded-t-[3rem] overflow-hidden backdrop-blur-xl"
           style={{
             backgroundColor: "rgba(10, 9, 8, 0.85)",
             borderTop: "1px solid rgba(255, 200, 150, 0.15)",
@@ -1363,7 +1267,7 @@ export default function CaseStudyPage({
               >
                 <h1
                   ref={titleRef}
-                  className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-[-0.04em] mb-6"
+                  className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-[-0.04em] mb-6"
                 >
                   <SplitText delay={0.2}>{project.title}</SplitText>
                 </h1>

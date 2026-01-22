@@ -8,6 +8,9 @@ import { motion } from "framer-motion";
 const accentColor = "rgba(255, 200, 150, 1)";
 const accentColorMuted = "rgba(255, 200, 150, 0.6)";
 
+// Delay before showing footer (allows main content to paint first)
+const FOOTER_REVEAL_DELAY = 300;
+
 // Social icons as simple SVG components
 function TwitterIcon() {
   return (
@@ -52,6 +55,15 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
   const footerRef = useRef<HTMLElement>(null);
   const [footerHeight, setFooterHeight] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Delay footer visibility to prevent flash during page load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, FOOTER_REVEAL_DELAY);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const updateHeight = () => {
@@ -71,8 +83,11 @@ export default function Footer() {
       <footer
         ref={footerRef}
         id="site-footer"
-        className="fixed bottom-0 left-0 right-0 bg-[#050505]"
-        style={{ zIndex: 0 }}
+        className="fixed bottom-0 left-0 right-0 bg-[#050505] transition-opacity duration-500"
+        style={{
+          zIndex: 0,
+          opacity: isVisible ? 1 : 0,
+        }}
         data-footer
       >
         {/* Animated 3D orb element */}
