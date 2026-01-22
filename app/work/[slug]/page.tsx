@@ -338,12 +338,92 @@ function PhoneFrame({ url, title }: { url: string; title: string }) {
   );
 }
 
-// Horizontal gallery section with GSAP - now with interactive device frames
+// Mobile gallery - simple vertical scroll with images
+function MobileGallery({ images, title, liveUrl }: { images: string[]; title: string; liveUrl?: string }) {
+  return (
+    <div className="py-16 px-6 bg-[#0a0908]">
+      {/* Title */}
+      <div className="mb-8">
+        <p
+          className="text-xs uppercase tracking-[0.3em] mb-4"
+          style={{ color: accentColorMuted }}
+        >
+          Project Gallery
+        </p>
+        <h2 className="text-3xl font-black text-white tracking-[-0.03em]">
+          Visual <span className="text-white/30">Journey</span>
+        </h2>
+      </div>
+
+      {/* Gallery images */}
+      <div className="space-y-6">
+        {images.map((image, index) => (
+          <div
+            key={image}
+            className="relative aspect-4/3 rounded-xl overflow-hidden"
+            style={{ border: `1px solid ${accentColorMuted}` }}
+          >
+            <Image
+              src={image}
+              alt={`${title} - Image ${index + 1}`}
+              fill
+              className={image.includes("Mockup") ? "object-cover object-top" : "object-cover"}
+              sizes="100vw"
+            />
+            <div className="absolute bottom-4 left-4">
+              <span className="text-4xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>
+                {String(index + 1).padStart(2, "0")}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* CTA button */}
+      {liveUrl && (
+        <div className="mt-8 text-center">
+          <a
+            href={liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-full"
+            style={{
+              background: accentColor,
+              color: "#0a0908",
+            }}
+          >
+            <span className="font-semibold">Visit Live Site</span>
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Horizontal gallery section with GSAP - now with interactive device frames (desktop only)
 function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title: string; liveUrl?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+  // Check for mobile on mount
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Calculate total gallery width based on actual item widths
   // Title: 40vw, Mockup: 60vw, Laptop: 70vw, Phone: 50vw, CTA: 40vw = 260vw
@@ -351,7 +431,7 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
   const galleryWidth = liveUrl ? 280 : (images.length * 65 + 50);
 
   useIsomorphicLayoutEffect(() => {
-    if (!containerRef.current || !galleryRef.current) return;
+    if (!containerRef.current || !galleryRef.current || isMobile) return;
 
     const ctx = gsap.context(() => {
       const gallery = galleryRef.current;
@@ -373,8 +453,19 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
       });
     });
 
-    return () => ctx.revert();
-  }, []);
+    return () => {
+      try {
+        ctx.revert();
+      } catch {
+        // Element was already removed from DOM
+      }
+    };
+  }, [isMobile]);
+
+  // Show mobile gallery on small screens
+  if (isMobile) {
+    return <MobileGallery images={images} title={title} liveUrl={liveUrl} />;
+  }
 
   return (
     <div ref={containerRef} className="relative overflow-hidden bg-[#0a0908]">

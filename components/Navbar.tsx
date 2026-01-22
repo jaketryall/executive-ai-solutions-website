@@ -105,7 +105,7 @@ function NavLink({
   return (
     <TransitionLink
       href={href}
-      className="relative px-5 py-3"
+      className="relative inline-block px-5 py-3"
       onMouseEnter={() => {
         setIsHovered(true);
         onHover();

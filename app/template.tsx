@@ -16,7 +16,14 @@ export default function Template({ children }: TemplateProps) {
   // Reset scroll and refresh ScrollTrigger on page change
   useEffect(() => {
     // Kill all existing ScrollTriggers to prevent stale state
-    ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    // Wrap in try-catch as pinned elements may already be removed from DOM
+    ScrollTrigger.getAll().forEach((trigger) => {
+      try {
+        trigger.kill();
+      } catch {
+        // Element was already removed from DOM by React
+      }
+    });
 
     // Reset scroll position immediately
     window.scrollTo(0, 0);
