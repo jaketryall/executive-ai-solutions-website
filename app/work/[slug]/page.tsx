@@ -338,7 +338,7 @@ function PhoneFrame({ url, title }: { url: string; title: string }) {
   );
 }
 
-// Mobile gallery - simple vertical scroll with images
+// Mobile gallery - mockup image + phone frame with live site
 function MobileGallery({ images, title, liveUrl }: { images: string[]; title: string; liveUrl?: string }) {
   return (
     <div className="py-16 px-6 bg-[#0a0908]">
@@ -355,28 +355,47 @@ function MobileGallery({ images, title, liveUrl }: { images: string[]; title: st
         </h2>
       </div>
 
-      {/* Gallery images */}
       <div className="space-y-6">
-        {images.map((image, index) => (
+        {/* First item: Static mockup image */}
+        <div
+          className="relative aspect-4/3 rounded-xl overflow-hidden"
+          style={{ border: `1px solid ${accentColorMuted}` }}
+        >
+          <Image
+            src={images[0]}
+            alt={`${title} - Mockup`}
+            fill
+            className={images[0].includes("Mockup") ? "object-cover object-top" : "object-cover"}
+            sizes="100vw"
+          />
+          <div className="absolute bottom-4 left-4">
+            <span className="text-4xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>
+              01
+            </span>
+          </div>
+        </div>
+
+        {/* Second item: Phone frame with live site */}
+        {liveUrl && (
           <div
-            key={image}
-            className="relative aspect-4/3 rounded-xl overflow-hidden"
-            style={{ border: `1px solid ${accentColorMuted}` }}
+            className="relative rounded-xl overflow-hidden py-8 flex flex-col items-center justify-center"
+            style={{
+              border: `1px solid ${accentColorMuted}`,
+              background: "radial-gradient(ellipse at center, rgba(255, 200, 150, 0.05) 0%, transparent 70%)",
+            }}
           >
-            <Image
-              src={image}
-              alt={`${title} - Image ${index + 1}`}
-              fill
-              className={image.includes("Mockup") ? "object-cover object-top" : "object-cover"}
-              sizes="100vw"
-            />
+            <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(255, 200, 150, 0.1)", border: `1px solid ${accentColorMuted}` }}>
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-[10px] text-white/70">Live Site</span>
+            </div>
+            <PhoneFrame url={liveUrl} title={title} />
             <div className="absolute bottom-4 left-4">
               <span className="text-4xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>
-                {String(index + 1).padStart(2, "0")}
+                02
               </span>
             </div>
           </div>
-        ))}
+        )}
       </div>
 
       {/* CTA button */}
@@ -463,11 +482,11 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
     };
   }, [isMobile]);
 
-  // Show loading state until we know the device type
+  // Show minimal loading state until we know the device type
   if (isMobile === null) {
     return (
-      <div className="h-screen bg-[#0a0908] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: `${accentColor} transparent transparent transparent` }} />
+      <div className="py-16 md:h-screen bg-[#0a0908] flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: `${accentColor} transparent transparent transparent` }} />
       </div>
     );
   }
@@ -1204,10 +1223,10 @@ export default function CaseStudyPage({
           />
         </div>
 
-        {/* Hero Section - Larger to show more of laptop */}
+        {/* Hero Section - Shorter on mobile to avoid empty space */}
         <motion.section
           ref={heroRef}
-          className="relative h-screen md:h-[140vh] overflow-hidden"
+          className="relative h-[60vh] md:h-[140vh] overflow-hidden"
         >
           {/* Background image with parallax */}
           <motion.div
@@ -1215,29 +1234,22 @@ export default function CaseStudyPage({
             style={{ y: heroY, scale: heroScale }}
           >
             <div className="hero-image absolute inset-0 overflow-hidden">
-              {project.heroImage.includes("Mockup") ? (
-                /* Wrapper to position mockup images - uses heroOffset from project data */
-                <div
-                  className="absolute inset-x-0 bottom-0"
-                  style={{ top: project.heroOffset || "-13%" }}
-                >
-                  <Image
-                    src={project.heroImage}
-                    alt={project.title}
-                    fill
-                    className="object-contain object-top"
-                    priority
-                  />
-                </div>
-              ) : (
-                <Image
-                  src={project.heroImage}
-                  alt={project.title}
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              )}
+              <Image
+                src={project.heroImage}
+                alt={project.title}
+                fill
+                className={
+                  project.heroImage.includes("Mockup")
+                    ? "object-cover object-top"
+                    : "object-cover"
+                }
+                style={
+                  project.heroImage.includes("Mockup")
+                    ? { objectPosition: `center ${project.heroOffset || "-13%"}` }
+                    : undefined
+                }
+                priority
+              />
             </div>
             <div className="hero-gradient absolute inset-0 bg-gradient-to-t from-[#0a0908] via-[#0a0908]/40 to-[#0a0908]/20" />
             <div className="hero-gradient absolute inset-0 bg-gradient-to-r from-[#0a0908]/60 via-transparent to-transparent" />
@@ -1265,9 +1277,9 @@ export default function CaseStudyPage({
             </div>
           </motion.div>
 
-          {/* Scroll indicator */}
+          {/* Scroll indicator - hidden on mobile */}
           <motion.div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 hidden md:block"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5 }}
@@ -1288,7 +1300,7 @@ export default function CaseStudyPage({
 
         {/* Unified content section with glassmorphic effect - includes Overview and Challenge/Solution */}
         <section
-          className="relative z-10 -mt-24 rounded-t-3xl md:rounded-t-[3rem] overflow-hidden backdrop-blur-xl"
+          className="relative z-10 -mt-12 md:-mt-24 rounded-t-3xl md:rounded-t-[3rem] overflow-hidden backdrop-blur-xl"
           style={{
             backgroundColor: "rgba(10, 9, 8, 0.85)",
             borderTop: "1px solid rgba(255, 200, 150, 0.15)",
