@@ -337,20 +337,24 @@ function PhoneFrame({ url, title }: { url: string; title: string }) {
   );
 }
 
-// Horizontal gallery section with GSAP
+// Horizontal gallery section with GSAP - uses matchMedia for responsive behavior
 function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title: string; liveUrl?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
 
   const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-  // Calculate gallery width based on content
+  // Calculate gallery width based on content (for desktop horizontal scroll)
   const galleryWidth = liveUrl ? 280 : (images.length * 65 + 50);
 
   useIsomorphicLayoutEffect(() => {
     if (!containerRef.current || !galleryRef.current) return;
 
-    const ctx = gsap.context(() => {
+    // Use matchMedia for responsive GSAP animations
+    const mm = gsap.matchMedia();
+
+    // Desktop: horizontal scroll with pin
+    mm.add("(min-width: 768px)", () => {
       const gallery = galleryRef.current;
       if (!gallery) return;
 
@@ -368,20 +372,34 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
           anticipatePin: 1,
         },
       });
+
+      // matchMedia auto-reverts when breakpoint changes
     });
 
-    return () => ctx.revert();
+    // Mobile: no horizontal scroll, just vertical stacking (handled by CSS)
+    // No GSAP needed for mobile - content scrolls vertically naturally
+
+    return () => mm.revert();
   }, []);
 
   return (
     <div ref={containerRef} className="relative overflow-hidden bg-[#0a0908]">
+      {/* Desktop: horizontal layout with fixed width for scroll */}
+      {/* Mobile: vertical layout that scrolls naturally */}
       <div
         ref={galleryRef}
-        className="flex items-center h-screen gap-8 px-8 md:px-16"
-        style={{ width: `${galleryWidth}vw` }}
+        className="gallery-inner flex flex-col md:flex-row md:items-center min-h-0 md:h-screen gap-8 px-6 py-16 md:py-0 md:px-16"
       >
+        {/* Inject responsive width via CSS variable */}
+        <style jsx>{`
+          @media (min-width: 768px) {
+            .gallery-inner {
+              width: ${galleryWidth}vw;
+            }
+          }
+        `}</style>
         {/* Title card */}
-        <div className="shrink-0 w-[40vw] h-[70vh] flex flex-col justify-center">
+        <div className="shrink-0 w-full md:w-[40vw] h-auto md:h-[70vh] flex flex-col justify-center py-8 md:py-0">
           <p
             className="text-xs uppercase tracking-[0.3em] mb-4"
             style={{ color: accentColorMuted }}
@@ -399,7 +417,7 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
           <>
             {/* First item: Static mockup image */}
             <div
-              className="gallery-item shrink-0 w-[60vw] h-[70vh] rounded-xl overflow-hidden relative group"
+              className="gallery-item shrink-0 w-full md:w-[60vw] h-[50vh] md:h-[70vh] rounded-xl overflow-hidden relative group"
               style={{
                 border: `1px solid ${accentColorMuted}`,
               }}
@@ -420,9 +438,9 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
               </div>
             </div>
 
-            {/* Second item: Laptop with live site */}
+            {/* Second item: Laptop with live site - hidden on mobile */}
             <div
-              className="gallery-item shrink-0 w-[70vw] h-[70vh] rounded-xl overflow-hidden relative flex items-center justify-center p-8"
+              className="gallery-item shrink-0 hidden md:flex w-full md:w-[70vw] h-[60vh] md:h-[70vh] rounded-xl overflow-hidden relative items-center justify-center p-8"
               style={{
                 border: `1px solid ${accentColorMuted}`,
                 background: "radial-gradient(ellipse at center, rgba(255, 200, 150, 0.05) 0%, transparent 70%)",
@@ -438,27 +456,27 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
               </div>
             </div>
 
-            {/* Third item: Phone with live site */}
+            {/* Third item: Phone with live site - visible on both mobile and desktop */}
             <div
-              className="gallery-item shrink-0 w-[50vw] h-[70vh] rounded-xl overflow-hidden relative flex items-center justify-center p-8"
+              className="gallery-item shrink-0 flex w-full md:w-[50vw] h-[70vh] md:h-[70vh] rounded-xl overflow-hidden relative items-center justify-center p-4 md:p-8"
               style={{
                 border: `1px solid ${accentColorMuted}`,
                 background: "radial-gradient(ellipse at center, rgba(255, 200, 150, 0.05) 0%, transparent 70%)",
               }}
             >
               <PhoneFrame url={liveUrl} title={title} />
-              <div className="absolute bottom-6 left-6">
-                <span className="text-6xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>03</span>
+              <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6">
+                <span className="text-4xl md:text-6xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>03</span>
               </div>
-              <div className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: "rgba(255, 200, 150, 0.1)", border: `1px solid ${accentColorMuted}` }}>
+              <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full" style={{ background: "rgba(255, 200, 150, 0.1)", border: `1px solid ${accentColorMuted}` }}>
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-xs text-white/70">Mobile View</span>
+                <span className="text-[10px] md:text-xs text-white/70">Mobile View</span>
               </div>
             </div>
 
             {/* CTA card: Visit live site */}
             <div
-              className="gallery-item shrink-0 w-[40vw] h-[70vh] rounded-xl overflow-hidden relative flex flex-col items-center justify-center p-12"
+              className="gallery-item shrink-0 w-full md:w-[40vw] h-[50vh] md:h-[70vh] rounded-xl overflow-hidden relative flex flex-col items-center justify-center p-8 md:p-12"
               style={{
                 border: `1px solid ${accentColorMuted}`,
                 background: "radial-gradient(ellipse at center, rgba(255, 200, 150, 0.08) 0%, transparent 70%)",
@@ -503,7 +521,7 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
           images.map((image, index) => (
             <div
               key={image}
-              className="gallery-item shrink-0 w-[60vw] h-[70vh] rounded-xl overflow-hidden relative group"
+              className="gallery-item shrink-0 w-full md:w-[60vw] h-[50vh] md:h-[70vh] rounded-xl overflow-hidden relative group"
               style={{
                 border: `1px solid ${accentColorMuted}`,
               }}
@@ -1120,10 +1138,10 @@ export default function CaseStudyPage({
           />
         </div>
 
-        {/* Hero Section - Larger to show more of laptop */}
+        {/* Hero Section - Responsive height: shorter on mobile, taller on desktop */}
         <motion.section
           ref={heroRef}
-          className="relative h-[140vh] overflow-hidden"
+          className="relative h-[60vh] md:h-[140vh] overflow-hidden"
         >
           {/* Background image with parallax */}
           <motion.div
@@ -1133,18 +1151,32 @@ export default function CaseStudyPage({
             <div className="hero-image absolute inset-0 overflow-hidden">
               {project.heroImage.includes("Mockup") ? (
                 /* Wrapper to position mockup images - uses heroOffset from project data */
-                <div
-                  className="absolute inset-x-0 bottom-0"
-                  style={{ top: project.heroOffset || "-13%" }}
-                >
-                  <Image
-                    src={project.heroImage}
-                    alt={project.title}
-                    fill
-                    className="object-contain object-top"
-                    priority
-                  />
-                </div>
+                /* Mobile: object-cover with top alignment, Desktop: absolute positioning with offset */
+                <>
+                  {/* Mobile version - simpler object-cover approach */}
+                  <div className="md:hidden absolute inset-0">
+                    <Image
+                      src={project.heroImage}
+                      alt={project.title}
+                      fill
+                      className="object-cover object-top"
+                      priority
+                    />
+                  </div>
+                  {/* Desktop version - precise offset positioning */}
+                  <div
+                    className="hidden md:block absolute inset-x-0 bottom-0"
+                    style={{ top: project.heroOffset || "-13%" }}
+                  >
+                    <Image
+                      src={project.heroImage}
+                      alt={project.title}
+                      fill
+                      className="object-contain object-top"
+                      priority
+                    />
+                  </div>
+                </>
               ) : (
                 <Image
                   src={project.heroImage}
@@ -1181,9 +1213,9 @@ export default function CaseStudyPage({
             </div>
           </motion.div>
 
-          {/* Scroll indicator */}
+          {/* Scroll indicator - hidden on mobile */}
           <motion.div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 hidden md:block"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5 }}
@@ -1204,7 +1236,7 @@ export default function CaseStudyPage({
 
         {/* Unified content section with glassmorphic effect - includes Overview and Challenge/Solution */}
         <section
-          className="relative z-10 -mt-24 rounded-t-4xl md:rounded-t-[3rem] overflow-hidden backdrop-blur-xl"
+          className="relative z-10 -mt-12 md:-mt-24 rounded-t-3xl md:rounded-t-[3rem] overflow-hidden backdrop-blur-xl"
           style={{
             backgroundColor: "rgba(10, 9, 8, 0.85)",
             borderTop: "1px solid rgba(255, 200, 150, 0.15)",
