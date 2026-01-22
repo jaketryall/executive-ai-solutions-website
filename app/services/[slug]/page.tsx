@@ -653,17 +653,17 @@ function BenefitsSection({
 
   // Determine bento grid layout pattern based on number of benefits
   const getBentoClass = (index: number, total: number): string => {
-    // For 6 items (most common), create an interesting asymmetric layout
+    // For 6 items, create a dramatic layout with large cards:
+    // Row 1-2: Feature card (2 cols, 2 rows) + Card 1 & Card 2 stacked
+    // Row 3: Card 3 (1 col) + Card 4 (2 cols wide)
+    // Row 4: Card 5 (full width - 3 cols)
     if (total === 6) {
-      // Row 1: Large card (2 cols) + Small card
-      if (index === 0) return "md:col-span-2 md:row-span-2";
-      if (index === 1) return "md:col-span-1";
-      // Row 2: Small card spans under first
-      if (index === 2) return "md:col-span-1";
-      // Row 3: Small + Large (2 cols)
-      if (index === 3) return "md:col-span-1";
-      if (index === 4) return "md:col-span-2 md:row-span-1";
-      if (index === 5) return "md:col-span-1";
+      if (index === 0) return "md:col-span-2 md:row-span-2"; // Large 2x2 feature card
+      if (index === 1) return "md:col-span-1"; // Top right
+      if (index === 2) return "md:col-span-1"; // Middle right
+      if (index === 3) return "md:col-span-1"; // Bottom left
+      if (index === 4) return "md:col-span-2"; // Wide card
+      if (index === 5) return "md:col-span-3"; // Full-width closing card
     }
     // Default: uniform grid
     return "md:col-span-1";
@@ -671,7 +671,7 @@ function BenefitsSection({
 
   const isLargeCard = (index: number, total: number): boolean => {
     if (total === 6) {
-      return index === 0 || index === 4;
+      return index === 0 || index === 4 || index === 5; // Feature, wide, and full-width cards
     }
     return false;
   };

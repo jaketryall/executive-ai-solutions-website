@@ -17,7 +17,7 @@ const services = [
     title: "DESIGN",
     subtitle: "& Development",
     description: "High-converting websites that turn visitors into customers.",
-    image: "/Celestial Laptop Mockup.png",
+    image: "/Rubber iPhone Mockup.png",
     size: "large", // Takes up 2 rows
   },
   {
@@ -91,20 +91,20 @@ function BentoCard({
         <TransitionLink href={`/services/${service.slug}`} className="block h-full">
           {/* Image with parallax */}
           <motion.div
-            className="absolute -inset-[15%]"
+            className={service.image.includes("Mockup") ? "absolute -inset-[50%]" : "absolute -inset-[15%]"}
             style={{ y: imageY }}
           >
             <div
               className="absolute inset-0 transition-transform duration-700"
               style={{
-                transform: isHovered ? "scale(1.08)" : "scale(1)",
+                transform: isHovered ? "scale(1.05)" : "scale(1)",
               }}
             >
               <Image
                 src={service.image}
                 alt={service.title}
                 fill
-                className="object-cover"
+                className={service.image.includes("Mockup") ? "object-contain object-center" : "object-cover"}
                 sizes="(max-width: 768px) 100vw, 50vw"
                 priority={index === 0}
               />
