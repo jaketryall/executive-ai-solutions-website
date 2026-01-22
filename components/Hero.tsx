@@ -6,19 +6,31 @@ import { useRef, useState, useEffect } from "react";
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
 
+  // Ensure proper initialization after mount
+  useEffect(() => {
+    // Small delay to ensure scroll position is reset and DOM is ready
+    const timer = setTimeout(() => {
+      setIsMounted(true);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Hide fixed container when section is out of view
   useEffect(() => {
+    if (!isMounted) return;
+
     const unsubscribe = scrollYProgress.on("change", (value) => {
       setIsVisible(value < 1);
     });
     return () => unsubscribe();
-  }, [scrollYProgress]);
+  }, [scrollYProgress, isMounted]);
 
   // Logo mask scale: starts small, grows to reveal full video
   // Use spring for smooth, fluid animation

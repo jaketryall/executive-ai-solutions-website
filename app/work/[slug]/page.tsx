@@ -248,16 +248,16 @@ function LaptopFrame({ url, title }: { url: string; title: string }) {
 function PhoneFrame({ url, title }: { url: string; title: string }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Phone frame dimensions
-  const bodyWidth = 280;
-  const padding = 8;
-  const screenWidth = bodyWidth - padding * 2; // 264px
-  const screenHeight = Math.round(screenWidth * (19.5 / 9)); // iPhone aspect ratio ~2.17:1 = 573px
+  // Phone frame dimensions - sized to fit within 70vh gallery container
+  const bodyWidth = 240;
+  const padding = 7;
+  const screenWidth = bodyWidth - padding * 2; // 226px
+  const screenHeight = Math.round(screenWidth * (19.5 / 9)); // iPhone aspect ratio ~2.17:1 = 490px
 
   // Iframe renders at standard mobile viewport, scaled to fit
   const iframeWidth = 390; // iPhone 14/15 viewport width
   const iframeHeight = 844; // iPhone 14/15 viewport height
-  const scale = screenWidth / iframeWidth; // 264 / 390 ≈ 0.677
+  const scale = screenWidth / iframeWidth; // 226 / 390 ≈ 0.58
 
   // Total body height based on screen + padding
   const bodyHeight = screenHeight + padding * 2;
@@ -271,17 +271,17 @@ function PhoneFrame({ url, title }: { url: string; title: string }) {
           width: `${bodyWidth}px`,
           height: `${bodyHeight}px`,
           background: "linear-gradient(135deg, #2a2a2c 0%, #1a1a1c 50%, #0d0d0f 100%)",
-          borderRadius: "52px",
+          borderRadius: "45px",
           padding: `${padding}px`,
           border: "1px solid rgba(255,255,255,0.12)",
           boxShadow: "0 0 0 1px #0a0a0a, 0 25px 50px -12px rgba(0,0,0,0.8)",
         }}
       >
         {/* Side buttons */}
-        <div className="absolute left-[-2px] top-[18%] w-[3px] h-6 rounded-l-sm" style={{ background: "#2a2a2a" }} />
-        <div className="absolute left-[-2px] top-[26%] w-[3px] h-10 rounded-l-sm" style={{ background: "#2a2a2a" }} />
-        <div className="absolute left-[-2px] top-[38%] w-[3px] h-10 rounded-l-sm" style={{ background: "#2a2a2a" }} />
-        <div className="absolute right-[-2px] top-[26%] w-[3px] h-14 rounded-r-sm" style={{ background: "#2a2a2a" }} />
+        <div className="absolute left-[-2px] top-[18%] w-[3px] h-5 rounded-l-sm" style={{ background: "#2a2a2a" }} />
+        <div className="absolute left-[-2px] top-[26%] w-[3px] h-8 rounded-l-sm" style={{ background: "#2a2a2a" }} />
+        <div className="absolute left-[-2px] top-[38%] w-[3px] h-8 rounded-l-sm" style={{ background: "#2a2a2a" }} />
+        <div className="absolute right-[-2px] top-[26%] w-[3px] h-12 rounded-r-sm" style={{ background: "#2a2a2a" }} />
 
         {/* Screen */}
         <div
@@ -289,19 +289,19 @@ function PhoneFrame({ url, title }: { url: string; title: string }) {
           style={{
             width: `${screenWidth}px`,
             height: `${screenHeight}px`,
-            borderRadius: "44px",
+            borderRadius: "38px",
             overflow: "hidden",
           }}
         >
           {/* Dynamic Island */}
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 w-[90px] h-[26px] rounded-full bg-black z-20" />
+          <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-[77px] h-[22px] rounded-full bg-black z-20" />
 
           {/* Loading state */}
           {!isLoaded && (
             <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
               <div className="flex flex-col items-center gap-3">
-                <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: `${accentColor} transparent transparent transparent` }} />
-                <span className="text-white/40 text-xs">Loading...</span>
+                <div className="w-5 h-5 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: `${accentColor} transparent transparent transparent` }} />
+                <span className="text-white/40 text-[10px]">Loading...</span>
               </div>
             </div>
           )}
@@ -325,13 +325,13 @@ function PhoneFrame({ url, title }: { url: string; title: string }) {
           </div>
 
           {/* Home indicator */}
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-24 h-1 rounded-full bg-white/40 z-20" />
+          <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-20 h-1 rounded-full bg-white/40 z-20" />
         </div>
       </div>
 
       {/* Shadow */}
       <div
-        className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[85%] h-12 rounded-[50%] blur-2xl"
+        className="absolute -bottom-5 left-1/2 -translate-x-1/2 w-[85%] h-10 rounded-[50%] blur-2xl"
         style={{ background: "rgba(0,0,0,0.6)" }}
       />
     </div>
@@ -345,8 +345,10 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
 
   const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-  // Calculate number of items: 1 image + laptop + phone = 3 items (if liveUrl exists)
-  const itemCount = liveUrl ? 3 : images.length;
+  // Calculate total gallery width based on actual item widths
+  // Title: 40vw, Mockup: 60vw, Laptop: 70vw, Phone: 50vw, CTA: 40vw = 260vw
+  // Plus padding (px-16 = ~2vw each side) and gaps (gap-8 = ~2vw * 4 gaps = ~8vw)
+  const galleryWidth = liveUrl ? 280 : (images.length * 65 + 50);
 
   useIsomorphicLayoutEffect(() => {
     if (!containerRef.current || !galleryRef.current) return;
@@ -379,7 +381,7 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
       <div
         ref={galleryRef}
         className="flex items-center h-screen gap-8 px-8 md:px-16"
-        style={{ width: `${(itemCount + 1) * 80}vw` }}
+        style={{ width: `${galleryWidth}vw` }}
       >
         {/* Title card */}
         <div className="shrink-0 w-[40vw] h-[70vh] flex flex-col justify-center">
@@ -455,6 +457,48 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                 <span className="text-xs text-white/70">Mobile View</span>
               </div>
+            </div>
+
+            {/* Closing card: Visit live site CTA */}
+            <div
+              className="gallery-item shrink-0 w-[40vw] h-[70vh] rounded-xl overflow-hidden relative flex flex-col items-center justify-center p-12"
+              style={{
+                border: `1px solid ${accentColorMuted}`,
+                background: "radial-gradient(ellipse at center, rgba(255, 200, 150, 0.08) 0%, transparent 70%)",
+              }}
+            >
+              <p
+                className="text-xs uppercase tracking-[0.3em] mb-6"
+                style={{ color: accentColorMuted }}
+              >
+                Experience It Live
+              </p>
+              <h3 className="text-3xl md:text-4xl font-black text-white tracking-[-0.02em] text-center mb-8">
+                See the full
+                <br />
+                <span style={{ color: accentColor }}>experience</span>
+              </h3>
+              <a
+                href={liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-full transition-all duration-300 hover:scale-105"
+                style={{
+                  background: accentColor,
+                  color: "#0a0908",
+                }}
+              >
+                <span className="font-semibold">Visit Live Site</span>
+                <svg
+                  className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
             </div>
           </>
         ) : (
