@@ -106,6 +106,7 @@ function NavLink({
     <TransitionLink
       href={href}
       className="relative px-5 py-3"
+      style={{ position: 'relative' }}
       onMouseEnter={() => {
         setIsHovered(true);
         onHover();
@@ -121,9 +122,11 @@ function NavLink({
       </span>
       {isActive && (
         <motion.span
-          className="absolute -bottom-0 left-5 right-5 h-[2px]"
+          className="absolute bottom-0 left-5 right-5 h-[2px]"
           style={{ backgroundColor: accentColor }}
-          layoutId="navbar-underline"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
         />
       )}
     </TransitionLink>
@@ -165,7 +168,7 @@ function ServicesDropdown({
       }}
     >
       {/* Trigger */}
-      <button className="relative px-5 py-3 flex items-center gap-1.5">
+      <button className="relative px-5 py-3 flex items-center gap-1.5" style={{ position: 'relative' }}>
         <span
           className="text-sm font-medium uppercase tracking-[0.15em]"
           style={{ color: isActive ? accentColor : isHovered ? "#fff" : "rgba(255,255,255,0.7)" }}
@@ -185,9 +188,11 @@ function ServicesDropdown({
         </motion.svg>
         {isActive && (
           <motion.span
-            className="absolute -bottom-0 left-5 right-5 h-[2px]"
+            className="absolute bottom-0 left-5 right-5 h-[2px]"
             style={{ backgroundColor: accentColor }}
-            layoutId="navbar-underline"
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
           />
         )}
       </button>

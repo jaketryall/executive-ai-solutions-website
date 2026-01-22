@@ -1154,16 +1154,19 @@ export default function CaseStudyPage({
                 /* Mobile: object-cover with top alignment, Desktop: absolute positioning with offset */
                 <>
                   {/* Mobile version - simpler object-cover approach */}
+                  {/* sizes: 100vw on mobile (<768px), tiny on desktop where hidden */}
                   <div className="md:hidden absolute inset-0">
                     <Image
                       src={project.heroImage}
                       alt={project.title}
                       fill
+                      sizes="(max-width: 767px) 100vw, 1px"
                       className="object-cover object-top"
                       priority
                     />
                   </div>
                   {/* Desktop version - precise offset positioning */}
+                  {/* sizes: 80vw on desktop where visible, tiny on mobile where hidden */}
                   <div
                     className="hidden md:block absolute inset-x-0 bottom-0"
                     style={{ top: project.heroOffset || "-13%" }}
@@ -1172,6 +1175,7 @@ export default function CaseStudyPage({
                       src={project.heroImage}
                       alt={project.title}
                       fill
+                      sizes="(min-width: 768px) 80vw, 1px"
                       className="object-contain object-top"
                       priority
                     />
@@ -1182,6 +1186,7 @@ export default function CaseStudyPage({
                   src={project.heroImage}
                   alt={project.title}
                   fill
+                  sizes="100vw"
                   className="object-cover"
                   priority
                 />
