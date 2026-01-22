@@ -131,12 +131,222 @@ function SplitText({
   );
 }
 
-// Horizontal gallery section with GSAP
-function HorizontalGallery({ images, title }: { images: string[]; title: string }) {
+// Laptop device frame component - MacBook style
+function LaptopFrame({ url, title }: { url: string; title: string }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Display dimensions for the laptop screen
+  const screenWidth = 720;
+  const screenHeight = 450; // 16:10 aspect ratio
+  const bezelSize = 10;
+  const totalWidth = screenWidth + bezelSize * 2; // 740px
+
+  // Iframe renders at desktop size, scaled to fit
+  const iframeWidth = 1440;
+  const iframeHeight = 900;
+  const scale = screenWidth / iframeWidth; // 0.5
+
+  return (
+    <div className="relative mx-auto" style={{ width: `${totalWidth}px` }}>
+      {/* Screen/Lid */}
+      <div
+        className="relative rounded-t-2xl"
+        style={{
+          background: "linear-gradient(180deg, #1d1d1f 0%, #0d0d0d 100%)",
+          padding: `${bezelSize}px`,
+          paddingBottom: `${bezelSize / 2}px`,
+          border: "1px solid rgba(255,255,255,0.08)",
+          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+        }}
+      >
+        {/* Camera */}
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10">
+          <div className="w-2 h-2 rounded-full bg-[#1a1a1a] border border-[#0a0a0a]" />
+        </div>
+
+        {/* Screen container - exact dimensions with overflow hidden */}
+        <div
+          className="relative bg-black rounded-t-lg"
+          style={{
+            width: `${screenWidth}px`,
+            height: `${screenHeight}px`,
+            overflow: "hidden",
+          }}
+        >
+          {/* Loading state */}
+          {!isLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: `${accentColor} transparent transparent transparent` }} />
+                <span className="text-white/40 text-sm">Loading {title}...</span>
+              </div>
+            </div>
+          )}
+
+          {/* Iframe wrapper - clips the scaled iframe exactly */}
+          <div
+            className="absolute inset-0"
+            style={{ overflow: "hidden" }}
+          >
+            <iframe
+              src={url}
+              title={`${title} - Desktop View`}
+              style={{
+                width: `${iframeWidth}px`,
+                height: `${iframeHeight}px`,
+                transform: `scale(${scale})`,
+                transformOrigin: "top left",
+                border: "none",
+                display: "block",
+              }}
+              onLoad={() => setIsLoaded(true)}
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Hinge */}
+      <div
+        style={{
+          height: "8px",
+          marginLeft: `${bezelSize}px`,
+          marginRight: `${bezelSize}px`,
+          background: "linear-gradient(180deg, #0a0a0a 0%, #2a2a2a 50%, #0f0f0f 100%)",
+        }}
+      />
+
+      {/* Base */}
+      <div
+        className="relative rounded-b-lg"
+        style={{
+          background: "linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderTop: "none",
+          height: "14px",
+          marginLeft: "-10px",
+          marginRight: "-10px",
+        }}
+      >
+        {/* Trackpad notch */}
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1"
+          style={{ background: "#0a0a0a", borderRadius: "0 0 4px 4px" }}
+        />
+      </div>
+
+      {/* Shadow */}
+      <div
+        className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[95%] h-8 rounded-[50%] blur-xl"
+        style={{ background: "rgba(0,0,0,0.5)" }}
+      />
+    </div>
+  );
+}
+
+// Phone device frame component - iPhone 17 Pro exact proportions
+function PhoneFrame({ url, title }: { url: string; title: string }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Phone frame dimensions
+  const bodyWidth = 280;
+  const padding = 8;
+  const screenWidth = bodyWidth - padding * 2; // 264px
+  const screenHeight = Math.round(screenWidth * (19.5 / 9)); // iPhone aspect ratio ~2.17:1 = 573px
+
+  // Iframe renders at standard mobile viewport, scaled to fit
+  const iframeWidth = 390; // iPhone 14/15 viewport width
+  const iframeHeight = 844; // iPhone 14/15 viewport height
+  const scale = screenWidth / iframeWidth; // 264 / 390 ≈ 0.677
+
+  // Total body height based on screen + padding
+  const bodyHeight = screenHeight + padding * 2;
+
+  return (
+    <div className="relative mx-auto" style={{ width: `${bodyWidth}px`, height: `${bodyHeight}px` }}>
+      {/* Phone body - iPhone style aluminum frame */}
+      <div
+        className="relative"
+        style={{
+          width: `${bodyWidth}px`,
+          height: `${bodyHeight}px`,
+          background: "linear-gradient(135deg, #2a2a2c 0%, #1a1a1c 50%, #0d0d0f 100%)",
+          borderRadius: "52px",
+          padding: `${padding}px`,
+          border: "1px solid rgba(255,255,255,0.12)",
+          boxShadow: "0 0 0 1px #0a0a0a, 0 25px 50px -12px rgba(0,0,0,0.8)",
+        }}
+      >
+        {/* Side buttons */}
+        <div className="absolute left-[-2px] top-[18%] w-[3px] h-6 rounded-l-sm" style={{ background: "#2a2a2a" }} />
+        <div className="absolute left-[-2px] top-[26%] w-[3px] h-10 rounded-l-sm" style={{ background: "#2a2a2a" }} />
+        <div className="absolute left-[-2px] top-[38%] w-[3px] h-10 rounded-l-sm" style={{ background: "#2a2a2a" }} />
+        <div className="absolute right-[-2px] top-[26%] w-[3px] h-14 rounded-r-sm" style={{ background: "#2a2a2a" }} />
+
+        {/* Screen */}
+        <div
+          className="relative bg-black"
+          style={{
+            width: `${screenWidth}px`,
+            height: `${screenHeight}px`,
+            borderRadius: "44px",
+            overflow: "hidden",
+          }}
+        >
+          {/* Dynamic Island */}
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 w-[90px] h-[26px] rounded-full bg-black z-20" />
+
+          {/* Loading state */}
+          {!isLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: `${accentColor} transparent transparent transparent` }} />
+                <span className="text-white/40 text-xs">Loading...</span>
+              </div>
+            </div>
+          )}
+
+          {/* Iframe wrapper - clips the scaled iframe */}
+          <div className="absolute inset-0" style={{ overflow: "hidden" }}>
+            <iframe
+              src={url}
+              title={`${title} - Mobile View`}
+              style={{
+                width: `${iframeWidth}px`,
+                height: `${iframeHeight}px`,
+                transform: `scale(${scale})`,
+                transformOrigin: "top left",
+                border: "none",
+                display: "block",
+              }}
+              onLoad={() => setIsLoaded(true)}
+              loading="lazy"
+            />
+          </div>
+
+          {/* Home indicator */}
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-24 h-1 rounded-full bg-white/40 z-20" />
+        </div>
+      </div>
+
+      {/* Shadow */}
+      <div
+        className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[85%] h-12 rounded-[50%] blur-2xl"
+        style={{ background: "rgba(0,0,0,0.6)" }}
+      />
+    </div>
+  );
+}
+
+// Horizontal gallery section with GSAP - now with interactive device frames
+function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title: string; liveUrl?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
 
   const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+  // Calculate number of items: 1 image + laptop + phone = 3 items (if liveUrl exists)
+  const itemCount = liveUrl ? 3 : images.length;
 
   useIsomorphicLayoutEffect(() => {
     if (!containerRef.current || !galleryRef.current) return;
@@ -169,7 +379,7 @@ function HorizontalGallery({ images, title }: { images: string[]; title: string 
       <div
         ref={galleryRef}
         className="flex items-center h-screen gap-8 px-8 md:px-16"
-        style={{ width: `${(images.length + 1) * 80}vw` }}
+        style={{ width: `${(itemCount + 1) * 80}vw` }}
       >
         {/* Title card */}
         <div className="shrink-0 w-[40vw] h-[70vh] flex flex-col justify-center">
@@ -186,38 +396,96 @@ function HorizontalGallery({ images, title }: { images: string[]; title: string 
           </h2>
         </div>
 
-        {/* Gallery images */}
-        {images.map((image, index) => (
-          <div
-            key={image}
-            className="gallery-item shrink-0 w-[60vw] h-[70vh] rounded-xl overflow-hidden relative group"
-            style={{
-              border: `1px solid ${accentColorMuted}`,
-            }}
-          >
-            <Image
-              src={image}
-              alt={`${title} - Image ${index + 1}`}
-              fill
-              className={`${image.includes("Mockup") ? "object-cover object-top" : "object-cover"} transition-transform duration-700 group-hover:scale-105`}
-              sizes="60vw"
-            />
-            {/* Subtle warm overlay on hover */}
+        {liveUrl ? (
+          <>
+            {/* First item: Static mockup image */}
             <div
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              style={{ background: `linear-gradient(to top, rgba(255, 200, 150, 0.15), transparent)` }}
-            />
-            {/* Number overlay */}
-            <div className="absolute bottom-6 left-6">
-              <span
-                className="text-6xl font-black"
-                style={{ color: "rgba(255,255,255,0.1)" }}
-              >
-                {String(index + 1).padStart(2, "0")}
-              </span>
+              className="gallery-item shrink-0 w-[60vw] h-[70vh] rounded-xl overflow-hidden relative group"
+              style={{
+                border: `1px solid ${accentColorMuted}`,
+              }}
+            >
+              <Image
+                src={images[0]}
+                alt={`${title} - Mockup`}
+                fill
+                className={`${images[0].includes("Mockup") ? "object-cover object-top" : "object-cover"} transition-transform duration-700 group-hover:scale-105`}
+                sizes="60vw"
+              />
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ background: `linear-gradient(to top, rgba(255, 200, 150, 0.15), transparent)` }}
+              />
+              <div className="absolute bottom-6 left-6">
+                <span className="text-6xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>01</span>
+              </div>
             </div>
-          </div>
-        ))}
+
+            {/* Second item: Laptop with live site */}
+            <div
+              className="gallery-item shrink-0 w-[70vw] h-[70vh] rounded-xl overflow-hidden relative flex items-center justify-center p-8"
+              style={{
+                border: `1px solid ${accentColorMuted}`,
+                background: "radial-gradient(ellipse at center, rgba(255, 200, 150, 0.05) 0%, transparent 70%)",
+              }}
+            >
+              <LaptopFrame url={liveUrl} title={title} />
+              <div className="absolute bottom-6 left-6">
+                <span className="text-6xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>02</span>
+              </div>
+              <div className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: "rgba(255, 200, 150, 0.1)", border: `1px solid ${accentColorMuted}` }}>
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-xs text-white/70">Live Site</span>
+              </div>
+            </div>
+
+            {/* Third item: Phone with live site */}
+            <div
+              className="gallery-item shrink-0 w-[50vw] h-[70vh] rounded-xl overflow-hidden relative flex items-center justify-center p-8"
+              style={{
+                border: `1px solid ${accentColorMuted}`,
+                background: "radial-gradient(ellipse at center, rgba(255, 200, 150, 0.05) 0%, transparent 70%)",
+              }}
+            >
+              <PhoneFrame url={liveUrl} title={title} />
+              <div className="absolute bottom-6 left-6">
+                <span className="text-6xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>03</span>
+              </div>
+              <div className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: "rgba(255, 200, 150, 0.1)", border: `1px solid ${accentColorMuted}` }}>
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-xs text-white/70">Mobile View</span>
+              </div>
+            </div>
+          </>
+        ) : (
+          /* Fallback: Original gallery images if no liveUrl */
+          images.map((image, index) => (
+            <div
+              key={image}
+              className="gallery-item shrink-0 w-[60vw] h-[70vh] rounded-xl overflow-hidden relative group"
+              style={{
+                border: `1px solid ${accentColorMuted}`,
+              }}
+            >
+              <Image
+                src={image}
+                alt={`${title} - Image ${index + 1}`}
+                fill
+                className={`${image.includes("Mockup") ? "object-cover object-top" : "object-cover"} transition-transform duration-700 group-hover:scale-105`}
+                sizes="60vw"
+              />
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ background: `linear-gradient(to top, rgba(255, 200, 150, 0.15), transparent)` }}
+              />
+              <div className="absolute bottom-6 left-6">
+                <span className="text-6xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
@@ -980,7 +1248,7 @@ export default function CaseStudyPage({
 
         {/* Horizontal Gallery */}
         <div className="relative z-10">
-          <HorizontalGallery images={project.gallery} title={project.title} />
+          <HorizontalGallery images={project.gallery} title={project.title} liveUrl={project.liveUrl} />
         </div>
 
         {/* Results Section */}

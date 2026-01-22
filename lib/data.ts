@@ -24,6 +24,7 @@ export interface Project {
   heroImage: string;
   heroOffset?: string; // CSS top offset for hero image positioning (e.g., "-13%" to push up, "0%" for default)
   gallery: string[];
+  liveUrl?: string; // Live website URL for interactive device preview
   year: string;
   tagline: string;
   description: string;
@@ -71,6 +72,7 @@ export const projects: Project[] = [
       "https://images.unsplash.com/photo-1474302770737-173ee21bab63?w=1200&q=80",
       "https://images.unsplash.com/photo-1559628233-100c798642d4?w=1200&q=80",
     ],
+    liveUrl: "https://www.desertwingsflightschool.com",
     year: "2024",
     tagline: "Where pilots are born",
     description: "Full website design and development for an Arizona flight school, featuring an interactive pricing calculator and ongoing SEO optimization.",
@@ -103,6 +105,7 @@ export const projects: Project[] = [
       "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=1200&q=80",
       "https://images.unsplash.com/photo-1526232761682-d26e03ac148e?w=1200&q=80",
     ],
+    liveUrl: "https://www.rileduppickleball.com",
     year: "2024",
     tagline: "Stop losing to players you should beat",
     description: "My pickleball coaching business website, featuring a custom-built CRM system for managing students, scheduling, and tracking progress.",
@@ -135,6 +138,7 @@ export const projects: Project[] = [
       "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80",
       "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1200&q=80",
     ],
+    liveUrl: "https://www.wingsnwheelsdetailing.com",
     year: "2024",
     tagline: "Portfolio concept site",
     description: "A design showcase demonstrating premium service industry website capabilities. Built as a portfolio piece to demonstrate design and development skills.",
@@ -167,6 +171,7 @@ export const projects: Project[] = [
       "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=1200&q=80",
       "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
     ],
+    liveUrl: "https://www.adventureairaz.com",
     year: "2024",
     tagline: "See Arizona from above",
     description: "Website built for a gyrocopter tour company using Wix, meeting the client's specific platform requirements while maximizing visual impact.",
