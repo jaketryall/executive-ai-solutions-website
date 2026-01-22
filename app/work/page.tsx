@@ -242,7 +242,7 @@ export default function WorkPage() {
 
             {/* Title */}
             <motion.h1
-              className="text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[0.95] tracking-[-0.03em]"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[0.95] tracking-[-0.03em]"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}

@@ -413,7 +413,8 @@ function MobileGallery({ images, title, liveUrl }: { images: string[]; title: st
 function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title: string; liveUrl?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  // Start with null to prevent hydration mismatch flash
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
@@ -431,7 +432,7 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
   const galleryWidth = liveUrl ? 280 : (images.length * 65 + 50);
 
   useIsomorphicLayoutEffect(() => {
-    if (!containerRef.current || !galleryRef.current || isMobile) return;
+    if (!containerRef.current || !galleryRef.current || isMobile !== false) return;
 
     const ctx = gsap.context(() => {
       const gallery = galleryRef.current;
@@ -461,6 +462,15 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
       }
     };
   }, [isMobile]);
+
+  // Show loading state until we know the device type
+  if (isMobile === null) {
+    return (
+      <div className="h-screen bg-[#0a0908] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: `${accentColor} transparent transparent transparent` }} />
+      </div>
+    );
+  }
 
   // Show mobile gallery on small screens
   if (isMobile) {
@@ -802,7 +812,7 @@ function ResultsSection({ result, metrics }: { result: string; metrics: { label:
             The Result
           </p>
           <h2
-            className="text-7xl md:text-9xl lg:text-[12rem] font-black tracking-[-0.04em] leading-none"
+            className="text-5xl md:text-7xl lg:text-9xl xl:text-[12rem] font-black tracking-[-0.04em] leading-none"
             style={{ color: accentColor }}
           >
             {result}
@@ -914,7 +924,7 @@ function TestimonialSection({ quote, author, role }: { quote: string; author: st
       <div className="max-w-5xl mx-auto text-center relative">
         {/* Large quote mark */}
         <div
-          className="quote-mark absolute -top-8 left-1/2 -translate-x-1/2 text-[200px] md:text-[300px] font-serif leading-none pointer-events-none select-none"
+          className="quote-mark absolute -top-8 left-1/2 -translate-x-1/2 text-[80px] md:text-[200px] lg:text-[300px] font-serif leading-none pointer-events-none select-none"
           style={{ color: "rgba(255, 200, 150, 0.08)" }}
         >
           "
@@ -1197,7 +1207,7 @@ export default function CaseStudyPage({
         {/* Hero Section - Larger to show more of laptop */}
         <motion.section
           ref={heroRef}
-          className="relative h-[140vh] overflow-hidden"
+          className="relative h-screen md:h-[140vh] overflow-hidden"
         >
           {/* Background image with parallax */}
           <motion.div
@@ -1278,7 +1288,7 @@ export default function CaseStudyPage({
 
         {/* Unified content section with glassmorphic effect - includes Overview and Challenge/Solution */}
         <section
-          className="relative z-10 -mt-24 rounded-t-4xl md:rounded-t-[3rem] overflow-hidden backdrop-blur-xl"
+          className="relative z-10 -mt-24 rounded-t-3xl md:rounded-t-[3rem] overflow-hidden backdrop-blur-xl"
           style={{
             backgroundColor: "rgba(10, 9, 8, 0.85)",
             borderTop: "1px solid rgba(255, 200, 150, 0.15)",
@@ -1341,7 +1351,7 @@ export default function CaseStudyPage({
               >
                 <h1
                   ref={titleRef}
-                  className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-[-0.04em] mb-6"
+                  className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-[-0.04em] mb-6"
                 >
                   <SplitText delay={0.2}>{project.title}</SplitText>
                 </h1>
