@@ -1,14 +1,12 @@
 "use client";
 
 import { motion, useScroll, useTransform, useMotionTemplate, useSpring } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef1 = useRef<HTMLVideoElement>(null);
   const videoRef2 = useRef<HTMLVideoElement>(null);
-  const [isVisible, setIsVisible] = useState(true);
-
   // Handle video loop manually
   const handleVideoEnded = (e: React.SyntheticEvent<HTMLVideoElement>) => {
     const video = e.currentTarget;
@@ -21,43 +19,29 @@ export default function Hero() {
     offset: ["start start", "end start"],
   });
 
-  // Hide fixed container when section is out of view
-  useEffect(() => {
-    const unsubscribe = scrollYProgress.on("change", (value) => {
-      setIsVisible(value < 1);
-    });
-    return () => unsubscribe();
-  }, [scrollYProgress]);
-
   // Logo mask scale: starts small, grows to reveal full video
-  // Use spring for smooth, fluid animation
   const maskSizeRaw = useTransform(scrollYProgress, [0, 0.5], [20, 5000]);
   const maskSize = useSpring(maskSizeRaw, { stiffness: 100, damping: 30, mass: 0.5 });
   const maskSizePercent = useMotionTemplate`${maskSize}%`;
 
   // Initial content fades out quickly
-  const initialContentOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
+  const initialContentOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
 
-  // Background opacity - becomes semi-transparent when video is fully zoomed
-  const bgOpacity = useTransform(scrollYProgress, [0.3, 0.4], [1, 0.3]);
+  // Background opacity - becomes transparent when video is fully zoomed, then fades back to black
+  const bgOpacity = useTransform(scrollYProgress, [0.3, 0.45, 0.75, 0.95], [1, 0, 0, 1]);
+
+  // Video fades out towards the end - start later for cleaner transition
+  const videoOpacity = useTransform(scrollYProgress, [0.75, 0.95], [1, 0]);
 
   return (
     <section
       ref={sectionRef}
-      className="relative h-[200vh]"
+      className="relative h-[200vh] bg-black"
     >
-      {/* Fixed container - hidden when scrolled past */}
-      <div
-        className="fixed top-0 left-0 right-0 h-screen w-full overflow-hidden bg-black"
-        style={{
-          zIndex: 5,
-          visibility: isVisible ? "visible" : "hidden",
-          pointerEvents: isVisible ? "auto" : "none",
-        }}
-      >
-
+      {/* Sticky container that stays while scrolling through the section */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden bg-black">
         {/* Video layer - sits behind everything */}
-        <div className="absolute inset-0">
+        <motion.div className="absolute inset-0" style={{ opacity: videoOpacity }}>
           <video
             ref={videoRef1}
             autoPlay
@@ -67,9 +51,9 @@ export default function Hero() {
             onEnded={handleVideoEnded}
             className="w-full h-full object-cover"
           >
-            <source src="/final-comp.mp4?v=2" type="video/mp4" />
+            <source src="/final-comp.mp4?v=3" type="video/mp4" />
           </video>
-        </div>
+        </motion.div>
 
         {/* Black overlay that becomes semi-transparent when fully zoomed */}
         <motion.div
@@ -82,25 +66,20 @@ export default function Hero() {
           className="absolute inset-0 pointer-events-none overflow-hidden"
           style={{ opacity: initialContentOpacity }}
         >
-          {/* Project images array - alternating laptop/phone pattern */}
           {(() => {
             const projectImages = [
-              "/Celestial Laptop Mockup.png",    // Laptop
-              "/Celestial iPhone Mockup.png",   // Phone
-              "/Elegant Black Laptop Mockup.png", // Laptop
-              "/Rubber iPhone Mockup.png",      // Phone
+              "/Celestial Laptop Mockup.png",
+              "/Celestial iPhone Mockup.png",
+              "/Elegant Black Laptop Mockup.png",
+              "/Rubber iPhone Mockup.png",
             ];
 
-            // Card dimensions
             const cardWidth = 350;
-            const gapWidth = 32; // gap-8 = 2rem = 32px
+            const gapWidth = 32;
             const cardCount = 8;
-            // Total width of one set of cards (including gaps between cards, but not after last)
             const setWidth = cardCount * cardWidth + (cardCount - 1) * gapWidth;
-            // Add one more gap for the space between sets
             const translateDistance = setWidth + gapWidth;
 
-            // Helper to render a set of cards
             const renderCards = (offset: number, keyPrefix: string) =>
               [...Array(cardCount)].map((_, i) => (
                 <div
@@ -120,7 +99,6 @@ export default function Hero() {
 
             return (
               <>
-                {/* Inline keyframes for precise pixel-based animation */}
                 <style>{`
                   @keyframes marquee-scroll-left {
                     from { transform: translateX(0); }
@@ -132,39 +110,30 @@ export default function Hero() {
                   }
                 `}</style>
 
-                {/* Top row - moves left continuously */}
                 <div className="absolute top-[5%] flex overflow-hidden w-full">
                   <div
                     className="flex gap-8 whitespace-nowrap will-change-transform"
-                    style={{
-                      animation: "marquee-scroll-left 40s linear infinite",
-                    }}
+                    style={{ animation: "marquee-scroll-left 40s linear infinite" }}
                   >
                     {renderCards(0, "top-a")}
                     {renderCards(0, "top-b")}
                   </div>
                 </div>
 
-                {/* Middle row - moves right continuously */}
                 <div className="absolute top-[35%] flex overflow-hidden w-full">
                   <div
                     className="flex gap-8 whitespace-nowrap will-change-transform"
-                    style={{
-                      animation: "marquee-scroll-right 45s linear infinite",
-                    }}
+                    style={{ animation: "marquee-scroll-right 45s linear infinite" }}
                   >
                     {renderCards(2, "mid-a")}
                     {renderCards(2, "mid-b")}
                   </div>
                 </div>
 
-                {/* Bottom row - moves left slower */}
                 <div className="absolute top-[65%] flex overflow-hidden w-full">
                   <div
                     className="flex gap-8 whitespace-nowrap will-change-transform"
-                    style={{
-                      animation: "marquee-scroll-left 50s linear infinite",
-                    }}
+                    style={{ animation: "marquee-scroll-left 50s linear infinite" }}
                   >
                     {renderCards(1, "bot-a")}
                     {renderCards(1, "bot-b")}
@@ -179,6 +148,7 @@ export default function Hero() {
         <motion.div
           className="absolute inset-0"
           style={{
+            opacity: videoOpacity,
             maskImage: "url('/Executive Ai Solutions Logo.svg')",
             maskPosition: "center",
             maskRepeat: "no-repeat",
@@ -198,12 +168,11 @@ export default function Hero() {
             onEnded={handleVideoEnded}
             className="w-full h-full object-cover"
           >
-            <source src="/final-comp.mp4?v=2" type="video/mp4" />
+            <source src="/final-comp.mp4?v=3" type="video/mp4" />
           </video>
         </motion.div>
 
-
-        {/* Initial state - just scroll indicator */}
+        {/* Scroll indicator */}
         <motion.div
           className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10"
           style={{ opacity: initialContentOpacity }}
@@ -219,8 +188,6 @@ export default function Hero() {
             <div className="w-px h-12 bg-gradient-to-b from-white/30 to-transparent" />
           </motion.div>
         </motion.div>
-
-
       </div>
     </section>
   );

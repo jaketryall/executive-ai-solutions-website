@@ -35,7 +35,7 @@ const services = [
     title: "CUSTOM",
     subtitle: "Solutions",
     description: "Tailored CRM systems that scale with your business.",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+    image: "/custom-dashboard-mockup.png",
     size: "medium",
   },
 ];
@@ -91,7 +91,13 @@ function BentoCard({
         <TransitionLink href={`/services/${service.slug}`} className="block h-full">
           {/* Image with parallax */}
           <motion.div
-            className={service.image.includes("Mockup") ? "absolute -inset-[50%]" : "absolute -inset-[15%]"}
+            className={
+              service.image.includes("Mockup")
+                ? "absolute -inset-[50%]"
+                : service.image.includes("dashboard")
+                  ? "absolute inset-0"
+                  : "absolute -inset-[15%]"
+            }
             style={{ y: imageY }}
           >
             <div
@@ -104,7 +110,13 @@ function BentoCard({
                 src={service.image}
                 alt={service.title}
                 fill
-                className={service.image.includes("Mockup") ? "object-contain object-center" : "object-cover"}
+                className={
+                  service.image.includes("Mockup")
+                    ? "object-contain object-center"
+                    : service.image.includes("dashboard")
+                      ? "object-cover object-top"
+                      : "object-cover"
+                }
                 sizes="(max-width: 768px) 100vw, 50vw"
                 priority={index === 0}
               />
