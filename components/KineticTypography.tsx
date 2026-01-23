@@ -114,10 +114,10 @@ export default function KineticTypography() {
   return (
     <section
       ref={sectionRef}
-      className="relative pt-24 pb-24 overflow-hidden bg-neutral-950 rounded-t-4xl"
+      className="relative pt-24 pb-24 overflow-hidden bg-black"
       style={{ zIndex: 10 }}
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-neutral-950 via-neutral-900/50 to-neutral-950" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black via-neutral-900/50 to-neutral-950" />
 
 
       <div

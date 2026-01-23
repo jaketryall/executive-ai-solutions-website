@@ -5,7 +5,16 @@ import { useRef, useState, useEffect } from "react";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
+  const videoRef1 = useRef<HTMLVideoElement>(null);
+  const videoRef2 = useRef<HTMLVideoElement>(null);
   const [isVisible, setIsVisible] = useState(true);
+
+  // Handle video loop manually
+  const handleVideoEnded = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+    const video = e.currentTarget;
+    video.currentTime = 0;
+    video.play();
+  };
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -29,9 +38,6 @@ export default function Hero() {
   // Initial content fades out quickly
   const initialContentOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
 
-  // Showreel UI fades in as video expands
-  const showreelOpacity = useTransform(scrollYProgress, [0.25, 0.4], [0, 1]);
-
   // Background opacity - becomes semi-transparent when video is fully zoomed
   const bgOpacity = useTransform(scrollYProgress, [0.3, 0.4], [1, 0.3]);
 
@@ -53,13 +59,15 @@ export default function Hero() {
         {/* Video layer - sits behind everything */}
         <div className="absolute inset-0">
           <video
+            ref={videoRef1}
             autoPlay
             muted
             loop
             playsInline
+            onEnded={handleVideoEnded}
             className="w-full h-full object-cover"
           >
-            <source src="/temp_video_335177785007935488.MP4" type="video/mp4" />
+            <source src="/final-comp.mp4?v=2" type="video/mp4" />
           </video>
         </div>
 
@@ -182,13 +190,15 @@ export default function Hero() {
           }}
         >
           <video
+            ref={videoRef2}
             autoPlay
             muted
             loop
             playsInline
+            onEnded={handleVideoEnded}
             className="w-full h-full object-cover"
           >
-            <source src="/temp_video_335177785007935488.MP4" type="video/mp4" />
+            <source src="/final-comp.mp4?v=2" type="video/mp4" />
           </video>
         </motion.div>
 
@@ -210,55 +220,6 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* Showreel UI - appears when video fills screen */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none z-10"
-          style={{ opacity: showreelOpacity }}
-        >
-          {/* Top left */}
-          <div className="absolute top-8 left-8">
-            <p className="text-white/40 text-[10px] uppercase tracking-[0.3em]">
-              Showreel 2024
-            </p>
-          </div>
-
-          {/* Top right */}
-          <div className="absolute top-8 right-8">
-            <p className="text-white/40 text-[10px] uppercase tracking-[0.3em]">
-              01 / 04
-            </p>
-          </div>
-
-          {/* Bottom left - big text */}
-          <div className="absolute bottom-8 left-8">
-            <p className="text-white/30 text-[10px] uppercase tracking-[0.3em] mb-2">
-              Now Playing
-            </p>
-            <h2 className="text-white text-2xl md:text-4xl font-black tracking-[-0.02em]">
-              DESERT WINGS
-            </h2>
-            <p className="text-white/50 text-sm mt-1">
-              Aviation · Brand Identity
-            </p>
-          </div>
-
-          {/* Bottom right */}
-          <div className="absolute bottom-8 right-8 text-right">
-            <p className="text-white/40 text-[10px] uppercase tracking-[0.3em]">
-              Sound On
-            </p>
-          </div>
-
-          {/* Center play indicator */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <motion.div
-              className="w-20 h-20 rounded-full border border-white/20 flex items-center justify-center"
-              whileHover={{ scale: 1.1, borderColor: "rgba(255,255,255,0.5)" }}
-            >
-              <div className="w-0 h-0 border-l-[12px] border-l-white/60 border-y-[8px] border-y-transparent ml-1" />
-            </motion.div>
-          </div>
-        </motion.div>
 
       </div>
     </section>
