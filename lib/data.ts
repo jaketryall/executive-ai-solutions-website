@@ -63,6 +63,7 @@ export interface Service {
   process: ServiceProcess[];
   pricing: PricingTier[];
   relatedProjects: string[]; // slugs of related projects
+  image: string; // Hero image for service page
 }
 
 // =============================================================================
@@ -284,6 +285,7 @@ export const services: Service[] = [
       },
     ],
     relatedProjects: ["desert-wings", "apex"],
+    image: "/Celestial Laptop Mockup.png",
   },
   {
     slug: "seo",
@@ -360,6 +362,7 @@ export const services: Service[] = [
       },
     ],
     relatedProjects: ["meridian", "vertex"],
+    image: "/SEO.jpg",
   },
   {
     slug: "custom-solutions",
@@ -436,6 +439,7 @@ export const services: Service[] = [
       },
     ],
     relatedProjects: ["vertex", "meridian"],
+    image: "/custom-dashboard-mockup.png",
   },
 ];
 

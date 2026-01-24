@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, use, useEffect, useState, useLayoutEffect } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -75,73 +75,53 @@ function KineticMarquee({ text, direction = -1 }: { text: string; direction?: nu
 }
 
 // ============================================================================
-// CINEMATIC HERO SECTION
+// CINEMATIC HERO SECTION - MINIMAL ACCENT (TEXT-FOCUSED)
 // ============================================================================
 function CinematicHero({
   service,
-  relatedProject,
 }: {
   service: NonNullable<ReturnType<typeof getServiceBySlug>>;
-  relatedProject?: ReturnType<typeof getRelatedProjects>[0];
 }) {
   const sectionRef = useRef<HTMLElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const accentLineRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
 
-  const imageY = useTransform(scrollYProgress, [0, 1], [0, 150]);
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], [0.6, 0.9]);
+  const numberY = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -40]);
 
   useIsomorphicLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      // Title reveal animation
-      if (titleRef.current) {
+      // Content reveal animation
+      if (contentRef.current) {
         gsap.fromTo(
-          titleRef.current,
-          { y: 100, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 1.2,
-            ease: "power3.out",
-            delay: 0.3,
-          }
-        );
-      }
-
-      // Subtitle reveal
-      if (subtitleRef.current) {
-        gsap.fromTo(
-          subtitleRef.current,
+          contentRef.current,
           { y: 60, opacity: 0 },
           {
             y: 0,
             opacity: 1,
             duration: 1,
             ease: "power3.out",
-            delay: 0.5,
+            delay: 0.2,
           }
         );
       }
 
-      // Image scale on load
-      if (imageRef.current) {
+      // Animated accent line
+      if (accentLineRef.current) {
         gsap.fromTo(
-          imageRef.current,
-          { scale: 1.2, opacity: 0 },
+          accentLineRef.current,
+          { scaleX: 0, opacity: 0 },
           {
-            scale: 1,
+            scaleX: 1,
             opacity: 1,
-            duration: 1.5,
-            ease: "power2.out",
+            duration: 1.2,
+            ease: "power3.out",
+            delay: 0.5,
           }
         );
       }
@@ -150,77 +130,145 @@ function CinematicHero({
     return () => ctx.revert();
   }, []);
 
-  const heroImage = relatedProject?.heroImage || "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=2000&q=90";
-
   return (
-    <section ref={sectionRef} className="relative h-[100vh] overflow-hidden">
-      {/* Background Image with Parallax */}
-      <motion.div
-        ref={imageRef}
-        className="absolute inset-0"
-        style={{ y: imageY, scale: imageScale }}
-      >
-        <Image
-          src={heroImage}
-          alt={service.title}
-          fill
-          className="object-cover"
-          priority
-          sizes="100vw"
-        />
-      </motion.div>
-
-      {/* Gradient Overlays */}
-      <motion.div
-        ref={overlayRef}
-        className="absolute inset-0 bg-black"
-        style={{ opacity: overlayOpacity }}
-      />
+    <section ref={sectionRef} className="relative min-h-[100vh] flex items-center justify-center">
+      {/* Background gradient */}
       <div
         className="absolute inset-0"
         style={{
-          background: `linear-gradient(to top, #0a0908 0%, transparent 50%), linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 30%)`,
+          background: "linear-gradient(to bottom, #0a0908 0%, #0d0b09 100%)",
         }}
       />
 
-      {/* Content */}
-      <motion.div
-        className="relative h-full flex flex-col justify-end px-6 md:px-12 lg:px-20 pb-20 md:pb-32"
-        style={{ y: contentY }}
+      {/* Ambient glow - center positioned */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(ellipse 60% 60% at 50% 50%, ${accentColor}10, transparent)`,
+        }}
+      />
+
+      {/* Secondary ambient glow - top right */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(ellipse 40% 40% at 80% 20%, ${accentColor}08, transparent)`,
+        }}
+      />
+
+      {/* Giant background number - centered */}
+      <motion.span
+        className="absolute font-black text-white/[0.025] pointer-events-none select-none leading-none z-0"
+        style={{
+          fontSize: "clamp(20rem, 40vw, 50rem)",
+          y: numberY,
+        }}
       >
-        <div className="max-w-7xl mx-auto w-full">
-          {/* Service number */}
-          <motion.span
-            className="inline-block text-sm md:text-base uppercase tracking-[0.3em] mb-4 md:mb-6"
-            style={{ color: accentColor }}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-          >
-            Service {service.number}
-          </motion.span>
+        {service.number}
+      </motion.span>
+
+      {/* Decorative horizontal line */}
+      <div
+        ref={accentLineRef}
+        className="absolute top-1/2 left-0 right-0 h-px pointer-events-none origin-left"
+        style={{
+          background: `linear-gradient(90deg, transparent, ${accentColor}30, transparent)`,
+        }}
+      />
+
+      {/* Decorative corner accents */}
+      <div
+        className="absolute top-32 left-8 md:left-16 w-px h-24 pointer-events-none hidden md:block"
+        style={{
+          background: `linear-gradient(180deg, ${accentColor}40, transparent)`,
+        }}
+      />
+      <div
+        className="absolute top-32 left-8 md:left-16 w-24 h-px pointer-events-none hidden md:block"
+        style={{
+          background: `linear-gradient(90deg, ${accentColor}40, transparent)`,
+        }}
+      />
+      <div
+        className="absolute bottom-32 right-8 md:right-16 w-px h-24 pointer-events-none hidden md:block"
+        style={{
+          background: `linear-gradient(0deg, ${accentColor}40, transparent)`,
+        }}
+      />
+      <div
+        className="absolute bottom-32 right-8 md:right-16 w-24 h-px pointer-events-none hidden md:block"
+        style={{
+          background: `linear-gradient(270deg, ${accentColor}40, transparent)`,
+        }}
+      />
+
+      {/* Main content - centered */}
+      <div className="relative max-w-5xl mx-auto px-6 md:px-12 lg:px-20 py-32">
+        <motion.div
+          ref={contentRef}
+          className="relative z-10 text-center"
+          style={{ y: contentY }}
+        >
+          {/* Service number tag */}
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <span
+              className="w-12 h-px"
+              style={{ backgroundColor: accentColorMuted }}
+            />
+            <span
+              className="text-sm font-medium tracking-[0.3em]"
+              style={{ color: accentColor }}
+            >
+              {service.number}
+            </span>
+            <span
+              className="w-12 h-px"
+              style={{ backgroundColor: accentColorMuted }}
+            />
+          </div>
 
           {/* Title */}
-          <h1
-            ref={titleRef}
-            className="text-5xl md:text-7xl lg:text-9xl font-black text-white tracking-[-0.04em] leading-[0.9] mb-4 md:mb-6"
-          >
-            {service.title.split(" ").map((word, i) => (
-              <span key={i} className="block">
-                {word}
-              </span>
-            ))}
+          <h1 className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white tracking-[-0.04em] leading-[0.85] mb-4">
+            {service.title}
           </h1>
 
           {/* Subtitle */}
           <p
-            ref={subtitleRef}
-            className="text-xl md:text-2xl lg:text-3xl text-white/60 font-light max-w-2xl"
+            className="text-2xl md:text-3xl lg:text-4xl font-light mb-8"
+            style={{ color: accentColorMuted }}
           >
             {service.subtitle}
           </p>
-        </div>
-      </motion.div>
+
+          {/* Description */}
+          <p className="text-white/50 text-lg md:text-xl leading-relaxed mb-12 max-w-2xl mx-auto">
+            {service.description}
+          </p>
+
+          {/* CTA Button */}
+          <TransitionLink
+            href="#pricing"
+            className="inline-flex items-center gap-4 group"
+          >
+            <span
+              className="px-8 py-4 rounded-full border-2 transition-all duration-300 group-hover:bg-[rgba(255,200,150,0.15)] group-hover:border-[rgba(255,200,150,1)]"
+              style={{ borderColor: accentColor }}
+            >
+              <span className="text-sm uppercase tracking-[0.2em] font-semibold text-white">
+                View Pricing
+              </span>
+            </span>
+            <span
+              className="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300 group-hover:bg-[rgba(255,200,150,0.15)] group-hover:translate-y-1"
+              style={{ borderColor: accentColor }}
+            >
+              <span style={{ color: accentColor }} className="text-xl">
+                ↓
+              </span>
+            </span>
+          </TransitionLink>
+        </motion.div>
+      </div>
 
       {/* Scroll indicator */}
       <motion.div
@@ -858,17 +906,15 @@ function PricingSection({
       if (cards) {
         gsap.fromTo(
           cards,
-          { y: 80, opacity: 0, scale: 0.95 },
+          { opacity: 0 },
           {
-            y: 0,
             opacity: 1,
-            scale: 1,
             duration: 0.8,
             stagger: 0.15,
-            ease: "power3.out",
+            ease: "power1.inOut",
             scrollTrigger: {
               trigger: cardsRef.current,
-              start: "top 80%",
+              start: "top 75%",
               toggleActions: "play none none reverse",
             },
           }
@@ -927,11 +973,14 @@ function PricingSection({
           className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 pt-12"
         >
           {pricing.map((tier, i) => (
-            <div
+            <TransitionLink
               key={tier.name}
-              className={`pricing-card group relative transition-transform duration-300 hover:-translate-y-2 ${
+              href="/contact"
+              className={`pricing-card group relative transition-transform duration-300 hover:-translate-y-2 block ${
                 tier.highlighted ? "md:-mt-4 md:mb-4" : ""
               }`}
+              onMouseEnter={() => play("hover", { volume: 0.05 })}
+              onClick={() => play("click")}
             >
               {/* Highlighted badge - outside overflow container */}
               {tier.highlighted && (
@@ -1024,10 +1073,10 @@ function PricingSection({
                   ))}
                 </ul>
 
-                {/* CTA Button - always at bottom */}
-                <TransitionLink href="/contact" className="mt-auto">
-                  <motion.button
-                    className="w-full py-4 rounded-xl font-semibold text-sm transition-all duration-300"
+                {/* CTA Button - visual element at bottom */}
+                <div className="mt-auto">
+                  <motion.div
+                    className="w-full py-4 rounded-xl font-semibold text-sm transition-all duration-300 text-center"
                     style={{
                       background: tier.highlighted
                         ? `linear-gradient(135deg, ${accentColor}, rgba(255, 180, 120, 1))`
@@ -1039,12 +1088,10 @@ function PricingSection({
                     }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onMouseEnter={() => play("hover", { volume: 0.05 })}
-                    onClick={() => play("click")}
                   >
                     {tier.highlighted ? "Get Started" : tier.cta}
-                  </motion.button>
-                </TransitionLink>
+                  </motion.div>
+                </div>
               </div>
 
                 {/* Hover glow effect */}
@@ -1065,7 +1112,7 @@ function PricingSection({
                   }}
                 />
               </div>
-            </div>
+            </TransitionLink>
           ))}
         </div>
 
@@ -1302,7 +1349,6 @@ export default function ServicePage({
   }
 
   const relatedProjects = getRelatedProjects(service.relatedProjects);
-  const primaryProject = relatedProjects[0];
 
   return (
     <>
@@ -1389,7 +1435,7 @@ export default function ServicePage({
           />
         </div>
         {/* Cinematic Hero */}
-        <CinematicHero service={service} relatedProject={primaryProject} />
+        <CinematicHero service={service} />
 
         {/* Kinetic Marquee - transparent to show glassmorphic background */}
         <section className="py-16 md:py-24 overflow-hidden bg-transparent relative">
