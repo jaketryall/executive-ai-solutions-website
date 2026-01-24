@@ -317,6 +317,82 @@ function RevealLetter({
   );
 }
 
+// Transitional statement with staggered letters
+function TransitionStatement({
+  containerRef,
+}: {
+  containerRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const statement = "Now let's build yours";
+  const letters = statement.split("");
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Statement appears after cards fade out, stays visible until Services covers it
+  const containerOpacity = useTransform(
+    scrollYProgress,
+    [0.7, 0.85],
+    [0, 1]
+  );
+
+  return (
+    <motion.div
+      className="fixed inset-0 flex items-center justify-center pointer-events-none"
+      style={{ opacity: containerOpacity, zIndex: 15 }}
+    >
+      <h3 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+        {letters.map((letter, index) => {
+          // Stagger each letter's appearance
+          const letterStart = 0.72 + index * 0.008;
+          const letterEnd = letterStart + 0.05;
+
+          return (
+            <TransitionLetter
+              key={index}
+              letter={letter}
+              scrollYProgress={scrollYProgress}
+              start={letterStart}
+              end={letterEnd}
+            />
+          );
+        })}
+      </h3>
+    </motion.div>
+  );
+}
+
+// Individual letter for the transition statement
+function TransitionLetter({
+  letter,
+  scrollYProgress,
+  start,
+  end,
+}: {
+  letter: string;
+  scrollYProgress: MotionValue<number>;
+  start: number;
+  end: number;
+}) {
+  const opacity = useTransform(scrollYProgress, [start, end], [0, 1]);
+  const y = useTransform(scrollYProgress, [start, end], [30, 0]);
+
+  return (
+    <motion.span
+      className="inline-block"
+      style={{
+        opacity,
+        y,
+        color: letter === " " ? "transparent" : "white",
+      }}
+    >
+      {letter === " " ? "\u00A0" : letter}
+    </motion.span>
+  );
+}
+
 // Flying title text that whooshes by
 function FlyingTitle({
   text,
@@ -515,7 +591,7 @@ export default function Work() {
   }, [isMobile, titleFadeOpacity]);
 
   // Center title only fades out at the end of the section, stays solid otherwise
-  const centerTitleScrollOpacity = useTransform(scrollYProgress, [0, 0.9, 1], [1, 1, 0]);
+  const centerTitleScrollOpacity = useTransform(scrollYProgress, [0, 0.6, 0.75], [1, 1, 0]);
   const centerTitleScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.05, 1.1]);
 
   // Title entrance uses stagger effect controlled by isInView state
@@ -687,7 +763,13 @@ export default function Work() {
               transition={{ duration: 1.5, repeat: Infinity }}
             />
           </motion.div>
+
         </motion.div>
+      )}
+
+      {/* Transitional statement - outside fade wrapper so Services can scroll over it */}
+      {!isMobile && isInView && (
+        <TransitionStatement containerRef={sectionRef} />
       )}
 
       {/* Mobile Layout */}

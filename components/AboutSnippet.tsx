@@ -1,7 +1,16 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useLayoutEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 // Cinematic warm color palette
 const accentColorMuted = "rgba(255, 200, 150, 0.6)";
@@ -19,11 +28,13 @@ function ScrollFillWord({
   scrollYProgress: ReturnType<typeof useScroll>["scrollYProgress"];
 }) {
   // Calculate when this word should start and end filling
-  // Slower fill - spread across more scroll distance
-  const scrollRange = 0.45;
-  const wordDuration = scrollRange / totalWords;
-  const wordStart = 0.15 + index * wordDuration;
-  const wordEnd = wordStart + wordDuration * 1.2;
+  // Words fill during the pinned portion (roughly 0.3 to 0.7 of scroll progress)
+  const fillStart = 0.25;
+  const fillEnd = 0.7;
+  const fillRange = fillEnd - fillStart;
+  const wordDuration = fillRange / totalWords;
+  const wordStart = fillStart + index * wordDuration;
+  const wordEnd = wordStart + wordDuration * 1.4;
 
   const fillProgress = useTransform(
     scrollYProgress,
@@ -50,63 +61,84 @@ function ScrollFillWord({
 }
 
 export default function AboutSnippet() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
+  // Track scroll progress through the entire container
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start 80%", "end 20%"],
+    target: containerRef,
+    offset: ["start end", "end start"],
   });
 
-  // Parallax effect - gentler
-  const y = useTransform(scrollYProgress, [0, 0.5, 1], [30, 0, -15]);
-
-  // Title animation - scroll-driven reveal from underneath (starts first), fades out as it leaves
-  const titleY = useTransform(scrollYProgress, [0, 0.08], [30, 0]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.08, 0.7, 0.9], [0, 1, 1, 0]);
-
-  // Paragraph container animation - slides up after title completes, fades out as it leaves
-  const paragraphY = useTransform(scrollYProgress, [0.05, 0.15], [40, 0]);
-  const paragraphOpacity = useTransform(scrollYProgress, [0.05, 0.15, 0.7, 0.9], [0, 1, 1, 0]);
+  // Content fades out as it leaves
+  const contentOpacity = useTransform(scrollYProgress, [0.8, 0.95], [1, 0]);
 
   // Main text - split into words
   const mainText = "We design websites that convert, build tools that scale, and craft strategies that get you found.";
   const words = mainText.split(" ");
 
-  return (
-    <section
-      ref={sectionRef}
-      className="relative bg-black py-24 md:py-32 overflow-hidden"
-      style={{ zIndex: 5 }}
-    >
+  // GSAP ScrollTrigger for pinning at center
+  useIsomorphicLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      if (!containerRef.current || !pinRef.current || !contentRef.current) return;
 
-      {/* Content */}
-      <motion.div
-        className="relative max-w-5xl mx-auto px-6 md:px-12 text-center"
-        style={{ y }}
+      // Fade in content as it enters viewport
+      gsap.fromTo(
+        contentRef.current,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Pin when content reaches center of viewport
+      ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: "top top",
+        end: "bottom bottom",
+        pin: pinRef.current,
+        pinSpacing: false,
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative bg-black"
+      style={{ height: "250vh", zIndex: 5 }}
+    >
+      {/* Pinned content container */}
+      <div
+        ref={pinRef}
+        className="h-screen flex items-center justify-center"
       >
-        {/* Small label with reveal from underneath */}
-        <div className="overflow-hidden mb-8">
-          <motion.p
-            className="text-xs uppercase tracking-[0.3em]"
-            style={{
-              color: accentColorMuted,
-              y: titleY,
-              opacity: titleOpacity,
-            }}
+        <motion.div
+          ref={contentRef}
+          className="relative max-w-5xl mx-auto px-6 md:px-12 text-center"
+          style={{ opacity: contentOpacity }}
+        >
+          {/* Small label */}
+          <p
+            className="text-xs uppercase tracking-[0.3em] mb-8"
+            style={{ color: accentColorMuted }}
           >
             What We Do
-          </motion.p>
-        </div>
+          </p>
 
-        {/* Main statement with scroll-fill effect */}
-        <div className="overflow-hidden">
-          <motion.h2
-            className="text-2xl md:text-4xl lg:text-5xl font-medium leading-[1.4] tracking-[-0.02em]"
-            style={{
-              y: paragraphY,
-              opacity: paragraphOpacity,
-            }}
-          >
+          {/* Main statement with scroll-fill effect */}
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-medium leading-[1.4] tracking-[-0.02em]">
             {words.map((word, index) => (
               <span key={index}>
                 <ScrollFillWord
@@ -118,10 +150,9 @@ export default function AboutSnippet() {
                 {index < words.length - 1 && " "}
               </span>
             ))}
-          </motion.h2>
-        </div>
-
-      </motion.div>
-    </section>
+          </h2>
+        </motion.div>
+      </div>
+    </div>
   );
 }
