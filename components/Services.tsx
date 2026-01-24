@@ -90,8 +90,9 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
   const numberY = useTransform(scrollYProgress, [0, 1], [100, -100]);
   const imageY = useTransform(scrollYProgress, [0, 1], [-40, 40]);
 
-  // GSAP reveal animations
+  // GSAP reveal animations with responsive handling
   useIsomorphicLayoutEffect(() => {
+    const mm = gsap.matchMedia();
     const ctx = gsap.context(() => {
       const card = cardRef.current;
       const image = imageRef.current;
@@ -100,37 +101,67 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
 
       if (!card || !image || !content || !features) return;
 
-      // Set initial states
-      gsap.set(image, { opacity: 0, x: isReversed ? 60 : -60 });
-      gsap.set(content, { opacity: 0, x: isReversed ? -40 : 40 });
+      // Desktop: horizontal slide animations
+      mm.add("(min-width: 768px)", () => {
+        gsap.set(image, { opacity: 0, x: isReversed ? 60 : -60 });
+        gsap.set(content, { opacity: 0, x: isReversed ? -40 : 40 });
 
-      // Image slides in
-      gsap.to(image, {
-        opacity: 1,
-        x: 0,
-        duration: 1.2,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: card,
-          start: "top 80%",
-          toggleActions: "play none none none",
-        },
+        gsap.to(image, {
+          opacity: 1,
+          x: 0,
+          duration: 1.2,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        });
+
+        gsap.to(content, {
+          opacity: 1,
+          x: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 75%",
+            toggleActions: "play none none none",
+          },
+        });
       });
 
-      // Content slides in (slightly delayed)
-      gsap.to(content, {
-        opacity: 1,
-        x: 0,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: card,
-          start: "top 75%",
-          toggleActions: "play none none none",
-        },
+      // Mobile: simple fade-up animations (no horizontal movement)
+      mm.add("(max-width: 767px)", () => {
+        gsap.set(image, { opacity: 0, y: 30 });
+        gsap.set(content, { opacity: 0, y: 20 });
+
+        gsap.to(image, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        });
+
+        gsap.to(content, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        });
       });
 
-      // Features stagger in
+      // Features stagger in (same for both)
       const featureItems = features.querySelectorAll(".feature-item");
       gsap.fromTo(
         featureItems,
@@ -150,7 +181,10 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
       );
     }, cardRef);
 
-    return () => ctx.revert();
+    return () => {
+      mm.revert();
+      ctx.revert();
+    };
   }, [isReversed]);
 
   return (
@@ -173,7 +207,7 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
 
       <div className="container mx-auto px-6 md:px-12 lg:px-16">
         <div className="relative">
-          {/* Image - with parallax wrapper */}
+          {/* Image - with parallax wrapper (desktop only) */}
           <motion.div
             className={`relative md:absolute md:top-1/2 md:-translate-y-1/2 w-full md:w-[55%] lg:w-[52%] z-10 ${
               isReversed ? "md:right-0" : "md:left-0"
@@ -243,7 +277,7 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
             </div>
 
             {/* Title */}
-            <h3 className="text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-[0.85] mb-3">
+            <h3 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-[0.85] mb-3">
               {service.title}
             </h3>
             <p
@@ -331,7 +365,7 @@ export default function Services() {
             >
               What We Offer
             </p>
-            <h2 className="text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-[0.9]">
+            <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-[0.9]">
               SERVICES
             </h2>
           </motion.div>
