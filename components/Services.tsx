@@ -67,9 +67,10 @@ interface ServiceCardProps {
   service: (typeof services)[0];
   index: number;
   isReversed: boolean;
+  isLast: boolean;
 }
 
-function ServiceCard({ service, index, isReversed }: ServiceCardProps) {
+function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -153,7 +154,7 @@ function ServiceCard({ service, index, isReversed }: ServiceCardProps) {
   return (
     <div
       ref={cardRef}
-      className="relative py-20 md:py-32 lg:py-40"
+      className={`relative pt-20 md:pt-32 lg:pt-40 ${isLast ? "pb-8 md:pb-12" : "pb-20 md:pb-32 lg:pb-40"}`}
     >
       {/* Giant background number */}
       <motion.span
@@ -341,12 +342,13 @@ export default function Services() {
             service={service}
             index={index}
             isReversed={index % 2 === 1}
+            isLast={index === services.length - 1}
           />
         ))}
       </div>
 
       {/* Bottom CTA section */}
-      <div className="relative py-24 md:py-32">
+      <div className="relative pt-12 md:pt-16 pb-24 md:pb-32">
         <div className="container mx-auto px-6 md:px-12 lg:px-16">
           <motion.div
             className="text-center"

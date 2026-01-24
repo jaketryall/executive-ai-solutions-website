@@ -1,158 +1,110 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useEffect, useLayoutEffect } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+import { useRef } from "react";
 
 // Cinematic warm color palette
 const accentColorMuted = "rgba(255, 200, 150, 0.6)";
 
-// Word component that fills as you scroll
-function ScrollFillWord({
-  word,
+// Letter component that fills one at a time
+function ScrollFillLetter({
+  letter,
   index,
-  totalWords,
+  totalLetters,
   scrollYProgress,
 }: {
-  word: string;
+  letter: string;
   index: number;
-  totalWords: number;
+  totalLetters: number;
   scrollYProgress: ReturnType<typeof useScroll>["scrollYProgress"];
 }) {
-  // Calculate when this word should start and end filling
-  // Words fill during the pinned portion (roughly 0.3 to 0.7 of scroll progress)
-  const fillStart = 0.25;
-  const fillEnd = 0.7;
-  const fillRange = fillEnd - fillStart;
-  const wordDuration = fillRange / totalWords;
-  const wordStart = fillStart + index * wordDuration;
-  const wordEnd = wordStart + wordDuration * 1.4;
+  // Each letter gets its own slice of the scroll progress - compressed for faster fill
+  const letterSlice = 0.3 / totalLetters;
+  const fillStart = 0.15 + index * letterSlice;
+  const fillEnd = fillStart + letterSlice * 2.5; // Overlap for smooth flow
 
-  const fillProgress = useTransform(
+  const opacity = useTransform(
     scrollYProgress,
-    [wordStart, wordEnd],
-    [0, 100]
+    [fillStart, fillEnd],
+    [0.15, 1]
   );
 
-  return (
-    <span className="relative inline-block">
-      {/* Background text (muted) */}
-      <span className="text-white/20">{word}</span>
+  // Handle spaces
+  if (letter === " ") {
+    return <span>{"\u00A0"}</span>;
+  }
 
-      {/* Foreground text (fills with scroll) */}
-      <motion.span
-        className="absolute inset-0 text-white overflow-hidden"
-        style={{
-          clipPath: useTransform(fillProgress, (v) => `inset(0 ${100 - v}% 0 0)`),
-        }}
-      >
-        {word}
-      </motion.span>
-    </span>
+  return (
+    <motion.span
+      className="inline-block"
+      style={{ opacity }}
+    >
+      {letter}
+    </motion.span>
   );
 }
 
 export default function AboutSnippet() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
 
-  // Track scroll progress through the entire container
+  // Track scroll progress through the section
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
   });
 
-  // Content fades out as it leaves
-  const contentOpacity = useTransform(scrollYProgress, [0.8, 0.95], [1, 0]);
+  // Main text - split into letters
+  const mainText =
+    "We design websites that convert, build tools that scale, and craft strategies that get you found.";
+  const letters = mainText.split("");
 
-  // Main text - split into words
-  const mainText = "We design websites that convert, build tools that scale, and craft strategies that get you found.";
-  const words = mainText.split(" ");
+  // Scroll-driven entrance animations - delayed to start when section is more visible
+  const labelOpacity = useTransform(scrollYProgress, [0.2, 0.35], [0, 1]);
+  const labelY = useTransform(scrollYProgress, [0.2, 0.35], [20, 0]);
 
-  // GSAP ScrollTrigger for pinning at center
-  useIsomorphicLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      if (!containerRef.current || !pinRef.current || !contentRef.current) return;
-
-      // Fade in content as it enters viewport
-      gsap.fromTo(
-        contentRef.current,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-
-      // Pin when content reaches center of viewport
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: "top top",
-        end: "bottom bottom",
-        pin: pinRef.current,
-        pinSpacing: false,
-      });
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
+  const textOpacity = useTransform(scrollYProgress, [0.25, 0.4], [0, 1]);
+  const textY = useTransform(scrollYProgress, [0.25, 0.4], [40, 0]);
 
   return (
-    <div
+    <section
       ref={containerRef}
-      className="relative bg-black"
-      style={{ height: "250vh", zIndex: 5 }}
+      className="relative py-32 md:py-40 bg-black"
     >
-      {/* Pinned content container */}
+      {/* Subtle gradient background */}
       <div
-        ref={pinRef}
-        className="h-screen flex items-center justify-center"
-      >
-        <motion.div
-          ref={contentRef}
-          className="relative max-w-5xl mx-auto px-6 md:px-12 text-center"
-          style={{ opacity: contentOpacity }}
-        >
-          {/* Small label */}
-          <p
-            className="text-xs uppercase tracking-[0.3em] mb-8"
-            style={{ color: accentColorMuted }}
-          >
-            What We Do
-          </p>
+        className="absolute inset-0"
+        style={{
+          background: "linear-gradient(180deg, #000000 0%, #0a0908 100%)",
+        }}
+      />
 
-          {/* Main statement with scroll-fill effect */}
-          <h2 className="text-2xl md:text-4xl lg:text-5xl font-medium leading-[1.4] tracking-[-0.02em]">
-            {words.map((word, index) => (
-              <span key={index}>
-                <ScrollFillWord
-                  word={word}
-                  index={index}
-                  totalWords={words.length}
-                  scrollYProgress={scrollYProgress}
-                />
-                {index < words.length - 1 && " "}
-              </span>
-            ))}
-          </h2>
-        </motion.div>
-      </div>
-    </div>
+      <motion.div
+        className="relative max-w-5xl mx-auto px-6 md:px-12 text-center"
+      >
+        {/* Small label */}
+        <motion.p
+          className="text-xs uppercase tracking-[0.3em] mb-8"
+          style={{ color: accentColorMuted, opacity: labelOpacity, y: labelY }}
+        >
+          What We Do
+        </motion.p>
+
+        {/* Main statement with scroll-fill effect - one letter at a time */}
+        <motion.h2
+          className="text-2xl md:text-4xl lg:text-5xl font-medium leading-[1.4] tracking-[-0.02em] text-white"
+          style={{ opacity: textOpacity, y: textY }}
+        >
+          {letters.map((letter, index) => (
+            <ScrollFillLetter
+              key={index}
+              letter={letter}
+              index={index}
+              totalLetters={letters.length}
+              scrollYProgress={scrollYProgress}
+            />
+          ))}
+        </motion.h2>
+      </motion.div>
+    </section>
   );
 }

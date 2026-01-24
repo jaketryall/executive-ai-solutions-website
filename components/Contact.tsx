@@ -357,7 +357,7 @@ export default function Contact() {
     <section
       ref={sectionRef}
       id="contact"
-      className="relative py-32 overflow-hidden bg-[#0a0908]"
+      className="relative py-32 overflow-hidden bg-[#0a0908] min-h-screen"
       style={{
         zIndex: 10,
       }}
