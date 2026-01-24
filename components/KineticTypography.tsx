@@ -100,7 +100,7 @@ export default function KineticTypography() {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top 60%",
-              end: "70% center",
+              end: "90% center",
               scrub: 0.5,
             },
           }
@@ -151,7 +151,7 @@ export default function KineticTypography() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 20%, rgba(0,0,0,0.7) 50%, #000000 80%, #000000 100%)",
+              "linear-gradient(to bottom, transparent 0%, rgba(5,4,4,0.3) 20%, rgba(5,4,4,0.7) 50%, #050404 80%, #050404 100%)",
           }}
         />
       </div>

@@ -69,12 +69,29 @@ export default function AboutSnippet() {
     <section
       ref={containerRef}
       className="relative pt-32 md:pt-40 pb-56 md:pb-72 bg-black"
+      style={{ marginBottom: "-8px", position: "relative", zIndex: 2 }}
     >
-      {/* Dark background */}
+      {/* Dark background - warm charcoal */}
       <div
         className="absolute inset-0"
         style={{
-          background: "#000000",
+          background: "#050404",
+        }}
+      />
+
+      {/* Ambient warm glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse 80% 50% at 50% 50%, rgba(255, 200, 150, 0.06) 0%, transparent 70%)",
+        }}
+      />
+
+      {/* Bottom fade to ensure seamless transition to Work section */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+        style={{
+          background: "linear-gradient(to bottom, transparent, #050404)",
         }}
       />
 

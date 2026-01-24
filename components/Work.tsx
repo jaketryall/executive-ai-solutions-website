@@ -588,8 +588,8 @@ export default function Work() {
       const viewportHeight = window.innerHeight;
 
       // Title appears as Work section approaches viewport
-      const fadeStart = viewportHeight * 0.7; // Start fading when section top is 70% down viewport
-      const fadeEnd = viewportHeight * 0.3; // Fully visible when section top is 30% down viewport
+      const fadeStart = viewportHeight * 0.5; // Start fading when section top is 50% down viewport
+      const fadeEnd = viewportHeight * 0.2; // Fully visible when section top is 20% down viewport
 
       if (sectionTop > fadeStart) {
         // Section hasn't scrolled enough yet
@@ -685,12 +685,33 @@ export default function Work() {
       className="relative overflow-hidden"
       style={{
         zIndex: 10,
-        background: "#000000",
+        background: "#050404",
         marginTop: "-1px",
         // Height determines scroll length - more height = more scroll time for animations
         height: isMobile ? "auto" : "500vh",
       }}
     >
+      {/* Top fade to ensure seamless transition from AboutSnippet section */}
+      <div
+        className="absolute top-0 left-0 right-0 h-32 pointer-events-none z-1"
+        style={{
+          background: "linear-gradient(to top, transparent, #050404)",
+        }}
+      />
+
+      {/* Ambient warm glows */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse 100% 60% at 50% 20%, rgba(255, 200, 150, 0.04) 0%, transparent 60%)",
+        }}
+      />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse 60% 40% at 80% 70%, rgba(255, 180, 120, 0.03) 0%, transparent 50%)",
+        }}
+      />
 
       {/* Desktop Layout - Fixed elements with smooth entrance/exit */}
       {!isMobile && (
