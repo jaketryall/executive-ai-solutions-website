@@ -89,7 +89,7 @@ export default function KineticTypography() {
         });
       }
 
-      // Gradient overlay transition - starts at 40% and completes before section ends
+      // Gradient overlay transition
       if (gradientOverlayRef.current) {
         gsap.fromTo(
           gradientOverlayRef.current,
@@ -99,8 +99,8 @@ export default function KineticTypography() {
             ease: "power2.inOut",
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: "10% center",
-              end: "100% center",
+              start: "top 60%",
+              end: "70% center",
               scrub: 0.5,
             },
           }

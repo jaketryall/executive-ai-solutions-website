@@ -587,10 +587,9 @@ export default function Work() {
       const sectionBottom = rect.bottom;
       const viewportHeight = window.innerHeight;
 
-      // Start fading in only when the section top is near the viewport top
-      // This ensures the title appears "inside" the Work section visually
-      const fadeStart = viewportHeight * 0.1; // Start fading when section top is 10% down from viewport top
-      const fadeEnd = -viewportHeight * 0.05; // Fully visible when section top is slightly above viewport
+      // Title appears as Work section approaches viewport
+      const fadeStart = viewportHeight * 0.7; // Start fading when section top is 70% down viewport
+      const fadeEnd = viewportHeight * 0.3; // Fully visible when section top is 30% down viewport
 
       if (sectionTop > fadeStart) {
         // Section hasn't scrolled enough yet
@@ -683,10 +682,11 @@ export default function Work() {
     <section
       id="work"
       ref={sectionRef}
-      className="relative bg-black rounded-t-[3rem] overflow-hidden"
+      className="relative overflow-hidden"
       style={{
         zIndex: 10,
-        boxShadow: "0 -50px 0 0 black",
+        background: "#000000",
+        marginTop: "-1px",
         // Height determines scroll length - more height = more scroll time for animations
         height: isMobile ? "auto" : "500vh",
       }}

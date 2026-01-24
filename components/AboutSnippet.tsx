@@ -70,11 +70,11 @@ export default function AboutSnippet() {
       ref={containerRef}
       className="relative pt-32 md:pt-40 pb-56 md:pb-72 bg-black"
     >
-      {/* Subtle gradient background */}
+      {/* Dark background */}
       <div
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(180deg, #000000 0%, #0a0908 100%)",
+          background: "#000000",
         }}
       />
 
