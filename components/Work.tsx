@@ -16,32 +16,30 @@ if (typeof window !== "undefined") {
 const accentColor = "rgba(255, 200, 150, 1)";
 const accentColorMuted = "rgba(255, 200, 150, 0.6)";
 
-// Animated letter for the main title
+// Animated letter for the main title - GSAP controlled
 function TitleLetter({
   letter,
   index,
-  isVisible,
   isMuted = false,
+  className = "",
 }: {
   letter: string;
   index: number;
-  isVisible: boolean;
   isMuted?: boolean;
+  className?: string;
 }) {
   return (
-    <motion.span
-      className="inline-block"
-      initial={{ opacity: 0, y: 50 }}
-      animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-      transition={{
-        duration: 0.5,
-        delay: index * 0.04,
-        ease: [0.16, 1, 0.3, 1],
+    <span
+      className={`work-title-letter inline-block ${className}`}
+      data-index={index}
+      style={{
+        color: isMuted ? "rgba(255, 255, 255, 0.2)" : "white",
+        opacity: 0,
+        transform: "translateY(40px)",
       }}
-      style={{ color: isMuted ? "rgba(255, 255, 255, 0.2)" : "white" }}
     >
       {letter}
-    </motion.span>
+    </span>
   );
 }
 
@@ -618,9 +616,14 @@ export default function Work() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isMobile, titleFadeOpacity]);
 
-  // Center title only fades out at the end of the section, stays solid otherwise
-  const centerTitleScrollOpacity = useTransform(scrollYProgress, [0, 0.6, 0.75], [1, 1, 0]);
-  const centerTitleScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.05, 1.1]);
+  // Title scrolls in from below, then locks in center, then fades out at end
+  const titleY = useTransform(scrollYProgress, [0, 0.06], [60, 0]);
+  const titleEntryOpacity = useTransform(scrollYProgress, [0, 0.05], [0, 1]);
+  const titleExitOpacity = useTransform(scrollYProgress, [0.6, 0.75], [1, 0]);
+  const centerTitleScale = useTransform(scrollYProgress, [0.08, 0.5, 1], [1, 1.05, 1.1]);
+
+  // Ambient glow fade-in as you scroll into the section
+  const warmGlowOpacity = useTransform(scrollYProgress, [0, 0.15], [0, 1]);
 
   // Title entrance uses stagger effect controlled by isInView state
 
@@ -634,96 +637,129 @@ export default function Work() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Animate decorative elements when they come into view
+  // Scroll-driven title letter animation
   useEffect(() => {
-    if (isMobile || !isInView) return;
+    if (isMobile) return;
 
-    // Small delay to ensure DOM elements are rendered
-    const timer = setTimeout(() => {
+    const ctx = gsap.context(() => {
       const workLabel = document.querySelector(".work-label");
       const workCount = document.querySelector(".work-count");
       const decorLines = document.querySelectorAll(".work-decor-line");
+      const titleLetters = document.querySelectorAll(".work-title-letter");
 
-      // Animate label
+      if (!sectionRef.current) return;
+
+      // Create scroll-driven timeline for title letters
+      if (titleLetters.length > 0) {
+        // Sequential stagger - each letter slightly after the previous
+        titleLetters.forEach((letter, index) => {
+          const staggerDelay = index * 0.008; // Small offset per letter
+
+          gsap.to(letter, {
+            opacity: 1,
+            y: 0,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: `top ${45 - staggerDelay * 100}%`,
+              end: `top ${20 - staggerDelay * 100}%`,
+              scrub: 0.3,
+            },
+          });
+        });
+      }
+
+      // Scroll-driven label animation
       if (workLabel) {
         gsap.to(workLabel, {
           y: 0,
           opacity: 1,
-          duration: 0.6,
           ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 55%",
+            end: "top 35%",
+            scrub: 0.3,
+          },
         });
       }
 
-      // Animate count
-      if (workCount) {
-        gsap.to(workCount, {
-          opacity: 1,
-          duration: 0.8,
-          delay: 0.3,
-          ease: "power2.out",
-        });
-      }
-
-      // Animate decorative lines
+      // Scroll-driven decorative lines
       if (decorLines.length > 0) {
         gsap.to(decorLines, {
           scaleX: 1,
-          duration: 1,
-          delay: 0.2,
           ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 40%",
+            end: "top 25%",
+            scrub: 0.3,
+          },
         });
       }
-    }, 50);
 
-    return () => clearTimeout(timer);
+      // Scroll-driven count
+      if (workCount) {
+        gsap.to(workCount, {
+          opacity: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 35%",
+            end: "top 20%",
+            scrub: 0.3,
+          },
+        });
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
   }, [isMobile, isInView]);
 
   return (
     <section
       id="work"
       ref={sectionRef}
-      className="relative overflow-hidden"
+      className="relative rounded-t-[3rem]"
       style={{
         zIndex: 10,
-        background: "#050404",
-        marginTop: "-1px",
-        // Height determines scroll length - more height = more scroll time for animations
+        marginTop: "-3rem",
         height: isMobile ? "auto" : "500vh",
+        background: "linear-gradient(180deg, #0a0806 0%, #0c0908 15%, #0e0b09 40%, #0c0908 70%, #12100e 90%, #151311 100%)",
       }}
     >
-      {/* Top fade to ensure seamless transition from AboutSnippet section */}
-      <div
-        className="absolute top-0 left-0 right-0 h-32 pointer-events-none z-1"
-        style={{
-          background: "linear-gradient(to top, transparent, #050404)",
-        }}
-      />
-
       {/* Ambient warm glows */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse 100% 60% at 50% 20%, rgba(255, 200, 150, 0.04) 0%, transparent 60%)",
+          background: "radial-gradient(ellipse 120% 80% at 50% 40%, rgba(255, 180, 120, 0.08) 0%, transparent 60%)",
         }}
       />
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse 60% 40% at 80% 70%, rgba(255, 180, 120, 0.03) 0%, transparent 50%)",
+          background: "radial-gradient(ellipse 80% 50% at 20% 60%, rgba(255, 200, 150, 0.05) 0%, transparent 50%)",
+        }}
+      />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse 60% 40% at 80% 70%, rgba(255, 160, 100, 0.04) 0%, transparent 50%)",
         }}
       />
 
-      {/* Desktop Layout - Fixed elements with smooth entrance/exit */}
+      {/* Desktop Layout - Title scrolls in then becomes sticky */}
       {!isMobile && (
         <motion.div
-          className="fixed inset-0 pointer-events-none"
-          style={{ opacity: titleFadeOpacity, zIndex: 10 }}
+          className="sticky top-0 h-screen pointer-events-none overflow-hidden"
+          style={{ zIndex: 10 }}
         >
-          {/* Fixed center title */}
+          {/* Title container - scrolls in from below, locks in center, fades out at end */}
           <motion.div
-            className="fixed inset-0 flex items-center justify-center pointer-events-none"
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
             style={{
-              opacity: centerTitleScrollOpacity,
+              y: titleY,
+              opacity: titleExitOpacity,
               scale: centerTitleScale,
               zIndex: 1,
             }}
@@ -746,14 +782,13 @@ export default function Work() {
               </p>
 
               {/* Big centered title with letter animation */}
-              <h2 className="text-[18vw] font-black leading-[0.8] tracking-[-0.04em]">
+              <h2 className="text-[18vw] font-black leading-[0.8] tracking-[-0.02em]">
                 <span className="block">
                   {"THE".split("").map((letter, i) => (
                     <TitleLetter
                       key={`the-${i}`}
                       letter={letter}
                       index={i}
-                      isVisible={isInView}
                     />
                   ))}
                 </span>
@@ -763,7 +798,6 @@ export default function Work() {
                       key={`proof-${i}`}
                       letter={letter}
                       index={i + 3}
-                      isVisible={isInView}
                       isMuted
                     />
                   ))}
@@ -819,7 +853,7 @@ export default function Work() {
 
           {/* Scroll indicator */}
           <motion.div
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
             style={{
               opacity: scrollIndicatorOpacity,
               zIndex: 2,

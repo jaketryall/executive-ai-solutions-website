@@ -8,7 +8,7 @@ import Navbar from "@/components/Navbar";
 import { TransitionLink } from "@/components/PageTransition";
 import Footer from "@/components/Footer";
 import { useSound } from "@/components/SoundManager";
-import { services, getServiceBySlug, getRelatedProjects } from "@/lib/data";
+import { services, getServiceBySlug, getRelatedProjects, PricingTier } from "@/lib/data";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -841,6 +841,250 @@ function BenefitsSection({
 }
 
 // ============================================================================
+// PRICING SECTION
+// ============================================================================
+function PricingSection({
+  pricing,
+}: {
+  pricing: PricingTier[];
+}) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const { play } = useSound();
+
+  useIsomorphicLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      const cards = cardsRef.current?.querySelectorAll(".pricing-card");
+      if (cards) {
+        gsap.fromTo(
+          cards,
+          { y: 80, opacity: 0, scale: 0.95 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: cardsRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section ref={sectionRef} className="relative py-32 md:py-48 bg-transparent overflow-hidden">
+      {/* Background glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(ellipse 50% 50% at 50% 30%, ${accentColor}08, transparent)`,
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+        {/* Section header */}
+        <div className="text-center mb-16 md:mb-24">
+          <motion.span
+            className="text-xs uppercase tracking-[0.3em] mb-4 block"
+            style={{ color: accentColorMuted }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            Investment
+          </motion.span>
+          <motion.h2
+            className="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-[-0.04em] mb-6"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            Pricing
+          </motion.h2>
+          <motion.p
+            className="text-white/40 text-lg md:text-xl max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            Transparent pricing with no hidden fees. Every project includes strategy, design, and development.
+          </motion.p>
+        </div>
+
+        {/* Pricing cards */}
+        <div
+          ref={cardsRef}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 pt-12"
+        >
+          {pricing.map((tier, i) => (
+            <div
+              key={tier.name}
+              className={`pricing-card group relative transition-transform duration-300 hover:-translate-y-2 ${
+                tier.highlighted ? "md:-mt-4 md:mb-4" : ""
+              }`}
+            >
+              {/* Highlighted badge - outside overflow container */}
+              {tier.highlighted && (
+                <div
+                  className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider z-10"
+                  style={{
+                    background: `linear-gradient(135deg, ${accentColor}, rgba(255, 180, 120, 1))`,
+                    color: "#000",
+                  }}
+                >
+                  {tier.cta}
+                </div>
+              )}
+
+              {/* Card container with overflow hidden */}
+              <div
+                className="relative rounded-2xl md:rounded-3xl overflow-hidden h-full"
+                style={{
+                  background: tier.highlighted
+                    ? `linear-gradient(145deg, rgba(255,200,150,0.12) 0%, rgba(255,200,150,0.04) 100%)`
+                    : "linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)",
+                  border: tier.highlighted
+                    ? `1px solid ${accentColor}40`
+                    : "1px solid rgba(255,255,255,0.08)",
+                }}
+              >
+                {/* Background number */}
+                <div
+                  className="absolute -right-4 -top-4 text-[180px] md:text-[220px] font-black leading-none pointer-events-none select-none"
+                  style={{
+                    WebkitTextStroke: tier.highlighted
+                      ? `1px rgba(255,200,150,0.1)`
+                      : `1px rgba(255,255,255,0.04)`,
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+
+                {/* Content */}
+                <div className="relative p-8 md:p-10 h-full flex flex-col">
+                {/* Tier name */}
+                <h3
+                  className="text-lg font-semibold mb-2"
+                  style={{ color: tier.highlighted ? accentColor : "white" }}
+                >
+                  {tier.name}
+                </h3>
+
+                {/* Price - fixed height for alignment */}
+                <div className="mb-4 min-h-[72px] md:min-h-[80px]">
+                  <span className="text-4xl md:text-5xl font-black text-white">
+                    {tier.price}
+                  </span>
+                </div>
+
+                {/* Description - fixed height for alignment */}
+                <p className="text-white/50 text-sm mb-8 min-h-[40px]">
+                  {tier.description}
+                </p>
+
+                {/* Features - grow to push button to bottom */}
+                <ul className="space-y-3 mb-8 grow">
+                  {tier.features.map((feature, j) => (
+                    <li key={j} className="flex items-start gap-3">
+                      <span
+                        className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                        style={{
+                          background: tier.highlighted
+                            ? `${accentColor}20`
+                            : "rgba(255,255,255,0.1)",
+                          border: tier.highlighted
+                            ? `1px solid ${accentColor}40`
+                            : "1px solid rgba(255,255,255,0.1)",
+                        }}
+                      >
+                        <svg
+                          width="10"
+                          height="10"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke={tier.highlighted ? accentColor : "rgba(255,255,255,0.5)"}
+                          strokeWidth="3"
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      </span>
+                      <span className="text-white/70 text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* CTA Button - always at bottom */}
+                <TransitionLink href="/contact" className="mt-auto">
+                  <motion.button
+                    className="w-full py-4 rounded-xl font-semibold text-sm transition-all duration-300"
+                    style={{
+                      background: tier.highlighted
+                        ? `linear-gradient(135deg, ${accentColor}, rgba(255, 180, 120, 1))`
+                        : "rgba(255,255,255,0.08)",
+                      color: tier.highlighted ? "#000" : "white",
+                      border: tier.highlighted
+                        ? "none"
+                        : "1px solid rgba(255,255,255,0.1)",
+                    }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onMouseEnter={() => play("hover", { volume: 0.05 })}
+                    onClick={() => play("click")}
+                  >
+                    {tier.highlighted ? "Get Started" : tier.cta}
+                  </motion.button>
+                </TransitionLink>
+              </div>
+
+                {/* Hover glow effect */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{
+                    background: `radial-gradient(circle at 50% 100%, ${accentColor}15, transparent 60%)`,
+                  }}
+                />
+
+                {/* Border glow on hover */}
+                <div
+                  className="absolute inset-0 rounded-2xl md:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{
+                    boxShadow: tier.highlighted
+                      ? `inset 0 0 0 1px ${accentColor}60, 0 0 40px ${accentColor}20`
+                      : `inset 0 0 0 1px ${accentColor}30`,
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom note */}
+        <motion.p
+          className="text-center text-white/30 text-sm mt-12"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+        >
+          All prices are starting points. Final quote based on project scope. Payment plans available.
+        </motion.p>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
 // RELATED PROJECTS SECTION
 // ============================================================================
 function RelatedProjectsSection({
@@ -1160,6 +1404,9 @@ export default function ServicePage({
 
         {/* Benefits */}
         <BenefitsSection service={service} />
+
+        {/* Pricing */}
+        <PricingSection pricing={service.pricing} />
 
         {/* Kinetic Marquee 2 - transparent to show glassmorphic background */}
         <section className="py-16 md:py-24 overflow-hidden bg-transparent relative">

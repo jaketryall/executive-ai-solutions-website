@@ -78,6 +78,8 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
 
   const isMockup = service.image.includes("Mockup");
   const isDashboard = service.image.includes("dashboard");
+  const isSEO = service.image.includes("SEO");
+  const isWideImage = isDashboard || isSEO;
 
   // Parallax effects
   const { scrollYProgress } = useScroll({
@@ -173,14 +175,16 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
         <div className="relative">
           {/* Image - with parallax wrapper */}
           <motion.div
-            className={`relative md:absolute md:top-1/2 md:-translate-y-1/2 w-full md:w-[45%] lg:w-[42%] z-10 ${
-              isReversed ? "md:right-[8%]" : "md:left-0"
+            className={`relative md:absolute md:top-1/2 md:-translate-y-1/2 w-full md:w-[55%] lg:w-[52%] z-10 ${
+              isReversed ? "md:right-0" : "md:left-0"
             }`}
             style={{ y: imageY }}
           >
             <div
               ref={imageRef}
-              className="relative overflow-hidden rounded-3xl will-change-transform aspect-[4/3] md:aspect-[5/4]"
+              className={`relative overflow-hidden rounded-3xl will-change-transform ${
+                isWideImage ? "aspect-[16/10]" : "aspect-[4/3] md:aspect-[5/4]"
+              }`}
               style={{
                 boxShadow: "0 40px 80px -20px rgba(0, 0, 0, 0.6)",
               }}
@@ -314,8 +318,8 @@ export default function Services() {
     <section
       ref={sectionRef}
       id="services"
-      className="relative bg-[#0a0908] overflow-hidden rounded-t-[3rem]"
-      style={{ zIndex: 20, boxShadow: "0 -50px 0 0 #0a0908" }}
+      className="relative bg-[#080706] overflow-hidden rounded-t-[3rem]"
+      style={{ zIndex: 20, boxShadow: "0 -50px 0 0 #080706" }}
     >
       {/* Section header */}
       <div className="relative pt-24 md:pt-32 pb-12 md:pb-16">

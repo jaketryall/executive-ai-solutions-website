@@ -360,20 +360,26 @@ export default function Contact() {
       className="relative py-32 overflow-hidden bg-[#0a0908] min-h-screen"
       style={{
         zIndex: 10,
+        isolation: "isolate",
       }}
     >
-      {/* Static background to fill any gaps - matches Services */}
+      {/* Solid opaque background - prevents footer bleed-through */}
       <div
-        className="absolute inset-0"
-        style={{ background: "linear-gradient(180deg, #0a0908 0%, #0d0b09 50%, #0a0908 100%)" }}
+        className="absolute inset-0 bg-[#0a0908]"
+        style={{ zIndex: 1 }}
+      />
+      {/* Extra coverage below section to prevent footer flash */}
+      <div
+        className="absolute left-0 right-0 -bottom-[100vh] h-[100vh] bg-[#0a0908]"
+        style={{ zIndex: 1 }}
       />
 
-      {/* Animated background that slides up */}
-      <motion.div
-        className="absolute inset-0 bg-neutral-950 rounded-t-[3rem]"
+      {/* Static gradient background - always visible */}
+      <div
+        className="absolute inset-0"
         style={{
-          y: sectionY,
-          opacity: sectionOpacity,
+          background: "linear-gradient(180deg, #0a0908 0%, #0d0b09 50%, #0a0908 100%)",
+          zIndex: 2,
         }}
       />
       {/* Warm ambient glow background */}
@@ -382,6 +388,7 @@ export default function Contact() {
         className="absolute inset-0 pointer-events-none opacity-0"
         style={{
           background: `radial-gradient(ellipse 80% 60% at 50% 30%, ${accentColorFaint} 0%, transparent 60%)`,
+          zIndex: 3,
         }}
       />
 
@@ -389,7 +396,7 @@ export default function Contact() {
       <svg
         ref={connectionLinesRef}
         className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{ opacity: isRevealed ? 0.2 : 0, transition: "opacity 0.5s" }}
+        style={{ opacity: isRevealed ? 0.2 : 0, transition: "opacity 0.5s", zIndex: 3 }}
       >
         <path
           d="M 100 300 Q 200 300 200 400"
@@ -413,7 +420,7 @@ export default function Contact() {
 
       <motion.div
         className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 relative"
-        style={{ y: contentY, opacity: contentOpacity }}
+        style={{ y: contentY, opacity: contentOpacity, zIndex: 5 }}
       >
         {/* Header */}
         <div ref={headerRef} className="mb-20">

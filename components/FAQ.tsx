@@ -21,11 +21,11 @@ const faqs = [
   },
   {
     question: "What platform do you build on?",
-    answer: "I primarily build with Next.js and React for maximum performance and flexibility. For simpler projects or those needing a CMS, I also work with Webflow and WordPress.",
+    answer: "I build with Next.js and React for maximum performance and flexibility, paired with Sanity CMS for content management. Sanity is a powerful, customizable headless CMS that gives you complete control over your content.",
   },
   {
     question: "Can I update the website myself?",
-    answer: "Absolutely. I can set up a content management system (CMS) so you can easily update text, images, and blog posts without any coding knowledge.",
+    answer: "Absolutely. I set up Sanity CMS so you can easily update text, images, and blog posts through an intuitive interface—no coding knowledge required.",
   },
   {
     question: "What if I need changes after launch?",

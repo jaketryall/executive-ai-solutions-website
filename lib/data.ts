@@ -42,6 +42,15 @@ export interface ServiceProcess {
   description: string;
 }
 
+export interface PricingTier {
+  name: string;
+  price: string;
+  description: string;
+  features: string[];
+  highlighted?: boolean;
+  cta: string;
+}
+
 export interface Service {
   slug: string;
   number: string;
@@ -52,6 +61,7 @@ export interface Service {
   longDescription: string;
   benefits: string[];
   process: ServiceProcess[];
+  pricing: PricingTier[];
   relatedProjects: string[]; // slugs of related projects
 }
 
@@ -226,6 +236,53 @@ export const services: Service[] = [
       { step: "Development", description: "Building with clean code and modern technologies" },
       { step: "Launch & Optimize", description: "Going live and fine-tuning for peak performance" },
     ],
+    pricing: [
+      {
+        name: "Landing Page",
+        price: "$2,500",
+        description: "Perfect for campaigns and product launches",
+        features: [
+          "Single high-converting page",
+          "Custom responsive design",
+          "Basic SEO optimization",
+          "Contact form integration",
+          "2 rounds of revisions",
+          "30-day support",
+        ],
+        cta: "Get Started",
+      },
+      {
+        name: "Business Website",
+        price: "$5,000",
+        description: "Complete website for growing businesses",
+        features: [
+          "Up to 8 custom pages",
+          "Sanity CMS integration",
+          "Advanced SEO setup",
+          "Blog or news section",
+          "Analytics dashboard",
+          "3 rounds of revisions",
+          "60-day support",
+        ],
+        highlighted: true,
+        cta: "Most Popular",
+      },
+      {
+        name: "Custom Platform",
+        price: "From $10,000",
+        description: "Full-scale web applications and platforms",
+        features: [
+          "Unlimited pages",
+          "Custom functionality",
+          "E-commerce or booking systems",
+          "User authentication",
+          "API integrations",
+          "Ongoing maintenance options",
+          "Priority support",
+        ],
+        cta: "Let's Talk",
+      },
+    ],
     relatedProjects: ["desert-wings", "apex"],
   },
   {
@@ -255,6 +312,53 @@ export const services: Service[] = [
       { step: "Content Strategy", description: "Creating content that ranks and converts" },
       { step: "Monitor & Adapt", description: "Tracking results and refining the approach" },
     ],
+    pricing: [
+      {
+        name: "SEO Audit",
+        price: "$750",
+        description: "One-time comprehensive analysis",
+        features: [
+          "Full technical SEO audit",
+          "Keyword opportunity analysis",
+          "Competitor benchmarking",
+          "Prioritized action plan",
+          "30-minute strategy call",
+          "Detailed PDF report",
+        ],
+        cta: "Get Audit",
+      },
+      {
+        name: "Growth",
+        price: "$1,500/mo",
+        description: "Ongoing SEO for steady growth",
+        features: [
+          "Monthly SEO optimization",
+          "4 blog posts per month",
+          "Technical monitoring",
+          "Local SEO management",
+          "Monthly reporting",
+          "Keyword rank tracking",
+          "Quarterly strategy reviews",
+        ],
+        highlighted: true,
+        cta: "Most Popular",
+      },
+      {
+        name: "Dominate",
+        price: "$3,000/mo",
+        description: "Aggressive ranking strategy",
+        features: [
+          "Everything in Growth",
+          "8 content pieces per month",
+          "Link building campaigns",
+          "Schema markup optimization",
+          "Conversion rate optimization",
+          "Weekly reporting",
+          "Priority support",
+        ],
+        cta: "Let's Talk",
+      },
+    ],
     relatedProjects: ["meridian", "vertex"],
   },
   {
@@ -283,6 +387,53 @@ export const services: Service[] = [
       { step: "Development", description: "Building with rigorous testing at every stage" },
       { step: "Integration", description: "Connecting with your existing tools and data" },
       { step: "Training & Support", description: "Ensuring your team gets maximum value" },
+    ],
+    pricing: [
+      {
+        name: "Automation",
+        price: "From $3,000",
+        description: "Streamline repetitive workflows",
+        features: [
+          "Workflow analysis",
+          "Custom automation setup",
+          "API integrations",
+          "Documentation",
+          "Team training session",
+          "30-day support",
+        ],
+        cta: "Get Started",
+      },
+      {
+        name: "Custom Tool",
+        price: "From $8,000",
+        description: "Bespoke internal tools and dashboards",
+        features: [
+          "Requirements discovery",
+          "Custom UI/UX design",
+          "Full-stack development",
+          "User authentication",
+          "Database architecture",
+          "Deployment & hosting setup",
+          "60-day support",
+        ],
+        highlighted: true,
+        cta: "Most Popular",
+      },
+      {
+        name: "Enterprise",
+        price: "Custom",
+        description: "Complex systems and integrations",
+        features: [
+          "Complete system architecture",
+          "Multi-platform integration",
+          "Advanced security features",
+          "Scalable infrastructure",
+          "Dedicated project manager",
+          "Ongoing maintenance",
+          "SLA agreements",
+        ],
+        cta: "Let's Talk",
+      },
     ],
     relatedProjects: ["vertex", "meridian"],
   },

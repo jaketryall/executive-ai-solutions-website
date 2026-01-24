@@ -87,11 +87,27 @@ export default function AboutSnippet() {
         }}
       />
 
-      {/* Bottom fade to ensure seamless transition to Work section */}
+      {/* Wide subtle warmth spread across bottom */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+        className="absolute bottom-0 left-0 right-0 h-72 pointer-events-none"
         style={{
-          background: "linear-gradient(to bottom, transparent, #050404)",
+          background: "linear-gradient(to bottom, transparent 0%, rgba(12, 9, 7, 0.5) 40%, #0a0806 100%)",
+        }}
+      />
+
+      {/* Very subtle warm tint */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none"
+        style={{
+          background: "linear-gradient(to bottom, transparent 0%, rgba(255, 180, 120, 0.04) 50%, rgba(255, 180, 120, 0.06) 100%)",
+        }}
+      />
+
+      {/* Corner fill - extends below section to show through Work's rounded corners */}
+      <div
+        className="absolute -bottom-16 left-0 right-0 h-20 pointer-events-none"
+        style={{
+          background: "linear-gradient(to bottom, #0a0806 0%, #0a0806 100%)",
         }}
       />
 

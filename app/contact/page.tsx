@@ -179,7 +179,7 @@ export default function ContactPage() {
                   transition={{ duration: 0.8, delay: 0.5 }}
                 >
                   <p className="text-white/50 text-lg leading-relaxed">
-                    Ready to start your project? Drop me a line and I'll get back to you within 24 hours.
+                    Ready to start your project? Send me a message and I'll get back to you within 24 hours.
                   </p>
                 </motion.div>
               </div>
@@ -507,7 +507,7 @@ export default function ContactPage() {
                         className="text-3xl font-black block mb-1"
                         style={{ color: accentColor }}
                       >
-                        4+
+                        2+
                       </span>
                       <span className="text-white/40 text-sm">Years Experience</span>
                     </div>
@@ -574,7 +574,7 @@ export default function ContactPage() {
                 },
                 {
                   q: "What technologies do you use?",
-                  a: "I primarily build with Next.js, React, TypeScript, and Tailwind CSS. For CMS needs, I work with Sanity, Contentful, or headless WordPress.",
+                  a: "I primarily build with Next.js, React, TypeScript, and Tailwind CSS. For content management, I use Sanity CMS—a powerful, customizable headless CMS that gives you complete control over your content.",
                 },
                 {
                   q: "Do you offer ongoing support?",

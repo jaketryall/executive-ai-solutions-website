@@ -47,7 +47,7 @@ function GitHubIcon() {
 const socialLinks = [
   { label: "Twitter", href: "https://twitter.com/executiveai", icon: TwitterIcon },
   { label: "LinkedIn", href: "https://linkedin.com/company/executiveaisolutions", icon: LinkedInIcon },
-  { label: "Instagram", href: "https://instagram.com/executiveaisolutions", icon: InstagramIcon },
+  { label: "Instagram", href: "https://instagram.com/exec.ai.solutions", icon: InstagramIcon },
   { label: "GitHub", href: "https://github.com/executiveaisolutions", icon: GitHubIcon },
 ];
 

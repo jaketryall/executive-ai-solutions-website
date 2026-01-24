@@ -281,7 +281,7 @@ export default function AboutPage() {
                   <div className="space-y-6">
                     <div>
                       <span className="text-4xl md:text-5xl font-black" style={{ color: accentColor }}>
-                        4+
+                        2+
                       </span>
                       <p className="text-white/40 text-sm mt-1">Years building for the web</p>
                     </div>
