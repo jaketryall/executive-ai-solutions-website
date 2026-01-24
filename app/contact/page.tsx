@@ -133,7 +133,7 @@ export default function ContactPage() {
         {/* Hero Section - Full height, dramatic */}
         <motion.section
           ref={heroRef}
-          className="relative min-h-[70vh] flex items-end pb-16 md:pb-24 overflow-hidden"
+          className="relative min-h-[50vh] md:min-h-[60vh] lg:min-h-[70vh] flex items-end pb-12 md:pb-20 lg:pb-24 overflow-hidden"
           style={{ y: heroY, opacity: heroOpacity }}
         >
           {/* Background gradient */}
@@ -190,10 +190,10 @@ export default function ContactPage() {
         {/* Main Content */}
         <section className="relative py-16 md:py-24 px-6 md:px-12 lg:px-20">
           <div className="max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-12 gap-12 lg:gap-20">
+            <div className="grid md:grid-cols-12 gap-8 md:gap-12 lg:gap-20">
 
               {/* Left Column - Form */}
-              <div className="lg:col-span-7">
+              <div className="md:col-span-7">
                 {isSubmitted ? (
                   <motion.div
                     className="flex flex-col items-center justify-center py-20 text-center"
@@ -430,9 +430,9 @@ export default function ContactPage() {
               </div>
 
               {/* Right Column - Info */}
-              <div className="lg:col-span-5">
+              <div className="md:col-span-5">
                 <motion.div
-                  className="lg:sticky lg:top-32 space-y-16"
+                  className="md:sticky md:top-32 space-y-12 lg:space-y-16"
                   initial={{ opacity: 0, x: 40 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
@@ -448,7 +448,7 @@ export default function ContactPage() {
                     </p>
                     <a
                       href="mailto:jaker@executiveaisolutions.com"
-                      className="text-2xl md:text-3xl font-bold text-white hover:opacity-80 transition-opacity block"
+                      className="text-xl md:text-2xl lg:text-3xl font-bold text-white hover:opacity-80 transition-opacity block break-all"
                       onMouseEnter={() => play("hover", { volume: 0.04 })}
                     >
                       jaker@executiveaisolutions.com
