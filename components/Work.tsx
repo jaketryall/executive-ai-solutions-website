@@ -16,6 +16,35 @@ if (typeof window !== "undefined") {
 const accentColor = "rgba(255, 200, 150, 1)";
 const accentColorMuted = "rgba(255, 200, 150, 0.6)";
 
+// Animated letter for the main title
+function TitleLetter({
+  letter,
+  index,
+  isVisible,
+  isMuted = false,
+}: {
+  letter: string;
+  index: number;
+  isVisible: boolean;
+  isMuted?: boolean;
+}) {
+  return (
+    <motion.span
+      className="inline-block"
+      initial={{ opacity: 0, y: 50 }}
+      animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      transition={{
+        duration: 0.5,
+        delay: index * 0.04,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      style={{ color: isMuted ? "rgba(255, 255, 255, 0.2)" : "white" }}
+    >
+      {letter}
+    </motion.span>
+  );
+}
+
 // Work items with cinematic descriptions
 export const workItems = [
   {
@@ -558,13 +587,13 @@ export default function Work() {
       const sectionBottom = rect.bottom;
       const viewportHeight = window.innerHeight;
 
-      // Start fading in when the section is within 0.4 viewport height of entering
-      // Fully visible when section top reaches 15% from top
-      const fadeStart = viewportHeight * 0.4; // Start fading when section top is 0.4vh away
-      const fadeEnd = viewportHeight * 0.15; // Fully visible when 15% from top
+      // Start fading in only when the section top is near the viewport top
+      // This ensures the title appears "inside" the Work section visually
+      const fadeStart = viewportHeight * 0.1; // Start fading when section top is 10% down from viewport top
+      const fadeEnd = -viewportHeight * 0.05; // Fully visible when section top is slightly above viewport
 
       if (sectionTop > fadeStart) {
-        // Not yet in fade zone
+        // Section hasn't scrolled enough yet
         setIsInView(false);
         titleFadeOpacity.set(0);
       } else if (sectionTop <= fadeStart && sectionTop > fadeEnd) {
@@ -654,9 +683,10 @@ export default function Work() {
     <section
       id="work"
       ref={sectionRef}
-      className="relative bg-black"
+      className="relative bg-black rounded-t-[3rem] overflow-hidden"
       style={{
-        zIndex: 5,
+        zIndex: 10,
+        boxShadow: "0 -50px 0 0 black",
         // Height determines scroll length - more height = more scroll time for animations
         height: isMobile ? "auto" : "500vh",
       }}
@@ -694,10 +724,29 @@ export default function Work() {
                 Selected Work
               </p>
 
-              {/* Big centered title */}
+              {/* Big centered title with letter animation */}
               <h2 className="text-[18vw] font-black leading-[0.8] tracking-[-0.04em]">
-                <span className="block text-white">THE</span>
-                <span className="block text-white/20">PROOF</span>
+                <span className="block">
+                  {"THE".split("").map((letter, i) => (
+                    <TitleLetter
+                      key={`the-${i}`}
+                      letter={letter}
+                      index={i}
+                      isVisible={isInView}
+                    />
+                  ))}
+                </span>
+                <span className="block">
+                  {"PROOF".split("").map((letter, i) => (
+                    <TitleLetter
+                      key={`proof-${i}`}
+                      letter={letter}
+                      index={i + 3}
+                      isVisible={isInView}
+                      isMuted
+                    />
+                  ))}
+                </span>
               </h2>
 
               {/* Decorative lines */}

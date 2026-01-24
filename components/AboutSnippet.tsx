@@ -68,7 +68,7 @@ export default function AboutSnippet() {
   return (
     <section
       ref={containerRef}
-      className="relative py-32 md:py-40 bg-black"
+      className="relative pt-32 md:pt-40 pb-56 md:pb-72 bg-black"
     >
       {/* Subtle gradient background */}
       <div
