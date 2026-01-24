@@ -185,39 +185,43 @@ export default function Contact() {
         const title = headerRef.current.querySelector(".section-title");
 
         // Title scales up toward camera
-        gsap.fromTo(
-          title,
-          { scale: 0.7, opacity: 0, y: 80 },
-          {
-            scale: 1,
-            opacity: 1,
-            y: 0,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top bottom",
-              end: "top 40%",
-              scrub: 0.5,
-            },
-          }
-        );
+        if (title) {
+          gsap.fromTo(
+            title,
+            { scale: 0.7, opacity: 0, y: 80 },
+            {
+              scale: 1,
+              opacity: 1,
+              y: 0,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top bottom",
+                end: "top 40%",
+                scrub: 0.5,
+              },
+            }
+          );
+        }
 
         // Label fades in
-        gsap.fromTo(
-          label,
-          { opacity: 0, y: 20 },
-          {
-            opacity: 1,
-            y: 0,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 80%",
-              end: "top 50%",
-              scrub: 0.3,
-            },
-          }
-        );
+        if (label) {
+          gsap.fromTo(
+            label,
+            { opacity: 0, y: 20 },
+            {
+              opacity: 1,
+              y: 0,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top 80%",
+                end: "top 50%",
+                scrub: 0.3,
+              },
+            }
+          );
+        }
       }
 
       // ===== CONTENT - Comes toward you with scrub =====

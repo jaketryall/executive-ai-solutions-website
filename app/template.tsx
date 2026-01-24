@@ -12,18 +12,20 @@ export default function Template({ children }: TemplateProps) {
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    // Fade in the page content using the body or a global class
-    // This avoids wrapping content in extra divs that break sticky
-    gsap.fromTo(
-      "main",
-      { opacity: 0 },
-      {
-        opacity: 1,
-        duration: 0.4,
-        delay: 0.1,
-        ease: "power2.out",
-      }
-    );
+    // Fade in the page content - wait for DOM to be ready
+    const mainEl = document.querySelector("main");
+    if (mainEl) {
+      gsap.fromTo(
+        mainEl,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 0.4,
+          delay: 0.1,
+          ease: "power2.out",
+        }
+      );
+    }
   }, []);
 
   // Return children directly without wrapper to preserve sticky contexts
