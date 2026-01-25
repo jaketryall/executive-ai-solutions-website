@@ -96,10 +96,12 @@ export default function Hero() {
             muted
             loop
             playsInline
+            preload="auto"
+            poster="/video-poster.webp"
             onEnded={handleVideoEnded}
             className="w-full h-full object-cover"
           >
-            <source src="/final-comp.mp4?v=3" type="video/mp4" />
+            <source src="/final-comp.mp4?v=4" type="video/mp4" />
           </video>
         </motion.div>
 
@@ -195,10 +197,12 @@ export default function Hero() {
             muted
             loop
             playsInline
+            preload="auto"
+            poster="/video-poster.webp"
             onEnded={handleVideoEnded}
             className="w-full h-full object-cover"
           >
-            <source src="/final-comp.mp4?v=3" type="video/mp4" />
+            <source src="/final-comp.mp4?v=4" type="video/mp4" />
           </video>
         </motion.div>
 
