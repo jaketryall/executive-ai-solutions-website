@@ -14,6 +14,7 @@ interface AnimatedLogoProps {
   delay?: number;
   size?: "sm" | "md" | "lg" | "xl";
   showGlow?: boolean;
+  instant?: boolean; // Skip animation and show immediately
 }
 
 const sizeMap = {
@@ -31,6 +32,7 @@ export default function AnimatedLogo({
   delay = 0.3,
   size,
   showGlow = false,
+  instant = false,
 }: AnimatedLogoProps) {
   // Use size preset if provided, otherwise fall back to explicit dimensions
   const dimensions = size ? sizeMap[size] : { width: width ?? 200, height: height ?? 120 };
@@ -98,13 +100,13 @@ export default function AnimatedLogo({
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{ filter: "blur(25px)" }}
-          initial={{ opacity: 0, pathLength: 0 }}
-          animate={isInView ? {
+          initial={instant ? { opacity: 0.15, pathLength: 1, stroke: "#b6bac5" } : { opacity: 0, pathLength: 0 }}
+          animate={isInView || instant ? {
             opacity: isHovered ? 0.6 : 0.15,
             pathLength: 1,
             stroke: isHovered ? "#ffc896" : "#b6bac5",
           } : {}}
-          transition={{
+          transition={instant ? { duration: 0.3 } : {
             pathLength: { duration: drawDuration, delay, ease: [0.65, 0, 0.35, 1] },
             opacity: { duration: 0.3 },
             stroke: { duration: 0.3 },
@@ -119,13 +121,13 @@ export default function AnimatedLogo({
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{ filter: "blur(10px)" }}
-          initial={{ opacity: 0, pathLength: 0 }}
-          animate={isInView ? {
+          initial={instant ? { opacity: 0.25, pathLength: 1, stroke: "#b6bac5" } : { opacity: 0, pathLength: 0 }}
+          animate={isInView || instant ? {
             opacity: isHovered ? 0.7 : 0.25,
             pathLength: 1,
             stroke: isHovered ? "#ffc896" : "#b6bac5",
           } : {}}
-          transition={{
+          transition={instant ? { duration: 0.3 } : {
             pathLength: { duration: drawDuration, delay: delay + 0.1, ease: [0.65, 0, 0.35, 1] },
             opacity: { duration: 0.3 },
             stroke: { duration: 0.3 },
@@ -140,9 +142,9 @@ export default function AnimatedLogo({
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={isInView ? { pathLength: 1, opacity: 1 } : {}}
-          transition={{
+          initial={instant ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+          animate={isInView || instant ? { pathLength: 1, opacity: 1 } : {}}
+          transition={instant ? { duration: 0 } : {
             pathLength: { duration: drawDuration, delay, ease: [0.65, 0, 0.35, 1] },
             opacity: { duration: 0.3, delay },
           }}
@@ -153,9 +155,9 @@ export default function AnimatedLogo({
           d={LOGO_PATH}
           fill={isHovered ? "url(#logoFillGradientHover)" : "url(#logoFillGradient)"}
           stroke="none"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{
+          initial={instant ? { opacity: 1 } : { opacity: 0 }}
+          animate={isInView || instant ? { opacity: 1 } : {}}
+          transition={instant ? { duration: 0 } : {
             duration: 0.8,
             delay: delay + drawDuration - 0.2,
             ease: "easeOut",

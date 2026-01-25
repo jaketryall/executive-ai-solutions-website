@@ -423,9 +423,9 @@ export default function Navbar() {
       >
         <nav className="mx-4 mt-4 px-5 py-4 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl">
           <div className="flex items-center justify-between">
-            {/* Logo - icon only on mobile */}
+            {/* Logo - icon only on mobile, instant visibility */}
             <TransitionLink href="/" className="flex items-center">
-              <AnimatedLogo width={32} height={22} drawDuration={0.8} delay={0.2} />
+              <AnimatedLogo width={38} height={26} instant />
             </TransitionLink>
 
             {/* Menu Button */}
