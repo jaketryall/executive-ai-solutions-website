@@ -128,7 +128,7 @@ export default function AboutSnippet() {
           {(() => {
             let letterIndex = 0;
             return words.map((word, wordIndex) => (
-              <span key={wordIndex} style={{ whiteSpace: "nowrap" }}>
+              <span key={wordIndex} style={{ whiteSpace: "nowrap", display: "inline" }}>
                 {word.split("").map((letter) => {
                   const currentIndex = letterIndex++;
                   return (
@@ -141,7 +141,7 @@ export default function AboutSnippet() {
                     />
                   );
                 })}
-                {wordIndex < words.length - 1 && <span>{"\u00A0"}</span>}
+                {wordIndex < words.length - 1 && " "}
               </span>
             ));
           })()}
