@@ -423,9 +423,13 @@ export default function Navbar() {
       >
         <nav className="mx-4 mt-4 px-5 py-4 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl">
           <div className="flex items-center justify-between">
-            {/* Logo - bright white for mobile visibility */}
+            {/* Logo - use SVG file directly for proper fill */}
             <TransitionLink href="/" className="flex items-center">
-              <AnimatedLogo width={36} height={24} instant />
+              <img
+                src="/Executive Ai Solutions Logo.svg"
+                alt="Executive AI"
+                className="w-9 h-9 object-contain"
+              />
             </TransitionLink>
 
             {/* Menu Button */}
