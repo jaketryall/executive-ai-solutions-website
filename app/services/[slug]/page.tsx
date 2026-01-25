@@ -551,12 +551,12 @@ function VerticalTimelineSection({
 
                 {/* Card */}
                 <div
-                  className={`timeline-card ml-16 md:ml-0 md:w-[calc(50%-40px)] ${
+                  className={`timeline-card ml-12 md:ml-0 w-[calc(100%-3rem)] md:w-[calc(50%-40px)] shrink-0 ${
                     i % 2 === 0 ? "md:pr-12" : "md:pl-12"
                   }`}
                 >
                   <div
-                    className="relative p-8 md:p-10 rounded-2xl overflow-hidden group"
+                    className="relative p-5 md:p-8 lg:p-10 rounded-2xl overflow-hidden group"
                     style={{
                       background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)",
                       border: "1px solid rgba(255,255,255,0.08)",
@@ -564,7 +564,7 @@ function VerticalTimelineSection({
                   >
                     {/* Step number watermark */}
                     <div
-                      className="absolute -right-4 -top-4 text-[120px] md:text-[160px] font-black leading-none pointer-events-none select-none"
+                      className="absolute -right-2 -top-2 md:-right-4 md:-top-4 text-[80px] md:text-[120px] lg:text-[160px] font-black leading-none pointer-events-none select-none"
                       style={{
                         WebkitTextStroke: `1px rgba(255,200,150,0.08)`,
                         WebkitTextFillColor: "transparent",
@@ -574,9 +574,9 @@ function VerticalTimelineSection({
                     </div>
 
                     {/* Icon and step indicator */}
-                    <div className="flex items-center gap-4 mb-6">
+                    <div className="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                       <div
-                        className="w-12 h-12 rounded-xl flex items-center justify-center"
+                        className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center"
                         style={{
                           background: `linear-gradient(135deg, ${accentColor}20, transparent)`,
                           border: `1px solid ${accentColor}30`,
@@ -596,10 +596,10 @@ function VerticalTimelineSection({
                     </div>
 
                     {/* Content */}
-                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                    <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-2 md:mb-4">
                       {step.step}
                     </h3>
-                    <p className="text-white/50 text-base md:text-lg leading-relaxed">
+                    <p className="text-white/50 text-sm md:text-base lg:text-lg leading-relaxed">
                       {step.description}
                     </p>
 
@@ -614,7 +614,7 @@ function VerticalTimelineSection({
                 </div>
 
                 {/* Empty space for opposite side */}
-                <div className="hidden md:block md:w-[calc(50%-40px)]" />
+                <div className="hidden md:block md:w-[calc(50%-40px)] shrink-0" />
               </div>
             ))}
           </div>
