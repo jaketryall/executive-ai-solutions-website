@@ -24,7 +24,7 @@ export default function About() {
     <motion.section
       id="about"
       ref={sectionRef}
-      className="relative py-32 md:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a] overflow-hidden -mt-12 z-80 shadow-section-stack"
+      className="relative py-24 md:py-28 lg:py-40 px-6 md:px-12 lg:px-24 bg-[#0a0a0a] overflow-hidden -mt-12 z-80 shadow-section-stack"
       style={{
         scale,
         opacity,

@@ -297,7 +297,7 @@ export default function Pricing() {
         }}
       />
 
-      <div className="px-6 md:px-12 lg:px-20 py-32">
+      <div className="px-6 md:px-12 lg:px-20 py-24 md:py-28 lg:py-32">
         <div className="max-w-[1400px] mx-auto">
           {/* Header */}
           <div className="max-w-3xl mb-16">

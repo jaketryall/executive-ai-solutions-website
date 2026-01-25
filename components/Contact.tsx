@@ -473,7 +473,7 @@ export default function Contact() {
                 </p>
                 <a
                   href="mailto:jaker@executiveaisolutions.com"
-                  className="text-white text-lg transition-colors"
+                  className="text-white text-base md:text-lg transition-colors break-all"
                   style={{ ["--tw-hover-color" as string]: accentColor }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = accentColor)}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "white")}

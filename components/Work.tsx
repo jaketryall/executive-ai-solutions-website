@@ -221,7 +221,7 @@ function FlyingProjectCard({
           onMouseLeave={() => setIsHovered(false)}
         >
           {/* Card - clean mockup with hover reveal */}
-          <div className="relative aspect-4/3 overflow-hidden rounded-xl">
+          <div className="relative aspect-4/3 overflow-hidden rounded-xl bg-black/50">
             {/* Image wrapper for parallax */}
             <motion.div
               className="absolute inset-0"
@@ -509,7 +509,7 @@ function MobileWork() {
             <TransitionLink href={`/work/${project.slug}`}>
               <div className="group relative">
                 {/* Clean mockup image */}
-                <div className="relative overflow-hidden rounded-xl aspect-4/3 mb-3">
+                <div className="relative overflow-hidden rounded-xl aspect-4/3 mb-3 bg-black/50">
                   <Image
                     src={project.image}
                     alt={project.title}

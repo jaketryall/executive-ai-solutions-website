@@ -257,7 +257,7 @@ export const services: Service[] = [
         price: "$5,000",
         description: "Complete website for growing businesses",
         features: [
-          "Up to 8 custom pages",
+          "Up to 5 custom pages",
           "Sanity CMS integration",
           "Advanced SEO setup",
           "Blog or news section",

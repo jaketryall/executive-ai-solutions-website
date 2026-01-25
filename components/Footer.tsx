@@ -185,7 +185,7 @@ export default function Footer() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
               >
-                <span className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-[-0.03em] group-hover:text-white/80 transition-colors duration-300">
+                <span className="text-2xl md:text-5xl lg:text-6xl font-black text-white tracking-[-0.03em] group-hover:text-white/80 transition-colors duration-300 break-all md:break-normal">
                   jaker@executiveaisolutions.com
                 </span>
                 <motion.div

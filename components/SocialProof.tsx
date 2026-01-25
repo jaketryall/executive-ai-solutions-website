@@ -35,7 +35,7 @@ export default function SocialProof() {
   return (
     <motion.section
       ref={sectionRef}
-      className="relative py-32 md:py-40 bg-[#0a0a0c] overflow-hidden"
+      className="relative py-24 md:py-28 lg:py-40 bg-[#0a0a0c] overflow-hidden"
       style={{
         opacity: entryOpacity,
       }}

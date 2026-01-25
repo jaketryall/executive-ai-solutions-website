@@ -118,7 +118,7 @@ export default function Approach() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-black py-32 md:py-48 overflow-hidden"
+      className="relative bg-black py-24 md:py-32 lg:py-48 overflow-hidden"
       style={{ zIndex: 10 }}
     >
       {/* Background elements */}
