@@ -309,39 +309,36 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
   );
 }
 
-// Mobile transition overlay - fast vertical wipe with centered logo
+// Mobile transition overlay - lightweight CSS-based wipe
 function MobileTransitionOverlay({ isActive }: { isActive: boolean }) {
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       {isActive && (
         <motion.div
-          className="fixed inset-0 z-9999 pointer-events-auto"
+          className="fixed inset-0 z-[9999] pointer-events-auto bg-black"
           initial={{ y: "-100%" }}
           animate={{ y: "0%" }}
           exit={{ y: "100%" }}
           transition={{
-            duration: 0.4,
-            ease: [0.76, 0, 0.24, 1],
+            duration: 0.35,
+            ease: [0.32, 0, 0.67, 0],
+          }}
+          style={{
+            willChange: "transform",
+            backfaceVisibility: "hidden",
           }}
         >
-          {/* Black panel */}
-          <div className="absolute inset-0 bg-black" />
-
-          {/* Centered small logo */}
+          {/* Static centered logo - no animation for performance */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <motion.svg
+            <svg
               viewBox="0 0 500 500"
-              className="w-16 h-16"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.2, delay: 0.1 }}
+              className="w-14 h-14 opacity-80"
             >
               <path
                 d={LOGO_PATH}
                 fill={accentColor}
               />
-            </motion.svg>
+            </svg>
           </div>
         </motion.div>
       )}
@@ -379,10 +376,10 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
         setIsMobileTransitioning(true);
         document.body.classList.add("page-transitioning");
 
-        // Navigate when panel covers screen (at ~350ms into 400ms animation)
+        // Navigate when panel covers screen (at ~250ms into 350ms animation)
         setTimeout(() => {
           router.push(href);
-        }, 350);
+        }, 250);
 
         return;
       }
