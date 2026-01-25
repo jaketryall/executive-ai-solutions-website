@@ -321,6 +321,7 @@ function ServicesDropdown({
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const { scrollY } = useScroll();
   const { play } = useSound();
   const pathname = usePathname();
@@ -429,7 +430,12 @@ export default function Navbar() {
 
             {/* Menu Button */}
             <button
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => {
+                if (isOpen) {
+                  setMobileServicesOpen(false);
+                }
+                setIsOpen(!isOpen);
+              }}
               className="p-2"
               aria-label="Toggle menu"
             >
@@ -486,7 +492,7 @@ export default function Navbar() {
                   </TransitionLink>
                 </motion.div>
               ))}
-              {/* Services Section */}
+              {/* Services Section - Clickable Dropdown */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -494,34 +500,74 @@ export default function Navbar() {
                 transition={{ delay: 0.4 }}
                 className="text-center"
               >
-                <p
-                  className="text-5xl font-black py-4 uppercase"
+                <button
+                  onClick={() => {
+                    play("click");
+                    setMobileServicesOpen(!mobileServicesOpen);
+                  }}
+                  className="flex items-center gap-3 text-5xl font-black py-4 uppercase mx-auto"
                   style={{ color: pathname.startsWith("/services") ? accentColor : "#fff" }}
                 >
                   Services
-                </p>
-                <div className="flex gap-6 mt-2">
-                  {[
-                    { href: "/services/website-design", label: "Web" },
-                    { href: "/services/seo", label: "SEO" },
-                    { href: "/services/custom-solutions", label: "Custom" },
-                  ].map((service) => (
-                    <TransitionLink
-                      key={service.href}
-                      href={service.href}
-                      onClick={() => {
-                        play("click");
-                        setIsOpen(false);
-                      }}
-                      className="text-lg font-medium transition-colors"
-                      style={{
-                        color: pathname === service.href ? accentColor : "rgba(255,255,255,0.6)",
-                      }}
+                  <motion.svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    animate={{ rotate: mobileServicesOpen ? 180 : 0 }}
+                    transition={{ duration: 0.3, ease: [0.76, 0, 0.24, 1] }}
+                    className="mt-1"
+                  >
+                    <path
+                      d="M6 9L12 15L18 9"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </motion.svg>
+                </button>
+                <AnimatePresence>
+                  {mobileServicesOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: [0.76, 0, 0.24, 1] }}
+                      className="overflow-hidden"
                     >
-                      {service.label}
-                    </TransitionLink>
-                  ))}
-                </div>
+                      <div className="flex flex-col gap-3 py-4">
+                        {[
+                          { href: "/services/website-design", label: "Website Design" },
+                          { href: "/services/seo", label: "SEO" },
+                          { href: "/services/custom-solutions", label: "Custom Solutions" },
+                        ].map((service, index) => (
+                          <motion.div
+                            key={service.href}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                          >
+                            <TransitionLink
+                              href={service.href}
+                              onClick={() => {
+                                play("click");
+                                setIsOpen(false);
+                                setMobileServicesOpen(false);
+                              }}
+                              className="text-xl font-medium transition-colors block"
+                              style={{
+                                color: pathname === service.href ? accentColor : "rgba(255,255,255,0.6)",
+                              }}
+                            >
+                              {service.label}
+                            </TransitionLink>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
