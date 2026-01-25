@@ -337,7 +337,7 @@ export default function AboutPage() {
                 {/* Background image */}
                 <div className="absolute inset-0 bg-black">
                   <Image
-                    src="/Elegant Black Laptop Mockup.png"
+                    src="/Elegant Black Laptop Mockup.webp"
                     alt="Featured project"
                     fill
                     className="object-contain object-right translate-x-8 transition-transform duration-700 group-hover:scale-105"

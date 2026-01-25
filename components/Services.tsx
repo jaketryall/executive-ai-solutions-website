@@ -26,7 +26,7 @@ const services = [
     subtitle: "& Development",
     description:
       "High-converting websites that turn visitors into customers. We craft digital experiences that captivate and convert.",
-    image: "/Rubber iPhone Mockup.png",
+    image: "/Rubber iPhone Mockup.webp",
     details: [
       "Custom design tailored to your brand",
       "Responsive, mobile-first development",
@@ -40,7 +40,7 @@ const services = [
     subtitle: "& Strategy",
     description:
       "Data-driven strategies that drive organic traffic and rankings. Dominate search results and outperform your competition.",
-    image: "/SEO.jpg",
+    image: "/Celestial Laptop Mockup.webp",
     details: [
       "Comprehensive keyword research",
       "Technical SEO optimization",
@@ -54,7 +54,7 @@ const services = [
     subtitle: "Solutions",
     description:
       "Tailored systems and software that scale with your business. From automation to AI, we build what you need.",
-    image: "/custom-dashboard-mockup.png",
+    image: "/custom-dashboard-mockup.webp",
     details: [
       "Bespoke software development",
       "Seamless system integrations",

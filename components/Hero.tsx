@@ -50,10 +50,10 @@ export default function Hero() {
 
   // Marquee setup
   const projectImages = [
-    "/Celestial Laptop Mockup.png",
-    "/Celestial iPhone Mockup.png",
-    "/Elegant Black Laptop Mockup.png",
-    "/Rubber iPhone Mockup.png",
+    "/Celestial Laptop Mockup.webp",
+    "/Celestial iPhone Mockup.webp",
+    "/Elegant Black Laptop Mockup.webp",
+    "/Rubber iPhone Mockup.webp",
   ];
 
   const cardWidth = 350;

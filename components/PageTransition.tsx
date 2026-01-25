@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef, useMemo } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSound } from "./SoundManager";
 import gsap from "gsap";
@@ -52,6 +52,18 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
   const isAnimatingRef = useRef(false);
   // Cache viewport dimensions to prevent jitter from layout changes during navigation
   const viewportRef = useRef({ width: 0, height: 0 });
+  // Detect actual mobile device (not just viewport size)
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+
+  useEffect(() => {
+    // Detect actual mobile/touch devices - these have issues with SVG data URI animations
+    const checkMobile = () => {
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      setIsMobileDevice(isTouchDevice && isMobileUA);
+    };
+    checkMobile();
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -75,6 +87,44 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
         timelineRef.current.kill();
       }
 
+      // Mobile devices: use simple fade transition (SVG data URIs cause issues)
+      if (isMobileDevice) {
+        gsap.set(container, { display: "block", pointerEvents: "auto" });
+        gsap.set(blackPanel, { opacity: 0 });
+        gsap.set(logoLayer, { opacity: 0 }); // Hide logo layer on mobile
+        gsap.set(solidLogo, { opacity: 0 });
+
+        const tl = gsap.timeline({
+          onComplete: () => {
+            isAnimatingRef.current = false;
+            document.body.classList.remove("page-transitioning");
+          }
+        });
+        timelineRef.current = tl;
+
+        // Simple fade to black
+        tl.to(blackPanel, {
+          opacity: 1,
+          duration: 0.4,
+          ease: "power2.inOut",
+        });
+
+        // Hold
+        tl.to({}, { duration: 1.2 });
+
+        // Fade out
+        tl.to(blackPanel, {
+          opacity: 0,
+          duration: 0.4,
+          ease: "power2.inOut",
+        });
+
+        // Hide container
+        tl.set(container, { display: "none", pointerEvents: "none" });
+        return;
+      }
+
+      // Desktop: full SVG logo animation
       // Initial state: container visible, logo layer starts visible with large cutout
       gsap.set(container, { display: "block", pointerEvents: "auto" });
       gsap.set(blackPanel, { opacity: 0 });
@@ -158,7 +208,7 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
       // Hide container
       tl.set(container, { display: "none", pointerEvents: "none", opacity: 1 });
     }
-  }, [isActive]);
+  }, [isActive, isMobileDevice]);
 
   // Update the logo layer with scaled logo mask and glow
   const updateMask = (logoLayer: HTMLDivElement, scale: number, glowOpacity: number) => {
