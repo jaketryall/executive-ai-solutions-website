@@ -10,16 +10,19 @@ export default function Hero() {
 
   // Responsive initial mask size - larger on mobile
   const [initialMaskSize, setInitialMaskSize] = useState(20);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const updateMaskSize = () => {
+    const updateResponsive = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
       // Use larger initial size on mobile for better visibility
-      setInitialMaskSize(window.innerWidth < 768 ? 40 : 20);
+      setInitialMaskSize(mobile ? 40 : 20);
     };
 
-    updateMaskSize();
-    window.addEventListener("resize", updateMaskSize);
-    return () => window.removeEventListener("resize", updateMaskSize);
+    updateResponsive();
+    window.addEventListener("resize", updateResponsive);
+    return () => window.removeEventListener("resize", updateResponsive);
   }, []);
 
   // Handle video loop manually
@@ -56,9 +59,10 @@ export default function Hero() {
     "/thumbnails/Rubber iPhone Mockup.webp",
   ];
 
-  const cardWidth = 350;
-  const gapWidth = 32;
-  const cardCount = 8;
+  // Responsive marquee: fewer cards on mobile (4 vs 8)
+  const cardWidth = isMobile ? 280 : 350;
+  const gapWidth = isMobile ? 16 : 32;
+  const cardCount = isMobile ? 4 : 8;
   const setWidth = cardCount * cardWidth + (cardCount - 1) * gapWidth;
   const translateDistance = setWidth + gapWidth;
 
@@ -66,7 +70,7 @@ export default function Hero() {
     [...Array(cardCount)].map((_, i) => (
       <div
         key={`${keyPrefix}-${i}`}
-        className="w-[350px] h-[220px] rounded-lg overflow-hidden shrink-0"
+        className={`${isMobile ? "w-[280px] h-[175px]" : "w-[350px] h-[220px]"} rounded-lg overflow-hidden shrink-0`}
         style={{
           boxShadow: "0 0 40px rgba(255,250,240,0.1)",
         }}
@@ -127,29 +131,31 @@ export default function Hero() {
             }
           `}</style>
 
-          {/* Top row */}
-          <div className="absolute top-[5%] flex overflow-hidden w-full">
-            <div
-              className="flex gap-8 whitespace-nowrap will-change-transform opacity-20"
-              style={{
-                animationName: "marquee-scroll-left",
-                animationDuration: "40s",
-                animationTimingFunction: "linear",
-                animationIterationCount: "infinite",
-              }}
-            >
-              {renderCards(0, "top-a")}
-              {renderCards(0, "top-b")}
+          {/* Top row - hidden on mobile */}
+          {!isMobile && (
+            <div className="absolute top-[5%] flex overflow-hidden w-full">
+              <div
+                className="flex gap-8 whitespace-nowrap will-change-transform opacity-20"
+                style={{
+                  animationName: "marquee-scroll-left",
+                  animationDuration: "40s",
+                  animationTimingFunction: "linear",
+                  animationIterationCount: "infinite",
+                }}
+              >
+                {renderCards(0, "top-a")}
+                {renderCards(0, "top-b")}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Middle row */}
-          <div className="absolute top-[35%] flex overflow-hidden w-full">
+          {/* Middle row - centered on mobile */}
+          <div className={`absolute ${isMobile ? "top-[40%]" : "top-[35%]"} flex overflow-hidden w-full`}>
             <div
-              className="flex gap-8 whitespace-nowrap will-change-transform opacity-20"
+              className={`flex ${isMobile ? "gap-4" : "gap-8"} whitespace-nowrap will-change-transform opacity-20`}
               style={{
                 animationName: "marquee-scroll-right",
-                animationDuration: "45s",
+                animationDuration: isMobile ? "25s" : "45s",
                 animationTimingFunction: "linear",
                 animationIterationCount: "infinite",
               }}
@@ -159,21 +165,23 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Bottom row */}
-          <div className="absolute top-[65%] flex overflow-hidden w-full">
-            <div
-              className="flex gap-8 whitespace-nowrap will-change-transform opacity-20"
-              style={{
-                animationName: "marquee-scroll-left",
-                animationDuration: "50s",
-                animationTimingFunction: "linear",
-                animationIterationCount: "infinite",
-              }}
-            >
-              {renderCards(1, "bot-a")}
-              {renderCards(1, "bot-b")}
+          {/* Bottom row - hidden on mobile */}
+          {!isMobile && (
+            <div className="absolute top-[65%] flex overflow-hidden w-full">
+              <div
+                className="flex gap-8 whitespace-nowrap will-change-transform opacity-20"
+                style={{
+                  animationName: "marquee-scroll-left",
+                  animationDuration: "50s",
+                  animationTimingFunction: "linear",
+                  animationIterationCount: "infinite",
+                }}
+              >
+                {renderCards(1, "bot-a")}
+                {renderCards(1, "bot-b")}
+              </div>
             </div>
-          </div>
+          )}
         </motion.div>
 
         {/* Video with logo-shaped mask that grows */}
