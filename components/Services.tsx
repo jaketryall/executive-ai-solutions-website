@@ -133,32 +133,38 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
 
       // Mobile: simple fade-up animations (no horizontal movement)
       mm.add("(max-width: 767px)", () => {
-        gsap.set(image, { opacity: 0, y: 30 });
-        gsap.set(content, { opacity: 0, y: 20 });
+        // Use fromTo with immediateRender: false to avoid flash
+        gsap.fromTo(
+          image,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 90%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
 
-        gsap.to(image, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: card,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        });
-
-        gsap.to(content, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: card,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        });
+        gsap.fromTo(
+          content,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 90%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
       });
 
       // Features stagger in (same for both)
@@ -181,7 +187,13 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
       );
     }, cardRef);
 
+    // Refresh ScrollTrigger after a short delay to ensure proper positioning
+    const refreshTimeout = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+
     return () => {
+      clearTimeout(refreshTimeout);
       mm.revert();
       ctx.revert();
     };
