@@ -73,7 +73,7 @@ export default function RootLayout({
         {/* Preload hero video poster for instant display */}
         <link rel="preload" href="/video-poster.webp" as="image" type="image/webp" />
         {/* Preload hero video */}
-        <link rel="preload" href="/final-comp.mp4?v=4" as="video" type="video/mp4" />
+        <link rel="preload" href="/final-comp.mp4?v=6" as="video" type="video/mp4" />
       </head>
       <body className={`${inter.variable} ${sourceSerif.variable} font-sans bg-[#0a0908]`}>
         <SoundProvider>

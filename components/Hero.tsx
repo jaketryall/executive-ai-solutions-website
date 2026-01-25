@@ -101,7 +101,7 @@ export default function Hero() {
             onEnded={handleVideoEnded}
             className="w-full h-full object-cover"
           >
-            <source src="/final-comp.mp4?v=4" type="video/mp4" />
+            <source src="/final-comp.mp4?v=6" type="video/mp4" />
           </video>
         </motion.div>
 
@@ -202,7 +202,7 @@ export default function Hero() {
             onEnded={handleVideoEnded}
             className="w-full h-full object-cover"
           >
-            <source src="/final-comp.mp4?v=4" type="video/mp4" />
+            <source src="/final-comp.mp4?v=6" type="video/mp4" />
           </video>
         </motion.div>
 
