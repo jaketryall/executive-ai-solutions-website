@@ -1304,7 +1304,7 @@ export default function CaseStudyPage({
               >
                 <h1
                   ref={titleRef}
-                  className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-[-0.04em] mb-6"
+                  className="text-4xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-[-0.04em] mb-6"
                 >
                   <SplitText delay={0.2}>{project.title}</SplitText>
                 </h1>
