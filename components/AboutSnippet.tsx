@@ -31,7 +31,6 @@ function ScrollFillLetter({
 
   return (
     <motion.span
-      className="inline-block"
       style={{ opacity }}
     >
       {letter}
