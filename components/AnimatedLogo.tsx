@@ -100,11 +100,11 @@ export default function AnimatedLogo({
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{ filter: "blur(25px)" }}
-          initial={instant ? { opacity: 0.15, pathLength: 1, stroke: "#b6bac5" } : { opacity: 0, pathLength: 0 }}
+          initial={instant ? { opacity: 0.3, pathLength: 1, stroke: "#ffffff" } : { opacity: 0, pathLength: 0 }}
           animate={isInView || instant ? {
-            opacity: isHovered ? 0.6 : 0.15,
+            opacity: isHovered ? 0.6 : instant ? 0.3 : 0.15,
             pathLength: 1,
-            stroke: isHovered ? "#ffc896" : "#b6bac5",
+            stroke: isHovered ? "#ffc896" : instant ? "#ffffff" : "#b6bac5",
           } : {}}
           transition={instant ? { duration: 0.3 } : {
             pathLength: { duration: drawDuration, delay, ease: [0.65, 0, 0.35, 1] },
@@ -121,11 +121,11 @@ export default function AnimatedLogo({
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{ filter: "blur(10px)" }}
-          initial={instant ? { opacity: 0.25, pathLength: 1, stroke: "#b6bac5" } : { opacity: 0, pathLength: 0 }}
+          initial={instant ? { opacity: 0.4, pathLength: 1, stroke: "#ffffff" } : { opacity: 0, pathLength: 0 }}
           animate={isInView || instant ? {
-            opacity: isHovered ? 0.7 : 0.25,
+            opacity: isHovered ? 0.7 : instant ? 0.4 : 0.25,
             pathLength: 1,
-            stroke: isHovered ? "#ffc896" : "#b6bac5",
+            stroke: isHovered ? "#ffc896" : instant ? "#ffffff" : "#b6bac5",
           } : {}}
           transition={instant ? { duration: 0.3 } : {
             pathLength: { duration: drawDuration, delay: delay + 0.1, ease: [0.65, 0, 0.35, 1] },
@@ -138,7 +138,7 @@ export default function AnimatedLogo({
         <motion.path
           d={LOGO_PATH}
           fill="none"
-          stroke={isHovered ? "url(#logoGradientHover)" : "url(#logoGradient)"}
+          stroke={isHovered ? "url(#logoGradientHover)" : instant ? "#ffffff" : "url(#logoGradient)"}
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -153,7 +153,7 @@ export default function AnimatedLogo({
         {/* Fill - fades in after stroke completes */}
         <motion.path
           d={LOGO_PATH}
-          fill={isHovered ? "url(#logoFillGradientHover)" : "url(#logoFillGradient)"}
+          fill={isHovered ? "url(#logoFillGradientHover)" : instant ? "url(#logoFillGradientInstant)" : "url(#logoFillGradient)"}
           stroke="none"
           initial={instant ? { opacity: 1 } : { opacity: 0 }}
           animate={isInView || instant ? { opacity: 1 } : {}}
@@ -185,6 +185,11 @@ export default function AnimatedLogo({
           <linearGradient id="logoFillGradientHover" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#ffffff" />
             <stop offset="100%" stopColor="#d0d4de" />
+          </linearGradient>
+          {/* Instant/bright gradient - solid white for mobile navbar */}
+          <linearGradient id="logoFillGradientInstant" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="100%" stopColor="#e8e8e8" />
           </linearGradient>
         </defs>
       </motion.svg>
