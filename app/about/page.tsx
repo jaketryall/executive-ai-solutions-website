@@ -329,19 +329,55 @@ export default function AboutPage() {
 
               {/* Featured Project - Wide card */}
               <BentoCard
-                className="relative overflow-hidden group cursor-pointer min-h-[350px] bg-black!"
+                className="relative overflow-hidden group cursor-pointer md:min-h-[350px]"
                 gridClassName="md:col-span-8"
                 delay={0.3}
                 href="/work"
               >
-                {/* Background image */}
-                <div className="absolute inset-0 bg-black">
+                {/* Mobile: stacked layout - image on top, text below */}
+                <div className="md:hidden">
+                  {/* Image container */}
+                  <div className="relative h-[200px] overflow-hidden">
+                    <Image
+                      src="/Elegant Black Laptop Mockup.webp"
+                      alt="Featured project"
+                      fill
+                      className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                      sizes="100vw"
+                    />
+                  </div>
+                  {/* Text content */}
+                  <div className="p-6 bg-black">
+                    <p
+                      className="text-xs uppercase tracking-[0.3em] mb-3"
+                      style={{ color: accentColor }}
+                    >
+                      Featured Work
+                    </p>
+                    <h3 className="text-2xl font-black text-white mb-2">
+                      See What I've Built
+                    </h3>
+                    <p className="text-white/60 mb-4 text-sm">
+                      Real projects with real results. Take a look at recent work.
+                    </p>
+                    <span
+                      className="inline-flex items-center gap-2 text-sm font-medium"
+                      style={{ color: accentColor }}
+                    >
+                      View Projects
+                      <span>→</span>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Desktop: side-by-side layout */}
+                <div className="hidden md:block absolute inset-0 bg-black">
                   <Image
                     src="/Elegant Black Laptop Mockup.webp"
                     alt="Featured project"
                     fill
                     className="object-contain object-right translate-x-8 transition-transform duration-700 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 50vw"
+                    sizes="50vw"
                   />
                   <div
                     className="absolute inset-0"
@@ -351,16 +387,16 @@ export default function AboutPage() {
                   />
                 </div>
 
-                <div className="relative z-10 p-8 md:p-12 h-full flex flex-col justify-between">
+                <div className="hidden md:flex relative z-10 p-12 h-full flex-col justify-between">
                   <p
                     className="text-xs uppercase tracking-[0.3em]"
-                    style={{ color: accentColorMuted }}
+                    style={{ color: accentColor }}
                   >
                     Featured Work
                   </p>
 
                   <div>
-                    <h3 className="text-3xl md:text-4xl font-black text-white mb-2">
+                    <h3 className="text-4xl font-black text-white mb-2">
                       See What I've Built
                     </h3>
                     <p className="text-white/50 mb-4 max-w-md">

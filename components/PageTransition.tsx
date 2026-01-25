@@ -313,14 +313,31 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
 export function PageTransitionProvider({ children }: { children: ReactNode }) {
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
   const [targetPage, setTargetPage] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const { play } = useSound();
+
+  // Detect mobile on mount
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const navigateTo = useCallback(
     (href: string, e?: React.MouseEvent) => {
       // Don't transition if already on the page
       if (href === pathname) return;
+
+      // On mobile, skip all transitions and navigate directly
+      if (isMobile) {
+        router.push(href);
+        return;
+      }
 
       // Store click position for clip-path origin
       if (e) {
@@ -346,7 +363,7 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
         router.push(href);
       }, 1600);
     },
-    [pathname, play, router]
+    [pathname, play, router, isMobile]
   );
 
   // Reset transition state when pathname changes

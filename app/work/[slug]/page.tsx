@@ -723,7 +723,7 @@ function ResultsSection({ result, metrics }: { result: string; metrics: { label:
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Big result */}
-        <div ref={numberRef} className="text-center mb-24">
+        <div ref={numberRef} className="text-center mb-24 px-4">
           <p
             className="text-xs uppercase tracking-[0.3em] mb-6"
             style={{ color: accentColorMuted }}
@@ -731,7 +731,7 @@ function ResultsSection({ result, metrics }: { result: string; metrics: { label:
             The Result
           </p>
           <h2
-            className="text-7xl md:text-9xl lg:text-[12rem] font-black tracking-[-0.04em] leading-none"
+            className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-[-0.04em] leading-tight wrap-break-word"
             style={{ color: accentColor }}
           >
             {result}
