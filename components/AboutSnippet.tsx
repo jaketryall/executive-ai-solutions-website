@@ -127,19 +127,21 @@ export default function AboutSnippet() {
           {(() => {
             let letterIndex = 0;
             return words.map((word, wordIndex) => (
-              <span key={wordIndex} style={{ whiteSpace: "nowrap", display: "inline" }}>
-                {word.split("").map((letter) => {
-                  const currentIndex = letterIndex++;
-                  return (
-                    <ScrollFillLetter
-                      key={currentIndex}
-                      letter={letter}
-                      index={currentIndex}
-                      totalLetters={totalLetters}
-                      scrollYProgress={scrollYProgress}
-                    />
-                  );
-                })}
+              <span key={wordIndex}>
+                <span style={{ whiteSpace: "nowrap" }}>
+                  {word.split("").map((letter) => {
+                    const currentIndex = letterIndex++;
+                    return (
+                      <ScrollFillLetter
+                        key={currentIndex}
+                        letter={letter}
+                        index={currentIndex}
+                        totalLetters={totalLetters}
+                        scrollYProgress={scrollYProgress}
+                      />
+                    );
+                  })}
+                </span>
                 {wordIndex < words.length - 1 && " "}
               </span>
             ));
