@@ -522,7 +522,7 @@ function VerticalTimelineSection({
           />
 
           {/* Timeline items */}
-          <div className="relative space-y-16 md:space-y-24">
+          <div className="relative space-y-8 md:space-y-24">
             {service.process.map((step, i) => (
               <div
                 key={i}
@@ -532,22 +532,12 @@ function VerticalTimelineSection({
               >
                 {/* Timeline node (center dot) */}
                 <div
-                  className={`timeline-node absolute left-6 md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full z-10`}
+                  className={`timeline-node absolute left-6 md:left-1/2 md:-translate-x-1/2 w-3 h-3 md:w-4 md:h-4 rounded-full z-10`}
                   style={{
                     background: accentColor,
-                    boxShadow: `0 0 20px ${accentColor}80, 0 0 40px ${accentColor}40`,
+                    boxShadow: `0 0 12px ${accentColor}90, 0 0 24px ${accentColor}50`,
                   }}
-                >
-                  {/* Pulse ring */}
-                  <div
-                    className="absolute inset-0 rounded-full animate-ping"
-                    style={{
-                      background: accentColor,
-                      opacity: 0.3,
-                      animationDuration: "2s",
-                    }}
-                  />
-                </div>
+                />
 
                 {/* Card */}
                 <div
@@ -556,15 +546,16 @@ function VerticalTimelineSection({
                   }`}
                 >
                   <div
-                    className="relative p-5 md:p-8 lg:p-10 rounded-2xl overflow-hidden group"
+                    className="relative p-5 md:p-8 lg:p-10 rounded-xl md:rounded-2xl overflow-hidden group"
                     style={{
-                      background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)",
-                      border: "1px solid rgba(255,255,255,0.08)",
+                      background: "linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)",
+                      border: "1px solid rgba(255,255,255,0.06)",
+                      borderLeft: `3px solid ${accentColor}`,
                     }}
                   >
-                    {/* Step number watermark */}
+                    {/* Step number watermark - hidden on mobile for cleaner look */}
                     <div
-                      className="absolute -right-2 -top-2 md:-right-4 md:-top-4 text-[80px] md:text-[120px] lg:text-[160px] font-black leading-none pointer-events-none select-none"
+                      className="absolute -right-4 -top-4 text-[120px] lg:text-[160px] font-black leading-none pointer-events-none select-none hidden md:block"
                       style={{
                         WebkitTextStroke: `1px rgba(255,200,150,0.08)`,
                         WebkitTextFillColor: "transparent",
@@ -573,39 +564,43 @@ function VerticalTimelineSection({
                       {String(i + 1).padStart(2, "0")}
                     </div>
 
-                    {/* Icon and step indicator */}
-                    <div className="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
-                      <div
-                        className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center"
-                        style={{
-                          background: `linear-gradient(135deg, ${accentColor}20, transparent)`,
-                          border: `1px solid ${accentColor}30`,
-                          color: accentColor,
-                        }}
-                      >
-                        {processIcons[step.step] || (
-                          <span className="text-lg font-black">{i + 1}</span>
-                        )}
-                      </div>
-                      <span
-                        className="text-xs uppercase tracking-[0.2em]"
-                        style={{ color: accentColorMuted }}
-                      >
-                        Step {String(i + 1).padStart(2, "0")}
-                      </span>
+                    {/* Step number badge - mobile only */}
+                    <div
+                      className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold md:hidden"
+                      style={{
+                        background: `${accentColor}15`,
+                        color: accentColor,
+                        border: `1px solid ${accentColor}30`,
+                      }}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </div>
+
+                    {/* Icon */}
+                    <div
+                      className="w-11 h-11 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-4 md:mb-6"
+                      style={{
+                        background: `linear-gradient(135deg, ${accentColor}15, ${accentColor}05)`,
+                        border: `1px solid ${accentColor}25`,
+                        color: accentColor,
+                      }}
+                    >
+                      {processIcons[step.step] || (
+                        <span className="text-lg font-black">{i + 1}</span>
+                      )}
                     </div>
 
                     {/* Content */}
-                    <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-2 md:mb-4">
+                    <h3 className="text-lg md:text-2xl lg:text-3xl font-bold text-white mb-2 md:mb-3 pr-8 md:pr-0">
                       {step.step}
                     </h3>
-                    <p className="text-white/50 text-sm md:text-base lg:text-lg leading-relaxed">
+                    <p className="text-white/60 text-sm md:text-base lg:text-lg leading-relaxed">
                       {step.description}
                     </p>
 
                     {/* Hover glow */}
                     <div
-                      className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                      className="absolute inset-0 rounded-xl md:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                       style={{
                         background: `radial-gradient(circle at 50% 100%, ${accentColor}10, transparent 70%)`,
                       }}
