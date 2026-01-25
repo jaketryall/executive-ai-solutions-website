@@ -241,7 +241,7 @@ function ServicesDropdown({
                       className="relative px-4 py-3 rounded-xl overflow-hidden"
                       initial={false}
                       animate={{
-                        backgroundColor: hoveredIndex === index ? "rgba(255, 200, 150, 0.1)" : "transparent",
+                        backgroundColor: hoveredIndex === index ? "rgba(255, 200, 150, 0.1)" : "rgba(255, 200, 150, 0)",
                       }}
                       transition={{ duration: 0.2 }}
                     >

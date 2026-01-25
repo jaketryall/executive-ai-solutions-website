@@ -62,7 +62,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="bg-[#0a0908]">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -71,7 +71,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className={`${inter.variable} ${sourceSerif.variable} font-sans`}>
+      <body className={`${inter.variable} ${sourceSerif.variable} font-sans bg-[#0a0908]`}>
         <SoundProvider>
           <PageTransitionProvider>
             <CustomCursor />

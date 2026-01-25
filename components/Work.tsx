@@ -99,7 +99,7 @@ export const workItems = [
   },
 ];
 
-// Flying project card with multi-layer parallax
+// Flying project card - Editorial magazine style with bold typography
 function FlyingProjectCard({
   project,
   index,
@@ -113,8 +113,7 @@ function FlyingProjectCard({
   const [isHovered, setIsHovered] = useState(false);
   const { play } = useSound();
 
-  // Stagger the starting positions - cards overlap each other
-  // Tighter spacing (0.12) means next card enters while previous is still visible
+  // Stagger the starting positions
   const startOffset = index * 0.12;
 
   const { scrollYProgress } = useScroll({
@@ -122,10 +121,9 @@ function FlyingProjectCard({
     offset: ["start start", "end end"],
   });
 
-  // Multi-layer parallax - cards continuously move upward
-  // Settle point is when card reaches center, exit completes at end of its animation window
+  // Multi-layer parallax
   const settlePoint = startOffset + 0.25;
-  const exitPoint = Math.min(startOffset + 0.55, 1); // Ensure we don't go past 1
+  const exitPoint = Math.min(startOffset + 0.55, 1);
 
   const cardY = useTransform(
     scrollYProgress,
@@ -133,47 +131,28 @@ function FlyingProjectCard({
     ["100vh", "0vh", "-100vh"]
   );
 
-  // Image moves slower than card (parallax within card)
+  // Image parallax - starts at 0 to avoid gaps at top
   const imageY = useTransform(
     scrollYProgress,
     [startOffset, settlePoint, exitPoint],
-    ["30%", "0%", "-20%"]
+    ["0%", "-5%", "-12%"]
   );
 
-  // Title flies faster (whoosh effect)
-  const titleX = useTransform(
-    scrollYProgress,
-    [startOffset, startOffset + 0.15, startOffset + 0.3],
-    ["-100%", "0%", "0%"]
-  );
-
-  const titleOpacity = useTransform(
-    scrollYProgress,
-    [startOffset, startOffset + 0.1, startOffset + 0.35, startOffset + 0.45],
-    [0, 1, 1, 0]
-  );
-
-  // Scale and rotation for dramatic entry
+  // Scale for entry
   const cardScale = useTransform(
     scrollYProgress,
     [startOffset, startOffset + 0.15, startOffset + 0.4, exitPoint],
-    [0.8, 1, 1, 0.9]
+    [0.9, 1, 1, 0.95]
   );
 
+  // Subtle rotation
   const cardRotate = useTransform(
     scrollYProgress,
-    [startOffset, startOffset + 0.15],
-    [5, 0]
+    [startOffset, startOffset + 0.12],
+    [2, 0]
   );
 
-  // Glow intensity based on position
-  const glowOpacity = useTransform(
-    scrollYProgress,
-    [startOffset + 0.1, startOffset + 0.25, startOffset + 0.4],
-    [0, 1, 0]
-  );
-
-  // Card opacity - fully hidden until scroll triggers it, then fades out before exit completes
+  // Card opacity
   const fadeOutStart = Math.min(startOffset + 0.4, 0.85);
   const fadeOutEnd = Math.min(startOffset + 0.5, 0.95);
   const cardOpacity = useTransform(
@@ -182,7 +161,7 @@ function FlyingProjectCard({
     [0, 0, 1, 1, 0]
   );
 
-  // Alternating left/right positions
+  // Alternating positions
   const isLeft = index % 2 === 0;
   const xPosition = isLeft ? "5%" : "45%";
 
@@ -196,122 +175,169 @@ function FlyingProjectCard({
         rotate: cardRotate,
         opacity: cardOpacity,
         left: xPosition,
-        top: "15vh",
+        top: "10vh",
         zIndex: 10 + index,
       }}
     >
-      {/* Glow layer - outside the clipped container */}
-      <motion.div
-        className="absolute -inset-16 -z-10 rounded-3xl pointer-events-none"
-        style={{
-          background: `radial-gradient(ellipse at center, ${project.warmColor.replace("0.15", "0.08")} 0%, transparent 60%)`,
-          filter: "blur(30px)",
-          opacity: glowOpacity,
-        }}
-      />
-
       <TransitionLink href={`/work/${project.slug}`}>
-        <div
+        <motion.div
           className="group relative cursor-pointer"
-          style={{ isolation: "isolate" }}
           onMouseEnter={() => {
             setIsHovered(true);
             play("hover", { volume: 0.06 });
           }}
           onMouseLeave={() => setIsHovered(false)}
         >
-          {/* Card - clean mockup with hover reveal */}
-          <div className="relative aspect-4/3 overflow-hidden rounded-xl bg-black/50">
-            {/* Image wrapper for parallax */}
-            <motion.div
-              className="absolute inset-0"
-              style={{ y: imageY }}
-            >
-              {/* Oversized image for parallax movement */}
-              <div className="absolute -inset-[15%]">
-                <Image
-                  src={project.image}
-                  alt={project.title}
-                  fill
-                  className={project.image.includes("Laptop") ? "object-contain" : "object-cover object-top"}
-                  sizes="50vw"
-                  priority={index < 2}
-                />
-              </div>
-            </motion.div>
-
-            {/* Gradient overlay - fades in on hover */}
-            <motion.div
-              className="absolute inset-0 pointer-events-none"
-              initial={false}
-              animate={{
-                opacity: isHovered ? 1 : 0,
-              }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-              style={{
-                background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)",
-              }}
-            />
-
-            {/* Content - slides up on hover */}
-            <motion.div
-              className="absolute inset-0 p-6 flex flex-col justify-end"
-              initial={false}
-              animate={{
-                y: isHovered ? 0 : 20,
-                opacity: isHovered ? 1 : 0,
-              }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <motion.div style={{ x: titleX, opacity: titleOpacity }}>
-                <p
-                  className="text-xs uppercase tracking-[0.3em] mb-2"
-                  style={{ color: accentColor }}
-                >
-                  {project.category} • {project.year}
-                </p>
-                <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-[-0.03em] mb-2">
-                  {project.title}
-                </h3>
-                <p className="text-white/60 text-sm md:text-base max-w-md">
-                  {project.tagline}
-                </p>
+          {/* Main card */}
+          <div className="relative overflow-hidden rounded-xl">
+            {/* Full-bleed image */}
+            <div className="relative aspect-[4/3] overflow-hidden bg-[#0a0a0a]">
+              <motion.div
+                className="absolute inset-0"
+                style={{ y: imageY }}
+              >
+                <div className="absolute -inset-[8%]">
+                  <Image
+                    src={project.image}
+                    alt={project.title}
+                    fill
+                    className="object-cover transition-transform duration-700 ease-out"
+                    style={{
+                      transform: isHovered ? "scale(1.08)" : "scale(1)",
+                    }}
+                    sizes="50vw"
+                    priority={index < 2}
+                  />
+                </div>
               </motion.div>
-            </motion.div>
 
-            {/* View indicator - always visible, transforms on hover */}
-            <motion.div
-              className="absolute bottom-4 right-4 flex items-center gap-2 z-10 px-3 py-1.5 rounded-full"
-              style={{
-                background: "rgba(0,0,0,0.5)",
-                backdropFilter: "blur(8px)",
-                border: "1px solid rgba(255,255,255,0.1)",
-              }}
-              animate={{
-                scale: isHovered ? 1.05 : 1,
-                background: isHovered ? "rgba(255, 200, 150, 0.15)" : "rgba(0,0,0,0.5)",
-                borderColor: isHovered ? "rgba(255, 200, 150, 0.3)" : "rgba(255,255,255,0.1)",
-              }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-            >
-              <motion.span
-                className="text-xs font-medium"
-                animate={{ color: isHovered ? "rgba(255, 200, 150, 1)" : "rgba(255,255,255,0.7)" }}
+              {/* Dark gradient overlay - stronger on hover */}
+              <motion.div
+                className="absolute inset-0 pointer-events-none"
+                animate={{
+                  background: isHovered
+                    ? "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.3) 100%)"
+                    : "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.05) 100%)",
+                }}
+                transition={{ duration: 0.4 }}
+              />
+
+              {/* Content overlay */}
+              <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-end">
+                {/* Category tag - always visible with rounded corners */}
+                <motion.div
+                  className="mb-auto pt-2"
+                  animate={{
+                    opacity: isHovered ? 1 : 0.9,
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <span
+                    className="inline-block text-xs uppercase tracking-[0.2em] font-medium px-3 py-1.5 rounded-md"
+                    style={{
+                      color: accentColor,
+                      background: "rgba(0, 0, 0, 0.5)",
+                      backdropFilter: "blur(8px)",
+                      border: `1px solid rgba(255, 200, 150, 0.15)`,
+                    }}
+                  >
+                    {project.category}
+                  </span>
+                </motion.div>
+
+                {/* Title - hidden by default, reveals on hover */}
+                <motion.h3
+                  className="text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-[-0.03em] leading-[0.95] mb-3"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{
+                    opacity: isHovered ? 1 : 0,
+                    y: isHovered ? 0 : 20,
+                  }}
+                  transition={{ duration: 0.4, delay: 0.02, ease: "easeOut" }}
+                >
+                  {project.title}
+                </motion.h3>
+
+                {/* Tagline - hidden by default */}
+                <motion.p
+                  className="text-white/70 text-sm md:text-base max-w-sm mb-6"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{
+                    opacity: isHovered ? 1 : 0,
+                    y: isHovered ? 0 : 15,
+                  }}
+                  transition={{ duration: 0.3, delay: 0.06, ease: "easeOut" }}
+                >
+                  {project.description}
+                </motion.p>
+
+                {/* View button - hidden by default */}
+                <motion.div
+                  className="flex items-center gap-3"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{
+                    opacity: isHovered ? 1 : 0,
+                    y: isHovered ? 0 : 15,
+                  }}
+                  transition={{ duration: 0.3, delay: 0.08, ease: "easeOut" }}
+                >
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: accentColor }}
+                  >
+                    View Project
+                  </span>
+                  <motion.div
+                    className="w-10 h-10 rounded-full flex items-center justify-center"
+                    style={{
+                      background: accentColor,
+                    }}
+                    animate={{
+                      scale: isHovered ? 1 : 0.9,
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <motion.svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#000"
+                      strokeWidth="2"
+                      animate={{ x: isHovered ? 2 : 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </motion.svg>
+                  </motion.div>
+                </motion.div>
+              </div>
+
+              {/* Hover border accent */}
+              <motion.div
+                className="absolute inset-0 pointer-events-none rounded-xl"
+                style={{
+                  border: `2px solid ${accentColor}`,
+                  opacity: 0,
+                }}
+                animate={{
+                  opacity: isHovered ? 0.5 : 0,
+                }}
                 transition={{ duration: 0.3 }}
-              >
-                View
-              </motion.span>
-              <motion.span
-                className="text-sm"
-                style={{ color: accentColor }}
-                animate={{ x: isHovered ? 3 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                →
-              </motion.span>
-            </motion.div>
+              />
+            </div>
           </div>
-        </div>
+
+          {/* Subtle shadow */}
+          <div
+            className="absolute -inset-4 -z-10 rounded-2xl transition-opacity duration-500"
+            style={{
+              background: `radial-gradient(ellipse at center, ${project.warmColor.replace("0.15", "0.15")} 0%, transparent 70%)`,
+              filter: "blur(30px)",
+              opacity: isHovered ? 1 : 0.4,
+            }}
+          />
+        </motion.div>
       </TransitionLink>
     </motion.div>
   );
@@ -420,76 +446,19 @@ function TransitionLetter({
   );
 }
 
-// Flying title text that whooshes by
-function FlyingTitle({
-  text,
-  index,
-  containerRef,
-  direction = "left",
-}: {
-  text: string;
-  index: number;
-  containerRef: React.RefObject<HTMLDivElement | null>;
-  direction?: "left" | "right";
-}) {
-  // Match card timing: each card starts 0.12 apart
-  const startOffset = index * 0.12 + 0.05;
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
-
-  // Title flies across screen - faster to match compressed timing
-  const x = useTransform(
-    scrollYProgress,
-    [startOffset, startOffset + 0.15, startOffset + 0.3],
-    direction === "left" ? ["100vw", "0vw", "-100vw"] : ["-100vw", "0vw", "100vw"]
-  );
-
-  const opacity = useTransform(
-    scrollYProgress,
-    [startOffset, startOffset + 0.08, startOffset + 0.22, startOffset + 0.3],
-    [0, 0.15, 0.15, 0]
-  );
-
-  return (
-    <motion.div
-      className="fixed top-1/2 -translate-y-1/2 whitespace-nowrap pointer-events-none"
-      style={{
-        x,
-        opacity,
-        zIndex: 5,
-      }}
-    >
-      <span
-        className="text-[20vw] font-black tracking-[-0.04em]"
-        style={{
-          WebkitTextStroke: "1px rgba(255,200,150,0.15)",
-          WebkitTextFillColor: "transparent",
-        }}
-      >
-        {text}
-      </span>
-    </motion.div>
-  );
-}
-
-// Mobile layout
+// Mobile layout - Editorial style matching desktop
 function MobileWork() {
-  const { play } = useSound();
-
   return (
-    <div className="md:hidden px-6 py-24">
+    <div className="md:hidden px-4 py-20">
       {/* Header */}
-      <div className="mb-16 text-center">
+      <div className="mb-12 text-center">
         <p
-          className="text-sm uppercase tracking-[0.25em] mb-4"
+          className="text-xs uppercase tracking-[0.3em] mb-4"
           style={{ color: accentColorMuted }}
         >
           Selected Work
         </p>
-        <h2 className="text-[18vw] font-black text-white leading-[0.85] tracking-[-0.03em]">
+        <h2 className="text-[15vw] font-black text-white leading-[0.85] tracking-[-0.03em]">
           THE
           <br />
           <span className="text-white/20">PROOF</span>
@@ -497,58 +466,113 @@ function MobileWork() {
       </div>
 
       {/* Project Cards */}
-      <div className="space-y-10">
+      <div className="space-y-6">
         {workItems.map((project, index) => (
           <motion.div
             key={project.slug}
-            initial={{ opacity: 0, y: 60 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={{ duration: 0.7, delay: index * 0.1 }}
+            viewport={{ once: true, margin: "-5%" }}
+            transition={{ duration: 0.5, delay: index * 0.06 }}
           >
             <TransitionLink href={`/work/${project.slug}`}>
-              <div className="group relative">
-                {/* Clean mockup image */}
-                <div className="relative overflow-hidden rounded-xl aspect-4/3 mb-3 bg-black/50">
+              <div className="group relative overflow-hidden rounded-xl">
+                {/* Full-bleed image with content overlay */}
+                <div className="relative aspect-[4/3] overflow-hidden bg-[#0a0a0a]">
                   <Image
                     src={project.image}
                     alt={project.title}
                     fill
-                    className={`${project.image.includes("Laptop") ? "object-contain" : "object-cover object-top"} transition-transform duration-700 group-active:scale-105`}
-                    sizes="100vw"
+                    className="object-cover transition-transform duration-500 group-active:scale-105"
+                    sizes="(max-width: 768px) 92vw, 50vw"
                   />
 
-                  {/* Subtle vignette */}
-                  <div className="absolute inset-0 pointer-events-none" style={{
-                    background: "radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.2) 100%)"
-                  }} />
-
-                  {/* View indicator */}
+                  {/* Dark gradient overlay */}
                   <div
-                    className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all duration-300 group-active:scale-105"
+                    className="absolute inset-0 pointer-events-none"
                     style={{
-                      background: "rgba(0,0,0,0.5)",
-                      backdropFilter: "blur(8px)",
-                      border: "1px solid rgba(255,255,255,0.1)",
+                      background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.15) 100%)",
+                    }}
+                  />
+
+                  {/* Large number watermark */}
+                  <div
+                    className="absolute -bottom-4 -right-2 text-[8rem] font-black leading-none pointer-events-none select-none"
+                    style={{
+                      color: "transparent",
+                      WebkitTextStroke: `1px ${accentColor}`,
+                      opacity: 0.15,
                     }}
                   >
-                    <span className="text-white/70 text-xs font-medium group-active:text-[rgba(255,200,150,1)] transition-colors">View</span>
-                    <span className="text-sm transition-transform group-active:translate-x-0.5" style={{ color: accentColor }}>→</span>
+                    0{index + 1}
                   </div>
-                </div>
 
-                {/* Content below image on mobile */}
-                <div className="px-1">
-                  <p
-                    className="text-xs uppercase tracking-[0.2em] mb-1"
-                    style={{ color: accentColor }}
-                  >
-                    {project.category} • {project.year}
-                  </p>
-                  <h3 className="text-xl font-black text-white tracking-[-0.02em] mb-0.5">
-                    {project.title}
-                  </h3>
-                  <p className="text-white/50 text-sm">{project.tagline}</p>
+                  {/* Content overlay */}
+                  <div className="absolute inset-0 p-5 flex flex-col justify-end">
+                    {/* Category tag */}
+                    <span
+                      className="self-start text-[10px] uppercase tracking-[0.2em] font-medium px-2.5 py-1 mb-3"
+                      style={{
+                        color: accentColor,
+                        background: "rgba(255, 200, 150, 0.1)",
+                        border: `1px solid rgba(255, 200, 150, 0.2)`,
+                      }}
+                    >
+                      {project.category}
+                    </span>
+
+                    {/* Title */}
+                    <h3 className="text-2xl font-black text-white tracking-[-0.02em] leading-[0.95] mb-2">
+                      {project.title}
+                    </h3>
+
+                    {/* Tagline */}
+                    <p className="text-white/60 text-sm mb-4 line-clamp-2">
+                      {project.tagline}
+                    </p>
+
+                    {/* Bottom row */}
+                    <div className="flex items-end justify-between">
+                      {/* Result stat */}
+                      <div>
+                        <div
+                          className="text-2xl font-black"
+                          style={{ color: accentColor }}
+                        >
+                          {project.result}
+                        </div>
+                        <div className="text-[9px] uppercase tracking-[0.15em] text-white/40">
+                          {project.resultLabel}
+                        </div>
+                      </div>
+
+                      {/* View button */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium text-white/60 group-active:text-[rgba(255,200,150,1)] transition-colors">
+                          View
+                        </span>
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center transition-colors group-active:bg-[rgba(255,200,150,1)]"
+                          style={{
+                            background: "rgba(255,255,255,0.1)",
+                            border: "1px solid rgba(255,255,255,0.15)",
+                          }}
+                        >
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            className="text-white group-active:text-black transition-colors"
+                          >
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </TransitionLink>
@@ -829,17 +853,6 @@ export default function Work() {
               </div>
             </div>
           </motion.div>
-
-          {/* Flying title texts (background layer) */}
-          {workItems.map((project, index) => (
-            <FlyingTitle
-              key={`title-${project.slug}`}
-              text={project.title}
-              index={index}
-              containerRef={sectionRef}
-              direction={index % 2 === 0 ? "left" : "right"}
-            />
-          ))}
 
           {/* Flying project cards */}
           {workItems.map((project, index) => (

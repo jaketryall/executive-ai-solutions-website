@@ -450,155 +450,423 @@ function TransitionOverlay({ isActive }: { isActive: boolean; targetLabel: strin
   );
 }
 
-// Page loader for initial load with logo path reveal
+// Page loader for initial load - 3D isometric logo reveal inspired by premium motion graphics
 export function PageLoader({ onComplete }: { onComplete: () => void }) {
-  const [drawComplete, setDrawComplete] = useState(false);
-  const [phase, setPhase] = useState<"drawing" | "revealing" | "complete">("drawing");
+  const [phase, setPhase] = useState<
+    "intro" | "assemble" | "flatten" | "hold" | "transition" | "reveal"
+  >("intro");
   const { play } = useSound();
 
   useEffect(() => {
-    // Play reveal sound when drawing starts
-    const revealTimer = setTimeout(() => {
+    // Phase timing
+    const introTimer = setTimeout(() => {
+      setPhase("assemble");
       play("reveal");
-    }, 500);
+    }, 300);
 
-    // Mark drawing complete after path animation
-    const drawTimer = setTimeout(() => {
-      setDrawComplete(true);
-    }, 2000);
+    // Logo assembles with construction lines
+    const flattenTimer = setTimeout(() => {
+      setPhase("flatten");
+    }, 1400);
 
-    // Start revealing after drawing and fill complete
-    const revealPhaseTimer = setTimeout(() => {
-      setPhase("revealing");
+    // Hold the flat logo
+    const holdTimer = setTimeout(() => {
+      setPhase("hold");
+    }, 2200);
+
+    // Transition from light to dark
+    const transitionTimer = setTimeout(() => {
+      setPhase("transition");
     }, 2800);
 
-    // Complete the loader
+    // Final reveal
+    const revealTimer = setTimeout(() => {
+      setPhase("reveal");
+    }, 3400);
+
+    // Complete - remove loader from DOM
     const completeTimer = setTimeout(() => {
-      setPhase("complete");
       onComplete();
-    }, 3500);
+    }, 4000);
 
     return () => {
+      clearTimeout(introTimer);
+      clearTimeout(flattenTimer);
+      clearTimeout(holdTimer);
+      clearTimeout(transitionTimer);
       clearTimeout(revealTimer);
-      clearTimeout(drawTimer);
-      clearTimeout(revealPhaseTimer);
       clearTimeout(completeTimer);
     };
   }, [onComplete, play]);
 
-  if (phase === "complete") return null;
+  const isIntro = phase === "intro";
+  const isAssembling = phase === "assemble";
+  const isFlattening = phase === "flatten";
+  const isHolding = phase === "hold";
+  const isTransitioning = phase === "transition";
+  const isRevealing = phase === "reveal";
+
+  // Light background color (subtle lavender/blue tint like the reference)
+  const lightBg = "#e8eaef";
+  const gridDotColor = "rgba(180, 185, 200, 0.4)";
+  const constructionLineColor = "rgba(255, 255, 255, 0.8)";
 
   return (
-    <motion.div
-      className="fixed inset-0 z-[200] bg-[#0a0908] flex items-center justify-center"
-      initial={{ opacity: 1 }}
-      animate={{ opacity: phase === "revealing" ? 0 : 1 }}
-      transition={{ duration: 0.7, ease: "easeInOut" }}
-    >
-      {/* Subtle ambient glow */}
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none"
-        style={{
-          background: `radial-gradient(ellipse at center, rgba(255, 200, 150, 0.06) 0%, transparent 50%)`,
+    <motion.div className="fixed inset-0 z-[200] flex items-center justify-center overflow-hidden pointer-events-none">
+      {/* Light background - transitions to dark */}
+      <motion.div
+        className="absolute inset-0"
+        initial={{ backgroundColor: lightBg }}
+        animate={{
+          backgroundColor:
+            isTransitioning || isRevealing ? "#000000" : lightBg,
+        }}
+        transition={{
+          duration: 0.8,
+          ease: [0.4, 0, 0.2, 1],
         }}
       />
 
-      <div className="relative flex flex-col items-center">
-        {/* Logo with animated path drawing effect */}
+      {/* Grid dots pattern */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        initial={{ opacity: 0 }}
+        animate={{
+          opacity: isTransitioning || isRevealing ? 0 : isIntro ? 0 : 0.6,
+        }}
+        transition={{ duration: 0.5 }}
+        style={{
+          backgroundImage: `radial-gradient(circle, ${gridDotColor} 1px, transparent 1px)`,
+          backgroundSize: "24px 24px",
+        }}
+      />
+
+      {/* 3D perspective container */}
+      <motion.div
+        className="relative flex items-center justify-center will-change-transform z-10"
+        style={{ perspective: "1000px" }}
+        initial={{ opacity: 0 }}
+        animate={{
+          opacity: isRevealing ? 0 : isIntro ? 0 : 1,
+        }}
+        transition={{
+          opacity: {
+            duration: isRevealing ? 0.4 : 0.6,
+            ease: [0.25, 0.1, 0.25, 1],
+          },
+        }}
+      >
+        {/* Logo with 3D rotation */}
         <motion.div
-          className="relative mb-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
+          className="relative"
+          initial={{ rotateX: 55, rotateY: -25, rotateZ: 0 }}
+          animate={{
+            rotateX:
+              isFlattening || isHolding || isTransitioning || isRevealing
+                ? 0
+                : isAssembling
+                ? 55
+                : 55,
+            rotateY:
+              isFlattening || isHolding || isTransitioning || isRevealing
+                ? 0
+                : isAssembling
+                ? -25
+                : -25,
+            rotateZ: 0,
+            scale:
+              isHolding || isTransitioning
+                ? 1.05
+                : isFlattening
+                ? 1
+                : isAssembling
+                ? 0.9
+                : 0.8,
+          }}
+          transition={{
+            duration: 1,
+            ease: [0.25, 0.1, 0.25, 1],
+          }}
+          style={{ transformStyle: "preserve-3d" }}
         >
-          {/* Soft glow behind logo */}
+          {/* Outer construction circle */}
           <motion.div
-            className="absolute inset-0 -z-10 pointer-events-none"
+            className="absolute rounded-full border-2"
             style={{
-              background: `radial-gradient(ellipse at center, rgba(255, 200, 150, 0.15) 0%, transparent 70%)`,
-              filter: "blur(60px)",
+              width: "calc(20vw + 60px)",
+              height: "calc(20vw + 60px)",
+              minWidth: "180px",
+              minHeight: "180px",
+              maxWidth: "360px",
+              maxHeight: "360px",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+              borderColor: constructionLineColor,
             }}
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ scale: 0.5, opacity: 0, pathLength: 0 }}
             animate={{
-              opacity: drawComplete ? 0.5 : 0.1,
-              scale: drawComplete ? 1 : 0.9,
+              scale:
+                isTransitioning || isRevealing
+                  ? 1.2
+                  : isFlattening || isHolding
+                  ? 1
+                  : isAssembling
+                  ? 1
+                  : 0.5,
+              opacity:
+                isTransitioning || isRevealing
+                  ? 0
+                  : isFlattening || isHolding
+                  ? 0.3
+                  : isAssembling
+                  ? 0.6
+                  : 0,
             }}
             transition={{
-              duration: 1,
-              ease: "easeOut",
+              duration: 0.8,
+              ease: [0.25, 0.1, 0.25, 1],
             }}
           />
 
-          {/* The animated SVG logo */}
+          {/* Inner construction circle */}
+          <motion.div
+            className="absolute rounded-full border"
+            style={{
+              width: "calc(20vw + 20px)",
+              height: "calc(20vw + 20px)",
+              minWidth: "140px",
+              minHeight: "140px",
+              maxWidth: "320px",
+              maxHeight: "320px",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+              borderColor: constructionLineColor,
+            }}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{
+              scale:
+                isTransitioning || isRevealing
+                  ? 1.1
+                  : isFlattening || isHolding
+                  ? 1
+                  : isAssembling
+                  ? 1
+                  : 0.8,
+              opacity:
+                isTransitioning || isRevealing
+                  ? 0
+                  : isFlattening || isHolding
+                  ? 0.2
+                  : isAssembling
+                  ? 0.5
+                  : 0,
+            }}
+            transition={{
+              duration: 0.6,
+              delay: 0.1,
+              ease: [0.25, 0.1, 0.25, 1],
+            }}
+          />
+
+          {/* Soft glow/shadow behind logo */}
+          <motion.div
+            className="absolute pointer-events-none"
+            style={{
+              width: "calc(20vw + 100px)",
+              height: "calc(20vw + 100px)",
+              minWidth: "220px",
+              minHeight: "220px",
+              maxWidth: "400px",
+              maxHeight: "400px",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+              background:
+                isTransitioning || isRevealing
+                  ? `radial-gradient(ellipse at center, ${accentColor}30 0%, transparent 70%)`
+                  : "radial-gradient(ellipse at center, rgba(200, 210, 230, 0.5) 0%, transparent 70%)",
+              filter: "blur(30px)",
+            }}
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity:
+                isRevealing
+                  ? 0
+                  : isTransitioning
+                  ? 0.8
+                  : isHolding
+                  ? 0.6
+                  : isFlattening
+                  ? 0.5
+                  : isAssembling
+                  ? 0.3
+                  : 0,
+            }}
+            transition={{ duration: 0.5 }}
+          />
+
+          {/* SVG logo */}
           <svg
             viewBox="0 0 500 500"
-            className="w-[180px] md:w-[220px] h-auto"
+            className="w-[20vw] h-auto relative z-10"
             style={{
-              filter: drawComplete ? "drop-shadow(0 0 20px rgba(255, 200, 150, 0.15))" : "none",
+              minWidth: "120px",
+              maxWidth: "300px",
             }}
           >
-            {/* Drawing stroke animation */}
+            <defs>
+              <filter id="loader-glow-3d">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <filter id="loader-shadow">
+                <feDropShadow
+                  dx="0"
+                  dy="10"
+                  stdDeviation="15"
+                  floodColor="rgba(0,0,0,0.15)"
+                />
+              </filter>
+            </defs>
+
+            {/* Drawing stroke - white during assembly, accent during transition */}
             <motion.path
               d={LOGO_PATH}
-              stroke={accentColor}
-              strokeWidth="2"
+              strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
               fill="none"
-              initial={{ pathLength: 0, opacity: 1 }}
-              animate={{ pathLength: 1 }}
+              filter="url(#loader-glow-3d)"
+              initial={{ pathLength: 0, opacity: 0, stroke: "#ffffff" }}
+              animate={{
+                pathLength:
+                  isAssembling ||
+                  isFlattening ||
+                  isHolding ||
+                  isTransitioning
+                    ? 1
+                    : 0,
+                opacity:
+                  isRevealing
+                    ? 0
+                    : isTransitioning
+                    ? 0.3
+                    : isHolding
+                    ? 0.5
+                    : isFlattening
+                    ? 0.8
+                    : isAssembling
+                    ? 1
+                    : 0,
+                stroke: isTransitioning ? accentColor : "#ffffff",
+              }}
               transition={{
                 pathLength: {
-                  duration: 2,
+                  duration: 0.9,
                   ease: [0.65, 0, 0.35, 1],
+                },
+                opacity: {
+                  duration: 0.3,
+                  ease: [0.25, 0.1, 0.25, 1],
+                },
+                stroke: {
+                  duration: 0.5,
                 },
               }}
             />
 
-            {/* Fill that fades in after stroke completes */}
+            {/* Filled logo - appears during flatten phase */}
             <motion.path
               d={LOGO_PATH}
-              fill={accentColor}
               stroke="none"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: drawComplete ? 1 : 0 }}
+              filter={
+                isTransitioning || isRevealing ? "none" : "url(#loader-shadow)"
+              }
+              initial={{ opacity: 0, fill: "#ffffff" }}
+              animate={{
+                opacity:
+                  isRevealing
+                    ? 0
+                    : isTransitioning
+                    ? 1
+                    : isHolding
+                    ? 1
+                    : isFlattening
+                    ? 0.9
+                    : 0,
+                fill: isTransitioning || isRevealing ? accentColor : "#ffffff",
+              }}
               transition={{
-                duration: 0.8,
-                ease: "easeOut",
+                opacity: {
+                  duration: 0.4,
+                  ease: [0.25, 0.1, 0.25, 1],
+                },
+                fill: {
+                  duration: 0.5,
+                },
+              }}
+              style={{
+                filter:
+                  isTransitioning || isRevealing
+                    ? `drop-shadow(0 0 30px ${accentColor}50)`
+                    : undefined,
               }}
             />
           </svg>
         </motion.div>
+      </motion.div>
 
-        {/* Brand name that fades in after logo draws */}
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: drawComplete ? 1 : 0, y: drawComplete ? 0 : 10 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
-          <span className="text-lg md:text-xl font-bold text-white tracking-[0.15em]">
+      {/* Brand text - appears during hold phase with dark background */}
+      <motion.div
+        className="absolute left-1/2 -translate-x-1/2 text-center z-10"
+        style={{ top: "calc(50% + 14vw)" }}
+        initial={{ opacity: 0 }}
+        animate={{
+          opacity: isRevealing ? 0 : isTransitioning ? 1 : 0,
+        }}
+        transition={{
+          duration: 0.4,
+          ease: [0.25, 0.1, 0.25, 1],
+          delay: isTransitioning ? 0.2 : 0,
+        }}
+      >
+        <motion.div className="overflow-hidden">
+          <motion.span
+            className="block text-base md:text-lg font-semibold text-white tracking-[0.25em]"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{
+              y: isTransitioning ? 0 : 20,
+              opacity: isTransitioning ? 1 : 0,
+            }}
+            transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
+          >
             EXECUTIVE AI
-          </span>
-          <span className="block text-xs md:text-sm font-medium text-white/40 tracking-[0.2em] mt-1">
-            SOLUTIONS
-          </span>
+          </motion.span>
         </motion.div>
 
-        {/* Decorative rings */}
-        <motion.div
-          className="absolute -inset-16 border border-white/5 rounded-full pointer-events-none"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: drawComplete ? 1 : 0 }}
-          transition={{ delay: 0.2, duration: 0.8 }}
-        />
-        <motion.div
-          className="absolute -inset-28 border border-white/[0.03] rounded-full pointer-events-none"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: drawComplete ? 1 : 0 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-        />
-      </div>
+        <motion.div className="overflow-hidden mt-1">
+          <motion.span
+            className="block text-xs text-white/40 tracking-[0.4em] uppercase font-light"
+            initial={{ y: 15, opacity: 0 }}
+            animate={{
+              y: isTransitioning ? 0 : 15,
+              opacity: isTransitioning ? 1 : 0,
+            }}
+            transition={{
+              duration: 0.45,
+              delay: 0.08,
+              ease: [0.25, 0.1, 0.25, 1],
+            }}
+          >
+            Design Studio
+          </motion.span>
+        </motion.div>
+      </motion.div>
     </motion.div>
   );
 }

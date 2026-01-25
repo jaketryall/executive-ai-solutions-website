@@ -1,12 +1,27 @@
 "use client";
 
 import { motion, useScroll, useTransform, useMotionTemplate, useSpring } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef1 = useRef<HTMLVideoElement>(null);
   const videoRef2 = useRef<HTMLVideoElement>(null);
+
+  // Responsive initial mask size - larger on mobile
+  const [initialMaskSize, setInitialMaskSize] = useState(20);
+
+  useEffect(() => {
+    const updateMaskSize = () => {
+      // Use larger initial size on mobile for better visibility
+      setInitialMaskSize(window.innerWidth < 768 ? 40 : 20);
+    };
+
+    updateMaskSize();
+    window.addEventListener("resize", updateMaskSize);
+    return () => window.removeEventListener("resize", updateMaskSize);
+  }, []);
+
   // Handle video loop manually
   const handleVideoEnded = (e: React.SyntheticEvent<HTMLVideoElement>) => {
     const video = e.currentTarget;
@@ -20,7 +35,7 @@ export default function Hero() {
   });
 
   // Logo mask scale: starts small, grows to reveal full video
-  const maskSizeRaw = useTransform(scrollYProgress, [0, 0.5], [20, 5000]);
+  const maskSizeRaw = useTransform(scrollYProgress, [0, 0.5], [initialMaskSize, 5000]);
   const maskSize = useSpring(maskSizeRaw, { stiffness: 100, damping: 30, mass: 0.5 });
   const maskSizePercent = useMotionTemplate`${maskSize}%`;
 
@@ -32,6 +47,37 @@ export default function Hero() {
 
   // Video fades out towards the end - start later for cleaner transition
   const videoOpacity = useTransform(scrollYProgress, [0.75, 0.95], [1, 0]);
+
+  // Marquee setup
+  const projectImages = [
+    "/Celestial Laptop Mockup.png",
+    "/Celestial iPhone Mockup.png",
+    "/Elegant Black Laptop Mockup.png",
+    "/Rubber iPhone Mockup.png",
+  ];
+
+  const cardWidth = 350;
+  const gapWidth = 32;
+  const cardCount = 8;
+  const setWidth = cardCount * cardWidth + (cardCount - 1) * gapWidth;
+  const translateDistance = setWidth + gapWidth;
+
+  const renderCards = (offset: number, keyPrefix: string) =>
+    [...Array(cardCount)].map((_, i) => (
+      <div
+        key={`${keyPrefix}-${i}`}
+        className="w-[350px] h-[220px] rounded-lg overflow-hidden shrink-0"
+        style={{
+          boxShadow: "0 0 40px rgba(255,250,240,0.1)",
+        }}
+      >
+        <img
+          src={projectImages[(i + offset) % projectImages.length]}
+          alt=""
+          className="w-full h-full object-cover object-top"
+        />
+      </div>
+    ));
 
   return (
     <section
@@ -66,82 +112,64 @@ export default function Hero() {
           className="absolute inset-0 pointer-events-none overflow-hidden"
           style={{ opacity: initialContentOpacity }}
         >
-          {(() => {
-            const projectImages = [
-              "/Celestial Laptop Mockup.png",
-              "/Celestial iPhone Mockup.png",
-              "/Elegant Black Laptop Mockup.png",
-              "/Rubber iPhone Mockup.png",
-            ];
+          <style>{`
+            @keyframes marquee-scroll-left {
+              from { transform: translateX(0); }
+              to { transform: translateX(-${translateDistance}px); }
+            }
+            @keyframes marquee-scroll-right {
+              from { transform: translateX(-${translateDistance}px); }
+              to { transform: translateX(0); }
+            }
+          `}</style>
 
-            const cardWidth = 350;
-            const gapWidth = 32;
-            const cardCount = 8;
-            const setWidth = cardCount * cardWidth + (cardCount - 1) * gapWidth;
-            const translateDistance = setWidth + gapWidth;
+          {/* Top row */}
+          <div className="absolute top-[5%] flex overflow-hidden w-full">
+            <div
+              className="flex gap-8 whitespace-nowrap will-change-transform opacity-20"
+              style={{
+                animationName: "marquee-scroll-left",
+                animationDuration: "40s",
+                animationTimingFunction: "linear",
+                animationIterationCount: "infinite",
+              }}
+            >
+              {renderCards(0, "top-a")}
+              {renderCards(0, "top-b")}
+            </div>
+          </div>
 
-            const renderCards = (offset: number, keyPrefix: string) =>
-              [...Array(cardCount)].map((_, i) => (
-                <div
-                  key={`${keyPrefix}-${i}`}
-                  className="w-[350px] h-[220px] rounded-lg overflow-hidden opacity-20 shrink-0"
-                  style={{
-                    boxShadow: "0 0 40px rgba(255,250,240,0.1)",
-                  }}
-                >
-                  <img
-                    src={projectImages[(i + offset) % projectImages.length]}
-                    alt=""
-                    className="w-full h-full object-cover object-top"
-                  />
-                </div>
-              ));
+          {/* Middle row */}
+          <div className="absolute top-[35%] flex overflow-hidden w-full">
+            <div
+              className="flex gap-8 whitespace-nowrap will-change-transform opacity-20"
+              style={{
+                animationName: "marquee-scroll-right",
+                animationDuration: "45s",
+                animationTimingFunction: "linear",
+                animationIterationCount: "infinite",
+              }}
+            >
+              {renderCards(2, "mid-a")}
+              {renderCards(2, "mid-b")}
+            </div>
+          </div>
 
-            return (
-              <>
-                <style>{`
-                  @keyframes marquee-scroll-left {
-                    from { transform: translateX(0); }
-                    to { transform: translateX(-${translateDistance}px); }
-                  }
-                  @keyframes marquee-scroll-right {
-                    from { transform: translateX(-${translateDistance}px); }
-                    to { transform: translateX(0); }
-                  }
-                `}</style>
-
-                <div className="absolute top-[5%] flex overflow-hidden w-full">
-                  <div
-                    className="flex gap-8 whitespace-nowrap will-change-transform"
-                    style={{ animation: "marquee-scroll-left 40s linear infinite" }}
-                  >
-                    {renderCards(0, "top-a")}
-                    {renderCards(0, "top-b")}
-                  </div>
-                </div>
-
-                <div className="absolute top-[35%] flex overflow-hidden w-full">
-                  <div
-                    className="flex gap-8 whitespace-nowrap will-change-transform"
-                    style={{ animation: "marquee-scroll-right 45s linear infinite" }}
-                  >
-                    {renderCards(2, "mid-a")}
-                    {renderCards(2, "mid-b")}
-                  </div>
-                </div>
-
-                <div className="absolute top-[65%] flex overflow-hidden w-full">
-                  <div
-                    className="flex gap-8 whitespace-nowrap will-change-transform"
-                    style={{ animation: "marquee-scroll-left 50s linear infinite" }}
-                  >
-                    {renderCards(1, "bot-a")}
-                    {renderCards(1, "bot-b")}
-                  </div>
-                </div>
-              </>
-            );
-          })()}
+          {/* Bottom row */}
+          <div className="absolute top-[65%] flex overflow-hidden w-full">
+            <div
+              className="flex gap-8 whitespace-nowrap will-change-transform opacity-20"
+              style={{
+                animationName: "marquee-scroll-left",
+                animationDuration: "50s",
+                animationTimingFunction: "linear",
+                animationIterationCount: "infinite",
+              }}
+            >
+              {renderCards(1, "bot-a")}
+              {renderCards(1, "bot-b")}
+            </div>
+          </div>
         </motion.div>
 
         {/* Video with logo-shaped mask that grows */}

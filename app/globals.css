@@ -20,6 +20,7 @@
 
   html {
     scroll-behavior: smooth;
+    background-color: #0a0908;
   }
 
   html, body {
@@ -112,6 +113,26 @@
     }
     to {
       opacity: 1;
+    }
+  }
+
+  /* Page reveal overlay - slides up to reveal content */
+  .page-reveal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background-color: #0a0908;
+    animation: revealSlideUp 0.8s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+    animation-delay: 0.1s;
+    pointer-events: none;
+  }
+
+  @keyframes revealSlideUp {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-100%);
     }
   }
 
