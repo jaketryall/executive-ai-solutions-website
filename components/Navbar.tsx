@@ -423,12 +423,9 @@ export default function Navbar() {
       >
         <nav className="mx-4 mt-4 px-5 py-4 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl">
           <div className="flex items-center justify-between">
-            {/* Logo - same as desktop */}
-            <TransitionLink href="/" className="flex items-center gap-2">
-              <AnimatedLogo width={32} height={22} instant />
-              <span className="text-white font-bold text-xs uppercase tracking-[0.1em]">
-                Executive AI
-              </span>
+            {/* Logo - animated like desktop */}
+            <TransitionLink href="/" className="flex items-center">
+              <AnimatedLogo width={36} height={24} drawDuration={1} delay={0.3} />
             </TransitionLink>
 
             {/* Menu Button */}
