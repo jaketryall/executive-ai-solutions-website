@@ -29,11 +29,6 @@ function ScrollFillLetter({
     [0.15, 1]
   );
 
-  // Handle spaces
-  if (letter === " ") {
-    return <span>{"\u00A0"}</span>;
-  }
-
   return (
     <motion.span
       className="inline-block"
@@ -53,10 +48,13 @@ export default function AboutSnippet() {
     offset: ["start end", "end start"],
   });
 
-  // Main text - split into letters
+  // Main text - split into words, then letters
   const mainText =
     "We design websites that convert, build tools that scale, and craft strategies that get you found.";
-  const letters = mainText.split("");
+  const words = mainText.split(" ");
+
+  // Calculate total letters for animation timing
+  const totalLetters = mainText.replace(/ /g, "").length;
 
   // Scroll-driven entrance animations - delayed to start when section is more visible
   const labelOpacity = useTransform(scrollYProgress, [0.2, 0.35], [0, 1]);
@@ -68,7 +66,7 @@ export default function AboutSnippet() {
   return (
     <section
       ref={containerRef}
-      className="relative pt-32 md:pt-40 pb-56 md:pb-72 bg-black"
+      className="relative pt-24 md:pt-32 lg:pt-40 pb-40 md:pb-48 lg:pb-72 bg-black"
       style={{ marginBottom: "-8px", position: "relative", zIndex: 2 }}
     >
       {/* Dark background - warm charcoal */}
@@ -127,15 +125,26 @@ export default function AboutSnippet() {
           className="text-2xl md:text-4xl lg:text-5xl font-medium leading-[1.4] tracking-[-0.02em] text-white"
           style={{ opacity: textOpacity, y: textY }}
         >
-          {letters.map((letter, index) => (
-            <ScrollFillLetter
-              key={index}
-              letter={letter}
-              index={index}
-              totalLetters={letters.length}
-              scrollYProgress={scrollYProgress}
-            />
-          ))}
+          {(() => {
+            let letterIndex = 0;
+            return words.map((word, wordIndex) => (
+              <span key={wordIndex} style={{ whiteSpace: "nowrap" }}>
+                {word.split("").map((letter) => {
+                  const currentIndex = letterIndex++;
+                  return (
+                    <ScrollFillLetter
+                      key={currentIndex}
+                      letter={letter}
+                      index={currentIndex}
+                      totalLetters={totalLetters}
+                      scrollYProgress={scrollYProgress}
+                    />
+                  );
+                })}
+                {wordIndex < words.length - 1 && <span>{"\u00A0"}</span>}
+              </span>
+            ));
+          })()}
         </motion.h2>
       </motion.div>
     </section>
