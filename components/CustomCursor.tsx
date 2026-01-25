@@ -96,7 +96,7 @@ export default function CustomCursor() {
           animate={{
             width: isExpanded ? 80 : 40,
             height: isExpanded ? 80 : 40,
-            borderColor: variant === "card" ? "#00f0ff" : "#ffffff",
+            borderColor: variant === "card" ? "#ffc896" : "#ffffff",
           }}
           transition={{ duration: 0.2, ease: "easeOut" }}
         />

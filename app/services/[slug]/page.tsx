@@ -952,20 +952,24 @@ function PricingSection({
         {/* Pricing cards */}
         <div
           ref={cardsRef}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 pt-12"
+          className={`pt-12 ${
+            pricing.length === 1
+              ? "flex justify-center"
+              : "grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8"
+          }`}
         >
           {pricing.map((tier, i) => (
             <TransitionLink
               key={tier.name}
               href="/contact"
               className={`pricing-card group relative transition-transform duration-300 hover:-translate-y-2 block ${
-                tier.highlighted ? "md:-mt-4 md:mb-4" : ""
-              }`}
+                tier.highlighted && pricing.length > 1 ? "md:-mt-4 md:mb-4" : ""
+              } ${pricing.length === 1 ? "w-full max-w-4xl" : ""}`}
               onMouseEnter={() => play("hover", { volume: 0.05 })}
               onClick={() => play("click")}
             >
-              {/* Highlighted badge - outside overflow container */}
-              {tier.highlighted && (
+              {/* Highlighted badge - outside overflow container (only show when multiple cards) */}
+              {tier.highlighted && pricing.length > 1 && (
                 <div
                   className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider z-10"
                   style={{
@@ -989,92 +993,149 @@ function PricingSection({
                     : "1px solid rgba(255,255,255,0.08)",
                 }}
               >
-                {/* Background number */}
-                <div
-                  className="absolute -right-4 -top-4 text-[180px] md:text-[220px] font-black leading-none pointer-events-none select-none"
-                  style={{
-                    WebkitTextStroke: tier.highlighted
-                      ? `1px rgba(255,200,150,0.1)`
-                      : `1px rgba(255,255,255,0.04)`,
-                    WebkitTextFillColor: "transparent",
-                  }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-
-                {/* Content */}
-                <div className="relative p-8 md:p-10 h-full flex flex-col">
-                {/* Tier name */}
-                <h3
-                  className="text-lg font-semibold mb-2"
-                  style={{ color: tier.highlighted ? accentColor : "white" }}
-                >
-                  {tier.name}
-                </h3>
-
-                {/* Price - fixed height for alignment */}
-                <div className="mb-4 min-h-[72px] md:min-h-[80px]">
-                  <span className="text-4xl md:text-5xl font-black text-white">
-                    {tier.price}
-                  </span>
-                </div>
-
-                {/* Description - fixed height for alignment */}
-                <p className="text-white/50 text-sm mb-8 min-h-[40px]">
-                  {tier.description}
-                </p>
-
-                {/* Features - grow to push button to bottom */}
-                <ul className="space-y-3 mb-8 grow">
-                  {tier.features.map((feature, j) => (
-                    <li key={j} className="flex items-start gap-3">
-                      <span
-                        className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                        style={{
-                          background: tier.highlighted
-                            ? `${accentColor}20`
-                            : "rgba(255,255,255,0.1)",
-                          border: tier.highlighted
-                            ? `1px solid ${accentColor}40`
-                            : "1px solid rgba(255,255,255,0.1)",
-                        }}
-                      >
-                        <svg
-                          width="10"
-                          height="10"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke={tier.highlighted ? accentColor : "rgba(255,255,255,0.5)"}
-                          strokeWidth="3"
-                        >
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      </span>
-                      <span className="text-white/70 text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* CTA Button - visual element at bottom */}
-                <div className="mt-auto">
-                  <motion.div
-                    className="w-full py-4 rounded-xl font-semibold text-sm transition-all duration-300 text-center"
+                {/* Background number - hide for single card */}
+                {pricing.length > 1 && (
+                  <div
+                    className="absolute -right-4 -top-4 text-[180px] md:text-[220px] font-black leading-none pointer-events-none select-none"
                     style={{
-                      background: tier.highlighted
-                        ? `linear-gradient(135deg, ${accentColor}, rgba(255, 180, 120, 1))`
-                        : "rgba(255,255,255,0.08)",
-                      color: tier.highlighted ? "#000" : "white",
-                      border: tier.highlighted
-                        ? "none"
-                        : "1px solid rgba(255,255,255,0.1)",
+                      WebkitTextStroke: tier.highlighted
+                        ? `1px rgba(255,200,150,0.1)`
+                        : `1px rgba(255,255,255,0.04)`,
+                      WebkitTextFillColor: "transparent",
                     }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                   >
-                    {tier.highlighted ? "Get Started" : tier.cta}
-                  </motion.div>
+                    {String(i + 1).padStart(2, "0")}
+                  </div>
+                )}
+
+                {/* Content - different layout for single card */}
+                <div className={`relative h-full ${
+                  pricing.length === 1
+                    ? "p-8 md:p-12 lg:p-16 flex flex-col md:flex-row md:items-start gap-8 md:gap-16"
+                    : "p-8 md:p-10 flex flex-col"
+                }`}>
+                  {/* Left side - Title, price, description, CTA */}
+                  <div className={`${pricing.length === 1 ? "md:w-1/2 flex flex-col" : ""}`}>
+                    {/* Tier name */}
+                    <h3
+                      className={`font-semibold mb-2 ${pricing.length === 1 ? "text-xl md:text-2xl" : "text-lg"}`}
+                      style={{ color: tier.highlighted ? accentColor : "white" }}
+                    >
+                      {tier.name}
+                    </h3>
+
+                    {/* Price */}
+                    <div className={`${pricing.length === 1 ? "mb-6" : "mb-4 min-h-[72px] md:min-h-[80px]"}`}>
+                      <span className={`font-black text-white ${pricing.length === 1 ? "text-5xl md:text-7xl" : "text-4xl md:text-5xl"}`}>
+                        {tier.price}
+                      </span>
+                    </div>
+
+                    {/* Description */}
+                    <p className={`text-white/50 ${pricing.length === 1 ? "text-base md:text-lg mb-8 max-w-md" : "text-sm mb-8 min-h-[40px]"}`}>
+                      {tier.description}
+                    </p>
+
+                    {/* CTA Button - only show on left for single card */}
+                    {pricing.length === 1 && (
+                      <motion.div
+                        className="inline-flex py-4 px-8 rounded-xl font-semibold text-sm transition-all duration-300 text-center"
+                        style={{
+                          background: `linear-gradient(135deg, ${accentColor}, rgba(255, 180, 120, 1))`,
+                          color: "#000",
+                        }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        {tier.cta}
+                      </motion.div>
+                    )}
+                  </div>
+
+                  {/* Right side - Features */}
+                  <div className={`${pricing.length === 1 ? "md:w-1/2" : "grow"}`}>
+                    {pricing.length === 1 && (
+                      <p className="text-xs uppercase tracking-[0.2em] text-white/40 mb-6">
+                        What&apos;s Included
+                      </p>
+                    )}
+
+                    {/* Features */}
+                    <ul className={`${pricing.length === 1 ? "grid grid-cols-1 gap-4" : "space-y-3 mb-8"}`}>
+                      {tier.features.map((feature, j) => (
+                        <li key={j} className="flex items-start gap-3">
+                          <span
+                            className={`rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                              pricing.length === 1 ? "w-6 h-6" : "w-5 h-5"
+                            }`}
+                            style={{
+                              background: tier.highlighted
+                                ? `${accentColor}20`
+                                : "rgba(255,255,255,0.1)",
+                              border: tier.highlighted
+                                ? `1px solid ${accentColor}40`
+                                : "1px solid rgba(255,255,255,0.1)",
+                            }}
+                          >
+                            <svg
+                              width={pricing.length === 1 ? "12" : "10"}
+                              height={pricing.length === 1 ? "12" : "10"}
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke={tier.highlighted ? accentColor : "rgba(255,255,255,0.5)"}
+                              strokeWidth="3"
+                            >
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          </span>
+                          <span className={`text-white/70 ${pricing.length === 1 ? "text-base" : "text-sm"}`}>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* CTA Button - only for multiple cards layout */}
+                    {pricing.length > 1 && (
+                      <div className="mt-auto">
+                        <motion.div
+                          className="w-full py-4 rounded-xl font-semibold text-sm transition-all duration-300 text-center"
+                          style={{
+                            background: tier.highlighted
+                              ? `linear-gradient(135deg, ${accentColor}, rgba(255, 180, 120, 1))`
+                              : "rgba(255,255,255,0.08)",
+                            color: tier.highlighted ? "#000" : "white",
+                            border: tier.highlighted
+                              ? "none"
+                              : "1px solid rgba(255,255,255,0.1)",
+                          }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          {tier.highlighted ? "Get Started" : tier.cta}
+                        </motion.div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+
+                {/* Decorative elements for single card */}
+                {pricing.length === 1 && (
+                  <>
+                    {/* Corner accent */}
+                    <div
+                      className="absolute top-0 right-0 w-64 h-64 pointer-events-none"
+                      style={{
+                        background: `radial-gradient(circle at 100% 0%, ${accentColor}15, transparent 70%)`,
+                      }}
+                    />
+                    {/* Bottom accent */}
+                    <div
+                      className="absolute bottom-0 left-0 w-96 h-48 pointer-events-none"
+                      style={{
+                        background: `radial-gradient(ellipse at 0% 100%, ${accentColor}10, transparent 70%)`,
+                      }}
+                    />
+                  </>
+                )}
 
                 {/* Hover glow effect */}
                 <div
