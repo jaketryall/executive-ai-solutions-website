@@ -507,19 +507,7 @@ function VerticalTimelineSection({
             }}
           />
 
-          {/* Mobile line (left side) */}
-          <div
-            className="absolute left-6 top-0 bottom-0 w-px md:hidden"
-            style={{ background: "rgba(255,255,255,0.08)" }}
-          />
-          <div
-            className="absolute left-6 top-0 bottom-0 w-px origin-top md:hidden"
-            style={{
-              background: `linear-gradient(180deg, ${accentColor}, ${accentColorMuted})`,
-              boxShadow: `0 0 15px ${accentColor}60`,
-              transform: "scaleY(var(--mobile-progress, 0))",
-            }}
-          />
+          {/* Mobile line - hidden for cleaner look */}
 
           {/* Timeline items */}
           <div className="relative space-y-8 md:space-y-24">
@@ -530,9 +518,9 @@ function VerticalTimelineSection({
                   i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
                 }`}
               >
-                {/* Timeline node (center dot) */}
+                {/* Timeline node (center dot) - hidden on mobile for clean stacked cards */}
                 <div
-                  className={`timeline-node absolute left-6 md:left-1/2 md:-translate-x-1/2 w-3 h-3 md:w-4 md:h-4 rounded-full z-10`}
+                  className={`timeline-node absolute hidden md:block md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full z-10`}
                   style={{
                     background: accentColor,
                     boxShadow: `0 0 12px ${accentColor}90, 0 0 24px ${accentColor}50`,
@@ -541,16 +529,15 @@ function VerticalTimelineSection({
 
                 {/* Card */}
                 <div
-                  className={`timeline-card ml-12 md:ml-0 w-[calc(100%-3rem)] md:w-[calc(50%-40px)] shrink-0 ${
+                  className={`timeline-card w-full md:w-[calc(50%-40px)] shrink-0 ${
                     i % 2 === 0 ? "md:pr-12" : "md:pl-12"
                   }`}
                 >
                   <div
-                    className="relative p-5 md:p-8 lg:p-10 rounded-xl md:rounded-2xl overflow-hidden group"
+                    className="relative p-6 md:p-8 lg:p-10 rounded-2xl overflow-hidden group"
                     style={{
-                      background: "linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)",
-                      border: "1px solid rgba(255,255,255,0.06)",
-                      borderLeft: `3px solid ${accentColor}`,
+                      background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)",
+                      border: "1px solid rgba(255,255,255,0.08)",
                     }}
                   >
                     {/* Step number watermark - hidden on mobile for cleaner look */}
@@ -566,9 +553,9 @@ function VerticalTimelineSection({
 
                     {/* Step number badge - mobile only */}
                     <div
-                      className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold md:hidden"
+                      className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold mb-4"
                       style={{
-                        background: `${accentColor}15`,
+                        background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`,
                         color: accentColor,
                         border: `1px solid ${accentColor}30`,
                       }}
@@ -576,9 +563,9 @@ function VerticalTimelineSection({
                       {String(i + 1).padStart(2, "0")}
                     </div>
 
-                    {/* Icon */}
+                    {/* Icon - desktop only */}
                     <div
-                      className="w-11 h-11 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-4 md:mb-6"
+                      className="hidden md:flex w-12 h-12 rounded-xl items-center justify-center mb-6"
                       style={{
                         background: `linear-gradient(135deg, ${accentColor}15, ${accentColor}05)`,
                         border: `1px solid ${accentColor}25`,
@@ -591,7 +578,7 @@ function VerticalTimelineSection({
                     </div>
 
                     {/* Content */}
-                    <h3 className="text-lg md:text-2xl lg:text-3xl font-bold text-white mb-2 md:mb-3 pr-8 md:pr-0">
+                    <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-2 md:mb-3">
                       {step.step}
                     </h3>
                     <p className="text-white/60 text-sm md:text-base lg:text-lg leading-relaxed">
@@ -614,9 +601,9 @@ function VerticalTimelineSection({
             ))}
           </div>
 
-          {/* End node */}
+          {/* End node - hidden on mobile */}
           <div
-            className="absolute left-6 md:left-1/2 md:-translate-x-1/2 -bottom-4 w-6 h-6 rounded-full flex items-center justify-center"
+            className="absolute hidden md:flex left-1/2 -translate-x-1/2 -bottom-4 w-6 h-6 rounded-full items-center justify-center"
             style={{
               background: `linear-gradient(135deg, ${accentColor}, rgba(255,180,120,1))`,
               boxShadow: `0 0 30px ${accentColor}60`,
