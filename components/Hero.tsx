@@ -48,12 +48,12 @@ export default function Hero() {
   // Video fades out towards the end - start later for cleaner transition
   const videoOpacity = useTransform(scrollYProgress, [0.75, 0.95], [1, 0]);
 
-  // Marquee setup
+  // Marquee setup - use thumbnails for faster loading (700px for 350px display)
   const projectImages = [
-    "/Celestial Laptop Mockup.webp",
-    "/Celestial iPhone Mockup.webp",
-    "/Elegant Black Laptop Mockup.webp",
-    "/Rubber iPhone Mockup.webp",
+    "/thumbnails/Celestial Laptop Mockup.webp",
+    "/thumbnails/Celestial iPhone Mockup.webp",
+    "/thumbnails/Elegant Black Laptop Mockup.webp",
+    "/thumbnails/Rubber iPhone Mockup.webp",
   ];
 
   const cardWidth = 350;
@@ -74,6 +74,8 @@ export default function Hero() {
         <img
           src={projectImages[(i + offset) % projectImages.length]}
           alt=""
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover object-top"
         />
       </div>
