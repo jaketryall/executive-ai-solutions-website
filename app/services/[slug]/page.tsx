@@ -246,7 +246,7 @@ function CinematicHero({
           </p>
 
           {/* CTA Button */}
-          <TransitionLink
+          <a
             href="#pricing"
             className="inline-flex items-center gap-4 group"
           >
@@ -266,7 +266,7 @@ function CinematicHero({
                 ↓
               </span>
             </span>
-          </TransitionLink>
+          </a>
         </motion.div>
       </div>
 
@@ -908,7 +908,7 @@ function PricingSection({
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative py-32 md:py-48 bg-transparent overflow-hidden">
+    <section id="pricing" ref={sectionRef} className="relative py-32 md:py-48 bg-transparent overflow-hidden">
       {/* Background glow */}
       <div
         className="absolute inset-0 pointer-events-none"
