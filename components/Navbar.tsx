@@ -423,9 +423,12 @@ export default function Navbar() {
       >
         <nav className="mx-4 mt-4 px-5 py-4 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl">
           <div className="flex items-center justify-between">
-            {/* Logo - icon only on mobile, instant visibility */}
-            <TransitionLink href="/" className="flex items-center">
-              <AnimatedLogo width={38} height={26} instant />
+            {/* Logo - same as desktop */}
+            <TransitionLink href="/" className="flex items-center gap-2">
+              <AnimatedLogo width={32} height={22} instant />
+              <span className="text-white font-bold text-xs uppercase tracking-[0.1em]">
+                Executive AI
+              </span>
             </TransitionLink>
 
             {/* Menu Button */}
