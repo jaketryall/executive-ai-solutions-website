@@ -153,7 +153,7 @@ export default function AnimatedLogo({
         {/* Fill - fades in after stroke completes */}
         <motion.path
           d={LOGO_PATH}
-          fill={isHovered ? "url(#logoFillGradientHover)" : instant ? "url(#logoFillGradientInstant)" : "url(#logoFillGradient)"}
+          fill={isHovered ? "url(#logoFillGradientHover)" : instant ? "#ffffff" : "url(#logoFillGradient)"}
           stroke="none"
           initial={instant ? { opacity: 1 } : { opacity: 0 }}
           animate={isInView || instant ? { opacity: 1 } : {}}
