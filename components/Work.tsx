@@ -446,138 +446,285 @@ function TransitionLetter({
   );
 }
 
-// Mobile layout - Editorial style matching desktop
-function MobileWork() {
+// Mobile card with parallax
+function MobileWorkCard({
+  project,
+  index,
+  isActive,
+}: {
+  project: (typeof workItems)[0];
+  index: number;
+  isActive: boolean;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Parallax for inner image - keep scale high enough to prevent gaps
+  const imageY = useTransform(scrollYProgress, [0, 1], ["5%", "-5%"]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.2, 1.15, 1.2]);
+
   return (
-    <div className="md:hidden px-4 py-20">
-      {/* Header */}
-      <div className="mb-12 text-center">
-        <p
-          className="text-xs uppercase tracking-[0.3em] mb-4"
-          style={{ color: accentColorMuted }}
+    <TransitionLink
+      href={`/work/${project.slug}`}
+      className="shrink-0 w-[85vw] relative"
+      style={{ scrollSnapAlign: "center" }}
+    >
+      <motion.div
+        ref={cardRef}
+        className="relative rounded-3xl overflow-hidden touch-feedback"
+        style={{
+          background: "linear-gradient(165deg, #1a1816 0%, #0e0d0c 100%)",
+          boxShadow: isActive
+            ? "0 25px 50px -12px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,200,150,0.15)"
+            : "0 15px 30px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,200,150,0.06)",
+        }}
+        animate={{
+          scale: isActive ? 1 : 0.95,
+          opacity: isActive ? 1 : 0.7,
+        }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+      >
+        {/* Image with parallax */}
+        <div className="relative aspect-4/3 overflow-hidden">
+          <motion.div
+            className="absolute inset-0"
+            style={{ y: imageY, scale: imageScale }}
+          >
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              className="object-cover"
+              sizes="85vw"
+              priority={index < 2}
+            />
+          </motion.div>
+
+          {/* Cinematic gradient overlay */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.2) 60%, transparent 100%)",
+            }}
+          />
+
+          {/* Category tag */}
+          <div className="absolute top-4 left-4">
+            <span
+              className="text-[10px] uppercase tracking-[0.2em] font-semibold px-3 py-1.5 rounded-full"
+              style={{
+                color: accentColor,
+                background: "rgba(0,0,0,0.7)",
+                backdropFilter: "blur(12px)",
+                border: "1px solid rgba(255,200,150,0.25)",
+              }}
+            >
+              {project.category}
+            </span>
+          </div>
+
+          {/* Result badge */}
+          <div className="absolute top-4 right-4">
+            <div
+              className="text-center px-3 py-2 rounded-xl"
+              style={{
+                background: "rgba(0,0,0,0.7)",
+                backdropFilter: "blur(12px)",
+                border: "1px solid rgba(255,200,150,0.15)",
+              }}
+            >
+              <span
+                className="block text-lg font-black leading-none"
+                style={{ color: accentColor }}
+              >
+                {project.result}
+              </span>
+              <span className="text-[8px] uppercase tracking-wider text-white/50">
+                {project.resultLabel}
+              </span>
+            </div>
+          </div>
+
+          {/* Content overlaid on image */}
+          <div className="absolute bottom-0 left-0 right-0 p-5">
+            <h3 className="text-2xl font-black text-white mb-1 leading-tight tracking-tight">
+              {project.title}
+            </h3>
+            <p className="text-white/50 text-sm leading-relaxed">
+              {project.tagline}
+            </p>
+          </div>
+        </div>
+
+        {/* Bottom bar with CTA */}
+        <div
+          className="px-5 py-4 flex items-center justify-between"
+          style={{
+            background: "rgba(0,0,0,0.3)",
+            borderTop: "1px solid rgba(255,200,150,0.08)",
+          }}
         >
-          Selected Work
-        </p>
-        <h2 className="text-[15vw] font-black text-white leading-[0.85] tracking-[-0.03em]">
+          <div className="flex items-center gap-3">
+            <span className="text-white/30 text-[10px] uppercase tracking-widest">
+              {project.year}
+            </span>
+            <span className="w-1 h-1 rounded-full bg-white/20" />
+            <span className="text-white/30 text-[10px] uppercase tracking-widest">
+              Case Study
+            </span>
+          </div>
+          <div
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full"
+            style={{
+              background: "rgba(255,200,150,0.1)",
+              border: "1px solid rgba(255,200,150,0.2)",
+            }}
+          >
+            <span
+              className="text-xs font-semibold"
+              style={{ color: accentColor }}
+            >
+              View
+            </span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke={accentColor}
+              strokeWidth="2.5"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+      </motion.div>
+    </TransitionLink>
+  );
+}
+
+// Mobile layout - Horizontal swipe gallery with cards
+function MobileWork() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Header parallax
+  const headerY = useTransform(scrollYProgress, [0, 0.3], [40, 0]);
+  const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const scrollLeft = scrollRef.current.scrollLeft;
+    const cardWidth = window.innerWidth * 0.85;
+    const gap = 20;
+    const newIndex = Math.round(scrollLeft / (cardWidth + gap));
+    setActiveIndex(Math.min(newIndex, workItems.length - 1));
+  };
+
+  return (
+    <div ref={sectionRef} className="md:hidden relative overflow-hidden">
+      {/* Ambient glow - positioned below header to avoid border appearance */}
+      <div
+        className="absolute top-32 left-1/2 -translate-x-1/2 w-[150%] h-[400px] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(255,200,150,0.06) 0%, transparent 70%)",
+        }}
+      />
+
+      {/* Header */}
+      <motion.div
+        className="relative pt-20 pb-6 px-6"
+        style={{ y: headerY, opacity: headerOpacity }}
+      >
+        <div className="flex items-center gap-3 mb-6">
+          <span
+            className="w-8 h-px"
+            style={{ background: accentColorMuted }}
+          />
+          <p
+            className="text-[10px] uppercase tracking-[0.4em] font-medium"
+            style={{ color: accentColorMuted }}
+          >
+            Selected Work
+          </p>
+        </div>
+
+        <h2 className="text-[15vw] font-black text-white leading-[0.82] tracking-[-0.04em]">
           THE
           <br />
-          <span className="text-white/20">PROOF</span>
+          <span style={{ color: "rgba(255,200,150,0.25)" }}>PROOF</span>
         </h2>
+
+        {/* Progress indicator */}
+        <div className="flex items-center gap-3 mt-8">
+          <div className="flex items-center gap-1.5">
+            {workItems.map((_, index) => (
+              <motion.div
+                key={index}
+                className="h-1 rounded-full"
+                animate={{
+                  width: activeIndex === index ? 28 : 6,
+                  background:
+                    activeIndex === index
+                      ? accentColor
+                      : "rgba(255,255,255,0.15)",
+                }}
+                transition={{ duration: 0.3 }}
+              />
+            ))}
+          </div>
+          <span className="text-white/30 text-xs ml-2">
+            {String(activeIndex + 1).padStart(2, "0")}/{String(workItems.length).padStart(2, "0")}
+          </span>
+        </div>
+      </motion.div>
+
+      {/* Horizontal swipe gallery */}
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="relative flex gap-5 overflow-x-auto scrollbar-hide px-6 pb-24 pt-4"
+        style={{
+          scrollSnapType: "x mandatory",
+          WebkitOverflowScrolling: "touch",
+          scrollPaddingLeft: "24px",
+        }}
+      >
+        {workItems.map((project, index) => (
+          <MobileWorkCard
+            key={project.slug}
+            project={project}
+            index={index}
+            isActive={activeIndex === index}
+          />
+        ))}
+        {/* End spacer for last card centering */}
+        <div className="shrink-0 w-[10vw]" />
       </div>
 
-      {/* Project Cards */}
-      <div className="space-y-6">
-        {workItems.map((project, index) => (
-          <motion.div
-            key={project.slug}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-5%" }}
-            transition={{ duration: 0.5, delay: index * 0.06 }}
-          >
-            <TransitionLink href={`/work/${project.slug}`}>
-              <div className="group relative overflow-hidden rounded-xl">
-                {/* Full-bleed image with content overlay */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-[#0a0a0a]">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-active:scale-105"
-                    sizes="(max-width: 768px) 92vw, 50vw"
-                  />
-
-                  {/* Dark gradient overlay */}
-                  <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                      background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.15) 100%)",
-                    }}
-                  />
-
-                  {/* Large number watermark */}
-                  <div
-                    className="absolute -bottom-4 -right-2 text-[8rem] font-black leading-none pointer-events-none select-none"
-                    style={{
-                      color: "transparent",
-                      WebkitTextStroke: `1px ${accentColor}`,
-                      opacity: 0.15,
-                    }}
-                  >
-                    0{index + 1}
-                  </div>
-
-                  {/* Content overlay */}
-                  <div className="absolute inset-0 p-5 flex flex-col justify-end">
-                    {/* Category tag */}
-                    <span
-                      className="self-start text-[10px] uppercase tracking-[0.2em] font-medium px-2.5 py-1 mb-3"
-                      style={{
-                        color: accentColor,
-                        background: "rgba(255, 200, 150, 0.1)",
-                        border: `1px solid rgba(255, 200, 150, 0.2)`,
-                      }}
-                    >
-                      {project.category}
-                    </span>
-
-                    {/* Title */}
-                    <h3 className="text-2xl font-black text-white tracking-[-0.02em] leading-[0.95] mb-2">
-                      {project.title}
-                    </h3>
-
-                    {/* Tagline */}
-                    <p className="text-white/60 text-sm mb-4 line-clamp-2">
-                      {project.tagline}
-                    </p>
-
-                    {/* Bottom row */}
-                    <div className="flex items-end justify-between">
-                      {/* Result stat */}
-                      <div>
-                        <div
-                          className="text-2xl font-black"
-                          style={{ color: accentColor }}
-                        >
-                          {project.result}
-                        </div>
-                        <div className="text-[9px] uppercase tracking-[0.15em] text-white/40">
-                          {project.resultLabel}
-                        </div>
-                      </div>
-
-                      {/* View button */}
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium text-white/60 group-active:text-[rgba(255,200,150,1)] transition-colors">
-                          View
-                        </span>
-                        <div
-                          className="w-8 h-8 rounded-full flex items-center justify-center transition-colors group-active:bg-[rgba(255,200,150,1)]"
-                          style={{
-                            background: "rgba(255,255,255,0.1)",
-                            border: "1px solid rgba(255,255,255,0.15)",
-                          }}
-                        >
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            className="text-white group-active:text-black transition-colors"
-                          >
-                            <path d="M5 12h14M12 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </TransitionLink>
-          </motion.div>
-        ))}
+      {/* Swipe hint */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 text-white/30">
+        <motion.div
+          animate={{ x: [-4, 4, -4] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </motion.div>
+        <span className="text-[10px] uppercase tracking-widest">Swipe</span>
       </div>
     </div>
   );
@@ -744,12 +891,14 @@ export default function Work() {
     <section
       id="work"
       ref={sectionRef}
-      className="relative rounded-t-[3rem]"
+      className="relative md:rounded-t-[3rem]"
       style={{
         zIndex: 10,
-        marginTop: "-3rem",
+        marginTop: isMobile ? "0" : "-3rem",
         height: isMobile ? "auto" : "500vh",
-        background: "linear-gradient(180deg, #0a0806 0%, #0c0908 15%, #0e0b09 40%, #0c0908 70%, #12100e 90%, #151311 100%)",
+        background: isMobile
+          ? "#0a0806"
+          : "linear-gradient(180deg, #0a0806 0%, #0c0908 15%, #0e0b09 40%, #0c0908 70%, #12100e 90%, #151311 100%)",
       }}
     >
       {/* Ambient warm glows */}

@@ -63,6 +63,18 @@
   ::-webkit-scrollbar-thumb:hover {
     background: var(--text-secondary);
   }
+
+  /* Respect reduced motion preferences for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
 
 @layer utilities {
@@ -226,5 +238,30 @@
   .number-transition-active {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* Touch feedback for mobile - subtle scale on press */
+  .touch-feedback {
+    transition: transform 0.15s ease;
+  }
+
+  .touch-feedback:active {
+    transform: scale(0.97);
+  }
+
+  /* Mobile ambient pulse animation */
+  @keyframes ambient-pulse {
+    0%, 100% {
+      opacity: 0.6;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+  }
+
+  .animate-ambient-pulse {
+    animation: ambient-pulse 4s ease-in-out infinite;
   }
 }

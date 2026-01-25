@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useLayoutEffect } from "react";
+import { useRef, useEffect, useLayoutEffect, useState } from "react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -15,6 +15,10 @@ export default function KineticTypography() {
   const row1AnimRef = useRef<HTMLDivElement>(null);
   const gradientOverlayRef = useRef<HTMLDivElement>(null);
 
+  // Track if section is visible (for pausing animation when off-screen)
+  const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
   // Track scroll velocity for kinetic text
   const { scrollY } = useScroll();
   const lastScrollY = useRef(0);
@@ -22,6 +26,29 @@ export default function KineticTypography() {
   const scrollVelocity = useRef(0);
   const baseDirection = useRef(-1); // -1 = left, 1 = right
   const rafId = useRef<number>(0);
+
+  // Check for mobile on mount
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // IntersectionObserver to pause animation when off-screen (battery saver)
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0, rootMargin: "100px" }
+    );
+
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   // Track scroll velocity and update base direction
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -37,16 +64,21 @@ export default function KineticTypography() {
     }
   });
 
-  // Continuous animation loop for kinetic text
+  // Continuous animation loop for kinetic text - pauses when not visible
   useEffect(() => {
     if (row1AnimRef.current) {
       const width = row1AnimRef.current.scrollWidth / 2;
       row1Pos.current = -width / 2;
     }
 
+    // Only run animation when section is visible
+    if (!isVisible) {
+      return;
+    }
+
     const animate = () => {
-      // Base velocity in current direction plus scroll-driven boost
-      const baseVel = 1.2 * baseDirection.current;
+      // Slower velocity on mobile (0.6 vs 1.2) for better battery life
+      const baseVel = (isMobile ? 0.6 : 1.2) * baseDirection.current;
       const row1Vel = baseVel;
 
       // Decay the scroll velocity for smooth deceleration
@@ -66,7 +98,7 @@ export default function KineticTypography() {
 
     rafId.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafId.current);
-  }, []);
+  }, [isVisible, isMobile]);
 
   const useIsomorphicLayoutEffect =
     typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -132,7 +164,8 @@ export default function KineticTypography() {
       <div className="relative flex flex-col items-center justify-center">
         <div ref={textRow1Ref} className="flex whitespace-nowrap overflow-hidden">
           <div ref={row1AnimRef} className="flex">
-            {[...Array(8)].map((_, i) => (
+            {/* Fewer repetitions on mobile (4 vs 8) for better performance */}
+            {[...Array(isMobile ? 4 : 8)].map((_, i) => (
               <span
                 key={i}
                 className="text-[18vw] font-black text-white tracking-[-0.04em] mx-8 shrink-0"

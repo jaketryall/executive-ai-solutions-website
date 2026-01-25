@@ -309,9 +309,50 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
   );
 }
 
+// Mobile transition overlay - fast vertical wipe with centered logo
+function MobileTransitionOverlay({ isActive }: { isActive: boolean }) {
+  return (
+    <AnimatePresence mode="wait">
+      {isActive && (
+        <motion.div
+          className="fixed inset-0 z-9999 pointer-events-auto"
+          initial={{ y: "-100%" }}
+          animate={{ y: "0%" }}
+          exit={{ y: "100%" }}
+          transition={{
+            duration: 0.4,
+            ease: [0.76, 0, 0.24, 1],
+          }}
+        >
+          {/* Black panel */}
+          <div className="absolute inset-0 bg-black" />
+
+          {/* Centered small logo */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <motion.svg
+              viewBox="0 0 500 500"
+              className="w-16 h-16"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.2, delay: 0.1 }}
+            >
+              <path
+                d={LOGO_PATH}
+                fill={accentColor}
+              />
+            </motion.svg>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 // Provider for page route transitions
 export function PageTransitionProvider({ children }: { children: ReactNode }) {
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
+  const [isMobileTransitioning, setIsMobileTransitioning] = useState(false);
   const [targetPage, setTargetPage] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
@@ -333,9 +374,16 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
       // Don't transition if already on the page
       if (href === pathname) return;
 
-      // On mobile, skip all transitions and navigate directly
+      // On mobile, use faster mobile transition
       if (isMobile) {
-        router.push(href);
+        setIsMobileTransitioning(true);
+        document.body.classList.add("page-transitioning");
+
+        // Navigate when panel covers screen (at ~350ms into 400ms animation)
+        setTimeout(() => {
+          router.push(href);
+        }, 350);
+
         return;
       }
 
@@ -372,13 +420,18 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
     // The new page content will animate in via template.tsx
     const timer = setTimeout(() => {
       setIsPageTransitioning(false);
+      setIsMobileTransitioning(false);
+      document.body.classList.remove("page-transitioning");
     }, 100);
     return () => clearTimeout(timer);
   }, [pathname]);
 
   return (
     <PageTransitionContext.Provider value={{ isPageTransitioning, targetPage, navigateTo }}>
+      {/* Desktop transition */}
       <GSAPTransitionOverlay isActive={isPageTransitioning} targetPage={targetPage} />
+      {/* Mobile transition */}
+      <MobileTransitionOverlay isActive={isMobileTransitioning} />
       {children}
     </PageTransitionContext.Provider>
   );

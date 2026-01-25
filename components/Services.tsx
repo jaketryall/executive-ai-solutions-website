@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useEffect, useLayoutEffect } from "react";
+import { useRef, useEffect, useLayoutEffect, useState } from "react";
 import Image from "next/image";
 import { TransitionLink } from "@/components/PageTransition";
 import gsap from "gsap";
@@ -75,20 +75,32 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
   const imageRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const isMockup = service.image.includes("Mockup");
   const isDashboard = service.image.includes("dashboard");
   const isSEO = service.image.includes("SEO");
   const isWideImage = isDashboard || isSEO;
 
-  // Parallax effects
+  // Parallax effects - more noticeable on mobile
   const { scrollYProgress } = useScroll({
     target: cardRef,
     offset: ["start end", "end start"],
   });
 
   const numberY = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const imageY = useTransform(scrollYProgress, [0, 1], [-40, 40]);
+  // Container parallax - subtle movement
+  const imageContainerY = useTransform(scrollYProgress, [0, 1], isMobile ? [-60, 60] : [-40, 40]);
+  // Inner image parallax - creates layered depth effect
+  const imageInnerY = useTransform(scrollYProgress, [0, 1], isMobile ? ["8%", "-8%"] : ["5%", "-5%"]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.05, 1, 1.05]);
 
   // GSAP reveal animations with responsive handling
   useIsomorphicLayoutEffect(() => {
@@ -219,12 +231,12 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
 
       <div className="container mx-auto px-6 md:px-12 lg:px-16">
         <div className="relative">
-          {/* Image - with parallax wrapper (desktop only) */}
+          {/* Image - with parallax wrapper */}
           <motion.div
             className={`relative md:absolute md:top-1/2 md:-translate-y-1/2 w-full md:w-[55%] lg:w-[52%] z-10 ${
               isReversed ? "md:right-0" : "md:left-0"
             }`}
-            style={{ y: imageY }}
+            style={{ y: imageContainerY }}
           >
             <div
               ref={imageRef}
@@ -244,17 +256,23 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
                     : "rgba(10,9,8,1)",
                 }}
               />
-              <Image
-                src={service.image}
-                alt={service.title}
-                fill
-                className={
-                  isMockup
-                    ? "object-contain object-center scale-125 translate-y-[5%]"
-                    : "object-cover object-center"
-                }
-                sizes="(max-width: 768px) 100vw, 60vw"
-              />
+              {/* Inner image with parallax */}
+              <motion.div
+                className="absolute inset-0"
+                style={{ y: imageInnerY, scale: imageScale }}
+              >
+                <Image
+                  src={service.image}
+                  alt={service.title}
+                  fill
+                  className={
+                    isMockup
+                      ? "object-contain object-center scale-125 translate-y-[5%]"
+                      : "object-cover object-center"
+                  }
+                  sizes="(max-width: 768px) 100vw, 60vw"
+                />
+              </motion.div>
               {/* Subtle edge gradient */}
               <div
                 className="absolute inset-0"
@@ -368,7 +386,7 @@ export default function Services() {
       style={{ zIndex: 20, boxShadow: "0 -50px 0 0 #080706" }}
     >
       {/* Section header */}
-      <div className="relative pt-24 md:pt-32 pb-12 md:pb-16">
+      <div className="relative pt-12 md:pt-32 pb-8 md:pb-16">
         <div className="container mx-auto px-6 md:px-12 lg:px-16">
           <motion.div style={{ y: headerY, opacity: headerOpacity }}>
             <p
