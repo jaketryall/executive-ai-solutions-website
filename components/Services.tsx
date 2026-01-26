@@ -420,8 +420,9 @@ function MobileServices() {
                     src={service.image}
                     alt={service.title}
                     fill
-                    className={isMockup ? "object-contain object-center scale-110" : "object-cover object-top"}
-                    sizes="(max-width: 768px) calc(100vw - 2rem), 100vw"
+                    className={isMockup ? "object-contain object-center scale-110" : "object-cover object-center"}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority={index < 2}
                   />
                   {/* Gradient fade into content */}
                   <div
