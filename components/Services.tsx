@@ -27,6 +27,7 @@ const services = [
     description:
       "High-converting websites that turn visitors into customers. We craft digital experiences that captivate and convert.",
     image: "/Rubber iPhone Mockup.webp",
+    mobileImage: "/thumbnails/Rubber iPhone Mockup.webp", // 22KB vs 157KB
     details: [
       "Custom design tailored to your brand",
       "Responsive, mobile-first development",
@@ -41,6 +42,7 @@ const services = [
     description:
       "Data-driven strategies that drive organic traffic and rankings. Dominate search results and outperform your competition.",
     image: "/Celestial Laptop Mockup.webp",
+    mobileImage: "/thumbnails/Celestial Laptop Mockup.webp", // 22KB vs 101KB
     details: [
       "Comprehensive keyword research",
       "Technical SEO optimization",
@@ -55,6 +57,7 @@ const services = [
     description:
       "Tailored systems and software that scale with your business. From automation to AI, we build what you need.",
     image: "/custom-dashboard-mockup.webp",
+    mobileImage: "/custom-dashboard-mockup.webp", // Already small at 37KB
     details: [
       "Bespoke software development",
       "Seamless system integrations",
@@ -396,7 +399,7 @@ function MobileServices() {
       {/* Vertical cards */}
       <div className="px-4 pb-32 flex flex-col gap-6">
         {services.map((service, index) => {
-          const isMockup = service.image.includes("Mockup");
+          const isMockup = service.mobileImage.includes("Mockup");
 
           return (
             <TransitionLink
@@ -419,11 +422,11 @@ function MobileServices() {
                     }}
                   />
                   <Image
-                    src={service.image}
+                    src={service.mobileImage}
                     alt={service.title}
                     fill
                     className={isMockup ? "object-cover object-top scale-[1.15]" : "object-cover object-center"}
-                    sizes="(max-width: 768px) 100vw, 50vw"
+                    sizes="100vw"
                     placeholder="blur"
                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMCwsLCgwMDQ4RDgwOEQ4MDBANFRMPExoRExgeGBYZFxkdHRz/2wBDAQMEBAUEBQkFBQkdEQsRHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR3/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDBAMBAAAAAAAAAAAAAQIDBAAFEQYSITETQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gAMAwEAAhEDEEuA="
                   />

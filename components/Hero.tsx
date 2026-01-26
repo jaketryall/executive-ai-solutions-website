@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform, useMotionTemplate, useSpring } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
 import AnimatedLogo from "./AnimatedLogo";
 import { TransitionLink } from "./PageTransition";
 
@@ -71,10 +72,13 @@ function MobileHero() {
     <section className="relative h-screen bg-[#141312] md:hidden overflow-hidden">
       {/* Poster image - shows immediately */}
       <div className="absolute inset-0">
-        <img
+        <Image
           src="/video-poster.webp"
           alt=""
-          className="w-full h-full object-cover"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-[#141312]/60" />
       </div>
@@ -167,7 +171,7 @@ function MobileHero() {
             </span>
           </div>
 
-          {/* Marquee container */}
+          {/* Marquee container - only render images after intro (3s) to not compete with LCP */}
           <div
             className="flex gap-6"
             style={{
@@ -182,12 +186,18 @@ function MobileHero() {
                 href={`/work/${item.slug}`}
                 className="shrink-0 flex items-center gap-4 active:scale-[0.98] transition-transform"
               >
-                <div className="w-28 h-20 rounded-lg overflow-hidden bg-[#f5f0e8]/10">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-28 h-20 rounded-lg overflow-hidden bg-[#f5f0e8]/10 relative">
+                  {introComplete ? (
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      className="object-cover"
+                      sizes="112px"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-[#f5f0e8]/5" />
+                  )}
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[#f5f0e8] text-sm font-medium tracking-wide">
@@ -206,12 +216,18 @@ function MobileHero() {
                 href={`/work/${item.slug}`}
                 className="shrink-0 flex items-center gap-4 active:scale-[0.98] transition-transform"
               >
-                <div className="w-28 h-20 rounded-lg overflow-hidden bg-[#f5f0e8]/10">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-28 h-20 rounded-lg overflow-hidden bg-[#f5f0e8]/10 relative">
+                  {introComplete ? (
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      className="object-cover"
+                      sizes="112px"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-[#f5f0e8]/5" />
+                  )}
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[#f5f0e8] text-sm font-medium tracking-wide">
