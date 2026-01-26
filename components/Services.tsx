@@ -271,8 +271,8 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
                       : "object-cover object-center"
                   }
                   sizes="(max-width: 768px) 100vw, 60vw"
-                  priority={index < 3}
-                  loading="eager"
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMCwsLCgwMDQ4RDgwOEQ4MDBANFRMPExoRExgeGBYZFxkdHRz/2wBDAQMEBAUEBQkFBQkdEQsRHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR3/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDBAMBAAAAAAAAAAAAAQIDBAAFEQYSITETQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gAMAwEAAhEDEEuA="
                 />
               </motion.div>
               {/* Subtle edge gradient */}
@@ -424,8 +424,8 @@ function MobileServices() {
                     fill
                     className={isMockup ? "object-cover object-top scale-[1.15]" : "object-cover object-center"}
                     sizes="(max-width: 768px) 100vw, 50vw"
-                    priority
-                    loading="eager"
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMCwsLCgwMDQ4RDgwOEQ4MDBANFRMPExoRExgeGBYZFxkdHRz/2wBDAQMEBAUEBQkFBQkdEQsRHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR3/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDBAMBAAAAAAAAAAAAAQIDBAAFEQYSITETQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gAMAwEAAhEDEEuA="
                   />
                   {/* Gradient fade into content */}
                   <div
