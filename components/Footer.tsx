@@ -47,7 +47,7 @@ function InstagramIcon() {
 const socialLinks = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/jake-ryall", icon: LinkedInIcon },
   { label: "Dribbble", href: "https://dribbble.com/jake-ryall", icon: DribbbleIcon },
-  { label: "Instagram", href: "https://instagram.com/executiveaisolutions", icon: InstagramIcon },
+  { label: "Instagram", href: "https://instagram.com/exec.ai.solutions", icon: InstagramIcon },
   { label: "GitHub", href: "https://github.com/jaketryall", icon: GitHubIcon },
 ];
 

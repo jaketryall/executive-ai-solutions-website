@@ -406,7 +406,7 @@ function MobileServices() {
                 whileTap={{ scale: 0.985 }}
               >
                 {/* Image - fixed height */}
-                <div className="relative h-[240px] overflow-hidden">
+                <div className="relative h-[260px] overflow-hidden">
                   {/* Background for mockups */}
                   <div
                     className="absolute inset-0"
@@ -421,7 +421,7 @@ function MobileServices() {
                     alt={service.title}
                     fill
                     className={isMockup ? "object-contain object-center scale-110" : "object-cover object-top"}
-                    sizes="100vw"
+                    sizes="(max-width: 768px) calc(100vw - 2rem), 100vw"
                   />
                   {/* Gradient fade into content */}
                   <div
