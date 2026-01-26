@@ -420,7 +420,7 @@ function MobileServices() {
                     src={service.image}
                     alt={service.title}
                     fill
-                    className={isMockup ? "object-contain object-center scale-110" : "object-cover object-center"}
+                    className={isMockup ? "object-cover object-top scale-[1.15]" : "object-cover object-center"}
                     sizes="(max-width: 768px) 100vw, 50vw"
                     priority={index < 2}
                   />
