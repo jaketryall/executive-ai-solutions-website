@@ -153,7 +153,7 @@ function MobileContact() {
   };
 
   return (
-    <section className="md:hidden relative py-16 bg-[#0a0908]">
+    <section className="md:hidden relative py-16 bg-[#1c1b19]">
       <div className="px-6">
         {/* Header */}
         <div className="mb-10">
@@ -163,10 +163,10 @@ function MobileContact() {
           >
             Get in Touch
           </p>
-          <h2 className="text-4xl font-black text-white tracking-tight leading-tight">
+          <h2 className="text-4xl font-black text-[#f5f0e8] tracking-tight leading-tight">
             LET'S START
             <br />
-            <span className="text-white/30">SOMETHING</span>
+            <span className="text-[#f5f0e8]/30">SOMETHING</span>
           </h2>
         </div>
 
@@ -174,40 +174,40 @@ function MobileContact() {
         <div className="space-y-4 mb-10">
           <motion.a
             href="mailto:jaker@executiveaisolutions.com"
-            className="block p-4 rounded-xl bg-white/5 active:scale-[0.98] transition-transform"
+            className="block p-4 rounded-xl bg-[#f5f0e8]/5 active:scale-[0.98] transition-transform"
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
           >
-            <p className="text-xs uppercase tracking-wider text-white/40 mb-1">Email</p>
-            <p className="text-white text-sm break-all" style={{ color: accentColor }}>
+            <p className="text-xs uppercase tracking-wider text-[#f5f0e8]/40 mb-1">Email</p>
+            <p className="text-[#f5f0e8] text-sm break-all" style={{ color: accentColor }}>
               jaker@executiveaisolutions.com
             </p>
           </motion.a>
 
           <motion.div
-            className="p-4 rounded-xl bg-white/5"
+            className="p-4 rounded-xl bg-[#f5f0e8]/5"
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.1 }}
           >
-            <p className="text-xs uppercase tracking-wider text-white/40 mb-1">Response Time</p>
-            <p className="text-white text-sm">Within 24 hours</p>
+            <p className="text-xs uppercase tracking-wider text-[#f5f0e8]/40 mb-1">Response Time</p>
+            <p className="text-[#f5f0e8] text-sm">Within 24 hours</p>
           </motion.div>
 
           <motion.div
-            className="p-4 rounded-xl bg-white/5"
+            className="p-4 rounded-xl bg-[#f5f0e8]/5"
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.2 }}
           >
-            <p className="text-xs uppercase tracking-wider text-white/40 mb-1">Status</p>
+            <p className="text-xs uppercase tracking-wider text-[#f5f0e8]/40 mb-1">Status</p>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <p className="text-white text-sm">Available for projects</p>
+              <p className="text-[#f5f0e8] text-sm">Available for projects</p>
             </div>
           </motion.div>
         </div>
@@ -226,45 +226,45 @@ function MobileContact() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Message sent</h3>
-              <p className="text-white/50 text-sm">We'll be in touch within 24 hours.</p>
+              <h3 className="text-xl font-bold text-[#f5f0e8] mb-2">Message sent</h3>
+              <p className="text-[#f5f0e8]/50 text-sm">We'll be in touch within 24 hours.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-xs uppercase tracking-wider text-white/40 mb-2">Name</label>
+                <label className="block text-xs uppercase tracking-wider text-[#f5f0e8]/40 mb-2">Name</label>
                 <input
                   type="text"
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-white/5 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-1 placeholder:text-white/30"
+                  className="w-full bg-[#f5f0e8]/5 rounded-xl px-4 py-3 text-[#f5f0e8] focus:outline-none focus:ring-1 placeholder:text-[#f5f0e8]/30"
                   style={{ ["--tw-ring-color" as string]: accentColorMuted }}
                   placeholder="Your name"
                 />
               </div>
 
               <div>
-                <label className="block text-xs uppercase tracking-wider text-white/40 mb-2">Email</label>
+                <label className="block text-xs uppercase tracking-wider text-[#f5f0e8]/40 mb-2">Email</label>
                 <input
                   type="email"
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-white/5 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-1 placeholder:text-white/30"
+                  className="w-full bg-[#f5f0e8]/5 rounded-xl px-4 py-3 text-[#f5f0e8] focus:outline-none focus:ring-1 placeholder:text-[#f5f0e8]/30"
                   style={{ ["--tw-ring-color" as string]: accentColorMuted }}
                   placeholder="you@company.com"
                 />
               </div>
 
               <div>
-                <label className="block text-xs uppercase tracking-wider text-white/40 mb-2">Message</label>
+                <label className="block text-xs uppercase tracking-wider text-[#f5f0e8]/40 mb-2">Message</label>
                 <textarea
                   required
                   rows={4}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full bg-white/5 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-1 resize-none placeholder:text-white/30"
+                  className="w-full bg-[#f5f0e8]/5 rounded-xl px-4 py-3 text-[#f5f0e8] focus:outline-none focus:ring-1 resize-none placeholder:text-[#f5f0e8]/30"
                   style={{ ["--tw-ring-color" as string]: accentColorMuted }}
                   placeholder="Tell us about your project..."
                 />
@@ -273,7 +273,7 @@ function MobileContact() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 rounded-xl font-semibold text-black transition-opacity disabled:opacity-50 active:scale-[0.98]"
+                className="w-full py-4 rounded-xl font-semibold text-[#1c1b19] transition-opacity disabled:opacity-50 active:scale-[0.98]"
                 style={{ background: accentColor }}
               >
                 {isSubmitting ? "Sending..." : "Send Message"}

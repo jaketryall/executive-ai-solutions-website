@@ -459,7 +459,7 @@ function MobileWorkCard({
       href={`/work/${project.slug}`}
       className="shrink-0 w-[80vw] snap-start"
     >
-      <div className="relative rounded-2xl overflow-hidden bg-neutral-900 active:scale-[0.98] transition-transform duration-200">
+      <div className="relative rounded-2xl overflow-hidden bg-[#1f1e1c] active:scale-[0.98] transition-transform duration-200">
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden">
           <Image
@@ -475,7 +475,7 @@ function MobileWorkCard({
           <div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)",
+              background: "linear-gradient(to top, rgba(20,19,18,0.95) 0%, rgba(20,19,18,0.4) 50%, transparent 100%)",
             }}
           />
 
@@ -485,7 +485,7 @@ function MobileWorkCard({
               className="text-[10px] uppercase tracking-[0.15em] font-medium px-2.5 py-1 rounded-md"
               style={{
                 color: accentColor,
-                background: "rgba(0,0,0,0.6)",
+                background: "rgba(20,19,18,0.7)",
                 backdropFilter: "blur(8px)",
               }}
             >
@@ -495,10 +495,10 @@ function MobileWorkCard({
 
           {/* Content */}
           <div className="absolute bottom-0 left-0 right-0 p-4">
-            <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
+            <h3 className="text-xl font-bold text-[#f5f0e8] mb-1 tracking-tight">
               {project.title}
             </h3>
-            <p className="text-white/60 text-sm">
+            <p className="text-[#f5f0e8]/60 text-sm">
               {project.tagline}
             </p>
           </div>
@@ -511,7 +511,7 @@ function MobileWorkCard({
 // Mobile layout - Clean horizontal swipe gallery
 function MobileWork() {
   return (
-    <section className="md:hidden relative py-16 bg-[#0a0806]">
+    <section className="md:hidden relative py-16 bg-[#1c1b19]">
       {/* Header */}
       <div className="px-6 mb-6">
         <p
@@ -520,7 +520,7 @@ function MobileWork() {
         >
           Selected Work
         </p>
-        <h2 className="text-4xl font-black text-white tracking-tight">
+        <h2 className="text-4xl font-black text-[#f5f0e8] tracking-tight">
           THE PROOF
         </h2>
       </div>
@@ -542,7 +542,7 @@ function MobileWork() {
       </div>
 
       {/* Swipe hint */}
-      <div className="flex items-center justify-center gap-2 mt-4 text-white/40">
+      <div className="flex items-center justify-center gap-2 mt-4 text-[#f5f0e8]/40">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M5 12h14M12 5l7 7-7 7" />
         </svg>

@@ -371,7 +371,7 @@ function MobileServiceCard({ service }: { service: (typeof services)[0] }) {
   return (
     <TransitionLink href={`/services/${service.slug}`}>
       <motion.div
-        className="relative rounded-2xl overflow-hidden bg-neutral-900 active:scale-[0.98] transition-transform duration-200"
+        className="relative rounded-2xl overflow-hidden bg-[#1f1e1c] active:scale-[0.98] transition-transform duration-200"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
@@ -393,7 +393,7 @@ function MobileServiceCard({ service }: { service: (typeof services)[0] }) {
           <div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+              background: "linear-gradient(to top, rgba(20,19,18,0.95) 0%, rgba(20,19,18,0.4) 50%, transparent 100%)",
             }}
           />
 
@@ -403,7 +403,7 @@ function MobileServiceCard({ service }: { service: (typeof services)[0] }) {
               className="text-sm font-bold px-2.5 py-1 rounded-md"
               style={{
                 color: accentColor,
-                background: "rgba(0,0,0,0.6)",
+                background: "rgba(20,19,18,0.7)",
                 backdropFilter: "blur(8px)",
               }}
             >
@@ -413,11 +413,11 @@ function MobileServiceCard({ service }: { service: (typeof services)[0] }) {
 
           {/* Content */}
           <div className="absolute bottom-0 left-0 right-0 p-4">
-            <h3 className="text-2xl font-bold text-white mb-1">
+            <h3 className="text-2xl font-bold text-[#f5f0e8] mb-1">
               {service.title}
-              <span className="text-white/50 font-light ml-2">{service.subtitle}</span>
+              <span className="text-[#f5f0e8]/50 font-light ml-2">{service.subtitle}</span>
             </h3>
-            <p className="text-white/60 text-sm line-clamp-2">
+            <p className="text-[#f5f0e8]/60 text-sm line-clamp-2">
               {service.description}
             </p>
           </div>
@@ -430,7 +430,7 @@ function MobileServiceCard({ service }: { service: (typeof services)[0] }) {
 // Mobile services section
 function MobileServices() {
   return (
-    <section className="md:hidden relative py-16 bg-[#080706] rounded-t-[2rem]" style={{ zIndex: 20 }}>
+    <section className="md:hidden relative py-16 bg-[#1c1b19] rounded-t-[2rem]" style={{ zIndex: 20 }}>
       {/* Header */}
       <div className="px-6 mb-8">
         <p
@@ -439,7 +439,7 @@ function MobileServices() {
         >
           What We Offer
         </p>
-        <h2 className="text-4xl font-black text-white tracking-tight">
+        <h2 className="text-4xl font-black text-[#f5f0e8] tracking-tight">
           SERVICES
         </h2>
       </div>
@@ -455,7 +455,7 @@ function MobileServices() {
       <div className="px-6 mt-12 text-center">
         <a
           href="#contact"
-          className="inline-flex items-center gap-3 text-xl font-bold text-white"
+          className="inline-flex items-center gap-3 text-xl font-bold text-[#f5f0e8]"
         >
           <span>Let&apos;s Talk</span>
           <span

@@ -46,20 +46,14 @@ function MobileAboutSnippet() {
 
   return (
     <section
-      className="relative py-20 bg-black md:hidden"
+      className="relative py-20 bg-[#1a1918] md:hidden"
       style={{ marginBottom: "-8px", position: "relative", zIndex: 2 }}
     >
-      {/* Dark background */}
-      <div
-        className="absolute inset-0"
-        style={{ background: "#050404" }}
-      />
-
       {/* Subtle warm glow */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse 80% 50% at 50% 50%, rgba(255, 200, 150, 0.04) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse 80% 50% at 50% 50%, rgba(255, 200, 150, 0.03) 0%, transparent 70%)",
         }}
       />
 
@@ -77,7 +71,7 @@ function MobileAboutSnippet() {
         </motion.p>
 
         {/* Main text - word-by-word staggered animation */}
-        <h2 className="text-2xl font-medium leading-[1.5] tracking-[-0.01em] text-white">
+        <h2 className="text-2xl font-medium leading-[1.5] tracking-[-0.01em] text-[#f5f0e8]">
           {words.map((word, i) => (
             <motion.span
               key={i}
@@ -101,7 +95,7 @@ function MobileAboutSnippet() {
       <div
         className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
         style={{
-          background: "linear-gradient(to bottom, transparent 0%, #0a0806 100%)",
+          background: "linear-gradient(to bottom, transparent 0%, #1c1b19 100%)",
         }}
       />
     </section>

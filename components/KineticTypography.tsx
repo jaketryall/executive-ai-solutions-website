@@ -146,8 +146,8 @@ export default function KineticTypography() {
   // Mobile version - cleaner CSS-based animation
   if (isMobile) {
     return (
-      <section className="relative py-16 overflow-hidden bg-black md:hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-black to-neutral-950" />
+      <section className="relative py-16 overflow-hidden bg-[#141312] md:hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#141312] to-[#1a1918]" />
 
         <style>{`
           @keyframes kinetic-scroll {
@@ -167,7 +167,7 @@ export default function KineticTypography() {
             {[...Array(2)].map((_, i) => (
               <span
                 key={`a-${i}`}
-                className="text-[14vw] font-black text-white/80 tracking-[-0.04em] mx-3"
+                className="text-[14vw] font-black text-[#f5f0e8]/80 tracking-[-0.04em] mx-3"
               >
                 MORE LEADS • MORE SALES • MORE GROWTH •
               </span>
@@ -175,7 +175,7 @@ export default function KineticTypography() {
             {[...Array(2)].map((_, i) => (
               <span
                 key={`b-${i}`}
-                className="text-[14vw] font-black text-white/80 tracking-[-0.04em] mx-3"
+                className="text-[14vw] font-black text-[#f5f0e8]/80 tracking-[-0.04em] mx-3"
               >
                 MORE LEADS • MORE SALES • MORE GROWTH •
               </span>
@@ -187,7 +187,7 @@ export default function KineticTypography() {
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: "linear-gradient(to bottom, transparent 0%, #050404 100%)",
+            background: "linear-gradient(to bottom, transparent 0%, #1a1918 100%)",
           }}
         />
       </section>

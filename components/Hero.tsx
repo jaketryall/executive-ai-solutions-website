@@ -30,7 +30,7 @@ function MobileHero() {
   }, []);
 
   return (
-    <section className="relative h-screen bg-black md:hidden overflow-hidden">
+    <section className="relative h-screen bg-[#141312] md:hidden overflow-hidden">
       {/* Poster image - shows immediately */}
       <div className="absolute inset-0">
         <img
@@ -38,7 +38,7 @@ function MobileHero() {
           alt=""
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-[#141312]/60" />
       </div>
 
       {/* Video - fades in when loaded */}
@@ -59,7 +59,7 @@ function MobileHero() {
         >
           <source src="/final-comp.mp4?v=6" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-[#141312]/50" />
       </motion.div>
 
       {/* Content overlay */}
@@ -83,7 +83,7 @@ function MobileHero() {
 
           {/* Tagline */}
           <motion.p
-            className="mt-6 text-white/70 text-center text-sm font-light tracking-[0.2em] uppercase"
+            className="mt-6 text-[#f5f0e8]/80 text-center text-sm font-light tracking-[0.2em] uppercase"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 2.8 }}
@@ -93,7 +93,7 @@ function MobileHero() {
 
           {/* Subtext */}
           <motion.p
-            className="mt-4 text-white/50 text-center text-xs max-w-[280px] leading-relaxed"
+            className="mt-4 text-[#f5f0e8]/50 text-center text-xs max-w-[280px] leading-relaxed"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 3.0 }}
@@ -128,7 +128,7 @@ function MobileHero() {
                 key={`a-${item.title}`}
                 className="shrink-0 flex items-center gap-5"
               >
-                <div className="w-32 h-20 rounded-lg overflow-hidden bg-white/10">
+                <div className="w-32 h-20 rounded-lg overflow-hidden bg-[#f5f0e8]/10">
                   <img
                     src={item.image}
                     alt={item.title}
@@ -136,10 +136,10 @@ function MobileHero() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-white text-base font-medium tracking-wide">
+                  <span className="text-[#f5f0e8] text-base font-medium tracking-wide">
                     {item.title}
                   </span>
-                  <span className="text-white/50 text-sm uppercase tracking-wider">
+                  <span className="text-[#f5f0e8]/50 text-sm uppercase tracking-wider">
                     {item.category}
                   </span>
                 </div>
@@ -151,7 +151,7 @@ function MobileHero() {
                 key={`b-${item.title}`}
                 className="shrink-0 flex items-center gap-5"
               >
-                <div className="w-32 h-20 rounded-lg overflow-hidden bg-white/10">
+                <div className="w-32 h-20 rounded-lg overflow-hidden bg-[#f5f0e8]/10">
                   <img
                     src={item.image}
                     alt={item.title}
@@ -159,10 +159,10 @@ function MobileHero() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-white text-base font-medium tracking-wide">
+                  <span className="text-[#f5f0e8] text-base font-medium tracking-wide">
                     {item.title}
                   </span>
-                  <span className="text-white/50 text-sm uppercase tracking-wider">
+                  <span className="text-[#f5f0e8]/50 text-sm uppercase tracking-wider">
                     {item.category}
                   </span>
                 </div>
