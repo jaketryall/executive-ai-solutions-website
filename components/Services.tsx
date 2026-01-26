@@ -271,6 +271,8 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
                       : "object-cover object-center"
                   }
                   sizes="(max-width: 768px) 100vw, 60vw"
+                  priority={index < 3}
+                  loading="eager"
                 />
               </motion.div>
               {/* Subtle edge gradient */}
@@ -422,7 +424,8 @@ function MobileServices() {
                     fill
                     className={isMockup ? "object-cover object-top scale-[1.15]" : "object-cover object-center"}
                     sizes="(max-width: 768px) 100vw, 50vw"
-                    priority={index < 2}
+                    priority
+                    loading="eager"
                   />
                   {/* Gradient fade into content */}
                   <div
