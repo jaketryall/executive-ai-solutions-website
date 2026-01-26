@@ -446,287 +446,109 @@ function TransitionLetter({
   );
 }
 
-// Mobile card with parallax
+// Mobile card - clean editorial style (no heavy parallax)
 function MobileWorkCard({
   project,
   index,
-  isActive,
 }: {
   project: (typeof workItems)[0];
   index: number;
-  isActive: boolean;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: cardRef,
-    offset: ["start end", "end start"],
-  });
-
-  // Parallax for inner image - keep scale high enough to prevent gaps
-  const imageY = useTransform(scrollYProgress, [0, 1], ["5%", "-5%"]);
-  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.2, 1.15, 1.2]);
-
   return (
     <TransitionLink
       href={`/work/${project.slug}`}
-      className="shrink-0 w-[85vw] relative"
-      style={{ scrollSnapAlign: "center" }}
+      className="shrink-0 w-[80vw] snap-start"
     >
-      <motion.div
-        ref={cardRef}
-        className="relative rounded-3xl overflow-hidden touch-feedback"
-        style={{
-          background: "linear-gradient(165deg, #1a1816 0%, #0e0d0c 100%)",
-          boxShadow: isActive
-            ? "0 25px 50px -12px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,200,150,0.15)"
-            : "0 15px 30px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,200,150,0.06)",
-        }}
-        animate={{
-          scale: isActive ? 1 : 0.95,
-          opacity: isActive ? 1 : 0.7,
-        }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-      >
-        {/* Image with parallax */}
-        <div className="relative aspect-4/3 overflow-hidden">
-          <motion.div
-            className="absolute inset-0"
-            style={{ y: imageY, scale: imageScale }}
-          >
-            <Image
-              src={project.image}
-              alt={project.title}
-              fill
-              className="object-cover"
-              sizes="85vw"
-              priority={index < 2}
-            />
-          </motion.div>
+      <div className="relative rounded-2xl overflow-hidden bg-neutral-900 active:scale-[0.98] transition-transform duration-200">
+        {/* Image */}
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <Image
+            src={project.image}
+            alt={project.title}
+            fill
+            className="object-cover"
+            sizes="80vw"
+            priority={index < 2}
+          />
 
-          {/* Cinematic gradient overlay */}
+          {/* Gradient overlay */}
           <div
             className="absolute inset-0"
             style={{
-              background:
-                "linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.2) 60%, transparent 100%)",
+              background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)",
             }}
           />
 
           {/* Category tag */}
-          <div className="absolute top-4 left-4">
+          <div className="absolute top-3 left-3">
             <span
-              className="text-[10px] uppercase tracking-[0.2em] font-semibold px-3 py-1.5 rounded-full"
+              className="text-[10px] uppercase tracking-[0.15em] font-medium px-2.5 py-1 rounded-md"
               style={{
                 color: accentColor,
-                background: "rgba(0,0,0,0.7)",
-                backdropFilter: "blur(12px)",
-                border: "1px solid rgba(255,200,150,0.25)",
+                background: "rgba(0,0,0,0.6)",
+                backdropFilter: "blur(8px)",
               }}
             >
               {project.category}
             </span>
           </div>
 
-          {/* Result badge */}
-          <div className="absolute top-4 right-4">
-            <div
-              className="text-center px-3 py-2 rounded-xl"
-              style={{
-                background: "rgba(0,0,0,0.7)",
-                backdropFilter: "blur(12px)",
-                border: "1px solid rgba(255,200,150,0.15)",
-              }}
-            >
-              <span
-                className="block text-lg font-black leading-none"
-                style={{ color: accentColor }}
-              >
-                {project.result}
-              </span>
-              <span className="text-[8px] uppercase tracking-wider text-white/50">
-                {project.resultLabel}
-              </span>
-            </div>
-          </div>
-
-          {/* Content overlaid on image */}
-          <div className="absolute bottom-0 left-0 right-0 p-5">
-            <h3 className="text-2xl font-black text-white mb-1 leading-tight tracking-tight">
+          {/* Content */}
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
               {project.title}
             </h3>
-            <p className="text-white/50 text-sm leading-relaxed">
+            <p className="text-white/60 text-sm">
               {project.tagline}
             </p>
           </div>
         </div>
-
-        {/* Bottom bar with CTA */}
-        <div
-          className="px-5 py-4 flex items-center justify-between"
-          style={{
-            background: "rgba(0,0,0,0.3)",
-            borderTop: "1px solid rgba(255,200,150,0.08)",
-          }}
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-white/30 text-[10px] uppercase tracking-widest">
-              {project.year}
-            </span>
-            <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span className="text-white/30 text-[10px] uppercase tracking-widest">
-              Case Study
-            </span>
-          </div>
-          <div
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full"
-            style={{
-              background: "rgba(255,200,150,0.1)",
-              border: "1px solid rgba(255,200,150,0.2)",
-            }}
-          >
-            <span
-              className="text-xs font-semibold"
-              style={{ color: accentColor }}
-            >
-              View
-            </span>
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke={accentColor}
-              strokeWidth="2.5"
-            >
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </div>
-        </div>
-      </motion.div>
+      </div>
     </TransitionLink>
   );
 }
 
-// Mobile layout - Horizontal swipe gallery with cards
+// Mobile layout - Clean horizontal swipe gallery
 function MobileWork() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  // Header parallax
-  const headerY = useTransform(scrollYProgress, [0, 0.3], [40, 0]);
-  const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
-
-  const handleScroll = () => {
-    if (!scrollRef.current) return;
-    const scrollLeft = scrollRef.current.scrollLeft;
-    const cardWidth = window.innerWidth * 0.85;
-    const gap = 20;
-    const newIndex = Math.round(scrollLeft / (cardWidth + gap));
-    setActiveIndex(Math.min(newIndex, workItems.length - 1));
-  };
-
   return (
-    <div ref={sectionRef} className="md:hidden relative overflow-hidden">
-      {/* Ambient glow - positioned below header to avoid border appearance */}
-      <div
-        className="absolute top-32 left-1/2 -translate-x-1/2 w-[150%] h-[400px] pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, rgba(255,200,150,0.06) 0%, transparent 70%)",
-        }}
-      />
-
+    <section className="md:hidden relative py-16 bg-[#0a0806]">
       {/* Header */}
-      <motion.div
-        className="relative pt-20 pb-6 px-6"
-        style={{ y: headerY, opacity: headerOpacity }}
-      >
-        <div className="flex items-center gap-3 mb-6">
-          <span
-            className="w-8 h-px"
-            style={{ background: accentColorMuted }}
-          />
-          <p
-            className="text-[10px] uppercase tracking-[0.4em] font-medium"
-            style={{ color: accentColorMuted }}
-          >
-            Selected Work
-          </p>
-        </div>
-
-        <h2 className="text-[15vw] font-black text-white leading-[0.82] tracking-[-0.04em]">
-          THE
-          <br />
-          <span style={{ color: "rgba(255,200,150,0.25)" }}>PROOF</span>
+      <div className="px-6 mb-6">
+        <p
+          className="text-xs uppercase tracking-[0.3em] mb-4"
+          style={{ color: accentColorMuted }}
+        >
+          Selected Work
+        </p>
+        <h2 className="text-4xl font-black text-white tracking-tight">
+          THE PROOF
         </h2>
-
-        {/* Progress indicator */}
-        <div className="flex items-center gap-3 mt-8">
-          <div className="flex items-center gap-1.5">
-            {workItems.map((_, index) => (
-              <motion.div
-                key={index}
-                className="h-1 rounded-full"
-                animate={{
-                  width: activeIndex === index ? 28 : 6,
-                  background:
-                    activeIndex === index
-                      ? accentColor
-                      : "rgba(255,255,255,0.15)",
-                }}
-                transition={{ duration: 0.3 }}
-              />
-            ))}
-          </div>
-          <span className="text-white/30 text-xs ml-2">
-            {String(activeIndex + 1).padStart(2, "0")}/{String(workItems.length).padStart(2, "0")}
-          </span>
-        </div>
-      </motion.div>
+      </div>
 
       {/* Horizontal swipe gallery */}
       <div
-        ref={scrollRef}
-        onScroll={handleScroll}
-        className="relative flex gap-5 overflow-x-auto scrollbar-hide px-6 pb-24 pt-4"
-        style={{
-          scrollSnapType: "x mandatory",
-          WebkitOverflowScrolling: "touch",
-          scrollPaddingLeft: "24px",
-        }}
+        className="flex gap-4 overflow-x-auto scrollbar-hide px-6 pb-4 snap-x snap-mandatory"
+        style={{ WebkitOverflowScrolling: "touch" }}
       >
         {workItems.map((project, index) => (
           <MobileWorkCard
             key={project.slug}
             project={project}
             index={index}
-            isActive={activeIndex === index}
           />
         ))}
-        {/* End spacer for last card centering */}
-        <div className="shrink-0 w-[10vw]" />
+        {/* End spacer */}
+        <div className="shrink-0 w-4" />
       </div>
 
       {/* Swipe hint */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 text-white/30">
-        <motion.div
-          animate={{ x: [-4, 4, -4] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </motion.div>
-        <span className="text-[10px] uppercase tracking-widest">Swipe</span>
+      <div className="flex items-center justify-center gap-2 mt-4 text-white/40">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+        <span className="text-[10px] uppercase tracking-widest">Swipe to explore</span>
       </div>
-    </div>
+    </section>
   );
 }
 

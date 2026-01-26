@@ -143,14 +143,65 @@ export default function KineticTypography() {
     return () => ctx.revert();
   }, []);
 
+  // Mobile version - cleaner CSS-based animation
+  if (isMobile) {
+    return (
+      <section className="relative py-16 overflow-hidden bg-black md:hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-black to-neutral-950" />
+
+        <style>{`
+          @keyframes kinetic-scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+          }
+        `}</style>
+
+        <div className="relative overflow-hidden">
+          <div
+            className="flex whitespace-nowrap"
+            style={{
+              animation: "kinetic-scroll 12s linear infinite",
+              width: "fit-content",
+            }}
+          >
+            {[...Array(2)].map((_, i) => (
+              <span
+                key={`a-${i}`}
+                className="text-[14vw] font-black text-white/80 tracking-[-0.04em] mx-3"
+              >
+                MORE LEADS • MORE SALES • MORE GROWTH •
+              </span>
+            ))}
+            {[...Array(2)].map((_, i) => (
+              <span
+                key={`b-${i}`}
+                className="text-[14vw] font-black text-white/80 tracking-[-0.04em] mx-3"
+              >
+                MORE LEADS • MORE SALES • MORE GROWTH •
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Gradient fade to next section */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: "linear-gradient(to bottom, transparent 0%, #050404 100%)",
+          }}
+        />
+      </section>
+    );
+  }
+
+  // Desktop version
   return (
     <section
       ref={sectionRef}
-      className="relative pt-24 pb-24 overflow-hidden bg-black"
+      className="relative pt-24 pb-24 overflow-hidden bg-black hidden md:block"
       style={{ zIndex: 10 }}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-black via-neutral-900/50 to-neutral-950" />
-
 
       <div
         className="absolute inset-0 opacity-10"
@@ -164,8 +215,7 @@ export default function KineticTypography() {
       <div className="relative flex flex-col items-center justify-center">
         <div ref={textRow1Ref} className="flex whitespace-nowrap overflow-hidden">
           <div ref={row1AnimRef} className="flex">
-            {/* Fewer repetitions on mobile (4 vs 8) for better performance */}
-            {[...Array(isMobile ? 4 : 8)].map((_, i) => (
+            {[...Array(8)].map((_, i) => (
               <span
                 key={i}
                 className="text-[18vw] font-black text-white tracking-[-0.04em] mx-8 shrink-0"

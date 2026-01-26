@@ -2,28 +2,186 @@
 
 import { motion, useScroll, useTransform, useMotionTemplate, useSpring } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import AnimatedLogo from "./AnimatedLogo";
 
-export default function Hero() {
+// Work items for mobile hero showcase
+const mobileWorkItems = [
+  { title: "DESERT WINGS", category: "Flight School", image: "/thumbnails/Celestial Laptop Mockup.webp" },
+  { title: "RILED UP", category: "Coaching", image: "/thumbnails/Celestial iPhone Mockup.webp" },
+  { title: "WINGS N WHEELS", category: "Detailing", image: "/thumbnails/Rubber iPhone Mockup.webp" },
+  { title: "ADVENTURE AIR", category: "Tours", image: "/thumbnails/Elegant Black Laptop Mockup.webp" },
+];
+
+// Mobile Hero - Video-forward with work showcase
+function MobileHero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleCanPlay = () => {
+      setVideoLoaded(true);
+    };
+
+    video.addEventListener("canplaythrough", handleCanPlay);
+    return () => video.removeEventListener("canplaythrough", handleCanPlay);
+  }, []);
+
+  return (
+    <section className="relative h-screen bg-black md:hidden overflow-hidden">
+      {/* Poster image - shows immediately */}
+      <div className="absolute inset-0">
+        <img
+          src="/video-poster.webp"
+          alt=""
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/50" />
+      </div>
+
+      {/* Video - fades in when loaded */}
+      <motion.div
+        className="absolute inset-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: videoLoaded ? 1 : 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="w-full h-full object-cover"
+        >
+          <source src="/final-comp.mp4?v=6" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-black/40" />
+      </motion.div>
+
+      {/* Content overlay */}
+      <div className="absolute inset-0 flex flex-col">
+        {/* Main content - centered */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 pt-20">
+          {/* Logo with draw animation */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <AnimatedLogo
+              width={200}
+              height={120}
+              drawDuration={2}
+              delay={0.5}
+              showGlow
+            />
+          </motion.div>
+
+          {/* Tagline */}
+          <motion.p
+            className="mt-6 text-white/70 text-center text-sm font-light tracking-[0.2em] uppercase"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 2.8 }}
+          >
+            Premium AI Solutions
+          </motion.p>
+
+          {/* Subtext */}
+          <motion.p
+            className="mt-4 text-white/50 text-center text-xs max-w-[280px] leading-relaxed"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 3.0 }}
+          >
+            Transforming businesses with cutting-edge artificial intelligence
+          </motion.p>
+        </div>
+
+        {/* Bottom work showcase - infinite marquee */}
+        <motion.div
+          className="pb-8 overflow-hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 3.2 }}
+        >
+          <style>{`
+            @keyframes work-marquee {
+              from { transform: translateX(0); }
+              to { transform: translateX(-50%); }
+            }
+          `}</style>
+          <div
+            className="flex gap-8"
+            style={{
+              animation: "work-marquee 20s linear infinite",
+              width: "fit-content",
+            }}
+          >
+            {/* First set */}
+            {mobileWorkItems.map((item) => (
+              <div
+                key={`a-${item.title}`}
+                className="shrink-0 flex items-center gap-5"
+              >
+                <div className="w-32 h-20 rounded-lg overflow-hidden bg-white/10">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-white text-base font-medium tracking-wide">
+                    {item.title}
+                  </span>
+                  <span className="text-white/50 text-sm uppercase tracking-wider">
+                    {item.category}
+                  </span>
+                </div>
+              </div>
+            ))}
+            {/* Duplicate set for seamless loop */}
+            {mobileWorkItems.map((item) => (
+              <div
+                key={`b-${item.title}`}
+                className="shrink-0 flex items-center gap-5"
+              >
+                <div className="w-32 h-20 rounded-lg overflow-hidden bg-white/10">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-white text-base font-medium tracking-wide">
+                    {item.title}
+                  </span>
+                  <span className="text-white/50 text-sm uppercase tracking-wider">
+                    {item.category}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// Desktop Hero
+function DesktopHero() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef1 = useRef<HTMLVideoElement>(null);
   const videoRef2 = useRef<HTMLVideoElement>(null);
 
-  // Responsive initial mask size - larger on mobile
-  const [initialMaskSize, setInitialMaskSize] = useState(20);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const updateResponsive = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      // Use larger initial size on mobile for better visibility
-      setInitialMaskSize(mobile ? 40 : 20);
-    };
-
-    updateResponsive();
-    window.addEventListener("resize", updateResponsive);
-    return () => window.removeEventListener("resize", updateResponsive);
-  }, []);
+  const initialMaskSize = 20;
 
   // Handle video loop manually
   const handleVideoEnded = (e: React.SyntheticEvent<HTMLVideoElement>) => {
@@ -88,7 +246,7 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative h-[200vh] bg-black"
+      className="relative h-[200vh] bg-black hidden md:block"
     >
       {/* Sticky container that stays while scrolling through the section */}
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-black">
@@ -228,5 +386,15 @@ export default function Hero() {
         </motion.div>
       </div>
     </section>
+  );
+}
+
+// Main Hero export - renders mobile or desktop version
+export default function Hero() {
+  return (
+    <>
+      <MobileHero />
+      <DesktopHero />
+    </>
   );
 }

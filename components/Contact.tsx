@@ -134,7 +134,160 @@ function TypewriterText({
   );
 }
 
-export default function Contact() {
+// Mobile Contact - Clean, simple layout
+function MobileContact() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setIsSubmitting(false);
+    setSubmitted(true);
+  };
+
+  return (
+    <section className="md:hidden relative py-16 bg-[#0a0908]">
+      <div className="px-6">
+        {/* Header */}
+        <div className="mb-10">
+          <p
+            className="text-xs uppercase tracking-[0.3em] mb-4"
+            style={{ color: accentColorMuted }}
+          >
+            Get in Touch
+          </p>
+          <h2 className="text-4xl font-black text-white tracking-tight leading-tight">
+            LET'S START
+            <br />
+            <span className="text-white/30">SOMETHING</span>
+          </h2>
+        </div>
+
+        {/* Info cards */}
+        <div className="space-y-4 mb-10">
+          <motion.a
+            href="mailto:jaker@executiveaisolutions.com"
+            className="block p-4 rounded-xl bg-white/5 active:scale-[0.98] transition-transform"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+          >
+            <p className="text-xs uppercase tracking-wider text-white/40 mb-1">Email</p>
+            <p className="text-white text-sm break-all" style={{ color: accentColor }}>
+              jaker@executiveaisolutions.com
+            </p>
+          </motion.a>
+
+          <motion.div
+            className="p-4 rounded-xl bg-white/5"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+          >
+            <p className="text-xs uppercase tracking-wider text-white/40 mb-1">Response Time</p>
+            <p className="text-white text-sm">Within 24 hours</p>
+          </motion.div>
+
+          <motion.div
+            className="p-4 rounded-xl bg-white/5"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+          >
+            <p className="text-xs uppercase tracking-wider text-white/40 mb-1">Status</p>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <p className="text-white text-sm">Available for projects</p>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Form */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          {submitted ? (
+            <div className="text-center py-12">
+              <div className="w-12 h-12 rounded-full border border-emerald-500/30 flex items-center justify-center mx-auto mb-4">
+                <svg className="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Message sent</h3>
+              <p className="text-white/50 text-sm">We'll be in touch within 24 hours.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-white/40 mb-2">Name</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full bg-white/5 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-1 placeholder:text-white/30"
+                  style={{ ["--tw-ring-color" as string]: accentColorMuted }}
+                  placeholder="Your name"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-white/40 mb-2">Email</label>
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full bg-white/5 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-1 placeholder:text-white/30"
+                  style={{ ["--tw-ring-color" as string]: accentColorMuted }}
+                  placeholder="you@company.com"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-white/40 mb-2">Message</label>
+                <textarea
+                  required
+                  rows={4}
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  className="w-full bg-white/5 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-1 resize-none placeholder:text-white/30"
+                  style={{ ["--tw-ring-color" as string]: accentColorMuted }}
+                  placeholder="Tell us about your project..."
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-4 rounded-xl font-semibold text-black transition-opacity disabled:opacity-50 active:scale-[0.98]"
+                style={{ background: accentColor }}
+              >
+                {isSubmitting ? "Sending..." : "Send Message"}
+              </button>
+            </form>
+          )}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// Desktop Contact
+function DesktopContact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -361,7 +514,7 @@ export default function Contact() {
     <section
       ref={sectionRef}
       id="contact"
-      className="relative py-32 overflow-hidden bg-[#0a0908] min-h-screen"
+      className="relative py-32 overflow-hidden bg-[#0a0908] min-h-screen hidden md:block"
       style={{
         zIndex: 10,
         isolation: "isolate",
@@ -670,5 +823,15 @@ export default function Contact() {
         </div>
       </motion.div>
     </section>
+  );
+}
+
+// Main export
+export default function Contact() {
+  return (
+    <>
+      <MobileContact />
+      <DesktopContact />
+    </>
   );
 }

@@ -366,7 +366,112 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
   );
 }
 
-export default function Services() {
+// Mobile service card - clean and simple
+function MobileServiceCard({ service }: { service: (typeof services)[0] }) {
+  return (
+    <TransitionLink href={`/services/${service.slug}`}>
+      <motion.div
+        className="relative rounded-2xl overflow-hidden bg-neutral-900 active:scale-[0.98] transition-transform duration-200"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* Image */}
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <Image
+            src={service.image}
+            alt={service.title}
+            fill
+            className={
+              service.image.includes("Mockup")
+                ? "object-contain object-center scale-110"
+                : "object-cover object-center"
+            }
+            sizes="100vw"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+            }}
+          />
+
+          {/* Number badge */}
+          <div className="absolute top-3 left-3">
+            <span
+              className="text-sm font-bold px-2.5 py-1 rounded-md"
+              style={{
+                color: accentColor,
+                background: "rgba(0,0,0,0.6)",
+                backdropFilter: "blur(8px)",
+              }}
+            >
+              {service.number}
+            </span>
+          </div>
+
+          {/* Content */}
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            <h3 className="text-2xl font-bold text-white mb-1">
+              {service.title}
+              <span className="text-white/50 font-light ml-2">{service.subtitle}</span>
+            </h3>
+            <p className="text-white/60 text-sm line-clamp-2">
+              {service.description}
+            </p>
+          </div>
+        </div>
+      </motion.div>
+    </TransitionLink>
+  );
+}
+
+// Mobile services section
+function MobileServices() {
+  return (
+    <section className="md:hidden relative py-16 bg-[#080706] rounded-t-[2rem]" style={{ zIndex: 20 }}>
+      {/* Header */}
+      <div className="px-6 mb-8">
+        <p
+          className="text-xs uppercase tracking-[0.3em] mb-4"
+          style={{ color: accentColorMuted }}
+        >
+          What We Offer
+        </p>
+        <h2 className="text-4xl font-black text-white tracking-tight">
+          SERVICES
+        </h2>
+      </div>
+
+      {/* Service cards - vertical stack */}
+      <div className="px-6 space-y-4">
+        {services.map((service) => (
+          <MobileServiceCard key={service.slug} service={service} />
+        ))}
+      </div>
+
+      {/* CTA */}
+      <div className="px-6 mt-12 text-center">
+        <a
+          href="#contact"
+          className="inline-flex items-center gap-3 text-xl font-bold text-white"
+        >
+          <span>Let&apos;s Talk</span>
+          <span
+            className="w-10 h-10 rounded-full border flex items-center justify-center"
+            style={{ borderColor: accentColorMuted }}
+          >
+            <span style={{ color: accentColor }}>→</span>
+          </span>
+        </a>
+      </div>
+    </section>
+  );
+}
+
+// Desktop Services section
+function DesktopServices() {
   const sectionRef = useRef<HTMLElement>(null);
 
   // Section header parallax
@@ -382,12 +487,12 @@ export default function Services() {
     <section
       ref={sectionRef}
       id="services"
-      className="relative bg-[#080706] overflow-hidden rounded-t-[3rem]"
+      className="relative bg-[#080706] overflow-hidden rounded-t-[3rem] hidden md:block"
       style={{ zIndex: 20, boxShadow: "0 -50px 0 0 #080706" }}
     >
       {/* Section header */}
-      <div className="relative pt-12 md:pt-32 pb-8 md:pb-16">
-        <div className="container mx-auto px-6 md:px-12 lg:px-16">
+      <div className="relative pt-32 pb-16">
+        <div className="container mx-auto px-12 lg:px-16">
           <motion.div style={{ y: headerY, opacity: headerOpacity }}>
             <p
               className="text-xs uppercase tracking-[0.4em] mb-4"
@@ -395,7 +500,7 @@ export default function Services() {
             >
               What We Offer
             </p>
-            <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-[0.9]">
+            <h2 className="text-7xl lg:text-8xl font-black text-white tracking-tight leading-[0.9]">
               SERVICES
             </h2>
           </motion.div>
@@ -416,8 +521,8 @@ export default function Services() {
       </div>
 
       {/* Bottom CTA section */}
-      <div className="relative pt-12 md:pt-16 pb-24 md:pb-32">
-        <div className="container mx-auto px-6 md:px-12 lg:px-16">
+      <div className="relative pt-16 pb-32">
+        <div className="container mx-auto px-12 lg:px-16">
           <motion.div
             className="text-center"
             initial={{ opacity: 0, y: 40 }}
@@ -433,7 +538,7 @@ export default function Services() {
             </p>
             <motion.a
               href="#contact"
-              className="inline-flex items-center gap-4 text-3xl md:text-4xl font-bold text-white group"
+              className="inline-flex items-center gap-4 text-4xl font-bold text-white group"
               whileHover={{ x: 8 }}
             >
               <span>Let&apos;s Talk</span>
@@ -453,5 +558,14 @@ export default function Services() {
         </div>
       </div>
     </section>
+  );
+}
+
+export default function Services() {
+  return (
+    <>
+      <MobileServices />
+      <DesktopServices />
+    </>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 // Cinematic warm color palette
 const accentColorMuted = "rgba(255, 200, 150, 0.6)";
@@ -38,7 +38,78 @@ function ScrollFillLetter({
   );
 }
 
-export default function AboutSnippet() {
+// Mobile version - simpler word-level animation
+function MobileAboutSnippet() {
+  const mainText =
+    "We design websites that convert, build tools that scale, and craft strategies that get you found.";
+  const words = mainText.split(" ");
+
+  return (
+    <section
+      className="relative py-20 bg-black md:hidden"
+      style={{ marginBottom: "-8px", position: "relative", zIndex: 2 }}
+    >
+      {/* Dark background */}
+      <div
+        className="absolute inset-0"
+        style={{ background: "#050404" }}
+      />
+
+      {/* Subtle warm glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse 80% 50% at 50% 50%, rgba(255, 200, 150, 0.04) 0%, transparent 70%)",
+        }}
+      />
+
+      <div className="relative max-w-lg mx-auto px-6 text-center">
+        {/* Label */}
+        <motion.p
+          className="text-xs uppercase tracking-[0.3em] mb-6"
+          style={{ color: accentColorMuted }}
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.5 }}
+        >
+          What We Do
+        </motion.p>
+
+        {/* Main text - word-by-word staggered animation */}
+        <h2 className="text-2xl font-medium leading-[1.5] tracking-[-0.01em] text-white">
+          {words.map((word, i) => (
+            <motion.span
+              key={i}
+              className="inline-block mr-[0.3em]"
+              initial={{ opacity: 0.15 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{
+                duration: 0.4,
+                delay: i * 0.04,
+                ease: "easeOut",
+              }}
+            >
+              {word}
+            </motion.span>
+          ))}
+        </h2>
+      </div>
+
+      {/* Bottom gradient transition */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
+        style={{
+          background: "linear-gradient(to bottom, transparent 0%, #0a0806 100%)",
+        }}
+      />
+    </section>
+  );
+}
+
+// Desktop version with letter-by-letter scroll animation
+function DesktopAboutSnippet() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Track scroll progress through the section
@@ -65,7 +136,7 @@ export default function AboutSnippet() {
   return (
     <section
       ref={containerRef}
-      className="relative pt-24 md:pt-32 lg:pt-40 pb-40 md:pb-48 lg:pb-72 bg-black"
+      className="relative pt-24 md:pt-32 lg:pt-40 pb-40 md:pb-48 lg:pb-72 bg-black hidden md:block"
       style={{ marginBottom: "-8px", position: "relative", zIndex: 2 }}
     >
       {/* Dark background - warm charcoal */}
@@ -149,5 +220,15 @@ export default function AboutSnippet() {
         </motion.h2>
       </motion.div>
     </section>
+  );
+}
+
+// Main export - renders mobile or desktop version
+export default function AboutSnippet() {
+  return (
+    <>
+      <MobileAboutSnippet />
+      <DesktopAboutSnippet />
+    </>
   );
 }
