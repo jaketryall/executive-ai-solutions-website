@@ -366,105 +366,139 @@ function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
   );
 }
 
-// Mobile service card - clean and simple
-function MobileServiceCard({ service }: { service: (typeof services)[0] }) {
-  return (
-    <TransitionLink href={`/services/${service.slug}`}>
-      <motion.div
-        className="relative rounded-2xl overflow-hidden bg-[#1f1e1c] active:scale-[0.98] transition-transform duration-200"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.5 }}
-      >
-        {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden">
-          <Image
-            src={service.image}
-            alt={service.title}
-            fill
-            className={
-              service.image.includes("Mockup")
-                ? "object-contain object-center scale-110"
-                : "object-cover object-center"
-            }
-            sizes="100vw"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background: "linear-gradient(to top, rgba(20,19,18,0.95) 0%, rgba(20,19,18,0.4) 50%, transparent 100%)",
-            }}
-          />
-
-          {/* Number badge */}
-          <div className="absolute top-3 left-3">
-            <span
-              className="text-sm font-bold px-2.5 py-1 rounded-md"
-              style={{
-                color: accentColor,
-                background: "rgba(20,19,18,0.7)",
-                backdropFilter: "blur(8px)",
-              }}
-            >
-              {service.number}
-            </span>
-          </div>
-
-          {/* Content */}
-          <div className="absolute bottom-0 left-0 right-0 p-4">
-            <h3 className="text-2xl font-bold text-[#f5f0e8] mb-1">
-              {service.title}
-              <span className="text-[#f5f0e8]/50 font-light ml-2">{service.subtitle}</span>
-            </h3>
-            <p className="text-[#f5f0e8]/60 text-sm line-clamp-2">
-              {service.description}
-            </p>
-          </div>
-        </div>
-      </motion.div>
-    </TransitionLink>
-  );
-}
-
-// Mobile services section
+// Mobile services - Vertical card layout (Flighty-inspired)
 function MobileServices() {
   return (
-    <section className="md:hidden relative py-16 bg-[#1c1b19] rounded-t-[2rem]" style={{ zIndex: 20 }}>
-      {/* Header */}
-      <div className="px-6 mb-8">
-        <p
-          className="text-xs uppercase tracking-[0.3em] mb-4"
+    <section
+      id="services"
+      className="md:hidden relative rounded-t-[2rem] pt-20"
+      style={{
+        zIndex: 20,
+        marginTop: "-2rem",
+        background: "linear-gradient(180deg, #100e0c 0%, #0e0c0a 50%, #0c0a08 100%)",
+      }}
+    >
+      {/* Section header */}
+      <div className="px-6 pb-8">
+        <span
+          className="text-[10px] uppercase tracking-[0.3em] block mb-2"
           style={{ color: accentColorMuted }}
         >
           What We Offer
-        </p>
-        <h2 className="text-4xl font-black text-[#f5f0e8] tracking-tight">
+        </span>
+        <h2 className="text-3xl font-black text-[#f5f0e8] tracking-tight">
           SERVICES
         </h2>
       </div>
 
-      {/* Service cards - vertical stack */}
-      <div className="px-6 space-y-4">
-        {services.map((service) => (
-          <MobileServiceCard key={service.slug} service={service} />
-        ))}
-      </div>
+      {/* Vertical cards */}
+      <div className="px-4 pb-32 flex flex-col gap-6">
+        {services.map((service, index) => {
+          const isMockup = service.image.includes("Mockup");
 
-      {/* CTA */}
-      <div className="px-6 mt-12 text-center">
-        <a
-          href="#contact"
-          className="inline-flex items-center gap-3 text-xl font-bold text-[#f5f0e8]"
-        >
-          <span>Let&apos;s Talk</span>
-          <span
-            className="w-10 h-10 rounded-full border flex items-center justify-center"
-            style={{ borderColor: accentColorMuted }}
-          >
-            <span style={{ color: accentColor }}>→</span>
-          </span>
-        </a>
+          return (
+            <TransitionLink
+              key={service.slug}
+              href={`/services/${service.slug}`}
+            >
+              <motion.div
+                className="relative rounded-3xl overflow-hidden bg-[#1a1816] flex flex-col"
+                whileTap={{ scale: 0.985 }}
+              >
+                {/* Image - fixed height */}
+                <div className="relative h-[240px] overflow-hidden">
+                  {/* Background for mockups */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: isMockup
+                        ? "radial-gradient(ellipse 100% 80% at 50% 40%, rgba(255, 200, 150, 0.08) 0%, #1a1816 70%)"
+                        : "#1a1816",
+                    }}
+                  />
+                  <Image
+                    src={service.image}
+                    alt={service.title}
+                    fill
+                    className={isMockup ? "object-contain object-center scale-110" : "object-cover object-top"}
+                    sizes="100vw"
+                  />
+                  {/* Gradient fade into content */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: "linear-gradient(to bottom, transparent 50%, #1a1816 100%)",
+                    }}
+                  />
+                  {/* Number - on image */}
+                  <div className="absolute top-5 right-5 pointer-events-none">
+                    <span
+                      className="text-5xl font-black"
+                      style={{
+                        color: "transparent",
+                        WebkitTextStroke: "1px rgba(255, 200, 150, 0.2)",
+                      }}
+                    >
+                      {service.number}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="relative px-6 pt-2 pb-8">
+                  {/* Title + Subtitle */}
+                  <div className="mb-4">
+                    <h3 className="text-3xl font-black text-[#f5f0e8] tracking-tight leading-[0.95]">
+                      {service.title}
+                    </h3>
+                    <p
+                      className="text-lg font-light"
+                      style={{ color: accentColorMuted }}
+                    >
+                      {service.subtitle}
+                    </p>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-sm text-[#f5f0e8]/50 mb-5 leading-relaxed">
+                    {service.description}
+                  </p>
+
+                  {/* Details - compact list */}
+                  <div className="space-y-2 mb-6">
+                    {service.details.map((detail, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <span
+                          className="w-1 h-1 rounded-full shrink-0"
+                          style={{ background: accentColor }}
+                        />
+                        <span className="text-[#f5f0e8]/40 text-xs">{detail}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* CTA */}
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="text-sm font-medium uppercase tracking-widest"
+                      style={{ color: accentColor }}
+                    >
+                      Learn More
+                    </span>
+                    <span
+                      className="w-10 h-10 rounded-full flex items-center justify-center"
+                      style={{ background: accentColor }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1816" strokeWidth="2.5">
+                        <path d="M7 17L17 7M17 7H7M17 7V17" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            </TransitionLink>
+          );
+        })}
       </div>
     </section>
   );

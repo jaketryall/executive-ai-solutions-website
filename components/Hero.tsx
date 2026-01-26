@@ -3,31 +3,60 @@
 import { motion, useScroll, useTransform, useMotionTemplate, useSpring } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import AnimatedLogo from "./AnimatedLogo";
+import { TransitionLink } from "./PageTransition";
 
 // Work items for mobile hero showcase
 const mobileWorkItems = [
-  { title: "DESERT WINGS", category: "Flight School", image: "/thumbnails/Celestial Laptop Mockup.webp" },
-  { title: "RILED UP", category: "Coaching", image: "/thumbnails/Celestial iPhone Mockup.webp" },
-  { title: "WINGS N WHEELS", category: "Detailing", image: "/thumbnails/Rubber iPhone Mockup.webp" },
-  { title: "ADVENTURE AIR", category: "Tours", image: "/thumbnails/Elegant Black Laptop Mockup.webp" },
+  { title: "DESERT WINGS", category: "Flight School", image: "/thumbnails/Celestial Laptop Mockup.webp", slug: "desert-wings" },
+  { title: "RILED UP", category: "Coaching", image: "/thumbnails/Celestial iPhone Mockup.webp", slug: "riled-up" },
+  { title: "WINGS N WHEELS", category: "Detailing", image: "/thumbnails/Rubber iPhone Mockup.webp", slug: "wings-n-wheels" },
+  { title: "ADVENTURE AIR", category: "Tours", image: "/thumbnails/Elegant Black Laptop Mockup.webp", slug: "adventure-air" },
 ];
 
 // Mobile Hero - Video-forward with work showcase
 function MobileHero() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
+  const [introComplete, setIntroComplete] = useState(false);
+
+  // Ensure intro animations complete before allowing fade-out
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIntroComplete(true);
+    }, 3500); // Wait for logo draw + text animations
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const handleCanPlay = () => {
-      setVideoLoaded(true);
+    const handleReady = () => {
+      // Only mark ready if video is actually playing (has current time > 0)
+      // This prevents black frame flash
+      if (video.currentTime > 0 || video.readyState >= 4) {
+        setVideoReady(true);
+      }
     };
 
-    video.addEventListener("canplaythrough", handleCanPlay);
-    return () => video.removeEventListener("canplaythrough", handleCanPlay);
+    // Check if video is already playing (cached)
+    if (video.currentTime > 0 && video.readyState >= 3) {
+      setVideoReady(true);
+      return;
+    }
+
+    // Listen for playing event - most reliable for "video has a frame"
+    video.addEventListener("playing", handleReady);
+    video.addEventListener("timeupdate", handleReady, { once: true });
+
+    return () => {
+      video.removeEventListener("playing", handleReady);
+      video.removeEventListener("timeupdate", handleReady);
+    };
   }, []);
+
+  // Only fade out content when BOTH video is playing AND intro is complete
+  const shouldFadeOut = videoReady && introComplete;
 
   return (
     <section className="relative h-screen bg-[#141312] md:hidden overflow-hidden">
@@ -41,11 +70,11 @@ function MobileHero() {
         <div className="absolute inset-0 bg-[#141312]/60" />
       </div>
 
-      {/* Video - fades in when loaded */}
+      {/* Video - fades in when loaded AND intro complete */}
       <motion.div
         className="absolute inset-0"
         initial={{ opacity: 0 }}
-        animate={{ opacity: videoLoaded ? 1 : 0 }}
+        animate={{ opacity: shouldFadeOut ? 1 : 0 }}
         transition={{ duration: 1, ease: "easeOut" }}
       >
         <video
@@ -64,8 +93,13 @@ function MobileHero() {
 
       {/* Content overlay */}
       <div className="absolute inset-0 flex flex-col">
-        {/* Main content - centered */}
-        <div className="flex-1 flex flex-col items-center justify-center px-6 pt-20">
+        {/* Main content - centered, fades out when intro complete AND video loaded */}
+        <motion.div
+          className="flex-1 flex flex-col items-center justify-center px-6 pt-20"
+          initial={{ opacity: 1 }}
+          animate={{ opacity: shouldFadeOut ? 0 : 1 }}
+          transition={{ duration: 0.8, delay: shouldFadeOut ? 0.5 : 0 }}
+        >
           {/* Logo with draw animation */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -77,7 +111,6 @@ function MobileHero() {
               height={120}
               drawDuration={2}
               delay={0.5}
-              showGlow
             />
           </motion.div>
 
@@ -100,9 +133,9 @@ function MobileHero() {
           >
             Transforming businesses with cutting-edge artificial intelligence
           </motion.p>
-        </div>
+        </motion.div>
 
-        {/* Bottom work showcase - infinite marquee */}
+        {/* Bottom work showcase - auto-scrolling marquee, stays visible */}
         <motion.div
           className="pb-8 overflow-hidden"
           initial={{ opacity: 0 }}
@@ -115,20 +148,30 @@ function MobileHero() {
               to { transform: translateX(-50%); }
             }
           `}</style>
+
+          {/* Label */}
+          <div className="px-6 mb-3">
+            <span className="text-[#f5f0e8]/40 text-[10px] uppercase tracking-[0.2em]">
+              Our Work
+            </span>
+          </div>
+
+          {/* Marquee container */}
           <div
-            className="flex gap-8"
+            className="flex gap-6"
             style={{
-              animation: "work-marquee 20s linear infinite",
+              animation: "work-marquee 25s linear infinite",
               width: "fit-content",
             }}
           >
             {/* First set */}
             {mobileWorkItems.map((item) => (
-              <div
-                key={`a-${item.title}`}
-                className="shrink-0 flex items-center gap-5"
+              <TransitionLink
+                key={`a-${item.slug}`}
+                href={`/work/${item.slug}`}
+                className="shrink-0 flex items-center gap-4 active:scale-[0.98] transition-transform"
               >
-                <div className="w-32 h-20 rounded-lg overflow-hidden bg-[#f5f0e8]/10">
+                <div className="w-28 h-20 rounded-lg overflow-hidden bg-[#f5f0e8]/10">
                   <img
                     src={item.image}
                     alt={item.title}
@@ -136,22 +179,23 @@ function MobileHero() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[#f5f0e8] text-base font-medium tracking-wide">
+                  <span className="text-[#f5f0e8] text-sm font-medium tracking-wide">
                     {item.title}
                   </span>
-                  <span className="text-[#f5f0e8]/50 text-sm uppercase tracking-wider">
+                  <span className="text-[#f5f0e8]/50 text-xs uppercase tracking-wider">
                     {item.category}
                   </span>
                 </div>
-              </div>
+              </TransitionLink>
             ))}
             {/* Duplicate set for seamless loop */}
             {mobileWorkItems.map((item) => (
-              <div
-                key={`b-${item.title}`}
-                className="shrink-0 flex items-center gap-5"
+              <TransitionLink
+                key={`b-${item.slug}`}
+                href={`/work/${item.slug}`}
+                className="shrink-0 flex items-center gap-4 active:scale-[0.98] transition-transform"
               >
-                <div className="w-32 h-20 rounded-lg overflow-hidden bg-[#f5f0e8]/10">
+                <div className="w-28 h-20 rounded-lg overflow-hidden bg-[#f5f0e8]/10">
                   <img
                     src={item.image}
                     alt={item.title}
@@ -159,14 +203,14 @@ function MobileHero() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[#f5f0e8] text-base font-medium tracking-wide">
+                  <span className="text-[#f5f0e8] text-sm font-medium tracking-wide">
                     {item.title}
                   </span>
-                  <span className="text-[#f5f0e8]/50 text-sm uppercase tracking-wider">
+                  <span className="text-[#f5f0e8]/50 text-xs uppercase tracking-wider">
                     {item.category}
                   </span>
                 </div>
-              </div>
+              </TransitionLink>
             ))}
           </div>
         </motion.div>

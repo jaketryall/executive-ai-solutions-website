@@ -38,66 +38,73 @@ function ScrollFillLetter({
   );
 }
 
-// Mobile version - simpler word-level animation
-function MobileAboutSnippet() {
-  const mainText =
-    "We design websites that convert, build tools that scale, and craft strategies that get you found.";
-  const words = mainText.split(" ");
+// Accent colors
+const accentColor = "rgba(255, 200, 150, 1)";
 
+// Mobile version - Cinematic fullscreen statement (static, no parallax)
+function MobileAboutSnippet() {
   return (
     <section
-      className="relative py-20 bg-[#1a1918] md:hidden"
-      style={{ marginBottom: "-8px", position: "relative", zIndex: 2 }}
+      className="relative min-h-[50vh] flex flex-col items-center justify-center bg-[#141312] md:hidden overflow-hidden"
     >
-      {/* Subtle warm glow */}
+      {/* Ambient glow */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse 80% 50% at 50% 50%, rgba(255, 200, 150, 0.03) 0%, transparent 70%)",
+          background: `
+            radial-gradient(ellipse 120% 60% at 50% 50%, rgba(255, 200, 150, 0.06) 0%, transparent 50%),
+            radial-gradient(ellipse 80% 40% at 50% 20%, rgba(255, 200, 150, 0.03) 0%, transparent 40%)
+          `,
         }}
       />
 
-      <div className="relative max-w-lg mx-auto px-6 text-center">
-        {/* Label */}
-        <motion.p
-          className="text-xs uppercase tracking-[0.3em] mb-6"
-          style={{ color: accentColorMuted }}
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.5 }}
+      {/* Large background text */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none opacity-5"
+      >
+        <span
+          className="text-[70vw] font-black leading-none"
+          style={{
+            color: "transparent",
+            WebkitTextStroke: "1px rgba(255, 200, 150, 0.12)",
+          }}
         >
-          What We Do
-        </motion.p>
-
-        {/* Main text - word-by-word staggered animation */}
-        <h2 className="text-2xl font-medium leading-[1.5] tracking-[-0.01em] text-[#f5f0e8]">
-          {words.map((word, i) => (
-            <motion.span
-              key={i}
-              className="inline-block mr-[0.3em]"
-              initial={{ opacity: 0.15 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{
-                duration: 0.4,
-                delay: i * 0.04,
-                ease: "easeOut",
-              }}
-            >
-              {word}
-            </motion.span>
-          ))}
-        </h2>
+          WHY
+        </span>
       </div>
 
-      {/* Bottom gradient transition */}
+      {/* Content */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
-        style={{
-          background: "linear-gradient(to bottom, transparent 0%, #1c1b19 100%)",
-        }}
-      />
+        className="relative px-6 pt-20 pb-40 text-center"
+      >
+        {/* Label */}
+        <div className="mb-8">
+          <span
+            className="text-[10px] uppercase tracking-[0.3em]"
+            style={{ color: accentColorMuted }}
+          >
+            Why Choose Us
+          </span>
+        </div>
+
+        {/* Main statement */}
+        <h2 className="text-[9vw] font-black text-[#f5f0e8] tracking-[-0.03em] leading-[1.1] mb-8">
+          WE DON'T JUST
+          <br />
+          <span style={{ color: accentColor }}>BUILD</span>
+          <br />
+          WE <span style={{ color: accentColor }}>TRANSFORM</span>
+        </h2>
+
+        {/* Subtitle */}
+        <p
+          className="text-base leading-relaxed max-w-[300px] mx-auto"
+          style={{ color: "rgba(245, 240, 232, 0.5)" }}
+        >
+          Every project is a partnership. We combine strategy, design, and technology to create results that matter.
+        </p>
+      </div>
+
     </section>
   );
 }

@@ -134,7 +134,7 @@ function TypewriterText({
   );
 }
 
-// Mobile Contact - Clean, simple layout
+// Mobile Contact - Clean minimal form-first layout
 function MobileContact() {
   const [formData, setFormData] = useState({
     name: "",
@@ -143,6 +143,7 @@ function MobileContact() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -153,134 +154,203 @@ function MobileContact() {
   };
 
   return (
-    <section className="md:hidden relative py-16 bg-[#1c1b19]">
+    <section
+      id="contact"
+      className="md:hidden relative rounded-t-[2rem] pt-16 pb-20"
+      style={{
+        zIndex: 30,
+        marginTop: "-2rem",
+        background: "linear-gradient(180deg, #0a0806 0%, #080604 50%, #060503 100%)",
+      }}
+    >
+      {/* Header with status */}
+      <div className="px-6 mb-10">
+        <div className="flex items-center gap-3 mb-6">
+          <motion.span
+            className="w-2 h-2 rounded-full bg-emerald-500"
+            animate={{ opacity: [1, 0.4, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          />
+          <span className="text-[10px] uppercase tracking-[0.2em] text-emerald-400/80">
+            Taking on projects
+          </span>
+        </div>
+        <h2 className="text-[12vw] font-black text-[#f5f0e8] tracking-[-0.03em] leading-[0.9] mb-4">
+          GET IN
+          <br />
+          <span style={{ color: accentColor }}>TOUCH</span>
+        </h2>
+        <p className="text-[#f5f0e8]/40 text-sm">
+          Tell us about your project and we'll respond within 24 hours.
+        </p>
+      </div>
+
+      {/* Form section */}
       <div className="px-6">
-        {/* Header */}
-        <div className="mb-10">
-          <p
-            className="text-xs uppercase tracking-[0.3em] mb-4"
-            style={{ color: accentColorMuted }}
-          >
-            Get in Touch
-          </p>
-          <h2 className="text-4xl font-black text-[#f5f0e8] tracking-tight leading-tight">
-            LET'S START
-            <br />
-            <span className="text-[#f5f0e8]/30">SOMETHING</span>
-          </h2>
-        </div>
-
-        {/* Info cards */}
-        <div className="space-y-4 mb-10">
-          <motion.a
-            href="mailto:jaker@executiveaisolutions.com"
-            className="block p-4 rounded-xl bg-[#f5f0e8]/5 active:scale-[0.98] transition-transform"
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-          >
-            <p className="text-xs uppercase tracking-wider text-[#f5f0e8]/40 mb-1">Email</p>
-            <p className="text-[#f5f0e8] text-sm break-all" style={{ color: accentColor }}>
-              jaker@executiveaisolutions.com
-            </p>
-          </motion.a>
-
+        {submitted ? (
           <motion.div
-            className="p-4 rounded-xl bg-[#f5f0e8]/5"
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.1 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="py-12 text-center"
           >
-            <p className="text-xs uppercase tracking-wider text-[#f5f0e8]/40 mb-1">Response Time</p>
-            <p className="text-[#f5f0e8] text-sm">Within 24 hours</p>
+            <motion.div
+              className="w-16 h-16 rounded-full flex items-center justify-center mb-5 mx-auto"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
+              style={{
+                background: "rgba(16, 185, 129, 0.1)",
+                border: "1px solid rgba(16, 185, 129, 0.3)",
+              }}
+            >
+              <svg className="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <motion.path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.4, delay: 0.3 }}
+                />
+              </svg>
+            </motion.div>
+            <h3 className="text-xl font-bold text-[#f5f0e8] mb-2">Message Sent</h3>
+            <p className="text-[#f5f0e8]/40 text-sm">We'll be in touch soon.</p>
           </motion.div>
-
-          <motion.div
-            className="p-4 rounded-xl bg-[#f5f0e8]/5"
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            <p className="text-xs uppercase tracking-wider text-[#f5f0e8]/40 mb-1">Status</p>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <p className="text-[#f5f0e8] text-sm">Available for projects</p>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Form */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          {submitted ? (
-            <div className="text-center py-12">
-              <div className="w-12 h-12 rounded-full border border-emerald-500/30 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-[#f5f0e8] mb-2">Message sent</h3>
-              <p className="text-[#f5f0e8]/50 text-sm">We'll be in touch within 24 hours.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block text-xs uppercase tracking-wider text-[#f5f0e8]/40 mb-2">Name</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-[#f5f0e8]/5 rounded-xl px-4 py-3 text-[#f5f0e8] focus:outline-none focus:ring-1 placeholder:text-[#f5f0e8]/30"
-                  style={{ ["--tw-ring-color" as string]: accentColorMuted }}
-                  placeholder="Your name"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs uppercase tracking-wider text-[#f5f0e8]/40 mb-2">Email</label>
-                <input
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-[#f5f0e8]/5 rounded-xl px-4 py-3 text-[#f5f0e8] focus:outline-none focus:ring-1 placeholder:text-[#f5f0e8]/30"
-                  style={{ ["--tw-ring-color" as string]: accentColorMuted }}
-                  placeholder="you@company.com"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs uppercase tracking-wider text-[#f5f0e8]/40 mb-2">Message</label>
-                <textarea
-                  required
-                  rows={4}
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full bg-[#f5f0e8]/5 rounded-xl px-4 py-3 text-[#f5f0e8] focus:outline-none focus:ring-1 resize-none placeholder:text-[#f5f0e8]/30"
-                  style={{ ["--tw-ring-color" as string]: accentColorMuted }}
-                  placeholder="Tell us about your project..."
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full py-4 rounded-xl font-semibold text-[#1c1b19] transition-opacity disabled:opacity-50 active:scale-[0.98]"
-                style={{ background: accentColor }}
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name field */}
+            <div
+              className="rounded-xl p-4 transition-all duration-200"
+              style={{
+                background: focusedField === "name" ? "rgba(255, 200, 150, 0.05)" : "rgba(245, 240, 232, 0.03)",
+                border: `1px solid ${focusedField === "name" ? "rgba(255, 200, 150, 0.2)" : "rgba(245, 240, 232, 0.08)"}`,
+              }}
+            >
+              <label
+                className="text-[10px] uppercase tracking-[0.15em] block mb-2"
+                style={{ color: focusedField === "name" ? accentColor : "rgba(245, 240, 232, 0.4)" }}
               >
-                {isSubmitting ? "Sending..." : "Send Message"}
-              </button>
-            </form>
-          )}
-        </motion.div>
+                Name
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onFocus={() => setFocusedField("name")}
+                onBlur={() => setFocusedField(null)}
+                placeholder="Your name"
+                className="w-full bg-transparent text-[#f5f0e8] focus:outline-none placeholder:text-[#f5f0e8]/20"
+              />
+            </div>
+
+            {/* Email field */}
+            <div
+              className="rounded-xl p-4 transition-all duration-200"
+              style={{
+                background: focusedField === "email" ? "rgba(255, 200, 150, 0.05)" : "rgba(245, 240, 232, 0.03)",
+                border: `1px solid ${focusedField === "email" ? "rgba(255, 200, 150, 0.2)" : "rgba(245, 240, 232, 0.08)"}`,
+              }}
+            >
+              <label
+                className="text-[10px] uppercase tracking-[0.15em] block mb-2"
+                style={{ color: focusedField === "email" ? accentColor : "rgba(245, 240, 232, 0.4)" }}
+              >
+                Email
+              </label>
+              <input
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onFocus={() => setFocusedField("email")}
+                onBlur={() => setFocusedField(null)}
+                placeholder="you@company.com"
+                className="w-full bg-transparent text-[#f5f0e8] focus:outline-none placeholder:text-[#f5f0e8]/20"
+              />
+            </div>
+
+            {/* Message field */}
+            <div
+              className="rounded-xl p-4 transition-all duration-200"
+              style={{
+                background: focusedField === "message" ? "rgba(255, 200, 150, 0.05)" : "rgba(245, 240, 232, 0.03)",
+                border: `1px solid ${focusedField === "message" ? "rgba(255, 200, 150, 0.2)" : "rgba(245, 240, 232, 0.08)"}`,
+              }}
+            >
+              <label
+                className="text-[10px] uppercase tracking-[0.15em] block mb-2"
+                style={{ color: focusedField === "message" ? accentColor : "rgba(245, 240, 232, 0.4)" }}
+              >
+                Project Details
+              </label>
+              <textarea
+                required
+                rows={4}
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                onFocus={() => setFocusedField("message")}
+                onBlur={() => setFocusedField(null)}
+                placeholder="Tell us about your project..."
+                className="w-full bg-transparent text-[#f5f0e8] focus:outline-none resize-none placeholder:text-[#f5f0e8]/20"
+              />
+            </div>
+
+            {/* Submit button */}
+            <motion.button
+              type="submit"
+              disabled={isSubmitting}
+              className="relative w-full mt-2 py-4 rounded-xl font-semibold text-[#0a0806] overflow-hidden disabled:opacity-70"
+              style={{ background: accentColor }}
+              whileTap={{ scale: 0.98 }}
+            >
+              {isSubmitting && (
+                <motion.div
+                  className="absolute inset-0"
+                  style={{
+                    background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%)",
+                  }}
+                  animate={{ x: ["-100%", "100%"] }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                />
+              )}
+              <span className="relative flex items-center justify-center gap-2">
+                {isSubmitting ? (
+                  <>
+                    <motion.span
+                      className="w-4 h-4 border-2 border-[#0a0806]/30 border-t-[#0a0806] rounded-full"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    />
+                    <span>Sending...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Send Message</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </>
+                )}
+              </span>
+            </motion.button>
+          </form>
+        )}
+      </div>
+
+      {/* Footer - email as subtle secondary option */}
+      <div className="px-6 mt-10 pt-8 border-t border-[#f5f0e8]/5">
+        <p className="text-[#f5f0e8]/30 text-xs text-center mb-3">
+          Prefer email?
+        </p>
+        <a
+          href="mailto:jaker@executiveaisolutions.com"
+          className="text-[#f5f0e8]/60 text-sm text-center block hover:text-[#f5f0e8] transition-colors"
+        >
+          jaker@executiveaisolutions.com
+        </a>
       </div>
     </section>
   );

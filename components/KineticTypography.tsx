@@ -143,51 +143,100 @@ export default function KineticTypography() {
     return () => ctx.revert();
   }, []);
 
-  // Mobile version - cleaner CSS-based animation
+  // Mobile version - cinematic stacked single words
   if (isMobile) {
     return (
-      <section className="relative py-16 overflow-hidden bg-[#141312] md:hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#141312] to-[#1a1918]" />
+      <section className="relative min-h-[50vh] flex flex-col justify-center overflow-hidden bg-[#141312] md:hidden">
+        <div className="absolute inset-0 bg-[#141312]" />
 
-        <style>{`
-          @keyframes kinetic-scroll {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
-          }
-        `}</style>
-
-        <div className="relative overflow-hidden">
-          <div
-            className="flex whitespace-nowrap"
-            style={{
-              animation: "kinetic-scroll 12s linear infinite",
-              width: "fit-content",
-            }}
-          >
-            {[...Array(2)].map((_, i) => (
-              <span
-                key={`a-${i}`}
-                className="text-[14vw] font-black text-[#f5f0e8]/80 tracking-[-0.04em] mx-3"
-              >
-                MORE LEADS • MORE SALES • MORE GROWTH •
-              </span>
-            ))}
-            {[...Array(2)].map((_, i) => (
-              <span
-                key={`b-${i}`}
-                className="text-[14vw] font-black text-[#f5f0e8]/80 tracking-[-0.04em] mx-3"
-              >
-                MORE LEADS • MORE SALES • MORE GROWTH •
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Gradient fade to next section */}
+        {/* Ambient glow */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: "linear-gradient(to bottom, transparent 0%, #1a1918 100%)",
+            background: "radial-gradient(ellipse 100% 60% at 50% 50%, rgba(255, 200, 150, 0.06) 0%, transparent 60%)",
+          }}
+        />
+
+        <style>{`
+          @keyframes kinetic-left {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+          }
+          @keyframes kinetic-right {
+            from { transform: translateX(-50%); }
+            to { transform: translateX(0); }
+          }
+        `}</style>
+
+        {/* Stacked single words - one per line */}
+        <div className="relative py-4 -space-y-2">
+          {/* LEADS */}
+          <div className="overflow-hidden">
+            <div
+              className="flex whitespace-nowrap"
+              style={{
+                animation: "kinetic-left 12s linear infinite",
+                width: "fit-content",
+              }}
+            >
+              {[...Array(8)].map((_, i) => (
+                <span
+                  key={`leads-${i}`}
+                  className="text-[22vw] font-black text-[#f5f0e8] tracking-[-0.04em] px-8 leading-[0.85]"
+                >
+                  LEADS
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* SALES (accent, opposite direction) */}
+          <div className="overflow-hidden">
+            <div
+              className="flex whitespace-nowrap"
+              style={{
+                animation: "kinetic-right 15s linear infinite",
+                width: "fit-content",
+              }}
+            >
+              {[...Array(8)].map((_, i) => (
+                <span
+                  key={`sales-${i}`}
+                  className="text-[22vw] font-black tracking-[-0.04em] px-8 leading-[0.85]"
+                  style={{ color: "rgba(255, 200, 150, 0.85)" }}
+                >
+                  SALES
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* GROWTH */}
+          <div className="overflow-hidden">
+            <div
+              className="flex whitespace-nowrap"
+              style={{
+                animation: "kinetic-left 10s linear infinite",
+                width: "fit-content",
+              }}
+            >
+              {[...Array(6)].map((_, i) => (
+                <span
+                  key={`growth-${i}`}
+                  className="text-[22vw] font-black text-[#f5f0e8] tracking-[-0.04em] px-8 leading-[0.85]"
+                >
+                  GROWTH
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom fade */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
+          style={{
+            background: "linear-gradient(to top, #141312 0%, transparent 100%)",
           }}
         />
       </section>

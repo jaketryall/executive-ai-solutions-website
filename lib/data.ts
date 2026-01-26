@@ -285,7 +285,7 @@ export const services: Service[] = [
       },
     ],
     relatedProjects: ["desert-wings", "apex"],
-    image: "/Celestial Laptop Mockup.webp",
+    image: "/Rubber iPhone Mockup.webp",
   },
   {
     slug: "seo",
