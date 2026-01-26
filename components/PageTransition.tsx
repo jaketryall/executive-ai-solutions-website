@@ -309,35 +309,36 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
   );
 }
 
-// Mobile transition overlay - cinematic curtain wipe
+// Mobile transition overlay - cinematic horizontal wipe
 function MobileTransitionOverlay({ isActive }: { isActive: boolean }) {
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isActive && (
         <motion.div
           className="fixed inset-0 z-[9999] pointer-events-auto bg-black"
-          initial={{ y: "-100%" }}
-          animate={{ y: "0%" }}
-          exit={{ y: "100%" }}
+          initial={{ x: "-100%" }}
+          animate={{ x: "0%" }}
+          exit={{ x: "100%" }}
           transition={{
-            duration: 0.6,
-            ease: [0.76, 0, 0.24, 1],
+            duration: 0.8,
+            ease: [0.85, 0, 0.15, 1], // Slow start, fast middle, slow end
           }}
           style={{
             willChange: "transform",
             backfaceVisibility: "hidden",
           }}
         >
-          {/* Centered logo with subtle scale animation */}
+          {/* Centered logo with cinematic entrance */}
           <div className="absolute inset-0 flex items-center justify-center">
             <motion.svg
               viewBox="0 0 500 500"
-              className="w-14 h-14"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 0.9 }}
-              exit={{ scale: 1.1, opacity: 0 }}
+              className="w-16 h-16"
+              initial={{ scale: 0.6, opacity: 0, x: -20 }}
+              animate={{ scale: 1, opacity: 0.9, x: 0 }}
+              exit={{ scale: 0.9, opacity: 0, x: 20 }}
               transition={{
-                duration: 0.4,
+                duration: 0.5,
+                delay: 0.15,
                 ease: [0.25, 0.1, 0.25, 1],
               }}
             >
@@ -347,6 +348,19 @@ function MobileTransitionOverlay({ isActive }: { isActive: boolean }) {
               />
             </motion.svg>
           </div>
+
+          {/* Subtle accent line that leads the wipe */}
+          <motion.div
+            className="absolute top-0 bottom-0 w-[2px]"
+            style={{
+              background: `linear-gradient(to bottom, transparent, ${accentColor}, transparent)`,
+              right: 0,
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.6 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          />
         </motion.div>
       )}
     </AnimatePresence>
@@ -378,15 +392,15 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
       // Don't transition if already on the page
       if (href === pathname) return;
 
-      // On mobile, use cinematic curtain transition
+      // On mobile, use cinematic horizontal wipe transition
       if (isMobile) {
         setIsMobileTransitioning(true);
         document.body.classList.add("page-transitioning");
 
-        // Navigate when panel covers screen (at ~400ms into 600ms animation)
+        // Navigate when panel covers screen (at ~500ms into 800ms animation)
         setTimeout(() => {
           router.push(href);
-        }, 400);
+        }, 500);
 
         return;
       }
