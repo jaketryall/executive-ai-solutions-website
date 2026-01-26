@@ -143,9 +143,9 @@ export default function KineticTypography() {
     return () => ctx.revert();
   }, []);
 
-  // Mobile version - cinematic stacked single words
-  if (isMobile) {
-    return (
+  return (
+    <>
+      {/* Mobile version - cinematic stacked single words */}
       <section className="relative min-h-[50vh] flex flex-col justify-center overflow-hidden bg-[#141312] md:hidden">
         <div className="absolute inset-0 bg-[#141312]" />
 
@@ -240,53 +240,51 @@ export default function KineticTypography() {
           }}
         />
       </section>
-    );
-  }
 
-  // Desktop version
-  return (
-    <section
-      ref={sectionRef}
-      className="relative pt-24 pb-24 overflow-hidden bg-black hidden md:block"
-      style={{ zIndex: 10 }}
-    >
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-neutral-900/50 to-neutral-950" />
+      {/* Desktop version */}
+      <section
+        ref={sectionRef}
+        className="relative pt-24 pb-24 overflow-hidden bg-black hidden md:block"
+        style={{ zIndex: 10 }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-neutral-900/50 to-neutral-950" />
 
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
-          backgroundSize: "50px 50px",
-        }}
-      />
-
-      <div className="relative flex flex-col items-center justify-center">
-        <div ref={textRow1Ref} className="flex whitespace-nowrap overflow-hidden">
-          <div ref={row1AnimRef} className="flex">
-            {[...Array(8)].map((_, i) => (
-              <span
-                key={i}
-                className="text-[18vw] font-black text-white tracking-[-0.04em] mx-8 shrink-0"
-              >
-                MORE LEADS • MORE SALES • MORE GROWTH •
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Gradient overlay transition */}
-      <div className="absolute inset-0 pointer-events-none z-10">
         <div
-          ref={gradientOverlayRef}
-          className="absolute inset-0"
+          className="absolute inset-0 opacity-10"
           style={{
-            background:
-              "linear-gradient(to bottom, transparent 0%, rgba(5,4,4,0.3) 20%, rgba(5,4,4,0.7) 50%, #050404 80%, #050404 100%)",
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
+            backgroundSize: "50px 50px",
           }}
         />
-      </div>
-    </section>
+
+        <div className="relative flex flex-col items-center justify-center">
+          <div ref={textRow1Ref} className="flex whitespace-nowrap overflow-hidden">
+            <div ref={row1AnimRef} className="flex">
+              {[...Array(8)].map((_, i) => (
+                <span
+                  key={i}
+                  className="text-[18vw] font-black text-white tracking-[-0.04em] mx-8 shrink-0"
+                >
+                  MORE LEADS • MORE SALES • MORE GROWTH •
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Gradient overlay transition */}
+        <div className="absolute inset-0 pointer-events-none z-10">
+          <div
+            ref={gradientOverlayRef}
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to bottom, transparent 0%, rgba(5,4,4,0.3) 20%, rgba(5,4,4,0.7) 50%, #050404 80%, #050404 100%)",
+            }}
+          />
+        </div>
+      </section>
+    </>
   );
 }
