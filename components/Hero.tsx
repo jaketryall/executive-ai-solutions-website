@@ -18,6 +18,15 @@ function MobileHero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoReady, setVideoReady] = useState(false);
   const [introComplete, setIntroComplete] = useState(false);
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
+
+  // Delay video loading until intro is partway through (reduces initial load)
+  useEffect(() => {
+    const loadTimer = setTimeout(() => {
+      setShouldLoadVideo(true);
+    }, 2000); // Start loading video 2s in (during logo animation)
+    return () => clearTimeout(loadTimer);
+  }, []);
 
   // Ensure intro animations complete before allowing fade-out
   useEffect(() => {
@@ -29,7 +38,7 @@ function MobileHero() {
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !shouldLoadVideo) return;
 
     const handleReady = () => {
       // Only mark ready if video is actually playing (has current time > 0)
@@ -53,7 +62,7 @@ function MobileHero() {
       video.removeEventListener("playing", handleReady);
       video.removeEventListener("timeupdate", handleReady);
     };
-  }, []);
+  }, [shouldLoadVideo]);
 
   // Only fade out content when BOTH video is playing AND intro is complete
   const shouldFadeOut = videoReady && introComplete;
@@ -70,24 +79,26 @@ function MobileHero() {
         <div className="absolute inset-0 bg-[#141312]/60" />
       </div>
 
-      {/* Video - fades in when loaded AND intro complete */}
+      {/* Video - only loads after 2s delay, fades in when ready */}
       <motion.div
         className="absolute inset-0"
         initial={{ opacity: 0 }}
         animate={{ opacity: shouldFadeOut ? 1 : 0 }}
         transition={{ duration: 1, ease: "easeOut" }}
       >
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          className="w-full h-full object-cover"
-        >
-          <source src="/final-comp.mp4?v=6" type="video/mp4" />
-        </video>
+        {shouldLoadVideo && (
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="w-full h-full object-cover"
+          >
+            <source src="/final-comp.mp4?v=6" type="video/mp4" />
+          </video>
+        )}
         <div className="absolute inset-0 bg-[#141312]/50" />
       </motion.div>
 

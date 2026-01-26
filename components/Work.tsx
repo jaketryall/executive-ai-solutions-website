@@ -692,6 +692,10 @@ function MobileWork() {
                   className="object-cover object-center"
                   sizes="92vw"
                   priority={index < 2}
+                  {...(index >= 2 && {
+                    placeholder: "blur" as const,
+                    blurDataURL: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMCwsLCgwMDQ4RDgwOEQ4MDBANFRMPExoRExgeGBYZFxkdHRz/2wBDAQMEBAUEBQkFBQkdEQsRHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR3/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDBAMBAAAAAAAAAAAAAQIDBAAFEQYSITETQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gAMAwEAAhEDEEuA="
+                  })}
                 />
 
                 {/* Cinematic gradient overlays */}
