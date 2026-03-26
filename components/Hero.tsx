@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, useMotionTemplate, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionTemplate, useSpring, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import AnimatedLogo from "./AnimatedLogo";
@@ -246,217 +246,314 @@ function MobileHero() {
   );
 }
 
-// Desktop Hero
+// Desktop Hero — "JAKE RYALL" with projects inside letters, shrinks on scroll
 function DesktopHero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const videoRef1 = useRef<HTMLVideoElement>(null);
-  const videoRef2 = useRef<HTMLVideoElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const marqueeRow1 = useRef<HTMLDivElement>(null);
+  const marqueeRow2 = useRef<HTMLDivElement>(null);
+  const row1Pos = useRef(0);
+  const row2Pos = useRef(0);
+  const scrollDir = useRef(-1); // -1 = left, 1 = right
 
-  const initialMaskSize = 20;
+  // Scroll-velocity-driven marquee
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
 
-  // Handle video loop manually
-  const handleVideoEnded = (e: React.SyntheticEvent<HTMLVideoElement>) => {
-    const video = e.currentTarget;
-    video.currentTime = 0;
-    video.play();
-  };
+    const onScroll = () => {
+      const delta = window.scrollY - lastScrollY;
+      if (delta > 2) scrollDir.current = -1;
+      else if (delta < -2) scrollDir.current = 1;
+      lastScrollY = window.scrollY;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    const animate = () => {
+      const speed = 0.8;
+      row1Pos.current += speed * scrollDir.current;
+      row2Pos.current += speed * -scrollDir.current;
+
+      if (marqueeRow1.current) {
+        const w = marqueeRow1.current.scrollWidth / 2;
+        if (row1Pos.current <= -w) row1Pos.current += w;
+        if (row1Pos.current >= 0) row1Pos.current -= w;
+        marqueeRow1.current.style.transform = `translateX(${row1Pos.current}px)`;
+      }
+      if (marqueeRow2.current) {
+        const w = marqueeRow2.current.scrollWidth / 2;
+        if (row2Pos.current <= -w) row2Pos.current += w;
+        if (row2Pos.current >= 0) row2Pos.current -= w;
+        marqueeRow2.current.style.transform = `translateX(${row2Pos.current}px)`;
+      }
+      requestAnimationFrame(animate);
+    };
+    const raf = requestAnimationFrame(animate);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
 
-  // Logo mask scale: starts small, grows to reveal full video
-  const maskSizeRaw = useTransform(scrollYProgress, [0, 0.5], [initialMaskSize, 5000]);
-  const maskSize = useSpring(maskSizeRaw, { stiffness: 100, damping: 30, mass: 0.5 });
-  const maskSizePercent = useMotionTemplate`${maskSize}%`;
+  // Hero SHRINKS on scroll (the rectangle)
+  const heroScale = useTransform(scrollYProgress, [0, 0.6], [1, 0.52]);
+  const heroRadius = useTransform(scrollYProgress, [0, 0.3, 0.5], [0, 20, 40]);
 
-  // Initial content fades out quickly
-  const initialContentOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
+  // Name stays the same size (no scaling)
+  const nameScale = 1;
 
-  // Background opacity - becomes transparent when video is fully zoomed, then fades back to black
-  const bgOpacity = useTransform(scrollYProgress, [0.3, 0.45, 0.75, 0.95], [1, 0, 0, 1]);
+  // "JAKE" slides UP, "RYALL" slides DOWN — curtain open
+  const jakeY = useTransform(scrollYProgress, [0.2, 0.45], [0, -300]);
+  const ryallY = useTransform(scrollYProgress, [0.2, 0.45], [0, 300]);
+  const textOpacity = useTransform(scrollYProgress, [0.2, 0.4], [1, 0]);
 
-  // Video fades out towards the end - start later for cleaner transition
-  const videoOpacity = useTransform(scrollYProgress, [0.75, 0.95], [1, 0]);
+  // Project cards scale up with stagger (each card gets a slight delay via index)
+  const cardsReveal = useTransform(scrollYProgress, [0.25, 0.5], [0, 1]);
 
-  // Marquee setup - use thumbnails for faster loading (700px for 350px display)
-  const projectImages = [
-    "/thumbnails/Celestial Laptop Mockup.webp",
-    "/thumbnails/Celestial iPhone Mockup.webp",
-    "/thumbnails/Elegant Black Laptop Mockup.webp",
-    "/thumbnails/Rubber iPhone Mockup.webp",
-  ];
-
-  // Fixed desktop values for animation (CSS handles responsive sizing)
-  const desktopCardWidth = 350;
-  const desktopGapWidth = 32;
-  const cardCount = 8; // Always render 8 for seamless loop
-  const setWidth = cardCount * desktopCardWidth + (cardCount - 1) * desktopGapWidth;
-  const translateDistance = setWidth + desktopGapWidth;
-
-  const renderCards = (offset: number, keyPrefix: string) =>
-    [...Array(cardCount)].map((_, i) => (
-      <div
-        key={`${keyPrefix}-${i}`}
-        className="w-[280px] h-[175px] md:w-[350px] md:h-[220px] rounded-lg overflow-hidden shrink-0"
-        style={{
-          boxShadow: "0 0 40px rgba(255,250,240,0.1)",
-        }}
-      >
-        <img
-          src={projectImages[(i + offset) % projectImages.length]}
-          alt=""
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover object-top"
-        />
-      </div>
-    ));
+  // UI fades
+  const uiOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative h-[200vh] bg-black hidden md:block"
-    >
-      {/* Sticky container that stays while scrolling through the section */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden bg-black">
-        {/* Video layer - sits behind everything */}
-        <motion.div className="absolute inset-0" style={{ opacity: videoOpacity }}>
-          <video
-            ref={videoRef1}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            poster="/video-poster.webp"
-            onEnded={handleVideoEnded}
-            className="w-full h-full object-cover"
-          >
-            <source src="/final-comp.mp4?v=6" type="video/mp4" />
-          </video>
-        </motion.div>
+    <>
+      <section
+        ref={sectionRef}
+        className="relative h-[300vh] hidden md:block"
+      >
+        <div className="sticky top-0 h-screen w-full overflow-hidden">
 
-        {/* Black overlay that becomes semi-transparent when fully zoomed */}
-        <motion.div
-          className="absolute inset-0 bg-black"
-          style={{ opacity: bgOpacity }}
-        />
-
-        {/* Moving work images behind logo - infinite marquee */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none overflow-hidden"
-          style={{ opacity: initialContentOpacity }}
-        >
-          <style>{`
-            @keyframes marquee-scroll-left {
-              from { transform: translateX(0); }
-              to { transform: translateX(-${translateDistance}px); }
-            }
-            @keyframes marquee-scroll-right {
-              from { transform: translateX(-${translateDistance}px); }
-              to { transform: translateX(0); }
-            }
-          `}</style>
-
-          {/* Top row - hidden on mobile via CSS */}
-          <div className="absolute top-[5%] hidden md:flex overflow-hidden w-full">
-            <div
-              className="flex gap-8 whitespace-nowrap will-change-transform opacity-20"
-              style={{
-                animationName: "marquee-scroll-left",
-                animationDuration: "40s",
-                animationTimingFunction: "linear",
-                animationIterationCount: "infinite",
-              }}
-            >
-              {renderCards(0, "top-a")}
-              {renderCards(0, "top-b")}
+          {/* Dark bg content — marquee, scroll-direction-driven */}
+          <div className="absolute inset-0 flex flex-col justify-center pointer-events-none overflow-hidden">
+            <div ref={marqueeRow1} className="flex whitespace-nowrap will-change-transform" style={{ width: "fit-content" }}>
+              {[...Array(8)].map((_, i) => (
+                <span key={`a${i}`} className="shrink-0 pr-[3vw]" style={{ fontFamily: "var(--font-inter), sans-serif", fontSize: "14vw", fontWeight: 900, color: "rgba(255,255,255,0.04)", textTransform: "uppercase", letterSpacing: "-0.04em", lineHeight: 1 }}>
+                  Design · Develop · Deliver ·{" "}
+                </span>
+              ))}
+            </div>
+            <div ref={marqueeRow2} className="flex whitespace-nowrap -mt-[2vw] will-change-transform" style={{ width: "fit-content" }}>
+              {[...Array(8)].map((_, i) => (
+                <span key={`b${i}`} className="shrink-0 pr-[3vw]" style={{ fontFamily: "var(--font-inter), sans-serif", fontSize: "14vw", fontWeight: 900, color: "rgba(255,255,255,0.04)", textTransform: "uppercase", letterSpacing: "-0.04em", lineHeight: 1 }}>
+                  Strategy · Convert · Scale ·{" "}
+                </span>
+              ))}
             </div>
           </div>
 
-          {/* Middle row - centered on mobile */}
-          <div className="absolute top-[40%] md:top-[35%] flex overflow-hidden w-full">
-            <div
-              className="flex gap-4 md:gap-8 whitespace-nowrap will-change-transform opacity-20"
-              style={{
-                animationName: "marquee-scroll-right",
-                animationDuration: "45s",
-                animationTimingFunction: "linear",
-                animationIterationCount: "infinite",
-              }}
-            >
-              {renderCards(2, "mid-a")}
-              {renderCards(2, "mid-b")}
-            </div>
-          </div>
-
-          {/* Bottom row - hidden on mobile via CSS */}
-          <div className="absolute top-[65%] hidden md:flex overflow-hidden w-full">
-            <div
-              className="flex gap-8 whitespace-nowrap will-change-transform opacity-20"
-              style={{
-                animationName: "marquee-scroll-left",
-                animationDuration: "50s",
-                animationTimingFunction: "linear",
-                animationIterationCount: "infinite",
-              }}
-            >
-              {renderCards(1, "bot-a")}
-              {renderCards(1, "bot-b")}
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Video with logo-shaped mask that grows */}
-        <motion.div
-          className="absolute inset-0"
-          style={{
-            opacity: videoOpacity,
-            maskImage: "url('/Executive Ai Solutions Logo.svg')",
-            maskPosition: "center",
-            maskRepeat: "no-repeat",
-            maskSize: maskSizePercent,
-            WebkitMaskImage: "url('/Executive Ai Solutions Logo.svg')",
-            WebkitMaskPosition: "center",
-            WebkitMaskRepeat: "no-repeat",
-            WebkitMaskSize: maskSizePercent,
-          }}
-        >
-          <video
-            ref={videoRef2}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            poster="/video-poster.webp"
-            onEnded={handleVideoEnded}
-            className="w-full h-full object-cover"
-          >
-            <source src="/final-comp.mp4?v=6" type="video/mp4" />
-          </video>
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10"
-          style={{ opacity: initialContentOpacity }}
-        >
+          {/* === THE HERO — cream rectangle that SHRINKS === */}
           <motion.div
-            className="flex flex-col items-center gap-4"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-0 overflow-hidden"
+            style={{
+              scale: heroScale,
+              borderRadius: heroRadius,
+              background: "#0a0908",
+              boxShadow: "0 25px 100px -10px rgba(0,0,0,0.6), 0 10px 40px -5px rgba(0,0,0,0.4), 0 0 120px 20px rgba(0,0,0,0.2)",
+            }}
           >
-            <span className="text-white/50 text-[10px] uppercase tracking-[0.3em]">
-              Scroll
-            </span>
-            <div className="w-px h-12 bg-gradient-to-b from-white/30 to-transparent" />
+            {/* Everything except the name + project cards fades on scroll */}
+            <motion.div className="absolute inset-0 z-20" style={{ opacity: uiOpacity }}>
+              {/* Organic SVG curves — right side like L1 */}
+              <svg className="absolute top-0 right-0 h-full w-1/2 pointer-events-none" viewBox="0 0 960 1080" preserveAspectRatio="xMaxYMid slice" fill="none">
+                <path d="M200,0 C250,180 180,360 220,540 S160,720 200,900 S250,1000 200,1080" stroke="rgba(0,0,0,0.05)" strokeWidth="1.2" />
+                <path d="M400,0 C450,200 380,400 420,600 S360,800 400,1000 S450,1050 400,1080" stroke="rgba(0,0,0,0.035)" strokeWidth="1" />
+                <path d="M650,0 C700,220 630,440 670,660 S610,880 650,1080" stroke="rgba(0,0,0,0.025)" strokeWidth="1" />
+              </svg>
+
+              {/* NAV BAR */}
+              <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-8 pt-7">
+                <TransitionLink href="/" className="text-[12px] font-sans font-bold uppercase tracking-[0.08em]" style={{ color: "#1a1816" }}>
+                  Jake Ryall
+                </TransitionLink>
+                <div className="absolute left-1/2 -translate-x-1/2">
+                  <img src="/Executive Ai Solutions Logo.svg" alt="" className="w-8 h-8" style={{ opacity: 0.3, filter: "brightness(0)" }} />
+                </div>
+                <div className="flex items-center gap-3">
+                  <TransitionLink
+                    href="/contact"
+                    className="px-5 py-2 rounded-full text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1a1816] border border-[rgba(26,24,22,0.15)] transition-all duration-300 hover:bg-[#1a1816] hover:text-[#e5e1db] hover:border-[#1a1816]"
+                  >
+                    Get in Touch
+                  </TransitionLink>
+                  <button
+                    className="w-9 h-9 rounded-full border flex items-center justify-center transition-all duration-300 hover:bg-[#1a1816] hover:border-[#1a1816] group"
+                    style={{ borderColor: "rgba(26,24,22,0.15)" }}
+                    onClick={() => setMenuOpen(true)}
+                  >
+                    <div className="flex flex-col gap-[4px]">
+                      <span className="w-3.5 h-[1.5px] bg-[#1a1816] group-hover:bg-[#e5e1db] transition-colors" />
+                      <span className="w-3.5 h-[1.5px] bg-[#1a1816] group-hover:bg-[#e5e1db] transition-colors" />
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Bottom-right: scroll hint */}
+              <div className="absolute bottom-10 right-10 pointer-events-none">
+                <p className="text-[9px] font-sans uppercase tracking-[0.2em]" style={{ color: "#8a857d" }}>
+                  Scroll to explore
+                </p>
+              </div>
+
+              {/* Bottom-left: project count */}
+              <div className="absolute bottom-10 left-10 pointer-events-none">
+                <p className="text-[42px] font-sans font-black leading-none" style={{ color: "#1a1816", opacity: 0.06 }}>04</p>
+                <p className="text-[9px] font-sans uppercase tracking-[0.2em] mt-1" style={{ color: "#8a857d" }}>
+                  Selected Projects
+                </p>
+              </div>
+
+              {/* Center subtitle */}
+              <div className="absolute bottom-[10vh] left-0 right-0 text-center pointer-events-none">
+                <p className="text-[11px] font-sans uppercase tracking-[0.3em]" style={{ color: "#8a857d" }}>
+                  Websites that convert · Brands that stand out
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Video playing behind — visible through text and when cream fades */}
+            <div className="absolute inset-0">
+              <video
+                autoPlay muted loop playsInline preload="auto"
+                poster="/video-poster.webp"
+                className="w-full h-full object-cover"
+              >
+                <source src="/final-comp.mp4?v=6" type="video/mp4" />
+              </video>
+            </div>
+
+            {/* "JAKE" slides UP, "RYALL" slides DOWN — curtain open revealing video */}
+            <motion.div
+              className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none"
+            >
+              {/* Cream overlay — fades with text to reveal video underneath */}
+              <motion.div
+                className="absolute inset-0"
+                style={{ background: "#e5e1db", opacity: textOpacity }}
+              />
+
+              {/* JAKE — video poster visible through letters, slides up */}
+              <motion.span
+                className="relative"
+                style={{
+                  fontSize: "clamp(6rem, 14vw, 16rem)",
+                  fontFamily: "Impact, 'Arial Black', sans-serif",
+                  fontWeight: 900,
+                  lineHeight: 0.9,
+                  letterSpacing: "-0.03em",
+                  textTransform: "uppercase",
+                  color: "transparent",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  backgroundImage: "url('/video-poster.webp')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center 30%",
+                  y: jakeY,
+                  opacity: textOpacity,
+                }}
+              >
+                JAKE
+              </motion.span>
+
+              {/* RYALL — video poster through letters, slides down */}
+              <motion.span
+                className="relative"
+                style={{
+                  fontSize: "clamp(6rem, 14vw, 16rem)",
+                  fontFamily: "Impact, 'Arial Black', sans-serif",
+                  fontWeight: 900,
+                  lineHeight: 0.9,
+                  letterSpacing: "-0.03em",
+                  textTransform: "uppercase",
+                  color: "transparent",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  backgroundImage: "url('/video-poster.webp')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center 70%",
+                  y: ryallY,
+                  opacity: textOpacity,
+                }}
+              >
+                RYALL
+              </motion.span>
+            </motion.div>
+
           </motion.div>
-        </motion.div>
-      </div>
-    </section>
+
+          {/* No outside chrome — nav is inside the cream hero now */}
+        </div>
+      </section>
+
+      {/* === SPLASH MENU === */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            className="fixed inset-0 z-[100] hidden md:flex items-center justify-center"
+            style={{ background: "#0a0908" }}
+            initial={{ clipPath: "circle(0% at calc(100% - 52px) 52px)" }}
+            animate={{ clipPath: "circle(150% at calc(100% - 52px) 52px)" }}
+            exit={{ clipPath: "circle(0% at calc(100% - 52px) 52px)" }}
+            transition={{ duration: 0.75, ease: [0.65, 0.05, 0, 1] }}
+          >
+            <button
+              className="absolute top-7 right-8 w-10 h-10 rounded-full border border-white/15 flex items-center justify-center transition-colors hover:bg-white hover:border-white group"
+              onClick={() => setMenuOpen(false)}
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-white group-hover:text-[#0a0908] transition-colors">
+                <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </button>
+
+            <div className="flex flex-col items-center gap-2">
+              {[
+                { href: "/", label: "Home" },
+                { href: "/work", label: "Work" },
+                { href: "/about", label: "About" },
+                { href: "/services/website-design", label: "Services" },
+                { href: "/contact", label: "Contact" },
+              ].map((link, i) => (
+                <motion.div
+                  key={link.href}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 30 }}
+                  transition={{ duration: 0.5, delay: 0.15 + i * 0.08, ease: [0.65, 0.05, 0, 1] }}
+                >
+                  <TransitionLink
+                    href={link.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="block text-4xl font-bold uppercase tracking-[-0.02em] py-2 transition-colors duration-300 hover:text-[#c8a97e]"
+                    style={{ fontFamily: "var(--font-serif)", color: "#e5e1db" }}
+                  >
+                    {link.label}
+                  </TransitionLink>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div
+              className="absolute bottom-8 left-0 right-0 flex items-center justify-between px-10"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              <div className="flex items-center gap-5">
+                {["Ig", "Li", "Dr", "Gh"].map((s) => (
+                  <span key={s} className="text-[10px] font-sans uppercase tracking-[0.12em] text-white/30 hover:text-[#c8a97e] transition-colors cursor-pointer">{s}</span>
+                ))}
+              </div>
+              <a href="mailto:jaker@executiveaisolutions.com" className="text-[10px] font-sans text-white/30 hover:text-[#c8a97e] transition-colors">
+                jaker@executiveaisolutions.com
+              </a>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 

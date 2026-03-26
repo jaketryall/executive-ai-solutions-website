@@ -26,8 +26,9 @@ const Footer = dynamic(() => import("@/components/Footer"), {
 export default function Home() {
   return (
     <TransitionProvider>
-      <Navbar />
-      <main className="relative" style={{ zIndex: 10 }}>
+      {/* Navbar hidden on homepage — hero has its own nav */}
+      {/* <Navbar /> */}
+      <main className="relative" style={{ zIndex: 10, background: "#0a0908" }}>
         <Hero />
         <KineticTypography />
         <AboutSnippet />
