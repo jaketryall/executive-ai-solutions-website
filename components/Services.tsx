@@ -1,11 +1,12 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useEffect, useLayoutEffect, useState } from "react";
+import { motion, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
+import { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
-import { TransitionLink } from "@/components/PageTransition";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { TransitionLink } from "@/components/PageTransition";
+import { SplitText, useSplitTextReveal } from "@/lib/hooks";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -14,599 +15,922 @@ if (typeof window !== "undefined") {
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-// Cinematic warm color palette
 const accentColor = "rgba(255, 200, 150, 1)";
 const accentColorMuted = "rgba(255, 200, 150, 0.6)";
+const textColor = "#f5f0e8";
+const textMuted = "rgba(245, 240, 232, 0.5)";
+const borderColor = "rgba(255, 200, 150, 0.15)";
 
 const services = [
   {
     slug: "website-design",
     number: "01",
-    title: "Design",
-    subtitle: "& Development",
+    title: "Design & Development",
     description:
       "High-converting websites that turn visitors into customers. We craft digital experiences that captivate and convert.",
-    image: "/Rubber iPhone Mockup.webp",
-    mobileImage: "/thumbnails/Rubber iPhone Mockup.webp", // 22KB vs 157KB
     details: [
       "Custom design tailored to your brand",
       "Responsive, mobile-first development",
       "Performance optimized for conversions",
     ],
+    image: "/Rubber iPhone Mockup.webp",
   },
   {
     slug: "seo",
     number: "02",
-    title: "SEO",
-    subtitle: "& Strategy",
+    title: "SEO & Strategy",
     description:
       "Data-driven strategies that drive organic traffic and rankings. Dominate search results and outperform your competition.",
-    image: "/Celestial Laptop Mockup.webp",
-    mobileImage: "/thumbnails/Celestial Laptop Mockup.webp", // 22KB vs 101KB
     details: [
       "Comprehensive keyword research",
       "Technical SEO optimization",
       "Content strategy & link building",
     ],
+    image: "/Celestial Laptop Mockup.webp",
   },
   {
     slug: "custom-solutions",
     number: "03",
-    title: "Custom",
-    subtitle: "Solutions",
+    title: "Custom Solutions",
     description:
       "Tailored systems and software that scale with your business. From automation to AI, we build what you need.",
-    image: "/custom-dashboard-mockup.webp",
-    mobileImage: "/custom-dashboard-mockup.webp", // Already small at 37KB
     details: [
       "Bespoke software development",
       "Seamless system integrations",
       "Scalable cloud architecture",
     ],
+    image: "/custom-dashboard-mockup.webp",
   },
 ];
 
-interface ServiceCardProps {
-  service: (typeof services)[0];
-  index: number;
-  isReversed: boolean;
-  isLast: boolean;
-}
+/* ─────────────── Cursor-following image ─────────────── */
 
-function ServiceCard({ service, index, isReversed, isLast }: ServiceCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const featuresRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
+function CursorImage({
+  image,
+  isVisible,
+}: {
+  image: string;
+  isVisible: boolean;
+}) {
+  const mouseX = useMotionValue(-400);
+  const mouseY = useMotionValue(-400);
 
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const springConfig = { stiffness: 150, damping: 20, mass: 0.5 };
+  const x = useSpring(mouseX, springConfig);
+  const y = useSpring(mouseY, springConfig);
 
-  const isMockup = service.image.includes("Mockup");
-  const isDashboard = service.image.includes("dashboard");
-  const isSEO = service.image.includes("SEO");
-  const isWideImage = isDashboard || isSEO;
-
-  // Parallax effects - more noticeable on mobile
-  const { scrollYProgress } = useScroll({
-    target: cardRef,
-    offset: ["start end", "end start"],
+  const rotation = useMotionValue(0);
+  const springRotation = useSpring(rotation, {
+    stiffness: 200,
+    damping: 30,
   });
 
-  const numberY = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  // Container parallax - subtle movement
-  const imageContainerY = useTransform(scrollYProgress, [0, 1], isMobile ? [-60, 60] : [-40, 40]);
-  // Inner image parallax - creates layered depth effect
-  const imageInnerY = useTransform(scrollYProgress, [0, 1], isMobile ? ["8%", "-8%"] : ["5%", "-5%"]);
-  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.05, 1, 1.05]);
+  const lastX = useRef(0);
 
-  // GSAP reveal animations with responsive handling
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX - 140);
+      mouseY.set(e.clientY - 190);
+
+      const deltaX = e.clientX - lastX.current;
+      lastX.current = e.clientX;
+      rotation.set(gsap.utils.clamp(-12, 12, deltaX * 0.5));
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY, rotation]);
+
+  // Decay rotation back to zero
+  useEffect(() => {
+    if (!isVisible) return;
+    const interval = setInterval(() => {
+      rotation.set(rotation.get() * 0.9);
+    }, 50);
+    return () => clearInterval(interval);
+  }, [isVisible, rotation]);
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            x,
+            y,
+            rotate: springRotation,
+            zIndex: 50,
+            pointerEvents: "none",
+          }}
+        >
+          <div
+            style={{
+              width: 280,
+              height: 380,
+              borderRadius: 12,
+              overflow: "hidden",
+              boxShadow:
+                "0 25px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 200, 150, 0.08)",
+            }}
+          >
+            <Image
+              src={image}
+              alt=""
+              width={280}
+              height={380}
+              style={{ objectFit: "cover", width: "100%", height: "100%" }}
+              priority
+            />
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ─────────────── Desktop Service Row ─────────────── */
+
+function DesktopServiceRow({
+  service,
+  index,
+  isOpen,
+  isHovered,
+  onToggle,
+  onHoverStart,
+  onHoverEnd,
+}: {
+  service: (typeof services)[0];
+  index: number;
+  isOpen: boolean;
+  isHovered: boolean;
+  onToggle: () => void;
+  onHoverStart: () => void;
+  onHoverEnd: () => void;
+}) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const dividerRef = useRef<HTMLDivElement>(null);
+  const numberRef = useRef<HTMLSpanElement>(null);
+  const titleRef = useRef<HTMLSpanElement>(null);
+
   useIsomorphicLayoutEffect(() => {
-    const mm = gsap.matchMedia();
+    const row = rowRef.current;
+    const divider = dividerRef.current;
+    const number = numberRef.current;
+    const title = titleRef.current;
+    if (!row || !divider || !number || !title) return;
+
     const ctx = gsap.context(() => {
-      const card = cardRef.current;
-      const image = imageRef.current;
-      const content = contentRef.current;
-      const features = featuresRef.current;
-
-      if (!card || !image || !content || !features) return;
-
-      // Desktop: horizontal slide animations
-      mm.add("(min-width: 768px)", () => {
-        gsap.set(image, { opacity: 0, x: isReversed ? 60 : -60 });
-        gsap.set(content, { opacity: 0, x: isReversed ? -40 : 40 });
-
-        gsap.to(image, {
-          opacity: 1,
-          x: 0,
-          duration: 1.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: card,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        });
-
-        gsap.to(content, {
-          opacity: 1,
-          x: 0,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: card,
-            start: "top 75%",
-            toggleActions: "play none none none",
-          },
-        });
-      });
-
-      // Mobile: simple fade-up animations (no horizontal movement)
-      mm.add("(max-width: 767px)", () => {
-        // Use fromTo with immediateRender: false to avoid flash
-        gsap.fromTo(
-          image,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 90%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-
-        gsap.fromTo(
-          content,
-          { opacity: 0, y: 20 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 90%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      });
-
-      // Features stagger in (same for both)
-      const featureItems = features.querySelectorAll(".feature-item");
+      // 1. Gold divider line draws on scrub
       gsap.fromTo(
-        featureItems,
-        { y: 20, opacity: 0 },
+        divider,
+        { scaleX: 0 },
         {
-          y: 0,
-          opacity: 1,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: "power2.out",
+          scaleX: 1,
+          ease: "none",
           scrollTrigger: {
-            trigger: features,
-            start: "top 85%",
-            toggleActions: "play none none none",
+            trigger: row,
+            start: "top 90%",
+            end: "top 60%",
+            scrub: 1,
           },
         }
       );
-    }, cardRef);
 
-    // Refresh ScrollTrigger after a short delay to ensure proper positioning
-    const refreshTimeout = setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 100);
+      // 2. Number slides in from left on scrub
+      gsap.fromTo(
+        number,
+        { x: -30, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: row,
+            start: "top 85%",
+            end: "top 55%",
+            scrub: 1,
+          },
+        }
+      );
 
-    return () => {
-      clearTimeout(refreshTimeout);
-      mm.revert();
-      ctx.revert();
-    };
-  }, [isReversed]);
+      // 3. Title slides in from right on scrub
+      gsap.fromTo(
+        title,
+        { x: 60, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: row,
+            start: "top 80%",
+            end: "top 50%",
+            scrub: 1,
+          },
+        }
+      );
+
+      // 4. Row content parallax — each row moves at slightly different speed
+      const parallaxAmount = 20 + index * 15;
+      gsap.fromTo(
+        row,
+        { y: parallaxAmount },
+        {
+          y: -parallaxAmount * 0.5,
+          ease: "none",
+          scrollTrigger: {
+            trigger: row,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1,
+          },
+        }
+      );
+    }, row);
+
+    return () => ctx.revert();
+  }, [index]);
 
   return (
-    <div
-      ref={cardRef}
-      className={`relative pt-20 md:pt-32 lg:pt-40 ${isLast ? "pb-8 md:pb-12" : "pb-20 md:pb-32 lg:pb-40"}`}
-    >
-      {/* Giant background number */}
-      <motion.span
-        className="absolute font-black text-white/[0.02] pointer-events-none select-none leading-none"
+    <div ref={rowRef} className="service-row relative">
+      {/* Gold divider line */}
+      <div
+        ref={dividerRef}
         style={{
-          y: numberY,
-          fontSize: "clamp(14rem, 30vw, 35rem)",
-          top: "-10%",
-          ...(isReversed ? { left: "-5%" } : { right: "-5%" }),
+          height: 1,
+          backgroundColor: "rgba(255, 200, 150, 0.3)",
+          transformOrigin: "left",
+          transform: "scaleX(0)",
+        }}
+      />
+
+      {/* Hover glow on left edge */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        animate={{
+          opacity: isHovered ? 1 : 0,
+        }}
+        transition={{ duration: 0.4 }}
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(255,200,150,0.04) 0%, transparent 50%)",
+        }}
+      />
+
+      {/* Clickable header */}
+      <button
+        onClick={onToggle}
+        onMouseEnter={onHoverStart}
+        onMouseLeave={onHoverEnd}
+        className="relative w-full"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "2.5rem 0",
+          paddingTop: "3.5rem",
+          paddingBottom: "3.5rem",
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          gap: "2rem",
         }}
       >
-        {service.number}
-      </motion.span>
+        {/* Number */}
+        <motion.span
+          ref={numberRef}
+          animate={{ x: isHovered ? 8 : 0 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          style={{
+            fontFamily: "Inter, sans-serif",
+            fontSize: "clamp(0.875rem, 1.2vw, 1rem)",
+            fontWeight: 500,
+            color: accentColor,
+            minWidth: "3rem",
+            textAlign: "left",
+          }}
+        >
+          {service.number}
+        </motion.span>
 
-      <div className="container mx-auto px-6 md:px-12 lg:px-16">
-        <div className="relative">
-          {/* Image - with parallax wrapper */}
+        {/* Title */}
+        <div style={{ flex: 1, textAlign: "left" }}>
+          <motion.span
+            ref={titleRef}
+            animate={{
+              color: isHovered || isOpen ? accentColor : textColor,
+              x: isHovered ? 12 : 0,
+            }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: "clamp(2rem, 5vw, 5rem)",
+              fontWeight: 900,
+              lineHeight: 1,
+              display: "inline-block",
+              letterSpacing: "-0.025em",
+            }}
+          >
+            {service.title}
+          </motion.span>
+
+          {/* Gold underline sweep on hover/open */}
           <motion.div
-            className={`relative md:absolute md:top-1/2 md:-translate-y-1/2 w-full md:w-[55%] lg:w-[52%] z-10 ${
-              isReversed ? "md:right-0" : "md:left-0"
-            }`}
-            style={{ y: imageContainerY }}
+            animate={{ scaleX: isHovered || isOpen ? 1 : 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              height: 2,
+              backgroundColor: accentColor,
+              transformOrigin: "left",
+              marginTop: 8,
+              maxWidth: 300,
+            }}
+          />
+        </div>
+
+        {/* Plus / X toggle icon */}
+        <motion.span
+          animate={{ rotate: isOpen ? 45 : 0, scale: isHovered ? 1.1 : 1 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          style={{
+            fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
+            color: accentColor,
+            lineHeight: 1,
+            fontWeight: 300,
+            flexShrink: 0,
+          }}
+        >
+          +
+        </motion.span>
+      </button>
+
+      {/* Expandable content */}
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{
+              height: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+              opacity: { duration: 0.3, delay: 0.1 },
+            }}
+            style={{ overflow: "hidden" }}
           >
             <div
-              ref={imageRef}
-              className={`relative overflow-hidden rounded-3xl will-change-transform ${
-                isWideImage ? "aspect-[16/10]" : "aspect-[4/3] md:aspect-[5/4]"
-              }`}
               style={{
-                boxShadow: "0 40px 80px -20px rgba(0, 0, 0, 0.6)",
+                paddingBottom: "2.5rem",
+                paddingLeft: "4rem",
+                maxWidth: "640px",
               }}
             >
-              {/* Background */}
-              <div
-                className="absolute inset-0"
+              {/* Description */}
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.15 }}
                 style={{
-                  background: isMockup
-                    ? "radial-gradient(ellipse at center, rgba(255,200,150,0.1) 0%, rgba(20,18,16,1) 60%)"
-                    : "rgba(10,9,8,1)",
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: "clamp(0.95rem, 1.2vw, 1.125rem)",
+                  lineHeight: 1.7,
+                  color: textMuted,
+                  marginBottom: "1.5rem",
                 }}
-              />
-              {/* Inner image with parallax */}
-              <motion.div
-                className="absolute inset-0"
-                style={{ y: imageInnerY, scale: imageScale }}
               >
-                <Image
-                  src={service.image}
-                  alt={service.title}
-                  fill
-                  className={
-                    isMockup
-                      ? "object-contain object-center scale-125 translate-y-[5%]"
-                      : "object-cover object-center"
-                  }
-                  sizes="(max-width: 768px) 100vw, 60vw"
-                  placeholder="blur"
-                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMCwsLCgwMDQ4RDgwOEQ4MDBANFRMPExoRExgeGBYZFxkdHRz/2wBDAQMEBAUEBQkFBQkdEQsRHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR3/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDBAMBAAAAAAAAAAAAAQIDBAAFEQYSITETQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gAMAwEAAhEDEEuA="
-                />
+                {service.description}
+              </motion.p>
+
+              {/* Detail bullets — stagger in from left */}
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                {service.details.map((detail, i) => (
+                  <motion.li
+                    key={i}
+                    initial={{ opacity: 0, x: -15 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.35, delay: 0.2 + i * 0.1 }}
+                    style={{
+                      fontFamily: "Inter, sans-serif",
+                      fontSize: "clamp(0.85rem, 1vw, 0.95rem)",
+                      color: textColor,
+                      padding: "0.4rem 0",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.75rem",
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: "50%",
+                        backgroundColor: accentColor,
+                        flexShrink: 0,
+                      }}
+                    />
+                    {detail}
+                  </motion.li>
+                ))}
+              </ul>
+
+              {/* Learn More CTA */}
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.45 }}
+                style={{ marginTop: "1.75rem" }}
+              >
+                <TransitionLink href={`/services/${service.slug}`}>
+                  <motion.span
+                    whileHover={{ letterSpacing: "0.12em" }}
+                    transition={{ duration: 0.3 }}
+                    style={{
+                      fontFamily: "Inter, sans-serif",
+                      fontSize: "0.85rem",
+                      fontWeight: 600,
+                      color: accentColor,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.06em",
+                      display: "inline-block",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Learn More &rarr;
+                  </motion.span>
+                </TransitionLink>
               </motion.div>
-              {/* Subtle edge gradient */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: isReversed
-                    ? "linear-gradient(to left, transparent 0%, transparent 70%, rgba(10,9,8,0.3) 100%)"
-                    : "linear-gradient(to right, transparent 0%, transparent 70%, rgba(10,9,8,0.3) 100%)",
-                }}
-              />
             </div>
           </motion.div>
-
-          {/* Content - positioned on opposite side */}
-          <div
-            ref={contentRef}
-            className={`relative z-20 md:w-[50%] lg:w-[45%] ${
-              isReversed ? "md:mr-auto md:pr-8" : "md:ml-auto md:pl-8"
-            } mt-8 md:mt-0 md:py-16 lg:py-24`}
-          >
-            {/* Number tag */}
-            <div className="flex items-center gap-4 mb-8">
-              <span
-                className="text-sm font-medium tracking-[0.3em]"
-                style={{ color: accentColor }}
-              >
-                {service.number}
-              </span>
-              <span
-                className="w-16 h-px"
-                style={{ backgroundColor: accentColorMuted }}
-              />
-            </div>
-
-            {/* Title */}
-            <h3 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-[0.85] mb-3">
-              {service.title}
-            </h3>
-            <p
-              className="text-2xl md:text-3xl font-light mb-8"
-              style={{ color: accentColorMuted }}
-            >
-              {service.subtitle}
-            </p>
-
-            {/* Description */}
-            <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-10 max-w-md">
-              {service.description}
-            </p>
-
-            {/* Features */}
-            <div ref={featuresRef} className="space-y-4 mb-12">
-              {service.details.map((detail, i) => (
-                <div key={i} className="feature-item flex items-center gap-4">
-                  <span
-                    className="w-2 h-2 rounded-full shrink-0"
-                    style={{ backgroundColor: accentColor }}
-                  />
-                  <span className="text-white/60 text-base md:text-lg">
-                    {detail}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* CTA */}
-            <TransitionLink
-              href={`/services/${service.slug}`}
-              className="inline-flex items-center gap-4 group"
-            >
-              <span
-                className="px-8 py-4 rounded-full border-2 transition-all duration-300 group-hover:bg-[rgba(255,200,150,0.15)] group-hover:border-[rgba(255,200,150,1)]"
-                style={{ borderColor: accentColor }}
-              >
-                <span className="text-sm uppercase tracking-[0.2em] font-semibold text-white">
-                  Explore Service
-                </span>
-              </span>
-              <span
-                className="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300 group-hover:bg-[rgba(255,200,150,0.15)] group-hover:translate-x-2"
-                style={{ borderColor: accentColor }}
-              >
-                <span style={{ color: accentColor }} className="text-xl">
-                  →
-                </span>
-              </span>
-            </TransitionLink>
-          </div>
-        </div>
-      </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
-// Mobile services - Vertical card layout (Flighty-inspired)
-function MobileServices() {
-  return (
-    <section
-      id="services"
-      className="md:hidden relative rounded-t-[2rem] pt-20"
-      style={{
-        zIndex: 20,
-        marginTop: "-2rem",
-        background: "linear-gradient(180deg, #100e0c 0%, #0e0c0a 50%, #0c0a08 100%)",
-      }}
-    >
-      {/* Section header */}
-      <div className="px-6 pb-8">
-        <span
-          className="text-[10px] uppercase tracking-[0.3em] block mb-2"
-          style={{ color: accentColorMuted }}
-        >
-          What We Offer
-        </span>
-        <h2 className="text-3xl font-black text-[#f5f0e8] tracking-tight">
-          SERVICES
-        </h2>
-      </div>
+/* ─────────────── Desktop Services ─────────────── */
 
-      {/* Vertical cards */}
-      <div className="px-4 pb-32 flex flex-col gap-6">
-        {services.map((service, index) => {
-          const isMockup = service.mobileImage.includes("Mockup");
-
-          return (
-            <TransitionLink
-              key={service.slug}
-              href={`/services/${service.slug}`}
-            >
-              <motion.div
-                className="relative rounded-3xl overflow-hidden bg-[#1a1816] flex flex-col"
-                whileTap={{ scale: 0.985 }}
-              >
-                {/* Image - fixed height */}
-                <div className="relative h-[260px] overflow-hidden">
-                  {/* Background for mockups */}
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: isMockup
-                        ? "radial-gradient(ellipse 100% 80% at 50% 40%, rgba(255, 200, 150, 0.08) 0%, #1a1816 70%)"
-                        : "#1a1816",
-                    }}
-                  />
-                  <Image
-                    src={service.mobileImage}
-                    alt={service.title}
-                    fill
-                    className={isMockup ? "object-cover object-top scale-[1.15]" : "object-cover object-center"}
-                    sizes="100vw"
-                    placeholder="blur"
-                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMCwsLCgwMDQ4RDgwOEQ4MDBANFRMPExoRExgeGBYZFxkdHRz/2wBDAQMEBAUEBQkFBQkdEQsRHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR3/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDBAMBAAAAAAAAAAAAAQIDBAAFEQYSITETQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gAMAwEAAhEDEEuA="
-                  />
-                  {/* Gradient fade into content */}
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: "linear-gradient(to bottom, transparent 50%, #1a1816 100%)",
-                    }}
-                  />
-                  {/* Number - on image */}
-                  <div className="absolute top-5 right-5 pointer-events-none">
-                    <span
-                      className="text-5xl font-black"
-                      style={{
-                        color: "transparent",
-                        WebkitTextStroke: "1px rgba(255, 200, 150, 0.2)",
-                      }}
-                    >
-                      {service.number}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="relative px-6 pt-2 pb-8">
-                  {/* Title + Subtitle */}
-                  <div className="mb-4">
-                    <h3 className="text-3xl font-black text-[#f5f0e8] tracking-tight leading-[0.95]">
-                      {service.title}
-                    </h3>
-                    <p
-                      className="text-lg font-light"
-                      style={{ color: accentColorMuted }}
-                    >
-                      {service.subtitle}
-                    </p>
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-sm text-[#f5f0e8]/50 mb-5 leading-relaxed">
-                    {service.description}
-                  </p>
-
-                  {/* Details - compact list */}
-                  <div className="space-y-2 mb-6">
-                    {service.details.map((detail, i) => (
-                      <div key={i} className="flex items-center gap-3">
-                        <span
-                          className="w-1 h-1 rounded-full shrink-0"
-                          style={{ background: accentColor }}
-                        />
-                        <span className="text-[#f5f0e8]/40 text-xs">{detail}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* CTA */}
-                  <div className="flex items-center justify-between">
-                    <span
-                      className="text-sm font-medium uppercase tracking-widest"
-                      style={{ color: accentColor }}
-                    >
-                      Learn More
-                    </span>
-                    <span
-                      className="w-10 h-10 rounded-full flex items-center justify-center"
-                      style={{ background: accentColor }}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1816" strokeWidth="2.5">
-                        <path d="M7 17L17 7M17 7H7M17 7V17" />
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
-            </TransitionLink>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-// Desktop Services section
 function DesktopServices() {
   const sectionRef = useRef<HTMLElement>(null);
+  const leftColumnRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  // Section header parallax
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "start start"],
-  });
+  // Split text reveal for pinned title
+  useSplitTextReveal(headerRef);
 
-  const headerY = useTransform(scrollYProgress, [0, 1], [100, 0]);
-  const headerOpacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+  // GSAP: Pin the left column while right column scrolls past
+  useIsomorphicLayoutEffect(() => {
+    const section = sectionRef.current;
+    const leftCol = leftColumnRef.current;
+    if (!section || !leftCol) return;
+
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: "bottom bottom",
+        pin: leftCol,
+        pinSpacing: false,
+      });
+    }, section);
+
+    // Refresh ScrollTrigger after layout settles
+    const timeout = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 200);
+
+    return () => {
+      clearTimeout(timeout);
+      ctx.revert();
+    };
+  }, []);
 
   return (
     <section
       ref={sectionRef}
-      id="services"
-      className="relative bg-[#080706] overflow-hidden rounded-t-[3rem] hidden md:block"
-      style={{ zIndex: 20, boxShadow: "0 -50px 0 0 #080706" }}
+      data-bg="dark"
+      className="hidden md:block"
+      style={{
+        position: "relative",
+        padding: "0 clamp(1rem, 3vw, 3rem)",
+        paddingBottom: "clamp(1rem, 3vw, 3rem)",
+      }}
     >
-      {/* Section header */}
-      <div className="relative pt-32 pb-16">
-        <div className="container mx-auto px-12 lg:px-16">
-          <motion.div style={{ y: headerY, opacity: headerOpacity }}>
+      <div
+        style={{
+          backgroundColor: "#141210",
+          borderRadius: "clamp(1.5rem, 3vw, 3rem)",
+          position: "relative",
+          overflow: "hidden",
+          minHeight: "100vh",
+        }}
+      >
+      {/* Cursor-following image */}
+      <CursorImage
+        image={hoveredIndex !== null ? services[hoveredIndex].image : ""}
+        isVisible={hoveredIndex !== null}
+      />
+
+      {/* Giant background number — changes per hovered service */}
+      <div
+        className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none select-none overflow-hidden"
+        style={{ width: "50%", height: "100%" }}
+      >
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={hoveredIndex ?? "none"}
+            initial={{ opacity: 0, y: 80, scale: 0.95 }}
+            animate={{ opacity: 0.04, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -80, scale: 0.95 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute right-[-10%] top-1/2 -translate-y-1/2 font-black"
+            style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: "clamp(20rem, 40vw, 50rem)",
+              lineHeight: 0.8,
+              color: accentColor,
+            }}
+          >
+            {hoveredIndex !== null ? services[hoveredIndex].number : ""}
+          </motion.span>
+        </AnimatePresence>
+      </div>
+
+      {/* Two-column layout */}
+      <div
+        style={{
+          maxWidth: "1400px",
+          margin: "0 auto",
+          padding: "0 clamp(2rem, 5vw, 4rem)",
+          display: "flex",
+          alignItems: "flex-start",
+          position: "relative",
+          zIndex: 2,
+        }}
+      >
+        {/* Left column — pinned title (40%) */}
+        <div
+          ref={leftColumnRef}
+          style={{
+            width: "40%",
+            flexShrink: 0,
+            paddingTop: "8rem",
+            paddingRight: "3rem",
+            height: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
+          <div ref={headerRef}>
+            {/* Label */}
             <p
-              className="text-xs uppercase tracking-[0.4em] mb-4"
-              style={{ color: accentColorMuted }}
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: "0.8rem",
+                fontWeight: 500,
+                textTransform: "uppercase",
+                letterSpacing: "0.15em",
+                color: accentColorMuted,
+                marginBottom: "1rem",
+              }}
             >
-              What We Offer
+              What I Do
             </p>
-            <h2 className="text-7xl lg:text-8xl font-black text-white tracking-tight leading-[0.9]">
-              SERVICES
-            </h2>
-          </motion.div>
+
+            {/* Pinned big title */}
+            <SplitText
+              text="SERVICES"
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: "clamp(2.5rem, 4vw, 5rem)",
+                fontWeight: 900,
+                lineHeight: 0.95,
+                letterSpacing: "-0.04em",
+                color: textColor,
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Right column — accordion rows (60%) */}
+        <div
+          style={{
+            width: "60%",
+            paddingTop: "8rem",
+            paddingBottom: "8rem",
+          }}
+        >
+          {services.map((service, i) => (
+            <DesktopServiceRow
+              key={service.slug}
+              service={service}
+              index={i}
+              isOpen={openIndex === i}
+              isHovered={hoveredIndex === i}
+              onToggle={() => setOpenIndex(openIndex === i ? null : i)}
+              onHoverStart={() => setHoveredIndex(i)}
+              onHoverEnd={() => setHoveredIndex(null)}
+            />
+          ))}
+
+          {/* Bottom divider for the last row */}
+          <div
+            style={{
+              height: 1,
+              backgroundColor: borderColor,
+            }}
+          />
         </div>
       </div>
-
-      {/* Service cards - vertical flow with alternating layouts */}
-      <div className="relative">
-        {services.map((service, index) => (
-          <ServiceCard
-            key={service.slug}
-            service={service}
-            index={index}
-            isReversed={index % 2 === 1}
-            isLast={index === services.length - 1}
-          />
-        ))}
       </div>
+    </section>
+  );
+}
 
-      {/* Bottom CTA section */}
-      <div className="relative pt-16 pb-32">
-        <div className="container mx-auto px-12 lg:px-16">
-          <motion.div
-            className="text-center"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+/* ─────────────── Mobile Services ─────────────── */
+
+function MobileServices() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const rowsContainerRef = useRef<HTMLDivElement>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  useSplitTextReveal(headerRef);
+
+  // GSAP: Simple stagger reveal for mobile rows
+  useIsomorphicLayoutEffect(() => {
+    const container = rowsContainerRef.current;
+    if (!container) return;
+
+    const ctx = gsap.context(() => {
+      const rows = gsap.utils.toArray<HTMLElement>(
+        container.querySelectorAll(".mobile-service-row")
+      );
+
+      gsap.set(rows, { y: 40, opacity: 0 });
+
+      gsap.to(rows, {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        ease: "power3.out",
+        stagger: 0.12,
+        scrollTrigger: {
+          trigger: container,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      });
+    }, container);
+
+    const timeout = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 200);
+
+    return () => {
+      clearTimeout(timeout);
+      ctx.revert();
+    };
+  }, []);
+
+  return (
+    <section
+      ref={sectionRef}
+      data-bg="dark"
+      className="md:hidden"
+      style={{
+        padding: "5rem 0",
+        position: "relative",
+      }}
+    >
+      <div style={{ padding: "0 1.25rem" }}>
+        {/* Header */}
+        <div ref={headerRef} style={{ marginBottom: "3rem" }}>
+          <p
+            style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: "0.7rem",
+              fontWeight: 500,
+              textTransform: "uppercase",
+              letterSpacing: "0.15em",
+              color: accentColorMuted,
+              marginBottom: "0.75rem",
+            }}
           >
-            <p
-              className="text-sm uppercase tracking-[0.3em] mb-6"
-              style={{ color: accentColorMuted }}
+            What I Do
+          </p>
+
+          <SplitText
+            text="SERVICES"
+            style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: "clamp(2.5rem, 12vw, 4rem)",
+              fontWeight: 900,
+              lineHeight: 0.95,
+              letterSpacing: "-0.03em",
+              color: textColor,
+            }}
+          />
+        </div>
+
+        {/* Accordion */}
+        <div
+          ref={rowsContainerRef}
+          style={{ borderTop: `1px solid ${borderColor}` }}
+        >
+          {services.map((service, i) => (
+            <div
+              key={service.slug}
+              className="mobile-service-row"
+              style={{ borderBottom: `1px solid ${borderColor}` }}
             >
-              Ready to start?
-            </p>
-            <motion.a
-              href="#contact"
-              className="inline-flex items-center gap-4 text-4xl font-bold text-white group"
-              whileHover={{ x: 8 }}
-            >
-              <span>Let&apos;s Talk</span>
-              <span
-                className="w-14 h-14 rounded-full border flex items-center justify-center transition-all duration-300 group-hover:bg-white/10"
-                style={{ borderColor: accentColorMuted }}
+              {/* Header */}
+              <button
+                onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "1.25rem 0",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  gap: "1rem",
+                }}
               >
                 <span
-                  style={{ color: accentColor }}
-                  className="text-2xl transition-transform duration-300 group-hover:translate-x-0.5"
+                  style={{
+                    fontFamily: "Inter, sans-serif",
+                    fontSize: "0.75rem",
+                    fontWeight: 500,
+                    color: accentColorMuted,
+                    minWidth: "1.75rem",
+                  }}
                 >
-                  →
+                  {service.number}
                 </span>
-              </span>
-            </motion.a>
-          </motion.div>
+
+                <motion.span
+                  animate={{
+                    color: openIndex === i ? accentColor : textColor,
+                  }}
+                  transition={{ duration: 0.3 }}
+                  style={{
+                    fontFamily: "Inter, sans-serif",
+                    fontSize: "clamp(1.25rem, 5vw, 1.75rem)",
+                    fontWeight: 900,
+                    lineHeight: 1.2,
+                    flex: 1,
+                    textAlign: "left",
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  {service.title}
+                </motion.span>
+
+                <motion.span
+                  animate={{ rotate: openIndex === i ? 45 : 0 }}
+                  transition={{
+                    duration: 0.4,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  style={{
+                    fontSize: "1.5rem",
+                    color: accentColor,
+                    lineHeight: 1,
+                    fontWeight: 300,
+                    flexShrink: 0,
+                  }}
+                >
+                  +
+                </motion.span>
+              </button>
+
+              {/* Expandable content */}
+              <AnimatePresence initial={false}>
+                {openIndex === i && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{
+                      height: {
+                        duration: 0.45,
+                        ease: [0.22, 1, 0.36, 1],
+                      },
+                      opacity: { duration: 0.25, delay: 0.1 },
+                    }}
+                    style={{ overflow: "hidden" }}
+                  >
+                    <div
+                      style={{
+                        paddingBottom: "1.75rem",
+                        paddingLeft: "2.75rem",
+                      }}
+                    >
+                      <motion.p
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: 0.1 }}
+                        style={{
+                          fontFamily: "Inter, sans-serif",
+                          fontSize: "0.9rem",
+                          lineHeight: 1.7,
+                          color: textMuted,
+                          marginBottom: "1.25rem",
+                        }}
+                      >
+                        {service.description}
+                      </motion.p>
+
+                      <ul
+                        style={{
+                          listStyle: "none",
+                          padding: 0,
+                          margin: 0,
+                        }}
+                      >
+                        {service.details.map((detail, j) => (
+                          <motion.li
+                            key={j}
+                            initial={{ opacity: 0, x: -8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{
+                              duration: 0.3,
+                              delay: 0.15 + j * 0.07,
+                            }}
+                            style={{
+                              fontFamily: "Inter, sans-serif",
+                              fontSize: "0.825rem",
+                              color: textColor,
+                              padding: "0.35rem 0",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "0.6rem",
+                            }}
+                          >
+                            <span
+                              style={{
+                                width: 5,
+                                height: 5,
+                                borderRadius: "50%",
+                                backgroundColor: accentColor,
+                                flexShrink: 0,
+                              }}
+                            />
+                            {detail}
+                          </motion.li>
+                        ))}
+                      </ul>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: 0.4 }}
+                        style={{ marginTop: "1.25rem" }}
+                      >
+                        <TransitionLink href={`/services/${service.slug}`}>
+                          <span
+                            style={{
+                              fontFamily: "Inter, sans-serif",
+                              fontSize: "0.8rem",
+                              fontWeight: 600,
+                              color: accentColor,
+                              textTransform: "uppercase",
+                              letterSpacing: "0.06em",
+                            }}
+                          >
+                            Learn More &rarr;
+                          </span>
+                        </TransitionLink>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
+/* ─────────────── Export ─────────────── */
+
 export default function Services() {
   return (
     <>
-      <MobileServices />
       <DesktopServices />
+      <MobileServices />
     </>
   );
 }

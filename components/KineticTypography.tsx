@@ -1,59 +1,55 @@
 "use client";
 
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useLayoutEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Each word fills from dim to bright as you scroll through
-function FillWord({
-  word,
-  index,
-  total,
-  progress,
-  isAccent,
-}: {
-  word: string;
-  index: number;
-  total: number;
-  progress: MotionValue<number>;
-  isAccent?: boolean;
-}) {
-  const start = 0.1 + (index / total) * 0.6;
-  const end = start + (1 / total) * 2;
-  const opacity = useTransform(progress, [start, end], [0.1, 1]);
-  // Each word drifts slightly at different rates — parallax within the text
-  const y = useTransform(progress, [start, end], [8, 0]);
-
-  return (
-    <motion.span
-      className="inline-block mr-[0.3em]"
-      style={{
-        opacity,
-        y,
-        color: isAccent ? "rgba(255, 200, 150, 1)" : "#e5e1db",
-      }}
-    >
-      {word}
-    </motion.span>
-  );
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
 }
+
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+const statement = "I design websites that actually grow businesses.";
+const accentWords = ["design", "actually", "grow"];
 
 export default function KineticTypography() {
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
+  useIsomorphicLayoutEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
 
-  // The statement split into words, with some marked as accent
-  const statement = "I design websites that actually grow businesses.";
-  const words = statement.split(" ");
-  const accentWords = ["design", "actually", "grow"];
+    const words = section.querySelectorAll<HTMLSpanElement>("[data-word]");
+
+    const ctx = gsap.context(() => {
+      words.forEach((word, i) => {
+        gsap.fromTo(
+          word,
+          { opacity: 0.08, y: 12 },
+          {
+            opacity: 1,
+            y: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: word,
+              start: "top 85%",
+              end: "top 50%",
+              scrub: 1,
+            },
+          }
+        );
+      });
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <>
-      {/* Mobile — simple static version */}
-      <section className="min-h-[60vh] flex items-center justify-center px-6 md:hidden">
+      {/* Mobile */}
+      <section className="min-h-[50vh] flex items-center justify-center px-6 md:hidden" data-bg="morph">
         <p
           className="text-center"
           style={{
@@ -70,35 +66,41 @@ export default function KineticTypography() {
         </p>
       </section>
 
-      {/* Desktop — pinned scroll-fill statement */}
+      {/* Desktop — flows naturally, words light up as they scroll into view */}
       <section
         ref={sectionRef}
         className="relative hidden md:block"
-        style={{ height: "200vh" }}
+        data-bg="morph"
+        style={{ padding: "20vh 0" }}
       >
-        <div className="sticky top-0 h-screen flex items-center justify-center px-10">
-          <div className="max-w-[1100px]">
-            <p
-              className="leading-[1.2]"
-              style={{
-                fontFamily: "var(--font-inter), sans-serif",
-                fontSize: "clamp(2.5rem, 4.5vw, 5rem)",
-                fontWeight: 700,
-                letterSpacing: "-0.02em",
-              }}
-            >
-              {words.map((word, i) => (
-                <FillWord
+        <div className="max-w-[1100px] mx-auto px-10 text-center">
+          <p
+            className="leading-[1.3]"
+            style={{
+              fontFamily: "var(--font-inter), sans-serif",
+              fontSize: "clamp(2.5rem, 4.5vw, 5rem)",
+              fontWeight: 700,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            {statement.split(" ").map((word, i) => {
+              const clean = word.replace(/[.,]/g, "");
+              const isAccent = accentWords.includes(clean);
+              return (
+                <span
                   key={i}
-                  word={word}
-                  index={i}
-                  total={words.length}
-                  progress={scrollYProgress}
-                  isAccent={accentWords.includes(word.replace(/[.,]/g, ""))}
-                />
-              ))}
-            </p>
-          </div>
+                  data-word
+                  className="inline-block mr-[0.3em]"
+                  style={{
+                    color: isAccent ? "rgba(255, 200, 150, 1)" : "#e5e1db",
+                    opacity: 0.08,
+                  }}
+                >
+                  {word}
+                </span>
+              );
+            })}
+          </p>
         </div>
       </section>
     </>

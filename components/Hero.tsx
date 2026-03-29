@@ -323,6 +323,7 @@ function DesktopHero() {
       <section
         ref={sectionRef}
         className="relative h-[300vh] hidden md:block"
+        data-bg="dark"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden">
 

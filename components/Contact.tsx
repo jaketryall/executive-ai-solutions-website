@@ -160,7 +160,6 @@ function MobileContact() {
       style={{
         zIndex: 30,
         marginTop: "-2rem",
-        background: "linear-gradient(180deg, #0a0806 0%, #080604 50%, #060503 100%)",
       }}
     >
       {/* Header with status */}
@@ -584,31 +583,13 @@ function DesktopContact() {
     <section
       ref={sectionRef}
       id="contact"
-      className="relative py-32 overflow-hidden bg-[#0a0908] min-h-screen hidden md:block"
+      className="relative py-32 overflow-hidden min-h-screen hidden md:block"
+      data-bg="dark"
       style={{
         zIndex: 10,
         isolation: "isolate",
       }}
     >
-      {/* Solid opaque background - prevents footer bleed-through */}
-      <div
-        className="absolute inset-0 bg-[#0a0908]"
-        style={{ zIndex: 1 }}
-      />
-      {/* Extra coverage below section to prevent footer flash */}
-      <div
-        className="absolute left-0 right-0 -bottom-[100vh] h-[100vh] bg-[#0a0908]"
-        style={{ zIndex: 1 }}
-      />
-
-      {/* Static gradient background - always visible */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: "linear-gradient(180deg, #0a0908 0%, #0d0b09 50%, #0a0908 100%)",
-          zIndex: 2,
-        }}
-      />
       {/* Warm ambient glow background */}
       <div
         ref={gridRef}
