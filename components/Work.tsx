@@ -167,7 +167,8 @@ function DesktopWork() {
       );
     }, section);
 
-    const timer = setTimeout(() => ScrollTrigger.refresh(), 200);
+    // Longer delay — needs to wait for HorizontalGallery pin to initialize first
+    const timer = setTimeout(() => ScrollTrigger.refresh(), 500);
     return () => { clearTimeout(timer); ctx.revert(); };
   }, []);
 
@@ -179,9 +180,9 @@ function DesktopWork() {
     <section
       ref={sectionRef}
       data-bg="cream"
-      className="hidden md:block overflow-hidden"
-      style={{ padding: "clamp(6rem, 12vh, 10rem) 0" }}
+      className="hidden md:block relative"
     >
+      <div style={{ padding: "clamp(6rem, 12vh, 10rem) 0" }}>
       {/* Header */}
       <div className="px-6 md:px-12 lg:px-16">
         <div ref={headerRef} className="max-w-[1400px] mx-auto mb-16 lg:mb-24">
@@ -223,6 +224,7 @@ function DesktopWork() {
         {row2Projects.map((project, i) => (
           <FloatingCard key={`r2-${project.slug}`} project={project} index={i + 4} />
         ))}
+      </div>
       </div>
     </section>
   );

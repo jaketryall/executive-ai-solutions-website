@@ -135,8 +135,7 @@ function CursorImage({
               height: 380,
               borderRadius: 12,
               overflow: "hidden",
-              boxShadow:
-                "0 25px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 200, 150, 0.08)",
+              boxShadow: "0 8px 30px rgba(0, 0, 0, 0.2)",
             }}
           >
             <Image
@@ -270,18 +269,6 @@ function DesktopServiceRow({
         }}
       />
 
-      {/* Hover glow on left edge */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        animate={{
-          opacity: isHovered ? 1 : 0,
-        }}
-        transition={{ duration: 0.4 }}
-        style={{
-          background:
-            "linear-gradient(90deg, rgba(255,200,150,0.04) 0%, transparent 50%)",
-        }}
-      />
 
       {/* Clickable header */}
       <button
@@ -614,8 +601,35 @@ function DesktopServices() {
                 lineHeight: 0.95,
                 letterSpacing: "-0.04em",
                 color: textColor,
+                marginBottom: "2rem",
               }}
             />
+          </div>
+
+          {/* Dynamic description — changes based on hovered/open service */}
+          <div style={{ minHeight: "6rem" }}>
+            <AnimatePresence mode="wait">
+              {(hoveredIndex !== null || openIndex !== null) && (
+                <motion.div
+                  key={hoveredIndex ?? openIndex}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <p
+                    style={{
+                      fontFamily: "Inter, sans-serif",
+                      fontSize: "clamp(0.9rem, 1.1vw, 1.05rem)",
+                      lineHeight: 1.7,
+                      color: textMuted,
+                    }}
+                  >
+                    {services[hoveredIndex ?? openIndex ?? 0].description}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 

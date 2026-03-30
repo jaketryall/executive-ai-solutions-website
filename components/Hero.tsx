@@ -6,6 +6,252 @@ import Image from "next/image";
 import AnimatedLogo from "./AnimatedLogo";
 import { TransitionLink } from "./PageTransition";
 
+// Bottom-left hero interaction — circle draws on hover, arrow rotates in
+function ViewWorkWidget() {
+  const [hovered, setHovered] = useState(false);
+
+  const handleClick = () => {
+    const workSection = document.getElementById("work") || document.querySelector("[data-bg='cream']");
+    if (workSection) {
+      workSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  return (
+    <motion.div
+      className="absolute bottom-8 left-8 cursor-pointer"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={handleClick}
+      style={{ width: 160 }}
+    >
+      {/* Outer border container — draws itself on hover */}
+      <motion.div
+        className="relative rounded-xl overflow-hidden"
+        animate={{
+          backgroundColor: hovered
+            ? "rgba(26, 24, 22, 0.04)"
+            : "rgba(26, 24, 22, 0)",
+        }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          padding: "10px",
+        }}
+      >
+        {/* Border — subtle default, gold draws on hover */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          style={{ zIndex: 3 }}
+        >
+          {/* Static subtle border — always visible */}
+          <rect
+            x="0.5"
+            y="0.5"
+            rx="12"
+            ry="12"
+            fill="none"
+            stroke="rgba(26, 24, 22, 0.12)"
+            strokeWidth="1"
+            style={{ width: "calc(100% - 1px)", height: "calc(100% - 1px)" }}
+          />
+          {/* Gold border — draws on hover */}
+          <motion.rect
+            x="0.5"
+            y="0.5"
+            rx="12"
+            ry="12"
+            fill="none"
+            stroke="#c48a5a"
+            strokeWidth="1.5"
+            strokeDasharray="600"
+            animate={{ strokeDashoffset: hovered ? 0 : 600 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            style={{ width: "calc(100% - 1px)", height: "calc(100% - 1px)" }}
+          />
+        </svg>
+
+        {/* Top row: dot + label + arrow */}
+        <div className="flex items-center justify-between mb-2 relative" style={{ zIndex: 2 }}>
+          <div className="flex items-center gap-2">
+            <motion.div
+              className="rounded-full"
+              style={{ width: 6, height: 6 }}
+              animate={{
+                backgroundColor: hovered ? "#c48a5a" : "rgba(26, 24, 22, 0.3)",
+              }}
+              transition={{ duration: 0.3 }}
+            />
+            <motion.span
+              className="text-[9px] font-semibold uppercase tracking-[0.15em]"
+              animate={{ color: hovered ? "#c48a5a" : "rgba(26, 24, 22, 0.4)" }}
+              transition={{ duration: 0.3 }}
+            >
+              Latest Project
+            </motion.span>
+          </div>
+          <motion.svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            strokeWidth="2"
+            strokeLinecap="round"
+            animate={{
+              stroke: hovered ? "#c48a5a" : "rgba(26, 24, 22, 0.25)",
+              rotate: hovered ? 0 : 90,
+            }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </motion.svg>
+        </div>
+
+        {/* Expandable thumbnail */}
+        <motion.div
+          className="rounded-lg overflow-hidden relative"
+          animate={{
+            height: hovered ? 85 : 0,
+            opacity: hovered ? 1 : 0,
+            marginBottom: hovered ? 8 : 0,
+          }}
+          transition={{
+            height: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+            opacity: { duration: 0.3, delay: hovered ? 0.1 : 0 },
+            marginBottom: { duration: 0.3 },
+          }}
+          style={{ zIndex: 2, position: "relative" }}
+        >
+          <Image
+            src="/Celestial Laptop Mockup.webp"
+            alt="Desert Wings"
+            fill
+            className="object-cover"
+            sizes="160px"
+          />
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{ background: "rgba(26, 24, 22, 0.3)" }}
+            animate={{ opacity: hovered ? 1 : 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+              <path d="M7 17L17 7M17 7H7M17 7V17" />
+            </svg>
+          </motion.div>
+        </motion.div>
+
+        {/* Bottom: project name + year */}
+        <div className="flex items-baseline justify-between relative" style={{ zIndex: 2 }}>
+          <motion.span
+            className="text-[10px] font-bold"
+            animate={{ color: hovered ? "#1a1816" : "rgba(26, 24, 22, 0.45)" }}
+            transition={{ duration: 0.3 }}
+          >
+            Desert Wings
+          </motion.span>
+          <motion.span
+            className="text-[9px] font-medium"
+            animate={{ color: hovered ? "#c48a5a" : "rgba(26, 24, 22, 0.25)" }}
+            transition={{ duration: 0.3 }}
+          >
+            2024
+          </motion.span>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+const LOGO_PATH = "M818.41,570.38c15.05,0,19.94-12.01,19.94-32.84v-44.63c0-14.1-1.3-32.55-19.56-32.55H685.46c-8.01,0-12.19,7.43-14.91,14.56l-59.58,173.38c-2.14,5.61-7.02,7.55-12.88,7.55H402.05c-52,0-94.75-39.61-99.71-90.3V416.41c0-38.13,22.95-70.91,55.79-85.25c-35.32-15.72-56.3-50.36-56.31-86.68v-90.87c0-51.94,42.11-94.05,94.05-94.05c0.98,0,1.95,0.01,2.93,0.05h198.9c7.92,0,14.33,6.42,14.33,14.33c0,1.58-0.26,3.1-0.73,4.52c-7.43,22.16-14.95,44.26-22.55,66.31c-2.58,7.48-10.4,8.88-18.22,8.88c-0.04,0-0.08-0.03-0.12-0.04H425.71c-16.19,2.06-27.84,16.3-26.91,32.35v59.32c0,14.92,12.03,27.03,26.91,27.17c42.5,0.39,84.92,0,127.25,0c9.09,0,17.05,6.72,14.46,14.2c-0.97,2.8-2.05,5.45-3.43,9.44l-19.75,57.05c-3.13,9.04-13.06,10.33-22.03,10.33c-0.57,0-0.5,0-0.98,0h-74.16c-24.87,0-45.04,20.16-45.04,45.04c0,2.87,0,5.62,0,7.91v117.45c-0.09,15.01-3.55,31.7,23.66,31.7h96.52c12.17,0,16.56-6.09,22.04-22.04c0.25-0.72,0.48-1.25,0.64-1.71L703.6,78.46c2.76-8.03,5.58-18.86,14.58-18.86h129.22c52.12,0,94.43,42.03,94.88,94.04v158.93c0,7.91-6.42,14.33-14.33,14.33c-0.38,0-0.75-0.01-1.12-0.04h-72.63c-8.28,0-15.09-6.25-15.99-14.29V185.96c0-20.35-16.5-36.86-36.86-36.86c-6.61,0-17.46,2.65-20.81,12.59c-17.05,50.53-68.21,202.14-68.21,202.14c-0.87,2.57,0.37,6.21,3.08,6.21c1.21,0,1.99,0,3.02,0l119.78,0.04c52.82,0,104.07,39.42,104.07,89.65v105.82c0,52.41-42.48,94.89-94.89,94.89c-0.65,0-1.3-0.01-1.95-0.02h-127c-7.23,0-18.16,0.71-14.19-12.3l21.22-69.45c1.6-5.23,6.53-8.53,11.75-8.29";
+
+// Logo with dark outline that fills gold on hover
+function HeroLogo() {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <motion.div
+      className="cursor-pointer"
+      style={{ width: 36, height: 36 }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.95 }}
+    >
+      <svg viewBox="280 40 680 640" className="w-full h-full">
+        {/* Fill — fades in on hover */}
+        <motion.path
+          d={LOGO_PATH}
+          animate={{
+            fill: hovered ? "rgba(196, 138, 90, 1)" : "rgba(26, 24, 22, 0.15)",
+            stroke: hovered ? "rgba(196, 138, 90, 1)" : "rgba(26, 24, 22, 0.4)",
+          }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          strokeWidth="2"
+        />
+      </svg>
+    </motion.div>
+  );
+}
+
+// Staggered letter hover button — letters slide out upward, new set slides in from below
+function StaggerButton({
+  text,
+  href,
+  className = "",
+}: {
+  text: string;
+  href: string;
+  className?: string;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const letters = text.split("");
+
+  return (
+    <TransitionLink
+      href={href}
+      className={`relative overflow-hidden inline-flex items-center ${className}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <span className="sr-only">{text}</span>
+      <span aria-hidden className="flex">
+        {letters.map((letter, i) => (
+          <span
+            key={i}
+            className="relative inline-block overflow-hidden"
+            style={{ lineHeight: 1.2 }}
+          >
+            {/* Original letter — slides up on hover */}
+            <motion.span
+              className="inline-block"
+              animate={{ y: hovered ? "-100%" : "0%" }}
+              transition={{
+                duration: 0.3,
+                delay: hovered ? i * 0.02 : (letters.length - i) * 0.02,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {letter === " " ? "\u00A0" : letter}
+            </motion.span>
+            {/* Duplicate letter — slides up from below */}
+            <motion.span
+              className="absolute left-0 top-0 inline-block"
+              animate={{ y: hovered ? "0%" : "100%" }}
+              transition={{
+                duration: 0.3,
+                delay: hovered ? i * 0.02 : (letters.length - i) * 0.02,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {letter === " " ? "\u00A0" : letter}
+            </motion.span>
+          </span>
+        ))}
+      </span>
+    </TransitionLink>
+  );
+}
+
 // Work items for mobile hero showcase
 const mobileWorkItems = [
   { title: "DESERT WINGS", category: "Flight School", image: "/thumbnails/Celestial Laptop Mockup.webp", slug: "desert-wings" },
@@ -370,15 +616,14 @@ function DesktopHero() {
                   Jake Ryall
                 </TransitionLink>
                 <div className="absolute left-1/2 -translate-x-1/2">
-                  <img src="/Executive Ai Solutions Logo.svg" alt="" className="w-8 h-8" style={{ opacity: 0.3, filter: "brightness(0)" }} />
+                  <HeroLogo />
                 </div>
                 <div className="flex items-center gap-3">
-                  <TransitionLink
+                  <StaggerButton
                     href="/contact"
+                    text="Get in Touch"
                     className="px-5 py-2 rounded-full text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1a1816] border border-[rgba(26,24,22,0.15)] transition-all duration-300 hover:bg-[#1a1816] hover:text-[#e5e1db] hover:border-[#1a1816]"
-                  >
-                    Get in Touch
-                  </TransitionLink>
+                  />
                   <button
                     className="w-9 h-9 rounded-full border flex items-center justify-center transition-all duration-300 hover:bg-[#1a1816] hover:border-[#1a1816] group"
                     style={{ borderColor: "rgba(26,24,22,0.15)" }}
@@ -399,13 +644,8 @@ function DesktopHero() {
                 </p>
               </div>
 
-              {/* Bottom-left: project count */}
-              <div className="absolute bottom-10 left-10 pointer-events-none">
-                <p className="text-[42px] font-sans font-black leading-none" style={{ color: "#1a1816", opacity: 0.06 }}>04</p>
-                <p className="text-[9px] font-sans uppercase tracking-[0.2em] mt-1" style={{ color: "#8a857d" }}>
-                  Selected Projects
-                </p>
-              </div>
+              {/* Bottom-left: View Work interaction */}
+              <ViewWorkWidget />
 
               {/* Center subtitle */}
               <div className="absolute bottom-[10vh] left-0 right-0 text-center pointer-events-none">

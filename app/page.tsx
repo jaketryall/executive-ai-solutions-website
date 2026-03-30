@@ -4,9 +4,6 @@ import { TransitionProvider } from "@/components/PageTransition";
 import ScrollBackground from "@/components/homepage/ScrollBackground";
 
 // Dynamic imports for below-fold components - reduces initial bundle
-const KineticTypography = dynamic(() => import("@/components/KineticTypography"), {
-  loading: () => <div className="h-[50vh]" />,
-});
 const Work = dynamic(() => import("@/components/Work"), {
   loading: () => <div className="min-h-screen" />,
 });
@@ -26,7 +23,6 @@ export default function Home() {
       <ScrollBackground />
       <main className="relative" style={{ zIndex: 10 }}>
         <Hero />
-        <KineticTypography />
         <Work />
         <Services />
         <Contact />
