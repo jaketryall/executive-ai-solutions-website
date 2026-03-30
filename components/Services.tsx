@@ -201,12 +201,12 @@ function DesktopServiceRow({
         }
       );
 
-      // 2. Number slides in from left on scrub
+      // 2. Number fades up on scrub
       gsap.fromTo(
         number,
-        { x: -30, opacity: 0 },
+        { y: 20, opacity: 0 },
         {
-          x: 0,
+          y: 0,
           opacity: 1,
           ease: "none",
           scrollTrigger: {
@@ -218,12 +218,12 @@ function DesktopServiceRow({
         }
       );
 
-      // 3. Title slides in from right on scrub
+      // 3. Title fades up on scrub
       gsap.fromTo(
         title,
-        { x: 60, opacity: 0 },
+        { y: 30, opacity: 0 },
         {
-          x: 0,
+          y: 0,
           opacity: 1,
           ease: "none",
           scrollTrigger: {
@@ -567,12 +567,12 @@ function DesktopServices() {
           style={{
             width: "40%",
             flexShrink: 0,
-            paddingTop: "8rem",
+            paddingTop: "12rem",
             paddingRight: "3rem",
             height: "100vh",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
+            justifyContent: "flex-start",
           }}
         >
           <div ref={headerRef}>
@@ -592,8 +592,7 @@ function DesktopServices() {
             </p>
 
             {/* Pinned big title */}
-            <SplitText
-              text="SERVICES"
+            <h2
               style={{
                 fontFamily: "Inter, sans-serif",
                 fontSize: "clamp(2.5rem, 4vw, 5rem)",
@@ -603,7 +602,9 @@ function DesktopServices() {
                 color: textColor,
                 marginBottom: "2rem",
               }}
-            />
+            >
+              SERVICES
+            </h2>
           </div>
 
           {/* Dynamic description — changes based on hovered/open service */}
