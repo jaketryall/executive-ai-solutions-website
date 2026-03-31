@@ -4,6 +4,9 @@ import { TransitionProvider } from "@/components/PageTransition";
 import ScrollBackground from "@/components/homepage/ScrollBackground";
 
 // Dynamic imports for below-fold components - reduces initial bundle
+const Manifesto = dynamic(() => import("@/components/homepage/Manifesto"), {
+  loading: () => <div className="min-h-screen" />,
+});
 const Work = dynamic(() => import("@/components/Work"), {
   loading: () => <div className="min-h-screen" />,
 });
@@ -23,7 +26,11 @@ export default function Home() {
       <ScrollBackground />
       <main className="relative" style={{ zIndex: 10 }}>
         <Hero />
-        <Work />
+        {/* Wrapper lets the sticky signature persist across both sections */}
+        <div className="relative">
+          <Manifesto />
+          <Work />
+        </div>
         <Services />
         <Contact />
       </main>

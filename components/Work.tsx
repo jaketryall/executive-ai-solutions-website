@@ -5,7 +5,6 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TransitionLink } from "@/components/PageTransition";
-import { SplitText, useSplitTextReveal } from "@/lib/hooks";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -111,10 +110,10 @@ function FloatingCard({
 function DesktopWork() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLParagraphElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const row1Ref = useRef<HTMLDivElement>(null);
   const row2Ref = useRef<HTMLDivElement>(null);
-
-  useSplitTextReveal(headerRef);
 
   useIsomorphicLayoutEffect(() => {
     const section = sectionRef.current;
@@ -123,6 +122,27 @@ function DesktopWork() {
     if (!section || !row1 || !row2) return;
 
     const ctx = gsap.context(() => {
+      // Label slides in from left
+      const label = labelRef.current;
+      if (label) {
+        gsap.fromTo(label,
+          { x: -40, opacity: 0 },
+          { x: 0, opacity: 1, ease: "none",
+            scrollTrigger: { trigger: headerRef.current, start: "top 85%", end: "top 55%", scrub: 1 } }
+        );
+      }
+
+      // Title chars reveal from below
+      const title = titleRef.current;
+      if (title) {
+        const chars = title.querySelectorAll<HTMLSpanElement>(".title-char");
+        gsap.fromTo(chars,
+          { yPercent: 110, opacity: 0 },
+          { yPercent: 0, opacity: 1, stagger: 0.03, ease: "none",
+            scrollTrigger: { trigger: headerRef.current, start: "top 80%", end: "top 45%", scrub: 1 } }
+        );
+      }
+
       // Row 1 drifts RIGHT to LEFT
       gsap.fromTo(
         row1,
@@ -186,12 +206,16 @@ function DesktopWork() {
       {/* Header */}
       <div className="px-6 md:px-12 lg:px-16">
         <div ref={headerRef} className="max-w-[1400px] mx-auto mb-16 lg:mb-24">
-          <p className="text-xs font-medium tracking-[0.3em] uppercase mb-4" style={{ color: accentColor }}>
+          <p
+            ref={labelRef}
+            className="text-xs font-medium tracking-[0.3em] uppercase mb-4"
+            style={{ color: accentColor, opacity: 0 }}
+          >
             Selected Work
           </p>
-          <SplitText
-            text="PROJECTS"
-            as="h2"
+          <h2
+            ref={titleRef}
+            className="overflow-hidden"
             style={{
               fontFamily: "var(--font-inter), sans-serif",
               fontSize: "clamp(4rem, 8vw, 8rem)",
@@ -200,7 +224,17 @@ function DesktopWork() {
               lineHeight: 0.9,
               letterSpacing: "-0.03em",
             }}
-          />
+          >
+            {"PROJECTS".split("").map((char, i) => (
+              <span
+                key={i}
+                className="title-char inline-block"
+                style={{ willChange: "transform", opacity: 0 }}
+              >
+                {char}
+              </span>
+            ))}
+          </h2>
         </div>
       </div>
 

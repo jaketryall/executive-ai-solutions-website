@@ -733,15 +733,16 @@ function DesktopHero() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="fixed inset-0 z-[100] hidden md:flex items-center justify-center"
+            className="fixed inset-0 z-[100] hidden md:block"
             style={{ background: "#0a0908" }}
             initial={{ clipPath: "circle(0% at calc(100% - 52px) 52px)" }}
             animate={{ clipPath: "circle(150% at calc(100% - 52px) 52px)" }}
             exit={{ clipPath: "circle(0% at calc(100% - 52px) 52px)" }}
             transition={{ duration: 0.75, ease: [0.65, 0.05, 0, 1] }}
           >
+            {/* Close button */}
             <button
-              className="absolute top-7 right-8 w-10 h-10 rounded-full border border-white/15 flex items-center justify-center transition-colors hover:bg-white hover:border-white group"
+              className="absolute top-7 right-8 w-10 h-10 rounded-full border border-white/15 flex items-center justify-center transition-all hover:bg-white hover:border-white group z-10"
               onClick={() => setMenuOpen(false)}
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-white group-hover:text-[#0a0908] transition-colors">
@@ -749,48 +750,123 @@ function DesktopHero() {
               </svg>
             </button>
 
-            <div className="flex flex-col items-center gap-2">
-              {[
-                { href: "/", label: "Home" },
-                { href: "/work", label: "Work" },
-                { href: "/about", label: "About" },
-                { href: "/services/website-design", label: "Services" },
-                { href: "/contact", label: "Contact" },
-              ].map((link, i) => (
-                <motion.div
-                  key={link.href}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 30 }}
-                  transition={{ duration: 0.5, delay: 0.15 + i * 0.08, ease: [0.65, 0.05, 0, 1] }}
+            {/* Two-column layout like Lando L11 */}
+            <div className="h-full flex">
+              {/* Left — navigation links */}
+              <div className="w-1/2 h-full flex flex-col justify-center px-16 lg:px-24">
+                <motion.p
+                  className="text-xs uppercase tracking-[0.3em] mb-8"
+                  style={{ color: "rgba(255, 200, 150, 0.4)" }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3, duration: 0.5 }}
                 >
-                  <TransitionLink
-                    href={link.href}
-                    onClick={() => setMenuOpen(false)}
-                    className="block text-4xl font-bold uppercase tracking-[-0.02em] py-2 transition-colors duration-300 hover:text-[#c8a97e]"
-                    style={{ fontFamily: "var(--font-serif)", color: "#e5e1db" }}
-                  >
-                    {link.label}
-                  </TransitionLink>
-                </motion.div>
-              ))}
-            </div>
+                  Navigation
+                </motion.p>
 
-            <motion.div
-              className="absolute bottom-8 left-0 right-0 flex items-center justify-between px-10"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-            >
-              <div className="flex items-center gap-5">
-                {["Ig", "Li", "Dr", "Gh"].map((s) => (
-                  <span key={s} className="text-[10px] font-sans uppercase tracking-[0.12em] text-white/30 hover:text-[#c8a97e] transition-colors cursor-pointer">{s}</span>
+                {[
+                  { href: "/", label: "HOME" },
+                  { href: "/work", label: "WORK" },
+                  { href: "/about", label: "ABOUT" },
+                  { href: "/services/website-design", label: "SERVICES" },
+                  { href: "/contact", label: "CONTACT" },
+                ].map((link, i) => (
+                  <motion.div
+                    key={link.href}
+                    initial={{ opacity: 0, x: -40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -40 }}
+                    transition={{ duration: 0.5, delay: 0.2 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                    className="border-b border-white/5"
+                  >
+                    <TransitionLink
+                      href={link.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="group flex items-center justify-between py-4"
+                    >
+                      <span
+                        className="text-4xl lg:text-5xl font-black uppercase tracking-[-0.02em] transition-all duration-300 group-hover:text-[#c48a5a] group-hover:translate-x-3"
+                        style={{ fontFamily: "var(--font-inter)", color: "#e5e1db", display: "inline-block" }}
+                      >
+                        {link.label}
+                      </span>
+                      <svg
+                        width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        className="text-white/0 group-hover:text-[#c48a5a] transition-all duration-300 group-hover:translate-x-1"
+                        stroke="currentColor" strokeWidth="2"
+                      >
+                        <path d="M7 17L17 7M17 7H7M17 7V17" />
+                      </svg>
+                    </TransitionLink>
+                  </motion.div>
                 ))}
               </div>
-              <a href="mailto:jaker@executiveaisolutions.com" className="text-[10px] font-sans text-white/30 hover:text-[#c8a97e] transition-colors">
-                jaker@executiveaisolutions.com
-              </a>
-            </motion.div>
+
+              {/* Right — info panel */}
+              <div className="w-1/2 h-full flex flex-col justify-between py-16 px-16 lg:px-24">
+                {/* Top right — label */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5, duration: 0.5 }}
+                >
+                  <p className="text-xs uppercase tracking-[0.3em]" style={{ color: "rgba(255, 200, 150, 0.4)" }}>
+                    Get in Touch
+                  </p>
+                  <a
+                    href="mailto:jaker@executiveaisolutions.com"
+                    className="text-lg font-medium text-white/60 hover:text-[#c48a5a] transition-colors mt-2 inline-block"
+                  >
+                    jaker@executiveaisolutions.com
+                  </a>
+                </motion.div>
+
+                {/* Center — big statement */}
+                <motion.p
+                  className="text-white/[0.03] font-black leading-[0.85]"
+                  style={{
+                    fontFamily: "var(--font-inter)",
+                    fontSize: "clamp(6rem, 12vw, 14rem)",
+                    letterSpacing: "-0.04em",
+                  }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                >
+                  JR
+                </motion.p>
+
+                {/* Bottom — socials */}
+                <motion.div
+                  className="flex items-center justify-between"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6, duration: 0.5 }}
+                >
+                  <div className="flex items-center gap-6">
+                    {[
+                      { label: "LinkedIn", href: "https://www.linkedin.com/in/jake-ryall" },
+                      { label: "Dribbble", href: "https://dribbble.com/jake-ryall" },
+                      { label: "Instagram", href: "https://instagram.com/exec.ai.solutions" },
+                      { label: "GitHub", href: "https://github.com/jaketryall" },
+                    ].map((social) => (
+                      <a
+                        key={social.label}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] font-medium uppercase tracking-[0.15em] text-white/30 hover:text-[#c48a5a] transition-colors"
+                      >
+                        {social.label}
+                      </a>
+                    ))}
+                  </div>
+                  <p className="text-[11px] text-white/20">
+                    &copy; {new Date().getFullYear()}
+                  </p>
+                </motion.div>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -29,26 +29,27 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Executive AI - Web Design Studio",
+  metadataBase: new URL("https://executiveaisolutions.com"),
+  title: "Jake Ryall — Web Designer & Developer",
   description:
-    "We create digital experiences that convert. Award-winning design studio crafting premium websites for ambitious brands.",
+    "I design and build high-converting websites for ambitious brands. Custom web design, development, and SEO in Arizona.",
   keywords:
-    "web design, website design, web development, UI/UX design, brand identity, e-commerce, digital agency",
-  authors: [{ name: "Executive AI" }],
+    "Jake Ryall, web designer, web developer, Arizona, freelance, portfolio, website design, web development, UI/UX design, SEO",
+  authors: [{ name: "Jake Ryall" }],
   openGraph: {
-    title: "Executive AI - Web Design Studio",
+    title: "Jake Ryall — Web Designer & Developer",
     description:
-      "We create digital experiences that convert. Award-winning design studio crafting premium websites for ambitious brands.",
-    url: "https://executiveai.com",
-    siteName: "Executive AI",
+      "I design and build high-converting websites for ambitious brands. Custom web design, development, and SEO in Arizona.",
+    url: "https://executiveaisolutions.com",
+    siteName: "Jake Ryall",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Executive AI - Web Design Studio",
+    title: "Jake Ryall — Web Designer & Developer",
     description:
-      "We create digital experiences that convert. Award-winning design studio crafting premium websites.",
+      "I design and build high-converting websites for ambitious brands. Custom web design, development, and SEO in Arizona.",
   },
   robots: {
     index: true,
@@ -72,6 +73,31 @@ export default function RootLayout({
         />
         {/* Preload hero video poster for instant display */}
         <link rel="preload" href="/video-poster.webp" as="image" type="image/webp" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ProfessionalService",
+              name: "Jake Ryall",
+              jobTitle: "Web Designer & Developer",
+              url: "https://executiveaisolutions.com",
+              description:
+                "I design and build high-converting websites for ambitious brands. Custom web design, development, and SEO in Arizona.",
+              address: {
+                "@type": "PostalAddress",
+                addressRegion: "AZ",
+                addressCountry: "US",
+              },
+              sameAs: [
+                "https://www.linkedin.com/in/jake-ryall",
+                "https://github.com/jaketryall",
+                "https://instagram.com/exec.ai.solutions",
+                "https://dribbble.com/jake-ryall",
+              ],
+            }),
+          }}
+        />
       </head>
       <body className={`${inter.variable} ${sourceSerif.variable} font-sans bg-[#0a0908]`}>
         <SoundProvider>
