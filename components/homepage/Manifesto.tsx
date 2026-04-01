@@ -48,8 +48,8 @@ export default function Manifesto() {
           ease: "none",
           scrollTrigger: {
             trigger: section,
-            start: "top 50%",
-            end: "top -10%",
+            start: "top 35%",
+            end: "top -20%",
             scrub: 1,
           },
         }
@@ -64,8 +64,8 @@ export default function Manifesto() {
           ease: "none",
           scrollTrigger: {
             trigger: section,
-            start: "top 130%",
-            end: "top 70%",
+            start: "top 85%",
+            end: "top 45%",
             scrub: 1,
           },
         });
@@ -155,8 +155,8 @@ export default function Manifesto() {
 
         {/* Text — scrolls normally over the sticky signature */}
         <div
-          className="relative flex items-center justify-center"
-          style={{ zIndex: 1, minHeight: "100vh" }}
+          className="relative flex items-start justify-center"
+          style={{ zIndex: 1, minHeight: "100vh", paddingTop: "20vh" }}
         >
           <div className="max-w-[1300px] mx-auto px-8 lg:px-12 text-center">
             <p
