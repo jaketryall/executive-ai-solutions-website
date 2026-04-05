@@ -1,15 +1,18 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useLayoutEffect } from "react";
 import { TransitionLink } from "./PageTransition";
 import { motion } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 // Cinematic warm color palette
 const accentColor = "rgba(255, 200, 150, 1)";
 const accentColorMuted = "rgba(255, 200, 150, 0.6)";
-
-// Delay before showing footer (allows main content to paint first)
-const FOOTER_REVEAL_DELAY = 300;
 
 // Social icons as simple SVG components
 function DribbbleIcon() {
@@ -54,184 +57,170 @@ const socialLinks = [
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const footerRef = useRef<HTMLElement>(null);
-  const [footerHeight, setFooterHeight] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
 
-  // Delay footer visibility to prevent flash during page load
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, FOOTER_REVEAL_DELAY);
-    return () => clearTimeout(timer);
-  }, []);
+  const useIsomorphicLayoutEffect =
+    typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-  useEffect(() => {
-    const updateHeight = () => {
-      if (footerRef.current) {
-        setFooterHeight(footerRef.current.offsetHeight);
+  // GSAP scroll-triggered animations
+  useIsomorphicLayoutEffect(() => {
+    if (!footerRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const footer = footerRef.current!;
+
+      // Liquid curve — the SVG curve control point drops on scroll
+      const curvePath = footer.querySelector(".footer-curve-path");
+      if (curvePath) {
+        gsap.fromTo(
+          curvePath,
+          { attr: { d: "M0,0 Q500,0 1000,0 L1000,100 L0,100 Z" } },
+          {
+            attr: { d: "M0,0 Q500,120 1000,0 L1000,100 L0,100 Z" },
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: footer,
+              start: "top 100%",
+              end: "top 50%",
+              scrub: 0.8,
+            },
+          }
+        );
       }
-    };
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
-    return () => window.removeEventListener("resize", updateHeight);
+
+      // Elements slide up
+      const elements = footer.querySelectorAll(".footer-reveal");
+      if (elements.length) {
+        gsap.set(elements, { y: 25 });
+        gsap.to(elements, {
+          y: 0,
+          ease: "power3.out",
+          stagger: 0.06,
+          scrollTrigger: {
+            trigger: footer,
+            start: "top 75%",
+            end: "top 30%",
+            scrub: 0.5,
+          },
+        });
+      }
+
+      // Email underline draws in
+      const underline = footer.querySelector(".footer-underline");
+      if (underline) {
+        gsap.fromTo(
+          underline,
+          { scaleX: 0, transformOrigin: "left" },
+          {
+            scaleX: 1,
+            ease: "power2.inOut",
+            scrollTrigger: {
+              trigger: footer,
+              start: "top 55%",
+              end: "top 15%",
+              scrub: 0.5,
+            },
+          }
+        );
+      }
+    });
+
+    return () => ctx.revert();
   }, []);
+
+  const creamBg = "#e5e1db";
+  const darkText = "#1a1816";
 
   return (
-    <>
-      <div style={{ height: footerHeight }} />
-
       <footer
         ref={footerRef}
         id="site-footer"
-        className="fixed bottom-0 left-0 right-0 bg-[#050505] transition-opacity duration-500"
-        style={{
-          zIndex: 0,
-          opacity: isVisible ? 1 : 0,
-        }}
+        className="relative"
+        style={{ backgroundColor: creamBg, zIndex: 10 }}
         data-footer
       >
-        {/* Animated 3D orb element */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* CSS keyframes for the orb animation */}
-          <style>{`
-            @keyframes orb-float {
-              0%, 100% { transform: translate(30%, 30%) scale(1); }
-              50% { transform: translate(25%, 35%) scale(1.05); }
-            }
-            @keyframes orb-rotate {
-              0% { transform: rotate(0deg); }
-              100% { transform: rotate(360deg); }
-            }
-            @keyframes orb-pulse {
-              0%, 100% { opacity: 0.3; }
-              50% { opacity: 0.5; }
-            }
-          `}</style>
-
-          {/* Main glowing orb */}
-          <div
-            className="absolute right-0 bottom-0 w-[300px] h-[300px] md:w-[500px] md:h-[500px]"
-            style={{
-              animation: "orb-float 8s ease-in-out infinite",
-            }}
+        {/* Liquid curve SVG — extends up into the section above */}
+        <div className="absolute left-0 right-0 -top-[80px] md:-top-[120px] h-[80px] md:h-[120px] pointer-events-none" style={{ zIndex: 10 }}>
+          <svg
+            viewBox="0 0 1000 100"
+            preserveAspectRatio="none"
+            className="w-full h-full block"
           >
-            {/* Outer glow */}
-            <div
-              className="absolute inset-0 rounded-full blur-3xl"
-              style={{
-                background: `radial-gradient(circle, ${accentColor} 0%, rgba(255, 150, 100, 0.3) 40%, transparent 70%)`,
-                animation: "orb-pulse 4s ease-in-out infinite",
-              }}
+            <path
+              className="footer-curve-path"
+              d="M0,0 Q500,0 1000,0 L1000,100 L0,100 Z"
+              fill={creamBg}
             />
-
-            {/* Rotating ring 1 */}
-            <div
-              className="absolute inset-[15%] rounded-full"
-              style={{
-                border: "1px solid rgba(255, 200, 150, 0.15)",
-                animation: "orb-rotate 20s linear infinite",
-              }}
-            />
-
-            {/* Rotating ring 2 - opposite direction */}
-            <div
-              className="absolute inset-[25%] rounded-full"
-              style={{
-                border: "1px solid rgba(255, 200, 150, 0.1)",
-                animation: "orb-rotate 15s linear infinite reverse",
-              }}
-            />
-
-            {/* Inner core */}
-            <div
-              className="absolute inset-[35%] rounded-full"
-              style={{
-                background: `radial-gradient(circle at 30% 30%, rgba(255, 220, 180, 0.4) 0%, rgba(255, 180, 130, 0.2) 50%, transparent 70%)`,
-                boxShadow: `0 0 60px rgba(255, 200, 150, 0.3)`,
-              }}
-            />
-
-            {/* Highlight spot */}
-            <div
-              className="absolute top-[20%] left-[20%] w-[20%] h-[20%] rounded-full blur-md"
-              style={{
-                background: "rgba(255, 255, 255, 0.2)",
-              }}
-            />
-          </div>
+          </svg>
         </div>
 
+        {/* Subtle noise texture */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.03]"
+          style={{
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E\")",
+          }}
+        />
+
         {/* Main content */}
-        <div className="relative z-10 px-6 md:px-12 lg:px-20 py-16 md:py-24">
+        <div className="relative z-10 px-6 md:px-12 lg:px-20 pt-16 md:pt-24 pb-12 md:pb-16">
           <div className="max-w-6xl mx-auto">
 
             {/* Top section - Big CTA */}
             <div className="mb-16 md:mb-24">
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="text-xs uppercase tracking-[0.3em] mb-4"
-                style={{ color: accentColorMuted }}
+              <p
+                className="footer-reveal text-xs uppercase tracking-[0.3em] mb-4"
+                style={{ color: "rgba(26, 24, 22, 0.4)" }}
               >
                 Let&apos;s work together
-              </motion.p>
+              </p>
 
-              <motion.a
+              <a
                 href="mailto:jaker@executiveaisolutions.com"
-                className="group inline-block"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
+                className="footer-reveal group inline-block"
               >
-                <span className="text-2xl md:text-5xl lg:text-6xl font-black text-white tracking-[-0.03em] group-hover:text-white/80 transition-colors duration-300 break-all md:break-normal">
+                <span
+                  className="text-2xl md:text-5xl lg:text-6xl font-black tracking-[-0.03em] transition-colors duration-300 break-all md:break-normal"
+                  style={{ color: darkText }}
+                >
                   jaker@executiveaisolutions.com
                 </span>
-                <motion.div
-                  className="h-[2px] mt-2 origin-left"
-                  style={{ backgroundColor: accentColor }}
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                <div
+                  className="footer-underline h-[2px] mt-2"
+                  style={{ backgroundColor: darkText }}
                 />
-              </motion.a>
+              </a>
             </div>
 
             {/* Social links */}
-            <motion.div
-              className="flex gap-4 mb-12"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-            >
+            <div className="flex gap-4 mb-12">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all duration-300"
+                  className="footer-reveal w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300"
+                  style={{ color: "rgba(26,24,22,0.35)" }}
                   aria-label={social.label}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = darkText;
+                    e.currentTarget.style.backgroundColor = "rgba(26,24,22,0.06)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = "rgba(26,24,22,0.35)";
+                    e.currentTarget.style.backgroundColor = "transparent";
+                  }}
                 >
                   <social.icon />
                 </a>
               ))}
-            </motion.div>
+            </div>
 
             {/* Bottom section - Links and info */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 pt-8 border-t border-white/5">
+            <div className="footer-bottom flex flex-col md:flex-row justify-between items-start md:items-end gap-8 pt-8" style={{ borderTop: "1px solid rgba(26,24,22,0.08)" }}>
 
               {/* Left - Navigation */}
-              <motion.div
-                className="flex flex-wrap gap-x-8 gap-y-2"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-              >
+              <div className="flex flex-wrap gap-x-8 gap-y-2">
                 {[
                   { label: "Work", href: "/work" },
                   { label: "About", href: "/about" },
@@ -241,39 +230,33 @@ export default function Footer() {
                   <TransitionLink
                     key={item.href}
                     href={item.href}
-                    className="text-white/40 hover:text-white transition-colors duration-300 text-sm"
+                    className="transition-colors duration-300 text-sm"
+                    style={{ color: "rgba(26,24,22,0.4)" }}
                   >
                     {item.label}
                   </TransitionLink>
                 ))}
-              </motion.div>
+              </div>
 
               {/* Right - Copyright and status */}
-              <motion.div
-                className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3 }}
-              >
+              <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
                 <div className="flex items-center gap-2">
                   <motion.span
                     className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: "#4ade80" }}
+                    style={{ backgroundColor: "#16a34a" }}
                     animate={{ opacity: [0.5, 1, 0.5] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   />
-                  <span className="text-white/40 text-sm">Available for projects</span>
+                  <span className="text-sm" style={{ color: "rgba(26,24,22,0.4)" }}>Available for projects</span>
                 </div>
-                <p className="text-white/30 text-sm">
+                <p className="text-sm" style={{ color: "rgba(26,24,22,0.3)" }}>
                   © {currentYear} Executive AI Solutions
                 </p>
-              </motion.div>
+              </div>
             </div>
 
           </div>
         </div>
       </footer>
-    </>
   );
 }

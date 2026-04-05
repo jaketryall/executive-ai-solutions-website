@@ -355,200 +355,259 @@ function MobileContact() {
   );
 }
 
-// Desktop Contact
+// Animated form field with micro-interactions
+function AnimatedField({
+  label,
+  number,
+  children,
+  focused,
+}: {
+  label: string;
+  number: string;
+  children: React.ReactNode;
+  focused: boolean;
+}) {
+  return (
+    <motion.div
+      className="form-field contact-scrub relative py-6"
+    >
+      <label className="block text-[9px] uppercase tracking-[0.3em] mb-3 transition-colors duration-300"
+        style={{ color: focused ? accentColor : "rgba(255,255,255,0.25)" }}
+      >
+        {number} — {label}
+      </label>
+      {children}
+      {/* Base underline — drawn in by GSAP on scroll */}
+      <div
+        className="field-underline-base absolute bottom-0 left-0 right-0 h-px"
+        style={{ backgroundColor: "rgba(255,255,255,0.06)" }}
+      />
+      {/* Active underline that scales in on focus */}
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 h-px"
+        style={{ backgroundColor: accentColor, zIndex: 1 }}
+        initial={{ scaleX: 0, transformOrigin: "left" }}
+        animate={{ scaleX: focused ? 1 : 0 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      />
+    </motion.div>
+  );
+}
+
+// Rotating testimonials for the right panel
+const contactTestimonials = [
+  {
+    quote: "The website exceeded our expectations. Clean, professional, and it actually brings in new students every week.",
+    author: "Michael Torres",
+    role: "Owner, Desert Wings Aviation",
+    initials: "MT",
+  },
+  {
+    quote: "Our conversion rate doubled within the first month of launch. Best investment we've made.",
+    author: "David Park",
+    role: "Director, Vertex Labs",
+    initials: "DP",
+  },
+  {
+    quote: "Working with them was seamless. They understood our vision and delivered something we're proud of.",
+    author: "Sarah Chen",
+    role: "CEO, Meridian Consulting",
+    initials: "SC",
+  },
+];
+
+// Desktop Contact — Bold split, image right
 function DesktopContact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    company: "",
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [isRevealed, setIsRevealed] = useState(false);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
   const { play } = useSound();
 
   const sectionRef = useRef<HTMLElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-  const connectionLinesRef = useRef<SVGSVGElement>(null);
 
   const useIsomorphicLayoutEffect =
     typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+  // Rotate testimonials
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % contactTestimonials.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
 
   useIsomorphicLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      // ===== BLUEPRINT GRID REVEAL =====
-      if (gridRef.current) {
+      const section = sectionRef.current;
+      if (!section) return;
+
+      // ===== HEADLINE — each letter rises from under mask on scroll =====
+      const headlineWrap = section.querySelector(".contact-headline-wrap");
+      const headlineChars = section.querySelectorAll(".contact-char");
+      if (headlineChars.length && headlineWrap) {
+        gsap.set(headlineChars, { y: "100%" });
+        gsap.to(headlineChars, {
+          y: "0%",
+          ease: "none",
+          stagger: 0.04,
+          scrollTrigger: {
+            trigger: headlineWrap,
+            start: "top 85%",
+            end: "top 30%",
+            scrub: 1.5,
+          },
+        });
+      }
+
+      // ===== LEFT ELEMENTS (non-headline) — scrub-staggered as you scroll =====
+      const scrubElements = section.querySelectorAll(".contact-scrub");
+      scrubElements.forEach((el) => {
         gsap.fromTo(
-          gridRef.current,
-          { opacity: 0, scale: 1.1 },
+          el,
           {
-            opacity: 0.08,
-            scale: 1,
-            ease: "power2.out",
+            y: 50,
+            opacity: 0,
+          },
+          {
+            y: 0,
+            opacity: 1,
+            ease: "power3.out",
             scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top bottom",
-              end: "top 40%",
-              scrub: 0.5,
-              onEnter: () => setIsRevealed(true),
-              onLeaveBack: () => setIsRevealed(false),
+              trigger: el,
+              start: "top 95%",
+              end: "top 65%",
+              scrub: 0.4,
             },
           }
         );
-      }
+      });
 
-      // ===== HEADER - Comes toward you =====
-      if (headerRef.current) {
-        const label = headerRef.current.querySelector(".section-label");
-        const title = headerRef.current.querySelector(".section-title");
-
-        // Title scales up toward camera
-        if (title) {
+      // ===== FORM FIELD UNDERLINES — draw in on scroll =====
+      const formFields = section.querySelectorAll(".form-field");
+      formFields.forEach((field) => {
+        const underline = field.querySelector(".field-underline-base");
+        if (underline) {
           gsap.fromTo(
-            title,
-            { scale: 0.7, opacity: 0, y: 80 },
+            underline,
+            { scaleX: 0, transformOrigin: "left center" },
             {
-              scale: 1,
-              opacity: 1,
-              y: 0,
-              ease: "power2.out",
+              scaleX: 1,
+              ease: "power2.inOut",
               scrollTrigger: {
-                trigger: sectionRef.current,
-                start: "top bottom",
-                end: "top 40%",
-                scrub: 0.5,
-              },
-            }
-          );
-        }
-
-        // Label fades in
-        if (label) {
-          gsap.fromTo(
-            label,
-            { opacity: 0, y: 20 },
-            {
-              opacity: 1,
-              y: 0,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: sectionRef.current,
-                start: "top 80%",
-                end: "top 50%",
-                scrub: 0.3,
-              },
-            }
-          );
-        }
-      }
-
-      // ===== CONTENT - Comes toward you with scrub =====
-      if (contentRef.current) {
-        const infoSection = contentRef.current.querySelector(".contact-info");
-        const formSection = contentRef.current.querySelector(".contact-form");
-        const infoBlocks = contentRef.current.querySelectorAll(".info-block");
-        const formFields = contentRef.current.querySelectorAll(".form-field");
-
-        // Info section comes toward camera
-        if (infoSection) {
-          gsap.fromTo(
-            infoSection,
-            { scale: 0.85, opacity: 0, y: 60 },
-            {
-              scale: 1,
-              opacity: 1,
-              y: 0,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: contentRef.current,
-                start: "top bottom",
-                end: "top 50%",
-                scrub: 0.5,
-              },
-            }
-          );
-        }
-
-        // Form section comes toward camera with slight delay
-        if (formSection) {
-          gsap.fromTo(
-            formSection,
-            { scale: 0.85, opacity: 0, y: 80 },
-            {
-              scale: 1,
-              opacity: 1,
-              y: 0,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: contentRef.current,
+                trigger: field,
                 start: "top 90%",
-                end: "top 40%",
-                scrub: 0.6,
-              },
-            }
-          );
-        }
-
-        // Info blocks stagger in
-        infoBlocks.forEach((block, index) => {
-          gsap.fromTo(
-            block,
-            { opacity: 0, x: -20 },
-            {
-              opacity: 1,
-              x: 0,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: block,
-                start: "top bottom",
                 end: "top 70%",
                 scrub: 0.3,
               },
             }
           );
-        });
+        }
+      });
 
-        // Form fields stagger in
-        formFields.forEach((field, index) => {
-          gsap.fromTo(
-            field,
-            { opacity: 0, y: 30 },
-            {
-              opacity: 1,
-              y: 0,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: field,
-                start: "top bottom",
-                end: "top 75%",
-                scrub: 0.3,
-              },
-            }
-          );
-
-          // Underline draws in with scrub
-          const underline = field.querySelector(".field-underline");
-          if (underline) {
-            gsap.fromTo(
-              underline,
-              { scaleX: 0, transformOrigin: "left center" },
-              {
-                scaleX: 1,
-                ease: "power2.out",
-                scrollTrigger: {
-                  trigger: field,
-                  start: "top 85%",
-                  end: "top 65%",
-                  scrub: 0.3,
-                },
-              }
-            );
+      // ===== SUBMIT BUTTON — expands from left =====
+      const submitBtn = section.querySelector(".contact-submit-wrap");
+      if (submitBtn) {
+        gsap.fromTo(
+          submitBtn,
+          { scaleX: 0, opacity: 0, transformOrigin: "left center" },
+          {
+            scaleX: 1,
+            opacity: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: submitBtn,
+              start: "top 95%",
+              end: "top 75%",
+              scrub: 0.4,
+            },
           }
+        );
+      }
+
+      // ===== EMAIL LINK — slides in =====
+      const emailWrap = section.querySelector(".contact-email-wrap");
+      if (emailWrap) {
+        gsap.fromTo(
+          emailWrap,
+          { x: -30, opacity: 0 },
+          {
+            x: 0,
+            opacity: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: emailWrap,
+              start: "top 95%",
+              end: "top 80%",
+              scrub: 0.3,
+            },
+          }
+        );
+      }
+
+      // ===== RIGHT IMAGE — parallax only =====
+      const imagePanel = section.querySelector(".contact-image-panel");
+      const imageInner = section.querySelector(".contact-image-inner");
+
+      if (imageInner && imagePanel) {
+        gsap.to(imageInner, {
+          y: "-15%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: imagePanel,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
         });
+      }
+
+      // ===== TESTIMONIAL OVERLAY — fades up after image reveals =====
+      const testimonialOverlay = section.querySelector(".contact-testimonial-overlay");
+      if (testimonialOverlay) {
+        gsap.fromTo(
+          testimonialOverlay,
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: testimonialOverlay,
+              start: "top 95%",
+              end: "top 70%",
+              scrub: 0.5,
+            },
+          }
+        );
+      }
+
+      // ===== BRAND TAG — drops in =====
+      const brandTag = section.querySelector(".contact-brand-tag");
+      if (brandTag) {
+        gsap.fromTo(
+          brandTag,
+          { y: -20, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            ease: "back.out(1.7)",
+            scrollTrigger: {
+              trigger: imagePanel,
+              start: "top 70%",
+              end: "top 45%",
+              scrub: 0.4,
+            },
+          }
+        );
       }
     });
 
@@ -565,314 +624,378 @@ function DesktopContact() {
     play("success");
   };
 
-  // Simple section entrance - just slides up smoothly
-  const { scrollYProgress: sectionScrollProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "start 0.4"],
-  });
-
-  // Simple smooth slide up
-  const sectionY = useTransform(sectionScrollProgress, [0, 1], ["8%", "0%"]);
-  const sectionOpacity = useTransform(sectionScrollProgress, [0, 0.5], [0, 1]);
-
-  // Content follows slightly behind
-  const contentY = useTransform(sectionScrollProgress, [0.1, 1], [40, 0]);
-  const contentOpacity = useTransform(sectionScrollProgress, [0.1, 0.6], [0, 1]);
-
   return (
     <section
       ref={sectionRef}
       id="contact"
-      className="relative py-32 overflow-hidden min-h-screen hidden md:block"
-      data-bg="dark"
-      style={{
-        zIndex: 10,
-        isolation: "isolate",
-      }}
+      className="relative hidden md:block pb-12 lg:pb-16"
+      style={{ backgroundColor: "#e5e1db", zIndex: 10 }}
     >
-      {/* Warm ambient glow background */}
+      {/* Dark inner with rounded bottom corners — cream peeks through */}
       <div
-        ref={gridRef}
-        className="absolute inset-0 pointer-events-none opacity-0"
-        style={{
-          background: `radial-gradient(ellipse 80% 60% at 50% 30%, ${accentColorFaint} 0%, transparent 60%)`,
-          zIndex: 3,
-        }}
-      />
-
-      {/* Connection lines SVG */}
-      <svg
-        ref={connectionLinesRef}
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{ opacity: isRevealed ? 0.2 : 0, transition: "opacity 0.5s", zIndex: 3 }}
+        className="relative pt-28 lg:pt-36 pb-44 lg:pb-56 overflow-hidden rounded-b-[3rem] lg:rounded-b-[4rem]"
+        style={{ backgroundColor: "#0a0908" }}
       >
-        <path
-          d="M 100 300 Q 200 300 200 400"
-          stroke={accentColorMuted}
-          strokeWidth="1"
-          fill="none"
-        />
-        <path
-          d="M 100 400 Q 150 400 150 500"
-          stroke={accentColorMuted}
-          strokeWidth="1"
-          fill="none"
-        />
-        <path
-          d="M 100 500 Q 180 500 180 600"
-          stroke={accentColorMuted}
-          strokeWidth="1"
-          fill="none"
-        />
-      </svg>
+      {/* CSS for animations */}
+      <style>{`
+        @keyframes metal-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        @keyframes rotate-glow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .glow-border-btn {
+          position: relative;
+          overflow: hidden;
+        }
+        .glow-border-btn::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: max(200%, 800px);
+          height: max(200%, 800px);
+          transform-origin: center;
+          translate: -50% -50%;
+          background: conic-gradient(
+            from 0deg,
+            transparent 0deg,
+            transparent 340deg,
+            rgba(255, 200, 150, 0.5) 350deg,
+            rgba(255, 200, 150, 0.8) 355deg,
+            rgba(255, 200, 150, 0.5) 360deg
+          );
+          animation: rotate-glow 3s linear infinite;
+          z-index: 0;
+        }
+        .glow-border-btn::after {
+          content: '';
+          position: absolute;
+          inset: 2px;
+          background: #0a0908;
+          border-radius: inherit;
+          z-index: 1;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-border-btn:hover::after {
+          border-color: rgba(255, 200, 150, 0.2);
+        }
+      `}</style>
 
-      <motion.div
-        className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 relative"
-        style={{ y: contentY, opacity: contentOpacity, zIndex: 5 }}
-      >
-        {/* Header */}
-        <div ref={headerRef} className="mb-20">
-          <p
-            className="section-label text-sm uppercase tracking-[0.3em] mb-4"
-            style={{ color: accentColorMuted }}
-          >
-            <SplitText animation="chars" delay={0.2} stagger={0.03}>
-              Get in Touch
-            </SplitText>
-          </p>
-          <h2 className="section-title text-5xl md:text-6xl lg:text-8xl font-black text-white leading-[0.9] tracking-[-0.03em]">
-            <SplitText animation="words" delay={0.4} stagger={0.1}>
-              LET'S START
-            </SplitText>
-            <br />
-            <span className="text-white/30">
-              <SplitText animation="blur" delay={0.7} stagger={0.04}>
-                SOMETHING
-              </SplitText>
-            </span>
-          </h2>
-        </div>
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-24 items-start">
 
-        <div ref={contentRef} className="grid lg:grid-cols-2 gap-16 lg:gap-24">
-          {/* Left side - Info */}
-          <div className="contact-info">
-            <p className="text-white/50 text-lg md:text-xl leading-relaxed mb-12">
-              Ready to bring your vision to life? We'd love to hear about your project and explore how we can help.
+          {/* ===== LEFT: Headline + Form ===== */}
+          <div>
+            {/* Status */}
+            <div className="contact-scrub flex items-center gap-2.5 mb-8">
+              <motion.span
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: "rgba(16, 185, 129, 0.8)" }}
+                animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <span className="text-[10px] uppercase tracking-[0.2em] text-emerald-400/70">
+                Taking on projects
+              </span>
+            </div>
+
+            {/* BIG headline — letter-by-letter masked reveal */}
+            <h2
+              className="contact-headline-wrap font-black tracking-[-0.05em] leading-[0.9] mb-6"
+              style={{
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "clamp(4rem, 7vw, 8rem)",
+                color: "#f5f0e8",
+              }}
+            >
+              {["L","e","t","'","s"," ","b","u","i","l","d"].map((char, i) => (
+                <span key={i} className="inline-block overflow-hidden" style={char === " " ? { width: "0.2em" } : undefined}>
+                  <span className="contact-char inline-block">{char === " " ? "\u00A0" : char}</span>
+                </span>
+              ))}
+              <br />
+              {["s","o","m","e","t","h","i","n","g"," ","b","o","l","d","."].map((char, i) => (
+                <span
+                  key={i}
+                  className="inline-block overflow-hidden"
+                  style={{
+                    ...(char === " " ? { width: "0.2em" } : {}),
+                    ...(i >= 10 ? { color: accentColor } : {}),
+                  }}
+                >
+                  <span className="contact-char inline-block">{char === " " ? "\u00A0" : char}</span>
+                </span>
+              ))}
+            </h2>
+
+            <p className="contact-scrub text-white/40 text-lg leading-relaxed mb-12 max-w-lg">
+              Tell us about your project and we&apos;ll get back to you within 24 hours with a game plan.
             </p>
 
-            <div className="space-y-8">
-              <div
-                className="info-block relative pl-6 border-l"
-                style={{ borderColor: accentColorFaint }}
-              >
-                <div
-                  className="absolute left-0 top-0 w-2 h-2 rounded-full -translate-x-[5px]"
-                  style={{ backgroundColor: accentColorMuted }}
-                />
-                <p
-                  className="text-xs uppercase tracking-[0.2em] mb-2"
-                  style={{ color: accentColorMuted }}
+            {/* Form */}
+            <div>
+              {submitted ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="py-16"
                 >
-                  {isRevealed && <TypewriterText text="Email" delay={400} />}
-                </p>
-                <a
-                  href="mailto:jaker@executiveaisolutions.com"
-                  className="text-white text-base md:text-lg transition-colors break-all"
-                  style={{ ["--tw-hover-color" as string]: accentColor }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = accentColor)}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "white")}
-                >
-                  jaker@executiveaisolutions.com
-                </a>
-              </div>
-
-              <div
-                className="info-block relative pl-6 border-l"
-                style={{ borderColor: accentColorFaint }}
-              >
-                <div
-                  className="absolute left-0 top-0 w-2 h-2 rounded-full -translate-x-[5px]"
-                  style={{ backgroundColor: accentColorMuted }}
-                />
-                <p
-                  className="text-xs uppercase tracking-[0.2em] mb-2"
-                  style={{ color: accentColorMuted }}
-                >
-                  {isRevealed && <TypewriterText text="Response Time" delay={600} />}
-                </p>
-                <p className="text-white text-lg">Within 24 hours</p>
-              </div>
-
-              <div
-                className="info-block relative pl-6 border-l"
-                style={{ borderColor: accentColorFaint }}
-              >
-                <div
-                  className="absolute left-0 top-0 w-2 h-2 rounded-full -translate-x-[5px]"
-                  style={{ backgroundColor: accentColorMuted }}
-                />
-                <p
-                  className="text-xs uppercase tracking-[0.2em] mb-2"
-                  style={{ color: accentColorMuted }}
-                >
-                  {isRevealed && <TypewriterText text="Status" delay={800} />}
-                </p>
-                <div className="flex items-center gap-3">
-                  <motion.span
-                    className="w-2 h-2 rounded-full bg-emerald-500"
-                    animate={{
-                      boxShadow: [
-                        "0 0 0 0 rgba(16, 185, 129, 0.4)",
-                        "0 0 0 8px rgba(16, 185, 129, 0)",
-                      ],
+                  <motion.div
+                    className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
+                    initial={{ scale: 0, rotate: -180 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
+                    style={{
+                      background: "rgba(16, 185, 129, 0.1)",
+                      border: "1px solid rgba(16, 185, 129, 0.3)",
                     }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeOut",
-                    }}
-                  />
-                  <p className="text-white text-lg">Available for projects</p>
+                  >
+                    <svg className="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <motion.path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 0.4, delay: 0.3 }}
+                      />
+                    </svg>
+                  </motion.div>
+                  <h3 className="text-3xl font-black text-white mb-2">Message sent.</h3>
+                  <p className="text-white/40 text-lg">We&apos;ll be in touch within 24 hours.</p>
+                </motion.div>
+              ) : (
+                <form onSubmit={handleSubmit}>
+                  <div className="grid grid-cols-2 gap-x-8">
+                    <AnimatedField label="Name" number="01" focused={focusedField === "name"}>
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        onFocus={() => { setFocusedField("name"); play("hover", { volume: 0.04 }); }}
+                        onBlur={() => setFocusedField(null)}
+                        className="w-full bg-transparent text-white text-lg focus:outline-none placeholder:text-white/10"
+                        placeholder="Your name"
+                      />
+                    </AnimatedField>
+                    <AnimatedField label="Email" number="02" focused={focusedField === "email"}>
+                      <input
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        onFocus={() => { setFocusedField("email"); play("hover", { volume: 0.04 }); }}
+                        onBlur={() => setFocusedField(null)}
+                        className="w-full bg-transparent text-white text-lg focus:outline-none placeholder:text-white/10"
+                        placeholder="you@company.com"
+                      />
+                    </AnimatedField>
+                  </div>
+
+                  <AnimatedField label="Company" number="03" focused={focusedField === "company"}>
+                    <input
+                      type="text"
+                      value={formData.company}
+                      onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                      onFocus={() => { setFocusedField("company"); play("hover", { volume: 0.04 }); }}
+                      onBlur={() => setFocusedField(null)}
+                      className="w-full bg-transparent text-white text-lg focus:outline-none placeholder:text-white/10"
+                      placeholder="Your company (optional)"
+                    />
+                  </AnimatedField>
+
+                  <AnimatedField label="Project Details" number="04" focused={focusedField === "message"}>
+                    <textarea
+                      required
+                      rows={3}
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      onFocus={() => { setFocusedField("message"); play("hover", { volume: 0.04 }); }}
+                      onBlur={() => setFocusedField(null)}
+                      className="w-full bg-transparent text-white text-lg focus:outline-none resize-none placeholder:text-white/10"
+                      placeholder="Tell us about your project..."
+                    />
+                  </AnimatedField>
+
+                  {/* Submit */}
+                  <div className="contact-submit-wrap mt-10">
+                    <motion.button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="glow-border-btn group relative w-full flex items-center justify-center gap-3 py-5 px-8 rounded-full disabled:opacity-50 cursor-pointer"
+                      onClick={() => play("click")}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.98 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                    >
+                      {isSubmitting ? (
+                        <span className="relative flex items-center gap-3" style={{ zIndex: 3 }}>
+                          <motion.span
+                            className="w-4 h-4 border border-white/20 rounded-full"
+                            style={{ borderTopColor: accentColor }}
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          />
+                          <span className="text-white/50 text-sm uppercase tracking-[0.15em]">Sending...</span>
+                        </span>
+                      ) : (
+                        <span className="relative flex items-center gap-3" style={{ zIndex: 3 }}>
+                          <span className="text-sm uppercase tracking-[0.15em] font-semibold text-white">
+                            Send Message
+                          </span>
+                          <motion.span
+                            className="text-base text-white/40 group-hover:text-white transition-colors duration-300"
+                            animate={{ x: [0, 3, 0] }}
+                            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                          >
+                            →
+                          </motion.span>
+                        </span>
+                      )}
+                    </motion.button>
+                  </div>
+                </form>
+              )}
+            </div>
+
+            {/* Email fallback */}
+            <div className="contact-email-wrap mt-10 pt-6" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+              <p className="text-white/20 text-[10px] uppercase tracking-[0.2em] mb-2">Prefer email?</p>
+              <a
+                href="mailto:jaker@executiveaisolutions.com"
+                className="text-white/40 text-sm hover:text-white transition-colors duration-300 group inline-flex items-center gap-2"
+              >
+                jaker@executiveaisolutions.com
+                <motion.span
+                  className="inline-block"
+                  whileHover={{ x: 3, y: -3 }}
+                  transition={{ type: "spring", stiffness: 400 }}
+                >
+                  ↗
+                </motion.span>
+              </a>
+            </div>
+          </div>
+
+          {/* ===== RIGHT: Image + Testimonial Overlay ===== */}
+          <div className="contact-image-panel relative lg:sticky lg:top-28 self-start rounded-2xl overflow-hidden"
+            style={{ aspectRatio: "4/5" }}
+          >
+            {/* Inner wrapper for parallax + zoom */}
+            <div className="contact-image-inner absolute inset-0 will-change-transform"
+              style={{ height: "130%", top: "-15%" }}
+            >
+              <img
+                src="/custom-dashboard-mockup.webp"
+                alt="Executive AI Solutions — Custom dashboard"
+                className="w-full h-full object-cover object-top"
+              />
+            </div>
+
+            {/* Warm gradient overlay from bottom */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: "linear-gradient(to top, rgba(10,9,8,0.95) 0%, rgba(10,9,8,0.6) 35%, rgba(10,9,8,0.1) 60%, transparent 100%)",
+              }}
+            />
+
+            {/* Top-left brand tag */}
+            <div className="contact-brand-tag absolute top-6 left-6 flex items-center gap-2.5">
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{
+                  background: "rgba(255,200,150,0.15)",
+                  backdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255,200,150,0.2)",
+                }}
+              >
+                <span className="text-xs font-black" style={{ color: accentColor }}>E</span>
+              </div>
+              <span
+                className="text-sm font-bold"
+                style={{
+                  color: "rgba(255,255,255,0.9)",
+                  textShadow: "0 1px 8px rgba(0,0,0,0.5)",
+                }}
+              >
+                Executive AI
+              </span>
+            </div>
+
+            {/* Bottom testimonial overlay — like the reference */}
+            <div className="contact-testimonial-overlay absolute bottom-0 left-0 right-0 p-8">
+                <div className="relative min-h-[140px]">
+                  {contactTestimonials.map((testimonial, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute inset-0"
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{
+                        opacity: activeTestimonial === i ? 1 : 0,
+                        y: activeTestimonial === i ? 0 : 12,
+                      }}
+                      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <p
+                        className="text-lg lg:text-xl font-semibold leading-snug mb-6"
+                        style={{
+                          color: "rgba(255,255,255,0.9)",
+                          textShadow: "0 2px 12px rgba(0,0,0,0.4)",
+                        }}
+                      >
+                        &ldquo;{testimonial.quote}&rdquo;
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-white font-bold text-sm">{testimonial.author}</p>
+                          <p className="text-white/50 text-xs">{testimonial.role}</p>
+                        </div>
+                        <div
+                          className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold"
+                          style={{
+                            background: "rgba(255,200,150,0.2)",
+                            color: accentColor,
+                            border: "1px solid rgba(255,200,150,0.3)",
+                            backdropFilter: "blur(8px)",
+                          }}
+                        >
+                          {testimonial.initials}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Progress bar */}
+                <div className="flex gap-2 mt-6">
+                  {contactTestimonials.map((_, i) => (
+                    <motion.button
+                      key={i}
+                      onClick={() => setActiveTestimonial(i)}
+                      className="relative h-[3px] rounded-full overflow-hidden cursor-pointer flex-1"
+                      style={{
+                        backgroundColor: "rgba(255,255,255,0.1)",
+                      }}
+                      whileHover={{ backgroundColor: "rgba(255,255,255,0.2)" }}
+                    >
+                      {activeTestimonial === i && (
+                        <motion.div
+                          className="absolute inset-0 rounded-full"
+                          style={{ backgroundColor: accentColor }}
+                          initial={{ scaleX: 0, transformOrigin: "left" }}
+                          animate={{ scaleX: 1 }}
+                          transition={{ duration: 6, ease: "linear" }}
+                          key={`progress-${activeTestimonial}`}
+                        />
+                      )}
+                    </motion.button>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Right side - Form */}
-          <div className="contact-form">
-            {submitted ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="h-full flex flex-col items-start justify-center"
-              >
-                <motion.div
-                  className="w-12 h-12 rounded-full border border-emerald-500/30 flex items-center justify-center mb-6"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                >
-                  <svg className="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <motion.path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 0.5, delay: 0.2 }}
-                    />
-                  </svg>
-                </motion.div>
-                <h3 className="text-2xl font-bold text-white mb-2">Message sent</h3>
-                <p className="text-white/50">We'll be in touch within 24 hours.</p>
-              </motion.div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Name */}
-                <div className="form-field">
-                  <label
-                    className="block text-xs uppercase tracking-[0.2em] mb-3"
-                    style={{ color: accentColorMuted }}
-                  >
-                    {isRevealed && <TypewriterText text="Name" delay={500} />}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-transparent border-b border-white/10 py-3 text-white focus:outline-none transition-colors placeholder:text-white/20"
-                    style={{ ["--focus-border" as string]: accentColorMuted }}
-                    onFocus={(e) => (e.currentTarget.style.borderColor = accentColorMuted)}
-                    onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
-                    placeholder="Your name"
-                  />
-                  <div
-                    className="field-underline h-px mt-[-1px]"
-                    style={{ background: `linear-gradient(to right, ${accentColorMuted}, transparent)` }}
-                  />
-                </div>
-
-                {/* Email */}
-                <div className="form-field">
-                  <label
-                    className="block text-xs uppercase tracking-[0.2em] mb-3"
-                    style={{ color: accentColorMuted }}
-                  >
-                    {isRevealed && <TypewriterText text="Email" delay={600} />}
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-transparent border-b border-white/10 py-3 text-white focus:outline-none transition-colors placeholder:text-white/20"
-                    onFocus={(e) => (e.currentTarget.style.borderColor = accentColorMuted)}
-                    onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
-                    placeholder="you@company.com"
-                  />
-                  <div
-                    className="field-underline h-px mt-[-1px]"
-                    style={{ background: `linear-gradient(to right, ${accentColorMuted}, transparent)` }}
-                  />
-                </div>
-
-                {/* Message */}
-                <div className="form-field">
-                  <label
-                    className="block text-xs uppercase tracking-[0.2em] mb-3"
-                    style={{ color: accentColorMuted }}
-                  >
-                    {isRevealed && <TypewriterText text="Message" delay={700} />}
-                  </label>
-                  <textarea
-                    required
-                    rows={4}
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full bg-transparent border-b border-white/10 py-3 text-white focus:outline-none transition-colors resize-none placeholder:text-white/20"
-                    onFocus={(e) => (e.currentTarget.style.borderColor = accentColorMuted)}
-                    onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
-                    placeholder="Tell us about your project..."
-                  />
-                  <div
-                    className="field-underline h-px mt-[-1px]"
-                    style={{ background: `linear-gradient(to right, ${accentColorMuted}, transparent)` }}
-                  />
-                </div>
-
-                {/* Submit - Magnetic Button */}
-                <MagneticButton
-                  disabled={isSubmitting}
-                  className="group flex items-center gap-3 text-white text-sm uppercase tracking-[0.2em] font-medium transition-colors disabled:opacity-50 py-4 px-8 border border-white/10 rounded-full"
-                  onHover={() => play("hover", { volume: 0.08 })}
-                  onClick={() => play("click")}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <span
-                        className="w-4 h-4 border border-white/30 rounded-full animate-spin"
-                        style={{ borderTopColor: accentColor }}
-                      />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <span style={{ color: accentColor }}>Get in Touch</span>
-                      {/* Arrow with diagonal slide on hover */}
-                      <span className="relative w-5 h-5 overflow-hidden inline-block">
-                        <span className="absolute inset-0 flex items-center justify-center transition-all duration-300 group-hover:translate-x-full group-hover:-translate-y-full" style={{ color: accentColor }}>→</span>
-                        <span className="absolute inset-0 flex items-center justify-center -translate-x-full translate-y-full transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0" style={{ color: accentColor }}>→</span>
-                      </span>
-                    </>
-                  )}
-                </MagneticButton>
-              </form>
-            )}
-          </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }

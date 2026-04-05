@@ -78,8 +78,8 @@ export default function ScrollBackground() {
     el.style.opacity = isInFooter ? "0" : "1";
     el.style.pointerEvents = isInFooter ? "none" : "auto";
     el.style.transition = inMorph
-      ? "opacity 0.6s ease"
-      : "background-color 0.5s ease, opacity 0.6s ease";
+      ? "opacity 0.15s ease"
+      : "background-color 0.5s ease, opacity 0.15s ease";
 
     lastColorRef.current = newColor;
     isMorphRef.current = inMorph;

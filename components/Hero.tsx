@@ -252,6 +252,94 @@ function StaggerButton({
   );
 }
 
+// Splash menu nav item with stagger text hover
+function SplashNavItem({
+  href,
+  label,
+  index,
+  onNavigate,
+}: {
+  href: string;
+  label: string;
+  index: number;
+  onNavigate: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const letters = label.split("");
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -40 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -40 }}
+      transition={{ duration: 0.5, delay: 0.2 + index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+      className="border-b border-white/5"
+    >
+      <TransitionLink
+        href={href}
+        onClick={onNavigate}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className="group flex items-center justify-between py-4"
+      >
+        <span
+          className="relative inline-flex overflow-hidden"
+          style={{
+            fontFamily: "var(--font-inter)",
+            fontSize: "clamp(2rem, 4vw, 3.2rem)",
+            fontWeight: 900,
+            letterSpacing: "-0.02em",
+            lineHeight: 1.2,
+            color: "#e5e1db",
+          }}
+        >
+          <span className="flex">
+            {letters.map((letter, i) => (
+              <span key={i} className="relative inline-block overflow-hidden">
+                <motion.span
+                  className="inline-block"
+                  animate={{ y: hovered ? "-100%" : "0%" }}
+                  transition={{
+                    duration: 0.3,
+                    delay: hovered ? i * 0.02 : (letters.length - i) * 0.015,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  {letter === " " ? "\u00A0" : letter}
+                </motion.span>
+                <motion.span
+                  className="absolute left-0 top-0 inline-block"
+                  style={{ color: "rgba(255, 200, 150, 1)" }}
+                  animate={{ y: hovered ? "0%" : "100%" }}
+                  transition={{
+                    duration: 0.3,
+                    delay: hovered ? i * 0.02 : (letters.length - i) * 0.015,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  {letter === " " ? "\u00A0" : letter}
+                </motion.span>
+              </span>
+            ))}
+          </span>
+        </span>
+
+        <motion.svg
+          width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" strokeWidth="2"
+          animate={{
+            color: hovered ? "rgba(255, 200, 150, 1)" : "rgba(255,255,255,0)",
+            x: hovered ? 0 : -4,
+          }}
+          transition={{ duration: 0.3 }}
+        >
+          <path d="M7 17L17 7M17 7H7M17 7V17" />
+        </motion.svg>
+      </TransitionLink>
+    </motion.div>
+  );
+}
+
 // Work items for mobile hero showcase
 const mobileWorkItems = [
   { title: "DESERT WINGS", category: "Flight School", image: "/thumbnails/Celestial Laptop Mockup.webp", slug: "desert-wings" },
@@ -771,34 +859,13 @@ function DesktopHero() {
                   { href: "/services/website-design", label: "SERVICES" },
                   { href: "/contact", label: "CONTACT" },
                 ].map((link, i) => (
-                  <motion.div
+                  <SplashNavItem
                     key={link.href}
-                    initial={{ opacity: 0, x: -40 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -40 }}
-                    transition={{ duration: 0.5, delay: 0.2 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-                    className="border-b border-white/5"
-                  >
-                    <TransitionLink
-                      href={link.href}
-                      onClick={() => setMenuOpen(false)}
-                      className="group flex items-center justify-between py-4"
-                    >
-                      <span
-                        className="text-4xl lg:text-5xl font-black uppercase tracking-[-0.02em] transition-all duration-300 group-hover:text-[#c48a5a] group-hover:translate-x-3"
-                        style={{ fontFamily: "var(--font-inter)", color: "#e5e1db", display: "inline-block" }}
-                      >
-                        {link.label}
-                      </span>
-                      <svg
-                        width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        className="text-white/0 group-hover:text-[#c48a5a] transition-all duration-300 group-hover:translate-x-1"
-                        stroke="currentColor" strokeWidth="2"
-                      >
-                        <path d="M7 17L17 7M17 7H7M17 7V17" />
-                      </svg>
-                    </TransitionLink>
-                  </motion.div>
+                    href={link.href}
+                    label={link.label}
+                    index={i}
+                    onNavigate={() => setMenuOpen(false)}
+                  />
                 ))}
               </div>
 

@@ -86,6 +86,43 @@ function CTAButton() {
   );
 }
 
+// Splash menu item with staggered text hover
+function SplashMenuItem({
+  href,
+  label,
+  index,
+  isActive: active,
+  onNavigate,
+}: {
+  href: string;
+  label: string;
+  index: number;
+  isActive: boolean;
+  onNavigate: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 30 }}
+      transition={{ delay: 0.1 + index * 0.1 }}
+    >
+      <TransitionLink
+        href={href}
+        onClick={onNavigate}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className="block text-5xl font-black py-4 transition-colors uppercase"
+        style={{ color: active ? accentColor : "#fff" }}
+      >
+        <StaggeredText text={label} isHovered={hovered} />
+      </TransitionLink>
+    </motion.div>
+  );
+}
+
 // Nav link with staggered hover effect
 function NavLink({
   href,
@@ -474,27 +511,17 @@ export default function Navbar() {
           >
             <div className="flex flex-col justify-center items-center h-full">
               {navLinks.map((link, index) => (
-                <motion.div
+                <SplashMenuItem
                   key={link.href}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 30 }}
-                  transition={{ delay: 0.1 + index * 0.1 }}
-                >
-                  <TransitionLink
-                    href={link.href}
-                    onClick={() => {
-                      play("click");
-                      setIsOpen(false);
-                    }}
-                    className="block text-5xl font-black py-4 transition-colors uppercase"
-                    style={{
-                      color: isActive(link.href) ? accentColor : "#fff",
-                    }}
-                  >
-                    {link.label}
-                  </TransitionLink>
-                </motion.div>
+                  href={link.href}
+                  label={link.label}
+                  index={index}
+                  isActive={isActive(link.href)}
+                  onNavigate={() => {
+                    play("click");
+                    setIsOpen(false);
+                  }}
+                />
               ))}
               {/* Services Section - Clickable Dropdown */}
               <motion.div
