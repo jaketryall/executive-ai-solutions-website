@@ -628,13 +628,13 @@ function DesktopContact() {
     <section
       ref={sectionRef}
       id="contact"
-      className="relative hidden md:block pb-12 lg:pb-16"
-      style={{ backgroundColor: "#e5e1db", zIndex: 10 }}
+      className="relative hidden md:block"
+      style={{ zIndex: 10 }}
     >
-      {/* Dark inner with rounded bottom corners — cream peeks through */}
       <div
-        className="relative pt-28 lg:pt-36 pb-44 lg:pb-56 overflow-hidden rounded-b-[3rem] lg:rounded-b-[4rem]"
+        className="relative pt-28 lg:pt-36 pb-44 lg:pb-56 overflow-hidden"
         style={{ backgroundColor: "#0a0908" }}
+        data-bg="dark"
       >
       {/* CSS for animations */}
       <style>{`

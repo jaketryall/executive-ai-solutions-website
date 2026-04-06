@@ -828,14 +828,28 @@ function DesktopHero() {
             exit={{ clipPath: "circle(0% at calc(100% - 52px) 52px)" }}
             transition={{ duration: 0.75, ease: [0.65, 0.05, 0, 1] }}
           >
-            {/* Close button */}
+
+            {/* Close button — lines animate from hamburger to X */}
             <button
               className="absolute top-7 right-8 w-10 h-10 rounded-full border border-white/15 flex items-center justify-center transition-all hover:bg-white hover:border-white group z-10"
               onClick={() => setMenuOpen(false)}
             >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-white group-hover:text-[#0a0908] transition-colors">
-                <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
+              <div className="relative w-3.5 h-3.5 flex items-center justify-center">
+                <motion.span
+                  className="absolute w-3.5 h-[1.5px] bg-white group-hover:bg-[#0a0908] transition-colors"
+                  initial={{ rotate: 0, y: -2.5 }}
+                  animate={{ rotate: 45, y: 0 }}
+                  exit={{ rotate: 0, y: -2.5 }}
+                  transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
+                />
+                <motion.span
+                  className="absolute w-3.5 h-[1.5px] bg-white group-hover:bg-[#0a0908] transition-colors"
+                  initial={{ rotate: 0, y: 2.5 }}
+                  animate={{ rotate: -45, y: 0 }}
+                  exit={{ rotate: 0, y: 2.5 }}
+                  transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
+                />
+              </div>
             </button>
 
             {/* Two-column layout like Lando L11 */}

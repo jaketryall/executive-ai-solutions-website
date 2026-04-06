@@ -68,7 +68,7 @@ export default function Footer() {
     const ctx = gsap.context(() => {
       const footer = footerRef.current!;
 
-      // Liquid curve — the SVG curve control point drops on scroll
+      // Liquid curve drops on scroll
       const curvePath = footer.querySelector(".footer-curve-path");
       if (curvePath) {
         gsap.fromTo(
@@ -138,6 +138,7 @@ export default function Footer() {
         style={{ backgroundColor: creamBg, zIndex: 10 }}
         data-footer
       >
+
         {/* Liquid curve SVG — extends up into the section above */}
         <div className="absolute left-0 right-0 -top-[80px] md:-top-[120px] h-[80px] md:h-[120px] pointer-events-none" style={{ zIndex: 10 }}>
           <svg
