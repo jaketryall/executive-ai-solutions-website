@@ -9,6 +9,7 @@ import { TransitionLink } from "@/components/PageTransition";
 import Footer from "@/components/Footer";
 import { useSound } from "@/components/SoundManager";
 import { getProjectBySlug, getNextProject } from "@/lib/data";
+import { SplitText as SplitTextShared, useSplitTextReveal } from "@/lib/hooks";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -1004,6 +1005,10 @@ export default function CaseStudyPage({
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const contentRef = useRef<HTMLElement>(null);
+
+  // SplitText reveal for content title
+  useSplitTextReveal(contentRef);
 
   const { scrollYProgress: heroProgress } = useScroll({
     target: heroRef,
@@ -1241,6 +1246,7 @@ export default function CaseStudyPage({
 
         {/* Unified content section with glassmorphic effect - includes Overview and Challenge/Solution */}
         <section
+          ref={contentRef}
           className="relative z-10 -mt-12 md:-mt-24 rounded-t-3xl md:rounded-t-[3rem] overflow-hidden backdrop-blur-xl"
           style={{
             backgroundColor: "rgba(10, 9, 8, 0.85)",
@@ -1302,12 +1308,11 @@ export default function CaseStudyPage({
                 viewport={{ once: true }}
                 transition={{ duration: 0.8 }}
               >
-                <h1
-                  ref={titleRef}
+                <SplitTextShared
+                  text={project.title}
+                  as="h1"
                   className="text-4xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-[-0.04em] mb-6"
-                >
-                  <SplitText delay={0.2}>{project.title}</SplitText>
-                </h1>
+                />
                 <p
                   className="text-xl md:text-2xl text-white/50 italic max-w-2xl"
                 >

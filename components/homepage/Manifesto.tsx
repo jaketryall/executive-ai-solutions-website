@@ -101,12 +101,38 @@ export default function Manifesto() {
     return () => ctx.revert();
   }, []);
 
+  // Mobile manifesto — words fade in staggered on scroll
+  useIsomorphicLayoutEffect(() => {
+    const mobileWords = document.querySelectorAll(".mobile-manifesto-word");
+    if (!mobileWords.length) return;
+
+    const mobileSection = document.querySelector(".mobile-manifesto")?.closest("section");
+
+    const ctx = gsap.context(() => {
+      gsap.set(mobileWords, { opacity: 0, y: 15 });
+      gsap.to(mobileWords, {
+        opacity: 1,
+        y: 0,
+        ease: "none",
+        stagger: 0.06,
+        scrollTrigger: {
+          trigger: mobileSection,
+          start: "top 70%",
+          end: "top 30%",
+          scrub: 0.8,
+        },
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <>
-      {/* Mobile */}
+      {/* Mobile — words reveal on scroll */}
       <section className="min-h-[70vh] flex items-center justify-center px-6 md:hidden" data-bg="dark">
         <p
-          className="text-center leading-[1.1]"
+          className="mobile-manifesto text-center leading-[1.1]"
           style={{
             fontFamily: "var(--font-inter), sans-serif",
             fontSize: "clamp(2rem, 8vw, 3rem)",
@@ -114,8 +140,25 @@ export default function Manifesto() {
             color: "#e5e1db",
           }}
         >
-          I don&apos;t just <span style={{ color: "rgba(255, 200, 150, 1)" }}>build</span> websites.
-          I build <span style={{ color: "rgba(255, 200, 150, 1)" }}>unfair advantages.</span>
+          {[
+            { text: "I ", accent: false },
+            { text: "don't ", accent: false },
+            { text: "just ", accent: false },
+            { text: "build ", accent: true },
+            { text: "websites. ", accent: false },
+            { text: "I ", accent: false },
+            { text: "build ", accent: false },
+            { text: "unfair ", accent: true },
+            { text: "advantages.", accent: true },
+          ].map((word, i) => (
+            <span
+              key={i}
+              className="mobile-manifesto-word inline-block"
+              style={{ color: word.accent ? "rgba(255, 200, 150, 1)" : undefined }}
+            >
+              {word.text}
+            </span>
+          ))}
         </p>
       </section>
 

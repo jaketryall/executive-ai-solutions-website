@@ -689,19 +689,22 @@ function MobileServices() {
         container.querySelectorAll(".mobile-service-row")
       );
 
-      gsap.set(rows, { y: 40, opacity: 0 });
-
-      gsap.to(rows, {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: "power3.out",
-        stagger: 0.12,
-        scrollTrigger: {
-          trigger: container,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
+      rows.forEach((row) => {
+        gsap.fromTo(
+          row,
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: row,
+              start: "top 95%",
+              end: "top 65%",
+              scrub: 0.4,
+            },
+          }
+        );
       });
     }, container);
 
@@ -719,115 +722,68 @@ function MobileServices() {
     <section
       ref={sectionRef}
       data-bg="dark"
-      className="md:hidden"
-      style={{
-        padding: "5rem 0",
-        position: "relative",
-      }}
+      className="md:hidden py-20 px-6 relative"
     >
-      <div style={{ padding: "0 1.25rem" }}>
-        {/* Header */}
-        <div ref={headerRef} style={{ marginBottom: "3rem" }}>
-          <p
-            style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: "0.7rem",
-              fontWeight: 500,
-              textTransform: "uppercase",
-              letterSpacing: "0.15em",
-              color: accentColorMuted,
-              marginBottom: "0.75rem",
-            }}
+      {/* Header */}
+      <div ref={headerRef} className="mb-12">
+        <p className="text-[10px] font-medium uppercase tracking-[0.3em] mb-4" style={{ color: accentColorMuted }}>
+          What I Do
+        </p>
+
+        <SplitText
+          text="SERVICES"
+          style={{
+            fontFamily: "Inter, sans-serif",
+            fontSize: "clamp(3rem, 14vw, 5rem)",
+            fontWeight: 900,
+            lineHeight: 0.85,
+            letterSpacing: "-0.04em",
+            color: textColor,
+          }}
+        />
+      </div>
+
+      {/* Accordion */}
+      <div ref={rowsContainerRef}>
+        {services.map((service, i) => (
+          <div
+            key={service.slug}
+            className="mobile-service-row"
+            style={{ borderBottom: `1px solid ${borderColor}` }}
           >
-            What I Do
-          </p>
-
-          <SplitText
-            text="SERVICES"
-            style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: "clamp(2.5rem, 12vw, 4rem)",
-              fontWeight: 900,
-              lineHeight: 0.95,
-              letterSpacing: "-0.03em",
-              color: textColor,
-            }}
-          />
-        </div>
-
-        {/* Accordion */}
-        <div
-          ref={rowsContainerRef}
-          style={{ borderTop: `1px solid ${borderColor}` }}
-        >
-          {services.map((service, i) => (
-            <div
-              key={service.slug}
-              className="mobile-service-row"
-              style={{ borderBottom: `1px solid ${borderColor}` }}
+            {/* Header */}
+            <button
+              onClick={() => setOpenIndex(openIndex === i ? null : i)}
+              className="w-full flex items-center justify-between py-5 gap-4"
+              style={{ background: "none", border: "none", cursor: "pointer" }}
             >
-              {/* Header */}
-              <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
+              <span className="text-xs font-medium" style={{ color: accentColorMuted, minWidth: "1.5rem" }}>
+                {service.number}
+              </span>
+
+              <motion.span
+                animate={{ color: openIndex === i ? accentColor : textColor }}
+                transition={{ duration: 0.3 }}
+                className="flex-1 text-left font-black"
                 style={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "1.25rem 0",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  gap: "1rem",
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: "clamp(1.4rem, 6vw, 2rem)",
+                  lineHeight: 1.1,
+                  letterSpacing: "-0.02em",
                 }}
               >
-                <span
-                  style={{
-                    fontFamily: "Inter, sans-serif",
-                    fontSize: "0.75rem",
-                    fontWeight: 500,
-                    color: accentColorMuted,
-                    minWidth: "1.75rem",
-                  }}
-                >
-                  {service.number}
-                </span>
+                {service.title}
+              </motion.span>
 
-                <motion.span
-                  animate={{
-                    color: openIndex === i ? accentColor : textColor,
-                  }}
-                  transition={{ duration: 0.3 }}
-                  style={{
-                    fontFamily: "Inter, sans-serif",
-                    fontSize: "clamp(1.25rem, 5vw, 1.75rem)",
-                    fontWeight: 900,
-                    lineHeight: 1.2,
-                    flex: 1,
-                    textAlign: "left",
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  {service.title}
-                </motion.span>
-
-                <motion.span
-                  animate={{ rotate: openIndex === i ? 45 : 0 }}
-                  transition={{
-                    duration: 0.4,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                  style={{
-                    fontSize: "1.5rem",
-                    color: accentColor,
-                    lineHeight: 1,
-                    fontWeight: 300,
-                    flexShrink: 0,
-                  }}
-                >
-                  +
-                </motion.span>
-              </button>
+              <motion.span
+                animate={{ rotate: openIndex === i ? 45 : 0 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="text-2xl font-light shrink-0"
+                style={{ color: accentColor, lineHeight: 1 }}
+              >
+                +
+              </motion.span>
+            </button>
 
               {/* Expandable content */}
               <AnimatePresence initial={false}>
@@ -934,7 +890,6 @@ function MobileServices() {
             </div>
           ))}
         </div>
-      </div>
     </section>
   );
 }

@@ -1,13 +1,20 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import { TransitionLink } from "@/components/PageTransition";
 import Footer from "@/components/Footer";
 import { useSound } from "@/components/SoundManager";
 import { projects } from "@/lib/data";
+import { SplitText, useSplitTextReveal } from "@/lib/hooks";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 // Warm cinematic color palette
 const accentColor = "rgba(255, 200, 150, 1)";
@@ -165,84 +172,73 @@ function ProjectCard({
 
 export default function WorkPage() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  const useIsomorphicLayoutEffect =
+    typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+  // SplitText reveal for hero headline
+  useSplitTextReveal(heroRef);
+
+  // GSAP scroll animations
+  useIsomorphicLayoutEffect(() => {
+    if (!containerRef.current) return;
+
+    const ctx = gsap.context(() => {
+      // Project cards scrub-stagger in
+      const cards = document.querySelectorAll(".work-card");
+      cards.forEach((card) => {
+        gsap.fromTo(
+          card,
+          { y: 60, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 90%",
+              end: "top 60%",
+              scrub: 0.4,
+            },
+          }
+        );
+      });
+
+      // CTA section
+      const ctaElements = document.querySelectorAll(".work-cta-reveal");
+      ctaElements.forEach((el) => {
+        gsap.fromTo(
+          el,
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 90%",
+              end: "top 65%",
+              scrub: 0.4,
+            },
+          }
+        );
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <>
-      {/* CSS for animations */}
-      <style jsx global>{`
-        @keyframes float {
-          0%, 100% {
-            transform: translate(0, 0) rotate(0deg);
-          }
-          25% {
-            transform: translate(10%, 5%) rotate(1deg);
-          }
-          50% {
-            transform: translate(5%, 10%) rotate(-1deg);
-          }
-          75% {
-            transform: translate(-5%, 5%) rotate(0.5deg);
-          }
-        }
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out forwards;
-        }
-      `}</style>
-
       <Navbar />
       <main
         ref={containerRef}
-        className="relative bg-[#0a0908] overflow-hidden animate-fade-in"
+        className="relative bg-[#0a0908] overflow-hidden"
         style={{ zIndex: 10 }}
       >
-        {/* Moving background elements */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
-          {/* Large gradient orb 1 */}
-          <div
-            className="absolute w-[800px] h-[800px] rounded-full opacity-30"
-            style={{
-              background: `radial-gradient(circle, ${accentColorMuted} 0%, transparent 70%)`,
-              top: "-20%",
-              right: "-10%",
-              filter: "blur(80px)",
-              animation: "float 20s ease-in-out infinite",
-            }}
-          />
-          {/* Large gradient orb 2 */}
-          <div
-            className="absolute w-[600px] h-[600px] rounded-full opacity-20"
-            style={{
-              background: `radial-gradient(circle, rgba(255, 180, 120, 0.4) 0%, transparent 70%)`,
-              bottom: "10%",
-              left: "-15%",
-              filter: "blur(60px)",
-              animation: "float 25s ease-in-out infinite reverse",
-            }}
-          />
-          {/* Smaller accent orb */}
-          <div
-            className="absolute w-[400px] h-[400px] rounded-full opacity-15"
-            style={{
-              background: `radial-gradient(circle, ${accentColor} 0%, transparent 70%)`,
-              top: "40%",
-              left: "60%",
-              filter: "blur(100px)",
-              animation: "float 18s ease-in-out infinite",
-              animationDelay: "-5s",
-            }}
-          />
-        </div>
-
-        {/* Minimal Hero */}
-        <section className="pt-32 pb-16 md:pt-40 md:pb-20 px-6 md:px-12 lg:px-20">
+        {/* Hero */}
+        <section ref={heroRef} className="pt-36 pb-20 md:pt-44 md:pb-28 px-6 md:px-12 lg:px-20">
           <div className="max-w-7xl mx-auto">
             {/* Label */}
             <motion.p
@@ -255,69 +251,77 @@ export default function WorkPage() {
               Projects
             </motion.p>
 
-            {/* Title */}
-            <motion.h1
-              className="text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[0.95] tracking-[-0.03em]"
-              initial={{ opacity: 0, y: 30 }}
+            {/* Title — SplitText letter reveal */}
+            <SplitText
+              text={"Selected\nwork"}
+              as="h1"
+              style={{
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "clamp(4rem, 10vw, 9rem)",
+                fontWeight: 900,
+                color: "#f5f0e8",
+                lineHeight: 0.9,
+                letterSpacing: "-0.04em",
+              }}
+            />
+
+            {/* Subtitle */}
+            <motion.p
+              className="text-white/30 text-lg mt-8 max-w-md"
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
             >
-              Selected work
-            </motion.h1>
+              A selection of projects crafted with precision and purpose.
+            </motion.p>
           </div>
         </section>
 
         {/* Projects Grid */}
-        <section className="pb-24 md:pb-32 px-6 md:px-12 lg:px-20">
+        <section className="pb-32 md:pb-40 px-6 md:px-12 lg:px-20">
           <div className="max-w-7xl mx-auto">
-            {/* 2-column grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               {projects.map((project, i) => (
-                <ProjectCard key={project.slug} project={project} index={i} />
+                <div key={project.slug} className="work-card">
+                  <ProjectCard project={project} index={i} />
+                </div>
               ))}
             </div>
           </div>
         </section>
 
         {/* CTA Section */}
-        <section className="py-24 md:py-32 px-6 md:px-12 lg:px-20 border-t border-white/5">
+        <section className="py-28 md:py-36 px-6 md:px-12 lg:px-20 border-t border-white/5">
           <div className="max-w-4xl mx-auto text-center">
-            <motion.h2
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-6"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+            <h2
+              className="work-cta-reveal text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-[-0.03em] mb-6"
             >
               Have a project in mind?
-            </motion.h2>
+            </h2>
 
-            <motion.p
-              className="text-white/50 text-lg mb-10 max-w-xl mx-auto"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-            >
-              Let's talk about what you're building.
-            </motion.p>
+            <p className="work-cta-reveal text-white/40 text-lg mb-12 max-w-xl mx-auto">
+              Let&apos;s talk about what you&apos;re building.
+            </p>
 
-            <TransitionLink href="/contact">
-              <motion.button
-                className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span className="text-white font-medium">Contact me</span>
-                <span
-                  className="w-7 h-7 rounded-full flex items-center justify-center transition-transform group-hover:translate-x-0.5"
-                  style={{ backgroundColor: accentColor }}
+            <div className="work-cta-reveal">
+              <TransitionLink href="/contact">
+                <motion.button
+                  className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-white/15 hover:border-white/30 hover:bg-white/5 transition-all cursor-pointer"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </span>
-              </motion.button>
-            </TransitionLink>
+                  <span className="text-white font-semibold text-sm uppercase tracking-[0.12em]">Start a project</span>
+                  <span
+                    className="w-7 h-7 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: accentColor }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </motion.button>
+              </TransitionLink>
+            </div>
           </div>
         </section>
       </main>

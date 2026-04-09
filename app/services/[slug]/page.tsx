@@ -9,6 +9,7 @@ import { TransitionLink } from "@/components/PageTransition";
 import Footer from "@/components/Footer";
 import { useSound } from "@/components/SoundManager";
 import { services, getServiceBySlug, getRelatedProjects, PricingTier } from "@/lib/data";
+import { SplitText, useSplitTextReveal } from "@/lib/hooks";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -85,6 +86,9 @@ function CinematicHero({
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const accentLineRef = useRef<HTMLDivElement>(null);
+
+  // SplitText reveal for hero title
+  useSplitTextReveal(contentRef);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -227,10 +231,12 @@ function CinematicHero({
             />
           </div>
 
-          {/* Title */}
-          <h1 className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white tracking-[-0.04em] leading-[0.85] mb-4">
-            {service.title}
-          </h1>
+          {/* Title — SplitText letter reveal */}
+          <SplitText
+            text={service.title}
+            as="h1"
+            className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white tracking-[-0.04em] leading-[0.85] mb-4"
+          />
 
           {/* Subtitle */}
           <p

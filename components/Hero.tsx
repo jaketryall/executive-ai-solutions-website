@@ -1,10 +1,17 @@
 "use client";
 
 import { motion, useScroll, useTransform, useMotionTemplate, useSpring, AnimatePresence } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import AnimatedLogo from "./AnimatedLogo";
 import { TransitionLink } from "./PageTransition";
+import { SplitText, useSplitTextReveal } from "@/lib/hooks";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 // Bottom-left hero interaction — circle draws on hover, arrow rotates in
 function ViewWorkWidget() {
@@ -348,234 +355,135 @@ const mobileWorkItems = [
   { title: "ADVENTURE AIR", category: "Tours", image: "/thumbnails/Elegant Black Laptop Mockup.webp", slug: "adventure-air" },
 ];
 
-// Mobile Hero - Video-forward with work showcase
+// Mobile Hero — cream bg, bold JAKE RYALL, matches desktop feel
 function MobileHero() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoReady, setVideoReady] = useState(false);
-  const [introComplete, setIntroComplete] = useState(false);
-  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
-
-  // Delay video loading until intro is partway through (reduces initial load)
-  useEffect(() => {
-    const loadTimer = setTimeout(() => {
-      setShouldLoadVideo(true);
-    }, 2000); // Start loading video 2s in (during logo animation)
-    return () => clearTimeout(loadTimer);
-  }, []);
-
-  // Ensure intro animations complete before allowing fade-out
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIntroComplete(true);
-    }, 3500); // Wait for logo draw + text animations
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video || !shouldLoadVideo) return;
-
-    const handleReady = () => {
-      // Only mark ready if video is actually playing (has current time > 0)
-      // This prevents black frame flash
-      if (video.currentTime > 0 || video.readyState >= 4) {
-        setVideoReady(true);
-      }
-    };
-
-    // Check if video is already playing (cached)
-    if (video.currentTime > 0 && video.readyState >= 3) {
-      setVideoReady(true);
-      return;
-    }
-
-    // Listen for playing event - most reliable for "video has a frame"
-    video.addEventListener("playing", handleReady);
-    video.addEventListener("timeupdate", handleReady, { once: true });
-
-    return () => {
-      video.removeEventListener("playing", handleReady);
-      video.removeEventListener("timeupdate", handleReady);
-    };
-  }, [shouldLoadVideo]);
-
-  // Only fade out content when BOTH video is playing AND intro is complete
-  const shouldFadeOut = videoReady && introComplete;
-
   return (
-    <section className="relative h-screen bg-[#141312] md:hidden overflow-hidden">
-      {/* Poster image - shows immediately */}
-      <div className="absolute inset-0">
-        <Image
-          src="/video-poster.webp"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-[#141312]/60" />
+    <section className="relative min-h-screen md:hidden overflow-hidden" style={{ backgroundColor: "#e5e1db" }}>
+      {/* Subtle decorative lines */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 430 932" fill="none">
+        <path d="M150,0 C160,200 140,400 155,600 S140,800 150,932" stroke="rgba(0,0,0,0.04)" strokeWidth="1" />
+        <path d="M300,0 C310,250 290,500 305,750 S290,900 300,932" stroke="rgba(0,0,0,0.03)" strokeWidth="1" />
+      </svg>
+
+      {/* Top nav */}
+      <div className="relative z-10 flex items-center justify-between px-6 pt-6">
+        <TransitionLink href="/" className="text-[11px] font-bold uppercase tracking-[0.08em]" style={{ color: "#1a1816" }}>
+          Jake Ryall
+        </TransitionLink>
+        <div className="flex items-center gap-3">
+          <TransitionLink
+            href="/contact"
+            className="px-4 py-2 rounded-full text-[10px] font-semibold uppercase tracking-[0.1em] border transition-colors"
+            style={{ color: "#1a1816", borderColor: "rgba(26,24,22,0.15)" }}
+          >
+            Get in Touch
+          </TransitionLink>
+        </div>
       </div>
 
-      {/* Video - only loads after 2s delay, fades in when ready */}
-      <motion.div
-        className="absolute inset-0"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: shouldFadeOut ? 1 : 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-      >
-        {shouldLoadVideo && (
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            className="w-full h-full object-cover"
-          >
-            <source src="/final-comp.mp4?v=6" type="video/mp4" />
-          </video>
-        )}
-        <div className="absolute inset-0 bg-[#141312]/50" />
-      </motion.div>
-
-      {/* Content overlay */}
-      <div className="absolute inset-0 flex flex-col">
-        {/* Main content - centered, fades out when intro complete AND video loaded */}
-        <motion.div
-          className="flex-1 flex flex-col items-center justify-center px-6 pt-20"
-          initial={{ opacity: 1 }}
-          animate={{ opacity: shouldFadeOut ? 0 : 1 }}
-          transition={{ duration: 0.8, delay: shouldFadeOut ? 0.5 : 0 }}
-        >
-          {/* Logo with draw animation */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <AnimatedLogo
-              width={200}
-              height={120}
-              drawDuration={2}
-              delay={0.5}
-            />
-          </motion.div>
-
-          {/* Tagline */}
-          <motion.p
-            className="mt-6 text-[#f5f0e8]/80 text-center text-sm font-light tracking-[0.2em] uppercase"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 2.8 }}
-          >
-            Premium AI Solutions
-          </motion.p>
-
-          {/* Subtext */}
-          <motion.p
-            className="mt-4 text-[#f5f0e8]/50 text-center text-xs max-w-[280px] leading-relaxed"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 3.0 }}
-          >
-            Transforming businesses with cutting-edge artificial intelligence
-          </motion.p>
-        </motion.div>
-
-        {/* Bottom work showcase - auto-scrolling marquee, stays visible */}
-        <motion.div
-          className="pb-8 overflow-hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 3.2 }}
-        >
-          <style>{`
-            @keyframes work-marquee {
-              from { transform: translateX(0); }
-              to { transform: translateX(-50%); }
-            }
-          `}</style>
-
-          {/* Label */}
-          <div className="px-6 mb-3">
-            <span className="text-[#f5f0e8]/40 text-[10px] uppercase tracking-[0.2em]">
-              Our Work
-            </span>
-          </div>
-
-          {/* Marquee container - only render images after intro (3s) to not compete with LCP */}
-          <div
-            className="flex gap-6"
+      {/* Center — big bold name */}
+      <div className="relative z-10 flex flex-col items-center justify-center px-6" style={{ minHeight: "calc(100vh - 140px)" }}>
+        {/* Title — letter-by-letter reveal on load */}
+        <div className="text-center">
+          <h1
             style={{
-              animation: "work-marquee 25s linear infinite",
-              width: "fit-content",
+              fontFamily: "var(--font-inter), sans-serif",
+              fontSize: "clamp(5rem, 22vw, 10rem)",
+              fontWeight: 900,
+              color: "#1a1816",
+              lineHeight: 0.82,
+              letterSpacing: "-0.05em",
             }}
           >
-            {/* First set */}
-            {mobileWorkItems.map((item) => (
-              <TransitionLink
-                key={`a-${item.slug}`}
-                href={`/work/${item.slug}`}
-                className="shrink-0 flex items-center gap-4 active:scale-[0.98] transition-transform"
-              >
-                <div className="w-28 h-20 rounded-lg overflow-hidden bg-[#f5f0e8]/10 relative">
-                  {introComplete ? (
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      className="object-cover"
-                      sizes="112px"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-[#f5f0e8]/5" />
-                  )}
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[#f5f0e8] text-sm font-medium tracking-wide">
-                    {item.title}
-                  </span>
-                  <span className="text-[#f5f0e8]/50 text-xs uppercase tracking-wider">
-                    {item.category}
-                  </span>
-                </div>
-              </TransitionLink>
+            {["JAKE", "RYALL"].map((line, li) => (
+              <span key={li} className="block overflow-hidden">
+                {line.split("").map((char, ci) => (
+                  <motion.span
+                    key={ci}
+                    className="inline-block"
+                    initial={{ y: "100%" }}
+                    animate={{ y: "0%" }}
+                    transition={{
+                      duration: 0.6,
+                      delay: 0.3 + (li * line.length + ci) * 0.03,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                  >
+                    {char}
+                  </motion.span>
+                ))}
+              </span>
             ))}
-            {/* Duplicate set for seamless loop */}
-            {mobileWorkItems.map((item) => (
-              <TransitionLink
-                key={`b-${item.slug}`}
-                href={`/work/${item.slug}`}
-                className="shrink-0 flex items-center gap-4 active:scale-[0.98] transition-transform"
-              >
-                <div className="w-28 h-20 rounded-lg overflow-hidden bg-[#f5f0e8]/10 relative">
-                  {introComplete ? (
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      className="object-cover"
-                      sizes="112px"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-[#f5f0e8]/5" />
-                  )}
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[#f5f0e8] text-sm font-medium tracking-wide">
-                    {item.title}
-                  </span>
-                  <span className="text-[#f5f0e8]/50 text-xs uppercase tracking-wider">
-                    {item.category}
-                  </span>
-                </div>
-              </TransitionLink>
-            ))}
-          </div>
-        </motion.div>
+          </h1>
+        </div>
+
+        {/* Subtitle */}
+        <motion.p
+          className="text-center text-[10px] uppercase tracking-[0.3em] mt-8"
+          style={{ color: "#8a857d" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+        >
+          Websites that convert · Brands that stand out
+        </motion.p>
       </div>
+
+      {/* Bottom work showcase */}
+      <motion.div
+        className="relative z-10 pb-6 overflow-hidden"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.8 }}
+      >
+        <style>{`
+          @keyframes work-marquee {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+          }
+        `}</style>
+
+        <div className="px-6 mb-3 flex items-center justify-between">
+          <span className="text-[10px] uppercase tracking-[0.15em]" style={{ color: "#8a857d" }}>
+            Latest Projects
+          </span>
+          <TransitionLink href="/work" className="text-[10px] uppercase tracking-[0.15em]" style={{ color: "rgba(26,24,22,0.4)" }}>
+            View All →
+          </TransitionLink>
+        </div>
+
+        <div
+          className="flex gap-5 pl-6"
+          style={{
+            animation: "work-marquee 20s linear infinite",
+            width: "fit-content",
+          }}
+        >
+          {[...mobileWorkItems, ...mobileWorkItems].map((item, i) => (
+            <TransitionLink
+              key={`${item.slug}-${i}`}
+              href={`/work/${item.slug}`}
+              className="shrink-0 active:scale-[0.98] transition-transform"
+            >
+              <div className="w-32 h-24 rounded-xl overflow-hidden relative" style={{ border: "1px solid rgba(26,24,22,0.08)" }}>
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  className="object-cover"
+                  sizes="128px"
+                />
+              </div>
+              <p className="text-[10px] font-semibold mt-2 tracking-wide" style={{ color: "#1a1816" }}>
+                {item.title}
+              </p>
+              <p className="text-[9px] uppercase tracking-wider" style={{ color: "#8a857d" }}>
+                {item.category}
+              </p>
+            </TransitionLink>
+          ))}
+        </div>
+      </motion.div>
     </section>
   );
 }

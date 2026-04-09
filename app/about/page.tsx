@@ -1,12 +1,19 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import { TransitionLink } from "@/components/PageTransition";
 import Footer from "@/components/Footer";
 import { useSound } from "@/components/SoundManager";
+import { SplitText, useSplitTextReveal } from "@/lib/hooks";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 // Warm cinematic color palette
 const accentColor = "rgba(255, 200, 150, 1)";
@@ -110,7 +117,42 @@ function BentoCard({
 export default function AboutPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
+  const heroContentRef = useRef<HTMLDivElement>(null);
   const { play } = useSound();
+
+  const useIsomorphicLayoutEffect =
+    typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+  // SplitText reveal for hero title
+  useSplitTextReveal(heroContentRef);
+
+  // GSAP scrub animations for content sections
+  useIsomorphicLayoutEffect(() => {
+    if (!containerRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const scrubElements = document.querySelectorAll(".about-scrub");
+      scrubElements.forEach((el) => {
+        gsap.fromTo(
+          el,
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 92%",
+              end: "top 60%",
+              scrub: 0.4,
+            },
+          }
+        );
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
 
   const { scrollYProgress: heroProgress } = useScroll({
     target: heroRef,
@@ -139,7 +181,7 @@ export default function AboutPage() {
             }}
           />
 
-          <div className="relative z-10 w-full px-6 md:px-12 lg:px-20">
+          <div ref={heroContentRef} className="relative z-10 w-full px-6 md:px-12 lg:px-20">
             <div className="max-w-7xl mx-auto">
               {/* Small label */}
               <motion.p
@@ -152,21 +194,21 @@ export default function AboutPage() {
                 About
               </motion.p>
 
-              {/* Large asymmetric title */}
+              {/* Large asymmetric title — SplitText letter reveal */}
               <div className="grid md:grid-cols-12 gap-8 items-end">
                 <div className="md:col-span-7">
-                  <motion.h1
-                    className="text-[12vw] md:text-[8vw] font-black text-white leading-[0.85] tracking-[-0.04em]"
-                    initial={{ opacity: 0, y: 60 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    I BUILD
-                    <br />
-                    <span style={{ color: accentColor }}>WEBSITES</span>
-                    <br />
-                    THAT WORK
-                  </motion.h1>
+                  <SplitText
+                    text={"I BUILD\nWEBSITES\nTHAT WORK"}
+                    as="h1"
+                    style={{
+                      fontFamily: "var(--font-inter), sans-serif",
+                      fontSize: "clamp(3rem, 8vw, 8rem)",
+                      fontWeight: 900,
+                      color: "#f5f0e8",
+                      lineHeight: 0.85,
+                      letterSpacing: "-0.04em",
+                    }}
+                  />
 
                   <motion.p
                     className="text-white/50 text-lg leading-relaxed mt-8 max-w-lg"

@@ -1,10 +1,17 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useSound } from "@/components/SoundManager";
+import { SplitText, useSplitTextReveal } from "@/lib/hooks";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 // Warm cinematic color palette
 const accentColor = "rgba(255, 200, 150, 1)";
@@ -65,7 +72,11 @@ function MovingBackground() {
 export default function ContactPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
+  const heroContentRef = useRef<HTMLDivElement>(null);
   const { play } = useSound();
+
+  // SplitText reveal for hero title
+  useSplitTextReveal(heroContentRef);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -144,7 +155,7 @@ export default function ContactPage() {
             }}
           />
 
-          <div className="relative z-10 w-full px-6 md:px-12 lg:px-20">
+          <div ref={heroContentRef} className="relative z-10 w-full px-6 md:px-12 lg:px-20">
             <div className="max-w-7xl mx-auto">
               {/* Label */}
               <motion.p
@@ -157,19 +168,21 @@ export default function ContactPage() {
                 Contact
               </motion.p>
 
-              {/* Large title */}
+              {/* Large title — SplitText letter reveal */}
               <div className="grid md:grid-cols-12 gap-8 items-end">
                 <div className="md:col-span-8">
-                  <motion.h1
-                    className="text-[11vw] md:text-[7vw] font-black text-white leading-[0.85] tracking-[-0.04em]"
-                    initial={{ opacity: 0, y: 60 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    LET'S
-                    <br />
-                    <span style={{ color: accentColor }}>TALK</span>
-                  </motion.h1>
+                  <SplitText
+                    text={"LET'S\nTALK"}
+                    as="h1"
+                    style={{
+                      fontFamily: "var(--font-inter), sans-serif",
+                      fontSize: "clamp(4rem, 11vw, 10rem)",
+                      fontWeight: 900,
+                      color: "#f5f0e8",
+                      lineHeight: 0.85,
+                      letterSpacing: "-0.04em",
+                    }}
+                  />
                 </div>
 
                 <motion.div

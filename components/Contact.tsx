@@ -5,6 +5,7 @@ import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SplitText from "./SplitText";
+import { SplitText as SplitTextHooks, useSplitTextReveal } from "@/lib/hooks";
 import { useSound } from "./SoundManager";
 
 if (typeof window !== "undefined") {
@@ -134,8 +135,10 @@ function TypewriterText({
   );
 }
 
-// Mobile Contact - Clean minimal form-first layout
+// Mobile Contact - Bold with SplitText and micro-interactions
 function MobileContact() {
+  const mobileContactRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -144,6 +147,40 @@ function MobileContact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+
+  const useIsomorphicLayoutEffect =
+    typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+  // SplitText reveal for headline
+  useSplitTextReveal(headerRef);
+
+  // GSAP scrub reveals for form fields
+  useIsomorphicLayoutEffect(() => {
+    if (!mobileContactRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const fields = mobileContactRef.current!.querySelectorAll(".mobile-form-field");
+      fields.forEach((field) => {
+        gsap.fromTo(
+          field,
+          { y: 30, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: field,
+              start: "top 95%",
+              end: "top 70%",
+              scrub: 0.4,
+            },
+          }
+        );
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -155,32 +192,36 @@ function MobileContact() {
 
   return (
     <section
+      ref={mobileContactRef}
       id="contact"
-      className="md:hidden relative rounded-t-[2rem] pt-16 pb-20"
-      style={{
-        zIndex: 30,
-        marginTop: "-2rem",
-      }}
+      className="md:hidden relative py-20"
     >
-      {/* Header with status */}
-      <div className="px-6 mb-10">
-        <div className="flex items-center gap-3 mb-6">
+      {/* Header */}
+      <div ref={headerRef} className="px-6 mb-12">
+        <div className="flex items-center gap-3 mb-8">
           <motion.span
             className="w-2 h-2 rounded-full bg-emerald-500"
-            animate={{ opacity: [1, 0.4, 1] }}
+            animate={{ opacity: [1, 0.4, 1], scale: [1, 1.2, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           />
           <span className="text-[10px] uppercase tracking-[0.2em] text-emerald-400/80">
             Taking on projects
           </span>
         </div>
-        <h2 className="text-[12vw] font-black text-[#f5f0e8] tracking-[-0.03em] leading-[0.9] mb-4">
-          GET IN
-          <br />
-          <span style={{ color: accentColor }}>TOUCH</span>
-        </h2>
-        <p className="text-[#f5f0e8]/40 text-sm">
-          Tell us about your project and we'll respond within 24 hours.
+        <SplitTextHooks
+          text={"GET IN\nTOUCH"}
+          as="h2"
+          style={{
+            fontFamily: "var(--font-inter), sans-serif",
+            fontSize: "clamp(3.5rem, 16vw, 6rem)",
+            fontWeight: 900,
+            color: "#f5f0e8",
+            lineHeight: 0.85,
+            letterSpacing: "-0.04em",
+          }}
+        />
+        <p className="text-[#f5f0e8]/35 text-base mt-6 leading-relaxed">
+          Tell us about your project and we&apos;ll respond within 24 hours.
         </p>
       </div>
 
@@ -221,7 +262,7 @@ function MobileContact() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name field */}
             <div
-              className="rounded-xl p-4 transition-all duration-200"
+              className="mobile-form-field rounded-xl p-4 transition-all duration-200"
               style={{
                 background: focusedField === "name" ? "rgba(255, 200, 150, 0.05)" : "rgba(245, 240, 232, 0.03)",
                 border: `1px solid ${focusedField === "name" ? "rgba(255, 200, 150, 0.2)" : "rgba(245, 240, 232, 0.08)"}`,
@@ -247,7 +288,7 @@ function MobileContact() {
 
             {/* Email field */}
             <div
-              className="rounded-xl p-4 transition-all duration-200"
+              className="mobile-form-field rounded-xl p-4 transition-all duration-200"
               style={{
                 background: focusedField === "email" ? "rgba(255, 200, 150, 0.05)" : "rgba(245, 240, 232, 0.03)",
                 border: `1px solid ${focusedField === "email" ? "rgba(255, 200, 150, 0.2)" : "rgba(245, 240, 232, 0.08)"}`,
@@ -273,7 +314,7 @@ function MobileContact() {
 
             {/* Message field */}
             <div
-              className="rounded-xl p-4 transition-all duration-200"
+              className="mobile-form-field rounded-xl p-4 transition-all duration-200"
               style={{
                 background: focusedField === "message" ? "rgba(255, 200, 150, 0.05)" : "rgba(245, 240, 232, 0.03)",
                 border: `1px solid ${focusedField === "message" ? "rgba(255, 200, 150, 0.2)" : "rgba(245, 240, 232, 0.08)"}`,
@@ -301,7 +342,7 @@ function MobileContact() {
             <motion.button
               type="submit"
               disabled={isSubmitting}
-              className="relative w-full mt-2 py-4 rounded-xl font-semibold text-[#0a0806] overflow-hidden disabled:opacity-70"
+              className="mobile-form-field relative w-full mt-4 py-5 rounded-full font-bold text-sm uppercase tracking-[0.1em] text-[#0a0806] overflow-hidden disabled:opacity-70"
               style={{ background: accentColor }}
               whileTap={{ scale: 0.98 }}
             >
@@ -328,9 +369,7 @@ function MobileContact() {
                 ) : (
                   <>
                     <span>Send Message</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
+                    <span>→</span>
                   </>
                 )}
               </span>
@@ -339,16 +378,16 @@ function MobileContact() {
         )}
       </div>
 
-      {/* Footer - email as subtle secondary option */}
-      <div className="px-6 mt-10 pt-8 border-t border-[#f5f0e8]/5">
-        <p className="text-[#f5f0e8]/30 text-xs text-center mb-3">
+      {/* Email fallback */}
+      <div className="px-6 mt-12 pt-8" style={{ borderTop: "1px solid rgba(245,240,232,0.05)" }}>
+        <p className="text-[#f5f0e8]/25 text-[10px] uppercase tracking-[0.2em] mb-2">
           Prefer email?
         </p>
         <a
           href="mailto:jaker@executiveaisolutions.com"
-          className="text-[#f5f0e8]/60 text-sm text-center block hover:text-[#f5f0e8] transition-colors"
+          className="text-[#f5f0e8]/50 text-sm hover:text-[#f5f0e8] transition-colors inline-flex items-center gap-2"
         >
-          jaker@executiveaisolutions.com
+          jaker@executiveaisolutions.com <span className="text-xs">↗</span>
         </a>
       </div>
     </section>
