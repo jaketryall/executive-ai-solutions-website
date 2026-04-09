@@ -265,10 +265,12 @@ function DesktopWork() {
   );
 }
 
-/* ─── Mobile: Horizontal Snap Scroll ─── */
+/* ─── Mobile: 2-column grid, rows drift in opposite directions ─── */
 function MobileWork() {
   const mobileWorkRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
+  const mobileRow1Ref = useRef<HTMLDivElement>(null);
+  const mobileRow2Ref = useRef<HTMLDivElement>(null);
 
   useSplitTextReveal(headerRef);
 
@@ -276,35 +278,48 @@ function MobileWork() {
     if (!mobileWorkRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Each card reveals individually on scroll
-      const cards = mobileWorkRef.current!.querySelectorAll(".mobile-work-card");
-      cards.forEach((card) => {
-        gsap.fromTo(
-          card,
-          { y: 60, opacity: 0, scale: 0.97 },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 95%",
-              end: "top 60%",
-              scrub: 0.5,
-            },
-          }
+      const section = mobileWorkRef.current!;
+      const row1 = mobileRow1Ref.current;
+      const row2 = mobileRow2Ref.current;
+
+      // Row 1 drifts RIGHT to LEFT
+      if (row1) {
+        gsap.fromTo(row1,
+          { x: 40 },
+          { x: -40, ease: "none",
+            scrollTrigger: { trigger: section, start: "top bottom", end: "bottom top", scrub: 1 } }
         );
-      });
+      }
+
+      // Row 2 drifts LEFT to RIGHT (opposite)
+      if (row2) {
+        gsap.fromTo(row2,
+          { x: -40 },
+          { x: 40, ease: "none",
+            scrollTrigger: { trigger: section, start: "top bottom", end: "bottom top", scrub: 1 } }
+        );
+      }
+
+      // Cards fade in
+      const cards = section.querySelectorAll(".mobile-work-card");
+      gsap.fromTo(cards,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, stagger: 0.06, ease: "power2.out",
+          scrollTrigger: { trigger: section, start: "top 85%", toggleActions: "play none none none" } }
+      );
     });
 
     return () => ctx.revert();
   }, []);
 
+  // Split into 2 rows
+  const row1 = projects.slice(0, 2);
+  const row2 = [...projects].reverse().slice(0, 2);
+
   return (
-    <section ref={mobileWorkRef} data-bg="cream" className="md:hidden pt-20 pb-24">
+    <section ref={mobileWorkRef} data-bg="cream" className="md:hidden pt-20 pb-24 overflow-hidden">
       {/* Header */}
-      <div ref={headerRef} className="px-6 mb-14">
+      <div ref={headerRef} className="px-5 mb-10">
         <p className="text-[10px] font-medium tracking-[0.3em] uppercase mb-4" style={{ color: accentColor }}>
           Selected Work
         </p>
@@ -321,38 +336,48 @@ function MobileWork() {
         />
       </div>
 
-      {/* Full-bleed editorial cards */}
-      <div className="flex flex-col gap-10">
-        {projects.map((project, i) => {
-          const num = String(i + 1).padStart(2, "0");
-          return (
-            <TransitionLink key={project.slug} href={`/work/${project.slug}`} className="mobile-work-card block">
-              {/* Full-width image — no padding, bleeds to edges */}
-              <div className="relative overflow-hidden" style={{ aspectRatio: "3/4" }}>
-                <Image src={project.image} alt={project.title} fill className="object-cover" sizes="100vw" />
-                <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 40%, transparent 70%)" }} />
+      {/* Row 1 — drifts right to left */}
+      <div ref={mobileRow1Ref} className="flex gap-3 mb-3" style={{ paddingLeft: "3vw", paddingRight: "3vw" }}>
+        {row1.map((project, i) => (
+          <MobileCard key={`r1-${project.slug}`} project={project} index={i} />
+        ))}
+      </div>
 
-                {/* Number overlay top-right */}
-                <div className="absolute top-5 right-6">
-                  <span className="text-white/20 text-xs font-medium">{num}</span>
-                </div>
-
-                {/* Content at bottom */}
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <p className="text-white/50 text-[10px] uppercase tracking-[0.2em] mb-2">{project.category}</p>
-                  <h3
-                    className="text-white font-black tracking-tight"
-                    style={{ fontSize: "clamp(1.5rem, 7vw, 2.5rem)", lineHeight: 1 }}
-                  >
-                    {project.title}
-                  </h3>
-                </div>
-              </div>
-            </TransitionLink>
-          );
-        })}
+      {/* Row 2 — drifts left to right */}
+      <div ref={mobileRow2Ref} className="flex gap-3" style={{ paddingLeft: "3vw", paddingRight: "3vw" }}>
+        {row2.map((project, i) => (
+          <MobileCard key={`r2-${project.slug}`} project={project} index={i + 2} />
+        ))}
       </div>
     </section>
+  );
+}
+
+/* ─── Mobile card ─── */
+function MobileCard({ project, index }: { project: (typeof projects)[number]; index: number }) {
+  const num = String(index + 1).padStart(2, "0");
+  return (
+    <TransitionLink
+      href={`/work/${project.slug}`}
+      className="mobile-work-card block shrink-0"
+      style={{ width: "48%" }}
+    >
+      <div
+        className="relative rounded-xl overflow-hidden"
+        style={{ aspectRatio: "3/4", border: "1px solid rgba(26,23,20,0.08)" }}
+      >
+        <Image src={project.image} alt={project.title} fill className="object-cover" sizes="48vw" />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 50%, transparent 70%)" }} />
+        <div className="absolute bottom-0 left-0 right-0 p-3">
+          <p className="text-white/40 text-[8px] uppercase tracking-[0.15em] mb-1">{project.category}</p>
+          <h3 className="text-white font-black text-sm leading-tight tracking-tight">{project.title}</h3>
+        </div>
+      </div>
+      <div className="flex items-baseline justify-between mt-2 px-0.5">
+        <span className="text-[9px] font-medium" style={{ color: accentColor }}>{num}</span>
+        <span className="text-[9px]" style={{ color: "rgba(26,23,20,0.3)" }}>{project.year}</span>
+      </div>
+    </TransitionLink>
   );
 }
 
