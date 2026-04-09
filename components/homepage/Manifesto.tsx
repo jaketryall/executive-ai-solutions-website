@@ -101,65 +101,96 @@ export default function Manifesto() {
     return () => ctx.revert();
   }, []);
 
-  // Mobile manifesto — words fade in staggered on scroll
+  // Mobile manifesto — char-level scrub + signature draw (same as desktop)
   useIsomorphicLayoutEffect(() => {
-    const mobileWords = document.querySelectorAll(".mobile-manifesto-word");
-    if (!mobileWords.length) return;
+    const mobileSection = document.querySelector(".mobile-manifesto-section");
+    if (!mobileSection) return;
 
-    const mobileSection = document.querySelector(".mobile-manifesto")?.closest("section");
+    const chars = mobileSection.querySelectorAll("[data-split-char]");
+    const sig = mobileSection.querySelector(".mobile-signature-path") as SVGPathElement | null;
 
     const ctx = gsap.context(() => {
-      gsap.set(mobileWords, { opacity: 0, y: 15 });
-      gsap.to(mobileWords, {
-        opacity: 1,
-        y: 0,
-        ease: "none",
-        stagger: 0.06,
-        scrollTrigger: {
-          trigger: mobileSection,
-          start: "top 70%",
-          end: "top 30%",
-          scrub: 0.8,
-        },
-      });
-    });
+      // Chars reveal from below — scrub-linked
+      if (chars.length) {
+        gsap.set(chars, { yPercent: 100 });
+        gsap.to(chars, {
+          yPercent: 0,
+          stagger: 0.02,
+          ease: "none",
+          scrollTrigger: {
+            trigger: mobileSection,
+            start: "top 60%",
+            end: "top 10%",
+            scrub: 1,
+          },
+        });
+      }
+
+      // Signature draws on scroll
+      if (sig) {
+        const length = sig.getTotalLength();
+        gsap.set(sig, { strokeDasharray: length, strokeDashoffset: length });
+        gsap.to(sig, {
+          strokeDashoffset: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: mobileSection,
+            start: "top 80%",
+            end: "top 30%",
+            scrub: 1,
+          },
+        });
+      }
+    }, mobileSection);
 
     return () => ctx.revert();
   }, []);
 
   return (
     <>
-      {/* Mobile — words reveal on scroll */}
-      <section className="min-h-[70vh] flex items-center justify-center px-6 md:hidden" data-bg="dark">
-        <p
-          className="mobile-manifesto text-center leading-[1.1]"
-          style={{
-            fontFamily: "var(--font-inter), sans-serif",
-            fontSize: "clamp(2rem, 8vw, 3rem)",
-            fontWeight: 900,
-            color: "#e5e1db",
-          }}
-        >
-          {[
-            { text: "I ", accent: false },
-            { text: "don't ", accent: false },
-            { text: "just ", accent: false },
-            { text: "build ", accent: true },
-            { text: "websites. ", accent: false },
-            { text: "I ", accent: false },
-            { text: "build ", accent: false },
-            { text: "unfair ", accent: true },
-            { text: "advantages.", accent: true },
-          ].map((word, i) => (
-            <span
-              key={i}
-              className="mobile-manifesto-word inline-block"
-              style={{ color: word.accent ? "rgba(255, 200, 150, 1)" : undefined }}
-            >
-              {word.text}
+      {/* Mobile — same char-level scrub + signature draw as desktop */}
+      <section className="mobile-manifesto-section relative md:hidden py-24 px-6" data-bg="dark" style={{ minHeight: "80vh" }}>
+        {/* Signature draws on scroll — sits behind text */}
+        <div className="flex items-center justify-center mb-12 pointer-events-none">
+          <svg
+            viewBox="30 30 630 250"
+            fill="none"
+            preserveAspectRatio="xMidYMid meet"
+            className="w-full h-auto"
+            style={{ opacity: 0.1 }}
+          >
+            <path
+              className="mobile-signature-path"
+              d={SIGNATURE_PATH}
+              stroke="rgba(255, 200, 150, 1)"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+            />
+          </svg>
+        </div>
+
+        {/* Text — each word in overflow:hidden, chars reveal from below */}
+        <div className="leading-[1.05]" style={{ fontFamily: "var(--font-inter), sans-serif", fontSize: "clamp(2.2rem, 9vw, 3.5rem)", fontWeight: 900 }}>
+          {words.map((word, wi) => (
+            <span key={wi} className="inline-block overflow-hidden mr-[0.2em]" data-split-line>
+              {word.text.split("").map((char, ci) => (
+                <span
+                  key={ci}
+                  data-split-char
+                  className="inline-block"
+                  style={{
+                    color: word.accent ? "rgba(255, 200, 150, 1)" : "#e5e1db",
+                    willChange: "transform",
+                  }}
+                >
+                  {char}
+                </span>
+              ))}
             </span>
           ))}
-        </p>
+        </div>
       </section>
 
       {/* Desktop — text scrolls naturally, signature is sticky and stays until you pass it */}

@@ -276,21 +276,25 @@ function MobileWork() {
     if (!mobileWorkRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Header and cards stagger in
+      // Each card reveals individually on scroll
       const cards = mobileWorkRef.current!.querySelectorAll(".mobile-work-card");
-
-      gsap.set(cards, { x: 30, opacity: 0 });
-      gsap.to(cards, {
-        x: 0,
-        opacity: 1,
-        ease: "power3.out",
-        stagger: 0.08,
-        scrollTrigger: {
-          trigger: mobileWorkRef.current,
-          start: "top 85%",
-          end: "top 50%",
-          scrub: 0.5,
-        },
+      cards.forEach((card) => {
+        gsap.fromTo(
+          card,
+          { y: 60, opacity: 0, scale: 0.97 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 95%",
+              end: "top 60%",
+              scrub: 0.5,
+            },
+          }
+        );
       });
     });
 
@@ -298,9 +302,9 @@ function MobileWork() {
   }, []);
 
   return (
-    <section ref={mobileWorkRef} data-bg="cream" className="md:hidden py-20">
+    <section ref={mobileWorkRef} data-bg="cream" className="md:hidden pt-20 pb-24">
       {/* Header */}
-      <div ref={headerRef} className="px-6 mb-12">
+      <div ref={headerRef} className="px-6 mb-14">
         <p className="text-[10px] font-medium tracking-[0.3em] uppercase mb-4" style={{ color: accentColor }}>
           Selected Work
         </p>
@@ -308,31 +312,40 @@ function MobileWork() {
           text="PROJECTS"
           style={{
             fontFamily: "var(--font-inter), sans-serif",
-            fontSize: "clamp(3rem, 14vw, 5rem)",
+            fontSize: "clamp(3.5rem, 16vw, 5.5rem)",
             fontWeight: 900,
             color: textDark,
             lineHeight: 0.85,
-            letterSpacing: "-0.04em",
+            letterSpacing: "-0.05em",
           }}
         />
       </div>
 
-      {/* Full-width stacked cards */}
-      <div className="flex flex-col gap-6 px-6">
+      {/* Full-bleed editorial cards */}
+      <div className="flex flex-col gap-10">
         {projects.map((project, i) => {
           const num = String(i + 1).padStart(2, "0");
           return (
             <TransitionLink key={project.slug} href={`/work/${project.slug}`} className="mobile-work-card block">
-              <div className="relative rounded-2xl overflow-hidden" style={{ aspectRatio: "4/3" }}>
+              {/* Full-width image — no padding, bleeds to edges */}
+              <div className="relative overflow-hidden" style={{ aspectRatio: "3/4" }}>
                 <Image src={project.image} alt={project.title} fill className="object-cover" sizes="100vw" />
-                <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)" }} />
-                <div className="absolute bottom-5 left-5 right-5">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-white/40 text-[10px] uppercase tracking-[0.15em]">{project.category}</span>
-                    <span className="text-white/20 text-[10px]">—</span>
-                    <span className="text-[10px]" style={{ color: accentColor }}>{num}</span>
-                  </div>
-                  <h3 className="text-white text-xl font-black tracking-tight">{project.title}</h3>
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 40%, transparent 70%)" }} />
+
+                {/* Number overlay top-right */}
+                <div className="absolute top-5 right-6">
+                  <span className="text-white/20 text-xs font-medium">{num}</span>
+                </div>
+
+                {/* Content at bottom */}
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <p className="text-white/50 text-[10px] uppercase tracking-[0.2em] mb-2">{project.category}</p>
+                  <h3
+                    className="text-white font-black tracking-tight"
+                    style={{ fontSize: "clamp(1.5rem, 7vw, 2.5rem)", lineHeight: 1 }}
+                  >
+                    {project.title}
+                  </h3>
                 </div>
               </div>
             </TransitionLink>

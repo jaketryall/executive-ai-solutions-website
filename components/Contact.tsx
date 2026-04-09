@@ -194,10 +194,11 @@ function MobileContact() {
     <section
       ref={mobileContactRef}
       id="contact"
-      className="md:hidden relative py-20"
+      data-bg="dark"
+      className="md:hidden relative pt-20 pb-24"
     >
       {/* Header */}
-      <div ref={headerRef} className="px-6 mb-12">
+      <div ref={headerRef} className="px-6 mb-14">
         <div className="flex items-center gap-3 mb-8">
           <motion.span
             className="w-2 h-2 rounded-full bg-emerald-500"
@@ -213,14 +214,14 @@ function MobileContact() {
           as="h2"
           style={{
             fontFamily: "var(--font-inter), sans-serif",
-            fontSize: "clamp(3.5rem, 16vw, 6rem)",
+            fontSize: "clamp(4rem, 18vw, 7rem)",
             fontWeight: 900,
             color: "#f5f0e8",
             lineHeight: 0.85,
-            letterSpacing: "-0.04em",
+            letterSpacing: "-0.05em",
           }}
         />
-        <p className="text-[#f5f0e8]/35 text-base mt-6 leading-relaxed">
+        <p className="text-[#f5f0e8]/30 text-sm mt-8 leading-relaxed max-w-[280px]">
           Tell us about your project and we&apos;ll respond within 24 hours.
         </p>
       </div>
@@ -259,20 +260,11 @@ function MobileContact() {
             <p className="text-[#f5f0e8]/40 text-sm">We'll be in touch soon.</p>
           </motion.div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name field */}
-            <div
-              className="mobile-form-field rounded-xl p-4 transition-all duration-200"
-              style={{
-                background: focusedField === "name" ? "rgba(255, 200, 150, 0.05)" : "rgba(245, 240, 232, 0.03)",
-                border: `1px solid ${focusedField === "name" ? "rgba(255, 200, 150, 0.2)" : "rgba(245, 240, 232, 0.08)"}`,
-              }}
-            >
-              <label
-                className="text-[10px] uppercase tracking-[0.15em] block mb-2"
-                style={{ color: focusedField === "name" ? accentColor : "rgba(245, 240, 232, 0.4)" }}
-              >
-                Name
+          <form onSubmit={handleSubmit} className="space-y-0">
+            {/* Name */}
+            <div className="mobile-form-field py-5" style={{ borderBottom: `1px solid ${focusedField === "name" ? "rgba(255,200,150,0.3)" : "rgba(255,255,255,0.06)"}`, transition: "border-color 0.3s" }}>
+              <label className="text-[9px] uppercase tracking-[0.25em] block mb-3" style={{ color: focusedField === "name" ? accentColor : "rgba(255,255,255,0.25)" }}>
+                01 — Name
               </label>
               <input
                 type="text"
@@ -282,23 +274,14 @@ function MobileContact() {
                 onFocus={() => setFocusedField("name")}
                 onBlur={() => setFocusedField(null)}
                 placeholder="Your name"
-                className="w-full bg-transparent text-[#f5f0e8] focus:outline-none placeholder:text-[#f5f0e8]/20"
+                className="w-full bg-transparent text-[#f5f0e8] text-lg focus:outline-none placeholder:text-[#f5f0e8]/15"
               />
             </div>
 
-            {/* Email field */}
-            <div
-              className="mobile-form-field rounded-xl p-4 transition-all duration-200"
-              style={{
-                background: focusedField === "email" ? "rgba(255, 200, 150, 0.05)" : "rgba(245, 240, 232, 0.03)",
-                border: `1px solid ${focusedField === "email" ? "rgba(255, 200, 150, 0.2)" : "rgba(245, 240, 232, 0.08)"}`,
-              }}
-            >
-              <label
-                className="text-[10px] uppercase tracking-[0.15em] block mb-2"
-                style={{ color: focusedField === "email" ? accentColor : "rgba(245, 240, 232, 0.4)" }}
-              >
-                Email
+            {/* Email */}
+            <div className="mobile-form-field py-5" style={{ borderBottom: `1px solid ${focusedField === "email" ? "rgba(255,200,150,0.3)" : "rgba(255,255,255,0.06)"}`, transition: "border-color 0.3s" }}>
+              <label className="text-[9px] uppercase tracking-[0.25em] block mb-3" style={{ color: focusedField === "email" ? accentColor : "rgba(255,255,255,0.25)" }}>
+                02 — Email
               </label>
               <input
                 type="email"
@@ -308,33 +291,24 @@ function MobileContact() {
                 onFocus={() => setFocusedField("email")}
                 onBlur={() => setFocusedField(null)}
                 placeholder="you@company.com"
-                className="w-full bg-transparent text-[#f5f0e8] focus:outline-none placeholder:text-[#f5f0e8]/20"
+                className="w-full bg-transparent text-[#f5f0e8] text-lg focus:outline-none placeholder:text-[#f5f0e8]/15"
               />
             </div>
 
-            {/* Message field */}
-            <div
-              className="mobile-form-field rounded-xl p-4 transition-all duration-200"
-              style={{
-                background: focusedField === "message" ? "rgba(255, 200, 150, 0.05)" : "rgba(245, 240, 232, 0.03)",
-                border: `1px solid ${focusedField === "message" ? "rgba(255, 200, 150, 0.2)" : "rgba(245, 240, 232, 0.08)"}`,
-              }}
-            >
-              <label
-                className="text-[10px] uppercase tracking-[0.15em] block mb-2"
-                style={{ color: focusedField === "message" ? accentColor : "rgba(245, 240, 232, 0.4)" }}
-              >
-                Project Details
+            {/* Message */}
+            <div className="mobile-form-field py-5" style={{ borderBottom: `1px solid ${focusedField === "message" ? "rgba(255,200,150,0.3)" : "rgba(255,255,255,0.06)"}`, transition: "border-color 0.3s" }}>
+              <label className="text-[9px] uppercase tracking-[0.25em] block mb-3" style={{ color: focusedField === "message" ? accentColor : "rgba(255,255,255,0.25)" }}>
+                03 — Project Details
               </label>
               <textarea
                 required
-                rows={4}
+                rows={3}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 onFocus={() => setFocusedField("message")}
                 onBlur={() => setFocusedField(null)}
                 placeholder="Tell us about your project..."
-                className="w-full bg-transparent text-[#f5f0e8] focus:outline-none resize-none placeholder:text-[#f5f0e8]/20"
+                className="w-full bg-transparent text-[#f5f0e8] text-lg focus:outline-none resize-none placeholder:text-[#f5f0e8]/15"
               />
             </div>
 

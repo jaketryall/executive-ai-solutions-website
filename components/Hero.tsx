@@ -355,132 +355,144 @@ const mobileWorkItems = [
   { title: "ADVENTURE AIR", category: "Tours", image: "/thumbnails/Elegant Black Laptop Mockup.webp", slug: "adventure-air" },
 ];
 
-// Mobile Hero — cream bg, bold JAKE RYALL, matches desktop feel
+// Mobile Hero — Same cream bg + bold typography as desktop, scroll-responsive
 function MobileHero() {
+  const mobileHeroRef = useRef<HTMLDivElement>(null);
+  const mobileTextRef = useRef<HTMLDivElement>(null);
+
+  const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+  // Scroll-driven: text fades out + moves up as you scroll past
+  useIsomorphicLayoutEffect(() => {
+    if (!mobileHeroRef.current || !mobileTextRef.current) return;
+
+    const ctx = gsap.context(() => {
+      // Text fades and drifts up on scroll
+      gsap.to(mobileTextRef.current, {
+        y: "-20%",
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: mobileHeroRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="relative min-h-screen md:hidden overflow-hidden" style={{ backgroundColor: "#e5e1db" }}>
-      {/* Subtle decorative lines */}
+    <section
+      ref={mobileHeroRef}
+      className="relative min-h-screen md:hidden overflow-hidden"
+      data-bg="cream"
+      style={{ backgroundColor: "#e5e1db" }}
+    >
+      <style>{`
+        @keyframes mobile-marquee-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+      `}</style>
+
+      {/* Subtle decorative lines — same as desktop */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 430 932" fill="none">
-        <path d="M150,0 C160,200 140,400 155,600 S140,800 150,932" stroke="rgba(0,0,0,0.04)" strokeWidth="1" />
-        <path d="M300,0 C310,250 290,500 305,750 S290,900 300,932" stroke="rgba(0,0,0,0.03)" strokeWidth="1" />
+        <path d="M120,0 C130,200 110,400 125,600 S110,800 120,932" stroke="rgba(0,0,0,0.04)" strokeWidth="1" />
+        <path d="M310,0 C320,250 300,500 315,750 S300,900 310,932" stroke="rgba(0,0,0,0.03)" strokeWidth="1" />
       </svg>
 
       {/* Top nav */}
-      <div className="relative z-10 flex items-center justify-between px-6 pt-6">
-        <TransitionLink href="/" className="text-[11px] font-bold uppercase tracking-[0.08em]" style={{ color: "#1a1816" }}>
-          Jake Ryall
-        </TransitionLink>
-        <div className="flex items-center gap-3">
+      <div className="relative z-10 flex items-center justify-between px-5 pt-14 pb-4">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <TransitionLink href="/" className="text-[11px] font-bold uppercase tracking-[0.08em]" style={{ color: "#1a1816" }}>
+            Jake Ryall
+          </TransitionLink>
+        </motion.div>
+        <motion.div
+          className="flex items-center gap-3"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
           <TransitionLink
             href="/contact"
-            className="px-4 py-2 rounded-full text-[10px] font-semibold uppercase tracking-[0.1em] border transition-colors"
+            className="px-4 py-2 rounded-full text-[10px] font-semibold uppercase tracking-[0.1em] border"
             style={{ color: "#1a1816", borderColor: "rgba(26,24,22,0.15)" }}
           >
             Get in Touch
           </TransitionLink>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Center — big bold name */}
-      <div className="relative z-10 flex flex-col items-center justify-center px-6" style={{ minHeight: "calc(100vh - 140px)" }}>
-        {/* Title — letter-by-letter reveal on load */}
-        <div className="text-center">
-          <h1
-            style={{
-              fontFamily: "var(--font-inter), sans-serif",
-              fontSize: "clamp(5rem, 22vw, 10rem)",
-              fontWeight: 900,
-              color: "#1a1816",
-              lineHeight: 0.82,
-              letterSpacing: "-0.05em",
-            }}
-          >
-            {["JAKE", "RYALL"].map((line, li) => (
-              <span key={li} className="block overflow-hidden">
-                {line.split("").map((char, ci) => (
-                  <motion.span
-                    key={ci}
-                    className="inline-block"
-                    initial={{ y: "100%" }}
-                    animate={{ y: "0%" }}
-                    transition={{
-                      duration: 0.6,
-                      delay: 0.3 + (li * line.length + ci) * 0.03,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
-                  >
-                    {char}
-                  </motion.span>
-                ))}
-              </span>
-            ))}
-          </h1>
-        </div>
+      {/* Center content — same cream + black as desktop */}
+      <div ref={mobileTextRef} className="relative z-10 flex flex-col justify-center px-5" style={{ minHeight: "calc(100vh - 120px)" }}>
+        {/* Big bold name — letter reveal on load */}
+        <h1
+          className="font-black"
+          style={{
+            fontFamily: "var(--font-inter), sans-serif",
+            fontSize: "clamp(4.5rem, 22vw, 10rem)",
+            color: "#1a1816",
+            lineHeight: 0.82,
+            letterSpacing: "-0.05em",
+          }}
+        >
+          {["JAKE", "RYALL"].map((line, li) => (
+            <span key={li} className="block overflow-hidden">
+              {line.split("").map((char, ci) => (
+                <motion.span
+                  key={ci}
+                  className="inline-block"
+                  initial={{ y: "110%" }}
+                  animate={{ y: "0%" }}
+                  transition={{
+                    duration: 0.7,
+                    delay: 0.5 + (li * 5 + ci) * 0.04,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </span>
+          ))}
+        </h1>
 
         {/* Subtitle */}
         <motion.p
-          className="text-center text-[10px] uppercase tracking-[0.3em] mt-8"
+          className="text-[9px] uppercase tracking-[0.3em] mt-8"
           style={{ color: "#8a857d" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
         >
           Websites that convert · Brands that stand out
         </motion.p>
       </div>
 
-      {/* Bottom work showcase */}
+      {/* Bottom marquee — kinetic text */}
       <motion.div
-        className="relative z-10 pb-6 overflow-hidden"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.8 }}
+        className="absolute bottom-6 left-0 right-0 overflow-hidden z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 1.4 }}
       >
-        <style>{`
-          @keyframes work-marquee {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
-          }
-        `}</style>
-
-        <div className="px-6 mb-3 flex items-center justify-between">
-          <span className="text-[10px] uppercase tracking-[0.15em]" style={{ color: "#8a857d" }}>
-            Latest Projects
-          </span>
-          <TransitionLink href="/work" className="text-[10px] uppercase tracking-[0.15em]" style={{ color: "rgba(26,24,22,0.4)" }}>
-            View All →
-          </TransitionLink>
-        </div>
-
         <div
-          className="flex gap-5 pl-6"
-          style={{
-            animation: "work-marquee 20s linear infinite",
-            width: "fit-content",
-          }}
+          className="flex whitespace-nowrap"
+          style={{ animation: "mobile-marquee-left 20s linear infinite" }}
         >
-          {[...mobileWorkItems, ...mobileWorkItems].map((item, i) => (
-            <TransitionLink
-              key={`${item.slug}-${i}`}
-              href={`/work/${item.slug}`}
-              className="shrink-0 active:scale-[0.98] transition-transform"
+          {[...Array(4)].map((_, i) => (
+            <span
+              key={i}
+              className="shrink-0 text-[10px] uppercase tracking-[0.2em] font-medium px-6"
+              style={{ color: "rgba(26,24,22,0.15)" }}
             >
-              <div className="w-32 h-24 rounded-xl overflow-hidden relative" style={{ border: "1px solid rgba(26,24,22,0.08)" }}>
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-cover"
-                  sizes="128px"
-                />
-              </div>
-              <p className="text-[10px] font-semibold mt-2 tracking-wide" style={{ color: "#1a1816" }}>
-                {item.title}
-              </p>
-              <p className="text-[9px] uppercase tracking-wider" style={{ color: "#8a857d" }}>
-                {item.category}
-              </p>
-            </TransitionLink>
+              Design · Develop · Deliver · Strategy · Convert · Scale ·
+            </span>
           ))}
         </div>
       </motion.div>

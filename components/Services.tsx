@@ -690,9 +690,10 @@ function MobileServices() {
       );
 
       rows.forEach((row) => {
+        // Row slides up
         gsap.fromTo(
           row,
-          { y: 40, opacity: 0 },
+          { y: 30, opacity: 0 },
           {
             y: 0,
             opacity: 1,
@@ -700,11 +701,33 @@ function MobileServices() {
             scrollTrigger: {
               trigger: row,
               start: "top 95%",
-              end: "top 65%",
+              end: "top 70%",
               scrub: 0.4,
             },
           }
         );
+
+        // Divider line draws in
+        const divider = row.previousElementSibling?.classList?.contains("mobile-service-row")
+          ? null
+          : row.closest("[ref]")?.querySelector(".mobile-divider");
+        const rowBorder = row.querySelector(".mobile-row-line");
+        if (rowBorder) {
+          gsap.fromTo(
+            rowBorder,
+            { scaleX: 0, transformOrigin: "left" },
+            {
+              scaleX: 1,
+              ease: "power2.inOut",
+              scrollTrigger: {
+                trigger: row,
+                start: "top 90%",
+                end: "top 70%",
+                scrub: 0.3,
+              },
+            }
+          );
+        }
       });
     }, container);
 
@@ -722,10 +745,10 @@ function MobileServices() {
     <section
       ref={sectionRef}
       data-bg="dark"
-      className="md:hidden py-20 px-6 relative"
+      className="md:hidden pt-20 pb-24 px-6 relative"
     >
       {/* Header */}
-      <div ref={headerRef} className="mb-12">
+      <div ref={headerRef} className="mb-14">
         <p className="text-[10px] font-medium uppercase tracking-[0.3em] mb-4" style={{ color: accentColorMuted }}>
           What I Do
         </p>
@@ -734,10 +757,10 @@ function MobileServices() {
           text="SERVICES"
           style={{
             fontFamily: "Inter, sans-serif",
-            fontSize: "clamp(3rem, 14vw, 5rem)",
+            fontSize: "clamp(3.5rem, 16vw, 5.5rem)",
             fontWeight: 900,
             lineHeight: 0.85,
-            letterSpacing: "-0.04em",
+            letterSpacing: "-0.05em",
             color: textColor,
           }}
         />
@@ -748,9 +771,10 @@ function MobileServices() {
         {services.map((service, i) => (
           <div
             key={service.slug}
-            className="mobile-service-row"
-            style={{ borderBottom: `1px solid ${borderColor}` }}
+            className="mobile-service-row relative"
           >
+            {/* Animated bottom border */}
+            <div className="mobile-row-line absolute bottom-0 left-0 right-0 h-px" style={{ backgroundColor: borderColor }} />
             {/* Header */}
             <button
               onClick={() => setOpenIndex(openIndex === i ? null : i)}
