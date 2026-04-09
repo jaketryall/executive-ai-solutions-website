@@ -355,150 +355,7 @@ const mobileWorkItems = [
   { title: "ADVENTURE AIR", category: "Tours", image: "/thumbnails/Elegant Black Laptop Mockup.webp", slug: "adventure-air" },
 ];
 
-// Mobile Hero — Same cream bg + bold typography as desktop, scroll-responsive
-function MobileHero() {
-  const mobileHeroRef = useRef<HTMLDivElement>(null);
-  const mobileTextRef = useRef<HTMLDivElement>(null);
-
-  const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
-
-  // Scroll-driven: text fades out + moves up as you scroll past
-  useIsomorphicLayoutEffect(() => {
-    if (!mobileHeroRef.current || !mobileTextRef.current) return;
-
-    const ctx = gsap.context(() => {
-      // Text fades and drifts up on scroll
-      gsap.to(mobileTextRef.current, {
-        y: "-20%",
-        opacity: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: mobileHeroRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-    });
-
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <section
-      ref={mobileHeroRef}
-      className="relative min-h-screen md:hidden overflow-hidden"
-      data-bg="cream"
-      style={{ backgroundColor: "#e5e1db" }}
-    >
-      <style>{`
-        @keyframes mobile-marquee-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-      `}</style>
-
-      {/* Subtle decorative lines — same as desktop */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 430 932" fill="none">
-        <path d="M120,0 C130,200 110,400 125,600 S110,800 120,932" stroke="rgba(0,0,0,0.04)" strokeWidth="1" />
-        <path d="M310,0 C320,250 300,500 315,750 S300,900 310,932" stroke="rgba(0,0,0,0.03)" strokeWidth="1" />
-      </svg>
-
-      {/* Top nav */}
-      <div className="relative z-10 flex items-center justify-between px-5 pt-14 pb-4">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <TransitionLink href="/" className="text-[11px] font-bold uppercase tracking-[0.08em]" style={{ color: "#1a1816" }}>
-            Jake Ryall
-          </TransitionLink>
-        </motion.div>
-        <motion.div
-          className="flex items-center gap-3"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <TransitionLink
-            href="/contact"
-            className="px-4 py-2 rounded-full text-[10px] font-semibold uppercase tracking-[0.1em] border"
-            style={{ color: "#1a1816", borderColor: "rgba(26,24,22,0.15)" }}
-          >
-            Get in Touch
-          </TransitionLink>
-        </motion.div>
-      </div>
-
-      {/* Center content — same cream + black as desktop */}
-      <div ref={mobileTextRef} className="relative z-10 flex flex-col justify-center px-5" style={{ minHeight: "calc(100vh - 120px)" }}>
-        {/* Big bold name — letter reveal on load */}
-        <h1
-          className="font-black"
-          style={{
-            fontFamily: "var(--font-inter), sans-serif",
-            fontSize: "clamp(4.5rem, 22vw, 10rem)",
-            color: "#1a1816",
-            lineHeight: 0.82,
-            letterSpacing: "-0.05em",
-          }}
-        >
-          {["JAKE", "RYALL"].map((line, li) => (
-            <span key={li} className="block overflow-hidden">
-              {line.split("").map((char, ci) => (
-                <motion.span
-                  key={ci}
-                  className="inline-block"
-                  initial={{ y: "110%" }}
-                  animate={{ y: "0%" }}
-                  transition={{
-                    duration: 0.7,
-                    delay: 0.5 + (li * 5 + ci) * 0.04,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                >
-                  {char}
-                </motion.span>
-              ))}
-            </span>
-          ))}
-        </h1>
-
-        {/* Subtitle */}
-        <motion.p
-          className="text-[9px] uppercase tracking-[0.3em] mt-8"
-          style={{ color: "#8a857d" }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 1.2 }}
-        >
-          Websites that convert · Brands that stand out
-        </motion.p>
-      </div>
-
-      {/* Bottom marquee — kinetic text */}
-      <motion.div
-        className="absolute bottom-6 left-0 right-0 overflow-hidden z-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 1.4 }}
-      >
-        <div
-          className="flex whitespace-nowrap"
-          style={{ animation: "mobile-marquee-left 20s linear infinite" }}
-        >
-          {[...Array(4)].map((_, i) => (
-            <span
-              key={i}
-              className="shrink-0 text-[10px] uppercase tracking-[0.2em] font-medium px-6"
-              style={{ color: "rgba(26,24,22,0.15)" }}
-            >
-              Design · Develop · Deliver · Strategy · Convert · Scale ·
-            </span>
-          ))}
-        </div>
-      </motion.div>
-    </section>
-  );
-}
+// No separate MobileHero — DesktopHero is now responsive for all screen sizes
 
 // Desktop Hero — "JAKE RYALL" with projects inside letters, shrinks on scroll
 function DesktopHero() {
@@ -576,7 +433,7 @@ function DesktopHero() {
     <>
       <section
         ref={sectionRef}
-        className="relative h-[300vh] hidden md:block"
+        className="relative h-[300vh]"
         data-bg="dark"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden">
@@ -585,14 +442,14 @@ function DesktopHero() {
           <div className="absolute inset-0 flex flex-col justify-center pointer-events-none overflow-hidden">
             <div ref={marqueeRow1} className="flex whitespace-nowrap will-change-transform" style={{ width: "fit-content" }}>
               {[...Array(8)].map((_, i) => (
-                <span key={`a${i}`} className="shrink-0 pr-[3vw]" style={{ fontFamily: "var(--font-inter), sans-serif", fontSize: "14vw", fontWeight: 900, color: "rgba(255,255,255,0.04)", textTransform: "uppercase", letterSpacing: "-0.04em", lineHeight: 1 }}>
+                <span key={`a${i}`} className="shrink-0 pr-[3vw]" style={{ fontFamily: "var(--font-inter), sans-serif", fontSize: "clamp(3rem, 14vw, 14vw)", fontWeight: 900, color: "rgba(255,255,255,0.04)", textTransform: "uppercase", letterSpacing: "-0.04em", lineHeight: 1 }}>
                   Design · Develop · Deliver ·{" "}
                 </span>
               ))}
             </div>
             <div ref={marqueeRow2} className="flex whitespace-nowrap -mt-[2vw] will-change-transform" style={{ width: "fit-content" }}>
               {[...Array(8)].map((_, i) => (
-                <span key={`b${i}`} className="shrink-0 pr-[3vw]" style={{ fontFamily: "var(--font-inter), sans-serif", fontSize: "14vw", fontWeight: 900, color: "rgba(255,255,255,0.04)", textTransform: "uppercase", letterSpacing: "-0.04em", lineHeight: 1 }}>
+                <span key={`b${i}`} className="shrink-0 pr-[3vw]" style={{ fontFamily: "var(--font-inter), sans-serif", fontSize: "clamp(3rem, 14vw, 14vw)", fontWeight: 900, color: "rgba(255,255,255,0.04)", textTransform: "uppercase", letterSpacing: "-0.04em", lineHeight: 1 }}>
                   Strategy · Convert · Scale ·{" "}
                 </span>
               ))}
@@ -619,18 +476,18 @@ function DesktopHero() {
               </svg>
 
               {/* NAV BAR */}
-              <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-8 pt-7">
-                <TransitionLink href="/" className="text-[12px] font-sans font-bold uppercase tracking-[0.08em]" style={{ color: "#1a1816" }}>
+              <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-5 md:px-8 pt-14 md:pt-7">
+                <TransitionLink href="/" className="text-[11px] md:text-[12px] font-sans font-bold uppercase tracking-[0.08em]" style={{ color: "#1a1816" }}>
                   Jake Ryall
                 </TransitionLink>
-                <div className="absolute left-1/2 -translate-x-1/2">
+                <div className="absolute left-1/2 -translate-x-1/2 hidden md:block">
                   <HeroLogo />
                 </div>
                 <div className="flex items-center gap-3">
                   <StaggerButton
                     href="/contact"
                     text="Get in Touch"
-                    className="px-5 py-2 rounded-full text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1a1816] border border-[rgba(26,24,22,0.15)] transition-all duration-300 hover:bg-[#1a1816] hover:text-[#e5e1db] hover:border-[#1a1816]"
+                    className="hidden md:inline-flex px-5 py-2 rounded-full text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1a1816] border border-[rgba(26,24,22,0.15)] transition-all duration-300 hover:bg-[#1a1816] hover:text-[#e5e1db] hover:border-[#1a1816]"
                   />
                   <button
                     className="w-9 h-9 rounded-full border flex items-center justify-center transition-all duration-300 hover:bg-[#1a1816] hover:border-[#1a1816] group"
@@ -646,18 +503,20 @@ function DesktopHero() {
               </div>
 
               {/* Bottom-right: scroll hint */}
-              <div className="absolute bottom-10 right-10 pointer-events-none">
+              <div className="absolute bottom-10 right-5 md:right-10 pointer-events-none">
                 <p className="text-[9px] font-sans uppercase tracking-[0.2em]" style={{ color: "#8a857d" }}>
                   Scroll to explore
                 </p>
               </div>
 
-              {/* Bottom-left: View Work interaction */}
-              <ViewWorkWidget />
+              {/* Bottom-left: View Work interaction — desktop only */}
+              <div className="hidden md:block">
+                <ViewWorkWidget />
+              </div>
 
               {/* Center subtitle */}
               <div className="absolute bottom-[10vh] left-0 right-0 text-center pointer-events-none">
-                <p className="text-[11px] font-sans uppercase tracking-[0.3em]" style={{ color: "#8a857d" }}>
+                <p className="text-[9px] md:text-[11px] font-sans uppercase tracking-[0.3em]" style={{ color: "#8a857d" }}>
                   Websites that convert · Brands that stand out
                 </p>
               </div>
@@ -741,7 +600,7 @@ function DesktopHero() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="fixed inset-0 z-[100] hidden md:block"
+            className="fixed inset-0 z-[100]"
             style={{ background: "#0a0908" }}
             initial={{ clipPath: "circle(0% at calc(100% - 52px) 52px)" }}
             animate={{ clipPath: "circle(150% at calc(100% - 52px) 52px)" }}
@@ -772,10 +631,10 @@ function DesktopHero() {
               </div>
             </button>
 
-            {/* Two-column layout like Lando L11 */}
-            <div className="h-full flex">
+            {/* Layout — single column mobile, two column desktop */}
+            <div className="h-full flex flex-col md:flex-row">
               {/* Left — navigation links */}
-              <div className="w-1/2 h-full flex flex-col justify-center px-16 lg:px-24">
+              <div className="flex-1 md:w-1/2 h-full flex flex-col justify-center px-6 md:px-16 lg:px-24">
                 <motion.p
                   className="text-xs uppercase tracking-[0.3em] mb-8"
                   style={{ color: "rgba(255, 200, 150, 0.4)" }}
@@ -803,8 +662,8 @@ function DesktopHero() {
                 ))}
               </div>
 
-              {/* Right — info panel */}
-              <div className="w-1/2 h-full flex flex-col justify-between py-16 px-16 lg:px-24">
+              {/* Right — info panel (hidden on mobile, shown on desktop) */}
+              <div className="hidden md:flex w-1/2 h-full flex-col justify-between py-16 px-16 lg:px-24">
                 {/* Top right — label */}
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -875,12 +734,7 @@ function DesktopHero() {
   );
 }
 
-// Main Hero export - renders mobile or desktop version
+// Main Hero export — single responsive component
 export default function Hero() {
-  return (
-    <>
-      <MobileHero />
-      <DesktopHero />
-    </>
-  );
+  return <DesktopHero />;
 }

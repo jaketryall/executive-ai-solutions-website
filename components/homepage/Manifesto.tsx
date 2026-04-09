@@ -35,9 +35,10 @@ export default function Manifesto() {
     if (!section) return;
 
     const chars = section.querySelectorAll<HTMLSpanElement>("[data-char]");
+    const isMobile = window.innerWidth < 768;
 
     const ctx = gsap.context(() => {
-      // Chars reveal — delayed so signature finishes first
+      // Chars reveal — from below, scrub-linked
       gsap.fromTo(
         chars,
         { yPercent: 100, opacity: 0 },
@@ -48,14 +49,14 @@ export default function Manifesto() {
           ease: "none",
           scrollTrigger: {
             trigger: section,
-            start: "top 35%",
-            end: "top -20%",
+            start: isMobile ? "top 60%" : "top 35%",
+            end: isMobile ? "top 10%" : "top -20%",
             scrub: 1,
           },
         }
       );
 
-      // Signature draws
+      // Signature draws on scroll
       if (sig) {
         const length = sig.getTotalLength();
         gsap.set(sig, { strokeDasharray: length, strokeDashoffset: length });
@@ -64,14 +65,13 @@ export default function Manifesto() {
           ease: "none",
           scrollTrigger: {
             trigger: section,
-            start: "top 85%",
-            end: "top 45%",
+            start: isMobile ? "top 80%" : "top 85%",
+            end: isMobile ? "top 30%" : "top 45%",
             scrub: 1,
           },
         });
 
         // Color shifts from gold to dark as background changes to cream
-        // Need to target the parent SVG's opacity too since it caps visibility
         const svgEl = sig.closest("svg");
         if (svgEl) {
           gsap.to(svgEl, {
@@ -101,169 +101,76 @@ export default function Manifesto() {
     return () => ctx.revert();
   }, []);
 
-  // Mobile manifesto — char-level scrub + signature draw (same as desktop)
-  useIsomorphicLayoutEffect(() => {
-    const mobileSection = document.querySelector(".mobile-manifesto-section");
-    if (!mobileSection) return;
-
-    const chars = mobileSection.querySelectorAll("[data-split-char]");
-    const sig = mobileSection.querySelector(".mobile-signature-path") as SVGPathElement | null;
-
-    const ctx = gsap.context(() => {
-      // Chars reveal from below — scrub-linked
-      if (chars.length) {
-        gsap.set(chars, { yPercent: 100 });
-        gsap.to(chars, {
-          yPercent: 0,
-          stagger: 0.02,
-          ease: "none",
-          scrollTrigger: {
-            trigger: mobileSection,
-            start: "top 60%",
-            end: "top 10%",
-            scrub: 1,
-          },
-        });
-      }
-
-      // Signature draws on scroll
-      if (sig) {
-        const length = sig.getTotalLength();
-        gsap.set(sig, { strokeDasharray: length, strokeDashoffset: length });
-        gsap.to(sig, {
-          strokeDashoffset: 0,
-          ease: "none",
-          scrollTrigger: {
-            trigger: mobileSection,
-            start: "top 80%",
-            end: "top 30%",
-            scrub: 1,
-          },
-        });
-      }
-    }, mobileSection);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <>
-      {/* Mobile — same char-level scrub + signature draw as desktop */}
-      <section className="mobile-manifesto-section relative md:hidden py-24 px-6" data-bg="dark" style={{ minHeight: "80vh" }}>
-        {/* Signature draws on scroll — sits behind text */}
-        <div className="flex items-center justify-center mb-12 pointer-events-none">
-          <svg
-            viewBox="30 30 630 250"
-            fill="none"
-            preserveAspectRatio="xMidYMid meet"
-            className="w-full h-auto"
-            style={{ opacity: 0.1 }}
-          >
-            <path
-              className="mobile-signature-path"
-              d={SIGNATURE_PATH}
-              stroke="rgba(255, 200, 150, 1)"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-            />
-          </svg>
-        </div>
-
-        {/* Text — each word in overflow:hidden, chars reveal from below */}
-        <div className="leading-[1.05]" style={{ fontFamily: "var(--font-inter), sans-serif", fontSize: "clamp(2.2rem, 9vw, 3.5rem)", fontWeight: 900 }}>
-          {words.map((word, wi) => (
-            <span key={wi} className="inline-block overflow-hidden mr-[0.2em]" data-split-line>
-              {word.text.split("").map((char, ci) => (
-                <span
-                  key={ci}
-                  data-split-char
-                  className="inline-block"
-                  style={{
-                    color: word.accent ? "rgba(255, 200, 150, 1)" : "#e5e1db",
-                    willChange: "transform",
-                  }}
-                >
-                  {char}
-                </span>
-              ))}
-            </span>
-          ))}
-        </div>
-      </section>
-
-      {/* Desktop — text scrolls naturally, signature is sticky and stays until you pass it */}
-      <section
-        ref={sectionRef}
-        className="relative hidden md:block"
-        data-bg="dark"
-        style={{ minHeight: "100vh", padding: "15vh 0" }}
+    <section
+      ref={sectionRef}
+      className="relative"
+      data-bg="dark"
+      style={{ minHeight: "100vh", padding: "15vh 0" }}
+    >
+      {/* Signature — sticky, persists through manifesto */}
+      <div
+        className="sticky top-0 h-screen flex items-start justify-center pointer-events-none pt-[15vh] md:pt-[15vh]"
+        style={{ zIndex: 2, marginTop: "-30vh", marginBottom: "-70vh" }}
       >
-        {/* Signature — sticky, persists through manifesto and into work section */}
-        <div
-          className="sticky top-0 h-screen flex items-start justify-center pointer-events-none pt-[15vh]"
-          style={{ zIndex: 2, marginTop: "-30vh", marginBottom: "-70vh" }}
+        <svg
+          viewBox="30 30 630 250"
+          fill="none"
+          preserveAspectRatio="xMidYMid meet"
+          style={{
+            width: "clamp(300px, 85vw, 1200px)",
+            height: "auto",
+            opacity: 0.1,
+          }}
         >
-          <svg
-            viewBox="30 30 630 250"
+          <path
+            ref={signatureRef}
+            d={SIGNATURE_PATH}
+            stroke="rgba(255, 200, 150, 1)"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             fill="none"
-            preserveAspectRatio="xMidYMid meet"
+          />
+        </svg>
+      </div>
+
+      {/* Text — scrolls naturally over the sticky signature */}
+      <div
+        className="relative flex items-start justify-center"
+        style={{ zIndex: 1, minHeight: "100vh", paddingTop: "20vh" }}
+      >
+        <div className="max-w-[1300px] mx-auto px-6 md:px-8 lg:px-12 text-center">
+          <p
             style={{
-              width: "clamp(500px, 75vw, 1200px)",
-              height: "auto",
-              opacity: 0.1,
+              fontFamily: "var(--font-inter), sans-serif",
+              fontSize: "clamp(2.5rem, 9vw, 8rem)",
+              fontWeight: 900,
+              lineHeight: 1.05,
+              letterSpacing: "-0.03em",
             }}
           >
-            <path
-              ref={signatureRef}
-              d={SIGNATURE_PATH}
-              stroke="rgba(255, 200, 150, 1)"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-            />
-          </svg>
+            {words.map((word, wi) => (
+              <span key={wi} className="inline-flex mr-[0.22em]" style={{ overflow: "hidden" }}>
+                {word.text.split("").map((char, ci) => (
+                  <span
+                    key={ci}
+                    data-char
+                    className="inline-block"
+                    style={{
+                      color: word.accent ? "rgba(255, 200, 150, 1)" : "#e5e1db",
+                      willChange: "transform",
+                      opacity: 0,
+                    }}
+                  >
+                    {char}
+                  </span>
+                ))}
+              </span>
+            ))}
+          </p>
         </div>
-
-        {/* Text — scrolls normally over the sticky signature */}
-        <div
-          className="relative flex items-start justify-center"
-          style={{ zIndex: 1, minHeight: "100vh", paddingTop: "20vh" }}
-        >
-          <div className="max-w-[1300px] mx-auto px-8 lg:px-12 text-center">
-            <p
-              style={{
-                fontFamily: "var(--font-inter), sans-serif",
-                fontSize: "clamp(3.5rem, 7vw, 8rem)",
-                fontWeight: 900,
-                lineHeight: 1.05,
-                letterSpacing: "-0.03em",
-              }}
-            >
-              {words.map((word, wi) => (
-                <span key={wi} className="inline-flex mr-[0.22em]" style={{ overflow: "hidden" }}>
-                  {word.text.split("").map((char, ci) => (
-                    <span
-                      key={ci}
-                      data-char
-                      className="inline-block"
-                      style={{
-                        color: word.accent ? "rgba(255, 200, 150, 1)" : "#e5e1db",
-                        willChange: "transform",
-                        opacity: 0,
-                      }}
-                    >
-                      {char}
-                    </span>
-                  ))}
-                </span>
-              ))}
-            </p>
-          </div>
-        </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
