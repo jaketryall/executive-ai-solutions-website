@@ -360,22 +360,22 @@ function MobileCard({ project, index }: { project: (typeof projects)[number]; in
     <TransitionLink
       href={`/work/${project.slug}`}
       className="mobile-work-card block shrink-0"
-      style={{ width: "48%" }}
+      style={{ width: "52%" }}
     >
       <div
-        className="relative rounded-xl overflow-hidden"
-        style={{ aspectRatio: "3/4", border: "1px solid rgba(26,23,20,0.08)" }}
+        className="relative rounded-2xl overflow-hidden"
+        style={{ aspectRatio: "3/4.5", border: "1px solid rgba(26,23,20,0.08)" }}
       >
-        <Image src={project.image} alt={project.title} fill className="object-cover" sizes="48vw" />
+        <Image src={project.image} alt={project.title} fill className="object-cover" sizes="52vw" />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 50%, transparent 70%)" }} />
-        <div className="absolute bottom-0 left-0 right-0 p-3">
-          <p className="text-white/40 text-[8px] uppercase tracking-[0.15em] mb-1">{project.category}</p>
-          <h3 className="text-white font-black text-sm leading-tight tracking-tight">{project.title}</h3>
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <p className="text-white/40 text-[9px] uppercase tracking-[0.15em] mb-1">{project.category}</p>
+          <h3 className="text-white font-black text-base leading-tight tracking-tight">{project.title}</h3>
         </div>
       </div>
-      <div className="flex items-baseline justify-between mt-2 px-0.5">
-        <span className="text-[9px] font-medium" style={{ color: accentColor }}>{num}</span>
-        <span className="text-[9px]" style={{ color: "rgba(26,23,20,0.3)" }}>{project.year}</span>
+      <div className="flex items-baseline justify-between mt-2.5 px-0.5">
+        <span className="text-[10px] font-medium" style={{ color: accentColor }}>{num}</span>
+        <span className="text-[10px]" style={{ color: "rgba(26,23,20,0.3)" }}>{project.year}</span>
       </div>
     </TransitionLink>
   );

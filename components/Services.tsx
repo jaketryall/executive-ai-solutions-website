@@ -745,10 +745,21 @@ function MobileServices() {
     <section
       ref={sectionRef}
       data-bg="dark"
-      className="md:hidden pt-20 pb-24 px-6 relative"
+      className="md:hidden relative"
+      style={{ padding: "0 clamp(0.75rem, 3vw, 1.5rem)", paddingBottom: "clamp(0.75rem, 3vw, 1.5rem)" }}
     >
+      <div
+        style={{
+          backgroundColor: "#141210",
+          borderRadius: "clamp(1.25rem, 3vw, 2rem)",
+          position: "relative",
+          overflow: "hidden",
+          padding: "3.5rem 1.5rem 4rem",
+          minHeight: "90vh",
+        }}
+      >
       {/* Header */}
-      <div ref={headerRef} className="mb-14">
+      <div ref={headerRef} className="mb-16">
         <p className="text-[10px] font-medium uppercase tracking-[0.3em] mb-4" style={{ color: accentColorMuted }}>
           What I Do
         </p>
@@ -768,7 +779,9 @@ function MobileServices() {
 
       {/* Accordion */}
       <div ref={rowsContainerRef}>
-        {services.map((service, i) => (
+        {services.map((service, i) => {
+          const isOpen = openIndex === i;
+          return (
           <div
             key={service.slug}
             className="mobile-service-row relative"
@@ -777,36 +790,61 @@ function MobileServices() {
             <div className="mobile-row-line absolute bottom-0 left-0 right-0 h-px" style={{ backgroundColor: borderColor }} />
             {/* Header */}
             <button
-              onClick={() => setOpenIndex(openIndex === i ? null : i)}
-              className="w-full flex items-center justify-between py-5 gap-4"
-              style={{ background: "none", border: "none", cursor: "pointer" }}
+              onClick={() => setOpenIndex(isOpen ? null : i)}
+              className="w-full flex items-start gap-5 py-10"
+              style={{ background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
             >
-              <span className="text-xs font-medium" style={{ color: accentColorMuted, minWidth: "1.5rem" }}>
-                {service.number}
-              </span>
-
+              {/* Big number */}
               <motion.span
-                animate={{ color: openIndex === i ? accentColor : textColor }}
+                animate={{ color: isOpen ? accentColor : "rgba(255,255,255,0.12)" }}
                 transition={{ duration: 0.3 }}
-                className="flex-1 text-left font-black"
+                className="font-black shrink-0"
                 style={{
                   fontFamily: "Inter, sans-serif",
-                  fontSize: "clamp(1.4rem, 6vw, 2rem)",
-                  lineHeight: 1.1,
-                  letterSpacing: "-0.02em",
+                  fontSize: "clamp(2.5rem, 10vw, 4rem)",
+                  lineHeight: 0.9,
+                  letterSpacing: "-0.04em",
+                  marginTop: "-0.1em",
                 }}
               >
-                {service.title}
+                {service.number}
               </motion.span>
 
-              <motion.span
-                animate={{ rotate: openIndex === i ? 45 : 0 }}
+              <div className="flex-1 pt-1">
+                <motion.span
+                  animate={{ color: isOpen ? accentColor : textColor }}
+                  transition={{ duration: 0.3 }}
+                  className="block font-black"
+                  style={{
+                    fontFamily: "Inter, sans-serif",
+                    fontSize: "clamp(1.2rem, 5vw, 1.6rem)",
+                    lineHeight: 1.1,
+                    letterSpacing: "-0.02em",
+                  }}
+                >
+                  {service.title}
+                </motion.span>
+
+                {/* Subtle hint text when closed */}
+                <motion.span
+                  animate={{ opacity: isOpen ? 0 : 0.3, height: isOpen ? 0 : "auto" }}
+                  className="block text-xs mt-1.5 overflow-hidden"
+                  style={{ color: textMuted }}
+                >
+                  {service.description.slice(0, 60)}...
+                </motion.span>
+              </div>
+
+              {/* Arrow indicator */}
+              <motion.div
+                animate={{ rotate: isOpen ? 180 : 0 }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="text-2xl font-light shrink-0"
-                style={{ color: accentColor, lineHeight: 1 }}
+                className="shrink-0 mt-2"
               >
-                +
-              </motion.span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2" strokeLinecap="round">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </motion.div>
             </button>
 
               {/* Expandable content */}
@@ -912,8 +950,10 @@ function MobileServices() {
                 )}
               </AnimatePresence>
             </div>
-          ))}
+          );
+        })}
         </div>
+      </div>
     </section>
   );
 }

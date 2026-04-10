@@ -14,6 +14,8 @@ if (typeof window !== "undefined") {
 const accentColor = "rgba(255, 200, 150, 1)";
 const accentColorMuted = "rgba(255, 200, 150, 0.6)";
 
+const SIGNATURE_PATH = "M60,160 C65,100 80,60 95,55 C115,48 110,100 108,130 C105,165 90,200 80,210 Q70,220 85,215 C110,205 135,160 155,155 C175,150 170,185 160,200 Q148,218 165,210 C185,200 195,175 210,165 Q230,152 225,180 C220,205 200,225 195,218 Q188,208 210,195 C225,186 250,175 270,200 Q275,208 265,208 C250,208 280,170 310,120 C325,95 340,75 350,70 Q365,64 358,90 C350,120 335,165 340,185 Q345,200 360,185 C375,168 385,145 400,155 Q408,160 400,178 C390,200 365,230 360,248 Q355,265 370,250 C390,228 410,195 430,188 Q445,182 442,200 C438,215 425,225 435,220 Q450,212 460,140 L462,210 Q465,130 475,128 L477,210 C485,205 520,188 560,182 Q600,176 620,190";
+
 // Social icons as simple SVG components
 function DribbbleIcon() {
   return (
@@ -104,6 +106,23 @@ export default function Footer() {
         });
       }
 
+      // Mobile signature draws on scroll
+      const sig = footer.querySelector(".footer-signature-path") as SVGPathElement | null;
+      if (sig) {
+        const length = sig.getTotalLength();
+        gsap.set(sig, { strokeDasharray: length, strokeDashoffset: length });
+        gsap.to(sig, {
+          strokeDashoffset: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: footer,
+            start: "top 90%",
+            end: "top 30%",
+            scrub: 1,
+          },
+        });
+      }
+
       // Email underline draws in
       const underline = footer.querySelector(".footer-underline");
       if (underline) {
@@ -190,6 +209,27 @@ export default function Footer() {
                   style={{ backgroundColor: darkText }}
                 />
               </a>
+            </div>
+
+            {/* Signature — mobile only, draws on scroll */}
+            <div className="md:hidden flex justify-center mb-12 pointer-events-none">
+              <svg
+                viewBox="30 30 630 250"
+                fill="none"
+                preserveAspectRatio="xMidYMid meet"
+                className="w-[80vw]"
+                style={{ height: "auto", opacity: 0.15 }}
+              >
+                <path
+                  className="footer-signature-path"
+                  d={SIGNATURE_PATH}
+                  stroke={darkText}
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+              </svg>
             </div>
 
             {/* Social links */}
