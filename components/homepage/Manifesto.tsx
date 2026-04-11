@@ -120,8 +120,8 @@ export default function Manifesto() {
           ease: "none",
           scrollTrigger: {
             trigger: section,
-            start: "top 55%",
-            end: "top 5%",
+            start: "top 95%",
+            end: "top 45%",
             scrub: 1,
           },
         }
@@ -136,8 +136,8 @@ export default function Manifesto() {
           ease: "none",
           scrollTrigger: {
             trigger: section,
-            start: "top 90%",
-            end: "top 45%",
+            start: "top 100%",
+            end: "top 65%",
             scrub: 1,
           },
         });
@@ -228,7 +228,7 @@ export default function Manifesto() {
         ref={mobileRef}
         className="relative md:hidden overflow-hidden"
         data-bg="dark"
-        style={{ padding: "15vh 0 10vh" }}
+        style={{ padding: "0 0 10vh", marginTop: "-10vh" }}
       >
         <div className="px-6 text-center">
           {textBlock}

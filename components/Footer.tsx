@@ -153,13 +153,15 @@ export default function Footer() {
       <footer
         ref={footerRef}
         id="site-footer"
-        className="relative"
-        style={{ backgroundColor: creamBg, zIndex: 10 }}
+        className="relative mt-[-80px] md:mt-[-120px] pt-[80px] md:pt-[120px]"
+        style={{ backgroundColor: "transparent", zIndex: 10 }}
         data-footer
       >
+        {/* Cream background — offset down so the curve area stays transparent over the dark section */}
+        <div className="absolute inset-0 top-[80px] md:top-[120px]" style={{ backgroundColor: creamBg }} />
 
-        {/* Liquid curve SVG — extends up into the section above */}
-        <div className="absolute left-0 right-0 -top-[80px] md:-top-[120px] h-[80px] md:h-[120px] pointer-events-none" style={{ zIndex: 10 }}>
+        {/* Liquid curve SVG — sits in the top padding area over the dark section */}
+        <div className="absolute left-0 right-0 top-0 h-[80px] md:h-[120px] pointer-events-none" style={{ zIndex: 10 }}>
           <svg
             viewBox="0 0 1000 100"
             preserveAspectRatio="none"

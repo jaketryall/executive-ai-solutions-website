@@ -600,17 +600,17 @@ function DesktopHero() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="fixed inset-0 z-[100]"
+            className="fixed inset-0 z-[100] [--clip-x:calc(100%-40px)] [--clip-y:76px] md:[--clip-x:calc(100%-52px)] md:[--clip-y:48px]"
             style={{ background: "#0a0908" }}
-            initial={{ clipPath: "circle(0% at calc(100% - 52px) 52px)" }}
-            animate={{ clipPath: "circle(150% at calc(100% - 52px) 52px)" }}
-            exit={{ clipPath: "circle(0% at calc(100% - 52px) 52px)" }}
+            initial={{ clipPath: "circle(0% at var(--clip-x) var(--clip-y))" }}
+            animate={{ clipPath: "circle(150% at var(--clip-x) var(--clip-y))" }}
+            exit={{ clipPath: "circle(0% at var(--clip-x) var(--clip-y))" }}
             transition={{ duration: 0.75, ease: [0.65, 0.05, 0, 1] }}
           >
 
             {/* Close button — lines animate from hamburger to X */}
             <button
-              className="absolute top-7 right-8 w-10 h-10 rounded-full border border-white/15 flex items-center justify-center transition-all hover:bg-white hover:border-white group z-10"
+              className="absolute top-[56px] right-5 md:top-7 md:right-8 w-9 h-9 rounded-full border border-white/15 flex items-center justify-center transition-all hover:bg-white hover:border-white group z-10"
               onClick={() => setMenuOpen(false)}
             >
               <div className="relative w-3.5 h-3.5 flex items-center justify-center">

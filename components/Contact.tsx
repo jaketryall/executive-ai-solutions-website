@@ -195,7 +195,7 @@ function MobileContact() {
       ref={mobileContactRef}
       id="contact"
       data-bg="dark"
-      className="md:hidden relative pt-20 pb-24"
+      className="md:hidden relative pt-20 pb-40"
     >
       {/* Header */}
       <div ref={headerRef} className="px-6 mb-14">
@@ -352,18 +352,6 @@ function MobileContact() {
         )}
       </div>
 
-      {/* Email fallback */}
-      <div className="px-6 mt-12 pt-8" style={{ borderTop: "1px solid rgba(245,240,232,0.05)" }}>
-        <p className="text-[#f5f0e8]/25 text-[10px] uppercase tracking-[0.2em] mb-2">
-          Prefer email?
-        </p>
-        <a
-          href="mailto:jaker@executiveaisolutions.com"
-          className="text-[#f5f0e8]/50 text-sm hover:text-[#f5f0e8] transition-colors inline-flex items-center gap-2"
-        >
-          jaker@executiveaisolutions.com <span className="text-xs">↗</span>
-        </a>
-      </div>
     </section>
   );
 }
