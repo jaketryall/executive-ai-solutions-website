@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import { useSound } from "@/components/SoundManager";
 import { projects } from "@/lib/data";
 import { SplitText, useSplitTextReveal } from "@/lib/hooks";
+import ScrollBackground from "@/components/homepage/ScrollBackground";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -232,13 +233,14 @@ export default function WorkPage() {
   return (
     <>
       <Navbar />
+      <ScrollBackground />
       <main
         ref={containerRef}
-        className="relative bg-[#0a0908] overflow-hidden"
+        className="relative overflow-hidden"
         style={{ zIndex: 10 }}
       >
         {/* Hero */}
-        <section ref={heroRef} className="pt-36 pb-20 md:pt-44 md:pb-28 px-6 md:px-12 lg:px-20">
+        <section ref={heroRef} data-bg="dark" className="pt-36 pb-20 md:pt-44 md:pb-28 px-6 md:px-12 lg:px-20">
           <div className="max-w-7xl mx-auto">
             {/* Label */}
             <motion.p
@@ -278,7 +280,7 @@ export default function WorkPage() {
         </section>
 
         {/* Projects Grid */}
-        <section className="pb-32 md:pb-40 px-6 md:px-12 lg:px-20">
+        <section data-bg="dark" className="pb-32 md:pb-40 px-6 md:px-12 lg:px-20">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               {projects.map((project, i) => (
@@ -290,27 +292,29 @@ export default function WorkPage() {
           </div>
         </section>
 
+        <div data-bg="morph" className="h-[100px] md:h-[150px]" />
+
         {/* CTA Section */}
-        <section className="py-28 md:py-36 px-6 md:px-12 lg:px-20 border-t border-white/5">
+        <section data-bg="cream" className="py-28 md:py-36 px-6 md:px-12 lg:px-20">
           <div className="max-w-4xl mx-auto text-center">
             <h2
-              className="work-cta-reveal text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-[-0.03em] mb-6"
+              className="work-cta-reveal text-4xl md:text-5xl lg:text-6xl font-black text-[#1a1816] tracking-[-0.03em] mb-6"
             >
               Have a project in mind?
             </h2>
 
-            <p className="work-cta-reveal text-white/40 text-lg mb-12 max-w-xl mx-auto">
+            <p className="work-cta-reveal text-[#1a1816]/40 text-lg mb-12 max-w-xl mx-auto">
               Let&apos;s talk about what you&apos;re building.
             </p>
 
             <div className="work-cta-reveal">
               <TransitionLink href="/contact">
                 <motion.button
-                  className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-white/15 hover:border-white/30 hover:bg-white/5 transition-all cursor-pointer"
+                  className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-[#1a1816]/15 hover:border-[#1a1816]/30 hover:bg-[#1a1816]/5 transition-all cursor-pointer"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <span className="text-white font-semibold text-sm uppercase tracking-[0.12em]">Start a project</span>
+                  <span className="text-[#1a1816] font-semibold text-sm uppercase tracking-[0.12em]">Start a project</span>
                   <span
                     className="w-7 h-7 rounded-full flex items-center justify-center"
                     style={{ backgroundColor: accentColor }}

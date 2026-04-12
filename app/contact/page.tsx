@@ -8,6 +8,7 @@ import { useSound } from "@/components/SoundManager";
 import { SplitText, useSplitTextReveal } from "@/lib/hooks";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import ScrollBackground from "@/components/homepage/ScrollBackground";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -137,13 +138,14 @@ export default function ContactPage() {
 
   return (
     <>
-      <MovingBackground />
       <Navbar />
-      <main ref={containerRef} className="relative bg-[#0a0908]" style={{ zIndex: 10 }}>
+      <ScrollBackground />
+      <main ref={containerRef} className="relative" style={{ zIndex: 10 }}>
 
         {/* Hero Section - Full height, dramatic */}
         <motion.section
           ref={heroRef}
+          data-bg="dark"
           className="relative min-h-[50vh] md:min-h-[60vh] lg:min-h-[70vh] flex items-end pb-12 md:pb-20 lg:pb-24 overflow-hidden"
           style={{ y: heroY, opacity: heroOpacity }}
         >
@@ -201,7 +203,7 @@ export default function ContactPage() {
         </motion.section>
 
         {/* Main Content */}
-        <section className="relative py-16 md:py-24 px-6 md:px-12 lg:px-20">
+        <section data-bg="dark" className="relative py-16 md:py-24 px-6 md:px-12 lg:px-20">
           <div className="max-w-7xl mx-auto">
             <div className="grid md:grid-cols-12 gap-8 md:gap-12 lg:gap-20">
 
@@ -559,8 +561,10 @@ export default function ContactPage() {
           </div>
         </section>
 
+        <div data-bg="morph" className="h-[100px] md:h-[150px]" />
+
         {/* FAQ Section */}
-        <section className="py-24 md:py-32 px-6 md:px-12 lg:px-20 border-t border-white/5">
+        <section data-bg="cream" className="py-24 md:py-32 px-6 md:px-12 lg:px-20">
           <div className="max-w-7xl mx-auto">
             <motion.div
               className="mb-16"
@@ -570,11 +574,11 @@ export default function ContactPage() {
             >
               <p
                 className="text-xs uppercase tracking-[0.3em] mb-4"
-                style={{ color: accentColorMuted }}
+                style={{ color: "rgba(26,24,22,0.4)" }}
               >
                 FAQ
               </p>
-              <h2 className="text-4xl md:text-5xl font-black text-white tracking-[-0.03em]">
+              <h2 className="text-4xl md:text-5xl font-black text-[#1a1816] tracking-[-0.03em]">
                 Common Questions
               </h2>
             </motion.div>
@@ -600,14 +604,14 @@ export default function ContactPage() {
               ].map((faq, index) => (
                 <motion.div
                   key={faq.q}
-                  className="py-8 border-b border-white/5"
+                  className="py-8 border-b border-[#1a1816]/8"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.08 }}
                 >
-                  <h3 className="text-xl md:text-2xl font-bold text-white mb-4">{faq.q}</h3>
-                  <p className="text-white/50 text-lg leading-relaxed">{faq.a}</p>
+                  <h3 className="text-xl md:text-2xl font-bold text-[#1a1816] mb-4">{faq.q}</h3>
+                  <p className="text-[#1a1816]/50 text-lg leading-relaxed">{faq.a}</p>
                 </motion.div>
               ))}
             </div>

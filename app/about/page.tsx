@@ -6,6 +6,7 @@ import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import { TransitionLink } from "@/components/PageTransition";
 import Footer from "@/components/Footer";
+import ScrollBackground from "@/components/homepage/ScrollBackground";
 import { useSound } from "@/components/SoundManager";
 import { SplitText, useSplitTextReveal } from "@/lib/hooks";
 import gsap from "gsap";
@@ -165,11 +166,13 @@ export default function AboutPage() {
   return (
     <>
       <Navbar />
-      <main ref={containerRef} className="relative bg-[#0a0908]" style={{ zIndex: 10 }}>
+      <ScrollBackground />
+      <main ref={containerRef} className="relative" style={{ zIndex: 10 }}>
 
         {/* Hero - Minimal, asymmetric */}
         <motion.section
           ref={heroRef}
+          data-bg="dark"
           className="relative min-h-[90vh] flex items-end pb-20 md:pb-32 pt-32 md:pt-40 overflow-hidden"
           style={{ y: heroY, opacity: heroOpacity }}
         >
@@ -274,7 +277,7 @@ export default function AboutPage() {
         </motion.section>
 
         {/* Bento Grid Section */}
-        <section className="relative py-20 md:py-32 px-6 md:px-12 lg:px-20">
+        <section data-bg="dark" className="relative py-20 md:py-32 px-6 md:px-12 lg:px-20">
           {/* Ambient glow */}
           <div
             className="absolute inset-0 pointer-events-none"
@@ -518,11 +521,13 @@ export default function AboutPage() {
           </div>
         </section>
 
+        <div data-bg="morph" className="h-[100px] md:h-[150px]" />
+
         {/* CTA Section */}
-        <section className="py-32 px-6 md:px-12 lg:px-20 border-t border-white/5">
+        <section data-bg="cream" className="py-32 px-6 md:px-12 lg:px-20">
           <div className="max-w-4xl mx-auto text-center">
             <motion.h2
-              className="text-4xl md:text-6xl font-black text-white tracking-[-0.03em] mb-6"
+              className="text-4xl md:text-6xl font-black text-[#1a1816] tracking-[-0.03em] mb-6"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -531,7 +536,7 @@ export default function AboutPage() {
             </motion.h2>
 
             <motion.p
-              className="text-white/50 text-lg mb-10 max-w-xl mx-auto"
+              className="text-[#1a1816]/50 text-lg mb-10 max-w-xl mx-auto"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -542,14 +547,14 @@ export default function AboutPage() {
 
             <TransitionLink href="/contact">
               <motion.button
-                className="group inline-flex items-center gap-4 px-8 py-4 rounded-full border border-white/10 hover:border-white/20 transition-colors"
-                style={{ background: "rgba(255,255,255,0.03)" }}
+                className="group inline-flex items-center gap-4 px-8 py-4 rounded-full border border-[#1a1816]/10 hover:border-[#1a1816]/20 transition-colors"
+                style={{ background: "rgba(26,24,22,0.03)" }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onMouseEnter={() => play("hover", { volume: 0.06 })}
                 onClick={() => play("click")}
               >
-                <span className="text-white font-medium">Get in touch</span>
+                <span className="text-[#1a1816] font-medium">Get in touch</span>
                 <span
                   className="w-8 h-8 rounded-full flex items-center justify-center transition-transform group-hover:translate-x-1"
                   style={{ backgroundColor: accentColor }}

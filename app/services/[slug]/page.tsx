@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import { useSound } from "@/components/SoundManager";
 import { services, getServiceBySlug, getRelatedProjects, PricingTier } from "@/lib/data";
 import { SplitText, useSplitTextReveal } from "@/lib/hooks";
+import ScrollBackground from "@/components/homepage/ScrollBackground";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -135,7 +136,7 @@ function CinematicHero({
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative min-h-[100vh] flex items-center justify-center">
+    <section ref={sectionRef} data-bg="dark" className="relative min-h-[100vh] flex items-center justify-center">
       {/* Background gradient */}
       <div
         className="absolute inset-0"
@@ -342,6 +343,7 @@ function DescriptionSection({
   return (
     <section
       ref={sectionRef}
+      data-bg="dark"
       className="relative py-32 md:py-48 px-6 md:px-12 lg:px-20 bg-transparent"
     >
       <div className="max-w-5xl mx-auto">
@@ -462,7 +464,7 @@ function VerticalTimelineSection({
   }, [service.process.length]);
 
   return (
-    <section ref={sectionRef} className="relative py-32 md:py-48 bg-transparent">
+    <section ref={sectionRef} data-bg="dark" className="relative py-32 md:py-48 bg-transparent">
       {/* Background glow */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -713,7 +715,7 @@ function BenefitsSection({
   };
 
   return (
-    <section ref={sectionRef} className="relative py-32 md:py-48 bg-transparent">
+    <section ref={sectionRef} data-bg="dark" className="relative py-32 md:py-48 bg-transparent">
       {/* Ambient glow */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -914,12 +916,12 @@ function PricingSection({
   }, []);
 
   return (
-    <section id="pricing" ref={sectionRef} className="relative py-32 md:py-48 bg-transparent overflow-hidden">
-      {/* Background glow */}
+    <section id="pricing" ref={sectionRef} data-bg="cream" className="relative py-32 md:py-48 bg-transparent overflow-hidden">
+      {/* Background glow - subtle for cream */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(ellipse 50% 50% at 50% 30%, ${accentColor}08, transparent)`,
+          background: `radial-gradient(ellipse 50% 50% at 50% 30%, rgba(255,200,150,0.06), transparent)`,
         }}
       />
 
@@ -928,7 +930,7 @@ function PricingSection({
         <div className="text-center mb-16 md:mb-24">
           <motion.span
             className="text-xs uppercase tracking-[0.3em] mb-4 block"
-            style={{ color: accentColorMuted }}
+            style={{ color: "rgba(26,24,22,0.4)" }}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -936,7 +938,7 @@ function PricingSection({
             Investment
           </motion.span>
           <motion.h2
-            className="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-[-0.04em] mb-6"
+            className="text-4xl md:text-6xl lg:text-7xl font-black text-[#1a1816] tracking-[-0.04em] mb-6"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -945,7 +947,7 @@ function PricingSection({
             Pricing
           </motion.h2>
           <motion.p
-            className="text-white/40 text-lg md:text-xl max-w-2xl mx-auto"
+            className="text-[#1a1816]/40 text-lg md:text-xl max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -992,11 +994,11 @@ function PricingSection({
                 className="relative rounded-2xl md:rounded-3xl overflow-hidden h-full"
                 style={{
                   background: tier.highlighted
-                    ? `linear-gradient(145deg, rgba(255,200,150,0.12) 0%, rgba(255,200,150,0.04) 100%)`
-                    : "linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)",
+                    ? `linear-gradient(145deg, rgba(255,200,150,0.15) 0%, rgba(255,200,150,0.06) 100%)`
+                    : "linear-gradient(145deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.4) 100%)",
                   border: tier.highlighted
                     ? `1px solid ${accentColor}40`
-                    : "1px solid rgba(255,255,255,0.08)",
+                    : "1px solid rgba(26,24,22,0.08)",
                 }}
               >
                 {/* Background number - hide for single card */}
@@ -1006,7 +1008,7 @@ function PricingSection({
                     style={{
                       WebkitTextStroke: tier.highlighted
                         ? `1px rgba(255,200,150,0.1)`
-                        : `1px rgba(255,255,255,0.04)`,
+                        : `1px rgba(26,24,22,0.04)`,
                       WebkitTextFillColor: "transparent",
                     }}
                   >
@@ -1025,20 +1027,20 @@ function PricingSection({
                     {/* Tier name */}
                     <h3
                       className={`font-semibold mb-2 ${pricing.length === 1 ? "text-xl md:text-2xl" : "text-lg"}`}
-                      style={{ color: tier.highlighted ? accentColor : "white" }}
+                      style={{ color: tier.highlighted ? accentColor : "#1a1816" }}
                     >
                       {tier.name}
                     </h3>
 
                     {/* Price */}
                     <div className={`${pricing.length === 1 ? "mb-6" : "mb-4 min-h-[72px] md:min-h-[80px]"}`}>
-                      <span className={`font-black text-white ${pricing.length === 1 ? "text-5xl md:text-7xl" : "text-4xl md:text-5xl"}`}>
+                      <span className={`font-black text-[#1a1816] ${pricing.length === 1 ? "text-5xl md:text-7xl" : "text-4xl md:text-5xl"}`}>
                         {tier.price}
                       </span>
                     </div>
 
                     {/* Description */}
-                    <p className={`text-white/50 ${pricing.length === 1 ? "text-base md:text-lg mb-8 max-w-md" : "text-sm mb-8 min-h-[40px]"}`}>
+                    <p className={`text-[#1a1816]/50 ${pricing.length === 1 ? "text-base md:text-lg mb-8 max-w-md" : "text-sm mb-8 min-h-[40px]"}`}>
                       {tier.description}
                     </p>
 
@@ -1061,7 +1063,7 @@ function PricingSection({
                   {/* Right side - Features */}
                   <div className={`${pricing.length === 1 ? "md:w-1/2" : "grow"}`}>
                     {pricing.length === 1 && (
-                      <p className="text-xs uppercase tracking-[0.2em] text-white/40 mb-6">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#1a1816]/40 mb-6">
                         What&apos;s Included
                       </p>
                     )}
@@ -1077,10 +1079,10 @@ function PricingSection({
                             style={{
                               background: tier.highlighted
                                 ? `${accentColor}20`
-                                : "rgba(255,255,255,0.1)",
+                                : "rgba(26,24,22,0.06)",
                               border: tier.highlighted
                                 ? `1px solid ${accentColor}40`
-                                : "1px solid rgba(255,255,255,0.1)",
+                                : "1px solid rgba(26,24,22,0.1)",
                             }}
                           >
                             <svg
@@ -1088,13 +1090,13 @@ function PricingSection({
                               height={pricing.length === 1 ? "12" : "10"}
                               viewBox="0 0 24 24"
                               fill="none"
-                              stroke={tier.highlighted ? accentColor : "rgba(255,255,255,0.5)"}
+                              stroke={tier.highlighted ? accentColor : "rgba(26,24,22,0.5)"}
                               strokeWidth="3"
                             >
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
                           </span>
-                          <span className={`text-white/70 ${pricing.length === 1 ? "text-base" : "text-sm"}`}>{feature}</span>
+                          <span className={`text-[#1a1816]/70 ${pricing.length === 1 ? "text-base" : "text-sm"}`}>{feature}</span>
                         </li>
                       ))}
                     </ul>
@@ -1107,11 +1109,11 @@ function PricingSection({
                           style={{
                             background: tier.highlighted
                               ? `linear-gradient(135deg, ${accentColor}, rgba(255, 180, 120, 1))`
-                              : "rgba(255,255,255,0.08)",
-                            color: tier.highlighted ? "#000" : "white",
+                              : "rgba(26,24,22,0.06)",
+                            color: tier.highlighted ? "#000" : "#1a1816",
                             border: tier.highlighted
                               ? "none"
-                              : "1px solid rgba(255,255,255,0.1)",
+                              : "1px solid rgba(26,24,22,0.1)",
                           }}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
@@ -1167,7 +1169,7 @@ function PricingSection({
 
         {/* Bottom note */}
         <motion.p
-          className="text-center text-white/30 text-sm mt-12"
+          className="text-center text-[#1a1816]/30 text-sm mt-12"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -1194,7 +1196,7 @@ function RelatedProjectsSection({
   if (relatedProjects.length === 0) return null;
 
   return (
-    <section className="relative py-32 md:py-48 bg-transparent">
+    <section data-bg="dark" className="relative py-32 md:py-48 bg-transparent">
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
         {/* Section header */}
         <div className="flex items-end justify-between mb-12 md:mb-16">
@@ -1306,18 +1308,18 @@ function CTASection() {
   const { play } = useSound();
 
   return (
-    <section className="relative py-32 md:py-48 bg-transparent overflow-hidden">
-      {/* Background effect */}
+    <section data-bg="cream" className="relative py-32 md:py-48 bg-transparent overflow-hidden">
+      {/* Background effect - subtle for cream */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(ellipse 60% 60% at 50% 100%, ${accentColor}10, transparent)`,
+          background: `radial-gradient(ellipse 60% 60% at 50% 100%, rgba(255,200,150,0.06), transparent)`,
         }}
       />
 
       <div className="max-w-4xl mx-auto px-6 md:px-12 lg:px-20 text-center relative z-10">
         <motion.h2
-          className="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-[-0.04em] mb-6"
+          className="text-4xl md:text-6xl lg:text-7xl font-black text-[#1a1816] tracking-[-0.04em] mb-6"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -1325,7 +1327,7 @@ function CTASection() {
           Ready to Start?
         </motion.h2>
         <motion.p
-          className="text-xl md:text-2xl text-white/50 mb-12 max-w-2xl mx-auto"
+          className="text-xl md:text-2xl text-[#1a1816]/50 mb-12 max-w-2xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -1444,8 +1446,9 @@ export default function ServicePage({
       `}</style>
 
       <Navbar />
+      <ScrollBackground />
 
-      <main className="relative bg-[#0a0908] overflow-hidden" style={{ zIndex: 10 }}>
+      <main className="relative overflow-hidden" style={{ zIndex: 10 }}>
         {/* Moving background elements - fixed but contained by main's z-index */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
           {/* Large gradient orb 1 */}
@@ -1487,7 +1490,7 @@ export default function ServicePage({
         <CinematicHero service={service} />
 
         {/* Kinetic Marquee - transparent to show glassmorphic background */}
-        <section className="py-16 md:py-24 overflow-hidden bg-transparent relative">
+        <section data-bg="dark" className="py-16 md:py-24 overflow-hidden bg-transparent relative">
           <KineticMarquee text={`${service.title} •`} />
         </section>
 
@@ -1500,16 +1503,25 @@ export default function ServicePage({
         {/* Benefits */}
         <BenefitsSection service={service} />
 
+        {/* Morph spacer: dark -> cream */}
+        <div data-bg="morph" className="h-[100px] md:h-[150px]" />
+
         {/* Pricing */}
         <PricingSection pricing={service.pricing} />
 
+        {/* Morph spacer: cream -> dark */}
+        <div data-bg="morph" className="h-[100px] md:h-[150px]" />
+
         {/* Kinetic Marquee 2 - transparent to show glassmorphic background */}
-        <section className="py-16 md:py-24 overflow-hidden bg-transparent relative">
+        <section data-bg="dark" className="py-16 md:py-24 overflow-hidden bg-transparent relative">
           <KineticMarquee text="MORE LEADS • MORE SALES • MORE GROWTH •" direction={1} />
         </section>
 
         {/* Related Projects */}
         <RelatedProjectsSection relatedProjects={relatedProjects} />
+
+        {/* Morph spacer: dark -> cream */}
+        <div data-bg="morph" className="h-[100px] md:h-[150px]" />
 
         {/* CTA */}
         <CTASection />
