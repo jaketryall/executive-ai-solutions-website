@@ -170,8 +170,8 @@ function MobileContact() {
             ease: "power3.out",
             scrollTrigger: {
               trigger: field,
-              start: "top 95%",
-              end: "top 70%",
+              start: "top 80%",
+              end: "top 55%",
               scrub: 0.4,
             },
           }
@@ -194,8 +194,9 @@ function MobileContact() {
     <section
       ref={mobileContactRef}
       id="contact"
-      data-bg="dark"
+      data-bg="cream"
       className="md:hidden relative pt-20 pb-40"
+      style={{ backgroundColor: "#141210" }}
     >
       {/* Header */}
       <div ref={headerRef} className="px-6 mb-14">
@@ -462,8 +463,8 @@ function DesktopContact() {
           stagger: 0.04,
           scrollTrigger: {
             trigger: headlineWrap,
-            start: "top 85%",
-            end: "top 30%",
+            start: "top 65%",
+            end: "top 20%",
             scrub: 1.5,
           },
         });
@@ -484,8 +485,8 @@ function DesktopContact() {
             ease: "power3.out",
             scrollTrigger: {
               trigger: el,
-              start: "top 95%",
-              end: "top 65%",
+              start: "top 75%",
+              end: "top 45%",
               scrub: 0.4,
             },
           }
@@ -505,8 +506,8 @@ function DesktopContact() {
               ease: "power2.inOut",
               scrollTrigger: {
                 trigger: field,
-                start: "top 90%",
-                end: "top 70%",
+                start: "top 70%",
+                end: "top 50%",
                 scrub: 0.3,
               },
             }
@@ -526,8 +527,8 @@ function DesktopContact() {
             ease: "power3.out",
             scrollTrigger: {
               trigger: submitBtn,
-              start: "top 95%",
-              end: "top 75%",
+              start: "top 75%",
+              end: "top 55%",
               scrub: 0.4,
             },
           }
@@ -546,8 +547,8 @@ function DesktopContact() {
             ease: "power3.out",
             scrollTrigger: {
               trigger: emailWrap,
-              start: "top 95%",
-              end: "top 80%",
+              start: "top 75%",
+              end: "top 60%",
               scrub: 0.3,
             },
           }
@@ -583,8 +584,8 @@ function DesktopContact() {
             ease: "power3.out",
             scrollTrigger: {
               trigger: testimonialOverlay,
-              start: "top 95%",
-              end: "top 70%",
+              start: "top 75%",
+              end: "top 50%",
               scrub: 0.5,
             },
           }
@@ -634,8 +635,8 @@ function DesktopContact() {
     >
       <div
         className="relative pt-28 lg:pt-36 pb-44 lg:pb-56 overflow-hidden"
-        style={{ backgroundColor: "#0a0908" }}
-        data-bg="dark"
+        style={{ backgroundColor: "#141210" }}
+        data-bg="cream"
       >
       {/* CSS for animations */}
       <style>{`
@@ -669,7 +670,7 @@ function DesktopContact() {
           content: '';
           position: absolute;
           inset: 2px;
-          background: #0a0908;
+          background: #141210;
           border-radius: inherit;
           z-index: 1;
           border: 1px solid rgba(255, 255, 255, 0.1);

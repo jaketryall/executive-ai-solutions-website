@@ -138,31 +138,23 @@ export default function ContactPage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar lightHero />
       <ScrollBackground />
       <main ref={containerRef} className="relative" style={{ zIndex: 10 }}>
 
         {/* Hero Section - Full height, dramatic */}
         <motion.section
           ref={heroRef}
-          data-bg="dark"
+          data-bg="cream"
           className="relative min-h-[50vh] md:min-h-[60vh] lg:min-h-[70vh] flex items-end pb-12 md:pb-20 lg:pb-24 overflow-hidden"
           style={{ y: heroY, opacity: heroOpacity }}
         >
-          {/* Background gradient */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: `radial-gradient(ellipse 70% 50% at 30% 50%, rgba(255, 200, 150, 0.06) 0%, transparent 60%)`,
-            }}
-          />
-
           <div ref={heroContentRef} className="relative z-10 w-full px-6 md:px-12 lg:px-20">
             <div className="max-w-7xl mx-auto">
               {/* Label */}
               <motion.p
                 className="text-xs uppercase tracking-[0.4em] mb-6"
-                style={{ color: accentColorMuted }}
+                style={{ color: "rgba(26,24,22,0.4)" }}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -180,7 +172,7 @@ export default function ContactPage() {
                       fontFamily: "var(--font-inter), sans-serif",
                       fontSize: "clamp(4rem, 11vw, 10rem)",
                       fontWeight: 900,
-                      color: "#f5f0e8",
+                      color: "#1a1816",
                       lineHeight: 0.85,
                       letterSpacing: "-0.04em",
                     }}
@@ -193,7 +185,7 @@ export default function ContactPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.5 }}
                 >
-                  <p className="text-white/50 text-lg leading-relaxed">
+                  <p className="text-[#1a1816]/50 text-lg leading-relaxed">
                     Ready to start your project? Send me a message and I'll get back to you within 24 hours.
                   </p>
                 </motion.div>
@@ -201,6 +193,8 @@ export default function ContactPage() {
             </div>
           </div>
         </motion.section>
+
+        <div data-bg="morph" className="h-[250px] md:h-[400px]" />
 
         {/* Main Content */}
         <section data-bg="dark" className="relative py-16 md:py-24 px-6 md:px-12 lg:px-20">
@@ -561,10 +555,8 @@ export default function ContactPage() {
           </div>
         </section>
 
-        <div data-bg="morph" className="h-[100px] md:h-[150px]" />
-
         {/* FAQ Section */}
-        <section data-bg="cream" className="py-24 md:py-32 px-6 md:px-12 lg:px-20">
+        <section data-bg="dark" className="py-24 md:py-32 px-6 md:px-12 lg:px-20">
           <div className="max-w-7xl mx-auto">
             <motion.div
               className="mb-16"
@@ -574,11 +566,11 @@ export default function ContactPage() {
             >
               <p
                 className="text-xs uppercase tracking-[0.3em] mb-4"
-                style={{ color: "rgba(26,24,22,0.4)" }}
+                style={{ color: accentColorMuted }}
               >
                 FAQ
               </p>
-              <h2 className="text-4xl md:text-5xl font-black text-[#1a1816] tracking-[-0.03em]">
+              <h2 className="text-4xl md:text-5xl font-black text-white tracking-[-0.03em]">
                 Common Questions
               </h2>
             </motion.div>
@@ -604,14 +596,14 @@ export default function ContactPage() {
               ].map((faq, index) => (
                 <motion.div
                   key={faq.q}
-                  className="py-8 border-b border-[#1a1816]/8"
+                  className="py-8 border-b border-white/5"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.08 }}
                 >
-                  <h3 className="text-xl md:text-2xl font-bold text-[#1a1816] mb-4">{faq.q}</h3>
-                  <p className="text-[#1a1816]/50 text-lg leading-relaxed">{faq.a}</p>
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-4">{faq.q}</h3>
+                  <p className="text-white/50 text-lg leading-relaxed">{faq.a}</p>
                 </motion.div>
               ))}
             </div>

@@ -189,7 +189,7 @@ export default function Manifesto() {
               data-char
               className="inline-block"
               style={{
-                color: word.accent ? "rgba(255, 200, 150, 1)" : "#e5e1db",
+                color: word.accent ? "rgba(120, 115, 108, 1)" : "#e5e1db",
                 willChange: "transform",
                 opacity: 0,
               }}

@@ -232,7 +232,7 @@ export default function WorkPage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar lightHero />
       <ScrollBackground />
       <main
         ref={containerRef}
@@ -240,12 +240,12 @@ export default function WorkPage() {
         style={{ zIndex: 10 }}
       >
         {/* Hero */}
-        <section ref={heroRef} data-bg="dark" className="pt-36 pb-20 md:pt-44 md:pb-28 px-6 md:px-12 lg:px-20">
+        <section ref={heroRef} data-bg="cream" className="pt-36 pb-20 md:pt-44 md:pb-28 px-6 md:px-12 lg:px-20">
           <div className="max-w-7xl mx-auto">
             {/* Label */}
             <motion.p
               className="text-xs uppercase tracking-[0.3em] mb-6"
-              style={{ color: accentColorMuted }}
+              style={{ color: "rgba(26,24,22,0.4)" }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
@@ -261,7 +261,7 @@ export default function WorkPage() {
                 fontFamily: "var(--font-inter), sans-serif",
                 fontSize: "clamp(4rem, 10vw, 9rem)",
                 fontWeight: 900,
-                color: "#f5f0e8",
+                color: "#1a1816",
                 lineHeight: 0.9,
                 letterSpacing: "-0.04em",
               }}
@@ -269,7 +269,7 @@ export default function WorkPage() {
 
             {/* Subtitle */}
             <motion.p
-              className="text-white/30 text-lg mt-8 max-w-md"
+              className="text-[#1a1816]/30 text-lg mt-8 max-w-md"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
@@ -278,6 +278,8 @@ export default function WorkPage() {
             </motion.p>
           </div>
         </section>
+
+        <div data-bg="morph" className="h-[250px] md:h-[400px]" />
 
         {/* Projects Grid */}
         <section data-bg="dark" className="pb-32 md:pb-40 px-6 md:px-12 lg:px-20">
@@ -292,29 +294,27 @@ export default function WorkPage() {
           </div>
         </section>
 
-        <div data-bg="morph" className="h-[100px] md:h-[150px]" />
-
         {/* CTA Section */}
-        <section data-bg="cream" className="py-28 md:py-36 px-6 md:px-12 lg:px-20">
+        <section data-bg="dark" className="py-28 md:py-36 px-6 md:px-12 lg:px-20">
           <div className="max-w-4xl mx-auto text-center">
             <h2
-              className="work-cta-reveal text-4xl md:text-5xl lg:text-6xl font-black text-[#1a1816] tracking-[-0.03em] mb-6"
+              className="work-cta-reveal text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-[-0.03em] mb-6"
             >
               Have a project in mind?
             </h2>
 
-            <p className="work-cta-reveal text-[#1a1816]/40 text-lg mb-12 max-w-xl mx-auto">
+            <p className="work-cta-reveal text-white/40 text-lg mb-12 max-w-xl mx-auto">
               Let&apos;s talk about what you&apos;re building.
             </p>
 
             <div className="work-cta-reveal">
               <TransitionLink href="/contact">
                 <motion.button
-                  className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-[#1a1816]/15 hover:border-[#1a1816]/30 hover:bg-[#1a1816]/5 transition-all cursor-pointer"
+                  className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-white/15 hover:border-white/30 hover:bg-white/5 transition-all cursor-pointer"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <span className="text-[#1a1816] font-semibold text-sm uppercase tracking-[0.12em]">Start a project</span>
+                  <span className="text-white font-semibold text-sm uppercase tracking-[0.12em]">Start a project</span>
                   <span
                     className="w-7 h-7 rounded-full flex items-center justify-center"
                     style={{ backgroundColor: accentColor }}

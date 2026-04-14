@@ -59,14 +59,14 @@ function StaggeredText({ text, isHovered }: { text: string; isHovered: boolean }
 }
 
 // CTA Button with staggered text
-function CTAButton() {
+function CTAButton({ darkText = false }: { darkText?: boolean }) {
   const [isHovered, setIsHovered] = useState(false);
   const { play } = useSound();
 
   return (
     <TransitionLink
       href="/contact"
-      className="group relative h-11 px-6 ml-1 overflow-hidden rounded-full inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white transition-colors duration-300"
+      className={`group relative h-11 px-6 ml-1 overflow-hidden rounded-full inline-flex items-center justify-center gap-2 transition-colors duration-300 ${darkText ? "bg-[#1a1816]/10 hover:bg-[#1a1816]" : "bg-white/10 hover:bg-white"}`}
       onMouseEnter={() => {
         setIsHovered(true);
         play("hover", { volume: 0.08 });
@@ -74,13 +74,13 @@ function CTAButton() {
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => play("click")}
     >
-      <span className="relative z-10 text-white group-hover:text-black text-sm uppercase tracking-[0.12em] font-semibold transition-colors duration-300">
+      <span className={`relative z-10 text-sm uppercase tracking-[0.12em] font-semibold transition-colors duration-300 ${darkText ? "text-[#1a1816] group-hover:text-[#e5e1db]" : "text-white group-hover:text-black"}`}>
         <StaggeredText text="Start Project" isHovered={isHovered} />
       </span>
       {/* Arrow with diagonal slide on hover */}
       <span className="relative w-5 h-5 overflow-hidden">
-        <span className="absolute inset-0 flex items-center justify-center text-white/60 group-hover:text-black transition-all duration-300 group-hover:translate-x-full group-hover:-translate-y-full text-sm">→</span>
-        <span className="absolute inset-0 flex items-center justify-center -translate-x-full translate-y-full text-white/60 group-hover:text-black transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 text-sm">→</span>
+        <span className={`absolute inset-0 flex items-center justify-center transition-all duration-300 group-hover:translate-x-full group-hover:-translate-y-full text-sm ${darkText ? "text-[#1a1816]/60 group-hover:text-[#e5e1db]" : "text-white/60 group-hover:text-black"}`}>→</span>
+        <span className={`absolute inset-0 flex items-center justify-center -translate-x-full translate-y-full transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 text-sm ${darkText ? "text-[#1a1816]/60 group-hover:text-[#e5e1db]" : "text-white/60 group-hover:text-black"}`}>→</span>
       </span>
     </TransitionLink>
   );
@@ -130,14 +130,22 @@ function NavLink({
   isActive,
   onHover,
   onClick,
+  darkText = false,
 }: {
   href: string;
   label: string;
   isActive: boolean;
   onHover: () => void;
   onClick: () => void;
+  darkText?: boolean;
 }) {
   const [isHovered, setIsHovered] = useState(false);
+
+  const textColor = isActive
+    ? accentColor
+    : darkText
+      ? (isHovered ? "#1a1816" : "rgba(26,24,22,0.6)")
+      : (isHovered ? "#fff" : "rgba(255,255,255,0.7)");
 
   return (
     <TransitionLink
@@ -152,8 +160,8 @@ function NavLink({
       onClick={onClick}
     >
       <span
-        className="text-sm font-medium uppercase tracking-[0.15em]"
-        style={{ color: isActive ? accentColor : isHovered ? "#fff" : "rgba(255,255,255,0.7)" }}
+        className="text-sm font-medium uppercase tracking-[0.15em] transition-colors duration-300"
+        style={{ color: textColor }}
       >
         <StaggeredText text={label} isHovered={isHovered} />
       </span>
@@ -175,10 +183,12 @@ function ServicesDropdown({
   isActive,
   onHover,
   onClick,
+  darkText = false,
 }: {
   isActive: boolean;
   onHover: () => void;
   onClick: () => void;
+  darkText?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -207,8 +217,8 @@ function ServicesDropdown({
       {/* Trigger */}
       <button className="relative px-5 py-3 flex items-center gap-1.5" style={{ position: 'relative' }}>
         <span
-          className="text-sm font-medium uppercase tracking-[0.15em]"
-          style={{ color: isActive ? accentColor : isHovered ? "#fff" : "rgba(255,255,255,0.7)" }}
+          className="text-sm font-medium uppercase tracking-[0.15em] transition-colors duration-300"
+          style={{ color: isActive ? accentColor : darkText ? (isHovered ? "#1a1816" : "rgba(26,24,22,0.6)") : (isHovered ? "#fff" : "rgba(255,255,255,0.7)") }}
         >
           <StaggeredText text="Services" isHovered={isHovered} />
         </span>
@@ -219,7 +229,7 @@ function ServicesDropdown({
           fill="none"
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3, ease: [0.76, 0, 0.24, 1] }}
-          style={{ color: isActive ? accentColor : isHovered ? "#fff" : "rgba(255,255,255,0.5)" }}
+          style={{ color: isActive ? accentColor : darkText ? (isHovered ? "#1a1816" : "rgba(26,24,22,0.5)") : (isHovered ? "#fff" : "rgba(255,255,255,0.5)") }}
         >
           <path d="M2 4L5 7L8 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </motion.svg>
@@ -355,13 +365,16 @@ function ServicesDropdown({
   );
 }
 
-export default function Navbar() {
+export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const { scrollY } = useScroll();
   const { play } = useSound();
   const pathname = usePathname();
+
+  // When lightHero is true and not scrolled, use dark text for cream backgrounds
+  const useDarkText = lightHero && !isScrolled;
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 50);
@@ -408,9 +421,13 @@ export default function Navbar() {
           {/* Logo */}
           <TransitionLink href="/" className="flex items-center gap-3 pl-2 pr-4">
             <AnimatedLogo width={36} height={24} drawDuration={1} delay={0.5} />
-            <span className="text-white font-bold text-sm uppercase tracking-[0.1em]">
+            <motion.span
+              className="font-bold text-sm uppercase tracking-[0.1em]"
+              animate={{ color: useDarkText ? "#1a1816" : "#ffffff" }}
+              transition={{ duration: 0.4 }}
+            >
               Executive AI
-            </span>
+            </motion.span>
           </TransitionLink>
 
           {/* Divider - only visible when scrolled */}
@@ -430,12 +447,14 @@ export default function Navbar() {
                 isActive={isActive(link.href)}
                 onHover={() => play("hover")}
                 onClick={() => play("click")}
+                darkText={useDarkText}
               />
             ))}
             <ServicesDropdown
               isActive={pathname.startsWith("/services")}
               onHover={() => play("hover")}
               onClick={() => play("click")}
+              darkText={useDarkText}
             />
           </div>
 
@@ -447,7 +466,7 @@ export default function Navbar() {
           />
 
           {/* CTA */}
-          <CTAButton />
+          <CTAButton darkText={useDarkText} />
         </motion.nav>
       </motion.header>
 

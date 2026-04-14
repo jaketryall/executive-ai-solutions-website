@@ -63,89 +63,87 @@ const services = [
   },
 ];
 
-/* ─────────────── Cursor-following image ─────────────── */
+/* ─────────────── Cursor-following info box ─────────────── */
 
-function CursorImage({
-  image,
+function CursorInfo({
+  title,
+  description,
   isVisible,
 }: {
-  image: string;
+  title: string;
+  description: string;
   isVisible: boolean;
 }) {
   const mouseX = useMotionValue(-400);
   const mouseY = useMotionValue(-400);
 
-  const springConfig = { stiffness: 150, damping: 20, mass: 0.5 };
+  const springConfig = { stiffness: 400, damping: 40, mass: 0.3 };
   const x = useSpring(mouseX, springConfig);
   const y = useSpring(mouseY, springConfig);
 
-  const rotation = useMotionValue(0);
-  const springRotation = useSpring(rotation, {
-    stiffness: 200,
-    damping: 30,
-  });
-
-  const lastX = useRef(0);
-
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX - 140);
-      mouseY.set(e.clientY - 190);
-
-      const deltaX = e.clientX - lastX.current;
-      lastX.current = e.clientX;
-      rotation.set(gsap.utils.clamp(-12, 12, deltaX * 0.5));
+      mouseX.set(e.clientX + 16);
+      mouseY.set(e.clientY + 16);
     };
 
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY, rotation]);
-
-  // Decay rotation back to zero
-  useEffect(() => {
-    if (!isVisible) return;
-    const interval = setInterval(() => {
-      rotation.set(rotation.get() * 0.9);
-    }, 50);
-    return () => clearInterval(interval);
-  }, [isVisible, rotation]);
+  }, [mouseX, mouseY]);
 
   return (
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ opacity: 0, scale: 0.9, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 10 }}
+          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
           style={{
             position: "fixed",
             top: 0,
             left: 0,
             x,
             y,
-            rotate: springRotation,
             zIndex: 50,
             pointerEvents: "none",
           }}
         >
           <div
             style={{
-              width: 280,
-              height: 380,
-              borderRadius: 12,
-              overflow: "hidden",
-              boxShadow: "0 8px 30px rgba(0, 0, 0, 0.2)",
+              width: 260,
+              padding: "1.25rem 1.5rem",
+              borderRadius: 16,
+              background: "rgba(20, 18, 16, 0.95)",
+              backdropFilter: "blur(20px)",
+              border: "1px solid rgba(255, 200, 150, 0.15)",
+              boxShadow: "0 8px 40px rgba(0, 0, 0, 0.3)",
             }}
           >
-            <Image
-              src={image}
-              alt=""
-              width={280}
-              height={380}
-              style={{ objectFit: "cover", width: "100%", height: "100%" }}
-              priority
-            />
+            <p
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: "0.75rem",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.1em",
+                color: accentColor,
+                marginBottom: "0.5rem",
+              }}
+            >
+              {title}
+            </p>
+            <p
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: "0.8rem",
+                lineHeight: 1.5,
+                color: "rgba(255,255,255,0.5)",
+                margin: 0,
+              }}
+            >
+              {description}
+            </p>
           </div>
         </motion.div>
       )}
@@ -306,26 +304,54 @@ function DesktopServiceRow({
           {service.number}
         </motion.span>
 
-        {/* Title */}
-        <div style={{ flex: 1, textAlign: "left" }}>
-          <motion.span
-            ref={titleRef}
-            animate={{
-              color: isHovered || isOpen ? accentColor : textColor,
-              x: isHovered ? 12 : 0,
-            }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: "clamp(2rem, 5vw, 5rem)",
-              fontWeight: 900,
-              lineHeight: 1,
-              display: "inline-block",
-              letterSpacing: "-0.025em",
-            }}
-          >
-            {service.title}
-          </motion.span>
+        {/* Title + hover image preview */}
+        <div style={{ flex: 1, textAlign: "left", position: "relative" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+            <motion.span
+              ref={titleRef}
+              animate={{
+                color: isHovered || isOpen ? accentColor : textColor,
+                x: isHovered ? 12 : 0,
+              }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: "clamp(2rem, 5vw, 5rem)",
+                fontWeight: 900,
+                lineHeight: 1,
+                display: "inline-block",
+                letterSpacing: "-0.025em",
+              }}
+            >
+              {service.title}
+            </motion.span>
+
+            {/* Thumbnail preview — slides out on hover */}
+            <motion.div
+              initial={{ width: 0, opacity: 0 }}
+              animate={{
+                width: isHovered ? "clamp(80px, 10vw, 140px)" : 0,
+                opacity: isHovered ? 1 : 0,
+              }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                height: "clamp(55px, 7vw, 95px)",
+                borderRadius: 12,
+                overflow: "hidden",
+                flexShrink: 0,
+              }}
+            >
+              <img
+                src={service.image}
+                alt=""
+                style={{
+                  width: "140px",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </motion.div>
+          </div>
 
           {/* Gold underline sweep on hover/open */}
           <motion.div
@@ -463,45 +489,98 @@ function DesktopServiceRow({
 
 function DesktopServices() {
   const sectionRef = useRef<HTMLElement>(null);
-  const leftColumnRef = useRef<HTMLDivElement>(null);
+  const innerBoxRef = useRef<HTMLDivElement>(null);
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  // Split text reveal for pinned title
   useSplitTextReveal(headerRef);
 
-  // GSAP: Pin the left column while right column scrolls past
+  // Y-drift + expand effect
   useIsomorphicLayoutEffect(() => {
     const section = sectionRef.current;
-    const leftCol = leftColumnRef.current;
-    if (!section || !leftCol) return;
+    const innerBox = innerBoxRef.current;
+    if (!section || !innerBox) return;
+
+    const cs = getComputedStyle(section);
+    const startPadLR = cs.paddingLeft;
+    const startPadB = cs.paddingBottom;
 
     const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: section,
-        start: "top top",
-        end: "bottom bottom",
-        pin: leftCol,
-        pinSpacing: false,
+      // Gentle continuous upward drift
+      gsap.fromTo(innerBox, { y: 60 }, {
+        y: -60,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+        },
       });
-    }, section);
 
-    // Refresh ScrollTrigger after layout settles
-    const timeout = setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 200);
+      // Expand: padding collapses + bottom corners flatten
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "60% bottom",
+          end: "80% bottom",
+          scrub: 0.4,
+        },
+      });
 
-    return () => {
-      clearTimeout(timeout);
-      ctx.revert();
-    };
+      tl.fromTo(section, {
+        paddingLeft: startPadLR,
+        paddingRight: startPadLR,
+        paddingBottom: startPadB,
+      }, {
+        paddingLeft: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
+        ease: "power2.inOut",
+      }, 0);
+
+      tl.to(innerBox, {
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+        ease: "power2.inOut",
+      }, 0);
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  // Stacking cards — scale down + dim as next card covers
+  useIsomorphicLayoutEffect(() => {
+    const container = cardsContainerRef.current;
+    if (!container) return;
+
+    const cards = gsap.utils.toArray<HTMLElement>(container.querySelectorAll(".service-stack-card"));
+
+    const ctx = gsap.context(() => {
+      cards.forEach((card, i) => {
+        if (i < cards.length - 1) {
+          // Scale down + dim as the next card scrolls over this one
+          gsap.to(card.querySelector(".service-card-inner"), {
+            scale: 0.93,
+            opacity: 0.3,
+            scrollTrigger: {
+              trigger: cards[i + 1],
+              start: "top bottom",
+              end: "top 20%",
+              scrub: 0.3,
+            },
+          });
+        }
+      });
+    });
+
+    return () => ctx.revert();
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      data-bg="dark"
+      data-bg="cream"
       className="hidden md:block"
       style={{
         position: "relative",
@@ -510,162 +589,231 @@ function DesktopServices() {
       }}
     >
       <div
+        ref={innerBoxRef}
         style={{
           backgroundColor: "#141210",
           borderRadius: "clamp(1.5rem, 3vw, 3rem)",
           position: "relative",
-          overflow: "hidden",
-          minHeight: "100vh",
         }}
       >
-      {/* Cursor-following image */}
-      <CursorImage
-        image={hoveredIndex !== null ? services[hoveredIndex].image : ""}
-        isVisible={hoveredIndex !== null}
-      />
-
-      {/* Giant background number — changes per hovered service */}
-      <div
-        className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none select-none overflow-hidden"
-        style={{ width: "50%", height: "100%" }}
-      >
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={hoveredIndex ?? "none"}
-            initial={{ opacity: 0, y: 80, scale: 0.95 }}
-            animate={{ opacity: 0.04, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -80, scale: 0.95 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute right-[-10%] top-1/2 -translate-y-1/2 font-black"
+        {/* Header */}
+        <div
+          ref={headerRef}
+          style={{
+            padding: "clamp(4rem, 8vw, 8rem) clamp(2rem, 5vw, 5rem) clamp(2rem, 4vw, 4rem)",
+          }}
+        >
+          <p
             style={{
               fontFamily: "Inter, sans-serif",
-              fontSize: "clamp(20rem, 40vw, 50rem)",
-              lineHeight: 0.8,
-              color: accentColor,
+              fontSize: "0.8rem",
+              fontWeight: 500,
+              textTransform: "uppercase",
+              letterSpacing: "0.15em",
+              color: accentColorMuted,
+              marginBottom: "1rem",
             }}
           >
-            {hoveredIndex !== null ? services[hoveredIndex].number : ""}
-          </motion.span>
-        </AnimatePresence>
-      </div>
-
-      {/* Two-column layout */}
-      <div
-        style={{
-          maxWidth: "1400px",
-          margin: "0 auto",
-          padding: "0 clamp(2rem, 5vw, 4rem)",
-          display: "flex",
-          alignItems: "flex-start",
-          position: "relative",
-          zIndex: 2,
-        }}
-      >
-        {/* Left column — pinned title (40%) */}
-        <div
-          ref={leftColumnRef}
-          style={{
-            width: "40%",
-            flexShrink: 0,
-            paddingTop: "12rem",
-            paddingRight: "3rem",
-            height: "100vh",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-start",
-          }}
-        >
-          <div ref={headerRef}>
-            {/* Label */}
-            <p
-              style={{
-                fontFamily: "Inter, sans-serif",
-                fontSize: "0.8rem",
-                fontWeight: 500,
-                textTransform: "uppercase",
-                letterSpacing: "0.15em",
-                color: accentColorMuted,
-                marginBottom: "1rem",
-              }}
-            >
-              What I Do
-            </p>
-
-            {/* Pinned big title */}
-            <h2
-              style={{
-                fontFamily: "Inter, sans-serif",
-                fontSize: "clamp(2.5rem, 4vw, 5rem)",
-                fontWeight: 900,
-                lineHeight: 0.95,
-                letterSpacing: "-0.04em",
-                color: textColor,
-                marginBottom: "2rem",
-              }}
-            >
-              SERVICES
-            </h2>
-          </div>
-
-          {/* Dynamic description — changes based on hovered/open service */}
-          <div style={{ minHeight: "6rem" }}>
-            <AnimatePresence mode="wait">
-              {(hoveredIndex !== null || openIndex !== null) && (
-                <motion.div
-                  key={hoveredIndex ?? openIndex}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <p
-                    style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontSize: "clamp(0.9rem, 1.1vw, 1.05rem)",
-                      lineHeight: 1.7,
-                      color: textMuted,
-                    }}
-                  >
-                    {services[hoveredIndex ?? openIndex ?? 0].description}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-
-        {/* Right column — accordion rows (60%) */}
-        <div
-          style={{
-            width: "60%",
-            paddingTop: "8rem",
-            paddingBottom: "8rem",
-          }}
-        >
-          {services.map((service, i) => (
-            <DesktopServiceRow
-              key={service.slug}
-              service={service}
-              index={i}
-              isOpen={openIndex === i}
-              isHovered={hoveredIndex === i}
-              onToggle={() => setOpenIndex(openIndex === i ? null : i)}
-              onHoverStart={() => setHoveredIndex(i)}
-              onHoverEnd={() => setHoveredIndex(null)}
-            />
-          ))}
-
-          {/* Bottom divider for the last row */}
-          <div
+            What I Do
+          </p>
+          <SplitText
+            text="SERVICES"
             style={{
-              height: 1,
-              backgroundColor: borderColor,
+              fontFamily: "Inter, sans-serif",
+              fontSize: "clamp(4rem, 8vw, 9rem)",
+              fontWeight: 900,
+              lineHeight: 0.9,
+              letterSpacing: "-0.05em",
+              color: textColor,
             }}
           />
         </div>
-      </div>
+
+        {/* Stacking cards container */}
+        <div ref={cardsContainerRef} style={{ position: "relative" }}>
+          {services.map((service, i) => (
+            <ServiceStackCard key={service.slug} service={service} index={i} />
+          ))}
+        </div>
       </div>
     </section>
+  );
+}
+
+/* ─────────────── Service Stack Card ─────────────── */
+
+function ServiceStackCard({
+  service,
+  index,
+}: {
+  service: (typeof services)[0];
+  index: number;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const cardColors = ["#1c1917", "#1a1714", "#181512"];
+
+  return (
+    <div
+      className="service-stack-card"
+      style={{
+        position: "sticky",
+        top: `${8 + index * 2}%`,
+        zIndex: 10 + index,
+        marginBottom: "2rem",
+      }}
+    >
+      <div
+        className="service-card-inner"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          backgroundColor: cardColors[index],
+          borderRadius: "clamp(1rem, 2vw, 1.5rem)",
+          margin: "0 clamp(1rem, 3vw, 2.5rem)",
+          padding: "clamp(2.5rem, 4vw, 4rem) clamp(2rem, 4vw, 4rem)",
+          minHeight: "70vh",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          border: "1px solid rgba(255, 200, 150, 0.06)",
+          transition: "border-color 0.4s ease, transform 0.3s ease, opacity 0.3s ease",
+          borderColor: hovered ? "rgba(255, 200, 150, 0.15)" : "rgba(255, 200, 150, 0.06)",
+        }}
+      >
+        {/* Top: Number + Title */}
+        <div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: "1.5rem", marginBottom: "1.5rem" }}>
+            <span
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: "clamp(0.8rem, 1vw, 0.9rem)",
+                fontWeight: 500,
+                color: accentColor,
+                letterSpacing: "0.05em",
+              }}
+            >
+              {service.number}
+            </span>
+            <motion.span
+              animate={{ color: hovered ? accentColor : textColor }}
+              transition={{ duration: 0.3 }}
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: "clamp(3rem, 6vw, 6rem)",
+                fontWeight: 900,
+                lineHeight: 0.95,
+                letterSpacing: "-0.03em",
+              }}
+            >
+              {service.title}
+            </motion.span>
+          </div>
+
+          {/* Description */}
+          <p
+            style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: "clamp(1rem, 1.2vw, 1.15rem)",
+              lineHeight: 1.7,
+              color: textMuted,
+              maxWidth: "600px",
+              marginLeft: "clamp(2rem, 3vw, 3.5rem)",
+            }}
+          >
+            {service.description}
+          </p>
+        </div>
+
+        {/* Bottom: Details + Image */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+            gap: "3rem",
+            marginTop: "3rem",
+          }}
+        >
+          {/* Detail bullets */}
+          <div style={{ marginLeft: "clamp(2rem, 3vw, 3.5rem)" }}>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {service.details.map((detail, i) => (
+                <li
+                  key={i}
+                  style={{
+                    fontFamily: "Inter, sans-serif",
+                    fontSize: "clamp(0.85rem, 1vw, 0.95rem)",
+                    color: textColor,
+                    padding: "0.5rem 0",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.75rem",
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 5,
+                      height: 5,
+                      borderRadius: "50%",
+                      backgroundColor: accentColor,
+                      flexShrink: 0,
+                      opacity: 0.6,
+                    }}
+                  />
+                  {detail}
+                </li>
+              ))}
+            </ul>
+
+            {/* CTA */}
+            <TransitionLink href={`/services/${service.slug}`}>
+              <motion.span
+                whileHover={{ letterSpacing: "0.12em" }}
+                transition={{ duration: 0.3 }}
+                style={{
+                  display: "inline-block",
+                  marginTop: "1.5rem",
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: "0.8rem",
+                  fontWeight: 600,
+                  color: accentColor,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                  cursor: "pointer",
+                }}
+              >
+                Learn More &rarr;
+              </motion.span>
+            </TransitionLink>
+          </div>
+
+          {/* Image */}
+          <motion.div
+            animate={{
+              y: hovered ? -8 : 0,
+              scale: hovered ? 1.02 : 1,
+            }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              width: "clamp(200px, 30%, 380px)",
+              aspectRatio: "4/3",
+              borderRadius: "clamp(0.75rem, 1.5vw, 1.25rem)",
+              overflow: "hidden",
+              flexShrink: 0,
+              position: "relative",
+            }}
+          >
+            <Image
+              src={service.image}
+              alt={service.title}
+              fill
+              className="object-cover"
+              sizes="380px"
+            />
+          </motion.div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -744,11 +892,12 @@ function MobileServices() {
   return (
     <section
       ref={sectionRef}
-      data-bg="dark"
+      data-bg="cream"
       className="md:hidden relative"
       style={{ padding: "0 clamp(0.75rem, 3vw, 1.5rem)", paddingBottom: "clamp(0.75rem, 3vw, 1.5rem)" }}
     >
       <div
+
         style={{
           backgroundColor: "#141210",
           borderRadius: "clamp(1.25rem, 3vw, 2rem)",

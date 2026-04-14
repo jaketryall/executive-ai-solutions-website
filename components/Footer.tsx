@@ -158,7 +158,7 @@ export default function Footer() {
         data-footer
       >
         {/* Cream background — offset down so the curve area stays transparent over the dark section */}
-        <div className="absolute inset-0 top-[80px] md:top-[120px]" style={{ backgroundColor: creamBg }} />
+        <div className="absolute inset-0 top-[79px] md:top-[119px]" style={{ backgroundColor: creamBg }} />
 
         {/* Liquid curve SVG — sits in the top padding area over the dark section */}
         <div className="absolute left-0 right-0 top-0 h-[80px] md:h-[120px] pointer-events-none" style={{ zIndex: 10 }}>

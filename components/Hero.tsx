@@ -411,20 +411,38 @@ function DesktopHero() {
     offset: ["start start", "end start"],
   });
 
-  // Hero SHRINKS on scroll (the rectangle)
-  const heroScale = useTransform(scrollYProgress, [0, 0.6], [1, 0.52]);
-  const heroRadius = useTransform(scrollYProgress, [0, 0.3, 0.5], [0, 20, 40]);
+  // Ease-out function — fast start, smooth deceleration (like cubic-bezier(0.22, 1, 0.36, 1))
+  const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+
+  // Hero SHRINKS on scroll — proper ease-out curve, no kinks
+  const heroScale = useTransform(scrollYProgress, (p) => {
+    const t = Math.min(p / 0.45, 1); // normalize 0-0.45 → 0-1
+    return 1 - easeOut(t) * 0.48;    // 1 → 0.52
+  });
+  const heroRadius = useTransform(scrollYProgress, (p) => {
+    const t = Math.min(p / 0.35, 1);
+    return easeOut(t) * 40;           // 0 → 40
+  });
 
   // Name stays the same size (no scaling)
   const nameScale = 1;
 
   // "JAKE" slides UP, "RYALL" slides DOWN — curtain open
-  const jakeY = useTransform(scrollYProgress, [0.2, 0.45], [0, -300]);
-  const ryallY = useTransform(scrollYProgress, [0.2, 0.45], [0, 300]);
-  const textOpacity = useTransform(scrollYProgress, [0.2, 0.4], [1, 0]);
+  const jakeY = useTransform(scrollYProgress, (p) => {
+    const t = Math.max(0, Math.min((p - 0.05) / 0.2, 1));
+    return -easeOut(t) * 300;
+  });
+  const ryallY = useTransform(scrollYProgress, (p) => {
+    const t = Math.max(0, Math.min((p - 0.05) / 0.2, 1));
+    return easeOut(t) * 300;
+  });
+  const textOpacity = useTransform(scrollYProgress, [0.05, 0.2], [1, 0]);
 
-  // Project cards scale up with stagger (each card gets a slight delay via index)
-  const cardsReveal = useTransform(scrollYProgress, [0.25, 0.5], [0, 1]);
+  // Project cards scale up with stagger
+  const cardsReveal = useTransform(scrollYProgress, (p) => {
+    const t = Math.max(0, Math.min((p - 0.15) / 0.25, 1));
+    return easeOut(t);
+  });
 
   // UI fades
   const uiOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
@@ -433,7 +451,7 @@ function DesktopHero() {
     <>
       <section
         ref={sectionRef}
-        className="relative h-[300vh]"
+        className="relative h-[200vh]"
         data-bg="dark"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden">
@@ -456,9 +474,12 @@ function DesktopHero() {
             </div>
           </div>
 
-          {/* === THE HERO — cream rectangle that SHRINKS === */}
+          {/* === THE HERO — dark rectangle that SHRINKS on scroll === */}
           <motion.div
             className="absolute inset-0 overflow-hidden"
+            initial={{ scale: 0.96, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             style={{
               scale: heroScale,
               borderRadius: heroRadius,
@@ -467,7 +488,13 @@ function DesktopHero() {
             }}
           >
             {/* Everything except the name + project cards fades on scroll */}
-            <motion.div className="absolute inset-0 z-20" style={{ opacity: uiOpacity }}>
+            <motion.div
+              className="absolute inset-0 z-20"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              style={{ opacity: uiOpacity }}
+            >
               {/* Organic SVG curves — right side like L1 */}
               <svg className="absolute top-0 right-0 h-full w-1/2 pointer-events-none" viewBox="0 0 960 1080" preserveAspectRatio="xMaxYMid slice" fill="none">
                 <path d="M200,0 C250,180 180,360 220,540 S160,720 200,900 S250,1000 200,1080" stroke="rgba(0,0,0,0.05)" strokeWidth="1.2" />
@@ -477,8 +504,21 @@ function DesktopHero() {
 
               {/* NAV BAR */}
               <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-5 md:px-8 pt-14 md:pt-7">
-                <TransitionLink href="/" className="text-[11px] md:text-[12px] font-sans font-bold uppercase tracking-[0.08em]" style={{ color: "#1a1816" }}>
-                  Jake Ryall
+                <TransitionLink href="/" className="block" style={{ color: "#1a1816" }}>
+                  <svg
+                    viewBox="30 30 600 250"
+                    fill="none"
+                    preserveAspectRatio="xMinYMid meet"
+                    className="w-[100px] md:w-[130px] h-auto"
+                  >
+                    <path
+                      d="M60,160 C65,100 80,60 95,55 C115,48 110,100 108,130 C105,165 90,200 80,210 Q70,220 85,215 C110,205 135,160 155,155 C175,150 170,185 160,200 Q148,218 165,210 C185,200 195,175 210,165 Q230,152 225,180 C220,205 200,225 195,218 Q188,208 210,195 C225,186 250,175 270,200 Q275,208 265,208 C250,208 280,170 310,120 C325,95 340,75 350,70 Q365,64 358,90 C350,120 335,165 340,185 Q345,200 360,185 C375,168 385,145 400,155 Q408,160 400,178 C390,200 365,230 360,248 Q355,265 370,250 C390,228 410,195 430,188 Q445,182 442,200 C438,215 425,225 435,220 Q450,212 460,140 L462,210 Q465,130 475,128 L477,210 C485,205 520,188 560,182 Q600,176 620,190"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </TransitionLink>
                 <div className="absolute left-1/2 -translate-x-1/2 hidden md:block">
                   <HeroLogo />
@@ -533,21 +573,24 @@ function DesktopHero() {
               </video>
             </div>
 
-            {/* "JAKE" slides UP, "RYALL" slides DOWN — curtain open revealing video */}
+            {/* Text with video showing through letterforms — cream surrounds it */}
             <motion.div
               className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none"
             >
-              {/* Cream overlay — fades with text to reveal video underneath */}
+              {/* Cream overlay — video only visible through the text cutouts */}
               <motion.div
                 className="absolute inset-0"
                 style={{ background: "#e5e1db", opacity: textOpacity }}
               />
 
-              {/* JAKE — video poster visible through letters, slides up */}
+              {/* WEBSITE — video poster peeks through letters, slams in on load, slides up on scroll */}
               <motion.span
                 className="relative"
+                initial={{ opacity: 0, scale: 1.15, y: 30 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
                 style={{
-                  fontSize: "clamp(6rem, 14vw, 16rem)",
+                  fontSize: "clamp(4.5rem, 12vw, 14rem)",
                   fontFamily: "Impact, 'Arial Black', sans-serif",
                   fontWeight: 900,
                   lineHeight: 0.9,
@@ -563,14 +606,17 @@ function DesktopHero() {
                   opacity: textOpacity,
                 }}
               >
-                JAKE
+                WEBSITE
               </motion.span>
 
-              {/* RYALL — video poster through letters, slides down */}
+              {/* DESIGN — video poster through letters, slams in from opposite direction */}
               <motion.span
                 className="relative"
+                initial={{ opacity: 0, scale: 1.15, y: -30 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.9, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 style={{
-                  fontSize: "clamp(6rem, 14vw, 16rem)",
+                  fontSize: "clamp(4.5rem, 12vw, 14rem)",
                   fontFamily: "Impact, 'Arial Black', sans-serif",
                   fontWeight: 900,
                   lineHeight: 0.9,
@@ -586,7 +632,7 @@ function DesktopHero() {
                   opacity: textOpacity,
                 }}
               >
-                RYALL
+                DESIGN
               </motion.span>
             </motion.div>
 
