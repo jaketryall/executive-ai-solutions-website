@@ -107,161 +107,299 @@ function FloatingCard({
   );
 }
 
-/* ─── Desktop: 2 rows drifting in opposite directions ─── */
-function DesktopWork() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const labelRef = useRef<HTMLParagraphElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const row1Ref = useRef<HTMLDivElement>(null);
-  const row2Ref = useRef<HTMLDivElement>(null);
+/* ─── Full-bleed parallax project showcase ─── */
+function FullBleedProject({
+  project,
+  index,
+}: {
+  project: (typeof projects)[number];
+  index: number;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState(false);
+  const num = String(index + 1).padStart(2, "0");
 
   useIsomorphicLayoutEffect(() => {
-    const section = sectionRef.current;
-    const row1 = row1Ref.current;
-    const row2 = row2Ref.current;
-    if (!section || !row1 || !row2) return;
+    const container = containerRef.current;
+    const image = imageRef.current;
+    if (!container || !image) return;
 
     const ctx = gsap.context(() => {
-      // Label slides in from left
-      const label = labelRef.current;
-      if (label) {
-        gsap.fromTo(label,
-          { x: -40, opacity: 0 },
-          { x: 0, opacity: 1, ease: "none",
-            scrollTrigger: { trigger: headerRef.current, start: "top 85%", end: "top 55%", scrub: 1 } }
-        );
-      }
-
-      // Title chars reveal from below
-      const title = titleRef.current;
-      if (title) {
-        const chars = title.querySelectorAll<HTMLSpanElement>(".title-char");
-        gsap.fromTo(chars,
-          { yPercent: 110, opacity: 0 },
-          { yPercent: 0, opacity: 1, stagger: 0.03, ease: "none",
-            scrollTrigger: { trigger: headerRef.current, start: "top 80%", end: "top 45%", scrub: 1 } }
-        );
-      }
-
-      // Row 1 drifts RIGHT to LEFT
-      gsap.fromTo(
-        row1,
-        { x: 100 },
+      // Parallax — image moves slower than scroll, creates depth
+      gsap.fromTo(image,
+        { yPercent: -15 },
         {
-          x: -100,
+          yPercent: 15,
           ease: "none",
-          scrollTrigger: { trigger: section, start: "top bottom", end: "bottom top", scrub: 1 },
-        }
-      );
-
-      // Row 2 drifts LEFT to RIGHT (opposite)
-      gsap.fromTo(
-        row2,
-        { x: -100 },
-        {
-          x: 100,
-          ease: "none",
-          scrollTrigger: { trigger: section, start: "top bottom", end: "bottom top", scrub: 1 },
-        }
-      );
-
-      // Fade in all cards
-      const allCards = gsap.utils.toArray<HTMLElement>(
-        section.querySelectorAll(".floating-card")
-      );
-      gsap.fromTo(
-        allCards,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.08,
-          ease: "power2.out",
           scrollTrigger: {
-            trigger: section,
-            start: "top 80%",
-            toggleActions: "play none none none",
+            trigger: container,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
           },
         }
       );
-    }, section);
 
-    // Longer delay — needs to wait for HorizontalGallery pin to initialize first
-    const timer = setTimeout(() => ScrollTrigger.refresh(), 500);
-    return () => { clearTimeout(timer); ctx.revert(); };
+      // Subtle zoom-in as you scroll through
+      gsap.fromTo(image,
+        { scale: 1.15 },
+        {
+          scale: 1.05,
+          ease: "none",
+          scrollTrigger: {
+            trigger: container,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        }
+      );
+
+      // Text and details fade + slide in
+      const textEls = container.querySelectorAll(".project-text");
+      gsap.fromTo(textEls,
+        { y: 60, opacity: 0 },
+        {
+          y: 0, opacity: 1,
+          stagger: 0.08,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: container,
+            start: "top 60%",
+            end: "top 30%",
+            scrub: 0.5,
+          },
+        }
+      );
+    });
+
+    return () => ctx.revert();
   }, []);
 
-  // Row 1: all 4 projects
-  // Row 2: reversed order for visual variety
-  const row2Projects = [...projects].reverse();
-
   return (
-    <section
-      ref={sectionRef}
-      data-bg="cream"
-      className="hidden md:block relative"
+    <div
+      ref={containerRef}
+      className="relative overflow-hidden"
+      style={{ height: "100vh" }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      <div style={{ padding: "clamp(6rem, 12vh, 10rem) 0" }}>
-      {/* Header */}
-      <div className="px-6 md:px-12 lg:px-16">
-        <div ref={headerRef} className="max-w-[1400px] mx-auto mb-16 lg:mb-24">
-          <p
-            ref={labelRef}
-            className="text-xs font-medium tracking-[0.3em] uppercase mb-4"
-            style={{ color: accentColor, opacity: 0 }}
-          >
-            Selected Work
-          </p>
-          <h2
-            ref={titleRef}
-            className="overflow-hidden"
-            style={{
-              fontFamily: "var(--font-inter), sans-serif",
-              fontSize: "clamp(4rem, 8vw, 8rem)",
-              fontWeight: 900,
-              color: textDark,
-              lineHeight: 0.9,
-              letterSpacing: "-0.03em",
-            }}
-          >
-            {"PROJECTS".split("").map((char, i) => (
-              <span
-                key={i}
-                className="title-char inline-block"
-                style={{ willChange: "transform", opacity: 0 }}
+      {/* Full-bleed image with parallax */}
+      <div
+        ref={imageRef}
+        className="absolute inset-0 will-change-transform"
+        style={{ top: "-15%", bottom: "-15%", height: "130%" }}
+      >
+        <Image
+          src={project.image}
+          alt={project.title}
+          fill
+          className="object-cover"
+          style={{
+            transition: "filter 0.6s ease",
+            filter: hovered ? "brightness(0.7)" : "brightness(0.5)",
+          }}
+          sizes="100vw"
+          priority={index === 0}
+        />
+      </div>
+
+      {/* Gradient — heavier at bottom for text legibility */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0.3) 100%)",
+        }}
+      />
+
+      {/* Project number — giant, top-right */}
+      <div
+        className="absolute top-8 right-10 pointer-events-none select-none project-text"
+        style={{
+          fontFamily: "var(--font-inter), sans-serif",
+          fontSize: "clamp(6rem, 15vw, 14rem)",
+          fontWeight: 900,
+          lineHeight: 0.85,
+          color: "rgba(255,255,255,0.06)",
+          letterSpacing: "-0.05em",
+        }}
+      >
+        {num}
+      </div>
+
+      {/* Project info — bottom-left */}
+      <div className="absolute bottom-0 left-0 right-0 p-10 md:p-16 lg:p-20">
+        <div className="max-w-[1400px] mx-auto flex items-end justify-between">
+          <div>
+            <p
+              className="project-text text-xs font-medium uppercase tracking-[0.3em] mb-4"
+              style={{ color: accentColor }}
+            >
+              {project.category}
+            </p>
+            <h3
+              className="project-text"
+              style={{
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "clamp(2.5rem, 6vw, 5rem)",
+                fontWeight: 900,
+                color: "#fff",
+                lineHeight: 0.95,
+                letterSpacing: "-0.03em",
+              }}
+            >
+              {project.title}
+            </h3>
+            <p
+              className="project-text mt-3"
+              style={{
+                color: "rgba(255,255,255,0.4)",
+                fontSize: "0.9rem",
+                letterSpacing: "0.02em",
+              }}
+            >
+              {project.year}
+            </p>
+          </div>
+
+          {/* View arrow — grows on hover */}
+          <TransitionLink href={`/work/${project.slug}`}>
+            <div
+              className="project-text flex items-center justify-center rounded-full border transition-all duration-500"
+              style={{
+                width: hovered ? 80 : 56,
+                height: hovered ? 80 : 56,
+                borderColor: hovered ? accentColor : "rgba(255,255,255,0.2)",
+                backgroundColor: hovered ? "rgba(196, 138, 90, 0.1)" : "transparent",
+              }}
+            >
+              <svg
+                width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke={hovered ? accentColor : "rgba(255,255,255,0.6)"}
+                strokeWidth="2" strokeLinecap="round"
+                style={{ transition: "all 0.4s ease", transform: hovered ? "translate(2px, -2px)" : "none" }}
               >
-                {char}
-              </span>
-            ))}
-          </h2>
+                <path d="M7 17L17 7M17 7H7M17 7V17" />
+              </svg>
+            </div>
+          </TransitionLink>
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* Row 1 — drifts right to left */}
-      <div
-        ref={row1Ref}
-        className="flex gap-6 mb-6"
-        style={{ paddingLeft: "2vw", paddingRight: "2vw" }}
-      >
-        {projects.map((project, i) => (
-          <FloatingCard key={`r1-${project.slug}`} project={project} index={i} />
-        ))}
-      </div>
+/* ─── Expand intro — small card grows to full-bleed (inverse of hero) ─── */
+function WorkExpandIntro() {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
-      {/* Row 2 — drifts left to right */}
+  useIsomorphicLayoutEffect(() => {
+    const wrapper = wrapperRef.current;
+    const card = cardRef.current;
+    if (!wrapper || !card) return;
+
+    const ctx = gsap.context(() => {
+      // Card starts small with rounded corners, expands to fill viewport
+      gsap.fromTo(card,
+        {
+          scale: 0.6,
+          borderRadius: 40,
+          y: 200,
+        },
+        {
+          scale: 1,
+          borderRadius: 0,
+          y: 0,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: wrapper,
+            start: "40% 50%",
+            end: "80% 20%",
+            scrub: 0.2,
+          },
+        }
+      );
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div
+      ref={wrapperRef}
+      className="relative h-screen hidden md:flex items-center justify-center"
+      data-bg="dark"
+      style={{ backgroundColor: "#0a0908", marginTop: "-50vh", zIndex: 3 }}
+    >
       <div
-        ref={row2Ref}
-        className="flex gap-6"
-        style={{ paddingLeft: "2vw", paddingRight: "2vw" }}
+        ref={cardRef}
+        className="w-full h-full relative will-change-transform"
+        style={{ overflow: "hidden" }}
       >
-        {row2Projects.map((project, i) => (
-          <FloatingCard key={`r2-${project.slug}`} project={project} index={i + 4} />
+        <Image
+          src={projects[0].image}
+          alt={projects[0].title}
+          fill
+          className="object-cover"
+          style={{ filter: "brightness(0.5)" }}
+          sizes="100vw"
+          priority
+        />
+        {/* Gradient overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0.3) 100%)",
+          }}
+        />
+        {/* Project info visible as it expands */}
+        <div className="absolute bottom-0 left-0 right-0 p-10 md:p-16 lg:p-20">
+          <div className="max-w-[1400px] mx-auto">
+            <p
+              className="text-xs font-medium uppercase tracking-[0.3em] mb-4"
+              style={{ color: accentColor }}
+            >
+              {projects[0].category}
+            </p>
+            <h3
+              style={{
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "clamp(2.5rem, 6vw, 5rem)",
+                fontWeight: 900,
+                color: "#fff",
+                lineHeight: 0.95,
+                letterSpacing: "-0.03em",
+              }}
+            >
+              {projects[0].title}
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Desktop: Full-bleed parallax showcase ─── */
+function DesktopWork() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  return (
+    <>
+      <WorkExpandIntro />
+      <section
+        ref={sectionRef}
+        data-bg="dark"
+        className="hidden md:block relative"
+      >
+        {/* Skip first project since it's already shown in the expand intro */}
+        {projects.slice(1).map((project, i) => (
+          <FullBleedProject key={project.slug} project={project} index={i + 1} />
         ))}
-      </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 

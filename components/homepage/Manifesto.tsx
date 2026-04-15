@@ -240,9 +240,9 @@ export default function Manifesto() {
         ref={desktopRef}
         className="relative hidden md:block"
         data-bg="dark"
-        style={{ minHeight: "100vh", padding: "15vh 0" }}
+        style={{ minHeight: "100vh", padding: "15vh 0", paddingBottom: "60vh" }}
       >
-        {/* Signature — sticky */}
+        {/* Signature — sticky, extends into next section */}
         <div
           className="sticky top-0 h-screen flex items-start justify-center pointer-events-none pt-[15vh]"
           style={{ zIndex: 2, marginTop: "-30vh", marginBottom: "-70vh" }}

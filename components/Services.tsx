@@ -580,12 +580,13 @@ function DesktopServices() {
   return (
     <section
       ref={sectionRef}
-      data-bg="cream"
+      data-bg="dark"
       className="hidden md:block"
       style={{
         position: "relative",
         padding: "0 clamp(1rem, 3vw, 3rem)",
         paddingBottom: "clamp(1rem, 3vw, 3rem)",
+        backgroundColor: "#000000",
       }}
     >
       <div
