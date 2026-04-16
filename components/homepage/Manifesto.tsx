@@ -28,6 +28,7 @@ const words: Array<{ text: string; accent?: boolean }> = [
 export default function Manifesto() {
   const desktopRef = useRef<HTMLElement>(null);
   const desktopSigRef = useRef<SVGPathElement>(null);
+  const desktopTextRef = useRef<HTMLElement>(null);
   const mobileRef = useRef<HTMLElement>(null);
   const mobileSigRef = useRef<SVGPathElement>(null);
 
@@ -212,7 +213,7 @@ export default function Manifesto() {
       <path
         ref={ref}
         d={SIGNATURE_PATH}
-        stroke="rgba(255, 200, 150, 1)"
+        stroke="rgba(26, 24, 22, 1)"
         strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -235,14 +236,14 @@ export default function Manifesto() {
         </div>
       </section>
 
-      {/* ===== DESKTOP — exact original ===== */}
+      {/* ===== DESKTOP — one section, signature draws on cream then bg goes dark ===== */}
       <section
         ref={desktopRef}
         className="relative hidden md:block"
         data-bg="dark"
         style={{ minHeight: "100vh", padding: "15vh 0", paddingBottom: "60vh" }}
       >
-        {/* Signature — sticky, extends into next section */}
+        {/* Signature — sticky */}
         <div
           className="sticky top-0 h-screen flex items-start justify-center pointer-events-none pt-[15vh]"
           style={{ zIndex: 2, marginTop: "-30vh", marginBottom: "-70vh" }}

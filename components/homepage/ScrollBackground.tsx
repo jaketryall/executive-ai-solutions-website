@@ -37,7 +37,7 @@ export default function ScrollBackground() {
     const el = divRef.current;
     if (!el) return;
 
-    const viewportCenter = window.scrollY + window.innerHeight * 0.4;
+    const viewportCenter = window.scrollY + window.innerHeight * 0.3;
     const sections = document.querySelectorAll<HTMLElement>("[data-bg]");
     const sectionArray = Array.from(sections);
 
