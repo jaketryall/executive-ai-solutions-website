@@ -2,7 +2,7 @@
 
 import { useEffect, useCallback, useRef } from "react";
 
-const CREAM = "#e5e1db";
+const CREAM = "#f3f1ee";
 const DARK = "#0a0908";
 
 function hexToRgb(hex: string): [number, number, number] {

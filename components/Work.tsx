@@ -205,85 +205,69 @@ function FanCard({
   );
 }
 
-/* ─── Desktop: Video box shrinks into card fan ─── */
+/* ─── Desktop: Card fan — all cards stacked, fan out on scroll ─── */
 function DesktopWork() {
   const sectionRef = useRef<HTMLElement>(null);
-  const videoBoxRef = useRef<HTMLDivElement>(null);
-  const fanRef = useRef<HTMLDivElement>(null);
+  const fanContainerRef = useRef<HTMLDivElement>(null);
 
-  // Fan positions — each card's final offset from center
-  const cardPositions = [
-    { x: 0, rotation: -1 },       // Center (the video)
-    { x: -300, rotation: -12 },   // Far left
-    { x: 300, rotation: 10 },     // Far right
-    { x: 150, rotation: 5 },      // Inner right
+  // Final fanned positions for each card [x, rotation]
+  const fanPositions = [
+    { x: 0, rotation: 0 },          // Center — video card
+    { x: -360, rotation: -12 },     // Far left
+    { x: 180, rotation: 6 },        // Inner right
+    { x: -180, rotation: -6 },      // Inner left (behind center-left)
   ];
 
   useIsomorphicLayoutEffect(() => {
     const section = sectionRef.current;
-    const videoBox = videoBoxRef.current;
-    const fan = fanRef.current;
-    if (!section || !videoBox || !fan) return;
+    const container = fanContainerRef.current;
+    if (!section || !container) return;
 
-    const cards = gsap.utils.toArray<HTMLElement>(fan.querySelectorAll(".fan-card"));
+    const wrappers = gsap.utils.toArray<HTMLElement>(container.querySelectorAll(".fan-wrapper"));
 
     const ctx = gsap.context(() => {
-      // Hide all non-video cards initially (stacked behind video box)
-      cards.forEach((card, i) => {
-        if (i === 0) return;
-        gsap.set(card, {
+      // All cards start stacked at center, no rotation
+      wrappers.forEach((wrapper, i) => {
+        gsap.set(wrapper, {
           x: 0,
           rotation: 0,
-          opacity: 0,
-          scale: 0.85,
+          opacity: i === 0 ? 1 : 0,
+          scale: i === 0 ? 1 : 0.9,
         });
       });
 
-      // Timeline: video box shrinks + cards fan out
+      // Pin + fan out timeline
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          start: "top 15%",
-          end: "top -50%",
-          scrub: 0.4,
+          start: "top 25%",
+          end: "+=800",
+          scrub: 0.5,
           pin: true,
           pinSpacing: true,
         },
       });
 
-      // Video box shrinks from big showcase to card size
-      tl.fromTo(videoBox, {
-        width: "min(1100px, 85vw)",
-        aspectRatio: "16/10",
-        borderRadius: 16,
-      }, {
-        width: "clamp(280px, 22vw, 380px)",
-        aspectRatio: "3/4",
-        borderRadius: 20,
-        ease: "power3.inOut",
-        duration: 1,
-      }, 0);
-
-      // First fan card (behind video box) — just rotate into position
-      if (cards[0]) {
-        tl.to(cards[0], {
-          rotation: cardPositions[0].rotation,
-          ease: "power2.out",
-          duration: 1,
-        }, 0);
-      }
-
-      // Other cards emerge and fan out
-      cards.forEach((card, i) => {
-        if (i === 0) return;
-        tl.to(card, {
-          x: cardPositions[i].x,
-          rotation: cardPositions[i].rotation,
-          opacity: 1,
-          scale: 1,
-          ease: "power3.out",
-          duration: 1,
-        }, 0.15 + i * 0.1);
+      // Fan each card to its position
+      wrappers.forEach((wrapper, i) => {
+        if (i === 0) {
+          // Center card — slight settle rotation
+          tl.to(wrapper, {
+            rotation: fanPositions[0].rotation,
+            duration: 1,
+            ease: "power2.out",
+          }, 0);
+        } else {
+          // Cards emerge from behind center
+          tl.to(wrapper, {
+            x: fanPositions[i].x,
+            rotation: fanPositions[i].rotation,
+            opacity: 1,
+            scale: 1,
+            duration: 1,
+            ease: "back.out(1.2)",
+          }, 0.05 + i * 0.08);
+        }
       });
     });
 
@@ -296,54 +280,34 @@ function DesktopWork() {
       ref={sectionRef}
       data-bg="dark"
       className="hidden md:block relative"
-      style={{ paddingBottom: "10vh" }}
+      style={{ padding: "8vh 0 12vh" }}
     >
-      {/* The video box — starts big like in the hero, shrinks on scroll */}
-      <div className="flex justify-center" style={{ marginTop: "-2vh" }}>
-        <div
-          ref={videoBoxRef}
-          className="relative overflow-hidden will-change-[width,aspect-ratio]"
-          style={{
-            width: "min(1100px, 85vw)",
-            aspectRatio: "16/10",
-            borderRadius: 16,
-            border: "1px solid rgba(255,255,255,0.08)",
-            boxShadow: "0 25px 80px -12px rgba(0,0,0,0.5), 0 0 60px rgba(196, 138, 90, 0.06)",
-          }}
+      {/* "Selected Work" label */}
+      <div className="text-center mb-10">
+        <p
+          className="text-[10px] font-medium uppercase tracking-[0.3em]"
+          style={{ color: "rgba(255,255,255,0.2)" }}
         >
-          {/* Glow */}
-          <div
-            className="absolute -inset-20 pointer-events-none"
-            style={{
-              background: "radial-gradient(ellipse at center, rgba(196, 138, 90, 0.06) 0%, transparent 70%)",
-              filter: "blur(40px)",
-            }}
-          />
-          <video
-            autoPlay muted loop playsInline preload="auto"
-            poster="/video-poster.webp"
-            className="w-full h-full object-cover"
-          >
-            <source src="/final-comp.mp4?v=6" type="video/mp4" />
-          </video>
-        </div>
+          Selected Work
+        </p>
       </div>
 
-      {/* Card fan — positioned over/around the video box */}
+      {/* Fan container — all cards absolutely positioned at center */}
       <div
-        ref={fanRef}
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
-        style={{ top: "50%", transform: "translateY(-50%)" }}
+        ref={fanContainerRef}
+        className="relative mx-auto flex items-center justify-center"
+        style={{ height: "clamp(420px, 55vh, 580px)", maxWidth: 1200 }}
       >
-        {projects.slice(1).map((project, i) => (
+        {projects.map((project, i) => (
           <div
             key={project.slug}
-            className="absolute pointer-events-auto"
-            style={{ zIndex: 10 + i }}
+            className="fan-wrapper absolute will-change-transform"
+            style={{ zIndex: i === 0 ? 20 : 15 - i }}
           >
             <FanCard
               project={project}
-              index={i + 1}
+              index={i}
+              isVideo={i === 0}
             />
           </div>
         ))}

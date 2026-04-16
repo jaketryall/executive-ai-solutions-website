@@ -13,6 +13,9 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 // Bottom-left hero interaction — circle draws on hover, arrow rotates in
 function ViewWorkWidget() {
   const [hovered, setHovered] = useState(false);
@@ -297,7 +300,7 @@ function SplashNavItem({
             fontWeight: 900,
             letterSpacing: "-0.02em",
             lineHeight: 1.2,
-            color: "#e5e1db",
+            color: "#f3f1ee",
           }}
         >
           <span className="flex">
@@ -468,7 +471,7 @@ function HeroCorrectionText() {
           fontWeight: 900,
           lineHeight: 1.05,
           letterSpacing: "-0.03em",
-          color: "#e5e1db",
+          color: "#1a1816",
         }}
       >
         {phase === "typing" ? (
@@ -487,7 +490,7 @@ function HeroCorrectionText() {
             {displayedLine1}
             <span
               style={{
-                color: isDone ? "#c48a5a" : isGlitching ? "#c48a5a" : "#e5e1db",
+                color: isDone ? "#c48a5a" : isGlitching ? "#c48a5a" : "#1a1816",
                 transition: "color 0.3s ease",
               }}
             >
@@ -505,20 +508,78 @@ function HeroCorrectionText() {
 // Desktop Hero — shrinks on scroll
 function DesktopHero() {
   const sectionRef = useRef<HTMLElement>(null);
+  const videoBoxRef = useRef<HTMLDivElement>(null);
+  const heroContentRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Text parallax-fades up + video box drifts up on scroll
+  useIsomorphicLayoutEffect(() => {
+    const section = sectionRef.current;
+    const videoBox = videoBoxRef.current;
+    const heroContent = heroContentRef.current;
+    if (!section || !videoBox || !heroContent) return;
+
+    const ctx = gsap.context(() => {
+      // Hero text moves up faster than scroll + fades out
+      gsap.to(heroContent, {
+        y: -150,
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: "30% top",
+          scrub: true,
+        },
+      });
+
+      // Video box shrinks into a vertical card
+      const shrinkTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "18% top",
+          end: "45% top",
+          scrub: 0.3,
+        },
+      });
+
+      // Shrink video frame into a vertical card shape
+      const videoFrame = videoBox.querySelector(".video-frame") as HTMLElement;
+      if (videoFrame) {
+        shrinkTl.to(videoFrame, {
+          width: "420px",
+          height: "520px",
+          aspectRatio: "auto",
+          ease: "power2.inOut",
+        }, 0);
+      }
+
+      // "Selected Work" label fades in as card shrinks
+      const workLabel = videoBox.querySelector(".work-label");
+      if (workLabel) {
+        shrinkTl.fromTo(workLabel,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, ease: "power2.out" },
+          0.2
+        );
+      }
+
+    });
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <>
       <section
         ref={sectionRef}
         className="relative"
-        data-bg="dark"
+        data-bg="cream"
       >
-        <div className="relative min-h-screen w-full overflow-hidden">
+        <div className="relative min-h-screen w-full">
 
-          {/* Dark background */}
-          <div className="absolute inset-0" style={{ background: "#0a0908" }} />
+          {/* Cream background */}
+          <div className="absolute inset-0" style={{ background: "#f3f1ee" }} />
 
           {/* NAV BAR — fixed at top */}
           <motion.div
@@ -527,7 +588,7 @@ function DesktopHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <TransitionLink href="/" className="block" style={{ color: "#e5e1db" }}>
+            <TransitionLink href="/" className="block" style={{ color: "#1a1816" }}>
               <svg
                 viewBox="30 30 600 250"
                 fill="none"
@@ -547,66 +608,119 @@ function DesktopHero() {
               <StaggerButton
                 href="/contact"
                 text="Get in Touch"
-                className="hidden md:inline-flex px-5 py-2 rounded-full text-[11px] font-semibold uppercase tracking-[0.1em] text-[#e5e1db] border border-white/15 transition-all duration-300 hover:bg-white hover:text-[#0a0908] hover:border-white"
+                className="hidden md:inline-flex px-5 py-2 rounded-full text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1a1816] border border-[rgba(26,24,22,0.15)] transition-all duration-300 hover:bg-[#1a1816] hover:text-[#f3f1ee] hover:border-[#1a1816]"
               />
               <button
-                className="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center transition-all duration-300 hover:bg-white hover:border-white group"
+                className="w-9 h-9 rounded-full border border-[rgba(26,24,22,0.15)] flex items-center justify-center transition-all duration-300 hover:bg-[#1a1816] hover:border-[#1a1816] group"
                 onClick={() => setMenuOpen(true)}
               >
                 <div className="flex flex-col gap-[4px]">
-                  <span className="w-3.5 h-[1.5px] bg-white/70 group-hover:bg-[#0a0908] transition-colors" />
-                  <span className="w-3.5 h-[1.5px] bg-white/70 group-hover:bg-[#0a0908] transition-colors" />
+                  <span className="w-3.5 h-[1.5px] bg-[#1a1816] group-hover:bg-[#f3f1ee] transition-colors" />
+                  <span className="w-3.5 h-[1.5px] bg-[#1a1816] group-hover:bg-[#f3f1ee] transition-colors" />
                 </div>
               </button>
             </div>
           </motion.div>
 
-          {/* Centered hero content */}
-          <div className="relative z-10 flex flex-col items-center justify-start h-full pt-[18vh] md:pt-[20vh]">
-            {/* Correction text — centered */}
-            <div className="text-center px-6">
-              <HeroCorrectionText />
-            </div>
+          {/* Hero text content */}
+          <div className="relative z-10 pt-[18vh] md:pt-[20vh]">
+            {/* Title + subline + CTA — parallax fades up on scroll */}
+            <div ref={heroContentRef} className="flex flex-col items-center text-center">
+              <div className="px-6">
+                <HeroCorrectionText />
+              </div>
 
-            {/* Subline */}
-            <motion.p
-              className="text-center"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 2.8, ease: [0.22, 1, 0.36, 1] }}
-              style={{
-                fontFamily: "var(--font-inter), sans-serif",
-                fontSize: "clamp(0.9rem, 1.2vw, 1.1rem)",
-                color: "rgba(255,255,255,0.35)",
-                marginTop: "1.5rem",
-                maxWidth: "500px",
-                lineHeight: 1.6,
-                padding: "0 1rem",
-              }}
-            >
-              I design websites that turn visitors into customers.
-            </motion.p>
-
-            {/* CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 3.1, ease: [0.22, 1, 0.36, 1] }}
-              style={{ marginTop: "2rem" }}
-            >
-              <TransitionLink
-                href="/contact"
-                className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full transition-all duration-300 hover:opacity-90 group"
+              <motion.p
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 2.8, ease: [0.22, 1, 0.36, 1] }}
                 style={{
-                  backgroundColor: "#c48a5a",
-                  color: "#0a0908",
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontSize: "clamp(0.9rem, 1.2vw, 1.1rem)",
+                  color: "rgba(26,24,22,0.4)",
+                  marginTop: "1.5rem",
+                  maxWidth: "500px",
+                  lineHeight: 1.6,
+                  padding: "0 1rem",
                 }}
               >
-                <span className="text-sm font-semibold uppercase tracking-[0.1em]">Start a Project</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </TransitionLink>
+                I design websites that turn visitors into customers.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 3.1, ease: [0.22, 1, 0.36, 1] }}
+                style={{ marginTop: "2rem" }}
+              >
+                <TransitionLink
+                  href="/contact"
+                  className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full transition-all duration-300 hover:bg-[#c48a5a] hover:border-[#c48a5a] group"
+                  style={{
+                    backgroundColor: "#1a1816",
+                    color: "#f3f1ee",
+                  }}
+                >
+                  <span className="text-sm font-semibold uppercase tracking-[0.1em]">Start a Project</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </TransitionLink>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Video box — sticky, stays pinned while content scrolls */}
+          <div style={{ height: "200vh" }}>
+            <motion.div
+              ref={videoBoxRef}
+              className="sticky top-[22vh] mx-auto px-6 md:px-12 lg:px-20"
+              initial={{ opacity: 0, y: 80 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, delay: 3.4, ease: [0.22, 1, 0.36, 1] }}
+              style={{ maxWidth: 1100, marginTop: "clamp(6rem, 12vh, 10rem)", zIndex: 5 }}
+            >
+              {/* "Selected Work" — fades in above the card as it shrinks */}
+              <div
+                className="work-label absolute left-0 right-0 text-center"
+                style={{ opacity: 0, bottom: "100%", marginBottom: "2rem" }}
+              >
+                <p
+                  className="text-xs font-medium uppercase tracking-[0.3em]"
+                  style={{ color: "rgba(26,24,22,0.3)" }}
+                >
+                  Selected Work
+                </p>
+                <h2
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "clamp(2rem, 4vw, 3.5rem)",
+                    fontWeight: 900,
+                    color: "#1a1816",
+                    letterSpacing: "-0.03em",
+                    marginTop: "0.5rem",
+                  }}
+                >
+                  Recent Projects
+                </h2>
+              </div>
+              <div
+                className="video-frame relative overflow-hidden mx-auto"
+                style={{
+                  borderRadius: 24,
+                  border: "1px solid rgba(26,24,22,0.18)",
+                  boxShadow: "0 25px 80px -12px rgba(0,0,0,0.15), 0 10px 30px -5px rgba(0,0,0,0.08)",
+                  aspectRatio: "16/10",
+                }}
+              >
+                <video
+                  autoPlay muted loop playsInline preload="auto"
+                  poster="/video-poster.webp"
+                  className="w-full h-full object-cover"
+                >
+                  <source src="/final-comp.mp4?v=6" type="video/mp4" />
+                </video>
+              </div>
             </motion.div>
 
           </div>
