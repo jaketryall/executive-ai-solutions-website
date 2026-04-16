@@ -682,6 +682,16 @@ function DesktopHero() {
         }, 0.4 + i * 0.1);
       });
 
+      // Fade cream background out so dark shows through
+      const creamBg = section.querySelector(".hero-cream-bg");
+      if (creamBg) {
+        shrinkTl.to(creamBg, {
+          opacity: 0,
+          ease: "power2.inOut",
+          duration: 0.6,
+        }, 0.5);
+      }
+
       // Fade video out, reveal project card underneath
       const heroVideo = videoBox.querySelector(".hero-video");
       const cardOverlay = videoBox.querySelector(".card-overlay");
@@ -714,8 +724,8 @@ function DesktopHero() {
       >
         <div className="relative min-h-screen w-full">
 
-          {/* Cream background */}
-          <div className="absolute inset-0" style={{ background: "#f3f1ee" }} />
+          {/* Cream background — fades out as cards appear */}
+          <div className="hero-cream-bg absolute inset-0" style={{ background: "#f3f1ee" }} />
 
           {/* NAV BAR — fixed at top */}
           <motion.div
