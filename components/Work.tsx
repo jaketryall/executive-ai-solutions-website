@@ -107,299 +107,248 @@ function FloatingCard({
   );
 }
 
-/* ─── Full-bleed parallax project showcase ─── */
-function FullBleedProject({
+/* ─── Work card for the fan layout ─── */
+function FanCard({
   project,
   index,
+  isVideo,
 }: {
   project: (typeof projects)[number];
   index: number;
+  isVideo?: boolean;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
-  const num = String(index + 1).padStart(2, "0");
-
-  useIsomorphicLayoutEffect(() => {
-    const container = containerRef.current;
-    const image = imageRef.current;
-    if (!container || !image) return;
-
-    const ctx = gsap.context(() => {
-      // Parallax — image moves slower than scroll, creates depth
-      gsap.fromTo(image,
-        { yPercent: -15 },
-        {
-          yPercent: 15,
-          ease: "none",
-          scrollTrigger: {
-            trigger: container,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          },
-        }
-      );
-
-      // Subtle zoom-in as you scroll through
-      gsap.fromTo(image,
-        { scale: 1.15 },
-        {
-          scale: 1.05,
-          ease: "none",
-          scrollTrigger: {
-            trigger: container,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          },
-        }
-      );
-
-      // Text and details fade + slide in
-      const textEls = container.querySelectorAll(".project-text");
-      gsap.fromTo(textEls,
-        { y: 60, opacity: 0 },
-        {
-          y: 0, opacity: 1,
-          stagger: 0.08,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: container,
-            start: "top 60%",
-            end: "top 30%",
-            scrub: 0.5,
-          },
-        }
-      );
-    });
-
-    return () => ctx.revert();
-  }, []);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative overflow-hidden"
-      style={{ height: "100vh" }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      {/* Full-bleed image with parallax */}
+    <TransitionLink href={`/work/${project.slug}`}>
       <div
-        ref={imageRef}
-        className="absolute inset-0 will-change-transform"
-        style={{ top: "-15%", bottom: "-15%", height: "130%" }}
-      >
-        <Image
-          src={project.image}
-          alt={project.title}
-          fill
-          className="object-cover"
-          style={{
-            transition: "filter 0.6s ease",
-            filter: hovered ? "brightness(0.7)" : "brightness(0.5)",
-          }}
-          sizes="100vw"
-          priority={index === 0}
-        />
-      </div>
-
-      {/* Gradient — heavier at bottom for text legibility */}
-      <div
-        className="absolute inset-0 pointer-events-none"
+        className="fan-card relative overflow-hidden cursor-pointer"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         style={{
-          background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0.3) 100%)",
-        }}
-      />
-
-      {/* Project number — giant, top-right */}
-      <div
-        className="absolute top-8 right-10 pointer-events-none select-none project-text"
-        style={{
-          fontFamily: "var(--font-inter), sans-serif",
-          fontSize: "clamp(6rem, 15vw, 14rem)",
-          fontWeight: 900,
-          lineHeight: 0.85,
-          color: "rgba(255,255,255,0.06)",
-          letterSpacing: "-0.05em",
+          width: "clamp(280px, 22vw, 380px)",
+          aspectRatio: "3/4",
+          borderRadius: 20,
+          border: "1px solid rgba(255,255,255,0.08)",
+          boxShadow: hovered
+            ? `0 30px 80px rgba(0,0,0,0.4), 0 0 30px rgba(196, 138, 90, 0.1)`
+            : "0 15px 50px rgba(0,0,0,0.3)",
+          transform: hovered ? "scale(1.08)" : "scale(1)",
+          transition: "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease",
+          zIndex: hovered ? 50 : 10 + index,
+          position: "relative",
         }}
       >
-        {num}
-      </div>
+        {isVideo ? (
+          <video
+            autoPlay muted loop playsInline preload="auto"
+            poster="/video-poster.webp"
+            className="w-full h-full object-cover"
+          >
+            <source src="/final-comp.mp4?v=6" type="video/mp4" />
+          </video>
+        ) : (
+          <Image
+            src={project.image}
+            alt={project.title}
+            fill
+            className="object-cover"
+            sizes="22vw"
+          />
+        )}
 
-      {/* Project info — bottom-left */}
-      <div className="absolute bottom-0 left-0 right-0 p-10 md:p-16 lg:p-20">
-        <div className="max-w-[1400px] mx-auto flex items-end justify-between">
-          <div>
-            <p
-              className="project-text text-xs font-medium uppercase tracking-[0.3em] mb-4"
-              style={{ color: accentColor }}
-            >
-              {project.category}
-            </p>
-            <h3
-              className="project-text"
-              style={{
-                fontFamily: "var(--font-inter), sans-serif",
-                fontSize: "clamp(2.5rem, 6vw, 5rem)",
-                fontWeight: 900,
-                color: "#fff",
-                lineHeight: 0.95,
-                letterSpacing: "-0.03em",
-              }}
-            >
-              {project.title}
-            </h3>
-            <p
-              className="project-text mt-3"
-              style={{
-                color: "rgba(255,255,255,0.4)",
-                fontSize: "0.9rem",
-                letterSpacing: "0.02em",
-              }}
-            >
-              {project.year}
-            </p>
-          </div>
-
-          {/* View arrow — grows on hover */}
-          <TransitionLink href={`/work/${project.slug}`}>
-            <div
-              className="project-text flex items-center justify-center rounded-full border transition-all duration-500"
-              style={{
-                width: hovered ? 80 : 56,
-                height: hovered ? 80 : 56,
-                borderColor: hovered ? accentColor : "rgba(255,255,255,0.2)",
-                backgroundColor: hovered ? "rgba(196, 138, 90, 0.1)" : "transparent",
-              }}
-            >
-              <svg
-                width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke={hovered ? accentColor : "rgba(255,255,255,0.6)"}
-                strokeWidth="2" strokeLinecap="round"
-                style={{ transition: "all 0.4s ease", transform: hovered ? "translate(2px, -2px)" : "none" }}
-              >
-                <path d="M7 17L17 7M17 7H7M17 7V17" />
-              </svg>
-            </div>
-          </TransitionLink>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Expand intro — small card grows to full-bleed (inverse of hero) ─── */
-function WorkExpandIntro() {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  useIsomorphicLayoutEffect(() => {
-    const wrapper = wrapperRef.current;
-    const card = cardRef.current;
-    if (!wrapper || !card) return;
-
-    const ctx = gsap.context(() => {
-      // Card starts small with rounded corners, expands to fill viewport
-      gsap.fromTo(card,
-        {
-          scale: 0.6,
-          borderRadius: 40,
-          y: 200,
-        },
-        {
-          scale: 1,
-          borderRadius: 0,
-          y: 0,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: wrapper,
-            start: "40% 50%",
-            end: "80% 20%",
-            scrub: 0.2,
-          },
-        }
-      );
-    });
-
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <div
-      ref={wrapperRef}
-      className="relative h-screen hidden md:flex items-center justify-center"
-      data-bg="dark"
-      style={{ backgroundColor: "#0a0908", marginTop: "-50vh", zIndex: 3 }}
-    >
-      <div
-        ref={cardRef}
-        className="w-full h-full relative will-change-transform"
-        style={{ overflow: "hidden" }}
-      >
-        <Image
-          src={projects[0].image}
-          alt={projects[0].title}
-          fill
-          className="object-cover"
-          style={{ filter: "brightness(0.5)" }}
-          sizes="100vw"
-          priority
-        />
         {/* Gradient overlay */}
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0"
           style={{
-            background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0.3) 100%)",
+            background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)",
           }}
         />
-        {/* Project info visible as it expands */}
-        <div className="absolute bottom-0 left-0 right-0 p-10 md:p-16 lg:p-20">
-          <div className="max-w-[1400px] mx-auto">
-            <p
-              className="text-xs font-medium uppercase tracking-[0.3em] mb-4"
-              style={{ color: accentColor }}
-            >
-              {projects[0].category}
-            </p>
-            <h3
-              style={{
-                fontFamily: "var(--font-inter), sans-serif",
-                fontSize: "clamp(2.5rem, 6vw, 5rem)",
-                fontWeight: 900,
-                color: "#fff",
-                lineHeight: 0.95,
-                letterSpacing: "-0.03em",
-              }}
-            >
-              {projects[0].title}
-            </h3>
-          </div>
+
+        {/* Project info at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-5">
+          <p
+            className="text-[10px] font-medium uppercase tracking-[0.2em] mb-2"
+            style={{ color: accentColor, opacity: 0.8 }}
+          >
+            {project.category}
+          </p>
+          <h3
+            style={{
+              fontFamily: "var(--font-inter), sans-serif",
+              fontSize: "clamp(1rem, 1.3vw, 1.25rem)",
+              fontWeight: 800,
+              color: "#fff",
+              lineHeight: 1.1,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            {project.title}
+          </h3>
+        </div>
+
+        {/* Hover arrow */}
+        <div
+          className="absolute top-4 right-4"
+          style={{
+            opacity: hovered ? 1 : 0,
+            transform: hovered ? "translate(0,0)" : "translate(-4px, 4px)",
+            transition: "all 0.3s ease",
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+            <path d="M7 17L17 7M17 7H7M17 7V17" />
+          </svg>
         </div>
       </div>
-    </div>
+    </TransitionLink>
   );
 }
 
-/* ─── Desktop: Full-bleed parallax showcase ─── */
+/* ─── Desktop: Video box shrinks into card fan ─── */
 function DesktopWork() {
   const sectionRef = useRef<HTMLElement>(null);
+  const videoBoxRef = useRef<HTMLDivElement>(null);
+  const fanRef = useRef<HTMLDivElement>(null);
+
+  // Fan positions — each card's final offset from center
+  const cardPositions = [
+    { x: 0, rotation: -1 },       // Center (the video)
+    { x: -300, rotation: -12 },   // Far left
+    { x: 300, rotation: 10 },     // Far right
+    { x: 150, rotation: 5 },      // Inner right
+  ];
+
+  useIsomorphicLayoutEffect(() => {
+    const section = sectionRef.current;
+    const videoBox = videoBoxRef.current;
+    const fan = fanRef.current;
+    if (!section || !videoBox || !fan) return;
+
+    const cards = gsap.utils.toArray<HTMLElement>(fan.querySelectorAll(".fan-card"));
+
+    const ctx = gsap.context(() => {
+      // Hide all non-video cards initially (stacked behind video box)
+      cards.forEach((card, i) => {
+        if (i === 0) return;
+        gsap.set(card, {
+          x: 0,
+          rotation: 0,
+          opacity: 0,
+          scale: 0.85,
+        });
+      });
+
+      // Timeline: video box shrinks + cards fan out
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top 15%",
+          end: "top -50%",
+          scrub: 0.4,
+          pin: true,
+          pinSpacing: true,
+        },
+      });
+
+      // Video box shrinks from big showcase to card size
+      tl.fromTo(videoBox, {
+        width: "min(1100px, 85vw)",
+        aspectRatio: "16/10",
+        borderRadius: 16,
+      }, {
+        width: "clamp(280px, 22vw, 380px)",
+        aspectRatio: "3/4",
+        borderRadius: 20,
+        ease: "power3.inOut",
+        duration: 1,
+      }, 0);
+
+      // First fan card (behind video box) — just rotate into position
+      if (cards[0]) {
+        tl.to(cards[0], {
+          rotation: cardPositions[0].rotation,
+          ease: "power2.out",
+          duration: 1,
+        }, 0);
+      }
+
+      // Other cards emerge and fan out
+      cards.forEach((card, i) => {
+        if (i === 0) return;
+        tl.to(card, {
+          x: cardPositions[i].x,
+          rotation: cardPositions[i].rotation,
+          opacity: 1,
+          scale: 1,
+          ease: "power3.out",
+          duration: 1,
+        }, 0.15 + i * 0.1);
+      });
+    });
+
+    const timer = setTimeout(() => ScrollTrigger.refresh(), 300);
+    return () => { clearTimeout(timer); ctx.revert(); };
+  }, []);
 
   return (
-    <>
-      <WorkExpandIntro />
-      <section
-        ref={sectionRef}
-        data-bg="dark"
-        className="hidden md:block relative"
+    <section
+      ref={sectionRef}
+      data-bg="dark"
+      className="hidden md:block relative"
+      style={{ paddingBottom: "10vh" }}
+    >
+      {/* The video box — starts big like in the hero, shrinks on scroll */}
+      <div className="flex justify-center" style={{ marginTop: "-2vh" }}>
+        <div
+          ref={videoBoxRef}
+          className="relative overflow-hidden will-change-[width,aspect-ratio]"
+          style={{
+            width: "min(1100px, 85vw)",
+            aspectRatio: "16/10",
+            borderRadius: 16,
+            border: "1px solid rgba(255,255,255,0.08)",
+            boxShadow: "0 25px 80px -12px rgba(0,0,0,0.5), 0 0 60px rgba(196, 138, 90, 0.06)",
+          }}
+        >
+          {/* Glow */}
+          <div
+            className="absolute -inset-20 pointer-events-none"
+            style={{
+              background: "radial-gradient(ellipse at center, rgba(196, 138, 90, 0.06) 0%, transparent 70%)",
+              filter: "blur(40px)",
+            }}
+          />
+          <video
+            autoPlay muted loop playsInline preload="auto"
+            poster="/video-poster.webp"
+            className="w-full h-full object-cover"
+          >
+            <source src="/final-comp.mp4?v=6" type="video/mp4" />
+          </video>
+        </div>
+      </div>
+
+      {/* Card fan — positioned over/around the video box */}
+      <div
+        ref={fanRef}
+        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+        style={{ top: "50%", transform: "translateY(-50%)" }}
       >
-        {/* Skip first project since it's already shown in the expand intro */}
         {projects.slice(1).map((project, i) => (
-          <FullBleedProject key={project.slug} project={project} index={i + 1} />
+          <div
+            key={project.slug}
+            className="absolute pointer-events-auto"
+            style={{ zIndex: 10 + i }}
+          >
+            <FanCard
+              project={project}
+              index={i + 1}
+            />
+          </div>
         ))}
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
 

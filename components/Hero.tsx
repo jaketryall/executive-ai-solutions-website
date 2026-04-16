@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, useMotionTemplate, useSpring, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import AnimatedLogo from "./AnimatedLogo";
@@ -355,290 +355,262 @@ const mobileWorkItems = [
   { title: "ADVENTURE AIR", category: "Tours", image: "/thumbnails/Elegant Black Laptop Mockup.webp", slug: "adventure-air" },
 ];
 
+/* ─── Hero correction text — "You need a website" → "You need an unfair advantage" ─── */
+function HeroCorrectionText() {
+  // Skip animation on repeat visits
+  const hasSeenRef = useRef(false);
+  const [skipAnimation, setSkipAnimation] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const seen = sessionStorage.getItem("hero-seen");
+      if (seen) {
+        setSkipAnimation(true);
+        hasSeenRef.current = true;
+      }
+    }
+  }, []);
+
+  const [phase, setPhase] = useState<"typing" | "pause" | "glitch" | "done">(
+    "typing"
+  );
+  const [typedCount, setTypedCount] = useState(0);
+  const [glitchText, setGlitchText] = useState("a website.");
+  const glitchChars = "!@#$%&*?░▒▓█▀▄";
+
+  const line1 = "You need ";
+  const originalEnd = "a website.";
+  const correctedEnd = "an unfair advantage.";
+
+  // Skip straight to done if returning visitor
+  useEffect(() => {
+    if (skipAnimation) {
+      setGlitchText(correctedEnd);
+      setPhase("done");
+    }
+  }, [skipAnimation]);
+
+  // Phase 1: Type out "You need a website." — faster (35ms)
+  useEffect(() => {
+    if (phase !== "typing" || skipAnimation) return;
+    const full = line1 + originalEnd;
+    if (typedCount >= full.length) {
+      const timer = setTimeout(() => setPhase("pause"), 300);
+      return () => clearTimeout(timer);
+    }
+    const timer = setTimeout(() => setTypedCount((c) => c + 1), 35);
+    return () => clearTimeout(timer);
+  }, [phase, typedCount, skipAnimation]);
+
+  // Phase 2: Short pause, then glitch
+  useEffect(() => {
+    if (phase !== "pause") return;
+    const timer = setTimeout(() => setPhase("glitch"), 500);
+    return () => clearTimeout(timer);
+  }, [phase]);
+
+  // Phase 3: Scramble "a website." into "an unfair advantage."
+  useEffect(() => {
+    if (phase !== "glitch") return;
+    let iteration = 0;
+    const maxIterations = 14;
+
+    const interval = setInterval(() => {
+      iteration++;
+      const progress = iteration / maxIterations;
+
+      if (progress >= 1) {
+        setGlitchText(correctedEnd);
+        setPhase("done");
+        clearInterval(interval);
+        // Mark as seen for this session
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("hero-seen", "1");
+        }
+        return;
+      }
+
+      // Characters resolve from left to right
+      const resolved = Math.floor(progress * correctedEnd.length);
+      let result = "";
+      for (let i = 0; i < correctedEnd.length; i++) {
+        if (i < resolved) {
+          result += correctedEnd[i];
+        } else {
+          result += glitchChars[Math.floor(Math.random() * glitchChars.length)];
+        }
+      }
+      setGlitchText(result);
+    }, 40);
+
+    return () => clearInterval(interval);
+  }, [phase]);
+
+  const displayedLine1 =
+    phase === "typing" ? (line1 + originalEnd).slice(0, typedCount) : line1;
+
+  const displayedEnd =
+    phase === "typing"
+      ? ""
+      : phase === "pause"
+      ? originalEnd
+      : glitchText;
+
+  const isGlitching = phase === "glitch";
+  const isDone = phase === "done";
+
+  return (
+    <div>
+      <h1
+        style={{
+          fontFamily: "var(--font-inter), sans-serif",
+          fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
+          fontWeight: 900,
+          lineHeight: 1.05,
+          letterSpacing: "-0.03em",
+          color: "#e5e1db",
+        }}
+      >
+        {phase === "typing" ? (
+          <>
+            {displayedLine1}
+            <motion.span
+              animate={{ opacity: [1, 0] }}
+              transition={{ duration: 0.4, repeat: Infinity, repeatType: "reverse" }}
+              style={{ color: "#c48a5a" }}
+            >
+              |
+            </motion.span>
+          </>
+        ) : (
+          <>
+            {displayedLine1}
+            <span
+              style={{
+                color: isDone ? "#c48a5a" : isGlitching ? "#c48a5a" : "#e5e1db",
+                transition: "color 0.3s ease",
+              }}
+            >
+              {displayedEnd}
+            </span>
+          </>
+        )}
+      </h1>
+    </div>
+  );
+}
+
 // No separate MobileHero — DesktopHero is now responsive for all screen sizes
 
-// Desktop Hero — "JAKE RYALL" with projects inside letters, shrinks on scroll
+// Desktop Hero — shrinks on scroll
 function DesktopHero() {
   const sectionRef = useRef<HTMLElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const marqueeRow1 = useRef<HTMLDivElement>(null);
-  const marqueeRow2 = useRef<HTMLDivElement>(null);
-  const row1Pos = useRef(0);
-  const row2Pos = useRef(0);
-  const scrollDir = useRef(-1); // -1 = left, 1 = right
 
-  // Scroll-velocity-driven marquee
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-
-    const onScroll = () => {
-      const delta = window.scrollY - lastScrollY;
-      if (delta > 2) scrollDir.current = -1;
-      else if (delta < -2) scrollDir.current = 1;
-      lastScrollY = window.scrollY;
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-
-    const animate = () => {
-      const speed = 0.8;
-      row1Pos.current += speed * scrollDir.current;
-      row2Pos.current += speed * -scrollDir.current;
-
-      if (marqueeRow1.current) {
-        const w = marqueeRow1.current.scrollWidth / 2;
-        if (row1Pos.current <= -w) row1Pos.current += w;
-        if (row1Pos.current >= 0) row1Pos.current -= w;
-        marqueeRow1.current.style.transform = `translateX(${row1Pos.current}px)`;
-      }
-      if (marqueeRow2.current) {
-        const w = marqueeRow2.current.scrollWidth / 2;
-        if (row2Pos.current <= -w) row2Pos.current += w;
-        if (row2Pos.current >= 0) row2Pos.current -= w;
-        marqueeRow2.current.style.transform = `translateX(${row2Pos.current}px)`;
-      }
-      requestAnimationFrame(animate);
-    };
-    const raf = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-
-  // Ease-out function — fast start, smooth deceleration (like cubic-bezier(0.22, 1, 0.36, 1))
-  const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
-
-  // Hero SHRINKS on scroll — proper ease-out curve, no kinks
-  const heroScale = useTransform(scrollYProgress, (p) => {
-    const t = Math.min(p / 0.45, 1); // normalize 0-0.45 → 0-1
-    return 1 - easeOut(t) * 0.48;    // 1 → 0.52
-  });
-  const heroRadius = useTransform(scrollYProgress, (p) => {
-    const t = Math.min(p / 0.35, 1);
-    return easeOut(t) * 40;           // 0 → 40
-  });
-
-  // Name stays the same size (no scaling)
-  const nameScale = 1;
-
-  // "JAKE" slides UP, "RYALL" slides DOWN — curtain open
-  const jakeY = useTransform(scrollYProgress, (p) => {
-    const t = Math.max(0, Math.min((p - 0.05) / 0.2, 1));
-    return -easeOut(t) * 300;
-  });
-  const ryallY = useTransform(scrollYProgress, (p) => {
-    const t = Math.max(0, Math.min((p - 0.05) / 0.2, 1));
-    return easeOut(t) * 300;
-  });
-  const textOpacity = useTransform(scrollYProgress, [0.05, 0.2], [1, 0]);
-
-  // Project cards scale up with stagger
-  const cardsReveal = useTransform(scrollYProgress, (p) => {
-    const t = Math.max(0, Math.min((p - 0.15) / 0.25, 1));
-    return easeOut(t);
-  });
-
-  // UI fades
-  const uiOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
 
   return (
     <>
       <section
         ref={sectionRef}
-        className="relative h-[200vh]"
+        className="relative"
         data-bg="dark"
       >
-        <div className="sticky top-0 h-screen w-full overflow-hidden">
+        <div className="relative min-h-screen w-full overflow-hidden">
 
-          {/* Dark bg content — marquee, scroll-direction-driven */}
-          <div className="absolute inset-0 flex flex-col justify-center pointer-events-none overflow-hidden">
-            <div ref={marqueeRow1} className="flex whitespace-nowrap will-change-transform" style={{ width: "fit-content" }}>
-              {[...Array(8)].map((_, i) => (
-                <span key={`a${i}`} className="shrink-0 pr-[3vw]" style={{ fontFamily: "var(--font-inter), sans-serif", fontSize: "clamp(3rem, 14vw, 14vw)", fontWeight: 900, color: "rgba(255,255,255,0.04)", textTransform: "uppercase", letterSpacing: "-0.04em", lineHeight: 1 }}>
-                  Design · Develop · Deliver ·{" "}
-                </span>
-              ))}
-            </div>
-            <div ref={marqueeRow2} className="flex whitespace-nowrap -mt-[2vw] will-change-transform" style={{ width: "fit-content" }}>
-              {[...Array(8)].map((_, i) => (
-                <span key={`b${i}`} className="shrink-0 pr-[3vw]" style={{ fontFamily: "var(--font-inter), sans-serif", fontSize: "clamp(3rem, 14vw, 14vw)", fontWeight: 900, color: "rgba(255,255,255,0.04)", textTransform: "uppercase", letterSpacing: "-0.04em", lineHeight: 1 }}>
-                  Strategy · Convert · Scale ·{" "}
-                </span>
-              ))}
-            </div>
-          </div>
+          {/* Dark background */}
+          <div className="absolute inset-0" style={{ background: "#0a0908" }} />
 
-          {/* === THE HERO — dark rectangle that SHRINKS on scroll === */}
+          {/* NAV BAR — fixed at top */}
           <motion.div
-            className="absolute inset-0 overflow-hidden"
-            initial={{ scale: 0.96, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              scale: heroScale,
-              borderRadius: heroRadius,
-              background: "#0a0908",
-              boxShadow: "0 25px 100px -10px rgba(0,0,0,0.6), 0 10px 40px -5px rgba(0,0,0,0.4), 0 0 120px 20px rgba(0,0,0,0.2)",
-            }}
+            className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-5 md:px-8 pt-14 md:pt-7"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
           >
-            {/* Everything except the name + project cards fades on scroll */}
-            <motion.div
-              className="absolute inset-0 z-20"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              style={{ opacity: uiOpacity }}
-            >
-              {/* Organic SVG curves — right side like L1 */}
-              <svg className="absolute top-0 right-0 h-full w-1/2 pointer-events-none" viewBox="0 0 960 1080" preserveAspectRatio="xMaxYMid slice" fill="none">
-                <path d="M200,0 C250,180 180,360 220,540 S160,720 200,900 S250,1000 200,1080" stroke="rgba(0,0,0,0.05)" strokeWidth="1.2" />
-                <path d="M400,0 C450,200 380,400 420,600 S360,800 400,1000 S450,1050 400,1080" stroke="rgba(0,0,0,0.035)" strokeWidth="1" />
-                <path d="M650,0 C700,220 630,440 670,660 S610,880 650,1080" stroke="rgba(0,0,0,0.025)" strokeWidth="1" />
+            <TransitionLink href="/" className="block" style={{ color: "#e5e1db" }}>
+              <svg
+                viewBox="30 30 600 250"
+                fill="none"
+                preserveAspectRatio="xMinYMid meet"
+                className="w-[100px] md:w-[130px] h-auto"
+              >
+                <path
+                  d="M60,160 C65,100 80,60 95,55 C115,48 110,100 108,130 C105,165 90,200 80,210 Q70,220 85,215 C110,205 135,160 155,155 C175,150 170,185 160,200 Q148,218 165,210 C185,200 195,175 210,165 Q230,152 225,180 C220,205 200,225 195,218 Q188,208 210,195 C225,186 250,175 270,200 Q275,208 265,208 C250,208 280,170 310,120 C325,95 340,75 350,70 Q365,64 358,90 C350,120 335,165 340,185 Q345,200 360,185 C375,168 385,145 400,155 Q408,160 400,178 C390,200 365,230 360,248 Q355,265 370,250 C390,228 410,195 430,188 Q445,182 442,200 C438,215 425,225 435,220 Q450,212 460,140 L462,210 Q465,130 475,128 L477,210 C485,205 520,188 560,182 Q600,176 620,190"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
-
-              {/* NAV BAR */}
-              <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-5 md:px-8 pt-14 md:pt-7">
-                <TransitionLink href="/" className="block" style={{ color: "#1a1816" }}>
-                  <svg
-                    viewBox="30 30 600 250"
-                    fill="none"
-                    preserveAspectRatio="xMinYMid meet"
-                    className="w-[100px] md:w-[130px] h-auto"
-                  >
-                    <path
-                      d="M60,160 C65,100 80,60 95,55 C115,48 110,100 108,130 C105,165 90,200 80,210 Q70,220 85,215 C110,205 135,160 155,155 C175,150 170,185 160,200 Q148,218 165,210 C185,200 195,175 210,165 Q230,152 225,180 C220,205 200,225 195,218 Q188,208 210,195 C225,186 250,175 270,200 Q275,208 265,208 C250,208 280,170 310,120 C325,95 340,75 350,70 Q365,64 358,90 C350,120 335,165 340,185 Q345,200 360,185 C375,168 385,145 400,155 Q408,160 400,178 C390,200 365,230 360,248 Q355,265 370,250 C390,228 410,195 430,188 Q445,182 442,200 C438,215 425,225 435,220 Q450,212 460,140 L462,210 Q465,130 475,128 L477,210 C485,205 520,188 560,182 Q600,176 620,190"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </TransitionLink>
-                <div className="absolute left-1/2 -translate-x-1/2 hidden md:block">
-                  <HeroLogo />
-                </div>
-                <div className="flex items-center gap-3">
-                  <StaggerButton
-                    href="/contact"
-                    text="Get in Touch"
-                    className="hidden md:inline-flex px-5 py-2 rounded-full text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1a1816] border border-[rgba(26,24,22,0.15)] transition-all duration-300 hover:bg-[#1a1816] hover:text-[#e5e1db] hover:border-[#1a1816]"
-                  />
-                  <button
-                    className="w-9 h-9 rounded-full border flex items-center justify-center transition-all duration-300 hover:bg-[#1a1816] hover:border-[#1a1816] group"
-                    style={{ borderColor: "rgba(26,24,22,0.15)" }}
-                    onClick={() => setMenuOpen(true)}
-                  >
-                    <div className="flex flex-col gap-[4px]">
-                      <span className="w-3.5 h-[1.5px] bg-[#1a1816] group-hover:bg-[#e5e1db] transition-colors" />
-                      <span className="w-3.5 h-[1.5px] bg-[#1a1816] group-hover:bg-[#e5e1db] transition-colors" />
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              {/* Bottom-right: scroll hint */}
-              <div className="absolute bottom-10 right-5 md:right-10 pointer-events-none">
-                <p className="text-[9px] font-sans uppercase tracking-[0.2em]" style={{ color: "#8a857d" }}>
-                  Scroll to explore
-                </p>
-              </div>
-
-              {/* Bottom-left: View Work interaction — desktop only */}
-              <div className="hidden md:block">
-                <ViewWorkWidget />
-              </div>
-
-              {/* Center subtitle */}
-              <div className="absolute bottom-[10vh] left-0 right-0 text-center pointer-events-none">
-                <p className="text-[9px] md:text-[11px] font-sans uppercase tracking-[0.3em]" style={{ color: "#8a857d" }}>
-                  Websites that convert · Brands that stand out
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Video playing behind — visible through text and when cream fades */}
-            <div className="absolute inset-0">
-              <video
-                autoPlay muted loop playsInline preload="auto"
-                poster="/video-poster.webp"
-                className="w-full h-full object-cover"
-              >
-                <source src="/final-comp.mp4?v=6" type="video/mp4" />
-              </video>
-            </div>
-
-            {/* Text with video showing through letterforms — cream surrounds it */}
-            <motion.div
-              className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none"
-            >
-              {/* Cream overlay — video only visible through the text cutouts */}
-              <motion.div
-                className="absolute inset-0"
-                style={{ background: "#e5e1db", opacity: textOpacity }}
+            </TransitionLink>
+            <div className="flex items-center gap-3">
+              <StaggerButton
+                href="/contact"
+                text="Get in Touch"
+                className="hidden md:inline-flex px-5 py-2 rounded-full text-[11px] font-semibold uppercase tracking-[0.1em] text-[#e5e1db] border border-white/15 transition-all duration-300 hover:bg-white hover:text-[#0a0908] hover:border-white"
               />
-
-              {/* WEBSITE — video poster peeks through letters, slams in on load, slides up on scroll */}
-              <motion.span
-                className="relative"
-                initial={{ opacity: 0, scale: 1.15, y: 30 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                style={{
-                  fontSize: "clamp(4.5rem, 12vw, 14rem)",
-                  fontFamily: "Impact, 'Arial Black', sans-serif",
-                  fontWeight: 900,
-                  lineHeight: 0.9,
-                  letterSpacing: "-0.03em",
-                  textTransform: "uppercase",
-                  color: "transparent",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  backgroundImage: "url('/video-poster.webp')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center 30%",
-                  y: jakeY,
-                  opacity: textOpacity,
-                }}
+              <button
+                className="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center transition-all duration-300 hover:bg-white hover:border-white group"
+                onClick={() => setMenuOpen(true)}
               >
-                WEBSITE
-              </motion.span>
-
-              {/* DESIGN — video poster through letters, slams in from opposite direction */}
-              <motion.span
-                className="relative"
-                initial={{ opacity: 0, scale: 1.15, y: -30 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.9, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                style={{
-                  fontSize: "clamp(4.5rem, 12vw, 14rem)",
-                  fontFamily: "Impact, 'Arial Black', sans-serif",
-                  fontWeight: 900,
-                  lineHeight: 0.9,
-                  letterSpacing: "-0.03em",
-                  textTransform: "uppercase",
-                  color: "transparent",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  backgroundImage: "url('/video-poster.webp')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center 70%",
-                  y: ryallY,
-                  opacity: textOpacity,
-                }}
-              >
-                DESIGN
-              </motion.span>
-            </motion.div>
-
+                <div className="flex flex-col gap-[4px]">
+                  <span className="w-3.5 h-[1.5px] bg-white/70 group-hover:bg-[#0a0908] transition-colors" />
+                  <span className="w-3.5 h-[1.5px] bg-white/70 group-hover:bg-[#0a0908] transition-colors" />
+                </div>
+              </button>
+            </div>
           </motion.div>
 
-          {/* No outside chrome — nav is inside the cream hero now */}
+          {/* Centered hero content */}
+          <div className="relative z-10 flex flex-col items-center justify-start h-full pt-[18vh] md:pt-[20vh]">
+            {/* Correction text — centered */}
+            <div className="text-center px-6">
+              <HeroCorrectionText />
+            </div>
+
+            {/* Subline */}
+            <motion.p
+              className="text-center"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 2.8, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "clamp(0.9rem, 1.2vw, 1.1rem)",
+                color: "rgba(255,255,255,0.35)",
+                marginTop: "1.5rem",
+                maxWidth: "500px",
+                lineHeight: 1.6,
+                padding: "0 1rem",
+              }}
+            >
+              I design websites that turn visitors into customers.
+            </motion.p>
+
+            {/* CTA */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 3.1, ease: [0.22, 1, 0.36, 1] }}
+              style={{ marginTop: "2rem" }}
+            >
+              <TransitionLink
+                href="/contact"
+                className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full transition-all duration-300 hover:opacity-90 group"
+                style={{
+                  backgroundColor: "#c48a5a",
+                  color: "#0a0908",
+                }}
+              >
+                <span className="text-sm font-semibold uppercase tracking-[0.1em]">Start a Project</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </TransitionLink>
+            </motion.div>
+
+          </div>
+
         </div>
       </section>
 

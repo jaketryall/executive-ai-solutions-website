@@ -26,11 +26,8 @@ export default function Home() {
       <ScrollBackground />
       <main className="relative" style={{ zIndex: 10 }}>
         <Hero />
-        {/* Wrapper lets the sticky signature persist across both sections */}
-        <div className="relative">
-          <Manifesto />
-          <Work />
-        </div>
+        <Work />
+        <Manifesto />
         <Services />
         <Contact />
       </main>
