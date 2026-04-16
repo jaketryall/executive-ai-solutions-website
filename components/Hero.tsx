@@ -17,6 +17,7 @@ const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 const heroProjects = [
+  { slug: "overdue", title: "Overdue", category: "Calendar App", image: "/custom-dashboard-mockup.webp" },
   { slug: "riled-up", title: "Riled Up", category: "Coaching", image: "/Celestial iPhone Mockup.webp" },
   { slug: "wings-n-wheels", title: "Wings N Wheels", category: "Design Showcase", image: "/Rubber iPhone Mockup.webp" },
   { slug: "adventure-air", title: "Adventure Air", category: "Gyrocopter Tours", image: "/Elegant Black Laptop Mockup.webp" },
@@ -658,6 +659,7 @@ function DesktopHero() {
       // Fan cards emerge from behind the video card
       const fanCards = gsap.utils.toArray<HTMLElement>(videoBox.querySelectorAll(".hero-fan-card"));
       const fanPositions = [
+        { x: -520, y: 90, rotation: -14 },    // Far left
         { x: -320, y: 40, rotation: -8 },     // Left
         { x: 320, y: 40, rotation: 8 },       // Right
         { x: 520, y: 90, rotation: 14 },      // Far right
