@@ -365,32 +365,30 @@ const mobileWorkItems = [
 ];
 
 /* ─── Fan cards with group hover — all cards react when one is hovered ─── */
-function HeroFanCards() {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
-  // Base positions (set by GSAP, but these define the hover offsets)
-  const basePositions = [
-    { x: -320, y: 40, rotation: -8 },
-    { x: 320, y: 40, rotation: 8 },
-    { x: 520, y: 90, rotation: 14 },
-  ];
-
-  // When a card is hovered, others spread away from it
+// hoveredIndex: -1 = video card, 0/1/2 = fan cards
+function HeroFanCards({
+  hoveredIndex,
+  setHoveredIndex,
+}: {
+  hoveredIndex: number | null;
+  setHoveredIndex: (i: number | null) => void;
+  videoCardIndex: number;
+}) {
+  // totalCards: video card (-1) + 3 fan cards (0, 1, 2) = 4 cards
+  // When a card is hovered, others spread away
   const getHoverOffset = (cardIndex: number) => {
-    if (hoveredIndex === null) return { x: 0, y: 0, scale: 1, rotation: 0 };
+    if (hoveredIndex === null) return { x: 0, y: 0, scale: 1 };
 
     if (cardIndex === hoveredIndex) {
-      // Hovered card: lift up, scale up
-      return { x: 0, y: -25, scale: 1.08, rotation: 0 };
+      return { x: 0, y: -25, scale: 1.08 };
     }
 
-    // Other cards: push away from hovered card
+    // Push away from hovered card
     const dir = cardIndex < hoveredIndex ? -1 : 1;
-    const distance = Math.abs(cardIndex - hoveredIndex);
-    const pushX = dir * (40 / distance);
-    const pushY = 10;
+    const pushX = dir * 35;
+    const pushY = 8;
 
-    return { x: pushX, y: pushY, scale: 0.97, rotation: dir * 2 };
+    return { x: pushX, y: pushY, scale: 0.97 };
   };
 
   return (
@@ -603,6 +601,7 @@ function DesktopHero() {
   const videoBoxRef = useRef<HTMLDivElement>(null);
   const heroContentRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hoveredFanIndex, setHoveredFanIndex] = useState<number | null>(null);
 
   // Text parallax-fades up + video box drifts up on scroll
   useIsomorphicLayoutEffect(() => {
@@ -680,6 +679,24 @@ function DesktopHero() {
           ease: "back.out(1.4)",
         }, 0.4 + i * 0.1);
       });
+
+      // Fade video out, reveal project card underneath
+      const heroVideo = videoBox.querySelector(".hero-video");
+      const cardOverlay = videoBox.querySelector(".card-overlay");
+      if (heroVideo) {
+        shrinkTl.to(heroVideo, {
+          opacity: 0,
+          ease: "power2.inOut",
+          duration: 0.5,
+        }, 0.3);
+      }
+      if (cardOverlay) {
+        shrinkTl.to(cardOverlay, {
+          opacity: 1,
+          ease: "power2.inOut",
+          duration: 0.5,
+        }, 0.5);
+      }
 
     });
 
@@ -821,26 +838,63 @@ function DesktopHero() {
                   Recent Projects
                 </h2>
               </div>
+              <TransitionLink href="/work/desert-wings">
               <div
-                className="video-frame relative overflow-hidden mx-auto"
+                className="video-frame relative overflow-hidden mx-auto cursor-pointer"
+                onMouseEnter={() => setHoveredFanIndex(-1)}
+                onMouseLeave={() => setHoveredFanIndex(null)}
                 style={{
                   borderRadius: 24,
                   border: "1px solid rgba(26,24,22,0.18)",
-                  boxShadow: "0 25px 80px -12px rgba(0,0,0,0.15), 0 10px 30px -5px rgba(0,0,0,0.08)",
+                  boxShadow: hoveredFanIndex === -1
+                    ? "0 35px 80px rgba(0,0,0,0.2)"
+                    : "0 25px 80px -12px rgba(0,0,0,0.15), 0 10px 30px -5px rgba(0,0,0,0.08)",
                   aspectRatio: "16/10",
+                  transition: "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease",
+                  transform: (() => {
+                    if (hoveredFanIndex === null) return "none";
+                    if (hoveredFanIndex === -1) return "scale(1.05) translateY(-15px)";
+                    return "scale(0.97) translateY(8px)";
+                  })(),
+                  zIndex: hoveredFanIndex === -1 ? 30 : 5,
                 }}
               >
+                {/* Project image underneath — revealed when video fades */}
+                <Image
+                  src="/Celestial Laptop Mockup.webp"
+                  alt="Desert Wings"
+                  fill
+                  className="object-cover"
+                  sizes="100vw"
+                />
+                {/* Gradient + project info — hidden initially, shown after video fades */}
+                <div className="card-overlay absolute inset-0" style={{ opacity: 0 }}>
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)" }}
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <p className="text-[10px] font-medium uppercase tracking-[0.2em] mb-2" style={{ color: "#c48a5a", opacity: 0.8 }}>
+                      Flight School
+                    </p>
+                    <h3 style={{ fontFamily: "var(--font-inter)", fontSize: "1.1rem", fontWeight: 800, color: "#fff", lineHeight: 1.1 }}>
+                      Desert Wings
+                    </h3>
+                  </div>
+                </div>
+                {/* Video — on top, fades out on scroll */}
                 <video
+                  className="hero-video absolute inset-0 w-full h-full object-cover"
                   autoPlay muted loop playsInline preload="auto"
                   poster="/video-poster.webp"
-                  className="w-full h-full object-cover"
                 >
                   <source src="/final-comp.mp4?v=6" type="video/mp4" />
                 </video>
               </div>
+              </TransitionLink>
 
               {/* Fan cards — emerge from behind the video card */}
-              <HeroFanCards />
+              <HeroFanCards hoveredIndex={hoveredFanIndex} setHoveredIndex={setHoveredFanIndex} videoCardIndex={-1} />
             </motion.div>
 
           </div>
