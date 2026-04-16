@@ -210,12 +210,11 @@ function DesktopWork() {
   const sectionRef = useRef<HTMLElement>(null);
   const fanContainerRef = useRef<HTMLDivElement>(null);
 
-  // Final fanned positions for each card [x, rotation]
+  // Fan positions — cards emerge left, right, and far right of the hero video card
   const fanPositions = [
-    { x: 0, rotation: 0 },          // Center — video card
-    { x: -360, rotation: -12 },     // Far left
-    { x: 180, rotation: 6 },        // Inner right
-    { x: -180, rotation: -6 },      // Inner left (behind center-left)
+    { x: -420, rotation: -10 },    // Left
+    { x: 420, rotation: 10 },      // Right
+    { x: 200, rotation: 4 },       // Inner right (overlaps slightly)
   ];
 
   useIsomorphicLayoutEffect(() => {
@@ -226,48 +225,36 @@ function DesktopWork() {
     const wrappers = gsap.utils.toArray<HTMLElement>(container.querySelectorAll(".fan-wrapper"));
 
     const ctx = gsap.context(() => {
-      // All cards start stacked at center, no rotation
-      wrappers.forEach((wrapper, i) => {
+      // All cards start stacked at center, hidden behind the hero video card
+      wrappers.forEach((wrapper) => {
         gsap.set(wrapper, {
           x: 0,
           rotation: 0,
-          opacity: i === 0 ? 1 : 0,
-          scale: i === 0 ? 1 : 0.9,
+          opacity: 0,
+          scale: 0.9,
         });
       });
 
-      // Pin + fan out timeline
+      // Fan out timeline — cards emerge as you scroll into this section
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          start: "top 25%",
-          end: "+=800",
-          scrub: 0.5,
-          pin: true,
-          pinSpacing: true,
+          start: "top 60%",
+          end: "top 10%",
+          scrub: 0.4,
         },
       });
 
-      // Fan each card to its position
+      // Each card fans to its position
       wrappers.forEach((wrapper, i) => {
-        if (i === 0) {
-          // Center card — slight settle rotation
-          tl.to(wrapper, {
-            rotation: fanPositions[0].rotation,
-            duration: 1,
-            ease: "power2.out",
-          }, 0);
-        } else {
-          // Cards emerge from behind center
-          tl.to(wrapper, {
-            x: fanPositions[i].x,
-            rotation: fanPositions[i].rotation,
-            opacity: 1,
-            scale: 1,
-            duration: 1,
-            ease: "back.out(1.2)",
-          }, 0.05 + i * 0.08);
-        }
+        tl.to(wrapper, {
+          x: fanPositions[i].x,
+          rotation: fanPositions[i].rotation,
+          opacity: 1,
+          scale: 1,
+          duration: 1,
+          ease: "back.out(1.4)",
+        }, i * 0.08);
       });
     });
 
@@ -278,36 +265,26 @@ function DesktopWork() {
   return (
     <section
       ref={sectionRef}
-      data-bg="dark"
+      data-bg="cream"
       className="hidden md:block relative"
-      style={{ padding: "8vh 0 12vh" }}
+      style={{ marginTop: "-400px", paddingTop: "0", paddingBottom: "12vh" }}
     >
-      {/* "Selected Work" label */}
-      <div className="text-center mb-10">
-        <p
-          className="text-[10px] font-medium uppercase tracking-[0.3em]"
-          style={{ color: "rgba(255,255,255,0.2)" }}
-        >
-          Selected Work
-        </p>
-      </div>
-
-      {/* Fan container — all cards absolutely positioned at center */}
+      {/* Fan container — positioned to overlap with hero's shrunk video card */}
       <div
         ref={fanContainerRef}
         className="relative mx-auto flex items-center justify-center"
-        style={{ height: "clamp(420px, 55vh, 580px)", maxWidth: 1200 }}
+        style={{ height: "clamp(480px, 60vh, 620px)", maxWidth: 1200 }}
       >
-        {projects.map((project, i) => (
+        {/* Only non-video project cards — the video card is in the Hero */}
+        {projects.slice(1).map((project, i) => (
           <div
             key={project.slug}
             className="fan-wrapper absolute will-change-transform"
-            style={{ zIndex: i === 0 ? 20 : 15 - i }}
+            style={{ zIndex: 10 + i }}
           >
             <FanCard
               project={project}
-              index={i}
-              isVideo={i === 0}
+              index={i + 1}
             />
           </div>
         ))}
@@ -433,10 +410,6 @@ function MobileCard({ project, index }: { project: (typeof projects)[number]; in
 }
 
 export default function Work() {
-  return (
-    <>
-      <DesktopWork />
-      <MobileWork />
-    </>
-  );
+  // Desktop work is now handled inside the Hero component (card fan)
+  return <MobileWork />;
 }

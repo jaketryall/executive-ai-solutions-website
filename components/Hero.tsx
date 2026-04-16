@@ -16,6 +16,12 @@ if (typeof window !== "undefined") {
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
+const heroProjects = [
+  { slug: "riled-up", title: "Riled Up", category: "Coaching", image: "/Celestial iPhone Mockup.webp" },
+  { slug: "wings-n-wheels", title: "Wings N Wheels", category: "Design Showcase", image: "/Rubber iPhone Mockup.webp" },
+  { slug: "adventure-air", title: "Adventure Air", category: "Gyrocopter Tours", image: "/Elegant Black Laptop Mockup.webp" },
+];
+
 // Bottom-left hero interaction — circle draws on hover, arrow rotates in
 function ViewWorkWidget() {
   const [hovered, setHovered] = useState(false);
@@ -358,6 +364,92 @@ const mobileWorkItems = [
   { title: "ADVENTURE AIR", category: "Tours", image: "/thumbnails/Elegant Black Laptop Mockup.webp", slug: "adventure-air" },
 ];
 
+/* ─── Fan cards with group hover — all cards react when one is hovered ─── */
+function HeroFanCards() {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  // Base positions (set by GSAP, but these define the hover offsets)
+  const basePositions = [
+    { x: -320, y: 40, rotation: -8 },
+    { x: 320, y: 40, rotation: 8 },
+    { x: 520, y: 90, rotation: 14 },
+  ];
+
+  // When a card is hovered, others spread away from it
+  const getHoverOffset = (cardIndex: number) => {
+    if (hoveredIndex === null) return { x: 0, y: 0, scale: 1, rotation: 0 };
+
+    if (cardIndex === hoveredIndex) {
+      // Hovered card: lift up, scale up
+      return { x: 0, y: -25, scale: 1.08, rotation: 0 };
+    }
+
+    // Other cards: push away from hovered card
+    const dir = cardIndex < hoveredIndex ? -1 : 1;
+    const distance = Math.abs(cardIndex - hoveredIndex);
+    const pushX = dir * (40 / distance);
+    const pushY = 10;
+
+    return { x: pushX, y: pushY, scale: 0.97, rotation: dir * 2 };
+  };
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: -1 }}>
+      {heroProjects.map((project, i) => {
+        const offset = getHoverOffset(i);
+        const isHovered = hoveredIndex === i;
+
+        return (
+          <div
+            key={project.slug}
+            className="hero-fan-card absolute pointer-events-auto will-change-transform"
+            onMouseEnter={() => setHoveredIndex(i)}
+            onMouseLeave={() => setHoveredIndex(null)}
+          >
+            <TransitionLink href={`/work/${project.slug}`}>
+              <div
+                className="relative overflow-hidden cursor-pointer"
+                style={{
+                  width: 300,
+                  height: 420,
+                  borderRadius: 20,
+                  border: "1px solid rgba(26,24,22,0.12)",
+                  boxShadow: isHovered
+                    ? "0 35px 80px rgba(0,0,0,0.2)"
+                    : "0 15px 50px rgba(0,0,0,0.1)",
+                  transition: "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease",
+                  transform: `translate(${offset.x}px, ${offset.y}px) scale(${offset.scale})`,
+                  zIndex: isHovered ? 30 : 1,
+                }}
+              >
+                <Image
+                  src={project.image}
+                  alt={project.title}
+                  fill
+                  className="object-cover"
+                  sizes="300px"
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)" }}
+                />
+                <div className="absolute bottom-0 left-0 right-0 p-5">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.2em] mb-2" style={{ color: "#c48a5a", opacity: 0.8 }}>
+                    {project.category}
+                  </p>
+                  <h3 style={{ fontFamily: "var(--font-inter)", fontSize: "1.1rem", fontWeight: 800, color: "#fff", lineHeight: 1.1 }}>
+                    {project.title}
+                  </h3>
+                </div>
+              </div>
+            </TransitionLink>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 /* ─── Hero correction text — "You need a website" → "You need an unfair advantage" ─── */
 function HeroCorrectionText() {
   // Skip animation on repeat visits
@@ -564,6 +656,31 @@ function DesktopHero() {
         );
       }
 
+      // Fan cards emerge from behind the video card
+      const fanCards = gsap.utils.toArray<HTMLElement>(videoBox.querySelectorAll(".hero-fan-card"));
+      const fanPositions = [
+        { x: -320, y: 40, rotation: -8 },     // Left
+        { x: 320, y: 40, rotation: 8 },       // Right
+        { x: 520, y: 90, rotation: 14 },      // Far right
+      ];
+
+      fanCards.forEach((card) => {
+        gsap.set(card, { x: 0, y: 0, rotation: 0, opacity: 0, scale: 0.9 });
+      });
+
+      // Fan out starts slightly after the shrink begins
+      fanCards.forEach((card, i) => {
+        shrinkTl.to(card, {
+          x: fanPositions[i].x,
+          y: fanPositions[i].y,
+          rotation: fanPositions[i].rotation,
+          opacity: 1,
+          scale: 1,
+          duration: 1,
+          ease: "back.out(1.4)",
+        }, 0.4 + i * 0.1);
+      });
+
     });
 
     return () => ctx.revert();
@@ -678,7 +795,7 @@ function DesktopHero() {
               initial={{ opacity: 0, y: 80 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, delay: 3.4, ease: [0.22, 1, 0.36, 1] }}
-              style={{ maxWidth: 1100, marginTop: "clamp(6rem, 12vh, 10rem)", zIndex: 5 }}
+              style={{ maxWidth: 1100, marginTop: "clamp(10rem, 24vh, 18rem)", zIndex: 5 }}
             >
               {/* "Selected Work" — fades in above the card as it shrinks */}
               <div
@@ -721,6 +838,9 @@ function DesktopHero() {
                   <source src="/final-comp.mp4?v=6" type="video/mp4" />
                 </video>
               </div>
+
+              {/* Fan cards — emerge from behind the video card */}
+              <HeroFanCards />
             </motion.div>
 
           </div>
