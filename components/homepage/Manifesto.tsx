@@ -325,6 +325,10 @@ export default function Manifesto() {
         const MIN_OPACITY = 0;
         // Distance (in px) from viewport center at which a card is fully "gone"
         const falloff = cardHeight * 0.9;
+        // Plateau: within this fraction of `falloff`, a card stays at full scale/opacity
+        // so the "active" card never sits at 0.98 — avoids a perceptible pop when the
+        // scroll-linked onUpdate first fires.
+        const PLATEAU = 0.35;
 
         gsap.fromTo(
           cardStack,
@@ -336,7 +340,7 @@ export default function Manifesto() {
               trigger: transitionEl,
               start: "top top",
               end: () => `+=${totalTravel}`,
-              scrub: 0.4,
+              scrub: true,
               invalidateOnRefresh: true,
               onUpdate: () => {
                 const stackRect = cardStack.getBoundingClientRect();
@@ -345,8 +349,9 @@ export default function Manifesto() {
                   const cardTop = stackRect.top + cardOffsets[i];
                   const cardCenter = cardTop + cardHeight / 2;
                   const distance = Math.abs(cardCenter - viewportCenter);
-                  const t = Math.min(distance / falloff, 1);
-                  // Ease the falloff so the viewing card stays "punchy" longer
+                  const rawT = Math.min(distance / falloff, 1);
+                  // Plateau: below PLATEAU, t = 0 (full presence). Beyond, ramp to 1.
+                  const t = Math.max(0, (rawT - PLATEAU) / (1 - PLATEAU));
                   const eased = t * t;
                   const scale = 1 - (1 - MIN_SCALE) * eased;
                   const opacity = 1 - (1 - MIN_OPACITY) * eased;
@@ -356,6 +361,21 @@ export default function Manifesto() {
             },
           }
         );
+
+        // "I BUILD" exits up-and-fades before the first card settles — starts
+        // while the pin is still approaching, gone by the time it locks in.
+        gsap.to([iWord, buildWord], {
+          y: () => -window.innerHeight * 0.35,
+          opacity: 0,
+          ease: "power2.in",
+          scrollTrigger: {
+            trigger: transitionEl,
+            start: "top 15%",
+            end: "top -5%",
+            scrub: 0.5,
+            invalidateOnRefresh: true,
+          },
+        });
       }
 
       // Release BUILD + "I" from fixed positioning when user scrolls past the pinned range
