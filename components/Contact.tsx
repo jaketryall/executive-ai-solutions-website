@@ -698,37 +698,24 @@ function DesktopContact() {
               </span>
             </div>
 
-            {/* BIG headline — letter-by-letter masked reveal */}
+            {/* Handoff headline — picks up from the Manifesto's "LET'S BUILD" moment */}
             <h2
               className="contact-headline-wrap font-black tracking-[-0.05em] leading-[0.9] mb-6"
               style={{
                 fontFamily: "var(--font-inter), sans-serif",
-                fontSize: "clamp(4rem, 7vw, 8rem)",
+                fontSize: "clamp(2.5rem, 4.5vw, 5rem)",
                 color: "#f5f0e8",
               }}
             >
-              {["L","e","t","'","s"," ","b","u","i","l","d"].map((char, i) => (
-                <span key={i} className="inline-block overflow-hidden" style={char === " " ? { width: "0.2em" } : undefined}>
-                  <span className="contact-char inline-block">{char === " " ? "\u00A0" : char}</span>
-                </span>
-              ))}
-              <br />
-              {["s","o","m","e","t","h","i","n","g"," ","b","o","l","d","."].map((char, i) => (
-                <span
-                  key={i}
-                  className="inline-block overflow-hidden"
-                  style={{
-                    ...(char === " " ? { width: "0.2em" } : {}),
-                    ...(i >= 10 ? { color: accentColor } : {}),
-                  }}
-                >
+              {"Tell me everything.".split("").map((char, i) => (
+                <span key={i} className="inline-block overflow-hidden" style={char === " " ? { width: "0.25em" } : undefined}>
                   <span className="contact-char inline-block">{char === " " ? "\u00A0" : char}</span>
                 </span>
               ))}
             </h2>
 
             <p className="contact-scrub text-white/40 text-lg leading-relaxed mb-12 max-w-lg">
-              Tell us about your project and we&apos;ll get back to you within 24 hours with a game plan.
+              The more you share, the sharper the first draft. Response within 24 hours.
             </p>
 
             {/* Form */}

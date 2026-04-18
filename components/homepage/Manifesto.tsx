@@ -25,10 +25,13 @@ const words: Array<{ text: string; accent?: boolean }> = [
   { text: "ADVANTAGES.", accent: true },
 ];
 
+// No serviceWords needed anymore
+
 export default function Manifesto() {
   const desktopRef = useRef<HTMLElement>(null);
   const desktopSigRef = useRef<SVGPathElement>(null);
   const desktopTextRef = useRef<HTMLElement>(null);
+  const servicesSectionRef = useRef<HTMLDivElement>(null);
   const mobileRef = useRef<HTMLElement>(null);
   const mobileSigRef = useRef<SVGPathElement>(null);
 
@@ -97,6 +100,281 @@ export default function Manifesto() {
         });
       }
     }, section);
+
+    return () => ctx.revert();
+  }, []);
+
+  // "BUILD" → "LET'S BUILD" transition to contact
+  useIsomorphicLayoutEffect(() => {
+    const transitionEl = servicesSectionRef.current;
+    const section = desktopRef.current;
+    if (!transitionEl || !section) return;
+
+    const allWordSpans = section.querySelectorAll<HTMLElement>(".manifesto-word");
+    const iWord = allWordSpans[5];     // "I" from second sentence
+    const buildWord = allWordSpans[6]; // "BUILD" from second sentence
+
+    if (!buildWord || !iWord) return;
+
+    const ctx = gsap.context(() => {
+      // Phase 1: Fade out ALL words except "I" (5) and "BUILD" (6) — those stay and fly.
+      // Ends at "top 50%" to match the fly trigger, so there's no awkward gap where
+      // the other words are faded but I/BUILD haven't moved yet.
+      allWordSpans.forEach((span, i) => {
+        if (i === 5 || i === 6) return;
+        gsap.to(span, {
+          opacity: 0,
+          scale: 0.8,
+          filter: "blur(4px)",
+          ease: "power2.in",
+          scrollTrigger: {
+            trigger: transitionEl,
+            start: "top 100%",
+            end: "top 50%",
+            scrub: true,
+          },
+        });
+      });
+
+      // Phase 1b: "BUILD" chars become dark
+      const buildChars = Array.from(buildWord.querySelectorAll("[data-char]"));
+      buildChars.forEach((char) => {
+        gsap.to(char, {
+          color: "#1a1816",
+          ease: "none",
+          scrollTrigger: {
+            trigger: transitionEl,
+            start: "top 100%",
+            end: "top 50%",
+            scrub: true,
+          },
+        });
+      });
+
+      // Phase 1c: Pin "I" and "BUILD" and animate to center
+
+      const setFixed = (span: HTMLElement, left: number, top: number) => {
+        // Reserve the word's flow slot with an invisible placeholder so neighboring
+        // words don't reflow when this one goes position: fixed. Scoped per-word.
+        const parent = span.parentNode as HTMLElement | null;
+        const key = span.dataset.wordIndex || "";
+        if (parent && !parent.querySelector(`[data-placeholder-for="${key}"]`)) {
+          const rect = span.getBoundingClientRect();
+          const style = window.getComputedStyle(span);
+          const placeholder = document.createElement("span");
+          placeholder.setAttribute("data-placeholder-for", key);
+          placeholder.style.display = "inline-block";
+          placeholder.style.width = `${rect.width}px`;
+          placeholder.style.height = `${rect.height}px`;
+          placeholder.style.marginRight = style.marginRight;
+          placeholder.style.marginLeft = style.marginLeft;
+          placeholder.style.verticalAlign = style.verticalAlign;
+          parent.insertBefore(placeholder, span);
+        }
+
+        span.style.position = "fixed";
+        span.style.left = `${left}px`;
+        span.style.top = `${top}px`;
+        span.style.zIndex = "100";
+        span.style.margin = "0";
+        span.style.overflow = "visible";
+      };
+
+      const clearFixed = (span: HTMLElement) => {
+        const key = span.dataset.wordIndex || "";
+        const placeholder = span.parentNode?.querySelector(`[data-placeholder-for="${key}"]`);
+        if (placeholder) placeholder.remove();
+
+        span.style.position = "";
+        span.style.left = "";
+        span.style.top = "";
+        span.style.zIndex = "";
+        span.style.margin = "";
+        span.style.overflow = "";
+      };
+
+      // Generic fly-to-center logic for BOTH "I" and "BUILD" — both take off at the
+      // same trigger point; targets are computed so the *phrase* "I BUILD" is centered.
+      type FlyState = {
+        word: HTMLElement;
+        savedRect: { left: number; top: number; width: number; height: number };
+        savedGap: number; // natural margin-right captured while in flow
+        flyTween: gsap.core.Tween | null;
+        returnTween: gsap.core.Tween | null;
+      };
+
+      // Headline sits high in the viewport to leave room for big cards.
+      const headlineCenterY = () => window.innerHeight * 0.15;
+
+      const buildState: FlyState = {
+        word: buildWord,
+        savedRect: { left: 0, top: 0, width: 0, height: 0 },
+        savedGap: 0,
+        flyTween: null,
+        returnTween: null,
+      };
+
+      const iState: FlyState = {
+        word: iWord,
+        savedRect: { left: 0, top: 0, width: 0, height: 0 },
+        savedGap: 0,
+        flyTween: null,
+        returnTween: null,
+      };
+
+      // Capture natural flow geometry BEFORE setFixed (which zeros margin).
+      const captureFlow = (state: FlyState) => {
+        const rect = state.word.getBoundingClientRect();
+        const gap = parseFloat(window.getComputedStyle(state.word).marginRight) || 0;
+        state.savedRect = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+        state.savedGap = gap;
+      };
+
+      // Compute phrase-centered targets for both words as a single unit.
+      const computePhraseTargets = () => {
+        const phraseWidth = iState.savedRect.width + iState.savedGap + buildState.savedRect.width;
+        const phraseLeft = (window.innerWidth - phraseWidth) / 2;
+        const y = headlineCenterY();
+        return {
+          i: { left: phraseLeft, top: y - iState.savedRect.height / 2 },
+          build: {
+            left: phraseLeft + iState.savedRect.width + iState.savedGap,
+            top: y - buildState.savedRect.height / 2,
+          },
+        };
+      };
+
+      const flyForward = (state: FlyState, target: { left: number; top: number }) => {
+        if (state.returnTween) { state.returnTween.kill(); state.returnTween = null; }
+        if (state.flyTween) state.flyTween.kill();
+
+        setFixed(state.word, state.savedRect.left, state.savedRect.top);
+
+        state.flyTween = gsap.to(state.word, {
+          left: target.left,
+          top: target.top,
+          duration: 1,
+          ease: "power3.inOut",
+        });
+      };
+
+      const flyBack = (state: FlyState) => {
+        if (state.flyTween) { state.flyTween.kill(); state.flyTween = null; }
+        if (state.returnTween) state.returnTween.kill();
+
+        const startLeft = parseFloat(state.word.style.left);
+        const startTop = parseFloat(state.word.style.top);
+        const scrollAtStart = window.scrollY;
+
+        const proxy = { p: 0 };
+        state.returnTween = gsap.to(proxy, {
+          p: 1,
+          duration: 1,
+          ease: "power3.inOut",
+          onUpdate: () => {
+            const scrollDelta = window.scrollY - scrollAtStart;
+            const liveTop = state.savedRect.top - scrollDelta;
+            state.word.style.left = `${gsap.utils.interpolate(startLeft, state.savedRect.left, proxy.p)}px`;
+            state.word.style.top = `${gsap.utils.interpolate(startTop, liveTop, proxy.p)}px`;
+          },
+          onComplete: () => {
+            clearFixed(state.word);
+            state.returnTween = null;
+          },
+        });
+      };
+
+      ScrollTrigger.create({
+        trigger: transitionEl,
+        start: "top 50%",
+        onEnter: () => {
+          // Capture both rects BEFORE computing targets — phrase centering needs both widths
+          captureFlow(buildState);
+          captureFlow(iState);
+          const targets = computePhraseTargets();
+          flyForward(buildState, targets.build);
+          flyForward(iState, targets.i);
+        },
+        onLeaveBack: () => {
+          flyBack(buildState);
+          flyBack(iState);
+        },
+      });
+
+      // Phase 3: Card stack — scroll-linked translateY + per-card "scale punch".
+      // Each card scales down and fades as it leaves the viewing zone; the next
+      // card scales up and fades in as it enters. Driven off the stack's live
+      // viewport position so the effect tracks scroll exactly.
+      const cardStack = transitionEl.querySelector<HTMLElement>(".card-stack");
+      if (cardStack) {
+        const cardElements = Array.from(
+          cardStack.querySelectorAll<HTMLElement>(".service-card")
+        );
+        // Use offsetTop (unaffected by transforms) so per-card position math is stable
+        // even as we apply scale/opacity to the cards.
+        const cardOffsets = cardElements.map((c) => c.offsetTop);
+        const cardHeight =
+          cardElements[0]?.offsetHeight || window.innerHeight * 0.78;
+        const gapPx =
+          parseFloat(window.getComputedStyle(cardStack).rowGap || "0") || 0;
+        const cycle = cardHeight + gapPx;
+        const totalTravel = cycle * (cardElements.length - 1);
+
+        // Scale punch parameters
+        const MIN_SCALE = 0.82;
+        const MIN_OPACITY = 0;
+        // Distance (in px) from viewport center at which a card is fully "gone"
+        const falloff = cardHeight * 0.9;
+
+        gsap.fromTo(
+          cardStack,
+          { y: 0 },
+          {
+            y: -totalTravel,
+            ease: "none",
+            scrollTrigger: {
+              trigger: transitionEl,
+              start: "top top",
+              end: () => `+=${totalTravel}`,
+              scrub: 0.4,
+              invalidateOnRefresh: true,
+              onUpdate: () => {
+                const stackRect = cardStack.getBoundingClientRect();
+                const viewportCenter = window.innerHeight / 2;
+                cardElements.forEach((card, i) => {
+                  const cardTop = stackRect.top + cardOffsets[i];
+                  const cardCenter = cardTop + cardHeight / 2;
+                  const distance = Math.abs(cardCenter - viewportCenter);
+                  const t = Math.min(distance / falloff, 1);
+                  // Ease the falloff so the viewing card stays "punchy" longer
+                  const eased = t * t;
+                  const scale = 1 - (1 - MIN_SCALE) * eased;
+                  const opacity = 1 - (1 - MIN_OPACITY) * eased;
+                  gsap.set(card, { scale, opacity });
+                });
+              },
+            },
+          }
+        );
+      }
+
+      // Release BUILD + "I" from fixed positioning when user scrolls past the pinned range
+      ScrollTrigger.create({
+        trigger: transitionEl,
+        start: "bottom bottom",
+        onEnter: () => {
+          clearFixed(buildWord);
+          clearFixed(iWord);
+        },
+        onLeaveBack: () => {
+          // Re-fix at their last target positions so scrolling back up is seamless
+          const targets = computePhraseTargets();
+          setFixed(buildWord, targets.build.left, targets.build.top);
+          setFixed(iWord, targets.i.left, targets.i.top);
+        },
+      });
+
+    });
 
     return () => ctx.revert();
   }, []);
@@ -183,14 +461,14 @@ export default function Manifesto() {
       }}
     >
       {words.map((word, wi) => (
-        <span key={wi} className="inline-flex mr-[0.22em]" style={{ overflow: "hidden" }}>
+        <span key={wi} className="manifesto-word inline-flex mr-[0.22em]" data-word-index={wi} style={{ overflow: "hidden" }}>
           {word.text.split("").map((char, ci) => (
             <span
               key={ci}
               data-char
               className="inline-block"
               style={{
-                color: word.accent ? "rgba(120, 115, 108, 1)" : "#e5e1db",
+                color: word.accent ? "rgba(120, 115, 108, 1)" : "#1a1816",
                 willChange: "transform",
                 opacity: 0,
               }}
@@ -228,7 +506,7 @@ export default function Manifesto() {
       <section
         ref={mobileRef}
         className="relative md:hidden overflow-hidden"
-        data-bg="dark"
+        data-bg="cream"
         style={{ padding: "0 0 10vh", marginTop: "-10vh" }}
       >
         <div className="px-6 text-center">
@@ -240,26 +518,153 @@ export default function Manifesto() {
       <section
         ref={desktopRef}
         className="relative hidden md:block"
-        data-bg="dark"
+        data-bg="cream"
         style={{ minHeight: "100vh", padding: "15vh 0", paddingBottom: "60vh" }}
       >
-        {/* Signature — sticky */}
+        {/* Signature */}
         <div
-          className="sticky top-0 h-screen flex items-start justify-center pointer-events-none pt-[15vh]"
-          style={{ zIndex: 2, marginTop: "-30vh", marginBottom: "-70vh" }}
+          className="absolute top-0 left-0 right-0 flex items-start justify-center pointer-events-none pt-[15vh]"
+          style={{ zIndex: 2 }}
         >
           <div style={{ width: "clamp(500px, 75vw, 1200px)" }}>
             {signatureSvg(desktopSigRef)}
           </div>
         </div>
 
-        {/* Text */}
+        {/* Text — intentionally no explicit z-index so the fixed "I"/"BUILD" words can
+             stack at the root level above the services container's stacking context. */}
         <div
           className="relative flex items-start justify-center"
-          style={{ zIndex: 1, minHeight: "100vh", paddingTop: "20vh" }}
+          style={{ minHeight: "100vh", paddingTop: "20vh" }}
         >
           <div className="max-w-[1300px] mx-auto px-8 lg:px-12 text-center">
             {textBlock}
+          </div>
+        </div>
+
+        {/* Services — "I BUILD" stays pinned at top (real manifesto words), 3 big cards cycle in below */}
+        <div
+          ref={servicesSectionRef}
+          className="relative"
+          style={{ zIndex: 1, height: "350vh" }}
+        >
+          <div className="sticky top-0 h-screen overflow-hidden">
+            {/* Card stack — stacked vertically in flow; whole stack translates up on scroll */}
+            <div
+              className="card-stack absolute left-1/2 -translate-x-1/2"
+              style={{
+                top: "20%",
+                width: "clamp(400px, 85vw, 1500px)",
+                display: "flex",
+                flexDirection: "column",
+                rowGap: "clamp(2rem, 4vh, 4rem)",
+                willChange: "transform",
+              }}
+            >
+              {[
+                {
+                  number: "01",
+                  name: "Conversion Websites",
+                  desc: "Sites that turn traffic into leads, not just pretty pixels. Built with conversion architecture from the first wireframe — every section earning its scroll.",
+                  tag: "Most common starting point",
+                },
+                {
+                  number: "02",
+                  name: "AI Automations",
+                  desc: "Back-office workflows that run while you sleep. Inbox triage, lead routing, content pipelines, client reporting — wired together with agents that don't miss.",
+                  tag: "Where we earn the AI in the name",
+                },
+                {
+                  number: "03",
+                  name: "Custom Software",
+                  desc: "Internal tools and dashboards built for how your team actually works. No SaaS rental fees, no 12 tabs open — one system shaped to your operation.",
+                  tag: "For when off-the-shelf runs out",
+                },
+              ].map((service) => (
+                <div
+                  key={service.number}
+                  className="service-card relative w-full"
+                  style={{
+                    backgroundColor: "#141210",
+                    borderRadius: "clamp(1.5rem, 2.25vw, 2.25rem)",
+                    padding: "clamp(2.5rem, 5vw, 5rem)",
+                    border: "1px solid rgba(229, 225, 219, 0.08)",
+                    minHeight: "clamp(550px, 78vh, 920px)",
+                    overflow: "hidden",
+                  }}
+                >
+                  {/* Giant watermark number — editorial-scale, anchors the card visually */}
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      position: "absolute",
+                      right: "clamp(-1.5rem, -1.5vw, -0.5rem)",
+                      bottom: "clamp(-5rem, -8vw, -3rem)",
+                      fontFamily: "var(--font-inter), sans-serif",
+                      fontSize: "clamp(16rem, 32vw, 32rem)",
+                      fontWeight: 900,
+                      lineHeight: 0.8,
+                      letterSpacing: "-0.08em",
+                      color: "rgba(255, 200, 150, 0.045)",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                      zIndex: 0,
+                    }}
+                  >
+                    {service.number}
+                  </span>
+
+                  <div style={{ position: "relative", zIndex: 1 }}>
+                    <div className="flex items-start justify-between" style={{ marginBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}>
+                      <span
+                        style={{
+                          color: "rgba(229, 225, 219, 0.35)",
+                          fontSize: "clamp(0.7rem, 0.85vw, 0.85rem)",
+                          letterSpacing: "0.3em",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {service.number} / 03
+                      </span>
+                      <span
+                        style={{
+                          color: "rgba(255, 200, 150, 0.6)",
+                          fontSize: "clamp(0.65rem, 0.75vw, 0.75rem)",
+                          letterSpacing: "0.2em",
+                          fontWeight: 500,
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        {service.tag}
+                      </span>
+                    </div>
+                    <h3
+                      style={{
+                        color: "#e5e1db",
+                        fontFamily: "var(--font-inter), sans-serif",
+                        fontSize: "clamp(2.5rem, 5.5vw, 5.5rem)",
+                        fontWeight: 900,
+                        lineHeight: 0.95,
+                        letterSpacing: "-0.035em",
+                        marginBottom: "clamp(1.25rem, 2.5vw, 2.25rem)",
+                      }}
+                    >
+                      {service.name}
+                    </h3>
+                    <p
+                      style={{
+                        color: "rgba(229, 225, 219, 0.55)",
+                        fontSize: "clamp(1rem, 1.3vw, 1.35rem)",
+                        lineHeight: 1.55,
+                        maxWidth: "720px",
+                      }}
+                    >
+                      {service.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

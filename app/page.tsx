@@ -10,9 +10,6 @@ const Manifesto = dynamic(() => import("@/components/homepage/Manifesto"), {
 const Work = dynamic(() => import("@/components/Work"), {
   loading: () => <div className="min-h-screen" />,
 });
-const Services = dynamic(() => import("@/components/Services"), {
-  loading: () => <div className="min-h-screen" />,
-});
 const Contact = dynamic(() => import("@/components/Contact"), {
   loading: () => <div className="min-h-screen" />,
 });
@@ -28,7 +25,6 @@ export default function Home() {
         <Hero />
         <Work />
         <Manifesto />
-        <Services />
         <Contact />
       </main>
       <Footer />
