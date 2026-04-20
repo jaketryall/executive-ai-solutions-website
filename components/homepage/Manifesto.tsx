@@ -35,6 +35,7 @@ export default function Manifesto() {
   const mobileRef = useRef<HTMLElement>(null);
   const mobileSigRef = useRef<SVGPathElement>(null);
 
+
   // Desktop animations — exact original values
   useIsomorphicLayoutEffect(() => {
     const section = desktopRef.current;
@@ -301,66 +302,55 @@ export default function Manifesto() {
         },
       });
 
-      // Phase 3: Card stack — scroll-linked translateY + per-card "scale punch".
-      // Each card scales down and fades as it leaves the viewing zone; the next
-      // card scales up and fades in as it enters. Driven off the stack's live
-      // viewport position so the effect tracks scroll exactly.
+      // Phase 3: Stack peel — cards are Z-stacked at the same spot. Each outgoing
+      // card tilts, translates off to the top-right, and fades — like being dealt
+      // off a deck. Matches the card-fan language from the Work section.
       const cardStack = transitionEl.querySelector<HTMLElement>(".card-stack");
       if (cardStack) {
         const cardElements = Array.from(
           cardStack.querySelectorAll<HTMLElement>(".service-card")
         );
-        // Use offsetTop (unaffected by transforms) so per-card position math is stable
-        // even as we apply scale/opacity to the cards.
-        const cardOffsets = cardElements.map((c) => c.offsetTop);
-        const cardHeight =
-          cardElements[0]?.offsetHeight || window.innerHeight * 0.78;
-        const gapPx =
-          parseFloat(window.getComputedStyle(cardStack).rowGap || "0") || 0;
-        const cycle = cardHeight + gapPx;
-        const totalTravel = cycle * (cardElements.length - 1);
 
-        // Scale punch parameters
-        const MIN_SCALE = 0.82;
-        const MIN_OPACITY = 0;
-        // Distance (in px) from viewport center at which a card is fully "gone"
-        const falloff = cardHeight * 0.9;
-        // Plateau: within this fraction of `falloff`, a card stays at full scale/opacity
-        // so the "active" card never sits at 0.98 — avoids a perceptible pop when the
-        // scroll-linked onUpdate first fires.
-        const PLATEAU = 0.35;
+        // One viewport of scroll per peel. Last card doesn't peel (final state).
+        const peelDuration = window.innerHeight;
+        const totalPeels = cardElements.length - 1;
+        const totalTravel = peelDuration * totalPeels;
 
-        gsap.fromTo(
-          cardStack,
-          { y: 0 },
-          {
-            y: -totalTravel,
-            ease: "none",
-            scrollTrigger: {
-              trigger: transitionEl,
-              start: "top top",
-              end: () => `+=${totalTravel}`,
-              scrub: true,
-              invalidateOnRefresh: true,
-              onUpdate: () => {
-                const stackRect = cardStack.getBoundingClientRect();
-                const viewportCenter = window.innerHeight / 2;
-                cardElements.forEach((card, i) => {
-                  const cardTop = stackRect.top + cardOffsets[i];
-                  const cardCenter = cardTop + cardHeight / 2;
-                  const distance = Math.abs(cardCenter - viewportCenter);
-                  const rawT = Math.min(distance / falloff, 1);
-                  // Plateau: below PLATEAU, t = 0 (full presence). Beyond, ramp to 1.
-                  const t = Math.max(0, (rawT - PLATEAU) / (1 - PLATEAU));
-                  const eased = t * t;
-                  const scale = 1 - (1 - MIN_SCALE) * eased;
-                  const opacity = 1 - (1 - MIN_OPACITY) * eased;
-                  gsap.set(card, { scale, opacity });
-                });
+        // Size the pinned runway to end exactly when the last peel finishes.
+        transitionEl.style.height = `${window.innerHeight + totalTravel}px`;
+
+        // Alternate peel directions so the fan reads varied, not repetitive.
+        const peelSpecs = [
+          { x: "38%", y: "-68%", rotation: 18 },    // card 01 peels top-right
+          { x: "-38%", y: "-68%", rotation: -18 },  // card 02 peels top-left
+        ];
+
+        cardElements.forEach((card, i) => {
+          if (i === cardElements.length - 1) return; // last card stays
+          const segmentStart = i * peelDuration;
+          const segmentEnd = (i + 1) * peelDuration;
+          const spec = peelSpecs[i] || peelSpecs[0];
+          gsap.fromTo(
+            card,
+            { x: 0, y: 0, rotation: 0, scale: 1, opacity: 1 },
+            {
+              x: spec.x,
+              y: spec.y,
+              rotation: spec.rotation,
+              scale: 0.9,
+              opacity: 0,
+              ease: "power2.in",
+              transformOrigin: "50% 60%",
+              scrollTrigger: {
+                trigger: transitionEl,
+                start: () => `top top-=${segmentStart}`,
+                end: () => `top top-=${segmentEnd}`,
+                scrub: true,
+                invalidateOnRefresh: true,
               },
-            },
-          }
-        );
+            }
+          );
+        });
 
         // "I BUILD" exits up-and-fades before the first card settles — starts
         // while the pin is still approaching, gone by the time it locks in.
@@ -562,23 +552,22 @@ export default function Manifesto() {
           </div>
         </div>
 
-        {/* Services — "I BUILD" stays pinned at top (real manifesto words), 3 big cards cycle in below */}
+        {/* Services — "I BUILD" stays pinned at top (real manifesto words), 3 big cards
+             cycle in below. Pin releases shortly after the cycle completes. */}
         <div
           ref={servicesSectionRef}
           className="relative"
-          style={{ zIndex: 1, height: "350vh" }}
+          style={{ zIndex: 1, height: "270vh" }}
         >
           <div className="sticky top-0 h-screen overflow-hidden">
-            {/* Card stack — stacked vertically in flow; whole stack translates up on scroll */}
+            {/* Card stack — Z-stacked (all at same spot, different z-indices). Outgoing
+                cards get their clip-path wiped to reveal the card behind them. */}
             <div
               className="card-stack absolute left-1/2 -translate-x-1/2"
               style={{
                 top: "20%",
                 width: "clamp(400px, 85vw, 1500px)",
-                display: "flex",
-                flexDirection: "column",
-                rowGap: "clamp(2rem, 4vh, 4rem)",
-                willChange: "transform",
+                height: "clamp(550px, 78vh, 920px)",
               }}
             >
               {[
@@ -600,17 +589,18 @@ export default function Manifesto() {
                   desc: "Internal tools and dashboards built for how your team actually works. No SaaS rental fees, no 12 tabs open — one system shaped to your operation.",
                   tag: "For when off-the-shelf runs out",
                 },
-              ].map((service) => (
+              ].map((service, idx, arr) => (
                 <div
                   key={service.number}
-                  className="service-card relative w-full"
+                  className="service-card absolute inset-0"
                   style={{
                     backgroundColor: "#141210",
                     borderRadius: "clamp(1.5rem, 2.25vw, 2.25rem)",
                     padding: "clamp(2.5rem, 5vw, 5rem)",
                     border: "1px solid rgba(229, 225, 219, 0.08)",
-                    minHeight: "clamp(550px, 78vh, 920px)",
                     overflow: "hidden",
+                    zIndex: arr.length - idx, // card 01 on top, card 03 bottom
+                    willChange: "transform, opacity",
                   }}
                 >
                   {/* Giant watermark number — editorial-scale, anchors the card visually */}

@@ -136,7 +136,7 @@ function TypewriterText({
 }
 
 // Mobile Contact - Bold with SplitText and micro-interactions
-function MobileContact() {
+export function MobileContact() {
   const mobileContactRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
