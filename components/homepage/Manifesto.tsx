@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useEffect, useLayoutEffect } from "react";
+import { useRef, useEffect, useLayoutEffect, useState } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -27,11 +28,69 @@ const words: Array<{ text: string; accent?: boolean }> = [
 
 // No serviceWords needed anymore
 
+// Service data extracted so it can be shared between the JSX rows and the
+// floating cursor-follow preview. Image paths are existing mockup assets in /public.
+const SERVICES: Array<{
+  number: string;
+  name: string;
+  desc: string;
+  image: string;
+  imageAlt: string;
+}> = [
+  {
+    number: "01",
+    name: "Conversion Websites",
+    desc: "Sites built with conversion architecture from the first wireframe — every section earning its scroll.",
+    image: "/Celestial Laptop Mockup.webp",
+    imageAlt: "Laptop mockup showing a conversion-focused website",
+  },
+  {
+    number: "02",
+    name: "AI Automations",
+    desc: "Back-office workflows that run while you sleep — inbox triage, lead routing, content pipelines.",
+    image: "/custom-dashboard-mockup.webp",
+    imageAlt: "Dashboard mockup for an AI automation workflow",
+  },
+  {
+    number: "03",
+    name: "Custom Software",
+    desc: "Internal tools and dashboards shaped to your operation — one system instead of 12 tabs.",
+    image: "/Elegant Black Laptop Mockup.webp",
+    imageAlt: "Dark laptop mockup showing a custom internal tool",
+  },
+];
+
 export default function Manifesto() {
   const desktopRef = useRef<HTMLElement>(null);
   const desktopSigRef = useRef<SVGPathElement>(null);
   const mobileRef = useRef<HTMLElement>(null);
   const mobileSigRef = useRef<SVGPathElement>(null);
+
+  // Cursor-follow preview for service rows (desktop only)
+  const servicesAreaRef = useRef<HTMLDivElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [hoveredServiceIdx, setHoveredServiceIdx] = useState<number | null>(null);
+
+  useIsomorphicLayoutEffect(() => {
+    const el = previewRef.current;
+    const area = servicesAreaRef.current;
+    if (!el || !area) return;
+
+    // Smooth cursor follow via gsap.quickTo — each axis eases toward target
+    // independently so the preview trails the cursor with a slight lag.
+    const xTo = gsap.quickTo(el, "x", { duration: 0.5, ease: "power3" });
+    const yTo = gsap.quickTo(el, "y", { duration: 0.5, ease: "power3" });
+
+    const handleMove = (e: MouseEvent) => {
+      const rect = area.getBoundingClientRect();
+      // Center the 380x280 preview on the cursor (offsets = -width/2, -height/2)
+      xTo(e.clientX - rect.left - 190);
+      yTo(e.clientY - rect.top - 140);
+    };
+
+    area.addEventListener("mousemove", handleMove);
+    return () => area.removeEventListener("mousemove", handleMove);
+  }, []);
 
 
   // Desktop animations — exact original values
@@ -377,118 +436,147 @@ export default function Manifesto() {
                 </div>
               </div>
 
-              {/* Right column — 3 services with icons */}
+              {/* Right column — 3 services with icons + cursor-follow preview */}
               <div
+                ref={servicesAreaRef}
+                className="relative"
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   gap: "clamp(1.75rem, 3.5vh, 2.5rem)",
                 }}
               >
-                {[
-                  {
-                    number: "01",
-                    name: "Conversion Websites",
-                    desc: "Sites built with conversion architecture from the first wireframe — every section earning its scroll.",
-                    icon: (
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="4" width="18" height="16" rx="2" />
-                        <path d="M3 9h18M7 13h6M7 17h4" />
-                      </svg>
-                    ),
-                  },
-                  {
-                    number: "02",
-                    name: "AI Automations",
-                    desc: "Back-office workflows that run while you sleep — inbox triage, lead routing, content pipelines.",
-                    icon: (
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M13 2L4.5 13h7l-1.5 9 8.5-11h-7l1.5-9z" />
-                      </svg>
-                    ),
-                  },
-                  {
-                    number: "03",
-                    name: "Custom Software",
-                    desc: "Internal tools and dashboards shaped to your operation — one system instead of 12 tabs.",
-                    icon: (
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="16 18 22 12 16 6" />
-                        <polyline points="8 6 2 12 8 18" />
-                      </svg>
-                    ),
-                  },
-                ].map((service) => (
-                  <div
-                    key={service.number}
-                    className="group"
-                    style={{
-                      display: "flex",
-                      gap: "clamp(1.25rem, 2vw, 1.75rem)",
-                      padding: "clamp(1.25rem, 2vh, 1.75rem) 0",
-                      borderBottom: "1px solid rgba(26,24,22,0.08)",
-                      cursor: "default",
-                    }}
-                  >
-                    {/* Icon */}
+                {/* Floating preview — desktop only. Tracks cursor via gsap.quickTo.
+                    Each service's image is an absolute layer; the hovered one is
+                    faded in, others are hidden. */}
+                <div
+                  ref={previewRef}
+                  aria-hidden="true"
+                  className="hidden lg:block pointer-events-none absolute left-0 top-0"
+                  style={{
+                    width: 380,
+                    height: 280,
+                    zIndex: 20,
+                    willChange: "transform",
+                  }}
+                >
+                  {SERVICES.map((s, i) => (
                     <div
-                      className="shrink-0 transition-colors duration-300 group-hover:bg-[#c48a5a]"
+                      key={s.number}
+                      className="absolute inset-0 rounded-2xl overflow-hidden"
                       style={{
-                        width: 52,
-                        height: 52,
-                        borderRadius: "50%",
-                        backgroundColor: "#1a1816",
-                        color: "#f3f1ee",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
+                        border: "1px solid rgba(26,24,22,0.08)",
+                        boxShadow: "0 30px 80px -20px rgba(0,0,0,0.35)",
+                        opacity: hoveredServiceIdx === i ? 1 : 0,
+                        transform: `scale(${hoveredServiceIdx === i ? 1 : 0.92})`,
+                        transition:
+                          "opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
                       }}
                     >
-                      {service.icon}
+                      <Image
+                        src={s.image}
+                        alt={s.imageAlt}
+                        fill
+                        className="object-cover"
+                        sizes="380px"
+                      />
                     </div>
+                  ))}
+                </div>
 
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
+                {SERVICES.map((service, i) => {
+                  const isDimmed =
+                    hoveredServiceIdx !== null && hoveredServiceIdx !== i;
+                  const icons = [
+                    <svg key="01" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="4" width="18" height="16" rx="2" />
+                      <path d="M3 9h18M7 13h6M7 17h4" />
+                    </svg>,
+                    <svg key="02" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M13 2L4.5 13h7l-1.5 9 8.5-11h-7l1.5-9z" />
+                    </svg>,
+                    <svg key="03" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="16 18 22 12 16 6" />
+                      <polyline points="8 6 2 12 8 18" />
+                    </svg>,
+                  ];
+                  return (
+                    <div
+                      key={service.number}
+                      className="group"
+                      onMouseEnter={() => setHoveredServiceIdx(i)}
+                      onMouseLeave={() => setHoveredServiceIdx(null)}
+                      style={{
+                        display: "flex",
+                        gap: "clamp(1.25rem, 2vw, 1.75rem)",
+                        padding: "clamp(1.25rem, 2vh, 1.75rem) 0",
+                        borderBottom: "1px solid rgba(26,24,22,0.08)",
+                        cursor: "default",
+                        opacity: isDimmed ? 0.35 : 1,
+                        transition:
+                          "opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
+                      }}
+                    >
+                      {/* Icon */}
                       <div
-                        className="flex items-baseline justify-between gap-4"
-                        style={{ marginBottom: "0.5rem" }}
-                      >
-                        <h3
-                          style={{
-                            fontFamily: "var(--font-inter), sans-serif",
-                            fontSize: "clamp(1.25rem, 1.6vw, 1.6rem)",
-                            fontWeight: 800,
-                            letterSpacing: "-0.02em",
-                            color: "#1a1816",
-                          }}
-                        >
-                          {service.name}
-                        </h3>
-                        <span
-                          style={{
-                            fontFamily: "var(--font-inter), sans-serif",
-                            fontSize: "0.72rem",
-                            fontWeight: 600,
-                            letterSpacing: "0.2em",
-                            color: "rgba(26,24,22,0.3)",
-                          }}
-                        >
-                          {service.number}
-                        </span>
-                      </div>
-                      <p
+                        className="shrink-0 transition-colors duration-300 group-hover:bg-[#78736c]"
                         style={{
-                          fontFamily: "var(--font-inter), sans-serif",
-                          fontSize: "clamp(0.92rem, 1.05vw, 1.05rem)",
-                          lineHeight: 1.55,
-                          color: "rgba(26,24,22,0.6)",
+                          width: 52,
+                          height: 52,
+                          borderRadius: "50%",
+                          backgroundColor: "#1a1816",
+                          color: "#f3f1ee",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
                       >
-                        {service.desc}
-                      </p>
+                        {icons[i]}
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div
+                          className="flex items-baseline justify-between gap-4"
+                          style={{ marginBottom: "0.5rem" }}
+                        >
+                          <h3
+                            style={{
+                              fontFamily: "var(--font-inter), sans-serif",
+                              fontSize: "clamp(1.25rem, 1.6vw, 1.6rem)",
+                              fontWeight: 800,
+                              letterSpacing: "-0.02em",
+                              color: "#1a1816",
+                            }}
+                          >
+                            {service.name}
+                          </h3>
+                          <span
+                            style={{
+                              fontFamily: "var(--font-inter), sans-serif",
+                              fontSize: "0.72rem",
+                              fontWeight: 600,
+                              letterSpacing: "0.2em",
+                              color: "rgba(26,24,22,0.3)",
+                            }}
+                          >
+                            {service.number}
+                          </span>
+                        </div>
+                        <p
+                          style={{
+                            fontFamily: "var(--font-inter), sans-serif",
+                            fontSize: "clamp(0.92rem, 1.05vw, 1.05rem)",
+                            lineHeight: 1.55,
+                            color: "rgba(26,24,22,0.6)",
+                          }}
+                        >
+                          {service.desc}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
