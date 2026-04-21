@@ -13,6 +13,9 @@ const Work = dynamic(() => import("@/components/Work"), {
 const ScrollMarquee = dynamic(() => import("@/components/homepage/ScrollMarquee"), {
   loading: () => <div className="h-[30vh]" />,
 });
+const Testimonials = dynamic(() => import("@/components/homepage/Testimonials"), {
+  loading: () => <div className="min-h-[60vh]" />,
+});
 const Contact = dynamic(() => import("@/components/Contact"), {
   loading: () => <div className="min-h-screen" />,
 });
@@ -27,6 +30,7 @@ export default function Home() {
       <main className="relative" style={{ zIndex: 10 }}>
         <Hero />
         <Work />
+        <Testimonials />
         <ScrollMarquee />
         <Manifesto />
         <Contact />
