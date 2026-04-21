@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 // Set this to false when you want to disable maintenance mode
 const MAINTENANCE_MODE = false;
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // If maintenance mode is enabled
   if (MAINTENANCE_MODE) {
     const { pathname } = request.nextUrl;
