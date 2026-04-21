@@ -30,8 +30,6 @@ const words: Array<{ text: string; accent?: boolean }> = [
 export default function Manifesto() {
   const desktopRef = useRef<HTMLElement>(null);
   const desktopSigRef = useRef<SVGPathElement>(null);
-  const desktopTextRef = useRef<HTMLElement>(null);
-  const servicesSectionRef = useRef<HTMLDivElement>(null);
   const mobileRef = useRef<HTMLElement>(null);
   const mobileSigRef = useRef<SVGPathElement>(null);
 
@@ -105,289 +103,6 @@ export default function Manifesto() {
     return () => ctx.revert();
   }, []);
 
-  // "BUILD" → "LET'S BUILD" transition to contact
-  useIsomorphicLayoutEffect(() => {
-    const transitionEl = servicesSectionRef.current;
-    const section = desktopRef.current;
-    if (!transitionEl || !section) return;
-
-    const allWordSpans = section.querySelectorAll<HTMLElement>(".manifesto-word");
-    const iWord = allWordSpans[5];     // "I" from second sentence
-    const buildWord = allWordSpans[6]; // "BUILD" from second sentence
-
-    if (!buildWord || !iWord) return;
-
-    const ctx = gsap.context(() => {
-      // Phase 1: Fade out ALL words except "I" (5) and "BUILD" (6) — those stay and fly.
-      // Ends at "top 50%" to match the fly trigger, so there's no awkward gap where
-      // the other words are faded but I/BUILD haven't moved yet.
-      allWordSpans.forEach((span, i) => {
-        if (i === 5 || i === 6) return;
-        gsap.to(span, {
-          opacity: 0,
-          scale: 0.8,
-          filter: "blur(4px)",
-          ease: "power2.in",
-          scrollTrigger: {
-            trigger: transitionEl,
-            start: "top 100%",
-            end: "top 50%",
-            scrub: true,
-          },
-        });
-      });
-
-      // Phase 1b: "BUILD" chars become dark
-      const buildChars = Array.from(buildWord.querySelectorAll("[data-char]"));
-      buildChars.forEach((char) => {
-        gsap.to(char, {
-          color: "#1a1816",
-          ease: "none",
-          scrollTrigger: {
-            trigger: transitionEl,
-            start: "top 100%",
-            end: "top 50%",
-            scrub: true,
-          },
-        });
-      });
-
-      // Phase 1c: Pin "I" and "BUILD" and animate to center
-
-      const setFixed = (span: HTMLElement, left: number, top: number) => {
-        // Reserve the word's flow slot with an invisible placeholder so neighboring
-        // words don't reflow when this one goes position: fixed. Scoped per-word.
-        const parent = span.parentNode as HTMLElement | null;
-        const key = span.dataset.wordIndex || "";
-        if (parent && !parent.querySelector(`[data-placeholder-for="${key}"]`)) {
-          const rect = span.getBoundingClientRect();
-          const style = window.getComputedStyle(span);
-          const placeholder = document.createElement("span");
-          placeholder.setAttribute("data-placeholder-for", key);
-          placeholder.style.display = "inline-block";
-          placeholder.style.width = `${rect.width}px`;
-          placeholder.style.height = `${rect.height}px`;
-          placeholder.style.marginRight = style.marginRight;
-          placeholder.style.marginLeft = style.marginLeft;
-          placeholder.style.verticalAlign = style.verticalAlign;
-          parent.insertBefore(placeholder, span);
-        }
-
-        span.style.position = "fixed";
-        span.style.left = `${left}px`;
-        span.style.top = `${top}px`;
-        span.style.zIndex = "100";
-        span.style.margin = "0";
-        span.style.overflow = "visible";
-      };
-
-      const clearFixed = (span: HTMLElement) => {
-        const key = span.dataset.wordIndex || "";
-        const placeholder = span.parentNode?.querySelector(`[data-placeholder-for="${key}"]`);
-        if (placeholder) placeholder.remove();
-
-        span.style.position = "";
-        span.style.left = "";
-        span.style.top = "";
-        span.style.zIndex = "";
-        span.style.margin = "";
-        span.style.overflow = "";
-      };
-
-      // Generic fly-to-center logic for BOTH "I" and "BUILD" — both take off at the
-      // same trigger point; targets are computed so the *phrase* "I BUILD" is centered.
-      type FlyState = {
-        word: HTMLElement;
-        savedRect: { left: number; top: number; width: number; height: number };
-        savedGap: number; // natural margin-right captured while in flow
-        flyTween: gsap.core.Tween | null;
-        returnTween: gsap.core.Tween | null;
-      };
-
-      // Headline sits high in the viewport to leave room for big cards.
-      const headlineCenterY = () => window.innerHeight * 0.15;
-
-      const buildState: FlyState = {
-        word: buildWord,
-        savedRect: { left: 0, top: 0, width: 0, height: 0 },
-        savedGap: 0,
-        flyTween: null,
-        returnTween: null,
-      };
-
-      const iState: FlyState = {
-        word: iWord,
-        savedRect: { left: 0, top: 0, width: 0, height: 0 },
-        savedGap: 0,
-        flyTween: null,
-        returnTween: null,
-      };
-
-      // Capture natural flow geometry BEFORE setFixed (which zeros margin).
-      const captureFlow = (state: FlyState) => {
-        const rect = state.word.getBoundingClientRect();
-        const gap = parseFloat(window.getComputedStyle(state.word).marginRight) || 0;
-        state.savedRect = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
-        state.savedGap = gap;
-      };
-
-      // Compute phrase-centered targets for both words as a single unit.
-      const computePhraseTargets = () => {
-        const phraseWidth = iState.savedRect.width + iState.savedGap + buildState.savedRect.width;
-        const phraseLeft = (window.innerWidth - phraseWidth) / 2;
-        const y = headlineCenterY();
-        return {
-          i: { left: phraseLeft, top: y - iState.savedRect.height / 2 },
-          build: {
-            left: phraseLeft + iState.savedRect.width + iState.savedGap,
-            top: y - buildState.savedRect.height / 2,
-          },
-        };
-      };
-
-      const flyForward = (state: FlyState, target: { left: number; top: number }) => {
-        if (state.returnTween) { state.returnTween.kill(); state.returnTween = null; }
-        if (state.flyTween) state.flyTween.kill();
-
-        setFixed(state.word, state.savedRect.left, state.savedRect.top);
-
-        state.flyTween = gsap.to(state.word, {
-          left: target.left,
-          top: target.top,
-          duration: 1,
-          ease: "power3.inOut",
-        });
-      };
-
-      const flyBack = (state: FlyState) => {
-        if (state.flyTween) { state.flyTween.kill(); state.flyTween = null; }
-        if (state.returnTween) state.returnTween.kill();
-
-        const startLeft = parseFloat(state.word.style.left);
-        const startTop = parseFloat(state.word.style.top);
-        const scrollAtStart = window.scrollY;
-
-        const proxy = { p: 0 };
-        state.returnTween = gsap.to(proxy, {
-          p: 1,
-          duration: 1,
-          ease: "power3.inOut",
-          onUpdate: () => {
-            const scrollDelta = window.scrollY - scrollAtStart;
-            const liveTop = state.savedRect.top - scrollDelta;
-            state.word.style.left = `${gsap.utils.interpolate(startLeft, state.savedRect.left, proxy.p)}px`;
-            state.word.style.top = `${gsap.utils.interpolate(startTop, liveTop, proxy.p)}px`;
-          },
-          onComplete: () => {
-            clearFixed(state.word);
-            state.returnTween = null;
-          },
-        });
-      };
-
-      ScrollTrigger.create({
-        trigger: transitionEl,
-        start: "top 50%",
-        onEnter: () => {
-          // Capture both rects BEFORE computing targets — phrase centering needs both widths
-          captureFlow(buildState);
-          captureFlow(iState);
-          const targets = computePhraseTargets();
-          flyForward(buildState, targets.build);
-          flyForward(iState, targets.i);
-        },
-        onLeaveBack: () => {
-          flyBack(buildState);
-          flyBack(iState);
-        },
-      });
-
-      // Phase 3: Stack peel — cards are Z-stacked at the same spot. Each outgoing
-      // card tilts, translates off to the top-right, and fades — like being dealt
-      // off a deck. Matches the card-fan language from the Work section.
-      const cardStack = transitionEl.querySelector<HTMLElement>(".card-stack");
-      if (cardStack) {
-        const cardElements = Array.from(
-          cardStack.querySelectorAll<HTMLElement>(".service-card")
-        );
-
-        // One viewport of scroll per peel. Last card doesn't peel (final state).
-        const peelDuration = window.innerHeight;
-        const totalPeels = cardElements.length - 1;
-        const totalTravel = peelDuration * totalPeels;
-
-        // Size the pinned runway to end exactly when the last peel finishes.
-        transitionEl.style.height = `${window.innerHeight + totalTravel}px`;
-
-        // Alternate peel directions so the fan reads varied, not repetitive.
-        const peelSpecs = [
-          { x: "38%", y: "-68%", rotation: 18 },    // card 01 peels top-right
-          { x: "-38%", y: "-68%", rotation: -18 },  // card 02 peels top-left
-        ];
-
-        cardElements.forEach((card, i) => {
-          if (i === cardElements.length - 1) return; // last card stays
-          const segmentStart = i * peelDuration;
-          const segmentEnd = (i + 1) * peelDuration;
-          const spec = peelSpecs[i] || peelSpecs[0];
-          gsap.fromTo(
-            card,
-            { x: 0, y: 0, rotation: 0, scale: 1, opacity: 1 },
-            {
-              x: spec.x,
-              y: spec.y,
-              rotation: spec.rotation,
-              scale: 0.9,
-              opacity: 0,
-              ease: "power2.in",
-              transformOrigin: "50% 60%",
-              scrollTrigger: {
-                trigger: transitionEl,
-                start: () => `top top-=${segmentStart}`,
-                end: () => `top top-=${segmentEnd}`,
-                scrub: true,
-                invalidateOnRefresh: true,
-              },
-            }
-          );
-        });
-
-        // "I BUILD" exits up-and-fades before the first card settles — starts
-        // while the pin is still approaching, gone by the time it locks in.
-        gsap.to([iWord, buildWord], {
-          y: () => -window.innerHeight * 0.35,
-          opacity: 0,
-          ease: "power2.in",
-          scrollTrigger: {
-            trigger: transitionEl,
-            start: "top 15%",
-            end: "top -5%",
-            scrub: 0.5,
-            invalidateOnRefresh: true,
-          },
-        });
-      }
-
-      // Release BUILD + "I" from fixed positioning when user scrolls past the pinned range
-      ScrollTrigger.create({
-        trigger: transitionEl,
-        start: "bottom bottom",
-        onEnter: () => {
-          clearFixed(buildWord);
-          clearFixed(iWord);
-        },
-        onLeaveBack: () => {
-          // Re-fix at their last target positions so scrolling back up is seamless
-          const targets = computePhraseTargets();
-          setFixed(buildWord, targets.build.left, targets.build.top);
-          setFixed(iWord, targets.i.left, targets.i.top);
-        },
-      });
-
-    });
-
-    return () => ctx.revert();
-  }, []);
 
   // Mobile animations
   useIsomorphicLayoutEffect(() => {
@@ -552,128 +267,229 @@ export default function Manifesto() {
           </div>
         </div>
 
-        {/* Services — "I BUILD" stays pinned at top (real manifesto words), 3 big cards
-             cycle in below. Pin releases shortly after the cycle completes. */}
+        {/* Services — two-column editorial layout. Left: headline + tech stack.
+             Right: 3 services with icons + short descriptions. No pin/sticky. */}
         <div
-          ref={servicesSectionRef}
           className="relative"
-          style={{ zIndex: 1, height: "270vh" }}
+          style={{ paddingTop: "18vh", paddingBottom: "20vh" }}
         >
-          <div className="sticky top-0 h-screen overflow-hidden">
-            {/* Card stack — Z-stacked (all at same spot, different z-indices). Outgoing
-                cards get their clip-path wiped to reveal the card behind them. */}
-            <div
-              className="card-stack absolute left-1/2 -translate-x-1/2"
-              style={{
-                top: "20%",
-                width: "clamp(400px, 85vw, 1500px)",
-                height: "clamp(550px, 78vh, 920px)",
-              }}
-            >
-              {[
-                {
-                  number: "01",
-                  name: "Conversion Websites",
-                  desc: "Sites that turn traffic into leads, not just pretty pixels. Built with conversion architecture from the first wireframe — every section earning its scroll.",
-                  tag: "Most common starting point",
-                },
-                {
-                  number: "02",
-                  name: "AI Automations",
-                  desc: "Back-office workflows that run while you sleep. Inbox triage, lead routing, content pipelines, client reporting — wired together with agents that don't miss.",
-                  tag: "Where we earn the AI in the name",
-                },
-                {
-                  number: "03",
-                  name: "Custom Software",
-                  desc: "Internal tools and dashboards built for how your team actually works. No SaaS rental fees, no 12 tabs open — one system shaped to your operation.",
-                  tag: "For when off-the-shelf runs out",
-                },
-              ].map((service, idx, arr) => (
-                <div
-                  key={service.number}
-                  className="service-card absolute inset-0"
+          <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
+            <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-16 xl:gap-28 items-start">
+              {/* Left column — big headline + tech stack */}
+              <div>
+                <p
                   style={{
-                    backgroundColor: "#141210",
-                    borderRadius: "clamp(1.5rem, 2.25vw, 2.25rem)",
-                    padding: "clamp(2.5rem, 5vw, 5rem)",
-                    border: "1px solid rgba(229, 225, 219, 0.08)",
-                    overflow: "hidden",
-                    zIndex: arr.length - idx, // card 01 on top, card 03 bottom
-                    willChange: "transform, opacity",
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "0.7rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.3em",
+                    textTransform: "uppercase",
+                    color: "rgba(26,24,22,0.4)",
+                    marginBottom: "1.75rem",
                   }}
                 >
-                  {/* Giant watermark number — editorial-scale, anchors the card visually */}
-                  <span
-                    aria-hidden="true"
+                  What I build
+                </p>
+                <h2
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "clamp(2.75rem, 6vw, 6rem)",
+                    fontWeight: 900,
+                    lineHeight: 0.95,
+                    letterSpacing: "-0.035em",
+                    color: "#1a1816",
+                    marginBottom: "clamp(2rem, 4vh, 3rem)",
+                  }}
+                >
+                  Three things.
+                  <br />
+                  <span style={{ color: "rgba(26,24,22,0.35)" }}>Done well.</span>
+                </h2>
+
+                <p
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "clamp(1rem, 1.15vw, 1.15rem)",
+                    lineHeight: 1.6,
+                    color: "rgba(26,24,22,0.6)",
+                    maxWidth: 520,
+                    marginBottom: "clamp(3rem, 6vh, 5rem)",
+                  }}
+                >
+                  I keep the scope tight on purpose — every project gets my full attention,
+                  my real stack, and a real outcome. No agency overhead, no filler.
+                </p>
+
+                {/* Tech stack */}
+                <div>
+                  <p
                     style={{
-                      position: "absolute",
-                      right: "clamp(-1.5rem, -1.5vw, -0.5rem)",
-                      bottom: "clamp(-5rem, -8vw, -3rem)",
                       fontFamily: "var(--font-inter), sans-serif",
-                      fontSize: "clamp(16rem, 32vw, 32rem)",
-                      fontWeight: 900,
-                      lineHeight: 0.8,
-                      letterSpacing: "-0.08em",
-                      color: "rgba(255, 200, 150, 0.045)",
-                      pointerEvents: "none",
-                      userSelect: "none",
-                      zIndex: 0,
+                      fontSize: "0.7rem",
+                      fontWeight: 600,
+                      letterSpacing: "0.3em",
+                      textTransform: "uppercase",
+                      color: "rgba(26,24,22,0.4)",
+                      marginBottom: "1.25rem",
                     }}
                   >
-                    {service.number}
-                  </span>
-
-                  <div style={{ position: "relative", zIndex: 1 }}>
-                    <div className="flex items-start justify-between" style={{ marginBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}>
+                    Tech stack
+                  </p>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "0.5rem",
+                    }}
+                  >
+                    {[
+                      "Next.js",
+                      "React",
+                      "TypeScript",
+                      "Tailwind",
+                      "Sanity",
+                      "GSAP",
+                      "Framer Motion",
+                      "OpenAI",
+                      "n8n",
+                      "Supabase",
+                    ].map((tool) => (
                       <span
+                        key={tool}
                         style={{
-                          color: "rgba(229, 225, 219, 0.35)",
-                          fontSize: "clamp(0.7rem, 0.85vw, 0.85rem)",
-                          letterSpacing: "0.3em",
-                          fontWeight: 600,
-                        }}
-                      >
-                        {service.number} / 03
-                      </span>
-                      <span
-                        style={{
-                          color: "rgba(255, 200, 150, 0.6)",
-                          fontSize: "clamp(0.65rem, 0.75vw, 0.75rem)",
-                          letterSpacing: "0.2em",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          padding: "0.6rem 1rem",
+                          borderRadius: "100px",
+                          backgroundColor: "rgba(26,24,22,0.04)",
+                          border: "1px solid rgba(26,24,22,0.08)",
+                          fontFamily: "var(--font-inter), sans-serif",
+                          fontSize: "0.82rem",
                           fontWeight: 500,
-                          textTransform: "uppercase",
+                          color: "rgba(26,24,22,0.7)",
+                          letterSpacing: "0.01em",
                         }}
                       >
-                        {service.tag}
+                        {tool}
                       </span>
-                    </div>
-                    <h3
-                      style={{
-                        color: "#e5e1db",
-                        fontFamily: "var(--font-inter), sans-serif",
-                        fontSize: "clamp(2.5rem, 5.5vw, 5.5rem)",
-                        fontWeight: 900,
-                        lineHeight: 0.95,
-                        letterSpacing: "-0.035em",
-                        marginBottom: "clamp(1.25rem, 2.5vw, 2.25rem)",
-                      }}
-                    >
-                      {service.name}
-                    </h3>
-                    <p
-                      style={{
-                        color: "rgba(229, 225, 219, 0.55)",
-                        fontSize: "clamp(1rem, 1.3vw, 1.35rem)",
-                        lineHeight: 1.55,
-                        maxWidth: "720px",
-                      }}
-                    >
-                      {service.desc}
-                    </p>
+                    ))}
                   </div>
                 </div>
-              ))}
+              </div>
+
+              {/* Right column — 3 services with icons */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "clamp(1.75rem, 3.5vh, 2.5rem)",
+                }}
+              >
+                {[
+                  {
+                    number: "01",
+                    name: "Conversion Websites",
+                    desc: "Sites built with conversion architecture from the first wireframe — every section earning its scroll.",
+                    icon: (
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="4" width="18" height="16" rx="2" />
+                        <path d="M3 9h18M7 13h6M7 17h4" />
+                      </svg>
+                    ),
+                  },
+                  {
+                    number: "02",
+                    name: "AI Automations",
+                    desc: "Back-office workflows that run while you sleep — inbox triage, lead routing, content pipelines.",
+                    icon: (
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M13 2L4.5 13h7l-1.5 9 8.5-11h-7l1.5-9z" />
+                      </svg>
+                    ),
+                  },
+                  {
+                    number: "03",
+                    name: "Custom Software",
+                    desc: "Internal tools and dashboards shaped to your operation — one system instead of 12 tabs.",
+                    icon: (
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="16 18 22 12 16 6" />
+                        <polyline points="8 6 2 12 8 18" />
+                      </svg>
+                    ),
+                  },
+                ].map((service) => (
+                  <div
+                    key={service.number}
+                    className="group"
+                    style={{
+                      display: "flex",
+                      gap: "clamp(1.25rem, 2vw, 1.75rem)",
+                      padding: "clamp(1.25rem, 2vh, 1.75rem) 0",
+                      borderBottom: "1px solid rgba(26,24,22,0.08)",
+                      cursor: "default",
+                    }}
+                  >
+                    {/* Icon */}
+                    <div
+                      className="shrink-0 transition-colors duration-300 group-hover:bg-[#c48a5a]"
+                      style={{
+                        width: 52,
+                        height: 52,
+                        borderRadius: "50%",
+                        backgroundColor: "#1a1816",
+                        color: "#f3f1ee",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {service.icon}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div
+                        className="flex items-baseline justify-between gap-4"
+                        style={{ marginBottom: "0.5rem" }}
+                      >
+                        <h3
+                          style={{
+                            fontFamily: "var(--font-inter), sans-serif",
+                            fontSize: "clamp(1.25rem, 1.6vw, 1.6rem)",
+                            fontWeight: 800,
+                            letterSpacing: "-0.02em",
+                            color: "#1a1816",
+                          }}
+                        >
+                          {service.name}
+                        </h3>
+                        <span
+                          style={{
+                            fontFamily: "var(--font-inter), sans-serif",
+                            fontSize: "0.72rem",
+                            fontWeight: 600,
+                            letterSpacing: "0.2em",
+                            color: "rgba(26,24,22,0.3)",
+                          }}
+                        >
+                          {service.number}
+                        </span>
+                      </div>
+                      <p
+                        style={{
+                          fontFamily: "var(--font-inter), sans-serif",
+                          fontSize: "clamp(0.92rem, 1.05vw, 1.05rem)",
+                          lineHeight: 1.55,
+                          color: "rgba(26,24,22,0.6)",
+                        }}
+                      >
+                        {service.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
