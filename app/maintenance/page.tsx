@@ -28,7 +28,7 @@ export default function MaintenancePage() {
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] pointer-events-none"
         style={{
-          background: `radial-gradient(ellipse at center, rgba(255, 200, 150, 0.08) 0%, transparent 50%)`,
+          background: `radial-gradient(ellipse at center, rgba(229, 225, 219, 0.08) 0%, transparent 50%)`,
         }}
       />
 
@@ -46,7 +46,7 @@ export default function MaintenancePage() {
               className="text-[12vw] md:text-[10vw] font-black select-none mx-8"
               style={{
                 color: "transparent",
-                WebkitTextStroke: "1px rgba(255, 200, 150, 0.05)",
+                WebkitTextStroke: "1px rgba(229, 225, 219, 0.05)",
               }}
             >
               EXECUTIVE AI SOLUTIONS
@@ -68,7 +68,7 @@ export default function MaintenancePage() {
           <motion.div
             className="absolute inset-0 -z-10 pointer-events-none"
             style={{
-              background: `radial-gradient(ellipse at center, rgba(255, 200, 150, 0.2) 0%, transparent 70%)`,
+              background: `radial-gradient(ellipse at center, rgba(229, 225, 219, 0.2) 0%, transparent 70%)`,
               filter: "blur(80px)",
             }}
             initial={{ opacity: 0, scale: 0.8 }}
@@ -87,13 +87,13 @@ export default function MaintenancePage() {
             viewBox="0 0 500 500"
             className="w-[280px] md:w-[400px] lg:w-[450px] h-auto"
             style={{
-              filter: drawComplete ? "drop-shadow(0 0 30px rgba(255, 200, 150, 0.2))" : "none",
+              filter: drawComplete ? "drop-shadow(0 0 30px rgba(229, 225, 219, 0.2))" : "none",
             }}
           >
             {/* Drawing stroke animation */}
             <motion.path
               d={LOGO_PATH}
-              stroke="rgba(255, 200, 150, 1)"
+              stroke="rgba(229, 225, 219, 1)"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -111,7 +111,7 @@ export default function MaintenancePage() {
             {/* Fill that fades in after stroke completes */}
             <motion.path
               d={LOGO_PATH}
-              fill="rgba(255, 200, 150, 1)"
+              fill="rgba(229, 225, 219, 1)"
               stroke="none"
               initial={{ opacity: 0 }}
               animate={{ opacity: drawComplete ? 1 : 0 }}
@@ -126,7 +126,7 @@ export default function MaintenancePage() {
         {/* Undergoing Maintenance text */}
         <motion.p
           className="text-xs uppercase tracking-[0.3em] mb-4"
-          style={{ color: "rgba(255, 200, 150, 0.6)" }}
+          style={{ color: "rgba(229, 225, 219, 0.6)" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: drawComplete ? 1 : 0 }}
           transition={{ duration: 0.8 }}

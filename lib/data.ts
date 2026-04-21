@@ -102,7 +102,7 @@ export const projects: Project[] = [
       role: "Founder, Desert Wings Flight School",
     },
     color: "#2a3f5f",
-    warmColor: "rgba(255, 200, 150, 0.12)",
+    warmColor: "rgba(229, 225, 219, 0.12)",
   },
   {
     slug: "riled-up",

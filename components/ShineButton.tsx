@@ -71,9 +71,9 @@ export default function ShineButton({
           <defs>
             <linearGradient id={`shineGrad-${dimensions.width}`} x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="transparent" />
-              <stop offset="35%" stopColor="rgba(255, 200, 150, 0.5)" />
+              <stop offset="35%" stopColor="rgba(229, 225, 219, 0.5)" />
               <stop offset="50%" stopColor="rgba(255, 220, 180, 1)" />
-              <stop offset="65%" stopColor="rgba(255, 200, 150, 0.5)" />
+              <stop offset="65%" stopColor="rgba(229, 225, 219, 0.5)" />
               <stop offset="100%" stopColor="transparent" />
             </linearGradient>
             <filter id="shineGlow" x="-50%" y="-50%" width="200%" height="200%">

@@ -139,7 +139,7 @@ export default function KineticTypography() {
         <div className="text-center">
           <p
             className="text-xs uppercase tracking-[0.3em] mb-6"
-            style={{ color: "rgba(255, 200, 150, 0.5)" }}
+            style={{ color: "rgba(229, 225, 219, 0.5)" }}
           >
             My Approach
           </p>
@@ -153,7 +153,7 @@ export default function KineticTypography() {
             }}
           >
             I design websites that{" "}
-            <span style={{ color: "rgba(255, 200, 150, 1)" }}>actually</span>{" "}
+            <span style={{ color: "rgba(229, 225, 219, 1)" }}>actually</span>{" "}
             grow businesses.
           </p>
         </div>
@@ -196,7 +196,7 @@ export default function KineticTypography() {
           <p
             ref={labelRef}
             className="text-xs uppercase tracking-[0.3em] mb-10"
-            style={{ color: "rgba(255, 200, 150, 0.4)", opacity: 0 }}
+            style={{ color: "rgba(229, 225, 219, 0.4)", opacity: 0 }}
           >
             My Approach
           </p>
@@ -220,7 +220,7 @@ export default function KineticTypography() {
                   data-word
                   className="inline-block mr-[0.3em]"
                   style={{
-                    color: isAccent ? "rgba(255, 200, 150, 1)" : "#e5e1db",
+                    color: isAccent ? "rgba(229, 225, 219, 1)" : "#e5e1db",
                     opacity: 0.06,
                   }}
                 >
@@ -235,7 +235,7 @@ export default function KineticTypography() {
             ref={lineRef}
             style={{
               height: 2,
-              backgroundColor: "rgba(255, 200, 150, 0.3)",
+              backgroundColor: "rgba(229, 225, 219, 0.3)",
               transformOrigin: "center",
               margin: "0 auto",
               transform: "scaleX(0)",

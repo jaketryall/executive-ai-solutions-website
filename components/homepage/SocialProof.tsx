@@ -112,16 +112,16 @@ export default function SocialProof() {
               maxWidth: "800px",
             }}
           >
-            <span style={{ color: "#c48a5a", fontSize: "1.5em", lineHeight: 0, verticalAlign: "-0.15em", marginRight: "0.1em" }}>&ldquo;</span>
+            <span style={{ color: "#78736c", fontSize: "1.5em", lineHeight: 0, verticalAlign: "-0.15em", marginRight: "0.1em" }}>&ldquo;</span>
             Jake rebuilt our site and bookings tripled in two months. Best investment we made all year.
-            <span style={{ color: "#c48a5a", fontSize: "1.5em", lineHeight: 0, verticalAlign: "-0.15em", marginLeft: "0.1em" }}>&rdquo;</span>
+            <span style={{ color: "#78736c", fontSize: "1.5em", lineHeight: 0, verticalAlign: "-0.15em", marginLeft: "0.1em" }}>&rdquo;</span>
           </p>
           <div className="mt-5 flex items-center gap-3">
             <div
               style={{
                 width: 32,
                 height: 1,
-                backgroundColor: "#c48a5a",
+                backgroundColor: "#78736c",
               }}
             />
             <p
@@ -163,7 +163,7 @@ export default function SocialProof() {
                   fontFamily: "var(--font-inter), sans-serif",
                   fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
                   fontWeight: 900,
-                  color: "#c48a5a",
+                  color: "#78736c",
                   letterSpacing: "-0.03em",
                   lineHeight: 1,
                 }}

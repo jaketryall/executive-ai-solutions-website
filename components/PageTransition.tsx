@@ -7,7 +7,7 @@ import { useSound } from "./SoundManager";
 import gsap from "gsap";
 
 // Warm accent color to match the site
-const accentColor = "rgba(255, 200, 150, 1)";
+const accentColor = "rgba(229, 225, 219, 1)";
 
 // Store the click position for clip-path origin
 let clickPosition = { x: 0, y: 0 };
@@ -207,7 +207,7 @@ function GSAPTransitionOverlay({ isActive }: { isActive: boolean; targetPage: st
         </defs>
         <rect width="100%" height="100%" fill="black" mask="url(#logoMask)"/>
         <g transform="translate(${translateX}, ${translateY}) scale(${logoScale})" filter="url(#glow)" opacity="${glowOpacity}">
-          <path d="${LOGO_PATH}" fill="none" stroke="rgba(255, 200, 150, 0.9)" stroke-width="${strokeWidth}"/>
+          <path d="${LOGO_PATH}" fill="none" stroke="rgba(229, 225, 219, 0.9)" stroke-width="${strokeWidth}"/>
         </g>
       </svg>
     `;

@@ -19,8 +19,8 @@ if (typeof window !== "undefined") {
 }
 
 // Warm cinematic color palette
-const accentColor = "rgba(255, 200, 150, 1)";
-const accentColorMuted = "rgba(255, 200, 150, 0.6)";
+const accentColor = "rgba(229, 225, 219, 1)";
+const accentColorMuted = "rgba(229, 225, 219, 0.6)";
 
 // Isomorphic layout effect
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -258,7 +258,7 @@ function CinematicHero({
             className="inline-flex items-center gap-4 group"
           >
             <span
-              className="px-8 py-4 rounded-full border-2 transition-all duration-300 group-hover:bg-[rgba(255,200,150,0.15)] group-hover:border-[rgba(255,200,150,1)]"
+              className="px-8 py-4 rounded-full border-2 transition-all duration-300 group-hover:bg-[rgba(229,225,219,0.15)] group-hover:border-[rgba(229,225,219,1)]"
               style={{ borderColor: accentColor }}
             >
               <span className="text-sm uppercase tracking-[0.2em] font-semibold text-white">
@@ -266,7 +266,7 @@ function CinematicHero({
               </span>
             </span>
             <span
-              className="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300 group-hover:bg-[rgba(255,200,150,0.15)] group-hover:translate-y-1"
+              className="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300 group-hover:bg-[rgba(229,225,219,0.15)] group-hover:translate-y-1"
               style={{ borderColor: accentColor }}
             >
               <span style={{ color: accentColor }} className="text-xl">
@@ -552,7 +552,7 @@ function VerticalTimelineSection({
                     <div
                       className="absolute -right-4 -top-4 text-[120px] lg:text-[160px] font-black leading-none pointer-events-none select-none hidden md:block"
                       style={{
-                        WebkitTextStroke: `1px rgba(255,200,150,0.08)`,
+                        WebkitTextStroke: `1px rgba(229,225,219,0.08)`,
                         WebkitTextFillColor: "transparent",
                       }}
                     >
@@ -781,7 +781,7 @@ function BenefitsSection({
                     large ? "-right-6 -bottom-10 text-[200px] md:text-[280px]" : "-right-4 -bottom-6 text-[120px] md:text-[160px]"
                   }`}
                   style={{
-                    WebkitTextStroke: `1px rgba(255,200,150,0.06)`,
+                    WebkitTextStroke: `1px rgba(229,225,219,0.06)`,
                     WebkitTextFillColor: "transparent",
                   }}
                 >
@@ -921,7 +921,7 @@ function PricingSection({
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(ellipse 50% 50% at 50% 30%, rgba(255,200,150,0.06), transparent)`,
+          background: `radial-gradient(ellipse 50% 50% at 50% 30%, rgba(229,225,219,0.06), transparent)`,
         }}
       />
 
@@ -994,7 +994,7 @@ function PricingSection({
                 className="relative rounded-2xl md:rounded-3xl overflow-hidden h-full"
                 style={{
                   background: tier.highlighted
-                    ? `linear-gradient(145deg, rgba(255,200,150,0.15) 0%, rgba(255,200,150,0.06) 100%)`
+                    ? `linear-gradient(145deg, rgba(229,225,219,0.15) 0%, rgba(229,225,219,0.06) 100%)`
                     : "linear-gradient(145deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.4) 100%)",
                   border: tier.highlighted
                     ? `1px solid ${accentColor}40`
@@ -1007,7 +1007,7 @@ function PricingSection({
                     className="absolute -right-4 -top-4 text-[180px] md:text-[220px] font-black leading-none pointer-events-none select-none"
                     style={{
                       WebkitTextStroke: tier.highlighted
-                        ? `1px rgba(255,200,150,0.1)`
+                        ? `1px rgba(229,225,219,0.1)`
                         : `1px rgba(26,24,22,0.04)`,
                       WebkitTextFillColor: "transparent",
                     }}
@@ -1313,7 +1313,7 @@ function CTASection() {
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(ellipse 60% 60% at 50% 100%, rgba(255,200,150,0.06), transparent)`,
+          background: `radial-gradient(ellipse 60% 60% at 50% 100%, rgba(229,225,219,0.06), transparent)`,
         }}
       />
 

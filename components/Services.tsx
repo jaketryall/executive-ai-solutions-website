@@ -15,11 +15,11 @@ if (typeof window !== "undefined") {
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-const accentColor = "rgba(255, 200, 150, 1)";
-const accentColorMuted = "rgba(255, 200, 150, 0.6)";
+const accentColor = "rgba(229, 225, 219, 1)";
+const accentColorMuted = "rgba(229, 225, 219, 0.6)";
 const textColor = "#f5f0e8";
 const textMuted = "rgba(245, 240, 232, 0.5)";
-const borderColor = "rgba(255, 200, 150, 0.15)";
+const borderColor = "rgba(229, 225, 219, 0.15)";
 
 const services = [
   {
@@ -116,7 +116,7 @@ function CursorInfo({
               borderRadius: 16,
               background: "rgba(20, 18, 16, 0.95)",
               backdropFilter: "blur(20px)",
-              border: "1px solid rgba(255, 200, 150, 0.15)",
+              border: "1px solid rgba(229, 225, 219, 0.15)",
               boxShadow: "0 8px 40px rgba(0, 0, 0, 0.3)",
             }}
           >
@@ -261,7 +261,7 @@ function DesktopServiceRow({
         ref={dividerRef}
         style={{
           height: 1,
-          backgroundColor: "rgba(255, 200, 150, 0.3)",
+          backgroundColor: "rgba(229, 225, 219, 0.3)",
           transformOrigin: "left",
           transform: "scaleX(0)",
         }}
@@ -676,9 +676,9 @@ function ServiceStackCard({
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          border: "1px solid rgba(255, 200, 150, 0.06)",
+          border: "1px solid rgba(229, 225, 219, 0.06)",
           transition: "border-color 0.4s ease, transform 0.3s ease, opacity 0.3s ease",
-          borderColor: hovered ? "rgba(255, 200, 150, 0.15)" : "rgba(255, 200, 150, 0.06)",
+          borderColor: hovered ? "rgba(229, 225, 219, 0.15)" : "rgba(229, 225, 219, 0.06)",
         }}
       >
         {/* Top: Number + Title */}

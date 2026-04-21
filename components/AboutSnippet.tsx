@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 
 // Cinematic warm color palette
-const accentColorMuted = "rgba(255, 200, 150, 0.6)";
+const accentColorMuted = "rgba(229, 225, 219, 0.6)";
 
 // Letter component that fills one at a time
 function ScrollFillLetter({
@@ -39,7 +39,7 @@ function ScrollFillLetter({
 }
 
 // Accent colors
-const accentColor = "rgba(255, 200, 150, 1)";
+const accentColor = "rgba(229, 225, 219, 1)";
 
 // Mobile version - Cinematic fullscreen statement (static, no parallax)
 function MobileAboutSnippet() {
@@ -52,8 +52,8 @@ function MobileAboutSnippet() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `
-            radial-gradient(ellipse 120% 60% at 50% 50%, rgba(255, 200, 150, 0.06) 0%, transparent 50%),
-            radial-gradient(ellipse 80% 40% at 50% 20%, rgba(255, 200, 150, 0.03) 0%, transparent 40%)
+            radial-gradient(ellipse 120% 60% at 50% 50%, rgba(229, 225, 219, 0.06) 0%, transparent 50%),
+            radial-gradient(ellipse 80% 40% at 50% 20%, rgba(229, 225, 219, 0.03) 0%, transparent 40%)
           `,
         }}
       />
@@ -66,7 +66,7 @@ function MobileAboutSnippet() {
           className="text-[70vw] font-black leading-none"
           style={{
             color: "transparent",
-            WebkitTextStroke: "1px rgba(255, 200, 150, 0.12)",
+            WebkitTextStroke: "1px rgba(229, 225, 219, 0.12)",
           }}
         >
           WHY
@@ -152,7 +152,7 @@ function DesktopAboutSnippet() {
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse 80% 50% at 50% 50%, rgba(255, 200, 150, 0.06) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse 80% 50% at 50% 50%, rgba(229, 225, 219, 0.06) 0%, transparent 70%)",
         }}
       />
 

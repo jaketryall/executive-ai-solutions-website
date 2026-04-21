@@ -63,13 +63,13 @@ export default function Marquee() {
         >
           <div
             className="marquee-left flex shrink-0 items-center text-xs md:text-sm font-semibold uppercase tracking-[0.3em]"
-            style={{ color: "rgba(255, 200, 150, 0.15)" }}
+            style={{ color: "rgba(229, 225, 219, 0.15)" }}
           >
             {ROW_CONTENT}
           </div>
           <div
             className="marquee-left flex shrink-0 items-center text-xs md:text-sm font-semibold uppercase tracking-[0.3em]"
-            style={{ color: "rgba(255, 200, 150, 0.15)" }}
+            style={{ color: "rgba(229, 225, 219, 0.15)" }}
             aria-hidden
           >
             {ROW_CONTENT}
@@ -88,13 +88,13 @@ export default function Marquee() {
         >
           <div
             className="marquee-right flex shrink-0 items-center text-xs md:text-sm font-semibold uppercase tracking-[0.3em]"
-            style={{ color: "rgba(255, 200, 150, 0.15)" }}
+            style={{ color: "rgba(229, 225, 219, 0.15)" }}
           >
             {ROW_CONTENT}
           </div>
           <div
             className="marquee-right flex shrink-0 items-center text-xs md:text-sm font-semibold uppercase tracking-[0.3em]"
-            style={{ color: "rgba(255, 200, 150, 0.15)" }}
+            style={{ color: "rgba(229, 225, 219, 0.15)" }}
             aria-hidden
           >
             {ROW_CONTENT}

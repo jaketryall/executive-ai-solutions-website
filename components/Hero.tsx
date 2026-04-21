@@ -78,7 +78,7 @@ function ViewWorkWidget() {
             rx="12"
             ry="12"
             fill="none"
-            stroke="#c48a5a"
+            stroke="#78736c"
             strokeWidth="1.5"
             strokeDasharray="600"
             animate={{ strokeDashoffset: hovered ? 0 : 600 }}
@@ -94,13 +94,13 @@ function ViewWorkWidget() {
               className="rounded-full"
               style={{ width: 6, height: 6 }}
               animate={{
-                backgroundColor: hovered ? "#c48a5a" : "rgba(26, 24, 22, 0.3)",
+                backgroundColor: hovered ? "#78736c" : "rgba(26, 24, 22, 0.3)",
               }}
               transition={{ duration: 0.3 }}
             />
             <motion.span
               className="text-[9px] font-semibold uppercase tracking-[0.15em]"
-              animate={{ color: hovered ? "#c48a5a" : "rgba(26, 24, 22, 0.4)" }}
+              animate={{ color: hovered ? "#78736c" : "rgba(26, 24, 22, 0.4)" }}
               transition={{ duration: 0.3 }}
             >
               Latest Project
@@ -114,7 +114,7 @@ function ViewWorkWidget() {
             strokeWidth="2"
             strokeLinecap="round"
             animate={{
-              stroke: hovered ? "#c48a5a" : "rgba(26, 24, 22, 0.25)",
+              stroke: hovered ? "#78736c" : "rgba(26, 24, 22, 0.25)",
               rotate: hovered ? 0 : 90,
             }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
@@ -168,7 +168,7 @@ function ViewWorkWidget() {
           </motion.span>
           <motion.span
             className="text-[9px] font-medium"
-            animate={{ color: hovered ? "#c48a5a" : "rgba(26, 24, 22, 0.25)" }}
+            animate={{ color: hovered ? "#78736c" : "rgba(26, 24, 22, 0.25)" }}
             transition={{ duration: 0.3 }}
           >
             2024
@@ -199,8 +199,8 @@ function HeroLogo() {
         <motion.path
           d={LOGO_PATH}
           animate={{
-            fill: hovered ? "rgba(196, 138, 90, 1)" : "rgba(26, 24, 22, 0.15)",
-            stroke: hovered ? "rgba(196, 138, 90, 1)" : "rgba(26, 24, 22, 0.4)",
+            fill: hovered ? "rgba(120, 115, 108, 1)" : "rgba(26, 24, 22, 0.15)",
+            stroke: hovered ? "rgba(120, 115, 108, 1)" : "rgba(26, 24, 22, 0.4)",
           }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           strokeWidth="2"
@@ -326,7 +326,7 @@ function SplashNavItem({
                 </motion.span>
                 <motion.span
                   className="absolute left-0 top-0 inline-block"
-                  style={{ color: "rgba(255, 200, 150, 1)" }}
+                  style={{ color: "rgba(229, 225, 219, 1)" }}
                   animate={{ y: hovered ? "0%" : "100%" }}
                   transition={{
                     duration: 0.3,
@@ -345,7 +345,7 @@ function SplashNavItem({
           width="20" height="20" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" strokeWidth="2"
           animate={{
-            color: hovered ? "rgba(255, 200, 150, 1)" : "rgba(255,255,255,0)",
+            color: hovered ? "rgba(229, 225, 219, 1)" : "rgba(255,255,255,0)",
             x: hovered ? 0 : -4,
           }}
           transition={{ duration: 0.3 }}
@@ -433,7 +433,7 @@ function HeroFanCards({
                   style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)" }}
                 />
                 <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <p className="text-[10px] font-medium uppercase tracking-[0.2em] mb-2" style={{ color: "#c48a5a", opacity: 0.8 }}>
+                  <p className="text-[10px] font-medium uppercase tracking-[0.2em] mb-2" style={{ color: "#78736c", opacity: 0.8 }}>
                     {project.category}
                   </p>
                   <h3 style={{ fontFamily: "var(--font-inter)", fontSize: "1.1rem", fontWeight: 800, color: "#fff", lineHeight: 1.1 }}>
@@ -571,7 +571,7 @@ function HeroCorrectionText() {
             <motion.span
               animate={{ opacity: [1, 0] }}
               transition={{ duration: 0.4, repeat: Infinity, repeatType: "reverse" }}
-              style={{ color: "#c48a5a" }}
+              style={{ color: "#78736c" }}
             >
               |
             </motion.span>
@@ -581,7 +581,7 @@ function HeroCorrectionText() {
             {displayedLine1}
             <span
               style={{
-                color: isDone ? "#c48a5a" : isGlitching ? "#c48a5a" : "#1a1816",
+                color: isDone ? "#78736c" : isGlitching ? "#78736c" : "#1a1816",
                 transition: "color 0.3s ease",
               }}
             >
@@ -877,7 +877,7 @@ function DesktopHero() {
               >
                 <TransitionLink
                   href="/contact"
-                  className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full transition-all duration-300 hover:bg-[#c48a5a] hover:border-[#c48a5a] group"
+                  className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full transition-all duration-300 hover:bg-[#78736c] hover:border-[#78736c] group"
                   style={{
                     backgroundColor: "#1a1816",
                     color: "#f3f1ee",
@@ -914,7 +914,7 @@ function DesktopHero() {
             <div className="flex items-center gap-3.5 shrink-0">
               <div className="flex -space-x-2.5">
                 {[
-                  "#c48a5a",
+                  "#78736c",
                   "#1a1816",
                   "#8a7a6a",
                   "#3d2f22",
@@ -950,7 +950,7 @@ function DesktopHero() {
                   </span>
                   <span
                     style={{
-                      color: "#c48a5a",
+                      color: "#78736c",
                       fontSize: "0.75rem",
                       letterSpacing: "0.15em",
                       lineHeight: 1,
@@ -1050,7 +1050,7 @@ function DesktopHero() {
                     style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)" }}
                   />
                   <div className="absolute bottom-0 left-0 right-0 p-5">
-                    <p className="text-[10px] font-medium uppercase tracking-[0.2em] mb-2" style={{ color: "#c48a5a", opacity: 0.8 }}>
+                    <p className="text-[10px] font-medium uppercase tracking-[0.2em] mb-2" style={{ color: "#78736c", opacity: 0.8 }}>
                       Flight School
                     </p>
                     <h3 style={{ fontFamily: "var(--font-inter)", fontSize: "1.1rem", fontWeight: 800, color: "#fff", lineHeight: 1.1 }}>
@@ -1159,7 +1159,7 @@ function DesktopHero() {
               <div className="flex-1 md:w-1/2 h-full flex flex-col justify-center px-6 md:px-16 lg:px-24">
                 <motion.p
                   className="text-xs uppercase tracking-[0.3em] mb-8"
-                  style={{ color: "rgba(255, 200, 150, 0.4)" }}
+                  style={{ color: "rgba(229, 225, 219, 0.4)" }}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3, duration: 0.5 }}
@@ -1192,12 +1192,12 @@ function DesktopHero() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5, duration: 0.5 }}
                 >
-                  <p className="text-xs uppercase tracking-[0.3em]" style={{ color: "rgba(255, 200, 150, 0.4)" }}>
+                  <p className="text-xs uppercase tracking-[0.3em]" style={{ color: "rgba(229, 225, 219, 0.4)" }}>
                     Get in Touch
                   </p>
                   <a
                     href="mailto:jaker@executiveaisolutions.com"
-                    className="text-lg font-medium text-white/60 hover:text-[#c48a5a] transition-colors mt-2 inline-block"
+                    className="text-lg font-medium text-white/60 hover:text-[#78736c] transition-colors mt-2 inline-block"
                   >
                     jaker@executiveaisolutions.com
                   </a>
@@ -1237,7 +1237,7 @@ function DesktopHero() {
                         href={social.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[11px] font-medium uppercase tracking-[0.15em] text-white/30 hover:text-[#c48a5a] transition-colors"
+                        className="text-[11px] font-medium uppercase tracking-[0.15em] text-white/30 hover:text-[#78736c] transition-colors"
                       >
                         {social.label}
                       </a>

@@ -65,7 +65,7 @@ export default function AnimatedLogo({
       <motion.div
         className="absolute inset-0 -z-10"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(255,200,150,0.3) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse at center, rgba(229,225,219,0.3) 0%, transparent 70%)",
           filter: "blur(15px)",
         }}
         initial={{ opacity: showGlow ? 0.5 : 0, scale: 0.8 }}

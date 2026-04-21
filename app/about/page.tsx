@@ -17,8 +17,8 @@ if (typeof window !== "undefined") {
 }
 
 // Warm cinematic color palette
-const accentColor = "rgba(255, 200, 150, 1)";
-const accentColorMuted = "rgba(255, 200, 150, 0.6)";
+const accentColor = "rgba(229, 225, 219, 1)";
+const accentColorMuted = "rgba(229, 225, 219, 0.6)";
 
 // Values data
 const values = [
@@ -80,7 +80,7 @@ function ValueRow({ value, index }: { value: typeof values[0]; index: number }) 
       <div
         ref={dividerRef}
         className="h-px"
-        style={{ backgroundColor: "rgba(255, 200, 150, 0.25)", transformOrigin: "left", transform: "scaleX(0)" }}
+        style={{ backgroundColor: "rgba(229, 225, 219, 0.25)", transformOrigin: "left", transform: "scaleX(0)" }}
       />
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -375,7 +375,7 @@ export default function AboutPage() {
             {/* Subtle radial glow */}
             <div
               className="absolute inset-0 pointer-events-none"
-              style={{ background: "radial-gradient(ellipse 60% 40% at 30% 30%, rgba(255,200,150,0.04) 0%, transparent 60%)" }}
+              style={{ background: "radial-gradient(ellipse 60% 40% at 30% 30%, rgba(229,225,219,0.04) 0%, transparent 60%)" }}
             />
 
             <div className="relative z-10 px-8 py-20 md:px-16 md:py-32 lg:px-24 lg:py-40">
@@ -449,7 +449,7 @@ export default function AboutPage() {
               }}
             >
               {renderWords("Your website is your", "")}
-              <span data-word style={{ color: accentColor, WebkitTextStroke: "2px rgba(255,200,150,0.8)", WebkitTextFillColor: "transparent" }}>
+              <span data-word style={{ color: accentColor, WebkitTextStroke: "2px rgba(229,225,219,0.8)", WebkitTextFillColor: "transparent" }}>
                 hardest-working
               </span>{" "}
               {renderWords("employee.", "")}
@@ -655,7 +655,7 @@ export default function AboutPage() {
                 {values.map((value, i) => (
                   <ValueRow key={value.title} value={value} index={i} />
                 ))}
-                <div className="h-px" style={{ backgroundColor: "rgba(255, 200, 150, 0.25)" }} />
+                <div className="h-px" style={{ backgroundColor: "rgba(229, 225, 219, 0.25)" }} />
               </div>
             </div>
           </div>
@@ -683,7 +683,7 @@ export default function AboutPage() {
                 <div
                   data-timeline
                   className="absolute left-4 md:left-8 top-0 bottom-0 w-px"
-                  style={{ backgroundColor: "rgba(255, 200, 150, 0.2)", transformOrigin: "top", transform: "scaleY(0)" }}
+                  style={{ backgroundColor: "rgba(229, 225, 219, 0.2)", transformOrigin: "top", transform: "scaleY(0)" }}
                 />
 
                 <div className="space-y-0">
@@ -701,7 +701,7 @@ export default function AboutPage() {
                         className="absolute right-0 md:right-4 top-4 md:top-6 font-black pointer-events-none select-none"
                         style={{
                           fontSize: "clamp(5rem, 12vw, 10rem)",
-                          WebkitTextStroke: "1px rgba(255, 200, 150, 0.06)",
+                          WebkitTextStroke: "1px rgba(229, 225, 219, 0.06)",
                           WebkitTextFillColor: "transparent",
                           lineHeight: 1,
                         }}

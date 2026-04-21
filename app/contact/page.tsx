@@ -15,8 +15,8 @@ if (typeof window !== "undefined") {
 }
 
 // Warm cinematic color palette
-const accentColor = "rgba(255, 200, 150, 1)";
-const accentColorMuted = "rgba(255, 200, 150, 0.6)";
+const accentColor = "rgba(229, 225, 219, 1)";
+const accentColorMuted = "rgba(229, 225, 219, 0.6)";
 
 // Moving background orbs
 function MovingBackground() {

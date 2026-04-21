@@ -12,7 +12,7 @@ if (typeof window !== "undefined") {
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-const accentColor = "#c48a5a";
+const accentColor = "#78736c";
 
 // Mixed content items — mood board style
 const items: Array<

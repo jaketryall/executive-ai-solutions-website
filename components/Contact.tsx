@@ -13,9 +13,9 @@ if (typeof window !== "undefined") {
 }
 
 // Cinematic warm color palette
-const accentColor = "rgba(255, 200, 150, 1)";
-const accentColorMuted = "rgba(255, 200, 150, 0.6)";
-const accentColorFaint = "rgba(255, 200, 150, 0.15)";
+const accentColor = "rgba(229, 225, 219, 1)";
+const accentColorMuted = "rgba(229, 225, 219, 0.6)";
+const accentColorFaint = "rgba(229, 225, 219, 0.15)";
 
 
 // Magnetic button component
@@ -263,7 +263,7 @@ export function MobileContact() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-0">
             {/* Name */}
-            <div className="mobile-form-field py-5" style={{ borderBottom: `1px solid ${focusedField === "name" ? "rgba(255,200,150,0.3)" : "rgba(255,255,255,0.06)"}`, transition: "border-color 0.3s" }}>
+            <div className="mobile-form-field py-5" style={{ borderBottom: `1px solid ${focusedField === "name" ? "rgba(229,225,219,0.3)" : "rgba(255,255,255,0.06)"}`, transition: "border-color 0.3s" }}>
               <label className="text-[9px] uppercase tracking-[0.25em] block mb-3" style={{ color: focusedField === "name" ? accentColor : "rgba(255,255,255,0.25)" }}>
                 01 — Name
               </label>
@@ -280,7 +280,7 @@ export function MobileContact() {
             </div>
 
             {/* Email */}
-            <div className="mobile-form-field py-5" style={{ borderBottom: `1px solid ${focusedField === "email" ? "rgba(255,200,150,0.3)" : "rgba(255,255,255,0.06)"}`, transition: "border-color 0.3s" }}>
+            <div className="mobile-form-field py-5" style={{ borderBottom: `1px solid ${focusedField === "email" ? "rgba(229,225,219,0.3)" : "rgba(255,255,255,0.06)"}`, transition: "border-color 0.3s" }}>
               <label className="text-[9px] uppercase tracking-[0.25em] block mb-3" style={{ color: focusedField === "email" ? accentColor : "rgba(255,255,255,0.25)" }}>
                 02 — Email
               </label>
@@ -297,7 +297,7 @@ export function MobileContact() {
             </div>
 
             {/* Message */}
-            <div className="mobile-form-field py-5" style={{ borderBottom: `1px solid ${focusedField === "message" ? "rgba(255,200,150,0.3)" : "rgba(255,255,255,0.06)"}`, transition: "border-color 0.3s" }}>
+            <div className="mobile-form-field py-5" style={{ borderBottom: `1px solid ${focusedField === "message" ? "rgba(229,225,219,0.3)" : "rgba(255,255,255,0.06)"}`, transition: "border-color 0.3s" }}>
               <label className="text-[9px] uppercase tracking-[0.25em] block mb-3" style={{ color: focusedField === "message" ? accentColor : "rgba(255,255,255,0.25)" }}>
                 03 — Project Details
               </label>
@@ -659,9 +659,9 @@ function DesktopContact() {
             from 0deg,
             transparent 0deg,
             transparent 340deg,
-            rgba(255, 200, 150, 0.5) 350deg,
-            rgba(255, 200, 150, 0.8) 355deg,
-            rgba(255, 200, 150, 0.5) 360deg
+            rgba(229, 225, 219, 0.5) 350deg,
+            rgba(229, 225, 219, 0.8) 355deg,
+            rgba(229, 225, 219, 0.5) 360deg
           );
           animation: rotate-glow 3s linear infinite;
           z-index: 0;
@@ -676,7 +676,7 @@ function DesktopContact() {
           border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .glow-border-btn:hover::after {
-          border-color: rgba(255, 200, 150, 0.2);
+          border-color: rgba(229, 225, 219, 0.2);
         }
       `}</style>
 
@@ -893,9 +893,9 @@ function DesktopContact() {
               <div
                 className="w-8 h-8 rounded-lg flex items-center justify-center"
                 style={{
-                  background: "rgba(255,200,150,0.15)",
+                  background: "rgba(229,225,219,0.15)",
                   backdropFilter: "blur(12px)",
-                  border: "1px solid rgba(255,200,150,0.2)",
+                  border: "1px solid rgba(229,225,219,0.2)",
                 }}
               >
                 <span className="text-xs font-black" style={{ color: accentColor }}>E</span>
@@ -942,9 +942,9 @@ function DesktopContact() {
                         <div
                           className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold"
                           style={{
-                            background: "rgba(255,200,150,0.2)",
+                            background: "rgba(229,225,219,0.2)",
                             color: accentColor,
-                            border: "1px solid rgba(255,200,150,0.3)",
+                            border: "1px solid rgba(229,225,219,0.3)",
                             backdropFilter: "blur(8px)",
                           }}
                         >

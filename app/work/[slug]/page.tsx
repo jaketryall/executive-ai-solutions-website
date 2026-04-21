@@ -18,8 +18,8 @@ if (typeof window !== "undefined") {
 }
 
 // Warm cinematic color palette
-const accentColor = "rgba(255, 200, 150, 1)";
-const accentColorMuted = "rgba(255, 200, 150, 0.6)";
+const accentColor = "rgba(229, 225, 219, 1)";
+const accentColorMuted = "rgba(229, 225, 219, 0.6)";
 
 // Animated counter that counts up
 function AnimatedCounter({ value, delay = 0 }: { value: string; delay?: number }) {
@@ -432,7 +432,7 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
               />
               <div
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                style={{ background: `linear-gradient(to top, rgba(255, 200, 150, 0.15), transparent)` }}
+                style={{ background: `linear-gradient(to top, rgba(229, 225, 219, 0.15), transparent)` }}
               />
               <div className="absolute bottom-6 left-6">
                 <span className="text-6xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>01</span>
@@ -444,14 +444,14 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
               className="gallery-item shrink-0 hidden md:flex w-full md:w-[70vw] h-[60vh] md:h-[70vh] rounded-xl overflow-hidden relative items-center justify-center p-8"
               style={{
                 border: `1px solid ${accentColorMuted}`,
-                background: "radial-gradient(ellipse at center, rgba(255, 200, 150, 0.05) 0%, transparent 70%)",
+                background: "radial-gradient(ellipse at center, rgba(229, 225, 219, 0.05) 0%, transparent 70%)",
               }}
             >
               <LaptopFrame url={liveUrl} title={title} />
               <div className="absolute bottom-6 left-6">
                 <span className="text-6xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>02</span>
               </div>
-              <div className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: "rgba(255, 200, 150, 0.1)", border: `1px solid ${accentColorMuted}` }}>
+              <div className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: "rgba(229, 225, 219, 0.1)", border: `1px solid ${accentColorMuted}` }}>
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                 <span className="text-xs text-white/70">Live Site</span>
               </div>
@@ -462,14 +462,14 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
               className="gallery-item shrink-0 flex w-full md:w-[50vw] h-[70vh] md:h-[70vh] rounded-xl overflow-hidden relative items-center justify-center p-4 md:p-8"
               style={{
                 border: `1px solid ${accentColorMuted}`,
-                background: "radial-gradient(ellipse at center, rgba(255, 200, 150, 0.05) 0%, transparent 70%)",
+                background: "radial-gradient(ellipse at center, rgba(229, 225, 219, 0.05) 0%, transparent 70%)",
               }}
             >
               <PhoneFrame url={liveUrl} title={title} />
               <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6">
                 <span className="text-4xl md:text-6xl font-black" style={{ color: "rgba(255,255,255,0.1)" }}>03</span>
               </div>
-              <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full" style={{ background: "rgba(255, 200, 150, 0.1)", border: `1px solid ${accentColorMuted}` }}>
+              <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full" style={{ background: "rgba(229, 225, 219, 0.1)", border: `1px solid ${accentColorMuted}` }}>
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                 <span className="text-[10px] md:text-xs text-white/70">Mobile View</span>
               </div>
@@ -480,7 +480,7 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
               className="gallery-item shrink-0 w-full md:w-[40vw] h-[50vh] md:h-[70vh] rounded-xl overflow-hidden relative flex flex-col items-center justify-center p-8 md:p-12"
               style={{
                 border: `1px solid ${accentColorMuted}`,
-                background: "radial-gradient(ellipse at center, rgba(255, 200, 150, 0.08) 0%, transparent 70%)",
+                background: "radial-gradient(ellipse at center, rgba(229, 225, 219, 0.08) 0%, transparent 70%)",
               }}
             >
               <p
@@ -537,7 +537,7 @@ function HorizontalGallery({ images, title, liveUrl }: { images: string[]; title
               {/* Subtle warm overlay on hover */}
               <div
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                style={{ background: `linear-gradient(to top, rgba(255, 200, 150, 0.15), transparent)` }}
+                style={{ background: `linear-gradient(to top, rgba(229, 225, 219, 0.15), transparent)` }}
               />
               {/* Number overlay */}
               <div className="absolute bottom-6 left-6">
@@ -718,7 +718,7 @@ function ResultsSection({ result, metrics }: { result: string; metrics: { label:
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(ellipse 80% 60% at 50% 50%, rgba(255, 200, 150, 0.08) 0%, transparent 60%)`,
+          background: `radial-gradient(ellipse 80% 60% at 50% 50%, rgba(229, 225, 219, 0.08) 0%, transparent 60%)`,
         }}
       />
 
@@ -837,15 +837,15 @@ function TestimonialSection({ quote, author, role }: { quote: string; author: st
       ref={containerRef}
       className="py-32 md:py-48 px-6 md:px-12 lg:px-20"
       style={{
-        borderTop: `1px solid rgba(255, 200, 150, 0.2)`,
-        borderBottom: `1px solid rgba(255, 200, 150, 0.2)`,
+        borderTop: `1px solid rgba(229, 225, 219, 0.2)`,
+        borderBottom: `1px solid rgba(229, 225, 219, 0.2)`,
       }}
     >
       <div className="max-w-5xl mx-auto text-center relative">
         {/* Large quote mark */}
         <div
           className="quote-mark absolute -top-8 left-1/2 -translate-x-1/2 text-[200px] md:text-[300px] font-serif leading-none pointer-events-none select-none"
-          style={{ color: "rgba(255, 200, 150, 0.08)" }}
+          style={{ color: "rgba(229, 225, 219, 0.08)" }}
         >
           "
         </div>
@@ -932,7 +932,7 @@ function NextProjectSection({ project }: { project: ReturnType<typeof getNextPro
                 style={{
                   color: accentColor,
                   border: `1px solid ${accentColorMuted}`,
-                  background: isHovered ? "rgba(255, 200, 150, 0.1)" : "transparent",
+                  background: isHovered ? "rgba(229, 225, 219, 0.1)" : "transparent",
                 }}
                 animate={{ x: isHovered ? 10 : 0 }}
                 transition={{ duration: 0.3 }}
@@ -1250,7 +1250,7 @@ export default function CaseStudyPage({
           className="relative z-10 -mt-12 md:-mt-24 rounded-t-3xl md:rounded-t-[3rem] overflow-hidden backdrop-blur-xl"
           style={{
             backgroundColor: "rgba(10, 9, 8, 0.85)",
-            borderTop: "1px solid rgba(255, 200, 150, 0.15)",
+            borderTop: "1px solid rgba(229, 225, 219, 0.15)",
             boxShadow: "0 -20px 80px rgba(0, 0, 0, 0.5)",
           }}
         >
@@ -1260,7 +1260,7 @@ export default function CaseStudyPage({
             <div
               className="absolute w-[600px] h-[600px] rounded-full"
               style={{
-                background: `radial-gradient(circle, rgba(255, 200, 150, 0.12) 0%, transparent 70%)`,
+                background: `radial-gradient(circle, rgba(229, 225, 219, 0.12) 0%, transparent 70%)`,
                 top: "-10%",
                 right: "-10%",
                 filter: "blur(60px)",
@@ -1280,7 +1280,7 @@ export default function CaseStudyPage({
             <div
               className="absolute w-[400px] h-[400px] rounded-full"
               style={{
-                background: `radial-gradient(circle, rgba(255, 200, 150, 0.08) 0%, transparent 70%)`,
+                background: `radial-gradient(circle, rgba(229, 225, 219, 0.08) 0%, transparent 70%)`,
                 top: "40%",
                 left: "50%",
                 transform: "translateX(-50%)",
@@ -1293,7 +1293,7 @@ export default function CaseStudyPage({
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: "linear-gradient(to bottom, rgba(255, 200, 150, 0.03) 0%, transparent 20%)",
+              background: "linear-gradient(to bottom, rgba(229, 225, 219, 0.03) 0%, transparent 20%)",
             }}
           />
 

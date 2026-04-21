@@ -18,8 +18,8 @@ if (typeof window !== "undefined") {
 }
 
 // Warm cinematic color palette
-const accentColor = "rgba(255, 200, 150, 1)";
-const accentColorMuted = "rgba(255, 200, 150, 0.6)";
+const accentColor = "rgba(229, 225, 219, 1)";
+const accentColorMuted = "rgba(229, 225, 219, 0.6)";
 
 // Animated border component - accent border by default, glow on hover
 function AnimatedBorder({ isHovered }: { isHovered: boolean }) {
@@ -40,7 +40,7 @@ function AnimatedBorder({ isHovered }: { isHovered: boolean }) {
         transition={{ duration: 0.3 }}
         style={{
           border: `1px solid ${accentColor}`,
-          boxShadow: `0 0 20px ${accentColorMuted}, 0 0 40px rgba(255, 200, 150, 0.2)`,
+          boxShadow: `0 0 20px ${accentColorMuted}, 0 0 40px rgba(229, 225, 219, 0.2)`,
         }}
       />
     </>

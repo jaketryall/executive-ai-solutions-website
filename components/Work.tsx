@@ -14,7 +14,7 @@ if (typeof window !== "undefined") {
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-const accentColor = "#c48a5a";
+const accentColor = "#78736c";
 const textDark = "#1a1714";
 
 const projects = [
@@ -131,7 +131,7 @@ function FanCard({
           borderRadius: 20,
           border: "1px solid rgba(255,255,255,0.08)",
           boxShadow: hovered
-            ? `0 30px 80px rgba(0,0,0,0.4), 0 0 30px rgba(196, 138, 90, 0.1)`
+            ? `0 30px 80px rgba(0,0,0,0.4), 0 0 30px rgba(120, 115, 108, 0.1)`
             : "0 15px 50px rgba(0,0,0,0.3)",
           transform: hovered ? "scale(1.08)" : "scale(1)",
           transition: "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease",

@@ -97,7 +97,7 @@ export default function ScrollMarquee() {
               aria-hidden="true"
               style={{
                 paddingRight: "0.5em",
-                color: "rgba(255, 200, 150, 0.7)",
+                color: "rgba(229, 225, 219, 0.7)",
                 fontSize: "0.55em",
                 transform: "translateY(-0.18em)",
               }}

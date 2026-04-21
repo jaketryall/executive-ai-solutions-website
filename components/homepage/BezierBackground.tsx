@@ -92,7 +92,7 @@ export default function BezierBackground() {
           height: "clamp(350px, 40vw, 700px)",
           bottom: "-5%",
           right: "10%",
-          background: "radial-gradient(ellipse at 60% 50%, rgba(255, 200, 150, 0.04) 0%, rgba(255, 170, 110, 0.01) 50%, transparent 70%)",
+          background: "radial-gradient(ellipse at 60% 50%, rgba(229, 225, 219, 0.04) 0%, rgba(229, 225, 219, 0.01) 50%, transparent 70%)",
           borderRadius: "45% 55% 60% 40% / 50% 45% 55% 50%",
           filter: "blur(45px)",
         }}

@@ -8,7 +8,7 @@ import { useSound } from "./SoundManager";
 import { TransitionLink } from "./PageTransition";
 
 // Warm cinematic color palette
-const accentColor = "rgba(255, 200, 150, 1)";
+const accentColor = "rgba(229, 225, 219, 1)";
 
 // Staggered text hover component - letters animate up on hover
 function StaggeredText({ text, isHovered }: { text: string; isHovered: boolean }) {
@@ -288,7 +288,7 @@ function ServicesDropdown({
                       className="relative px-4 py-3 rounded-xl overflow-hidden"
                       initial={false}
                       animate={{
-                        backgroundColor: hoveredIndex === index ? "rgba(255, 200, 150, 0.1)" : "rgba(255, 200, 150, 0)",
+                        backgroundColor: hoveredIndex === index ? "rgba(229, 225, 219, 0.1)" : "rgba(229, 225, 219, 0)",
                       }}
                       transition={{ duration: 0.2 }}
                     >
