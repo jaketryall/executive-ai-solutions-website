@@ -289,6 +289,40 @@ function DesktopWork() {
           </div>
         ))}
       </div>
+
+      {/* View all work — pill link below the fan */}
+      <div
+        className="flex justify-center relative"
+        style={{ marginTop: "clamp(3rem, 6vh, 5rem)", zIndex: 30 }}
+      >
+        <TransitionLink
+          href="/work"
+          className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full transition-all duration-300 text-[#1a1816] hover:bg-[#1a1816] hover:border-[#1a1816] hover:text-[#f3f1ee]"
+          style={{
+            fontFamily: "var(--font-inter), sans-serif",
+            fontSize: "0.82rem",
+            fontWeight: 600,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            border: "1.5px solid rgba(26,24,22,0.25)",
+            backgroundColor: "transparent",
+          }}
+        >
+          <span>View all work</span>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="transition-transform duration-300 group-hover:translate-x-1"
+          >
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </TransitionLink>
+      </div>
     </section>
   );
 }

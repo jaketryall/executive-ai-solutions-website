@@ -596,6 +596,82 @@ function HeroCorrectionText() {
 
 // No separate MobileHero — DesktopHero is now responsive for all screen sizes
 
+// Continuous horizontal scroll of client names — "trusted by" strip below the hero CTA
+function ClientLogosMarquee() {
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  useIsomorphicLayoutEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const ctx = gsap.context(() => {
+      gsap.to(track, {
+        xPercent: -50,
+        duration: 28,
+        ease: "none",
+        repeat: -1,
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
+  const clients = [
+    "Desert Wings",
+    "Riled Up",
+    "Wings N Wheels",
+    "Adventure Air",
+    "Overdue",
+  ];
+
+  return (
+    <div
+      className="overflow-hidden w-full"
+      style={{
+        // Fade only the left edge — marquee reads like it's continuously arriving
+        // from the left side of the hero, not looped into a tight box.
+        maskImage:
+          "linear-gradient(to right, transparent, black 10%, black 100%)",
+        WebkitMaskImage:
+          "linear-gradient(to right, transparent, black 10%, black 100%)",
+      }}
+    >
+      <div
+        ref={trackRef}
+        className="flex whitespace-nowrap"
+        style={{ willChange: "transform" }}
+      >
+        {[...clients, ...clients].map((name, i) => (
+          <span
+            key={i}
+            className="flex items-center"
+            style={{
+              fontFamily: "var(--font-inter), sans-serif",
+              fontSize: "0.82rem",
+              fontWeight: 600,
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              color: "rgba(26,24,22,0.42)",
+              flexShrink: 0,
+              paddingRight: "3rem",
+            }}
+          >
+            {name}
+            <span
+              aria-hidden="true"
+              style={{
+                marginLeft: "3rem",
+                width: "4px",
+                height: "4px",
+                borderRadius: "50%",
+                backgroundColor: "rgba(26,24,22,0.25)",
+              }}
+            />
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // Desktop Hero — shrinks on scroll
 function DesktopHero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -629,8 +705,8 @@ function DesktopHero() {
       const shrinkTl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          start: "18% top",
-          end: "45% top",
+          start: "15% top",
+          end: "65% top",
           scrub: 0.3,
         },
       });
@@ -813,11 +889,99 @@ function DesktopHero() {
                   </svg>
                 </TransitionLink>
               </motion.div>
+
             </div>
           </div>
 
-          {/* Video box — sticky, stays pinned while content scrolls */}
-          <div style={{ height: "200vh" }}>
+          {/* Trust bar — avatar stack + rating on the left, client logo marquee
+              on the right. Constrained narrower than the hero title. */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 3.3, ease: [0.22, 1, 0.36, 1] }}
+            className="flex items-center gap-8 mx-auto"
+            style={{
+              maxWidth: 900,
+              width: "calc(100% - 3rem)",
+              marginTop: "clamp(4rem, 8vh, 7rem)",
+              paddingTop: "clamp(0.5rem, 1vh, 1rem)",
+              paddingBottom: "clamp(1rem, 2vh, 1.5rem)",
+              position: "relative",
+              zIndex: 3,
+            }}
+          >
+            {/* Left: avatar stack + rating + tagline */}
+            <div className="flex items-center gap-3.5 shrink-0">
+              <div className="flex -space-x-2.5">
+                {[
+                  "#c48a5a",
+                  "#1a1816",
+                  "#8a7a6a",
+                  "#3d2f22",
+                ].map((color, i) => (
+                  <div
+                    key={i}
+                    className="rounded-full border-2"
+                    style={{
+                      width: 34,
+                      height: 34,
+                      backgroundColor: color,
+                      borderColor: "#f3f1ee",
+                      zIndex: 4 - i,
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="flex flex-col" style={{ gap: "0.15rem" }}>
+                <div
+                  className="flex items-center"
+                  style={{ gap: "0.4rem" }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "var(--font-inter), sans-serif",
+                      fontSize: "0.95rem",
+                      fontWeight: 700,
+                      color: "#1a1816",
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    5.0
+                  </span>
+                  <span
+                    style={{
+                      color: "#c48a5a",
+                      fontSize: "0.75rem",
+                      letterSpacing: "0.15em",
+                      lineHeight: 1,
+                    }}
+                  >
+                    ★★★★★
+                  </span>
+                </div>
+                <span
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "0.78rem",
+                    fontWeight: 500,
+                    color: "rgba(26,24,22,0.6)",
+                    letterSpacing: "0.01em",
+                  }}
+                >
+                  Trusted by small businesses
+                </span>
+              </div>
+            </div>
+
+            {/* Right: client logos marquee */}
+            <div className="flex-1 min-w-0">
+              <ClientLogosMarquee />
+            </div>
+          </motion.div>
+
+          {/* Video box — sticky, stays pinned while content scrolls. Height tuned
+              so pin releases shortly after the shrink + fan animations finish. */}
+          <div style={{ height: "130vh" }}>
             <motion.div
               ref={videoBoxRef}
               className="sticky top-[22vh] mx-auto px-6 md:px-12 lg:px-20"
@@ -909,6 +1073,46 @@ function DesktopHero() {
               <HeroFanCards hoveredIndex={hoveredFanIndex} setHoveredIndex={setHoveredFanIndex} videoCardIndex={-1} />
             </motion.div>
 
+          </div>
+
+          {/* View all work — pill link below the fan. Sits in natural flow after
+              the sticky 130vh container releases, so it never fights with the
+              pinned fan cards' z-index stacking. */}
+          <div
+            className="flex justify-center relative"
+            style={{
+              marginTop: "clamp(2rem, 4vh, 4rem)",
+              paddingBottom: "clamp(4rem, 8vh, 7rem)",
+              zIndex: 30,
+            }}
+          >
+            <TransitionLink
+              href="/work"
+              className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full transition-all duration-300 text-[#1a1816] hover:bg-[#1a1816] hover:border-[#1a1816] hover:text-[#f3f1ee]"
+              style={{
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "0.82rem",
+                fontWeight: 600,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                border: "1.5px solid rgba(26,24,22,0.25)",
+                backgroundColor: "transparent",
+              }}
+            >
+              <span>View all work</span>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </TransitionLink>
           </div>
 
         </div>
