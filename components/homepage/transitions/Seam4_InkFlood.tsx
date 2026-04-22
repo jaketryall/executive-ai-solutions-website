@@ -96,12 +96,21 @@ export default function Seam4InkFlood() {
         end: "top 30%",
         scrub: 0.5,
         onUpdate: (self) => {
+          const p = self.progress;
           // Card's top edge rises from 100% (below viewport) to 0% (full coverage).
-          const cardTop = 100 - self.progress * 100;
+          const cardTop = 100 - p * 100;
           // Tab sits TAB_HEIGHT_PCT above the card's top edge at all times.
           const tabTop = cardTop - TAB_HEIGHT_PCT;
           cardEl.style.top = `${cardTop}%`;
           tabEl.style.top = `${tabTop}%`;
+          // Dissolve the ink at the end of the scrub — once the card fully
+          // floods the viewport, fade it out so Contact's content (sitting
+          // underneath at a lower z-index) becomes visible. Without this
+          // fade the ink stays pinned at opacity 1 and permanently obscures
+          // the form once the user scrolls past the trigger's end.
+          const alpha = p < 0.9 ? 1 : Math.max(0, 1 - (p - 0.9) / 0.1);
+          cardEl.style.opacity = `${alpha}`;
+          tabEl.style.opacity = `${alpha}`;
         },
       });
 
