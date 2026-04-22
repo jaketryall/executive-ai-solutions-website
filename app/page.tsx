@@ -10,8 +10,8 @@ const Manifesto = dynamic(() => import("@/components/homepage/Manifesto"), {
 const Work = dynamic(() => import("@/components/Work"), {
   loading: () => <div className="min-h-screen" />,
 });
-const ScrollMarquee = dynamic(() => import("@/components/homepage/ScrollMarquee"), {
-  loading: () => <div className="h-[30vh]" />,
+const Capabilities = dynamic(() => import("@/components/homepage/Capabilities"), {
+  loading: () => <div className="min-h-screen" />,
 });
 const Testimonials = dynamic(() => import("@/components/homepage/Testimonials"), {
   loading: () => <div className="min-h-[60vh]" />,
@@ -30,9 +30,9 @@ export default function Home() {
       <main className="relative" style={{ zIndex: 10 }}>
         <Hero />
         <Work />
-        <Testimonials />
-        <ScrollMarquee />
+        <Capabilities />
         <Manifesto />
+        <Testimonials />
         <Contact />
       </main>
       <Footer />
