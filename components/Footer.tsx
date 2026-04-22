@@ -1,329 +1,200 @@
 "use client";
 
-import { useRef, useEffect, useLayoutEffect } from "react";
-import { TransitionLink } from "./PageTransition";
-import { motion } from "framer-motion";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useState } from "react";
+import { TransitionLink } from "@/components/PageTransition";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
-const darkText = "#1a1816";
-const creamBg = "#e5e1db";
-
-const navGroups: {
-  heading: string;
-  links: { label: string; href: string; external?: boolean }[];
-}[] = [
-  {
-    heading: "Studio",
-    links: [
-      { label: "Work", href: "/work" },
-      { label: "About", href: "/about" },
-      { label: "Services", href: "/services/website-design" },
-      { label: "Contact", href: "/contact" },
-    ],
-  },
-  {
-    heading: "Elsewhere",
-    links: [
-      { label: "LinkedIn", href: "https://www.linkedin.com/in/jake-ryall", external: true },
-      { label: "Dribbble", href: "https://dribbble.com/jake-ryall", external: true },
-      { label: "GitHub", href: "https://github.com/jaketryall", external: true },
-      { label: "Instagram", href: "https://instagram.com/exec.ai.solutions", external: true },
-    ],
-  },
-  {
-    heading: "Contact",
-    links: [
-      { label: "jaker@executiveaisolutions.com", href: "mailto:jaker@executiveaisolutions.com", external: true },
-      { label: "Rocklin, CA · PT", href: "#", external: false },
-    ],
-  },
+const SITEMAP = [
+  { label: "Home", href: "/" },
+  { label: "Work", href: "/work" },
+  { label: "About", href: "/about" },
+  { label: "Services", href: "/services/website-design" },
+  { label: "Contact", href: "/contact" },
 ];
 
+const SOCIALS = [
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/jake-ryall" },
+  { label: "Dribbble", href: "https://dribbble.com/jake-ryall" },
+  { label: "GitHub", href: "https://github.com/jaketryall" },
+  { label: "Instagram", href: "https://instagram.com/exec.ai.solutions" },
+  { label: "Email", href: "mailto:jaker@executiveaisolutions.com" },
+];
+
+// Humanizing tidbits — Jake updates these manually as projects ship.
+const STATUS =
+  "Last shipped: Apr 2026 · Currently building: Internal CMS for a Phoenix studio";
+
 export default function Footer() {
-  const footerRef = useRef<HTMLElement>(null);
-  const currentYear = new Date().getFullYear();
-
-  const useIsomorphicLayoutEffect =
-    typeof window !== "undefined" ? useLayoutEffect : useEffect;
-
-  useIsomorphicLayoutEffect(() => {
-    if (!footerRef.current) return;
-
-    const ctx = gsap.context(() => {
-      const footer = footerRef.current!;
-
-      // Liquid curve — kept from before, subtle organic transition from the
-      // dark Contact section above.
-      const curvePath = footer.querySelector(".footer-curve-path");
-      if (curvePath) {
-        gsap.fromTo(
-          curvePath,
-          { attr: { d: "M0,0 Q500,0 1000,0 L1000,100 L0,100 Z" } },
-          {
-            attr: { d: "M0,0 Q500,80 1000,0 L1000,100 L0,100 Z" },
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: footer,
-              start: "top 100%",
-              end: "top 55%",
-              scrub: 0.8,
-            },
-          }
-        );
-      }
-
-      // Apple-style restrained reveal — just a subtle rise-in, no stagger drama.
-      const revealTargets = footer.querySelectorAll(".footer-reveal");
-      if (revealTargets.length) {
-        gsap.fromTo(
-          revealTargets,
-          { y: 24, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            ease: "power2.out",
-            duration: 0.9,
-            stagger: 0.06,
-            scrollTrigger: {
-              trigger: footer,
-              start: "top 85%",
-              once: true,
-            },
-          }
-        );
-      }
-    });
-
-    return () => ctx.revert();
-  }, []);
+  const [markHovered, setMarkHovered] = useState(false);
 
   return (
     <footer
-      ref={footerRef}
-      id="site-footer"
-      className="relative mt-[-80px] md:mt-[-120px] pt-[80px] md:pt-[120px]"
-      style={{ backgroundColor: "transparent", zIndex: 10 }}
-      data-footer
+      className="px-6 pt-20 pb-8"
+      style={{ backgroundColor: "#0a0908", color: "#e5e1db" }}
     >
-      {/* Cream bg — offset down so the curve area sits over the dark section */}
-      <div
-        className="absolute inset-0 top-[79px] md:top-[119px]"
-        style={{ backgroundColor: creamBg }}
-      />
-
-      {/* Liquid curve — subtle organic transition */}
-      <div
-        className="absolute left-0 right-0 top-0 h-[80px] md:h-[120px] pointer-events-none"
-        style={{ zIndex: 10 }}
-      >
-        <svg
-          viewBox="0 0 1000 100"
-          preserveAspectRatio="none"
-          className="w-full h-full block"
-        >
-          <path
-            className="footer-curve-path"
-            d="M0,0 Q500,0 1000,0 L1000,100 L0,100 Z"
-            fill={creamBg}
-          />
-        </svg>
-      </div>
-
-      {/* ===== CTA BLOCK — Apple-style big clean hero ===== */}
-      <div className="relative z-10 px-6 md:px-12 lg:px-20 pt-24 md:pt-36 pb-20 md:pb-28">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="max-w-[880px]">
+      <div className="max-w-[1280px] mx-auto">
+        {/* 3-col grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
+          {/* Col 1 — mark + name */}
+          <div>
+            <button
+              type="button"
+              onMouseEnter={() => setMarkHovered(true)}
+              onMouseLeave={() => setMarkHovered(false)}
+              className="inline-flex items-center gap-3"
+              style={{
+                background: "transparent",
+                border: 0,
+                padding: 0,
+                cursor: "pointer",
+              }}
+              aria-label="Jake Ryall mark"
+            >
+              <div
+                className="rounded-lg flex items-center justify-center font-black transition-colors duration-300"
+                style={{
+                  width: 40,
+                  height: 40,
+                  backgroundColor: markHovered
+                    ? "#78736c"
+                    : "rgba(229,225,219,0.1)",
+                  color: markHovered ? "#0a0908" : "#e5e1db",
+                  fontFamily: "var(--font-inter)",
+                  fontSize: "0.95rem",
+                  letterSpacing: "-0.04em",
+                  transition:
+                    "background-color 0.3s ease, color 0.3s ease",
+                }}
+              >
+                JR
+              </div>
+              <span
+                className="text-sm font-semibold tracking-tight"
+                style={{ color: "#e5e1db" }}
+              >
+                Jake Ryall
+              </span>
+            </button>
             <p
-              className="footer-reveal"
-              style={{
-                fontFamily: "var(--font-inter), sans-serif",
-                fontSize: "clamp(0.82rem, 0.95vw, 0.95rem)",
-                fontWeight: 500,
-                color: "rgba(26,24,22,0.45)",
-                marginBottom: "clamp(1.5rem, 3vh, 2rem)",
-                letterSpacing: "-0.005em",
-              }}
+              className="text-xs mt-4"
+              style={{ color: "rgba(229,225,219,0.4)" }}
             >
-              Have a project in mind?
+              Designer &amp; Developer · Rocklin, CA
             </p>
-            <h2
-              className="footer-reveal"
-              style={{
-                fontFamily: "var(--font-inter), sans-serif",
-                fontSize: "clamp(2.75rem, 7vw, 6rem)",
-                fontWeight: 700,
-                letterSpacing: "-0.04em",
-                lineHeight: 1.02,
-                color: darkText,
-                marginBottom: "clamp(2rem, 4vh, 3rem)",
-              }}
-            >
-              Let&apos;s build something
-              <br />
-              <span style={{ color: "rgba(26,24,22,0.45)" }}>people actually use.</span>
-            </h2>
+          </div>
 
-            <div className="footer-reveal flex flex-wrap items-center gap-4">
-              <a
-                href="mailto:jaker@executiveaisolutions.com"
-                className="group inline-flex items-center gap-2.5 rounded-full transition-colors duration-300"
-                style={{
-                  fontFamily: "var(--font-inter), sans-serif",
-                  fontSize: "clamp(0.92rem, 1vw, 1rem)",
-                  fontWeight: 500,
-                  letterSpacing: "-0.005em",
-                  padding: "0.9rem 1.75rem",
-                  backgroundColor: darkText,
-                  color: "#f3f1ee",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#2a2620";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = darkText;
-                }}
-              >
-                <span>Start a project</span>
-                <motion.span
-                  className="inline-block"
-                  animate={{ x: [0, 2, 0] }}
-                  transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                  style={{ fontSize: "1.05em", lineHeight: 1 }}
-                >
-                  →
-                </motion.span>
-              </a>
-              <TransitionLink
-                href="/work"
-                className="group inline-flex items-center gap-2 rounded-full transition-colors duration-300 hover:bg-[rgba(26,24,22,0.06)]"
-                style={{
-                  fontFamily: "var(--font-inter), sans-serif",
-                  fontSize: "clamp(0.92rem, 1vw, 1rem)",
-                  fontWeight: 500,
-                  letterSpacing: "-0.005em",
-                  padding: "0.9rem 1.5rem",
-                  color: darkText,
-                }}
-              >
-                <span>See the work</span>
-                <span
-                  className="inline-block transition-transform duration-300 group-hover:translate-x-1"
-                  style={{ fontSize: "1em" }}
-                >
-                  ›
-                </span>
-              </TransitionLink>
-            </div>
+          {/* Col 2 — Sitemap */}
+          <div>
+            <p
+              className="text-[11px] uppercase tracking-[0.28em] mb-4"
+              style={{ color: "rgba(229,225,219,0.4)" }}
+            >
+              Sitemap
+            </p>
+            <ul className="space-y-2">
+              {SITEMAP.map((l) => (
+                <li key={l.href}>
+                  <TransitionLink
+                    href={l.href}
+                    className="group inline-flex items-center gap-1 text-sm"
+                    style={{ color: "rgba(229,225,219,0.75)" }}
+                  >
+                    <span className="relative">
+                      {l.label}
+                      <span className="absolute left-0 -bottom-0.5 h-px bg-current w-0 group-hover:w-full transition-all duration-300" />
+                    </span>
+                  </TransitionLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Col 3 — Socials */}
+          <div>
+            <p
+              className="text-[11px] uppercase tracking-[0.28em] mb-4"
+              style={{ color: "rgba(229,225,219,0.4)" }}
+            >
+              Socials
+            </p>
+            <ul className="space-y-2">
+              {SOCIALS.map((s) => (
+                <li key={s.href}>
+                  <a
+                    href={s.href}
+                    target={s.href.startsWith("http") ? "_blank" : undefined}
+                    rel={
+                      s.href.startsWith("http")
+                        ? "noopener noreferrer"
+                        : undefined
+                    }
+                    className="group inline-flex items-center gap-1 text-sm"
+                    style={{ color: "rgba(229,225,219,0.75)" }}
+                  >
+                    <span className="relative">
+                      {s.label}
+                      <span className="absolute left-0 -bottom-0.5 h-px bg-current w-0 group-hover:w-full transition-all duration-300" />
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
-      </div>
 
-      {/* ===== NAV GRID — clean 3-col, Apple-spec hairlines ===== */}
-      <div
-        className="relative z-10 px-6 md:px-12 lg:px-20 py-12 md:py-16"
-        style={{
-          borderTop: "1px solid rgba(26,24,22,0.1)",
-          borderBottom: "1px solid rgba(26,24,22,0.1)",
-        }}
-      >
-        <div className="max-w-[1400px] mx-auto grid grid-cols-2 md:grid-cols-3 gap-10 md:gap-16">
-          {navGroups.map((group) => (
-            <div key={group.heading} className="footer-reveal">
-              <p
-                style={{
-                  fontFamily: "var(--font-inter), sans-serif",
-                  fontSize: "0.72rem",
-                  fontWeight: 600,
-                  color: "rgba(26,24,22,0.45)",
-                  letterSpacing: "-0.005em",
-                  marginBottom: "1rem",
-                }}
-              >
-                {group.heading}
-              </p>
-              <ul className="flex flex-col gap-3">
-                {group.links.map((link) =>
-                  link.external ? (
-                    <li key={link.label}>
-                      <a
-                        href={link.href}
-                        {...(link.href.startsWith("http")
-                          ? { target: "_blank", rel: "noopener noreferrer" }
-                          : {})}
-                        className="group inline-block transition-colors duration-300"
-                        style={{
-                          fontFamily: "var(--font-inter), sans-serif",
-                          fontSize: "clamp(0.92rem, 1vw, 1rem)",
-                          fontWeight: 500,
-                          color: darkText,
-                          letterSpacing: "-0.005em",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.color = "rgba(26,24,22,0.55)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.color = darkText;
-                        }}
-                      >
-                        {link.label}
-                      </a>
-                    </li>
-                  ) : (
-                    <li key={link.label}>
-                      <TransitionLink
-                        href={link.href}
-                        className="group inline-block text-[#1a1816] transition-colors duration-300 hover:text-[rgba(26,24,22,0.55)]"
-                        style={{
-                          fontFamily: "var(--font-inter), sans-serif",
-                          fontSize: "clamp(0.92rem, 1vw, 1rem)",
-                          fontWeight: 500,
-                          letterSpacing: "-0.005em",
-                        }}
-                      >
-                        {link.label}
-                      </TransitionLink>
-                    </li>
-                  )
-                )}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ===== COPYRIGHT STRIP — minimal, Apple-scale type ===== */}
-      <div className="relative z-10 px-6 md:px-12 lg:px-20 py-6 md:py-8">
+        {/* Marquee strip */}
         <div
-          className="max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3"
+          className="overflow-hidden"
           style={{
-            fontFamily: "var(--font-inter), sans-serif",
-            fontSize: "0.78rem",
-            fontWeight: 500,
-            color: "rgba(26,24,22,0.5)",
-            letterSpacing: "-0.005em",
+            borderTop: "1px solid rgba(229,225,219,0.08)",
+            borderBottom: "1px solid rgba(229,225,219,0.08)",
           }}
         >
-          <span>Copyright © {currentYear} Executive AI Solutions. All rights reserved.</span>
-          <span className="flex items-center gap-2">
-            <motion.span
-              className="inline-block rounded-full"
-              style={{
-                width: 6,
-                height: 6,
-                backgroundColor: "rgba(16,185,129,0.85)",
-              }}
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            />
-            Available for Q2 · 2026
-          </span>
+          <div
+            className="flex whitespace-nowrap py-3"
+            style={{
+              animation: "footer-marquee 60s linear infinite",
+              width: "max-content",
+            }}
+          >
+            {Array.from({ length: 8 }).map((_, i) => (
+              <span
+                key={i}
+                className="px-6 text-xs uppercase tracking-[0.28em]"
+                style={{ color: "rgba(229,225,219,0.4)" }}
+              >
+                Jake Ryall · Available Q3 2026 · Rocklin, CA ·
+              </span>
+            ))}
+          </div>
         </div>
+
+        {/* Humanizing row */}
+        <p
+          className="text-xs mt-6"
+          style={{ color: "rgba(229,225,219,0.4)" }}
+        >
+          {STATUS}
+        </p>
+
+        {/* Copyright */}
+        <p
+          className="text-[11px] mt-2"
+          style={{ color: "rgba(229,225,219,0.25)" }}
+        >
+          © {new Date().getFullYear()} Executive AI Solutions · Built in Next.js
+        </p>
       </div>
+
+      <style jsx>{`
+        @keyframes footer-marquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+      `}</style>
     </footer>
   );
 }
