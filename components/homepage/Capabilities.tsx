@@ -99,15 +99,22 @@ function SectionHeader() {
           Vol. II · Capabilities
         </p>
       </div>
+      {/* Seam 1 mutates this rule (scaleX 0 → 1) via GSAP before
+          Capabilities finishes hydrating, so suppress the mismatch
+          warning for external DOM writes. Same pattern as Seam 4. */}
       <div
         data-seam-rule
+        suppressHydrationWarning
         className="h-px w-full mb-10 origin-center scale-x-0"
         style={{ background: "rgba(26,24,22,0.12)" }}
       />
 
-      {/* Title with serif italic accent on one word */}
+      {/* Seam 1's SplitText wraps this h2's chars in spans before
+          Capabilities' subtree finishes hydrating. suppressHydrationWarning
+          is React's escape hatch for externally-mutated elements. */}
       <h2
         data-seam-title
+        suppressHydrationWarning
         aria-label="Three things I ship for clients."
         className="cap-title font-black tracking-tight"
         style={{
