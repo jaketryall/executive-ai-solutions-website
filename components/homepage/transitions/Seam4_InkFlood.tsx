@@ -83,6 +83,25 @@ export default function Seam4InkFlood() {
           tabEl.style.top = `${tabTop}%`;
         },
       });
+
+      // Beat 1 — Proof card compression (early in the seam range).
+      // Cards scaleY 1 → 0.6 and skewX 0 → -4 as the ink tab and card
+      // begin rising. Reads as "ink pressing the cards down."
+      const proofCards = exitEl.querySelectorAll<HTMLElement>("[data-proof-card]");
+      if (proofCards.length > 0) {
+        gsap.to(proofCards, {
+          scaleY: 0.6,
+          skewX: -4,
+          transformOrigin: "center bottom",
+          ease: "power2.inOut",
+          scrollTrigger: {
+            trigger: exitEl,
+            start: "bottom 80%",
+            end: "bottom 50%",
+            scrub: 0.5,
+          },
+        });
+      }
     });
 
     return () => ctx.revert();
