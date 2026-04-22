@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Source_Serif_4 } from "next/font/google";
+import { Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
 import { SoundProvider } from "@/components/SoundManager";
 import { PageTransitionProvider } from "@/components/PageTransition";
+import ScrollProgress from "@/components/ui/ScrollProgress";
 import "./globals.css";
 
 const inter = Inter({
@@ -13,95 +14,52 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const sourceSerif = Source_Serif_4({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-serif",
-  style: ["normal", "italic"],
-});
-
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
-  themeColor: "#0a0a0f",
+  themeColor: "#f3f1ee",
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://executiveaisolutions.com"),
-  title: "Jake Ryall — Web Designer & Developer",
+  metadataBase: new URL("https://jakeryall.com"),
+  title: "Jake Ryall — Motion-forward design engineer",
   description:
-    "I design and build high-converting websites for ambitious brands. Custom web design, development, and SEO in Arizona.",
+    "I design and ship interfaces that move — the kind of work most agencies can't pull off. Selected projects, experiments, and case studies.",
   keywords:
-    "Jake Ryall, web designer, web developer, Arizona, freelance, portfolio, website design, web development, UI/UX design, SEO",
+    "Jake Ryall, design engineer, motion design, UI engineering, interaction design, GSAP, Framer Motion, Next.js, portfolio",
   authors: [{ name: "Jake Ryall" }],
   openGraph: {
-    title: "Jake Ryall — Web Designer & Developer",
-    description:
-      "I design and build high-converting websites for ambitious brands. Custom web design, development, and SEO in Arizona.",
-    url: "https://executiveaisolutions.com",
+    title: "Jake Ryall — Motion-forward design engineer",
+    description: "I design and ship interfaces that move.",
+    url: "https://jakeryall.com",
     siteName: "Jake Ryall",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Jake Ryall — Web Designer & Developer",
-    description:
-      "I design and build high-converting websites for ambitious brands. Custom web design, development, and SEO in Arizona.",
+    title: "Jake Ryall — Motion-forward design engineer",
+    description: "I design and ship interfaces that move.",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="bg-[#0a0908]">
+    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        {/* Preload hero video poster for instant display */}
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preload" href="/video-poster.webp" as="image" type="image/webp" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "ProfessionalService",
-              name: "Jake Ryall",
-              jobTitle: "Web Designer & Developer",
-              url: "https://executiveaisolutions.com",
-              description:
-                "I design and build high-converting websites for ambitious brands. Custom web design, development, and SEO in Arizona.",
-              address: {
-                "@type": "PostalAddress",
-                addressRegion: "AZ",
-                addressCountry: "US",
-              },
-              sameAs: [
-                "https://www.linkedin.com/in/jake-ryall",
-                "https://github.com/jaketryall",
-                "https://instagram.com/exec.ai.solutions",
-                "https://dribbble.com/jake-ryall",
-              ],
-            }),
-          }}
-        />
       </head>
-      <body className={`${inter.variable} ${sourceSerif.variable} font-sans bg-[#0a0908]`}>
+      <body className={`${inter.variable} font-sans`}>
         <SoundProvider>
           <PageTransitionProvider>
+            <ScrollProgress />
             <CustomCursor />
             <SmoothScroll>{children}</SmoothScroll>
           </PageTransitionProvider>

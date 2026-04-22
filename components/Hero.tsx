@@ -301,7 +301,7 @@ function HeroCorrectionText() {
   const strikeLineRef = useRef<SVGLineElement>(null);
   const convertingRef = useRef<HTMLSpanElement>(null);
 
-  const fullSentence = "I build beautiful websites.";
+  const fullSentence = "I design static interfaces.";
 
   // Skip on return visit
   useEffect(() => {
@@ -393,7 +393,7 @@ function HeroCorrectionText() {
 
   return (
     <h1
-      aria-label="I build converting websites."
+      aria-label="I design living interfaces."
       style={{
         fontFamily: "var(--font-inter), sans-serif",
         fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
@@ -417,13 +417,13 @@ function HeroCorrectionText() {
           )}
         </>
       ) : phase === "done" ? (
-        <>I build converting websites.</>
+        <>I design living interfaces.</>
       ) : (
         <>
-          <span>I build </span>
+          <span>I design </span>
           <span style={{ position: "relative", display: "inline-block" }}>
             <span ref={beautifulRef} style={{ display: "inline-block", color: "#1a1816" }}>
-              beautiful
+              static
             </span>
             {/* Strike line — DrawSVG animates it left→right */}
             <svg
@@ -466,10 +466,10 @@ function HeroCorrectionText() {
                 whiteSpace: "nowrap",
               }}
             >
-              converting
+              living
             </span>
           </span>
-          <span> websites.</span>
+          <span> interfaces.</span>
         </>
       )}
     </h1>
@@ -804,22 +804,7 @@ function DesktopHero() {
                 />
               </svg>
             </TransitionLink>
-            <div className="flex items-center gap-3">
-              <StaggerButton
-                href="/contact"
-                text="Get in Touch"
-                className="hidden md:inline-flex px-5 py-2 rounded-full text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1a1816] border border-[rgba(26,24,22,0.15)] transition-all duration-300 hover:bg-[#1a1816] hover:text-[#f3f1ee] hover:border-[#1a1816]"
-              />
-              <button
-                className="w-9 h-9 rounded-full border border-[rgba(26,24,22,0.15)] flex items-center justify-center transition-all duration-300 hover:bg-[#1a1816] hover:border-[#1a1816] group"
-                onClick={() => setMenuOpen(true)}
-              >
-                <div className="flex flex-col gap-[4px]">
-                  <span className="w-3.5 h-[1.5px] bg-[#1a1816] group-hover:bg-[#f3f1ee] transition-colors" />
-                  <span className="w-3.5 h-[1.5px] bg-[#1a1816] group-hover:bg-[#f3f1ee] transition-colors" />
-                </div>
-              </button>
-            </div>
+            {/* Corner ghost CTA removed — global nav handles "Start a project". */}
           </motion.div>
 
           {/* === "Live Studio" corners: masthead TL, availability TR ===
@@ -851,7 +836,7 @@ function DesktopHero() {
                   color: "rgba(26,24,22,0.7)",
                 }}
               >
-                Executive AI Solutions
+                Jake Ryall — Design Engineer
               </span>
               <div
                 className="transition-all duration-500 ease-out group-hover:w-20 group-hover:bg-[rgba(26,24,22,0.4)]"
@@ -879,57 +864,7 @@ function DesktopHero() {
             </TransitionLink>
           </motion.div>
 
-          {/* Availability badge is a click target → /contact. Hover darkens the
-              border + reveals a tiny wayfinder chevron to make "click me" obvious. */}
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute z-20 hidden lg:block"
-            style={{
-              top: "clamp(12vh, 14vh, 16vh)",
-              right: "clamp(1.25rem, 3vw, 3rem)",
-            }}
-          >
-            <TransitionLink
-              href="/contact"
-              className="group flex items-center transition-all duration-300 hover:border-[rgba(26,24,22,0.3)] hover:bg-[rgba(243,241,238,0.85)]"
-              style={{
-                gap: "0.55rem",
-                padding: "0.45rem 0.95rem",
-                border: "1px solid rgba(26,24,22,0.12)",
-                borderRadius: 100,
-                backgroundColor: "rgba(243,241,238,0.5)",
-                backdropFilter: "blur(6px)",
-              }}
-            >
-              <motion.span
-                className="rounded-full"
-                style={{ width: 6, height: 6, backgroundColor: "rgba(16,185,129,0.9)" }}
-                animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <span
-                className="transition-colors duration-300 group-hover:text-[#1a1816]"
-                style={{
-                  fontFamily: "var(--font-inter), sans-serif",
-                  fontSize: "0.66rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
-                  color: "rgba(26,24,22,0.75)",
-                }}
-              >
-                Available Q2 · 2 slots
-              </span>
-              <span
-                className="opacity-0 -translate-x-1 group-hover:opacity-70 group-hover:translate-x-0 transition-all duration-300"
-                style={{ fontSize: "0.7rem", color: "#1a1816", lineHeight: 1 }}
-              >
-                →
-              </span>
-            </TransitionLink>
-          </motion.div>
+          {/* Availability chip removed — global nav owns it to avoid duplicate status. */}
 
           {/* === Main grid: headline left, currently-shipping + video right === */}
           <div
@@ -960,7 +895,7 @@ function DesktopHero() {
                   marginBottom: "1.5rem",
                 }}
               >
-                Jake Ryall · Design + Dev · Available Q3 2026
+                Jake Ryall · Design Engineer · Available Q3 2026
               </motion.p>
 
               {/* Step 1.2 — Strikethrough headline */}
@@ -982,7 +917,7 @@ function DesktopHero() {
                   lineHeight: 1.6,
                 }}
               >
-                I&apos;m Jake. I design websites that earn their keep.
+                I'm a motion-forward design engineer. Most of my time goes into the 400ms after a click — where trust gets built.
               </motion.p>
 
               {/* Step 1.4 — Dual CTA: primary dark + ghost secondary */}
@@ -1041,11 +976,8 @@ function DesktopHero() {
                 paddingLeft: "clamp(1rem, 2vw, 2rem)",
               }}
             >
-              {/* Currently shipping card — cycles every 4s, pauses on hover so
-                  users can read + click. Active project is a TransitionLink to
-                  /work/[slug]. Progress segments under the title are clickable
-                  dots letting users jump between the 4 projects directly. */}
-              <motion.div
+              {/* Currently-shipping card removed — was duplicating FeaturedWork + nav chip. */}
+              {false && <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 3.3, ease: [0.22, 1, 0.36, 1] }}
@@ -1189,7 +1121,7 @@ function DesktopHero() {
                     />
                   ))}
                 </div>
-              </motion.div>
+              </motion.div>}
 
               {/* Video sticky container — same shrink/fan morph; now right-anchored.
                   Sticky + GSAP-animated layer is a plain div (ref=videoBoxRef) so
@@ -1318,7 +1250,7 @@ function DesktopHero() {
             </motion.div>
           </div>
 
-          <div
+          {false && <div
             className="hero-bottom-aside hidden lg:flex absolute z-20 flex-col items-end"
             style={{
               top: "calc(100vh - 7vh)",
@@ -1405,7 +1337,7 @@ function DesktopHero() {
                 </span>
               </div>
             </motion.div>
-          </div>
+          </div>}
 
           {/* View all work — pill link below the fan. Sits in natural flow after
               the sticky 130vh container releases, so it never fights with the
@@ -1503,7 +1435,6 @@ function DesktopHero() {
                   { href: "/", label: "HOME" },
                   { href: "/work", label: "WORK" },
                   { href: "/about", label: "ABOUT" },
-                  { href: "/services/website-design", label: "SERVICES" },
                   { href: "/contact", label: "CONTACT" },
                 ].map((link, i) => (
                   <SplashNavItem
@@ -1528,10 +1459,10 @@ function DesktopHero() {
                     Get in Touch
                   </p>
                   <a
-                    href="mailto:jaker@executiveaisolutions.com"
+                    href="mailto:jake@jakeryall.com"
                     className="text-lg font-medium text-white/60 hover:text-[#78736c] transition-colors mt-2 inline-block"
                   >
-                    jaker@executiveaisolutions.com
+                    jake@jakeryall.com
                   </a>
                 </motion.div>
 

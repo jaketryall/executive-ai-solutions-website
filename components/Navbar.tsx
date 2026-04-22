@@ -3,522 +3,263 @@
 import { useState } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { usePathname } from "next/navigation";
-import AnimatedLogo from "./AnimatedLogo";
-import { useSound } from "./SoundManager";
 import { TransitionLink } from "./PageTransition";
+import MagneticButton from "./ui/MagneticButton";
+import HoverText from "./ui/HoverText";
+import { ease } from "@/lib/motion";
 
-// Warm cinematic color palette
-const accentColor = "rgba(229, 225, 219, 1)";
+const NAV_LINKS = [
+  { href: "/work", label: "Work" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+];
 
-// Staggered text hover component - letters animate up on hover
-function StaggeredText({ text, isHovered }: { text: string; isHovered: boolean }) {
-  const letters = text.split("");
-
+function AvailabilityChip({ dark }: { dark: boolean }) {
   return (
-    <span className="relative inline-flex overflow-hidden">
-      {/* Hidden text for sizing */}
-      <span className="invisible">{text}</span>
-
-      {/* Primary text - moves up on hover */}
-      <span className="absolute inset-0 flex">
-        {letters.map((letter, i) => (
-          <motion.span
-            key={`primary-${i}`}
-            initial={{ y: 0 }}
-            animate={{ y: isHovered ? "-100%" : "0%" }}
-            transition={{
-              duration: 0.25,
-              delay: i * 0.02,
-              ease: [0.76, 0, 0.24, 1],
-            }}
-          >
-            {letter === " " ? "\u00A0" : letter}
-          </motion.span>
-        ))}
-      </span>
-
-      {/* Secondary text - comes up from below */}
-      <span className="absolute inset-0 flex">
-        {letters.map((letter, i) => (
-          <motion.span
-            key={`secondary-${i}`}
-            initial={{ y: "100%" }}
-            animate={{ y: isHovered ? "0%" : "100%" }}
-            transition={{
-              duration: 0.25,
-              delay: i * 0.02,
-              ease: [0.76, 0, 0.24, 1],
-            }}
-          >
-            {letter === " " ? "\u00A0" : letter}
-          </motion.span>
-        ))}
-      </span>
-    </span>
-  );
-}
-
-// CTA Button with staggered text
-function CTAButton({ darkText = false }: { darkText?: boolean }) {
-  const [isHovered, setIsHovered] = useState(false);
-  const { play } = useSound();
-
-  return (
-    <TransitionLink
-      href="/contact"
-      className={`group relative h-11 px-6 ml-1 overflow-hidden rounded-full inline-flex items-center justify-center gap-2 transition-colors duration-300 ${darkText ? "bg-[#1a1816]/10 hover:bg-[#1a1816]" : "bg-white/10 hover:bg-white"}`}
-      onMouseEnter={() => {
-        setIsHovered(true);
-        play("hover", { volume: 0.08 });
+    <div
+      className="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide press"
+      style={{
+        border: `1px solid ${dark ? "rgba(26,24,22,0.12)" : "rgba(229,225,219,0.16)"}`,
+        color: dark ? "rgba(26,24,22,0.75)" : "rgba(229,225,219,0.85)",
+        background: dark ? "rgba(255,255,255,0.35)" : "rgba(20,18,16,0.35)",
+        backdropFilter: "blur(12px)",
       }}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={() => play("click")}
     >
-      <span className={`relative z-10 text-sm uppercase tracking-[0.12em] font-semibold transition-colors duration-300 ${darkText ? "text-[#1a1816] group-hover:text-[#e5e1db]" : "text-white group-hover:text-black"}`}>
-        <StaggeredText text="Start Project" isHovered={isHovered} />
-      </span>
-      {/* Arrow with diagonal slide on hover */}
-      <span className="relative w-5 h-5 overflow-hidden">
-        <span className={`absolute inset-0 flex items-center justify-center transition-all duration-300 group-hover:translate-x-full group-hover:-translate-y-full text-sm ${darkText ? "text-[#1a1816]/60 group-hover:text-[#e5e1db]" : "text-white/60 group-hover:text-black"}`}>→</span>
-        <span className={`absolute inset-0 flex items-center justify-center -translate-x-full translate-y-full transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 text-sm ${darkText ? "text-[#1a1816]/60 group-hover:text-[#e5e1db]" : "text-white/60 group-hover:text-black"}`}>→</span>
-      </span>
-    </TransitionLink>
+      <span
+        className="pulse-dot w-1.5 h-1.5 rounded-full"
+        style={{ backgroundColor: "#19c37d", color: "#19c37d" }}
+      />
+      <span>Available · Q3 2026</span>
+    </div>
   );
 }
 
-// Splash menu item with staggered text hover
-function SplashMenuItem({
-  href,
-  label,
-  index,
-  isActive: active,
-  onNavigate,
-}: {
-  href: string;
-  label: string;
-  index: number;
-  isActive: boolean;
-  onNavigate: () => void;
-}) {
+function NavCTA({ dark, onClick }: { dark: boolean; onClick?: () => void }) {
   const [hovered, setHovered] = useState(false);
-
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 30 }}
-      transition={{ delay: 0.1 + index * 0.1 }}
+    <MagneticButton
+      as="link"
+      href="/contact"
+      onClick={onClick}
+      strength={12}
+      childStrength={5}
     >
-      <TransitionLink
-        href={href}
-        onClick={onNavigate}
+      <span
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="block text-5xl font-black py-4 transition-colors uppercase"
-        style={{ color: active ? accentColor : "#fff" }}
+        className="group relative inline-flex items-center gap-2 h-10 pl-5 pr-2 rounded-full press focus-ring"
+        style={{
+          background: dark ? "var(--ink)" : "var(--paper)",
+          color: dark ? "var(--paper)" : "var(--ink)",
+        }}
       >
-        <StaggeredText text={label} isHovered={hovered} />
-      </TransitionLink>
-    </motion.div>
+        <HoverText text="Start a project" trigger={hovered} className="text-[13px] font-medium tracking-tight" />
+        <span
+          className="relative w-7 h-7 rounded-full flex items-center justify-center overflow-hidden"
+          style={{
+            background: dark ? "var(--paper)" : "var(--ink)",
+            color: dark ? "var(--ink)" : "var(--paper)",
+          }}
+        >
+          <motion.span
+            animate={{ x: hovered ? 18 : 0, opacity: hovered ? 0 : 1 }}
+            transition={{ duration: 0.35, ease: ease.expoOut }}
+            className="absolute"
+          >
+            <Arrow />
+          </motion.span>
+          <motion.span
+            animate={{ x: hovered ? 0 : -18, opacity: hovered ? 1 : 0 }}
+            transition={{ duration: 0.35, ease: ease.expoOut }}
+            className="absolute"
+          >
+            <Arrow />
+          </motion.span>
+        </span>
+      </span>
+    </MagneticButton>
   );
 }
 
-// Nav link with staggered hover effect
+function Arrow() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 12h14M13 5l7 7-7 7" />
+    </svg>
+  );
+}
+
 function NavLink({
   href,
   label,
-  isActive,
-  onHover,
+  active,
+  dark,
   onClick,
-  darkText = false,
 }: {
   href: string;
   label: string;
-  isActive: boolean;
-  onHover: () => void;
-  onClick: () => void;
-  darkText?: boolean;
+  active: boolean;
+  dark: boolean;
+  onClick?: () => void;
 }) {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const textColor = isActive
-    ? accentColor
-    : darkText
-      ? (isHovered ? "#1a1816" : "rgba(26,24,22,0.6)")
-      : (isHovered ? "#fff" : "rgba(255,255,255,0.7)");
-
+  const [hovered, setHovered] = useState(false);
   return (
     <TransitionLink
       href={href}
-      className="relative px-5 py-3"
-      style={{ position: 'relative' }}
-      onMouseEnter={() => {
-        setIsHovered(true);
-        onHover();
-      }}
-      onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="relative px-3 py-2 text-[13px] tracking-tight"
+      style={{
+        color: active || hovered
+          ? dark ? "var(--ink)" : "var(--paper)"
+          : dark ? "rgba(26,24,22,0.6)" : "rgba(229,225,219,0.7)",
+        transition: "color 350ms var(--ease-expo-out)",
+      }}
     >
-      <span
-        className="text-sm font-medium uppercase tracking-[0.15em] transition-colors duration-300"
-        style={{ color: textColor }}
-      >
-        <StaggeredText text={label} isHovered={isHovered} />
-      </span>
-      {isActive && (
+      <HoverText text={label} trigger={hovered} />
+      {active && (
         <motion.span
-          className="absolute bottom-0 left-5 right-5 h-[2px]"
-          style={{ backgroundColor: accentColor }}
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
+          layoutId="nav-underline"
+          className="absolute left-3 right-3 -bottom-0.5 h-px"
+          style={{ backgroundColor: dark ? "var(--ink)" : "var(--paper)" }}
+          transition={{ duration: 0.45, ease: ease.expoOut }}
         />
       )}
     </TransitionLink>
   );
 }
 
-// Services dropdown with dynamic reveal
-function ServicesDropdown({
-  isActive,
-  onHover,
-  onClick,
-  darkText = false,
-}: {
-  isActive: boolean;
-  onHover: () => void;
-  onClick: () => void;
-  darkText?: boolean;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
-  const services = [
-    { href: "/services/website-design", label: "Website Design", description: "High-converting sites that grow your business" },
-    { href: "/services/seo", label: "SEO", description: "Get found by the people who matter" },
-    { href: "/services/custom-solutions", label: "Custom Solutions", description: "Tailored tools built for your workflow" },
-  ];
-
-  return (
-    <div
-      className="relative"
-      onMouseEnter={() => {
-        setIsOpen(true);
-        setIsHovered(true);
-        onHover();
-      }}
-      onMouseLeave={() => {
-        setIsOpen(false);
-        setIsHovered(false);
-        setHoveredIndex(null);
-      }}
-    >
-      {/* Trigger */}
-      <button className="relative px-5 py-3 flex items-center gap-1.5" style={{ position: 'relative' }}>
-        <span
-          className="text-sm font-medium uppercase tracking-[0.15em] transition-colors duration-300"
-          style={{ color: isActive ? accentColor : darkText ? (isHovered ? "#1a1816" : "rgba(26,24,22,0.6)") : (isHovered ? "#fff" : "rgba(255,255,255,0.7)") }}
-        >
-          <StaggeredText text="Services" isHovered={isHovered} />
-        </span>
-        <motion.svg
-          width="10"
-          height="10"
-          viewBox="0 0 10 10"
-          fill="none"
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.3, ease: [0.76, 0, 0.24, 1] }}
-          style={{ color: isActive ? accentColor : darkText ? (isHovered ? "#1a1816" : "rgba(26,24,22,0.5)") : (isHovered ? "#fff" : "rgba(255,255,255,0.5)") }}
-        >
-          <path d="M2 4L5 7L8 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </motion.svg>
-        {isActive && (
-          <motion.span
-            className="absolute bottom-0 left-5 right-5 h-[2px]"
-            style={{ backgroundColor: accentColor }}
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-          />
-        )}
-      </button>
-
-      {/* Dropdown */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: [0.76, 0, 0.24, 1] }}
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72"
-          >
-            {/* Glowing border effect */}
-            <div
-              className="absolute -inset-px rounded-2xl opacity-50"
-              style={{
-                background: `linear-gradient(135deg, ${accentColor}40, transparent, ${accentColor}20)`,
-              }}
-            />
-
-            <div className="relative bg-black/95 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
-              {/* Animated background gradient */}
-              <motion.div
-                className="absolute inset-0 opacity-30"
-                animate={{
-                  background: hoveredIndex !== null
-                    ? `radial-gradient(circle at ${50}% ${(hoveredIndex + 0.5) * 33}%, ${accentColor}20, transparent 70%)`
-                    : `radial-gradient(circle at 50% 50%, transparent, transparent)`,
-                }}
-                transition={{ duration: 0.3 }}
-              />
-
-              <div className="relative p-2">
-                {services.map((service, index) => (
-                  <TransitionLink
-                    key={service.href}
-                    href={service.href}
-                    onClick={onClick}
-                    onMouseEnter={() => setHoveredIndex(index)}
-                    onMouseLeave={() => setHoveredIndex(null)}
-                    className="group relative block"
-                  >
-                    <motion.div
-                      className="relative px-4 py-3 rounded-xl overflow-hidden"
-                      initial={false}
-                      animate={{
-                        backgroundColor: hoveredIndex === index ? "rgba(229, 225, 219, 0.1)" : "rgba(229, 225, 219, 0)",
-                      }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {/* Sliding highlight bar */}
-                      <motion.div
-                        className="absolute left-0 top-1/2 -translate-y-1/2 w-1 rounded-full"
-                        style={{ backgroundColor: accentColor }}
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{
-                          height: hoveredIndex === index ? 24 : 0,
-                          opacity: hoveredIndex === index ? 1 : 0,
-                        }}
-                        transition={{ duration: 0.2, ease: [0.76, 0, 0.24, 1] }}
-                      />
-
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <motion.p
-                            className="text-sm font-medium"
-                            animate={{
-                              color: hoveredIndex === index ? "#fff" : "rgba(255,255,255,0.8)",
-                              x: hoveredIndex === index ? 8 : 0,
-                            }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            {service.label}
-                          </motion.p>
-                          <motion.p
-                            className="text-xs mt-0.5"
-                            animate={{
-                              color: hoveredIndex === index ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.4)",
-                              x: hoveredIndex === index ? 8 : 0,
-                            }}
-                            transition={{ duration: 0.2, delay: 0.02 }}
-                          >
-                            {service.description}
-                          </motion.p>
-                        </div>
-
-                        {/* Arrow that slides in */}
-                        <motion.span
-                          className="text-sm"
-                          style={{ color: accentColor }}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{
-                            opacity: hoveredIndex === index ? 1 : 0,
-                            x: hoveredIndex === index ? 0 : -10,
-                          }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          →
-                        </motion.span>
-                      </div>
-                    </motion.div>
-                  </TransitionLink>
-                ))}
-              </div>
-
-              {/* Bottom accent line */}
-              <motion.div
-                className="h-px"
-                style={{
-                  background: `linear-gradient(90deg, transparent, ${accentColor}40, transparent)`,
-                }}
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
 export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
-  const { scrollY } = useScroll();
-  const { play } = useSound();
   const pathname = usePathname();
+  const { scrollY } = useScroll();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  // When lightHero is true and not scrolled, use dark text for cream backgrounds
-  const useDarkText = lightHero && !isScrolled;
+  useMotionValueEvent(scrollY, "change", (v) => setIsScrolled(v > 40));
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setIsScrolled(latest > 50);
-  });
-
-  // Navigation links - all dedicated pages now
-  const navLinks = [
-    { href: "/about", label: "About" },
-    { href: "/work", label: "Work" },
-    { href: "/contact", label: "Contact" },
-  ];
-
-  // Check if link is active
-  const isActive = (href: string) => {
-    if (href === "/") return pathname === "/";
-    return pathname.startsWith(href);
-  };
+  const darkSurface = lightHero && !isScrolled;
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
     <>
-      {/* Desktop Navbar - Transforms from wide to floating pill */}
       <motion.header
-        initial={{ y: -100, opacity: 0 }}
+        initial={{ y: -60, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="fixed top-0 left-0 right-0 z-50 hidden md:flex justify-center pt-8"
+        transition={{ duration: 0.7, delay: 0.1, ease: ease.expoOut }}
+        className="fixed top-0 left-0 right-0 z-50 hidden md:flex justify-center pt-5"
       >
         <motion.nav
-          className="flex items-center rounded-full"
           animate={{
-            backgroundColor: isScrolled ? "rgba(0, 0, 0, 0.85)" : "rgba(0, 0, 0, 0)",
-            backdropFilter: isScrolled ? "blur(20px)" : "blur(0px)",
-            paddingLeft: isScrolled ? "12px" : "48px",
-            paddingRight: isScrolled ? "12px" : "48px",
-            paddingTop: isScrolled ? "10px" : "20px",
-            paddingBottom: isScrolled ? "10px" : "20px",
-            gap: isScrolled ? "8px" : "40px",
+            background: isScrolled
+              ? (darkSurface ? "rgba(243,241,238,0.72)" : "rgba(20,18,16,0.72)")
+              : "rgba(0,0,0,0)",
+            borderColor: isScrolled
+              ? (darkSurface ? "rgba(26,24,22,0.08)" : "rgba(229,225,219,0.10)")
+              : "rgba(0,0,0,0)",
+            paddingInline: isScrolled ? "10px" : "18px",
           }}
-          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.5, ease: ease.expoOut }}
           style={{
-            border: isScrolled ? "1px solid rgba(255,255,255,0.1)" : "1px solid transparent",
+            backdropFilter: isScrolled ? "blur(16px) saturate(1.1)" : "none",
+            WebkitBackdropFilter: isScrolled ? "blur(16px) saturate(1.1)" : "none",
+            border: "1px solid transparent",
           }}
+          className="flex items-center gap-2 h-14 rounded-full"
         >
-          {/* Logo */}
-          <TransitionLink href="/" className="flex items-center gap-3 pl-2 pr-4">
-            <AnimatedLogo width={36} height={24} drawDuration={1} delay={0.5} />
+          <TransitionLink href="/" className="pl-3 pr-2 flex items-center gap-2 press group">
             <motion.span
-              className="font-bold text-sm uppercase tracking-[0.1em]"
-              animate={{ color: useDarkText ? "#1a1816" : "#ffffff" }}
-              transition={{ duration: 0.4 }}
+              whileHover={{ rotate: -15 }}
+              transition={{ type: "spring", stiffness: 300, damping: 14 }}
+              className="inline-flex items-center justify-center w-7 h-7 rounded-full text-[11px] font-semibold tracking-tight"
+              style={{
+                background: darkSurface ? "var(--ink)" : "var(--paper)",
+                color: darkSurface ? "var(--paper)" : "var(--ink)",
+              }}
             >
-              Executive AI
+              jr
             </motion.span>
+            <span
+              className="text-[13px] font-medium tracking-tight"
+              style={{ color: darkSurface ? "var(--ink)" : "var(--paper)" }}
+            >
+              Jake Ryall
+            </span>
           </TransitionLink>
 
-          {/* Divider - only visible when scrolled */}
-          <motion.div
-            className="w-px h-8 bg-white/10"
-            animate={{ opacity: isScrolled ? 1 : 0 }}
-            transition={{ duration: 0.3 }}
-          />
+          <span className="mx-1 h-5 w-px" style={{ backgroundColor: darkSurface ? "rgba(26,24,22,0.1)" : "rgba(229,225,219,0.12)" }} />
 
-          {/* Nav Links */}
           <div className="flex items-center">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.href}
-                href={link.href}
-                label={link.label}
-                isActive={isActive(link.href)}
-                onHover={() => play("hover")}
-                onClick={() => play("click")}
-                darkText={useDarkText}
-              />
+            {NAV_LINKS.map((l) => (
+              <NavLink key={l.href} href={l.href} label={l.label} active={isActive(l.href)} dark={darkSurface} />
             ))}
-            <ServicesDropdown
-              isActive={pathname.startsWith("/services")}
-              onHover={() => play("hover")}
-              onClick={() => play("click")}
-              darkText={useDarkText}
-            />
           </div>
 
-          {/* Divider - only visible when scrolled */}
-          <motion.div
-            className="w-px h-8 bg-white/10"
-            animate={{ opacity: isScrolled ? 1 : 0 }}
-            transition={{ duration: 0.3 }}
-          />
+          <span className="mx-1 h-5 w-px" style={{ backgroundColor: darkSurface ? "rgba(26,24,22,0.1)" : "rgba(229,225,219,0.12)" }} />
 
-          {/* CTA */}
-          <CTAButton darkText={useDarkText} />
+          <AvailabilityChip dark={darkSurface} />
+
+          <NavCTA dark={darkSurface} />
         </motion.nav>
       </motion.header>
 
-      {/* Mobile Navbar */}
+      {/* Mobile */}
       <motion.header
-        initial={{ y: -100 }}
+        initial={{ y: -60 }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.5 }}
         className="fixed top-0 left-0 right-0 z-50 md:hidden"
       >
-        <nav className="mx-4 mt-4 px-5 py-4 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl">
-          <div className="flex items-center justify-between">
-            {/* Logo - use SVG file directly for proper fill */}
-            <TransitionLink href="/" className="flex items-center">
-              <img
-                src="/Executive Ai Solutions Logo.svg"
-                alt="Executive AI"
-                className="w-9 h-9 object-contain"
-              />
-            </TransitionLink>
-
-            {/* Menu Button */}
-            <button
-              onClick={() => {
-                if (isOpen) {
-                  setMobileServicesOpen(false);
-                }
-                setIsOpen(!isOpen);
+        <nav
+          className="mx-3 mt-3 px-4 py-3 rounded-2xl flex items-center justify-between"
+          style={{
+            background: darkSurface ? "rgba(243,241,238,0.80)" : "rgba(20,18,16,0.80)",
+            border: `1px solid ${darkSurface ? "rgba(26,24,22,0.08)" : "rgba(229,225,219,0.10)"}`,
+            backdropFilter: "blur(16px) saturate(1.1)",
+            WebkitBackdropFilter: "blur(16px) saturate(1.1)",
+          }}
+        >
+          <TransitionLink href="/" className="flex items-center gap-2">
+            <span
+              className="inline-flex items-center justify-center w-7 h-7 rounded-full text-[11px] font-semibold"
+              style={{
+                background: darkSurface ? "var(--ink)" : "var(--paper)",
+                color: darkSurface ? "var(--paper)" : "var(--ink)",
               }}
-              className="p-2"
-              aria-label="Toggle menu"
             >
-              <div className="w-6 h-4 relative flex flex-col justify-between">
-                <motion.span
-                  animate={isOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
-                  className="w-full h-0.5 bg-white origin-center"
-                />
-                <motion.span
-                  animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
-                  className="w-full h-0.5 bg-white"
-                />
-                <motion.span
-                  animate={isOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
-                  className="w-full h-0.5 bg-white origin-center"
-                />
-              </div>
-            </button>
-          </div>
+              jr
+            </span>
+            <span
+              className="text-[13px] font-medium"
+              style={{ color: darkSurface ? "var(--ink)" : "var(--paper)" }}
+            >
+              Jake Ryall
+            </span>
+          </TransitionLink>
+
+          <button onClick={() => setIsOpen((v) => !v)} className="p-2 -mr-2" aria-label="Toggle menu">
+            <div className="w-6 h-4 relative flex flex-col justify-between">
+              <motion.span
+                animate={isOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
+                className="h-0.5 w-full rounded-full origin-center"
+                style={{ backgroundColor: darkSurface ? "var(--ink)" : "var(--paper)" }}
+              />
+              <motion.span
+                animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
+                className="h-0.5 w-full rounded-full"
+                style={{ backgroundColor: darkSurface ? "var(--ink)" : "var(--paper)" }}
+              />
+              <motion.span
+                animate={isOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
+                className="h-0.5 w-full rounded-full origin-center"
+                style={{ backgroundColor: darkSurface ? "var(--ink)" : "var(--paper)" }}
+              />
+            </div>
+          </button>
         </nav>
       </motion.header>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -526,117 +267,46 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-black z-40 md:hidden"
+            className="fixed inset-0 z-40 md:hidden"
+            style={{ background: "var(--ink)" }}
           >
-            <div className="flex flex-col justify-center items-center h-full">
-              {navLinks.map((link, index) => (
-                <SplashMenuItem
-                  key={link.href}
-                  href={link.href}
-                  label={link.label}
-                  index={index}
-                  isActive={isActive(link.href)}
-                  onNavigate={() => {
-                    play("click");
-                    setIsOpen(false);
-                  }}
-                />
-              ))}
-              {/* Services Section - Clickable Dropdown */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 30 }}
-                transition={{ delay: 0.4 }}
-                className="text-center"
-              >
-                <button
-                  onClick={() => {
-                    play("click");
-                    setMobileServicesOpen(!mobileServicesOpen);
-                  }}
-                  className="flex items-center gap-3 text-5xl font-black py-4 uppercase mx-auto"
-                  style={{ color: pathname.startsWith("/services") ? accentColor : "#fff" }}
+            <div className="flex flex-col justify-center h-full px-8 gap-2 text-paper">
+              {NAV_LINKS.map((l, i) => (
+                <motion.div
+                  key={l.href}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 + i * 0.06, ease: ease.expoOut, duration: 0.6 }}
                 >
-                  Services
-                  <motion.svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    animate={{ rotate: mobileServicesOpen ? 180 : 0 }}
-                    transition={{ duration: 0.3, ease: [0.76, 0, 0.24, 1] }}
-                    className="mt-1"
+                  <TransitionLink
+                    href={l.href}
+                    onClick={() => setIsOpen(false)}
+                    className="block text-5xl font-semibold tracking-tight py-2"
+                    style={{ color: isActive(l.href) ? "var(--paper)" : "rgba(229,225,219,0.55)" }}
                   >
-                    <path
-                      d="M6 9L12 15L18 9"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </motion.svg>
-                </button>
-                <AnimatePresence>
-                  {mobileServicesOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: [0.76, 0, 0.24, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <div className="flex flex-col gap-3 py-4">
-                        {[
-                          { href: "/services/website-design", label: "Website Design" },
-                          { href: "/services/seo", label: "SEO" },
-                          { href: "/services/custom-solutions", label: "Custom Solutions" },
-                        ].map((service, index) => (
-                          <motion.div
-                            key={service.href}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                          >
-                            <TransitionLink
-                              href={service.href}
-                              onClick={() => {
-                                play("click");
-                                setIsOpen(false);
-                                setMobileServicesOpen(false);
-                              }}
-                              className="text-xl font-medium transition-colors block"
-                              style={{
-                                color: pathname === service.href ? accentColor : "rgba(255,255,255,0.6)",
-                              }}
-                            >
-                              {service.label}
-                            </TransitionLink>
-                          </motion.div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    {l.label}
+                  </TransitionLink>
+                </motion.div>
+              ))}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, ease: ease.expoOut, duration: 0.6 }}
+                className="mt-6 flex items-center gap-3"
+              >
+                <span
+                  className="pulse-dot w-2 h-2 rounded-full"
+                  style={{ backgroundColor: "#19c37d", color: "#19c37d" }}
+                />
+                <span className="text-sm tracking-tight text-putty">Available · Q3 2026</span>
               </motion.div>
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 30 }}
-                transition={{ delay: 0.5 }}
-                className="mt-12"
+                transition={{ delay: 0.48, ease: ease.expoOut, duration: 0.6 }}
+                className="mt-8"
               >
-                <TransitionLink
-                  href="/contact"
-                  onClick={() => {
-                    play("click");
-                    setIsOpen(false);
-                  }}
-                  className="px-8 py-4 text-black font-bold text-sm uppercase tracking-[0.2em] rounded-full inline-block"
-                  style={{ backgroundColor: accentColor }}
-                >
-                  Start Project
-                </TransitionLink>
+                <NavCTA dark={false} onClick={() => setIsOpen(false)} />
               </motion.div>
             </div>
           </motion.div>
