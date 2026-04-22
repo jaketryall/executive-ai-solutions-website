@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef, useEffect, useLayoutEffect } from "react";
+import { gsap, ScrollTrigger } from "@/lib/gsap-setup";
+import { prefersReducedMotion } from "@/lib/microInteractions";
 import { generateInkPath } from "./_shared/inkPath";
 
 const useIsomorphicLayoutEffect =
@@ -9,18 +11,42 @@ const useIsomorphicLayoutEffect =
 /**
  * Seam 4 — Ink Flood.
  *
- * Sits between <Testimonials /> and <Contact /> in the homepage. Renders a
- * single fixed-position ink layer whose `clip-path` animates on scroll to
- * reveal a wavy dark tide rising over the cream page, carrying the user
- * from Testimonials into Contact.
+ * Scroll-driven transition between <Testimonials /> (cream) and <Contact />
+ * (dark). A wavy ink tide rises from the bottom of the viewport via an
+ * animated clip-path on a fixed-position layer.
  *
- * See design spec: docs/superpowers/specs/2026-04-21-gsap-section-transitions-design.md
+ * Anchors queried at mount:
+ *   [data-seam-exit="seam-4"]  — Testimonials section root
+ *   [data-seam-enter="seam-4"] — Contact desktop section root
+ *
+ * See design spec:
+ *   docs/superpowers/specs/2026-04-21-gsap-section-transitions-design.md
  */
 export default function Seam4InkFlood() {
   const inkRef = useRef<HTMLDivElement>(null);
 
   useIsomorphicLayoutEffect(() => {
-    // Intentionally empty — animation wiring lands in Task 5.
+    if (prefersReducedMotion()) return;
+
+    const exitEl = document.querySelector<HTMLElement>('[data-seam-exit="seam-4"]');
+    const enterEl = document.querySelector<HTMLElement>('[data-seam-enter="seam-4"]');
+    const inkEl = inkRef.current;
+    if (!exitEl || !enterEl || !inkEl) return;
+
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: exitEl,
+        start: "bottom 80%",
+        endTrigger: enterEl,
+        end: "top 30%",
+        scrub: 0.5,
+        onUpdate: (self) => {
+          inkEl.style.clipPath = generateInkPath(self.progress);
+        },
+      });
+    });
+
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -33,6 +59,7 @@ export default function Seam4InkFlood() {
         inset: 0,
         backgroundColor: "#0a0908",
         clipPath: generateInkPath(0),
+        willChange: "clip-path",
         zIndex: 15,
       }}
     />
