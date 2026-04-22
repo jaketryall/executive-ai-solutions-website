@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { gsap, ScrollTrigger } from "@/lib/gsap-setup";
+import { gsap, ScrollTrigger, SplitText } from "@/lib/gsap-setup";
 import { prefersReducedMotion } from "@/lib/microInteractions";
 
 // Desktop-only — mobile renders MobileWork, which has no fan.
@@ -62,6 +62,7 @@ export default function Seam1FanToKicker() {
     let rafId = 0;
     let frames = 0;
     let ctx: gsap.Context | null = null;
+    const splitsToRevert: InstanceType<typeof SplitText>[] = [];
 
     const tryStart = () => {
       if (cancelled) return;
@@ -124,6 +125,28 @@ export default function Seam1FanToKicker() {
             scrub: 0.5,
           },
         });
+
+        // Beat 4 — Headline SplitText mask reveal.
+        // "Three things I ship for clients." chars rise from below via
+        // yPercent 110 → 0 staggered. Triggered as the title enters
+        // the viewport, slightly after the rule finishes growing.
+        const title = document.querySelector<HTMLElement>("[data-seam-title]");
+        if (title) {
+          const split = SplitText.create(title, { type: "chars", mask: "chars" });
+          splitsToRevert.push(split);
+          gsap.set(split.chars, { yPercent: 110 });
+          gsap.to(split.chars, {
+            yPercent: 0,
+            stagger: 0.015,
+            ease: "appleOut",
+            scrollTrigger: {
+              trigger: enterEl,
+              start: "top 65%",
+              end: "top 35%",
+              scrub: 0.5,
+            },
+          });
+        }
       });
     };
 
@@ -132,6 +155,10 @@ export default function Seam1FanToKicker() {
     return () => {
       cancelled = true;
       if (rafId) cancelAnimationFrame(rafId);
+      // SplitText must revert before ctx.revert() kills the tweens —
+      // otherwise GSAP's inlined transforms linger on char spans about
+      // to be unwrapped. Same pattern as Seam 4.
+      splitsToRevert.forEach((s) => s.revert());
       ctx?.revert();
     };
   }, []);
