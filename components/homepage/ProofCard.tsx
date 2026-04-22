@@ -57,6 +57,7 @@ export default function ProofCard({ item, featured = false }: { item: ProofItem;
     >
       <motion.div
         ref={ref}
+        data-proof-card
         variants={cardHoverVariants}
         initial="rest"
         whileHover="hover"

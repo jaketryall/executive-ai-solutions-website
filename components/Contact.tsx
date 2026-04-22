@@ -300,7 +300,7 @@ function DesktopContact() {
   };
 
   return (
-    <section ref={sectionRef} id="contact-desktop" className="hidden md:block py-32 px-6" style={{ backgroundColor: "#0a0908", color: "#e5e1db" }}>
+    <section ref={sectionRef} id="contact-desktop" data-seam-enter="seam-4" className="hidden md:block py-32 px-6" style={{ backgroundColor: "#0a0908", color: "#e5e1db" }}>
       <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
         {/* LEFT — invitation + dual CTAs */}
         <div>

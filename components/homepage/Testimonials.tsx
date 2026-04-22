@@ -83,6 +83,7 @@ export default function Testimonials() {
     <section
       ref={sectionRef}
       id="testimonials"
+      data-seam-exit="seam-4"
       data-bg="cream"
       className="py-32 px-6"
       style={{ backgroundColor: "#f3f1ee" }}
