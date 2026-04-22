@@ -22,6 +22,12 @@ const Contact = dynamic(() => import("@/components/Contact"), {
 const Footer = dynamic(() => import("@/components/Footer"), {
   loading: () => <div className="h-[300px]" />,
 });
+const Seam4InkFlood = dynamic(
+  () => import("@/components/homepage/transitions/Seam4_InkFlood"),
+  {
+    loading: () => <div className="min-h-screen" />,
+  }
+);
 
 export default function Home() {
   return (
@@ -33,6 +39,7 @@ export default function Home() {
         <Capabilities />
         <Manifesto />
         <Testimonials />
+        <Seam4InkFlood />
         <Contact />
       </main>
       <Footer />
