@@ -35,9 +35,6 @@ const Seam3ManifestoToTestimonials = dynamic(
 const Seam4InkFlood = dynamic(
   () => import("@/components/homepage/transitions/Seam4_InkFlood"),
 );
-const Seam5ContactToFooter = dynamic(
-  () => import("@/components/homepage/transitions/Seam5_ContactToFooter"),
-);
 
 export default function Home() {
   return (
@@ -54,7 +51,6 @@ export default function Home() {
         <Testimonials />
         <Seam4InkFlood />
         <Contact />
-        <Seam5ContactToFooter />
       </main>
       <Footer />
     </TransitionProvider>

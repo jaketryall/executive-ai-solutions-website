@@ -94,6 +94,7 @@ export default function Testimonials() {
         <div className="mb-12">
           <p
             data-seam-proof-kicker
+            suppressHydrationWarning
             className="text-[11px] font-semibold uppercase tracking-[0.28em] mb-4"
             style={{ color: "#78736c" }}
           >

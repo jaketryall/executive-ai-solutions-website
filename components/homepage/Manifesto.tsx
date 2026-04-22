@@ -53,8 +53,8 @@ export default function Manifesto() {
       style={{ backgroundColor: "#f3f1ee" }}
     >
       <div className="max-w-[1100px] mx-auto">
-        {/* Kicker */}
-        <p data-seam-kicker className="text-[11px] font-semibold uppercase tracking-[0.28em] mb-8" style={{ color: "#78736c" }}>
+        {/* Kicker — Seam 2 fades this in */}
+        <p data-seam-kicker suppressHydrationWarning className="text-[11px] font-semibold uppercase tracking-[0.28em] mb-8" style={{ color: "#78736c" }}>
           The Manifesto
         </p>
         {/* Seam 2's horizontal rule — grows scaleX 0→1 as Capabilities
@@ -71,6 +71,8 @@ export default function Manifesto() {
         <div className="mb-12">
           <p
             className="m-lead font-medium tracking-tight"
+            suppressHydrationWarning
+            aria-label="I don't ship pretty."
             style={{
               fontFamily: "var(--font-inter)",
               fontSize: "clamp(2rem, 4.5vw, 3.5rem)",
@@ -82,6 +84,8 @@ export default function Manifesto() {
           </p>
           <h2
             className="m-punch font-black tracking-tight"
+            suppressHydrationWarning
+            aria-label="I ship results."
             style={{
               fontFamily: "var(--font-inter)",
               fontSize: "clamp(2.5rem, 6vw, 5rem)",
