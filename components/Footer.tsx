@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useLayoutEffect } from "react";
+import { useRef, useEffect, useLayoutEffect, useState } from "react";
 import { TransitionLink } from "./PageTransition";
 import { motion } from "framer-motion";
 import gsap from "gsap";
@@ -10,67 +10,89 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// Cinematic warm color palette
-const accentColor = "rgba(229, 225, 219, 1)";
-const accentColorMuted = "rgba(229, 225, 219, 0.6)";
+const darkText = "#1a1816";
+const creamBg = "#e5e1db";
 
 const SIGNATURE_PATH = "M60,160 C65,100 80,60 95,55 C115,48 110,100 108,130 C105,165 90,200 80,210 Q70,220 85,215 C110,205 135,160 155,155 C175,150 170,185 160,200 Q148,218 165,210 C185,200 195,175 210,165 Q230,152 225,180 C220,205 200,225 195,218 Q188,208 210,195 C225,186 250,175 270,200 Q275,208 265,208 C250,208 280,170 310,120 C325,95 340,75 350,70 Q365,64 358,90 C350,120 335,165 340,185 Q345,200 360,185 C375,168 385,145 400,155 Q408,160 400,178 C390,200 365,230 360,248 Q355,265 370,250 C390,228 410,195 430,188 Q445,182 442,200 C438,215 425,225 435,220 Q450,212 460,140 L462,210 Q465,130 475,128 L477,210 C485,205 520,188 560,182 Q600,176 620,190";
 
-// Social icons as simple SVG components
-function DribbbleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-      <path d="M12 24C5.385 24 0 18.615 0 12S5.385 0 12 0s12 5.385 12 12-5.385 12-12 12zm10.12-10.358c-.35-.11-3.17-.953-6.384-.438 1.34 3.684 1.887 6.684 1.992 7.308 2.3-1.555 3.936-4.02 4.395-6.87zm-6.115 7.808c-.153-.9-.75-4.032-2.19-7.77l-.066.02c-5.79 2.015-7.86 6.025-8.04 6.4 1.73 1.358 3.92 2.166 6.29 2.166 1.42 0 2.77-.29 4-.82zm-11.62-2.58c.232-.4 3.045-5.055 8.332-6.765.135-.045.27-.084.405-.12-.26-.585-.54-1.167-.832-1.74C7.17 11.775 2.206 11.71 1.756 11.7l-.004.312c0 2.633.998 5.037 2.634 6.855zm-2.42-8.955c.46.008 4.683.026 9.477-1.248-1.698-3.018-3.53-5.558-3.8-5.928-2.868 1.35-5.01 3.99-5.676 7.17zM9.6 2.052c.282.38 2.145 2.914 3.822 6 3.645-1.365 5.19-3.44 5.373-3.702-1.81-1.61-4.19-2.586-6.795-2.586-.825 0-1.63.1-2.4.285zm10.335 3.483c-.218.29-1.935 2.493-5.724 4.04.24.49.47.985.68 1.486.08.18.15.36.22.53 3.41-.43 6.8.26 7.14.33-.02-2.42-.88-4.64-2.31-6.38z" />
-    </svg>
-  );
-}
-
-function LinkedInIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-    </svg>
-  );
-}
-
-function GitHubIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-    </svg>
-  );
-}
-
-function InstagramIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
-    </svg>
-  );
-}
-
 const socialLinks = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/jake-ryall", icon: LinkedInIcon },
-  { label: "Dribbble", href: "https://dribbble.com/jake-ryall", icon: DribbbleIcon },
-  { label: "Instagram", href: "https://instagram.com/exec.ai.solutions", icon: InstagramIcon },
-  { label: "GitHub", href: "https://github.com/jaketryall", icon: GitHubIcon },
+  { label: "LINKEDIN", href: "https://www.linkedin.com/in/jake-ryall" },
+  { label: "DRIBBBLE", href: "https://dribbble.com/jake-ryall" },
+  { label: "INSTAGRAM", href: "https://instagram.com/exec.ai.solutions" },
+  { label: "GITHUB", href: "https://github.com/jaketryall" },
 ];
 
+function formatLocalTime(date: Date): string {
+  return date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "America/Los_Angeles",
+  });
+}
+
+function formatLocalDate(date: Date): string {
+  return date
+    .toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+      timeZone: "America/Los_Angeles",
+    })
+    .toUpperCase();
+}
+
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
   const footerRef = useRef<HTMLElement>(null);
+  const emailRef = useRef<HTMLAnchorElement>(null);
+  const currentYear = new Date().getFullYear();
 
   const useIsomorphicLayoutEffect =
     typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-  // GSAP scroll-triggered animations
+  // Live studio clock — ticks every second, formatted in the studio's own TZ.
+  // Purely atmospheric: reinforces the "one person at a desk" feel.
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => {
+    setNow(new Date());
+    const id = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  // Cursor-follow radial gradient on the email. We set CSS vars on the anchor
+  // directly (no React state) so the gradient follows the cursor at 60fps
+  // without re-rendering the tree.
+  useEffect(() => {
+    const el = emailRef.current;
+    if (!el) return;
+    const onMove = (e: MouseEvent) => {
+      const rect = el.getBoundingClientRect();
+      el.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+      el.style.setProperty("--my", `${e.clientY - rect.top}px`);
+    };
+    const onLeave = () => {
+      // Park the "spotlight" off-canvas so the text settles into its faded
+      // resting color instead of freezing where the cursor last was.
+      el.style.setProperty("--mx", `-9999px`);
+      el.style.setProperty("--my", `-9999px`);
+    };
+    el.addEventListener("mousemove", onMove);
+    el.addEventListener("mouseleave", onLeave);
+    onLeave();
+    return () => {
+      el.removeEventListener("mousemove", onMove);
+      el.removeEventListener("mouseleave", onLeave);
+    };
+  }, []);
+
   useIsomorphicLayoutEffect(() => {
     if (!footerRef.current) return;
 
     const ctx = gsap.context(() => {
       const footer = footerRef.current!;
 
-      // Liquid curve drops on scroll
+      // Liquid curve drops as the footer scrolls in — organic transition from
+      // the dark Contact section above to the cream footer below.
       const curvePath = footer.querySelector(".footer-curve-path");
       if (curvePath) {
         gsap.fromTo(
@@ -89,24 +111,43 @@ export default function Footer() {
         );
       }
 
-      // Elements slide up
+      // Stagger-rise reveal for the meta strip + CTA + socials + nav.
       const elements = footer.querySelectorAll(".footer-reveal");
       if (elements.length) {
-        gsap.set(elements, { y: 25 });
+        gsap.set(elements, { y: 30, opacity: 0 });
         gsap.to(elements, {
           y: 0,
+          opacity: 1,
           ease: "power3.out",
-          stagger: 0.06,
+          stagger: 0.05,
           scrollTrigger: {
             trigger: footer,
-            start: "top 75%",
-            end: "top 30%",
+            start: "top 80%",
+            end: "top 35%",
             scrub: 0.5,
           },
         });
       }
 
-      // Mobile signature draws on scroll
+      // Email — each line rises into a mask. Scrub-linked so it unfolds with
+      // the scroll rather than popping.
+      const emailLines = footer.querySelectorAll(".footer-email-line");
+      if (emailLines.length) {
+        gsap.set(emailLines, { yPercent: 110 });
+        gsap.to(emailLines, {
+          yPercent: 0,
+          ease: "power3.out",
+          stagger: 0.08,
+          scrollTrigger: {
+            trigger: footer,
+            start: "top 75%",
+            end: "top 35%",
+            scrub: 0.6,
+          },
+        });
+      }
+
+      // Mobile signature draws on scroll (kept from previous design).
       const sig = footer.querySelector(".footer-signature-path") as SVGPathElement | null;
       if (sig) {
         const length = sig.getTotalLength();
@@ -122,184 +163,375 @@ export default function Footer() {
           },
         });
       }
-
-      // Email underline draws in
-      const underline = footer.querySelector(".footer-underline");
-      if (underline) {
-        gsap.fromTo(
-          underline,
-          { scaleX: 0, transformOrigin: "left" },
-          {
-            scaleX: 1,
-            ease: "power2.inOut",
-            scrollTrigger: {
-              trigger: footer,
-              start: "top 55%",
-              end: "top 15%",
-              scrub: 0.5,
-            },
-          }
-        );
-      }
     });
 
     return () => ctx.revert();
   }, []);
 
-  const creamBg = "#e5e1db";
-  const darkText = "#1a1816";
-
   return (
-      <footer
-        ref={footerRef}
-        id="site-footer"
-        className="relative mt-[-80px] md:mt-[-120px] pt-[80px] md:pt-[120px]"
-        style={{ backgroundColor: "transparent", zIndex: 10 }}
-        data-footer
+    <footer
+      ref={footerRef}
+      id="site-footer"
+      className="relative mt-[-80px] md:mt-[-120px] pt-[80px] md:pt-[120px]"
+      style={{ backgroundColor: "transparent", zIndex: 10 }}
+      data-footer
+    >
+      {/* Cream bg — offset down so the curve area sits over the dark section */}
+      <div
+        className="absolute inset-0 top-[79px] md:top-[119px]"
+        style={{ backgroundColor: creamBg }}
+      />
+
+      {/* Liquid curve SVG — organic dark→cream transition */}
+      <div
+        className="absolute left-0 right-0 top-0 h-[80px] md:h-[120px] pointer-events-none"
+        style={{ zIndex: 10 }}
       >
-        {/* Cream background — offset down so the curve area stays transparent over the dark section */}
-        <div className="absolute inset-0 top-[79px] md:top-[119px]" style={{ backgroundColor: creamBg }} />
+        <svg
+          viewBox="0 0 1000 100"
+          preserveAspectRatio="none"
+          className="w-full h-full block"
+        >
+          <path
+            className="footer-curve-path"
+            d="M0,0 Q500,0 1000,0 L1000,100 L0,100 Z"
+            fill={creamBg}
+          />
+        </svg>
+      </div>
 
-        {/* Liquid curve SVG — sits in the top padding area over the dark section */}
-        <div className="absolute left-0 right-0 top-0 h-[80px] md:h-[120px] pointer-events-none" style={{ zIndex: 10 }}>
-          <svg
-            viewBox="0 0 1000 100"
-            preserveAspectRatio="none"
-            className="w-full h-full block"
-          >
-            <path
-              className="footer-curve-path"
-              d="M0,0 Q500,0 1000,0 L1000,100 L0,100 Z"
-              fill={creamBg}
-            />
-          </svg>
-        </div>
+      {/* Subtle noise — breaks up the cream plane */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.04]"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E\")",
+        }}
+      />
 
-        {/* Subtle noise texture */}
+      {/* Top meta strip — studio metadata, reads like a magazine masthead */}
+      <div
+        className="footer-reveal relative z-10 px-6 md:px-12 lg:px-20 pt-14 md:pt-20"
+      >
         <div
-          className="absolute inset-0 pointer-events-none opacity-[0.03]"
+          className="max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-6 pb-3"
           style={{
-            backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E\")",
+            borderBottom: "1px solid rgba(26,24,22,0.1)",
+            fontFamily: "var(--font-inter), sans-serif",
+            fontSize: "0.68rem",
+            fontWeight: 600,
+            letterSpacing: "0.28em",
+            textTransform: "uppercase",
+            color: "rgba(26,24,22,0.5)",
           }}
-        />
+        >
+          <span>
+            Executive AI Solutions ·{" "}
+            <span style={{ color: "rgba(26,24,22,0.35)" }}>Vol. 1</span>
+          </span>
+          <span className="hidden md:inline" style={{ color: "rgba(26,24,22,0.3)" }}>
+            ———
+          </span>
+          <span>Rocklin, CA · 38.7907°N · 121.2358°W</span>
+          <span className="hidden md:inline" style={{ color: "rgba(26,24,22,0.3)" }}>
+            ———
+          </span>
+          <span className="flex items-center gap-2 tabular-nums">
+            <motion.span
+              className="inline-block rounded-full"
+              style={{
+                width: 5,
+                height: 5,
+                backgroundColor: "rgba(16,185,129,0.9)",
+              }}
+              animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.15, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+            {now ? (
+              <>
+                Local {formatLocalTime(now)} · {formatLocalDate(now)}
+              </>
+            ) : (
+              "Local —:— · ———"
+            )}
+          </span>
+        </div>
+      </div>
 
-        {/* Main content */}
-        <div className="relative z-10 px-6 md:px-12 lg:px-20 pt-16 md:pt-24 pb-12 md:pb-16">
-          <div className="max-w-6xl mx-auto">
+      {/* Main editorial block — massive email, cursor-lit gradient */}
+      <div
+        className="relative z-10 px-6 md:px-12 lg:px-20 pt-14 md:pt-24 pb-14 md:pb-20"
+      >
+        <div className="max-w-[1400px] mx-auto">
+          {/* Eyebrow */}
+          <p
+            className="footer-reveal"
+            style={{
+              fontFamily: "var(--font-inter), sans-serif",
+              fontSize: "0.68rem",
+              fontWeight: 600,
+              letterSpacing: "0.3em",
+              textTransform: "uppercase",
+              color: "rgba(26,24,22,0.45)",
+              marginBottom: "clamp(2rem, 4vh, 3rem)",
+            }}
+          >
+            [ Let&apos;s work together ]
+          </p>
 
-            {/* Top section - Big CTA */}
-            <div className="mb-16 md:mb-24">
-              <p
-                className="footer-reveal text-xs uppercase tracking-[0.3em] mb-4"
-                style={{ color: "rgba(26, 24, 22, 0.4)" }}
+          {/* The email — split across two lines, each masked so GSAP can rise
+              it in. Cursor moves a radial gradient that reveals the dark text
+              color locally — the rest of the email rests at a faded tone. */}
+          <a
+            ref={emailRef}
+            href="mailto:jaker@executiveaisolutions.com"
+            className="footer-email-link block group"
+            style={{
+              fontFamily: "var(--font-inter), sans-serif",
+              fontSize: "clamp(2.75rem, 9vw, 9.5rem)",
+              fontWeight: 900,
+              letterSpacing: "-0.045em",
+              lineHeight: 0.92,
+              color: darkText,
+            }}
+          >
+            <span
+              className="footer-email-mask block overflow-hidden"
+              style={{ paddingBottom: "0.08em" }}
+            >
+              <span
+                className="footer-email-line footer-email-spotlight inline-block will-change-transform"
+                data-email-text
               >
-                Let&apos;s work together
-              </p>
-
-              <a
-                href="mailto:jaker@executiveaisolutions.com"
-                className="footer-reveal group inline-block"
+                jaker@
+              </span>
+            </span>
+            <span
+              className="footer-email-mask block overflow-hidden"
+              style={{ paddingBottom: "0.08em" }}
+            >
+              <span
+                className="footer-email-line footer-email-spotlight inline-block will-change-transform break-all md:break-normal"
+                data-email-text
               >
-                <span
-                  className="text-2xl md:text-5xl lg:text-6xl font-black tracking-[-0.03em] transition-colors duration-300 break-all md:break-normal"
-                  style={{ color: darkText }}
-                >
-                  jaker@executiveaisolutions.com
-                </span>
-                <div
-                  className="footer-underline h-[2px] mt-2"
-                  style={{ backgroundColor: darkText }}
-                />
-              </a>
-            </div>
+                executiveaisolutions.com
+              </span>
+            </span>
+          </a>
 
-            {/* Signature — mobile only, draws on scroll */}
-            <div className="md:hidden flex justify-center mb-12 pointer-events-none">
-              <svg
-                viewBox="30 30 630 250"
-                fill="none"
-                preserveAspectRatio="xMidYMid meet"
-                className="w-[80vw]"
-                style={{ height: "auto", opacity: 0.15 }}
+          {/* Send-one CTA — sits under the email like a byline */}
+          <div
+            className="footer-reveal mt-8 md:mt-10 flex flex-wrap items-center gap-x-6 gap-y-3"
+          >
+            <a
+              href="mailto:jaker@executiveaisolutions.com"
+              className="group inline-flex items-center gap-3 px-5 py-2.5 rounded-full transition-colors duration-300 hover:bg-[#1a1816] hover:text-[#e5e1db]"
+              style={{
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "0.72rem",
+                fontWeight: 700,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                border: "1px solid rgba(26,24,22,0.2)",
+                color: "#1a1816",
+              }}
+            >
+              <span>Send one</span>
+              <span
+                className="inline-block transition-transform duration-300 group-hover:translate-x-1"
+                style={{ fontSize: "0.9rem", lineHeight: 1 }}
               >
-                <path
-                  className="footer-signature-path"
-                  d={SIGNATURE_PATH}
-                  stroke={darkText}
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                />
-              </svg>
-            </div>
-
-            {/* Social links */}
-            <div className="flex gap-4 mb-12">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="footer-reveal w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300"
-                  style={{ color: "rgba(26,24,22,0.35)" }}
-                  aria-label={social.label}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = darkText;
-                    e.currentTarget.style.backgroundColor = "rgba(26,24,22,0.06)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "rgba(26,24,22,0.35)";
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
-                >
-                  <social.icon />
-                </a>
-              ))}
-            </div>
-
-            {/* Bottom section - Links and info */}
-            <div className="footer-bottom flex flex-col md:flex-row justify-between items-start md:items-end gap-8 pt-8" style={{ borderTop: "1px solid rgba(26,24,22,0.08)" }}>
-
-              {/* Left - Navigation */}
-              <div className="flex flex-wrap gap-x-8 gap-y-2">
-                {[
-                  { label: "Work", href: "/work" },
-                  { label: "About", href: "/about" },
-                  { label: "Services", href: "/services/website-design" },
-                  { label: "Contact", href: "/contact" },
-                ].map((item) => (
-                  <TransitionLink
-                    key={item.href}
-                    href={item.href}
-                    className="transition-colors duration-300 text-sm"
-                    style={{ color: "rgba(26,24,22,0.4)" }}
-                  >
-                    {item.label}
-                  </TransitionLink>
-                ))}
-              </div>
-
-              {/* Right - Copyright and status */}
-              <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
-                <div className="flex items-center gap-2">
-                  <motion.span
-                    className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: "#16a34a" }}
-                    animate={{ opacity: [0.5, 1, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
-                  <span className="text-sm" style={{ color: "rgba(26,24,22,0.4)" }}>Available for projects</span>
-                </div>
-                <p className="text-sm" style={{ color: "rgba(26,24,22,0.3)" }}>
-                  © {currentYear} Executive AI Solutions
-                </p>
-              </div>
-            </div>
-
+                ↗
+              </span>
+            </a>
+            <span
+              style={{
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "0.7rem",
+                fontWeight: 500,
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "rgba(26,24,22,0.45)",
+              }}
+            >
+              Typical response · under 4 hrs
+            </span>
           </div>
         </div>
-      </footer>
+      </div>
+
+      {/* Mobile signature — draws on scroll (kept) */}
+      <div className="md:hidden relative z-10 flex justify-center pb-8 pointer-events-none">
+        <svg
+          viewBox="30 30 630 250"
+          fill="none"
+          preserveAspectRatio="xMidYMid meet"
+          className="w-[75vw]"
+          style={{ height: "auto", opacity: 0.15 }}
+        >
+          <path
+            className="footer-signature-path"
+            d={SIGNATURE_PATH}
+            stroke={darkText}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+        </svg>
+      </div>
+
+      {/* Textual socials — big tracked-out names with hover underline draw */}
+      <div className="relative z-10 px-6 md:px-12 lg:px-20 pb-10 md:pb-14">
+        <div
+          className="max-w-[1400px] mx-auto flex flex-wrap items-center gap-x-6 gap-y-3 md:gap-x-10"
+          style={{
+            paddingTop: "clamp(1rem, 3vh, 2rem)",
+            borderTop: "1px solid rgba(26,24,22,0.1)",
+          }}
+        >
+          <span
+            className="footer-reveal"
+            style={{
+              fontFamily: "var(--font-inter), sans-serif",
+              fontSize: "0.62rem",
+              fontWeight: 600,
+              letterSpacing: "0.3em",
+              textTransform: "uppercase",
+              color: "rgba(26,24,22,0.4)",
+              marginRight: "1rem",
+            }}
+          >
+            Elsewhere
+          </span>
+          {socialLinks.map((social) => (
+            <a
+              key={social.label}
+              href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-reveal group relative inline-block transition-colors duration-300"
+              style={{
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "0.82rem",
+                fontWeight: 700,
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "rgba(26,24,22,0.55)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = darkText;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "rgba(26,24,22,0.55)";
+              }}
+            >
+              {social.label}
+              <span
+                className="absolute left-0 w-0 group-hover:w-full transition-all duration-500 ease-out"
+                style={{
+                  bottom: -3,
+                  height: 1,
+                  backgroundColor: darkText,
+                }}
+              />
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Bottom strip — nav + status + copyright */}
+      <div
+        className="relative z-10 px-6 md:px-12 lg:px-20 pb-8 md:pb-10"
+      >
+        <div
+          className="max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6"
+          style={{
+            paddingTop: "clamp(0.75rem, 2vh, 1.5rem)",
+            borderTop: "1px solid rgba(26,24,22,0.08)",
+            fontFamily: "var(--font-inter), sans-serif",
+            fontSize: "0.72rem",
+            fontWeight: 500,
+            color: "rgba(26,24,22,0.45)",
+          }}
+        >
+          {/* Left — nav */}
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            {[
+              { label: "Work", href: "/work" },
+              { label: "About", href: "/about" },
+              { label: "Services", href: "/services/website-design" },
+              { label: "Contact", href: "/contact" },
+            ].map((item) => (
+              <TransitionLink
+                key={item.href}
+                href={item.href}
+                className="relative group transition-colors duration-300 hover:text-[#1a1816]"
+              >
+                {item.label}
+                <span
+                  className="absolute left-0 w-0 group-hover:w-full transition-all duration-400 ease-out"
+                  style={{
+                    bottom: -2,
+                    height: 1,
+                    backgroundColor: darkText,
+                  }}
+                />
+              </TransitionLink>
+            ))}
+          </div>
+
+          {/* Right — status + copyright */}
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <span className="flex items-center gap-2">
+              <motion.span
+                className="inline-block rounded-full"
+                style={{
+                  width: 6,
+                  height: 6,
+                  backgroundColor: "rgba(16,185,129,0.9)",
+                }}
+                animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              />
+              2 slots open · Q2 2026
+            </span>
+            <span style={{ color: "rgba(26,24,22,0.3)" }}>·</span>
+            <span>© {currentYear} Executive AI Solutions</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Cursor-lit spotlight on the email text. `background-clip: text`
+          turns the gradient into per-pixel text color. --mx / --my are
+          updated from JS on mousemove. When the cursor is off the link the
+          vars are parked at -9999px so the text rests at the faded tone. */}
+      <style>{`
+        .footer-email-spotlight {
+          --mx: -9999px;
+          --my: -9999px;
+          background: radial-gradient(
+            circle at var(--mx) var(--my),
+            #1a1816 0%,
+            #1a1816 8%,
+            rgba(26, 24, 22, 0.22) 38%
+          );
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          color: transparent;
+          transition: background 0.4s ease;
+        }
+        @media (max-width: 767px) {
+          .footer-email-spotlight {
+            /* On touch devices there's no cursor — show the text at full
+               contrast instead of the faded resting state. */
+            -webkit-text-fill-color: #1a1816;
+            color: #1a1816;
+            background: none;
+          }
+        }
+      `}</style>
+    </footer>
   );
 }
