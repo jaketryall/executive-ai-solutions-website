@@ -22,7 +22,10 @@ const Contact = dynamic(() => import("@/components/Contact"), {
 const Footer = dynamic(() => import("@/components/Footer"), {
   loading: () => <div className="h-[300px]" />,
 });
-// Fixed-position overlay — no flow space, so no loading placeholder.
+// Logic-only seams (no loading placeholder needed)
+const Seam1FanToKicker = dynamic(
+  () => import("@/components/homepage/transitions/Seam1_FanToKicker"),
+);
 const Seam4InkFlood = dynamic(
   () => import("@/components/homepage/transitions/Seam4_InkFlood"),
 );
@@ -33,6 +36,7 @@ export default function Home() {
       <ScrollBackground />
       <main className="relative" style={{ zIndex: 10 }}>
         <Hero />
+        <Seam1FanToKicker />
         <Work />
         <Capabilities />
         <Manifesto />
