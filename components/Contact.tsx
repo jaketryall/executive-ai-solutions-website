@@ -1,10 +1,10 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
+import { TransitionLink } from "@/components/PageTransition";
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import SplitText from "./SplitText";
 import { SplitText as SplitTextHooks, useSplitTextReveal } from "@/lib/hooks";
 import { useSound } from "./SoundManager";
 
@@ -14,126 +14,7 @@ if (typeof window !== "undefined") {
 
 // Cinematic warm color palette
 const accentColor = "rgba(229, 225, 219, 1)";
-const accentColorMuted = "rgba(229, 225, 219, 0.6)";
-const accentColorFaint = "rgba(229, 225, 219, 0.15)";
 
-
-// Magnetic button component
-function MagneticButton({
-  children,
-  className = "",
-  disabled = false,
-  onHover,
-  onClick,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  disabled?: boolean;
-  onHover?: () => void;
-  onClick?: () => void;
-}) {
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const hasEnteredRef = useRef(false);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (disabled || !buttonRef.current) return;
-
-    const rect = buttonRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-
-    const distanceX = e.clientX - centerX;
-    const distanceY = e.clientY - centerY;
-
-    // Magnetic pull - button moves toward cursor
-    setPosition({
-      x: distanceX * 0.3,
-      y: distanceY * 0.3,
-    });
-  };
-
-  const handleMouseEnter = () => {
-    if (!hasEnteredRef.current) {
-      hasEnteredRef.current = true;
-      onHover?.();
-    }
-  };
-
-  const handleMouseLeave = () => {
-    setPosition({ x: 0, y: 0 });
-    hasEnteredRef.current = false;
-  };
-
-  const handleClick = () => {
-    onClick?.();
-  };
-
-  return (
-    <motion.button
-      ref={buttonRef}
-      type="submit"
-      disabled={disabled}
-      className={className}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClick={handleClick}
-      animate={{
-        x: position.x,
-        y: position.y,
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 150,
-        damping: 15,
-        mass: 0.1,
-      }}
-    >
-      {children}
-    </motion.button>
-  );
-}
-
-// Typewriter text component
-function TypewriterText({
-  text,
-  delay = 0,
-  className = "",
-}: {
-  text: string;
-  delay?: number;
-  className?: string;
-}) {
-  const [displayText, setDisplayText] = useState("");
-  const [isComplete, setIsComplete] = useState(false);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      let index = 0;
-      const interval = setInterval(() => {
-        if (index <= text.length) {
-          setDisplayText(text.slice(0, index));
-          index++;
-        } else {
-          clearInterval(interval);
-          setIsComplete(true);
-        }
-      }, 50);
-
-      return () => clearInterval(interval);
-    }, delay);
-
-    return () => clearTimeout(timeout);
-  }, [text, delay]);
-
-  return (
-    <span className={className}>
-      {displayText}
-      {!isComplete && <span className="animate-pulse">|</span>}
-    </span>
-  );
-}
 
 // Mobile Contact - Bold with SplitText and micro-interactions
 export function MobileContact() {
@@ -396,25 +277,46 @@ function AnimatedField({
   );
 }
 
-// Rotating testimonials for the right panel
-const contactTestimonials = [
+// Studio booking state — shown in the right-panel availability grid. Hardcoded
+// to a realistic "busy with two genuine openings" picture. Replace with real
+// data (Sanity / calendar API) once the pipeline is wired up. Week numbers
+// use ISO-week convention; the studio sells in 2-week sprints so openings
+// come in pairs.
+type WeekStatus = "booked" | "hold" | "open";
+const WEEKS: { num: number; label: string; status: WeekStatus; who?: string }[] = [
+  { num: 17, label: "W17", status: "booked", who: "Desert Wings · R2" },
+  { num: 18, label: "W18", status: "booked", who: "Desert Wings · R2" },
+  { num: 19, label: "W19", status: "booked", who: "Riled Up · P3" },
+  { num: 20, label: "W20", status: "booked", who: "Riled Up · P3" },
+  { num: 21, label: "W21", status: "hold" },
+  { num: 22, label: "W22", status: "open" },
+  { num: 23, label: "W23", status: "booked", who: "Internal · EAS" },
+  { num: 24, label: "W24", status: "open" },
+];
+
+// Linear 4-step flow of what happens after you send the form. Replaces the
+// generic rotating-testimonial overlay with something actually useful — shows
+// the funnel and sets response expectations up front.
+const STEPS: { num: string; title: string; body: string }[] = [
   {
-    quote: "The website exceeded our expectations. Clean, professional, and it actually brings in new students every week.",
-    author: "Michael Torres",
-    role: "Owner, Desert Wings Aviation",
-    initials: "MT",
+    num: "01",
+    title: "You send this",
+    body: "Lands in my inbox — no routing, no gate, no assistant reading it first.",
   },
   {
-    quote: "Our conversion rate doubled within the first month of launch. Best investment we've made.",
-    author: "David Park",
-    role: "Director, Vertex Labs",
-    initials: "DP",
+    num: "02",
+    title: "I read it",
+    body: "Focus hours are 07:00–10:00 PT. Your message lands in the same block.",
   },
   {
-    quote: "Working with them was seamless. They understood our vision and delivered something we're proud of.",
-    author: "Sarah Chen",
-    role: "CEO, Meridian Consulting",
-    initials: "SC",
+    num: "03",
+    title: "Reply under 4 hrs",
+    body: "Monday–Friday. Usually same-morning. Book a 20-min call if it's worth it.",
+  },
+  {
+    num: "04",
+    title: "Scope + quote",
+    body: "Fixed price, fixed scope, fixed start date within 48 hrs of the call.",
   },
 ];
 
@@ -429,21 +331,12 @@ function DesktopContact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
   const { play } = useSound();
 
   const sectionRef = useRef<HTMLElement>(null);
 
   const useIsomorphicLayoutEffect =
     typeof window !== "undefined" ? useLayoutEffect : useEffect;
-
-  // Rotate testimonials
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveTestimonial((prev) => (prev + 1) % contactTestimonials.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, []);
 
   useIsomorphicLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -555,58 +448,80 @@ function DesktopContact() {
         );
       }
 
-      // ===== RIGHT IMAGE — parallax only =====
-      const imagePanel = section.querySelector(".contact-image-panel");
-      const imageInner = section.querySelector(".contact-image-inner");
-
-      if (imageInner && imagePanel) {
-        gsap.to(imageInner, {
-          y: "-15%",
-          ease: "none",
-          scrollTrigger: {
-            trigger: imagePanel,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          },
-        });
-      }
-
-      // ===== TESTIMONIAL OVERLAY — fades up after image reveals =====
-      const testimonialOverlay = section.querySelector(".contact-testimonial-overlay");
-      if (testimonialOverlay) {
+      // ===== RIGHT PANEL — staggered card + step reveals =====
+      const rightCards = section.querySelectorAll(".contact-right-card");
+      rightCards.forEach((card) => {
         gsap.fromTo(
-          testimonialOverlay,
+          card,
           { y: 40, opacity: 0 },
           {
             y: 0,
             opacity: 1,
             ease: "power3.out",
             scrollTrigger: {
-              trigger: testimonialOverlay,
-              start: "top 75%",
-              end: "top 50%",
+              trigger: card,
+              start: "top 85%",
+              end: "top 55%",
               scrub: 0.5,
+            },
+          }
+        );
+      });
+
+      // Week pills cascade in as the booking card enters view — reads like a
+      // sequential calendar load rather than all-at-once.
+      const weekPills = section.querySelectorAll(".contact-week-pill");
+      if (weekPills.length) {
+        gsap.fromTo(
+          weekPills,
+          { y: 20, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            ease: "power2.out",
+            stagger: 0.04,
+            scrollTrigger: {
+              trigger: ".contact-booking-card",
+              start: "top 78%",
+              end: "top 50%",
+              scrub: 0.4,
             },
           }
         );
       }
 
-      // ===== BRAND TAG — drops in =====
-      const brandTag = section.querySelector(".contact-brand-tag");
-      if (brandTag) {
+      // "What happens next" steps — vertical line draws down, each step rises.
+      const stepRows = section.querySelectorAll(".contact-step-row");
+      stepRows.forEach((row) => {
         gsap.fromTo(
-          brandTag,
-          { y: -20, opacity: 0 },
+          row,
+          { x: -14, opacity: 0 },
           {
-            y: 0,
+            x: 0,
             opacity: 1,
-            ease: "back.out(1.7)",
+            ease: "power2.out",
             scrollTrigger: {
-              trigger: imagePanel,
-              start: "top 70%",
-              end: "top 45%",
+              trigger: row,
+              start: "top 88%",
+              end: "top 65%",
               scrub: 0.4,
+            },
+          }
+        );
+      });
+      const stepLine = section.querySelector(".contact-step-line");
+      if (stepLine) {
+        gsap.fromTo(
+          stepLine,
+          { scaleY: 0, transformOrigin: "top" },
+          {
+            scaleY: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".contact-whats-next",
+              start: "top 85%",
+              end: "bottom 70%",
+              scrub: 0.6,
             },
           }
         );
@@ -865,125 +780,342 @@ function DesktopContact() {
             </div>
           </div>
 
-          {/* ===== RIGHT: Image + Testimonial Overlay ===== */}
-          <div className="contact-image-panel relative lg:sticky lg:top-28 self-start rounded-2xl overflow-hidden"
-            style={{ aspectRatio: "4/5" }}
-          >
-            {/* Inner wrapper for parallax + zoom */}
-            <div className="contact-image-inner absolute inset-0 will-change-transform"
-              style={{ height: "130%", top: "-15%" }}
-            >
-              <img
-                src="/custom-dashboard-mockup.webp"
-                alt="Executive AI Solutions — Custom dashboard"
-                className="w-full h-full object-cover object-top"
-              />
-            </div>
+          {/* ===== RIGHT: Booking grid · What happens next · Pinned proof =====
+              Replaces the stock sticky-image + rotating-testimonial overlay
+              pattern with three card-stacked blocks that actually do work —
+              show scarcity (booking grid), set expectations (4-step flow),
+              and close with a real outcome link (pinned proof stat). */}
+          <div className="relative lg:sticky lg:top-28 self-start flex flex-col gap-6">
 
-            {/* Warm gradient overlay from bottom */}
+            {/* — 1. Booking availability grid — */}
             <div
-              className="absolute inset-0 pointer-events-none"
+              className="contact-right-card contact-booking-card relative rounded-2xl overflow-hidden"
               style={{
-                background: "linear-gradient(to top, rgba(10,9,8,0.95) 0%, rgba(10,9,8,0.6) 35%, rgba(10,9,8,0.1) 60%, transparent 100%)",
+                padding: "clamp(1.5rem, 2.25vw, 2rem)",
+                backgroundColor: "rgba(229,225,219,0.025)",
+                border: "1px solid rgba(229,225,219,0.08)",
               }}
-            />
-
-            {/* Top-left brand tag */}
-            <div className="contact-brand-tag absolute top-6 left-6 flex items-center gap-2.5">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{
-                  background: "rgba(229,225,219,0.15)",
-                  backdropFilter: "blur(12px)",
-                  border: "1px solid rgba(229,225,219,0.2)",
-                }}
-              >
-                <span className="text-xs font-black" style={{ color: accentColor }}>E</span>
+            >
+              <div className="flex items-baseline justify-between mb-5">
+                <span
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "0.62rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.3em",
+                    textTransform: "uppercase",
+                    color: "rgba(229,225,219,0.42)",
+                  }}
+                >
+                  Next 8 weeks · studio book
+                </span>
+                <span className="flex items-center gap-2">
+                  <motion.span
+                    className="inline-block rounded-full"
+                    style={{ width: 5, height: 5, backgroundColor: "rgba(16,185,129,0.9)" }}
+                    animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                  <span
+                    style={{
+                      fontFamily: "var(--font-inter), sans-serif",
+                      fontSize: "0.62rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.22em",
+                      textTransform: "uppercase",
+                      color: "rgba(229,225,219,0.7)",
+                    }}
+                  >
+                    2 open
+                  </span>
+                </span>
               </div>
-              <span
-                className="text-sm font-bold"
-                style={{
-                  color: "rgba(255,255,255,0.9)",
-                  textShadow: "0 1px 8px rgba(0,0,0,0.5)",
-                }}
-              >
-                Executive AI
-              </span>
-            </div>
 
-            {/* Bottom testimonial overlay — like the reference */}
-            <div className="contact-testimonial-overlay absolute bottom-0 left-0 right-0 p-8">
-                <div className="relative min-h-[140px]">
-                  {contactTestimonials.map((testimonial, i) => (
-                    <motion.div
-                      key={i}
-                      className="absolute inset-0"
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{
-                        opacity: activeTestimonial === i ? 1 : 0,
-                        y: activeTestimonial === i ? 0 : 12,
+              <div className="grid grid-cols-4 gap-2">
+                {WEEKS.map((w) => {
+                  const isOpen = w.status === "open";
+                  const isHold = w.status === "hold";
+                  const isBooked = w.status === "booked";
+                  return (
+                    <div
+                      key={w.num}
+                      className="contact-week-pill group relative overflow-hidden"
+                      style={{
+                        borderRadius: 10,
+                        padding: "0.7rem 0.7rem",
+                        backgroundColor: isOpen
+                          ? "rgba(16,185,129,0.09)"
+                          : isBooked
+                          ? "rgba(229,225,219,0.05)"
+                          : "transparent",
+                        border: isOpen
+                          ? "1px solid rgba(16,185,129,0.35)"
+                          : isHold
+                          ? "1px dashed rgba(229,225,219,0.22)"
+                          : "1px solid rgba(229,225,219,0.06)",
+                        cursor: isOpen ? "pointer" : "default",
+                        transition: "transform 0.3s ease, background-color 0.3s ease",
                       }}
-                      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                      onMouseEnter={(e) => {
+                        if (isOpen) e.currentTarget.style.transform = "translateY(-2px)";
+                      }}
+                      onMouseLeave={(e) => {
+                        if (isOpen) e.currentTarget.style.transform = "translateY(0)";
+                      }}
+                      title={
+                        isOpen
+                          ? "Open slot — click the form to grab it"
+                          : isHold
+                          ? "Hold — possible client continuation"
+                          : `Booked · ${w.who ?? ""}`
+                      }
                     >
-                      <p
-                        className="text-lg lg:text-xl font-semibold leading-snug mb-6"
-                        style={{
-                          color: "rgba(255,255,255,0.9)",
-                          textShadow: "0 2px 12px rgba(0,0,0,0.4)",
-                        }}
-                      >
-                        &ldquo;{testimonial.quote}&rdquo;
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-white font-bold text-sm">{testimonial.author}</p>
-                          <p className="text-white/50 text-xs">{testimonial.role}</p>
-                        </div>
-                        <div
-                          className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold"
+                      <div className="flex items-baseline justify-between mb-1">
+                        <span
                           style={{
-                            background: "rgba(229,225,219,0.2)",
-                            color: accentColor,
-                            border: "1px solid rgba(229,225,219,0.3)",
-                            backdropFilter: "blur(8px)",
+                            fontFamily: "var(--font-inter), sans-serif",
+                            fontSize: "0.7rem",
+                            fontWeight: 700,
+                            letterSpacing: "0.08em",
+                            color: isOpen
+                              ? "rgba(16,185,129,0.95)"
+                              : isBooked
+                              ? "rgba(229,225,219,0.4)"
+                              : "rgba(229,225,219,0.55)",
+                            fontVariantNumeric: "tabular-nums",
                           }}
                         >
-                          {testimonial.initials}
-                        </div>
+                          {w.label}
+                        </span>
+                        {isOpen && (
+                          <motion.span
+                            className="inline-block rounded-full"
+                            style={{
+                              width: 4,
+                              height: 4,
+                              backgroundColor: "rgba(16,185,129,0.95)",
+                            }}
+                            animate={{ opacity: [0.4, 1, 0.4] }}
+                            transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                          />
+                        )}
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
+                      <span
+                        style={{
+                          fontFamily: "var(--font-inter), sans-serif",
+                          fontSize: "0.55rem",
+                          fontWeight: 600,
+                          letterSpacing: "0.22em",
+                          textTransform: "uppercase",
+                          color: isOpen
+                            ? "rgba(16,185,129,0.7)"
+                            : isBooked
+                            ? "rgba(229,225,219,0.3)"
+                            : "rgba(229,225,219,0.4)",
+                        }}
+                      >
+                        {isOpen ? "Open" : isHold ? "Hold" : "Booked"}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
 
-                {/* Progress bar */}
-                <div className="flex gap-2 mt-6">
-                  {contactTestimonials.map((_, i) => (
-                    <motion.button
-                      key={i}
-                      onClick={() => setActiveTestimonial(i)}
-                      className="relative h-[3px] rounded-full overflow-hidden cursor-pointer flex-1"
+              <p
+                className="mt-5"
+                style={{
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontSize: "0.72rem",
+                  lineHeight: 1.55,
+                  color: "rgba(229,225,219,0.45)",
+                }}
+              >
+                Each slot is a 2-week sprint. <span style={{ color: "rgba(229,225,219,0.7)" }}>Hold</span> = waiting on an existing client
+                to extend. Openings are first-come, first-scoped.
+              </p>
+            </div>
+
+            {/* — 2. What happens next — */}
+            <div
+              className="contact-right-card contact-whats-next relative rounded-2xl overflow-hidden"
+              style={{
+                padding: "clamp(1.5rem, 2.25vw, 2rem)",
+                backgroundColor: "rgba(229,225,219,0.025)",
+                border: "1px solid rgba(229,225,219,0.08)",
+              }}
+            >
+              <div className="flex items-baseline justify-between mb-6">
+                <span
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "0.62rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.3em",
+                    textTransform: "uppercase",
+                    color: "rgba(229,225,219,0.42)",
+                  }}
+                >
+                  After you send this
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "0.62rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    color: "rgba(229,225,219,0.3)",
+                  }}
+                >
+                  04 steps
+                </span>
+              </div>
+
+              {/* Steps — vertical timeline with a draw-on-scroll connector */}
+              <div className="relative">
+                <span
+                  className="contact-step-line absolute left-[0.68rem] top-1 bottom-1 w-px"
+                  style={{ backgroundColor: "rgba(229,225,219,0.18)" }}
+                  aria-hidden="true"
+                />
+                <div className="flex flex-col">
+                  {STEPS.map((s, i) => (
+                    <div
+                      key={s.num}
+                      className="contact-step-row relative flex gap-4"
                       style={{
-                        backgroundColor: "rgba(255,255,255,0.1)",
+                        paddingTop: i === 0 ? 0 : "1.1rem",
+                        paddingBottom: i === STEPS.length - 1 ? 0 : "1.1rem",
                       }}
-                      whileHover={{ backgroundColor: "rgba(255,255,255,0.2)" }}
                     >
-                      {activeTestimonial === i && (
-                        <motion.div
-                          className="absolute inset-0 rounded-full"
-                          style={{ backgroundColor: accentColor }}
-                          initial={{ scaleX: 0, transformOrigin: "left" }}
-                          animate={{ scaleX: 1 }}
-                          transition={{ duration: 6, ease: "linear" }}
-                          key={`progress-${activeTestimonial}`}
-                        />
-                      )}
-                    </motion.button>
+                      {/* Step marker — circle over the vertical line */}
+                      <span
+                        className="shrink-0 relative z-10 rounded-full flex items-center justify-center"
+                        style={{
+                          width: 22,
+                          height: 22,
+                          backgroundColor: "#141210",
+                          border: "1px solid rgba(229,225,219,0.35)",
+                          fontFamily: "var(--font-inter), sans-serif",
+                          fontSize: "0.58rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.05em",
+                          color: "rgba(229,225,219,0.9)",
+                          marginLeft: 0,
+                        }}
+                      >
+                        {s.num}
+                      </span>
+
+                      <div className="flex-1 -mt-0.5">
+                        <p
+                          style={{
+                            fontFamily: "var(--font-inter), sans-serif",
+                            fontSize: "clamp(0.95rem, 1.05vw, 1.05rem)",
+                            fontWeight: 700,
+                            letterSpacing: "-0.01em",
+                            color: "rgba(229,225,219,0.92)",
+                            marginBottom: "0.25rem",
+                          }}
+                        >
+                          {s.title}
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: "var(--font-inter), sans-serif",
+                            fontSize: "0.82rem",
+                            lineHeight: 1.55,
+                            color: "rgba(229,225,219,0.5)",
+                          }}
+                        >
+                          {s.body}
+                        </p>
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
             </div>
+
+            {/* — 3. Pinned proof — big metric linking to the case study — */}
+            <TransitionLink
+              href="/work/desert-wings"
+              data-card
+              className="contact-right-card group relative block overflow-hidden rounded-2xl transition-colors duration-500"
+              style={{
+                padding: "clamp(1.5rem, 2.25vw, 2rem)",
+                backgroundColor: "rgba(229,225,219,0.04)",
+                border: "1px solid rgba(229,225,219,0.12)",
+              }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <span
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "0.62rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.3em",
+                    textTransform: "uppercase",
+                    color: "rgba(229,225,219,0.42)",
+                  }}
+                >
+                  Most recent outcome
+                </span>
+                <span
+                  className="transition-transform duration-400 ease-out group-hover:translate-x-1"
+                  style={{ fontSize: "0.9rem", color: accentColor, lineHeight: 1 }}
+                >
+                  →
+                </span>
+              </div>
+
+              <div className="flex items-baseline gap-4 mb-2">
+                <span
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "clamp(2.75rem, 4.5vw, 4rem)",
+                    fontWeight: 900,
+                    lineHeight: 0.9,
+                    letterSpacing: "-0.045em",
+                    color: accentColor,
+                  }}
+                >
+                  +40%
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "0.85rem",
+                    fontWeight: 500,
+                    color: "rgba(229,225,219,0.55)",
+                    letterSpacing: "0.01em",
+                  }}
+                >
+                  discovery flights
+                  <br />
+                  <span style={{ color: "rgba(229,225,219,0.35)", fontSize: "0.78rem" }}>
+                    first month post-launch
+                  </span>
+                </span>
+              </div>
+
+              <p
+                style={{
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: "rgba(229,225,219,0.55)",
+                  marginTop: "0.75rem",
+                }}
+              >
+                Desert Wings · Flight school
+              </p>
+            </TransitionLink>
           </div>
         </div>
+      </div>
       </div>
     </section>
   );
