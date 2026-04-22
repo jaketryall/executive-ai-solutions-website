@@ -1,11 +1,16 @@
 "use client";
 
-import { useRef, useEffect, useLayoutEffect } from "react";
+import { useRef, useEffect } from "react";
 import { gsap, ScrollTrigger, SplitText } from "@/lib/gsap-setup";
 import { prefersReducedMotion } from "@/lib/microInteractions";
 
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+// Deliberately using useEffect (not useLayoutEffect) so GSAP/ScrollTrigger
+// initialization never runs during hydration. When the scroll triggers
+// initialize, GSAP writes inline `transform` styles to elements it's about
+// to animate (reading them from their current computed style). If that
+// happens inside React's concurrent hydration window, the DOM diverges
+// from the VDOM and React flags a hydration mismatch. useEffect defers
+// setup past paint, by which time hydration is committed.
 
 // Dark ink color — matches Contact section's background.
 const INK_COLOR = "#0a0908";
@@ -71,7 +76,7 @@ export default function Seam4InkFlood() {
   const cardRef = useRef<HTMLDivElement>(null);
   const tabRef = useRef<HTMLDivElement>(null);
 
-  useIsomorphicLayoutEffect(() => {
+  useEffect(() => {
     // Apply off-screen rest state so the tab/card don't flash on mount
     // (before the ScrollTrigger's first onUpdate) and so reduced-motion
     // and mobile viewers see nothing stray.
