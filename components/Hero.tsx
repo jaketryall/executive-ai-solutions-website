@@ -5,13 +5,8 @@ import { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import AnimatedLogo from "./AnimatedLogo";
 import { TransitionLink } from "./PageTransition";
-import { SplitText, useSplitTextReveal } from "@/lib/hooks";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { SplitText as SplitTextComponent, useSplitTextReveal } from "@/lib/hooks";
+import { gsap, SplitText, DrawSVGPlugin } from "@/lib/gsap-setup";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -293,125 +288,130 @@ function HeroFanCards({
   );
 }
 
-/* ─── Hero correction text — "You need a website" → "You need an unfair advantage" ─── */
+/* ─── Hero correction text — types "I build beautiful websites." then
+   strikes through "beautiful" and rises "converting" into its place ─── */
 function HeroCorrectionText() {
-  // Skip animation on repeat visits
-  const hasSeenRef = useRef(false);
   const [skipAnimation, setSkipAnimation] = useState(false);
+  const [phase, setPhase] = useState<"typing" | "pause" | "striking" | "rising" | "done">("typing");
+  const [typedCount, setTypedCount] = useState(0);
+  const beautifulRef = useRef<HTMLSpanElement>(null);
+  const strikeLineRef = useRef<SVGLineElement>(null);
+  const convertingRef = useRef<HTMLSpanElement>(null);
 
+  const fullSentence = "I build beautiful websites.";
+
+  // Skip on return visit
   useEffect(() => {
     if (typeof window !== "undefined") {
       const seen = sessionStorage.getItem("hero-seen");
       if (seen) {
         setSkipAnimation(true);
-        hasSeenRef.current = true;
+        setPhase("done");
       }
     }
   }, []);
 
-  const [phase, setPhase] = useState<"typing" | "pause" | "glitch" | "done">(
-    "typing"
-  );
-  const [typedCount, setTypedCount] = useState(0);
-  const [glitchText, setGlitchText] = useState("a website.");
-  const glitchChars = "!@#$%&*?░▒▓█▀▄";
-
-  const line1 = "You need ";
-  const originalEnd = "a website.";
-  const correctedEnd = "an unfair advantage.";
-
-  // Skip straight to done if returning visitor
-  useEffect(() => {
-    if (skipAnimation) {
-      setGlitchText(correctedEnd);
-      setPhase("done");
-    }
-  }, [skipAnimation]);
-
-  // Phase 1: Type out "You need a website." — faster (35ms)
+  // Phase: typing
   useEffect(() => {
     if (phase !== "typing" || skipAnimation) return;
-    const full = line1 + originalEnd;
-    if (typedCount >= full.length) {
-      const timer = setTimeout(() => setPhase("pause"), 300);
-      return () => clearTimeout(timer);
+    if (typedCount >= fullSentence.length) {
+      const t = setTimeout(() => setPhase("pause"), 400);
+      return () => clearTimeout(t);
     }
-    const timer = setTimeout(() => setTypedCount((c) => c + 1), 35);
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => setTypedCount((c) => c + 1), 35);
+    return () => clearTimeout(t);
   }, [phase, typedCount, skipAnimation]);
 
-  // Phase 2: Short pause, then glitch
+  // Phase: pause -> striking
   useEffect(() => {
     if (phase !== "pause") return;
-    const timer = setTimeout(() => setPhase("glitch"), 500);
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => setPhase("striking"), 0);
+    return () => clearTimeout(t);
   }, [phase]);
 
-  // Phase 3: Scramble "a website." into "an unfair advantage."
+  // Phase: striking — DrawSVG line across "beautiful" + fade word to 30%
   useEffect(() => {
-    if (phase !== "glitch") return;
-    let iteration = 0;
-    const maxIterations = 14;
-
-    const interval = setInterval(() => {
-      iteration++;
-      const progress = iteration / maxIterations;
-
-      if (progress >= 1) {
-        setGlitchText(correctedEnd);
-        setPhase("done");
-        clearInterval(interval);
-        // Mark as seen for this session
-        if (typeof window !== "undefined") {
-          sessionStorage.setItem("hero-seen", "1");
-        }
-        return;
+    if (phase !== "striking") return;
+    if (typeof window === "undefined") return;
+    // Register DrawSVGPlugin here (safe in effect — client only)
+    gsap.registerPlugin(DrawSVGPlugin);
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ onComplete: () => setPhase("rising") });
+      if (strikeLineRef.current) {
+        tl.fromTo(
+          strikeLineRef.current,
+          { drawSVG: "0% 0%" },
+          { drawSVG: "0% 100%", duration: 0.35, ease: "power2.inOut" }
+        );
       }
-
-      // Characters resolve from left to right
-      const resolved = Math.floor(progress * correctedEnd.length);
-      let result = "";
-      for (let i = 0; i < correctedEnd.length; i++) {
-        if (i < resolved) {
-          result += correctedEnd[i];
-        } else {
-          result += glitchChars[Math.floor(Math.random() * glitchChars.length)];
-        }
+      if (beautifulRef.current) {
+        tl.to(beautifulRef.current, { opacity: 0.3, duration: 0.3, ease: "power2.out" }, 0.05);
       }
-      setGlitchText(result);
-    }, 40);
-
-    return () => clearInterval(interval);
+    });
+    return () => ctx.revert();
   }, [phase]);
 
-  const displayedLine1 =
-    phase === "typing" ? (line1 + originalEnd).slice(0, typedCount) : line1;
+  // Phase: rising — SplitText chars mask reveal for "converting"
+  useEffect(() => {
+    if (phase !== "rising") return;
+    const convEl = convertingRef.current;
+    if (!convEl) {
+      setPhase("done");
+      return;
+    }
+    let split: InstanceType<typeof SplitText> | null = null;
+    const ctx = gsap.context(() => {
+      split = SplitText.create(convEl, { type: "chars", mask: "chars", charsClass: "h-conv-char" });
+      gsap.set(split.chars, { yPercent: 110 });
+      gsap.set(convEl, { autoAlpha: 1 });
+      const tl = gsap.timeline({
+        onComplete: () => {
+          if (beautifulRef.current) {
+            gsap.to(beautifulRef.current, {
+              opacity: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              onComplete: () => {
+                setPhase("done");
+                if (typeof window !== "undefined") {
+                  sessionStorage.setItem("hero-seen", "1");
+                }
+              },
+            });
+          } else {
+            setPhase("done");
+            if (typeof window !== "undefined") {
+              sessionStorage.setItem("hero-seen", "1");
+            }
+          }
+        },
+      });
+      tl.to(split.chars, { yPercent: 0, duration: 0.5, stagger: 0.02, ease: "appleOut" });
+    });
+    return () => {
+      split?.revert();
+      ctx.revert();
+    };
+  }, [phase]);
 
-  const displayedEnd =
-    phase === "typing"
-      ? ""
-      : phase === "pause"
-      ? originalEnd
-      : glitchText;
-
-  const isGlitching = phase === "glitch";
-  const isDone = phase === "done";
+  const showCursor = phase === "typing" && !skipAnimation;
+  const typed = phase === "typing" ? fullSentence.slice(0, typedCount) : fullSentence;
 
   return (
-    <div>
-      <h1
-        style={{
-          fontFamily: "var(--font-inter), sans-serif",
-          fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
-          fontWeight: 900,
-          lineHeight: 1.05,
-          letterSpacing: "-0.03em",
-          color: "#1a1816",
-        }}
-      >
-        {phase === "typing" ? (
-          <>
-            {displayedLine1}
+    <h1
+      style={{
+        fontFamily: "var(--font-inter), sans-serif",
+        fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
+        fontWeight: 900,
+        lineHeight: 1.05,
+        letterSpacing: "-0.03em",
+        color: "#1a1816",
+      }}
+    >
+      {phase === "typing" ? (
+        <>
+          {typed}
+          {showCursor && (
             <motion.span
               animate={{ opacity: [1, 0] }}
               transition={{ duration: 0.4, repeat: Infinity, repeatType: "reverse" }}
@@ -419,22 +419,65 @@ function HeroCorrectionText() {
             >
               |
             </motion.span>
-          </>
-        ) : (
-          <>
-            {displayedLine1}
-            <span
+          )}
+        </>
+      ) : (phase === "done" && skipAnimation) ? (
+        <>I build converting websites.</>
+      ) : (
+        <>
+          <span>I build </span>
+          <span style={{ position: "relative", display: "inline-block" }}>
+            <span ref={beautifulRef} style={{ display: "inline-block", color: "#1a1816" }}>
+              beautiful
+            </span>
+            {/* Strike line — DrawSVG animates it left→right */}
+            <svg
+              aria-hidden
               style={{
-                color: isDone ? "#78736c" : isGlitching ? "#78736c" : "#1a1816",
-                transition: "color 0.3s ease",
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: "50%",
+                width: "100%",
+                height: 4,
+                overflow: "visible",
+                pointerEvents: "none",
+              }}
+              viewBox="0 0 100 4"
+              preserveAspectRatio="none"
+            >
+              <line
+                ref={strikeLineRef}
+                x1="0"
+                y1="2"
+                x2="100"
+                y2="2"
+                stroke="#1a1816"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
+            {/* "converting" rises up from below via SplitText chars mask */}
+            <span
+              ref={convertingRef}
+              style={{
+                position: "absolute",
+                left: 0,
+                top: 0,
+                color: "#1a1816",
+                visibility: phase === "rising" || phase === "done" ? "visible" : "hidden",
+                opacity: 0,
+                whiteSpace: "nowrap",
               }}
             >
-              {displayedEnd}
+              converting
             </span>
-          </>
-        )}
-      </h1>
-    </div>
+          </span>
+          <span> websites.</span>
+        </>
+      )}
+    </h1>
   );
 }
 
@@ -559,7 +602,6 @@ function DesktopHero() {
   const heroContentRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [hoveredFanIndex, setHoveredFanIndex] = useState<number | null>(null);
-  const [ratingHovered, setRatingHovered] = useState(false);
   const [scrollHintHovered, setScrollHintHovered] = useState(false);
 
   // "Currently shipping" crossfade cycle — advance every 4s, paused while hovered
@@ -898,7 +940,7 @@ function DesktopHero() {
             className="relative z-10 grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] lg:items-start"
             style={{ paddingTop: "clamp(18vh, 22vh, 26vh)" }}
           >
-            {/* LEFT column — glitch headline + subline + CTA + rating */}
+            {/* LEFT column — kicker + headline + subline + dual CTA */}
             <div
               ref={heroContentRef}
               className="flex flex-col items-start text-left"
@@ -907,10 +949,30 @@ function DesktopHero() {
                 paddingRight: "clamp(1rem, 2vw, 2rem)",
               }}
             >
+              {/* Step 1.1 — Identity kicker */}
+              <motion.p
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                style={{
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontSize: "0.65rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.28em",
+                  textTransform: "uppercase",
+                  color: "rgba(26,24,22,0.5)",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                Jake Ryall · Design + Dev · Available Q3 2026
+              </motion.p>
+
+              {/* Step 1.2 — Strikethrough headline */}
               <div style={{ maxWidth: 900 }}>
                 <HeroCorrectionText />
               </div>
 
+              {/* Step 1.3 — Updated subline */}
               <motion.p
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -918,117 +980,61 @@ function DesktopHero() {
                 style={{
                   fontFamily: "var(--font-inter), sans-serif",
                   fontSize: "clamp(0.9rem, 1.2vw, 1.1rem)",
-                  color: "rgba(26,24,22,0.4)",
+                  color: "rgba(26,24,22,0.55)",
                   marginTop: "1.5rem",
                   maxWidth: "500px",
                   lineHeight: 1.6,
                 }}
               >
-                I design websites that{" "}
-                <span className="relative inline-block group cursor-default">
-                  <span className="transition-colors duration-400 group-hover:text-[#1a1816]">
-                    turn visitors into customers
-                  </span>
-                  <span
-                    className="absolute left-0 w-0 group-hover:w-full transition-all duration-500 ease-out"
-                    style={{ bottom: -2, height: 1, backgroundColor: "#78736c" }}
-                  />
-                </span>
-                .
+                I&apos;m Jake. I design websites that earn their keep.
               </motion.p>
 
+              {/* Step 1.4 — Dual CTA: primary dark + ghost secondary */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 3.1, ease: [0.22, 1, 0.36, 1] }}
                 style={{ marginTop: "2rem" }}
               >
-                <TransitionLink
-                  href="/contact"
-                  className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full transition-all duration-300 hover:bg-[#78736c] hover:border-[#78736c] group"
-                  style={{
-                    backgroundColor: "#1a1816",
-                    color: "#f3f1ee",
-                  }}
-                >
-                  <span className="text-sm font-semibold uppercase tracking-[0.1em]">
-                    Start a Project
-                  </span>
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
+                <div className="flex items-center gap-4 flex-wrap">
+                  <TransitionLink
+                    href="/contact"
+                    className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full transition-colors duration-300 hover:bg-[#78736c] group"
+                    style={{ backgroundColor: "#1a1816", color: "#f3f1ee" }}
                   >
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </TransitionLink>
-              </motion.div>
-
-              {/* Rating row — button that scrolls to #testimonials. Stars lift
-                  + darken in a stagger on hover to echo the row's click target. */}
-              <motion.button
-                type="button"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 3.3, ease: [0.22, 1, 0.36, 1] }}
-                onClick={() => document.getElementById("testimonials")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                onMouseEnter={() => setRatingHovered(true)}
-                onMouseLeave={() => setRatingHovered(false)}
-                className="group flex items-center cursor-pointer"
-                style={{ gap: "0.55rem", marginTop: "1.75rem", background: "transparent", border: 0, padding: 0 }}
-              >
-                <span
-                  style={{
-                    fontFamily: "var(--font-inter), sans-serif",
-                    fontSize: "0.95rem",
-                    fontWeight: 700,
-                    color: "#1a1816",
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  5.0
-                </span>
-                <span className="inline-flex" style={{ gap: "0.08em" }}>
-                  {[0, 1, 2, 3, 4].map((i) => (
-                    <span
-                      key={i}
-                      className="inline-block"
-                      style={{
-                        color: ratingHovered ? "#1a1816" : "#78736c",
-                        fontSize: "0.75rem",
-                        lineHeight: 1,
-                        transition: "color 0.3s ease, transform 0.3s ease",
-                        transitionDelay: `${i * 45}ms`,
-                        transform: ratingHovered ? "translateY(-3px)" : "translateY(0)",
-                      }}
-                    >
-                      ★
+                    <span className="text-sm font-semibold uppercase tracking-widest">
+                      Start a Project
                     </span>
-                  ))}
-                </span>
-                <span
-                  className="transition-colors duration-300 group-hover:text-[rgba(26,24,22,0.75)]"
-                  style={{
-                    fontFamily: "var(--font-inter), sans-serif",
-                    fontSize: "0.78rem",
-                    fontWeight: 500,
-                    color: "rgba(26,24,22,0.5)",
-                    marginLeft: "0.3rem",
-                  }}
-                >
-                  · Read the reviews
-                </span>
-                <span
-                  className="opacity-0 -translate-x-1 group-hover:opacity-70 group-hover:translate-x-0 transition-all duration-300"
-                  style={{ fontSize: "0.7rem", color: "#1a1816", lineHeight: 1 }}
-                >
-                  →
-                </span>
-              </motion.button>
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    >
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </TransitionLink>
+
+                  <TransitionLink
+                    href="/work"
+                    className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full transition-colors duration-300 hover:border-[rgba(26,24,22,0.45)]"
+                    style={{
+                      backgroundColor: "transparent",
+                      color: "#1a1816",
+                      border: "1px solid rgba(26,24,22,0.2)",
+                    }}
+                  >
+                    <span className="text-sm font-semibold uppercase tracking-widest">
+                      See my work
+                    </span>
+                    <span aria-hidden>→</span>
+                  </TransitionLink>
+                </div>
+              </motion.div>
+              {/* Rating row removed — moved to Proof section (Task 4) */}
             </div>
 
             {/* RIGHT column — currently-shipping card + 130vh sticky video */}
