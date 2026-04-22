@@ -60,7 +60,27 @@ export default function Seam4InkFlood() {
   const cleanupRef = useRef<(() => void) | null>(null);
 
   useIsomorphicLayoutEffect(() => {
-    if (prefersReducedMotion()) return;
+    if (prefersReducedMotion()) {
+      // Apply final states for reduced motion so the page doesn't appear
+      // in a half-assembled state:
+      //  - Form field underlines are invisible at rest (scaleX 0); set to 1.
+      //  - The tab element otherwise sits slightly above the viewport floor
+      //    as a dark sliver — render nothing visible by moving it off-screen.
+      const enterEl = document.querySelector<HTMLElement>(
+        '[data-seam-enter="seam-4"]'
+      );
+      if (enterEl) {
+        const underlines = enterEl.querySelectorAll<HTMLElement>(
+          "[data-seam-underline]"
+        );
+        underlines.forEach((u) => {
+          u.style.transform = "scaleX(1)";
+        });
+      }
+      if (tabRef.current) tabRef.current.style.top = "-10%";
+      if (cardRef.current) cardRef.current.style.top = "100%";
+      return;
+    }
 
     const exitEl = document.querySelector<HTMLElement>('[data-seam-exit="seam-4"]');
     const enterEl = document.querySelector<HTMLElement>('[data-seam-enter="seam-4"]');
