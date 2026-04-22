@@ -46,8 +46,9 @@ export default function Manifesto() {
     <section
       ref={sectionRef}
       id="manifesto"
+      data-bg="cream"
       className="py-32 px-6"
-      style={{ backgroundColor: "#d8d3cc" }}
+      style={{ backgroundColor: "#f3f1ee" }}
     >
       <div className="max-w-[1100px] mx-auto">
         {/* Kicker */}

@@ -14,7 +14,7 @@ const ACCENT = "#4cd3f5";
 const ACCENT_SOFT = "rgba(76,211,245,0.18)";
 const ACCENT_GLOW = "rgba(76,211,245,0.55)";
 
-const CREAM = "#e5e1db";
+const CREAM = "#f3f1ee"; // matches ScrollBackground + Hero cream
 const TEXT_DARK = "#1a1816";
 const TAUPE = "#78736c";
 
@@ -947,21 +947,311 @@ function ChapterThree() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────
-   Main export — header + 3 chapters with shared topographic bg.
+   ScrollSpine — vertical cyan line on the left edge of Capabilities that
+   draws progressively as you scroll. Has 3 marker dots, one per chapter,
+   that light up + glow when their chapter enters the viewport. A small
+   "traveler" dot rides the line at the current scroll position.
+
+   Hides on mobile (< md) to avoid eating layout space.
+   ───────────────────────────────────────────────────────────────────── */
+function ScrollSpine() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<SVGLineElement>(null);
+  const travelerRef = useRef<HTMLDivElement>(null);
+
+  useIsomorphicLayoutEffect(() => {
+    if (!wrapRef.current) return;
+    const reduce = prefersReducedMotion();
+
+    const ctx = gsap.context(() => {
+      // Line draws via drawSVG, scrub-linked to scroll position over the section
+      if (lineRef.current) {
+        const section = wrapRef.current!.closest("section")!;
+        gsap.fromTo(
+          lineRef.current,
+          { drawSVG: "0% 0%" },
+          {
+            drawSVG: "0% 100%",
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top 80%",
+              end: "bottom 80%",
+              scrub: 1,
+            },
+          },
+        );
+      }
+
+      // Traveler dot rides the line based on scroll progress
+      if (travelerRef.current && !reduce) {
+        const section = wrapRef.current!.closest("section")!;
+        gsap.to(travelerRef.current, {
+          top: "100%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 80%",
+            end: "bottom 80%",
+            scrub: 1,
+          },
+        });
+
+        // Soft pulse on the traveler
+        gsap.to(travelerRef.current, {
+          scale: 1.4,
+          duration: 1.2,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+        });
+      }
+
+      // Each marker lights up when its chapter enters
+      ["chapter-1", "chapter-2", "chapter-3"].forEach((id) => {
+        const marker = wrapRef.current!.querySelector<HTMLElement>(`[data-marker="${id}"]`);
+        if (!marker) return;
+        ScrollTrigger.create({
+          trigger: `[data-chapter="${id}"]`,
+          start: "top 60%",
+          end: "bottom 40%",
+          onEnter: () => marker.classList.add("active"),
+          onEnterBack: () => marker.classList.add("active"),
+          onLeave: () => marker.classList.remove("active"),
+          onLeaveBack: () => marker.classList.remove("active"),
+        });
+      });
+    }, wrapRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div
+      ref={wrapRef}
+      className="hidden md:block absolute left-6 lg:left-10 top-0 h-full pointer-events-none z-20"
+      style={{ width: 24 }}
+      aria-hidden
+    >
+      {/* Vertical line via SVG (drawSVG-able) */}
+      <svg
+        className="absolute left-1/2 -translate-x-1/2 top-0 w-px h-full overflow-visible"
+        preserveAspectRatio="none"
+        viewBox="0 0 1 100"
+      >
+        <line x1="0.5" y1="0" x2="0.5" y2="100" stroke="rgba(26,24,22,0.08)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+        <line
+          ref={lineRef}
+          x1="0.5"
+          y1="0"
+          x2="0.5"
+          y2="100"
+          stroke={ACCENT}
+          strokeWidth="1.5"
+          vectorEffect="non-scaling-stroke"
+          style={{ filter: `drop-shadow(0 0 4px ${ACCENT_GLOW})` }}
+        />
+      </svg>
+
+      {/* Chapter markers — three dots positioned at 25/55/85 percent of the spine height */}
+      {[
+        { id: "chapter-1", top: "18%", label: "01" },
+        { id: "chapter-2", top: "48%", label: "02" },
+        { id: "chapter-3", top: "78%", label: "03" },
+      ].map((m) => (
+        <div
+          key={m.id}
+          data-marker={m.id}
+          className="cap-marker absolute left-1/2 -translate-x-1/2 flex items-center gap-3"
+          style={{ top: m.top }}
+        >
+          <span
+            className="block rounded-full transition-all duration-500"
+            style={{
+              width: 10,
+              height: 10,
+              background: TAUPE,
+              opacity: 0.4,
+            }}
+          />
+          <span
+            className="cap-marker-label text-[9px] uppercase tracking-[0.25em] font-bold transition-all duration-500"
+            style={{ color: TAUPE, opacity: 0.5, transform: "translateX(-4px)" }}
+          >
+            {m.label}
+          </span>
+        </div>
+      ))}
+
+      {/* Traveler dot — rides the line at the current scroll position */}
+      <div
+        ref={travelerRef}
+        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{
+          top: "0%",
+          width: 8,
+          height: 8,
+          background: ACCENT,
+          boxShadow: `0 0 12px ${ACCENT_GLOW}, 0 0 24px ${ACCENT_GLOW}`,
+        }}
+      />
+
+      {/* Active marker styles via inline <style> */}
+      <style jsx>{`
+        :global([data-marker].active span:first-child) {
+          background: ${ACCENT} !important;
+          opacity: 1 !important;
+          box-shadow: 0 0 10px ${ACCENT_GLOW};
+          transform: scale(1.3);
+        }
+        :global([data-marker].active .cap-marker-label) {
+          color: ${ACCENT} !important;
+          opacity: 1 !important;
+          transform: translateX(0) !important;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   BridgeMoment — sits at the very top of Capabilities. A short cinematic
+   "drop point" that signals the transition from the Hero. A vertical
+   cyan line draws downward as you scroll out of the Hero, with a small
+   pulsing dot, a "II" volume marker, and "BEGIN CHAPTER ONE" copy.
+   ───────────────────────────────────────────────────────────────────── */
+function BridgeMoment() {
+  const ref = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<SVGLineElement>(null);
+  const labelRef = useRef<HTMLDivElement>(null);
+
+  useIsomorphicLayoutEffect(() => {
+    if (!ref.current) return;
+    const reduce = prefersReducedMotion();
+
+    const ctx = gsap.context(() => {
+      // Line draws based on scroll into the bridge
+      if (lineRef.current) {
+        gsap.fromTo(
+          lineRef.current,
+          { drawSVG: "0% 0%" },
+          {
+            drawSVG: "0% 100%",
+            ease: "none",
+            scrollTrigger: {
+              trigger: ref.current,
+              start: "top bottom",
+              end: "bottom 60%",
+              scrub: 1,
+            },
+          },
+        );
+      }
+
+      // Label fades in then floats slightly
+      if (labelRef.current && !reduce) {
+        gsap.fromTo(
+          labelRef.current,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            ease: "appleOut",
+            scrollTrigger: { trigger: ref.current, start: "top 70%" },
+          },
+        );
+      }
+    }, ref);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className="relative w-full flex flex-col items-center pt-20 pb-16"
+      aria-hidden
+    >
+      {/* Vertical line (drawSVG) */}
+      <svg
+        className="overflow-visible"
+        width="2"
+        height="120"
+        viewBox="0 0 2 120"
+      >
+        <line x1="1" y1="0" x2="1" y2="120" stroke="rgba(26,24,22,0.08)" strokeWidth="1" />
+        <line
+          ref={lineRef}
+          x1="1"
+          y1="0"
+          x2="1"
+          y2="120"
+          stroke={ACCENT}
+          strokeWidth="1.5"
+          style={{ filter: `drop-shadow(0 0 4px ${ACCENT_GLOW})` }}
+        />
+      </svg>
+
+      {/* Pulsing terminus dot */}
+      <motion.span
+        className="block rounded-full -mt-1"
+        style={{
+          width: 10,
+          height: 10,
+          background: ACCENT,
+          boxShadow: `0 0 14px ${ACCENT_GLOW}, 0 0 28px ${ACCENT_GLOW}`,
+        }}
+        animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
+        transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Volume + label */}
+      <div ref={labelRef} className="mt-6 text-center">
+        <p
+          className="text-[10px] uppercase tracking-[0.32em] mb-2"
+          style={{ color: TAUPE, fontWeight: 600 }}
+        >
+          Vol. II
+        </p>
+        <p
+          className="text-[10px] uppercase tracking-[0.4em]"
+          style={{ color: ACCENT, fontWeight: 700 }}
+        >
+          ⟶ Begin Chapter One
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   Main export — header + 3 chapters with shared topographic bg, scroll
+   spine, and bridge moment. data-bg="cream" tells ScrollBackground to
+   keep the page bg cream throughout the section (no flash to dark).
    ───────────────────────────────────────────────────────────────────── */
 export default function Capabilities() {
   return (
     <section
       id="capabilities"
+      data-bg="cream"
       className="relative overflow-hidden"
       style={{ background: CREAM }}
     >
       <TopoBackground />
+      <ScrollSpine />
       <div className="relative z-10">
+        <BridgeMoment />
         <SectionHeader />
-        <ChapterOne />
-        <ChapterTwo />
-        <ChapterThree />
+        <div data-chapter="chapter-1">
+          <ChapterOne />
+        </div>
+        <div data-chapter="chapter-2">
+          <ChapterTwo />
+        </div>
+        <div data-chapter="chapter-3">
+          <ChapterThree />
+        </div>
       </div>
     </section>
   );

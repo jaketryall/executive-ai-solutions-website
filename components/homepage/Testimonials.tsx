@@ -83,8 +83,9 @@ export default function Testimonials() {
     <section
       ref={sectionRef}
       id="testimonials"
+      data-bg="cream"
       className="py-32 px-6"
-      style={{ backgroundColor: "#e5e1db" }}
+      style={{ backgroundColor: "#f3f1ee" }}
     >
       <div className="max-w-[1280px] mx-auto">
         {/* Header */}
