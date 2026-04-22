@@ -7,7 +7,6 @@ import { gsap, SplitText } from "@/lib/gsap-setup";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText as SplitTextHooks, useSplitTextReveal } from "@/lib/hooks";
 import { prefersReducedMotion } from "@/lib/microInteractions";
-import { useSound } from "./SoundManager";
 import AvailabilityWidget from "./homepage/AvailabilityWidget";
 
 if (typeof window !== "undefined") {
@@ -32,9 +31,6 @@ export function MobileContact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
-
-  const useIsomorphicLayoutEffect =
-    typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
   // SplitText reveal for headline
   useSplitTextReveal(headerRef);
@@ -284,7 +280,20 @@ function DesktopContact() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    // Stub — wire to actual endpoint later
+
+    const fd = new FormData(e.currentTarget as HTMLFormElement);
+    const payload = {
+      name: fd.get("name"),
+      email: fd.get("email"),
+      projectType: fd.get("projectType"),
+      brief: fd.get("brief"),
+      preferredStart: picked ?? null,
+    };
+    // TODO: wire to actual endpoint. For now, log so developers can verify
+    // the form is capturing fields correctly.
+    console.info("[contact] form submit (stub)", payload);
+
+    // Stub — simulate network
     await new Promise((r) => setTimeout(r, 900));
     setSubmitting(false);
     setDone(true);
@@ -341,8 +350,8 @@ function DesktopContact() {
           <AvailabilityWidget onPickDate={(d) => setPicked(d)} />
 
           <form onSubmit={submit} className="space-y-4">
-            <DesktopField label="Your name" name="name" />
-            <DesktopField label="Email" name="email" type="email" />
+            <DesktopField label="Your name" name="name" required />
+            <DesktopField label="Email" name="email" type="email" required />
 
             <div>
               <label className="block text-xs uppercase tracking-[0.2em] mb-2" style={{ color: "rgba(229,225,219,0.5)" }}>
@@ -352,7 +361,7 @@ function DesktopContact() {
                 {["Website", "Brand", "Automation", "Other"].map((t) => (
                   <label key={t} className="cursor-pointer">
                     <input type="radio" name="projectType" value={t} className="sr-only peer" />
-                    <span className="inline-block text-xs font-medium px-3 py-1.5 rounded-full peer-checked:bg-[#e5e1db] peer-checked:text-[#1a1816] transition-colors" style={{ border: "1px solid rgba(229,225,219,0.2)", color: "#e5e1db" }}>
+                    <span className="inline-block text-xs font-medium px-3 py-1.5 rounded-full peer-checked:bg-[#e5e1db] peer-checked:text-[#1a1816] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[#e5e1db] transition-colors" style={{ border: "1px solid rgba(229,225,219,0.2)", color: "#e5e1db" }}>
                       {t}
                     </span>
                   </label>
@@ -361,6 +370,7 @@ function DesktopContact() {
             </div>
 
             <DesktopField label="What are you building?" name="brief" maxLength={240} />
+
 
             {picked && (
               <p className="text-xs" style={{ color: "rgba(229,225,219,0.55)" }}>
@@ -385,7 +395,19 @@ function DesktopContact() {
   );
 }
 
-function DesktopField({ label, name, type = "text", maxLength }: { label: string; name: string; type?: string; maxLength?: number }) {
+function DesktopField({
+  label,
+  name,
+  type = "text",
+  maxLength,
+  required,
+}: {
+  label: string;
+  name: string;
+  type?: string;
+  maxLength?: number;
+  required?: boolean;
+}) {
   return (
     <div>
       <label htmlFor={name} className="block text-xs uppercase tracking-[0.2em] mb-2" style={{ color: "rgba(229,225,219,0.5)" }}>
@@ -396,6 +418,7 @@ function DesktopField({ label, name, type = "text", maxLength }: { label: string
         name={name}
         type={type}
         maxLength={maxLength}
+        required={required}
         className="w-full bg-transparent border-0 border-b focus:outline-none focus:border-[#e5e1db] py-2 text-sm"
         style={{ borderBottomColor: "rgba(229,225,219,0.2)", color: "#e5e1db" }}
       />
