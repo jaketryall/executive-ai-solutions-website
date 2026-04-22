@@ -349,7 +349,10 @@ function DesktopContact() {
             <DesktopField label="Email" name="email" type="email" required />
 
             <div>
-              <label data-seam-label className="block text-xs uppercase tracking-[0.2em] mb-2" style={{ color: "rgba(229,225,219,0.5)" }}>
+              {/* aria-label pre-rendered so SplitText's default aria="auto"
+                  mutation (adding aria-label on client) is a no-op — prevents
+                  hydration mismatches on HMR. */}
+              <label data-seam-label aria-label="Project type" className="block text-xs uppercase tracking-[0.2em] mb-2" style={{ color: "rgba(229,225,219,0.5)" }}>
                 Project type
               </label>
               <div className="flex flex-wrap gap-2">
@@ -405,9 +408,13 @@ function DesktopField({
 }) {
   return (
     <div>
+      {/* aria-label pre-rendered so SplitText's default aria="auto"
+          mutation (adding aria-label on client) is a no-op — prevents
+          hydration mismatches on HMR. */}
       <label
         htmlFor={name}
         data-seam-label
+        aria-label={label}
         className="block text-xs uppercase tracking-[0.2em] mb-2"
         style={{ color: "rgba(229,225,219,0.5)" }}
       >
