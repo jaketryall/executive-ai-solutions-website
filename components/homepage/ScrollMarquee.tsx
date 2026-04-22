@@ -3,157 +3,249 @@
 import { useRef, useEffect, useLayoutEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
+import { CustomEase } from "gsap/CustomEase";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, SplitText, CustomEase);
+  CustomEase.create("appleOut", "0.16, 1, 0.3, 1");
+  CustomEase.create("appleSnap", "0.76, 0, 0.24, 1");
 }
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-// Phrases repeat seamlessly — the track is duplicated so translating by -50%
-// wraps cleanly to the start.
-const PHRASES = [
-  "CONVERSION WEBSITES",
-  "AI AUTOMATIONS",
-  "CUSTOM SOFTWARE",
+// Each phrase is its own cinematic moment — reveals char-by-char via SplitText,
+// holds for a beat, then dissolves as the next phrase arrives. The section
+// pins for ~3x viewport so each phrase has room to breathe.
+const PHRASES: { label: string; caption: string; meta: string }[] = [
+  {
+    label: "CONVERSION",
+    caption: "Websites that turn visitors into customers.",
+    meta: "01 · Built on Next.js",
+  },
+  {
+    label: "AUTOMATION",
+    caption: "Workflows that run while you sleep.",
+    meta: "02 · n8n + custom agents",
+  },
+  {
+    label: "SOFTWARE",
+    caption: "Custom tools shaped to your operation.",
+    meta: "03 · React · Supabase · owned by you",
+  },
 ];
 
 export default function ScrollMarquee() {
   const sectionRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
 
   useIsomorphicLayoutEffect(() => {
-    const track = sectionRef.current?.querySelector<HTMLElement>(".marquee-track");
-    if (!track) return;
+    const section = sectionRef.current;
+    const stage = stageRef.current;
+    if (!section || !stage) return;
+
+    const phrases = gsap.utils.toArray<HTMLElement>(stage.querySelectorAll(".sm-phrase"));
+    const splits: SplitText[] = [];
 
     const ctx = gsap.context(() => {
-      // Base continuous loop — translate the track by -50% (half its width,
-      // since it contains two copies of the content) over 30s, repeating.
-      const loop = gsap.to(track, {
-        xPercent: -50,
-        duration: 30,
-        ease: "none",
-        repeat: -1,
-      });
-
-      // Scroll velocity listener — boost timeScale based on how fast the user
-      // is scrolling; negative velocity (scrolling up) reverses direction.
-      let currentTimeScale = 1;
-      const target = { value: 1 };
-
-      const velocityTrigger = ScrollTrigger.create({
-        onUpdate: (self) => {
-          const velocity = self.getVelocity();
-          // Map velocity to a multiplier. At rest: 1x. Fast scroll: up to 6x.
-          // Sign carries direction — scrolling up reverses the marquee.
-          const direction = velocity >= 0 ? 1 : -1;
-          const magnitude = Math.min(Math.abs(velocity) * 0.004, 5);
-          target.value = direction * (1 + magnitude);
+      // Pin the stage while the user scrolls through all phrases.
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: () => `+=${window.innerHeight * phrases.length * 1.1}`,
+          pin: true,
+          scrub: 1,
+          anticipatePin: 1,
         },
       });
 
-      // Ease timeScale toward the target each frame so changes feel smooth,
-      // not jittery. Decays back to 1 (base speed) when scroll stops.
-      const decayTicker = () => {
-        // Decay target toward 1 when user isn't actively scrolling
-        target.value += (1 - target.value) * 0.05;
-        currentTimeScale += (target.value - currentTimeScale) * 0.15;
-        loop.timeScale(currentTimeScale);
-      };
-      gsap.ticker.add(decayTicker);
+      phrases.forEach((phrase, i) => {
+        const labelEl = phrase.querySelector<HTMLElement>(".sm-label");
+        const captionEl = phrase.querySelector<HTMLElement>(".sm-caption");
+        const metaEl = phrase.querySelector<HTMLElement>(".sm-meta");
 
-      return () => {
-        gsap.ticker.remove(decayTicker);
-        velocityTrigger.kill();
-      };
-    }, sectionRef);
+        let labelSplit: SplitText | null = null;
+        if (labelEl) {
+          labelSplit = new SplitText(labelEl, { type: "chars", charsClass: "sm-char" });
+          splits.push(labelSplit);
+        }
 
-    return () => ctx.revert();
+        // Starting state — hide everything
+        gsap.set(phrase, { autoAlpha: 0 });
+        if (labelSplit) gsap.set(labelSplit.words ?? labelSplit.chars, { yPercent: 110 });
+        if (captionEl) gsap.set(captionEl, { y: 20, opacity: 0 });
+        if (metaEl) gsap.set(metaEl, { opacity: 0 });
+
+        // Position within the master timeline — each phrase gets its slot.
+        const slot = i;
+
+        // Enter
+        tl.to(phrase, { autoAlpha: 1, duration: 0.15 }, slot);
+        if (labelSplit) {
+          tl.to(
+            labelSplit.chars,
+            { yPercent: 0, stagger: 0.015, duration: 0.5, ease: "appleOut" },
+            slot + 0.05
+          );
+        }
+        if (captionEl) tl.to(captionEl, { y: 0, opacity: 1, duration: 0.4, ease: "appleOut" }, slot + 0.2);
+        if (metaEl) tl.to(metaEl, { opacity: 1, duration: 0.3 }, slot + 0.3);
+
+        // Hold mid-slot for readability
+        tl.to(phrase, { autoAlpha: 1, duration: 0.35 }, slot + 0.35);
+
+        // Exit (skip on the last phrase — we let the section unpin instead)
+        if (i < phrases.length - 1) {
+          if (labelSplit) {
+            tl.to(
+              labelSplit.chars,
+              { yPercent: -110, stagger: 0.01, duration: 0.4, ease: "appleSnap" },
+              slot + 0.7
+            );
+          }
+          if (captionEl) tl.to(captionEl, { y: -16, opacity: 0, duration: 0.3, ease: "appleSnap" }, slot + 0.72);
+          if (metaEl) tl.to(metaEl, { opacity: 0, duration: 0.25 }, slot + 0.75);
+          tl.to(phrase, { autoAlpha: 0, duration: 0.1 }, slot + 0.95);
+        }
+      });
+
+      // Subtle overall bg pan — warms up slightly across the whole pinned run
+      gsap.to(stage, {
+        backgroundColor: "#ebe7df",
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: () => `+=${window.innerHeight * phrases.length * 1.1}`,
+          scrub: 1,
+        },
+      });
+    }, section);
+
+    const refreshTimer = window.setTimeout(() => ScrollTrigger.refresh(), 400);
+    return () => {
+      window.clearTimeout(refreshTimer);
+      splits.forEach((s) => s.revert());
+      ctx.revert();
+    };
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden"
-      style={{ padding: "clamp(5vh, 7vh, 10vh) 0 clamp(6vh, 10vh, 14vh)" }}
+      className="relative"
       data-bg="cream"
+      style={{ height: "100vh" }}
     >
-      {/* Editorial meta strip — gives the marquee context as an "in rotation"
-          list rather than pure decoration. Thin hairline anchors it. */}
-      <div className="relative px-6 md:px-12 lg:px-20 mb-8 md:mb-14">
+      <div
+        ref={stageRef}
+        className="relative w-full h-screen overflow-hidden flex flex-col items-center justify-center"
+        style={{ backgroundColor: "#f3f1ee" }}
+      >
+        {/* Top meta strip — gives the section context without competing */}
         <div
-          className="max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-3 pb-3"
-          style={{
-            borderBottom: "1px solid rgba(26,24,22,0.12)",
-            fontFamily: "var(--font-inter), sans-serif",
-          }}
+          className="absolute top-0 left-0 right-0 flex items-baseline justify-between px-8 md:px-14 lg:px-20"
+          style={{ paddingTop: "clamp(6vh, 8vh, 9vh)" }}
         >
           <span
             style={{
-              fontSize: "0.65rem",
-              fontWeight: 700,
+              fontFamily: "var(--font-inter), sans-serif",
+              fontSize: "0.66rem",
+              fontWeight: 600,
               letterSpacing: "0.3em",
               textTransform: "uppercase",
-              color: "rgba(26,24,22,0.55)",
+              color: "rgba(26,24,22,0.5)",
             }}
           >
-            [ In rotation · Q2 2026 ]
+            [ What I build ]
           </span>
           <span
+            className="hidden md:inline"
             style={{
-              fontSize: "0.62rem",
+              fontFamily: "var(--font-inter), sans-serif",
+              fontSize: "0.64rem",
               fontWeight: 500,
               letterSpacing: "0.22em",
               textTransform: "uppercase",
-              color: "rgba(26,24,22,0.35)",
+              color: "rgba(26,24,22,0.3)",
             }}
           >
-            Scroll accelerates · direction follows scroll
+            Three disciplines · one person
           </span>
         </div>
-      </div>
 
-      <div
-        className="marquee-track flex whitespace-nowrap"
-        style={{
-          fontFamily: "var(--font-inter), sans-serif",
-          fontSize: "clamp(4rem, 13vw, 16rem)",
-          fontWeight: 900,
-          letterSpacing: "-0.04em",
-          lineHeight: 1,
-          willChange: "transform",
-        }}
-      >
-        {[...PHRASES, ...PHRASES].map((phrase, i) => {
-          // Alternate filled vs outline phrases for editorial rhythm.
-          // `-webkit-text-stroke` keeps the weight-900 Inter glyphs crisp
-          // at display size where outlined text normally thins out.
-          const isOutline = i % 2 === 1;
-          return (
-            <span key={i} className="inline-flex items-center shrink-0">
+        {/* Phrase stage — each phrase absolute-layered, GSAP swaps visibility */}
+        <div className="relative w-full" style={{ height: "clamp(20rem, 40vh, 36rem)" }}>
+          {PHRASES.map((p, i) => (
+            <div
+              key={p.label}
+              className="sm-phrase absolute inset-0 flex flex-col items-center justify-center"
+              style={{ padding: "0 1rem" }}
+            >
               <span
+                className="sm-meta"
                 style={{
-                  paddingRight: "0.5em",
-                  color: isOutline ? "transparent" : "#1a1816",
-                  WebkitTextStroke: isOutline ? "1.5px #1a1816" : undefined,
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontSize: "clamp(0.68rem, 0.85vw, 0.82rem)",
+                  fontWeight: 600,
+                  letterSpacing: "0.3em",
+                  textTransform: "uppercase",
+                  color: "rgba(26,24,22,0.4)",
+                  marginBottom: "clamp(1.25rem, 3vh, 2rem)",
                 }}
               >
-                {phrase}
+                {p.meta}
               </span>
-              <span
-                aria-hidden="true"
+              <div
+                className="sm-label block overflow-hidden"
                 style={{
-                  paddingRight: "0.5em",
-                  color: "rgba(26, 24, 22, 0.25)",
-                  fontSize: "0.55em",
-                  transform: "translateY(-0.18em)",
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontSize: "clamp(3.5rem, 13vw, 15rem)",
+                  fontWeight: 900,
+                  letterSpacing: "-0.05em",
+                  lineHeight: 0.9,
+                  color: "#1a1816",
+                  textAlign: "center",
                 }}
               >
-                ✦
-              </span>
-            </span>
-          );
-        })}
+                {p.label}
+              </div>
+              <p
+                className="sm-caption"
+                style={{
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontSize: "clamp(1rem, 1.25vw, 1.25rem)",
+                  fontWeight: 500,
+                  color: "rgba(26,24,22,0.55)",
+                  letterSpacing: "-0.005em",
+                  marginTop: "clamp(1.5rem, 3vh, 2rem)",
+                  maxWidth: "60ch",
+                  textAlign: "center",
+                }}
+              >
+                {p.caption}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom progress ticks — 3 segments, active one filled */}
+        <div
+          className="absolute bottom-0 left-0 right-0 flex items-center px-8 md:px-14 lg:px-20"
+          style={{ paddingBottom: "clamp(4vh, 6vh, 7vh)" }}
+        >
+          <div className="flex items-center gap-3 w-full max-w-[1400px] mx-auto">
+            {PHRASES.map((_, i) => (
+              <div
+                key={i}
+                className="flex-1 h-[2px]"
+                style={{ backgroundColor: "rgba(26,24,22,0.15)" }}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
