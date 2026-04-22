@@ -23,163 +23,7 @@ const heroProjects = [
   { slug: "adventure-air", title: "Adventure Air", category: "Gyrocopter Tours", image: "/Elegant Black Laptop Mockup.webp" },
 ];
 
-// Bottom-left hero interaction — circle draws on hover, arrow rotates in
-function ViewWorkWidget() {
-  const [hovered, setHovered] = useState(false);
-
-  const handleClick = () => {
-    const workSection = document.getElementById("work") || document.querySelector("[data-bg='cream']");
-    if (workSection) {
-      workSection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  return (
-    <motion.div
-      className="absolute bottom-8 left-8 cursor-pointer"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onClick={handleClick}
-      style={{ width: 160 }}
-    >
-      {/* Outer border container — draws itself on hover */}
-      <motion.div
-        className="relative rounded-xl overflow-hidden"
-        animate={{
-          backgroundColor: hovered
-            ? "rgba(26, 24, 22, 0.04)"
-            : "rgba(26, 24, 22, 0)",
-        }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        style={{
-          padding: "10px",
-        }}
-      >
-        {/* Border — subtle default, gold draws on hover */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ zIndex: 3 }}
-        >
-          {/* Static subtle border — always visible */}
-          <rect
-            x="0.5"
-            y="0.5"
-            rx="12"
-            ry="12"
-            fill="none"
-            stroke="rgba(26, 24, 22, 0.12)"
-            strokeWidth="1"
-            style={{ width: "calc(100% - 1px)", height: "calc(100% - 1px)" }}
-          />
-          {/* Gold border — draws on hover */}
-          <motion.rect
-            x="0.5"
-            y="0.5"
-            rx="12"
-            ry="12"
-            fill="none"
-            stroke="#78736c"
-            strokeWidth="1.5"
-            strokeDasharray="600"
-            animate={{ strokeDashoffset: hovered ? 0 : 600 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            style={{ width: "calc(100% - 1px)", height: "calc(100% - 1px)" }}
-          />
-        </svg>
-
-        {/* Top row: dot + label + arrow */}
-        <div className="flex items-center justify-between mb-2 relative" style={{ zIndex: 2 }}>
-          <div className="flex items-center gap-2">
-            <motion.div
-              className="rounded-full"
-              style={{ width: 6, height: 6 }}
-              animate={{
-                backgroundColor: hovered ? "#78736c" : "rgba(26, 24, 22, 0.3)",
-              }}
-              transition={{ duration: 0.3 }}
-            />
-            <motion.span
-              className="text-[9px] font-semibold uppercase tracking-[0.15em]"
-              animate={{ color: hovered ? "#78736c" : "rgba(26, 24, 22, 0.4)" }}
-              transition={{ duration: 0.3 }}
-            >
-              Latest Project
-            </motion.span>
-          </div>
-          <motion.svg
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            strokeWidth="2"
-            strokeLinecap="round"
-            animate={{
-              stroke: hovered ? "#78736c" : "rgba(26, 24, 22, 0.25)",
-              rotate: hovered ? 0 : 90,
-            }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <path d="M12 5v14M5 12l7 7 7-7" />
-          </motion.svg>
-        </div>
-
-        {/* Expandable thumbnail */}
-        <motion.div
-          className="rounded-lg overflow-hidden relative"
-          animate={{
-            height: hovered ? 85 : 0,
-            opacity: hovered ? 1 : 0,
-            marginBottom: hovered ? 8 : 0,
-          }}
-          transition={{
-            height: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
-            opacity: { duration: 0.3, delay: hovered ? 0.1 : 0 },
-            marginBottom: { duration: 0.3 },
-          }}
-          style={{ zIndex: 2, position: "relative" }}
-        >
-          <Image
-            src="/Celestial Laptop Mockup.webp"
-            alt="Desert Wings"
-            fill
-            className="object-cover"
-            sizes="160px"
-          />
-          <motion.div
-            className="absolute inset-0 flex items-center justify-center"
-            style={{ background: "rgba(26, 24, 22, 0.3)" }}
-            animate={{ opacity: hovered ? 1 : 0 }}
-            transition={{ duration: 0.3, delay: 0.2 }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-              <path d="M7 17L17 7M17 7H7M17 7V17" />
-            </svg>
-          </motion.div>
-        </motion.div>
-
-        {/* Bottom: project name + year */}
-        <div className="flex items-baseline justify-between relative" style={{ zIndex: 2 }}>
-          <motion.span
-            className="text-[10px] font-bold"
-            animate={{ color: hovered ? "#1a1816" : "rgba(26, 24, 22, 0.45)" }}
-            transition={{ duration: 0.3 }}
-          >
-            Desert Wings
-          </motion.span>
-          <motion.span
-            className="text-[9px] font-medium"
-            animate={{ color: hovered ? "#78736c" : "rgba(26, 24, 22, 0.25)" }}
-            transition={{ duration: 0.3 }}
-          >
-            2024
-          </motion.span>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-const LOGO_PATH = "M818.41,570.38c15.05,0,19.94-12.01,19.94-32.84v-44.63c0-14.1-1.3-32.55-19.56-32.55H685.46c-8.01,0-12.19,7.43-14.91,14.56l-59.58,173.38c-2.14,5.61-7.02,7.55-12.88,7.55H402.05c-52,0-94.75-39.61-99.71-90.3V416.41c0-38.13,22.95-70.91,55.79-85.25c-35.32-15.72-56.3-50.36-56.31-86.68v-90.87c0-51.94,42.11-94.05,94.05-94.05c0.98,0,1.95,0.01,2.93,0.05h198.9c7.92,0,14.33,6.42,14.33,14.33c0,1.58-0.26,3.1-0.73,4.52c-7.43,22.16-14.95,44.26-22.55,66.31c-2.58,7.48-10.4,8.88-18.22,8.88c-0.04,0-0.08-0.03-0.12-0.04H425.71c-16.19,2.06-27.84,16.3-26.91,32.35v59.32c0,14.92,12.03,27.03,26.91,27.17c42.5,0.39,84.92,0,127.25,0c9.09,0,17.05,6.72,14.46,14.2c-0.97,2.8-2.05,5.45-3.43,9.44l-19.75,57.05c-3.13,9.04-13.06,10.33-22.03,10.33c-0.57,0-0.5,0-0.98,0h-74.16c-24.87,0-45.04,20.16-45.04,45.04c0,2.87,0,5.62,0,7.91v117.45c-0.09,15.01-3.55,31.7,23.66,31.7h96.52c12.17,0,16.56-6.09,22.04-22.04c0.25-0.72,0.48-1.25,0.64-1.71L703.6,78.46c2.76-8.03,5.58-18.86,14.58-18.86h129.22c52.12,0,94.43,42.03,94.88,94.04v158.93c0,7.91-6.42,14.33-14.33,14.33c-0.38,0-0.75-0.01-1.12-0.04h-72.63c-8.28,0-15.09-6.25-15.99-14.29V185.96c0-20.35-16.5-36.86-36.86-36.86c-6.61,0-17.46,2.65-20.81,12.59c-17.05,50.53-68.21,202.14-68.21,202.14c-0.87,2.57,0.37,6.21,3.08,6.21c1.21,0,1.99,0,3.02,0l119.78,0.04c52.82,0,104.07,39.42,104.07,89.65v105.82c0,52.41-42.48,94.89-94.89,94.89c-0.65,0-1.3-0.01-1.95-0.02h-127c-7.23,0-18.16,0.71-14.19-12.3l21.22-69.45c1.6-5.23,6.53-8.53,11.75-8.29";
+const LOGO_PATH ="M818.41,570.38c15.05,0,19.94-12.01,19.94-32.84v-44.63c0-14.1-1.3-32.55-19.56-32.55H685.46c-8.01,0-12.19,7.43-14.91,14.56l-59.58,173.38c-2.14,5.61-7.02,7.55-12.88,7.55H402.05c-52,0-94.75-39.61-99.71-90.3V416.41c0-38.13,22.95-70.91,55.79-85.25c-35.32-15.72-56.3-50.36-56.31-86.68v-90.87c0-51.94,42.11-94.05,94.05-94.05c0.98,0,1.95,0.01,2.93,0.05h198.9c7.92,0,14.33,6.42,14.33,14.33c0,1.58-0.26,3.1-0.73,4.52c-7.43,22.16-14.95,44.26-22.55,66.31c-2.58,7.48-10.4,8.88-18.22,8.88c-0.04,0-0.08-0.03-0.12-0.04H425.71c-16.19,2.06-27.84,16.3-26.91,32.35v59.32c0,14.92,12.03,27.03,26.91,27.17c42.5,0.39,84.92,0,127.25,0c9.09,0,17.05,6.72,14.46,14.2c-0.97,2.8-2.05,5.45-3.43,9.44l-19.75,57.05c-3.13,9.04-13.06,10.33-22.03,10.33c-0.57,0-0.5,0-0.98,0h-74.16c-24.87,0-45.04,20.16-45.04,45.04c0,2.87,0,5.62,0,7.91v117.45c-0.09,15.01-3.55,31.7,23.66,31.7h96.52c12.17,0,16.56-6.09,22.04-22.04c0.25-0.72,0.48-1.25,0.64-1.71L703.6,78.46c2.76-8.03,5.58-18.86,14.58-18.86h129.22c52.12,0,94.43,42.03,94.88,94.04v158.93c0,7.91-6.42,14.33-14.33,14.33c-0.38,0-0.75-0.01-1.12-0.04h-72.63c-8.28,0-15.09-6.25-15.99-14.29V185.96c0-20.35-16.5-36.86-36.86-36.86c-6.61,0-17.46,2.65-20.81,12.59c-17.05,50.53-68.21,202.14-68.21,202.14c-0.87,2.57,0.37,6.21,3.08,6.21c1.21,0,1.99,0,3.02,0l119.78,0.04c52.82,0,104.07,39.42,104.07,89.65v105.82c0,52.41-42.48,94.89-94.89,94.89c-0.65,0-1.3-0.01-1.95-0.02h-127c-7.23,0-18.16,0.71-14.19-12.3l21.22-69.45c1.6-5.23,6.53-8.53,11.75-8.29";
 
 // Logo with dark outline that fills gold on hover
 function HeroLogo() {
@@ -405,7 +249,7 @@ function HeroFanCards({
             onMouseEnter={() => setHoveredIndex(i)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
-            <TransitionLink href={`/work/${project.slug}`}>
+            <TransitionLink href={`/work/${project.slug}`} data-card>
               <div
                 className="relative overflow-hidden cursor-pointer"
                 style={{
@@ -599,12 +443,14 @@ function HeroCorrectionText() {
 // Continuous horizontal scroll of client names — "trusted by" strip below the hero CTA
 function ClientLogosMarquee() {
   const trackRef = useRef<HTMLDivElement>(null);
+  const tweenRef = useRef<gsap.core.Tween | null>(null);
+  const [hovered, setHovered] = useState(false);
 
   useIsomorphicLayoutEffect(() => {
     const track = trackRef.current;
     if (!track) return;
     const ctx = gsap.context(() => {
-      gsap.to(track, {
+      tweenRef.current = gsap.to(track, {
         xPercent: -50,
         duration: 28,
         ease: "none",
@@ -613,6 +459,18 @@ function ClientLogosMarquee() {
     });
     return () => ctx.revert();
   }, []);
+
+  // Slow (not stop) the marquee on hover so users can read — still subtly moving
+  // so the "live" feel doesn't break. 0.15x = 6.6x slower than resting pace.
+  useEffect(() => {
+    const tween = tweenRef.current;
+    if (!tween) return;
+    gsap.to(tween, {
+      timeScale: hovered ? 0.15 : 1,
+      duration: 0.6,
+      ease: "power2.out",
+    });
+  }, [hovered]);
 
   const clients = [
     "Desert Wings",
@@ -624,7 +482,9 @@ function ClientLogosMarquee() {
 
   return (
     <div
-      className="overflow-hidden w-full"
+      className="overflow-hidden w-full cursor-default"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
         // Fade only the left edge — marquee reads like it's continuously arriving
         // from the left side of the hero, not looped into a tight box.
@@ -642,7 +502,7 @@ function ClientLogosMarquee() {
         {[...clients, ...clients].map((name, i) => (
           <span
             key={i}
-            className="flex items-center"
+            className="group/client flex items-center transition-colors duration-300 hover:text-[#1a1816]"
             style={{
               fontFamily: "var(--font-inter), sans-serif",
               fontSize: "0.82rem",
@@ -652,11 +512,13 @@ function ClientLogosMarquee() {
               color: "rgba(26,24,22,0.42)",
               flexShrink: 0,
               paddingRight: "3rem",
+              cursor: "default",
             }}
           >
             {name}
             <span
               aria-hidden="true"
+              className="transition-all duration-300 group-hover/client:scale-[2.5] group-hover/client:bg-[#1a1816]!"
               style={{
                 marginLeft: "3rem",
                 width: "4px",
@@ -673,12 +535,54 @@ function ClientLogosMarquee() {
 }
 
 // Desktop Hero — shrinks on scroll
+// Projects currently shipping — cycles in the right-rail micro-card.
+// Hardcoded for now; move to Sanity later if we want to edit without redeploys.
+const CURRENTLY_SHIPPING = [
+  { name: "Desert Wings", category: "Flight School", slug: "desert-wings" },
+  { name: "Riled Up", category: "Coaching", slug: "riled-up" },
+  { name: "Wings N Wheels", category: "Design Showcase", slug: "wings-n-wheels" },
+  { name: "Adventure Air", category: "Gyrocopter Tours", slug: "adventure-air" },
+];
+
+// Format elapsed seconds as MM:SS (with leading zeros) for the live session timer.
+function formatSession(seconds: number): string {
+  const m = Math.floor(seconds / 60)
+    .toString()
+    .padStart(2, "0");
+  const s = (seconds % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+}
+
 function DesktopHero() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoBoxRef = useRef<HTMLDivElement>(null);
   const heroContentRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [hoveredFanIndex, setHoveredFanIndex] = useState<number | null>(null);
+  const [ratingHovered, setRatingHovered] = useState(false);
+  const [scrollHintHovered, setScrollHintHovered] = useState(false);
+
+  // "Currently shipping" crossfade cycle — advance every 4s, paused while hovered
+  // so users can actually read / click whichever project caught their eye.
+  const [activeShippingIdx, setActiveShippingIdx] = useState(0);
+  const [shippingHovered, setShippingHovered] = useState(false);
+  useEffect(() => {
+    if (shippingHovered) return;
+    const id = window.setInterval(() => {
+      setActiveShippingIdx((i) => (i + 1) % CURRENTLY_SHIPPING.length);
+    }, 4000);
+    return () => window.clearInterval(id);
+  }, [shippingHovered]);
+
+  // Live MM:SS session timer — counts up from page load. Purely aesthetic,
+  // reinforces the "studio is running" feeling of the hero.
+  const [sessionSeconds, setSessionSeconds] = useState(0);
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setSessionSeconds((s) => s + 1);
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, []);
 
   // Text parallax-fades up + video box drifts up on scroll
   useIsomorphicLayoutEffect(() => {
@@ -701,6 +605,23 @@ function DesktopHero() {
         },
       });
 
+      // Client ticker shrinks in width as the user scrolls into the fan moment,
+      // so it reads as a tight byline instead of a wide bar competing with the
+      // "Recent Projects" headline once it travels up the viewport.
+      const marqueeWrapper = section.querySelector<HTMLElement>(".hero-marquee-wrapper");
+      if (marqueeWrapper) {
+        gsap.to(marqueeWrapper, {
+          maxWidth: 200,
+          ease: "power2.inOut",
+          scrollTrigger: {
+            trigger: section,
+            start: "5% top",
+            end: "30% top",
+            scrub: true,
+          },
+        });
+      }
+
       // Video box shrinks into a vertical card
       const shrinkTl = gsap.timeline({
         scrollTrigger: {
@@ -721,6 +642,25 @@ function DesktopHero() {
           ease: "power2.inOut",
         }, 0);
       }
+
+      // Slide the whole sticky video back toward viewport center as it shrinks —
+      // the hero layout places it in the right column (marginLeft: auto inside a
+      // 640px max cap), so without this the fan spreads from a right-anchored
+      // pivot instead of viewport center. Math: videoBox natural center sits at
+      // `viewport_right - pad - maxWidth/2`; we translate left by the delta to
+      // viewport center. invalidateOnRefresh re-computes on resize.
+      shrinkTl.to(
+        videoBox,
+        {
+          x: () => {
+            const pad = 48; // approx lg:px padding
+            const maxW = 640; // sticky motion.div maxWidth
+            return -(window.innerWidth / 2 - pad - maxW / 2);
+          },
+          ease: "power2.inOut",
+        },
+        0
+      );
 
       // "Selected Work" label fades in as card shrinks
       const workLabel = videoBox.querySelector(".work-label");
@@ -844,11 +784,130 @@ function DesktopHero() {
             </div>
           </motion.div>
 
-          {/* Hero text content */}
-          <div className="relative z-10 pt-[18vh] md:pt-[20vh]">
-            {/* Title + subline + CTA — parallax fades up on scroll */}
-            <div ref={heroContentRef} className="flex flex-col items-center text-center">
-              <div className="px-6">
+          {/* === "Live Studio" corners: masthead TL, availability TR ===
+              Masthead is a click target to /about. On hover the underline rule
+              expands and a tiny `→ About` wayfinder fades in under Vol./year. */}
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute z-20 hidden lg:block"
+            style={{
+              top: "clamp(12vh, 14vh, 16vh)",
+              left: "clamp(1.25rem, 3vw, 3rem)",
+            }}
+          >
+            <TransitionLink
+              href="/about"
+              className="group flex flex-col"
+              style={{ gap: "0.45rem" }}
+            >
+              <span
+                className="transition-colors duration-300 group-hover:text-[#1a1816]"
+                style={{
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontSize: "0.68rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.25em",
+                  textTransform: "uppercase",
+                  color: "rgba(26,24,22,0.7)",
+                }}
+              >
+                Executive AI Solutions
+              </span>
+              <div
+                className="transition-all duration-500 ease-out group-hover:w-20 group-hover:bg-[rgba(26,24,22,0.4)]"
+                style={{ width: 40, height: 1, backgroundColor: "rgba(26,24,22,0.15)" }}
+              />
+              <span
+                className="flex items-center"
+                style={{
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontSize: "0.68rem",
+                  fontVariantNumeric: "tabular-nums",
+                  color: "rgba(26,24,22,0.4)",
+                  letterSpacing: "0.05em",
+                  gap: "0.4rem",
+                }}
+              >
+                <span>Vol. 1 · 2026</span>
+                <span
+                  className="opacity-0 -translate-x-1 group-hover:opacity-60 group-hover:translate-x-0 transition-all duration-300"
+                  style={{ color: "#1a1816", fontSize: "0.62rem", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600 }}
+                >
+                  → About
+                </span>
+              </span>
+            </TransitionLink>
+          </motion.div>
+
+          {/* Availability badge is a click target → /contact. Hover darkens the
+              border + reveals a tiny wayfinder chevron to make "click me" obvious. */}
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute z-20 hidden lg:block"
+            style={{
+              top: "clamp(12vh, 14vh, 16vh)",
+              right: "clamp(1.25rem, 3vw, 3rem)",
+            }}
+          >
+            <TransitionLink
+              href="/contact"
+              className="group flex items-center transition-all duration-300 hover:border-[rgba(26,24,22,0.3)] hover:bg-[rgba(243,241,238,0.85)]"
+              style={{
+                gap: "0.55rem",
+                padding: "0.45rem 0.95rem",
+                border: "1px solid rgba(26,24,22,0.12)",
+                borderRadius: 100,
+                backgroundColor: "rgba(243,241,238,0.5)",
+                backdropFilter: "blur(6px)",
+              }}
+            >
+              <motion.span
+                className="rounded-full"
+                style={{ width: 6, height: 6, backgroundColor: "rgba(16,185,129,0.9)" }}
+                animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <span
+                className="transition-colors duration-300 group-hover:text-[#1a1816]"
+                style={{
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontSize: "0.66rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: "rgba(26,24,22,0.75)",
+                }}
+              >
+                Available Q2 · 2 slots
+              </span>
+              <span
+                className="opacity-0 -translate-x-1 group-hover:opacity-70 group-hover:translate-x-0 transition-all duration-300"
+                style={{ fontSize: "0.7rem", color: "#1a1816", lineHeight: 1 }}
+              >
+                →
+              </span>
+            </TransitionLink>
+          </motion.div>
+
+          {/* === Main grid: headline left, currently-shipping + video right === */}
+          <div
+            className="relative z-10 grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] lg:items-start"
+            style={{ paddingTop: "clamp(18vh, 22vh, 26vh)" }}
+          >
+            {/* LEFT column — glitch headline + subline + CTA + rating */}
+            <div
+              ref={heroContentRef}
+              className="flex flex-col items-start text-left"
+              style={{
+                paddingLeft: "clamp(1.25rem, 3vw, 3rem)",
+                paddingRight: "clamp(1rem, 2vw, 2rem)",
+              }}
+            >
+              <div style={{ maxWidth: 900 }}>
                 <HeroCorrectionText />
               </div>
 
@@ -863,10 +922,19 @@ function DesktopHero() {
                   marginTop: "1.5rem",
                   maxWidth: "500px",
                   lineHeight: 1.6,
-                  padding: "0 1rem",
                 }}
               >
-                I design websites that turn visitors into customers.
+                I design websites that{" "}
+                <span className="relative inline-block group cursor-default">
+                  <span className="transition-colors duration-400 group-hover:text-[#1a1816]">
+                    turn visitors into customers
+                  </span>
+                  <span
+                    className="absolute left-0 w-0 group-hover:w-full transition-all duration-500 ease-out"
+                    style={{ bottom: -2, height: 1, backgroundColor: "#78736c" }}
+                  />
+                </span>
+                .
               </motion.p>
 
               <motion.div
@@ -883,113 +951,260 @@ function DesktopHero() {
                     color: "#f3f1ee",
                   }}
                 >
-                  <span className="text-sm font-semibold uppercase tracking-[0.1em]">Start a Project</span>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <span className="text-sm font-semibold uppercase tracking-[0.1em]">
+                    Start a Project
+                  </span>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  >
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </TransitionLink>
               </motion.div>
 
-            </div>
-          </div>
-
-          {/* Trust bar — avatar stack + rating on the left, client logo marquee
-              on the right. Constrained narrower than the hero title. */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 3.3, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center gap-8 mx-auto"
-            style={{
-              maxWidth: 900,
-              width: "calc(100% - 3rem)",
-              marginTop: "clamp(4rem, 8vh, 7rem)",
-              paddingTop: "clamp(0.5rem, 1vh, 1rem)",
-              paddingBottom: "clamp(1rem, 2vh, 1.5rem)",
-              position: "relative",
-              zIndex: 3,
-            }}
-          >
-            {/* Left: avatar stack + rating + tagline */}
-            <div className="flex items-center gap-3.5 shrink-0">
-              <div className="flex -space-x-2.5">
-                {[
-                  "#78736c",
-                  "#1a1816",
-                  "#8a7a6a",
-                  "#3d2f22",
-                ].map((color, i) => (
-                  <div
-                    key={i}
-                    className="rounded-full border-2"
-                    style={{
-                      width: 34,
-                      height: 34,
-                      backgroundColor: color,
-                      borderColor: "#f3f1ee",
-                      zIndex: 4 - i,
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="flex flex-col" style={{ gap: "0.15rem" }}>
-                <div
-                  className="flex items-center"
-                  style={{ gap: "0.4rem" }}
-                >
-                  <span
-                    style={{
-                      fontFamily: "var(--font-inter), sans-serif",
-                      fontSize: "0.95rem",
-                      fontWeight: 700,
-                      color: "#1a1816",
-                      letterSpacing: "-0.01em",
-                    }}
-                  >
-                    5.0
-                  </span>
-                  <span
-                    style={{
-                      color: "#78736c",
-                      fontSize: "0.75rem",
-                      letterSpacing: "0.15em",
-                      lineHeight: 1,
-                    }}
-                  >
-                    ★★★★★
-                  </span>
-                </div>
+              {/* Rating row — button that scrolls to #testimonials. Stars lift
+                  + darken in a stagger on hover to echo the row's click target. */}
+              <motion.button
+                type="button"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 3.3, ease: [0.22, 1, 0.36, 1] }}
+                onClick={() => document.getElementById("testimonials")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                onMouseEnter={() => setRatingHovered(true)}
+                onMouseLeave={() => setRatingHovered(false)}
+                className="group flex items-center cursor-pointer"
+                style={{ gap: "0.55rem", marginTop: "1.75rem", background: "transparent", border: 0, padding: 0 }}
+              >
                 <span
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "0.95rem",
+                    fontWeight: 700,
+                    color: "#1a1816",
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  5.0
+                </span>
+                <span className="inline-flex" style={{ gap: "0.08em" }}>
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <span
+                      key={i}
+                      className="inline-block"
+                      style={{
+                        color: ratingHovered ? "#1a1816" : "#78736c",
+                        fontSize: "0.75rem",
+                        lineHeight: 1,
+                        transition: "color 0.3s ease, transform 0.3s ease",
+                        transitionDelay: `${i * 45}ms`,
+                        transform: ratingHovered ? "translateY(-3px)" : "translateY(0)",
+                      }}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </span>
+                <span
+                  className="transition-colors duration-300 group-hover:text-[rgba(26,24,22,0.75)]"
                   style={{
                     fontFamily: "var(--font-inter), sans-serif",
                     fontSize: "0.78rem",
                     fontWeight: 500,
-                    color: "rgba(26,24,22,0.6)",
-                    letterSpacing: "0.01em",
+                    color: "rgba(26,24,22,0.5)",
+                    marginLeft: "0.3rem",
                   }}
                 >
-                  Trusted by small businesses
+                  · Read the reviews
                 </span>
-              </div>
+                <span
+                  className="opacity-0 -translate-x-1 group-hover:opacity-70 group-hover:translate-x-0 transition-all duration-300"
+                  style={{ fontSize: "0.7rem", color: "#1a1816", lineHeight: 1 }}
+                >
+                  →
+                </span>
+              </motion.button>
             </div>
 
-            {/* Right: client logos marquee */}
-            <div className="flex-1 min-w-0">
-              <ClientLogosMarquee />
-            </div>
-          </motion.div>
-
-          {/* Video box — sticky, stays pinned while content scrolls. Height tuned
-              so pin releases shortly after the shrink + fan animations finish. */}
-          <div style={{ height: "130vh" }}>
-            <motion.div
-              ref={videoBoxRef}
-              className="sticky top-[22vh] mx-auto px-6 md:px-12 lg:px-20"
-              initial={{ opacity: 0, y: 80 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, delay: 3.4, ease: [0.22, 1, 0.36, 1] }}
-              style={{ maxWidth: 1100, marginTop: "clamp(10rem, 24vh, 18rem)", zIndex: 5 }}
+            {/* RIGHT column — currently-shipping card + 130vh sticky video */}
+            <div
+              className="relative"
+              style={{
+                paddingRight: "clamp(1.25rem, 3vw, 3rem)",
+                paddingLeft: "clamp(1rem, 2vw, 2rem)",
+              }}
             >
+              {/* Currently shipping card — cycles every 4s, pauses on hover so
+                  users can read + click. Active project is a TransitionLink to
+                  /work/[slug]. Progress segments under the title are clickable
+                  dots letting users jump between the 4 projects directly. */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 3.3, ease: [0.22, 1, 0.36, 1] }}
+                onMouseEnter={() => setShippingHovered(true)}
+                onMouseLeave={() => setShippingHovered(false)}
+                className="hidden lg:flex flex-col"
+                style={{
+                  maxWidth: 260,
+                  marginLeft: "auto",
+                  marginBottom: "clamp(1.5rem, 3vh, 2.5rem)",
+                }}
+              >
+                <div
+                  className="flex items-center"
+                  style={{ gap: "0.5rem", marginBottom: "0.55rem" }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "var(--font-inter), sans-serif",
+                      fontSize: "0.62rem",
+                      fontWeight: 600,
+                      letterSpacing: "0.28em",
+                      textTransform: "uppercase",
+                      color: "rgba(26,24,22,0.4)",
+                    }}
+                  >
+                    [ Currently shipping ]
+                  </span>
+                  <motion.span
+                    animate={{ opacity: shippingHovered ? 1 : 0 }}
+                    transition={{ duration: 0.2 }}
+                    style={{
+                      fontFamily: "var(--font-inter), sans-serif",
+                      fontSize: "0.55rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.18em",
+                      color: "rgba(26,24,22,0.35)",
+                    }}
+                  >
+                    ⏸ PAUSED
+                  </motion.span>
+                </div>
+                <TransitionLink
+                  href={`/work/${CURRENTLY_SHIPPING[activeShippingIdx].slug}`}
+                  className="group block"
+                >
+                  <div className="relative" style={{ minHeight: 54 }}>
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={CURRENTLY_SHIPPING[activeShippingIdx].slug}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                      >
+                        <div className="flex items-baseline" style={{ gap: "0.45rem" }}>
+                          <p
+                            style={{
+                              fontFamily: "var(--font-inter), sans-serif",
+                              fontSize: "1.08rem",
+                              fontWeight: 900,
+                              color: "#1a1816",
+                              letterSpacing: "-0.02em",
+                              lineHeight: 1.15,
+                            }}
+                          >
+                            {CURRENTLY_SHIPPING[activeShippingIdx].name}
+                          </p>
+                          <motion.span
+                            animate={{
+                              x: shippingHovered ? 4 : 0,
+                              opacity: shippingHovered ? 0.75 : 0,
+                            }}
+                            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                            style={{
+                              fontSize: "0.85rem",
+                              color: "#1a1816",
+                              lineHeight: 1,
+                            }}
+                          >
+                            →
+                          </motion.span>
+                        </div>
+                        <div
+                          className="flex items-center"
+                          style={{ gap: "0.45rem", marginTop: "0.35rem" }}
+                        >
+                          <motion.span
+                            className="inline-block"
+                            animate={{
+                              backgroundColor: shippingHovered
+                                ? "#1a1816"
+                                : "#78736c",
+                            }}
+                            transition={{ duration: 0.3 }}
+                            style={{
+                              width: 6,
+                              height: 6,
+                              borderRadius: 1,
+                            }}
+                          />
+                          <span
+                            className="transition-colors duration-300 group-hover:text-[rgba(26,24,22,0.8)]"
+                            style={{
+                              fontFamily: "var(--font-inter), sans-serif",
+                              fontSize: "0.72rem",
+                              fontWeight: 500,
+                              color: "rgba(26,24,22,0.55)",
+                            }}
+                          >
+                            {CURRENTLY_SHIPPING[activeShippingIdx].category}
+                          </span>
+                        </div>
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                </TransitionLink>
+                {/* Progress segments — click to jump to that project */}
+                <div
+                  className="flex items-center"
+                  style={{ gap: "0.35rem", marginTop: "0.85rem" }}
+                >
+                  {CURRENTLY_SHIPPING.map((_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      aria-label={`Show project ${i + 1} of ${CURRENTLY_SHIPPING.length}`}
+                      onClick={() => setActiveShippingIdx(i)}
+                      className="cursor-pointer transition-all duration-400 ease-out hover:!bg-[rgba(26,24,22,0.7)]"
+                      style={{
+                        width: i === activeShippingIdx ? 22 : 6,
+                        height: 2,
+                        borderRadius: 2,
+                        backgroundColor:
+                          i === activeShippingIdx
+                            ? "rgba(26,24,22,0.75)"
+                            : "rgba(26,24,22,0.2)",
+                        border: "none",
+                        padding: 0,
+                      }}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Video sticky container — same shrink/fan morph; now right-anchored.
+                  Sticky + GSAP-animated layer is a plain div (ref=videoBoxRef) so
+                  GSAP owns its transform. Framer-motion's load-in animation lives
+                  on an inner motion.div so the two don't fight over `transform`. */}
+              <div style={{ height: "130vh" }}>
+                <div
+                  ref={videoBoxRef}
+                  className="sticky top-[22vh]"
+                  style={{ maxWidth: 640, marginLeft: "auto", zIndex: 5, willChange: "transform" }}
+                >
+                <motion.div
+                  initial={{ opacity: 0, y: 80 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1.2, delay: 3.4, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ position: "relative" }}
+                >
               {/* "Selected Work" — fades in above the card as it shrinks */}
               <div
                 className="work-label absolute left-0 right-0 text-center"
@@ -1014,7 +1229,7 @@ function DesktopHero() {
                   Recent Projects
                 </h2>
               </div>
-              <TransitionLink href="/work/desert-wings">
+              <TransitionLink href="/work/desert-wings" data-card>
               <div
                 className="video-frame relative overflow-hidden mx-auto cursor-pointer"
                 onMouseEnter={() => setHoveredFanIndex(-1)}
@@ -1071,8 +1286,123 @@ function DesktopHero() {
 
               {/* Fan cards — emerge from behind the video card */}
               <HeroFanCards hoveredIndex={hoveredFanIndex} setHoveredIndex={setHoveredFanIndex} videoCardIndex={-1} />
-            </motion.div>
+                </motion.div>
+                </div>
+              </div>
+            </div>
+          </div>
 
+          {/* === "Live Studio" bottom corners: client ticker BL, scroll hint + session timer BR ===
+              Absolutely positioned at the bottom of the first viewport screen so they scroll
+              with the page. The ticker wrapper uses .hero-marquee-wrapper so GSAP can shrink
+              its max-width as the user scrolls into the fan moment — prevents the ticker from
+              visually competing with the "Recent Projects" headline once it reaches the top. */}
+          <div
+            className="hero-bottom-aside hero-marquee-wrapper hidden lg:block absolute z-20"
+            style={{
+              top: "calc(100vh - 7vh)",
+              left: "clamp(1.25rem, 3vw, 3rem)",
+              maxWidth: 420,
+              width: "calc(40% - 6vw)",
+              willChange: "max-width",
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 3.5, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <ClientLogosMarquee />
+            </motion.div>
+          </div>
+
+          <div
+            className="hero-bottom-aside hidden lg:flex absolute z-20 flex-col items-end"
+            style={{
+              top: "calc(100vh - 7vh)",
+              right: "clamp(1.25rem, 3vw, 3rem)",
+              gap: "0.3rem",
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 3.7, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col items-end"
+              style={{ gap: "0.3rem" }}
+            >
+              {/* Scroll hint as a button — jumps past the sticky fan to the Work
+                  section. Arrow + label darken in unison on hover to match the
+                  "live dashboard" hover language used elsewhere. */}
+              <button
+                type="button"
+                onClick={() =>
+                  window.scrollTo({
+                    top: window.innerHeight * 2.3,
+                    behavior: "smooth",
+                  })
+                }
+                onMouseEnter={() => setScrollHintHovered(true)}
+                onMouseLeave={() => setScrollHintHovered(false)}
+                className="flex items-center cursor-pointer"
+                style={{
+                  gap: "0.55rem",
+                  background: "transparent",
+                  border: 0,
+                  padding: 0,
+                }}
+              >
+                <motion.span
+                  animate={{ y: [0, 3, 0] }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                  style={{
+                    fontSize: "0.95rem",
+                    color: scrollHintHovered ? "#1a1816" : "rgba(26,24,22,0.5)",
+                    lineHeight: 1,
+                    transition: "color 0.3s ease",
+                  }}
+                >
+                  ↓
+                </motion.span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "0.66rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.25em",
+                    textTransform: "uppercase",
+                    color: scrollHintHovered ? "#1a1816" : "rgba(26,24,22,0.55)",
+                    transition: "color 0.3s ease",
+                  }}
+                >
+                  Scroll to work
+                </span>
+              </button>
+              {/* Session timer + pulsing "live" dot */}
+              <div className="flex items-center" style={{ gap: "0.4rem" }}>
+                <motion.span
+                  className="inline-block rounded-full"
+                  animate={{ opacity: [0.25, 0.65, 0.25] }}
+                  transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                  style={{
+                    width: 4,
+                    height: 4,
+                    backgroundColor: "rgba(26,24,22,0.55)",
+                  }}
+                />
+                <span
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "0.66rem",
+                    fontVariantNumeric: "tabular-nums",
+                    color: "rgba(26,24,22,0.35)",
+                    letterSpacing: "0.08em",
+                  }}
+                >
+                  Session {formatSession(sessionSeconds)}
+                </span>
+              </div>
+            </motion.div>
           </div>
 
           {/* View all work — pill link below the fan. Sits in natural flow after
