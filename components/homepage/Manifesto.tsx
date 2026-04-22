@@ -303,7 +303,7 @@ export default function Manifesto() {
         ref={desktopRef}
         className="relative hidden md:block"
         data-bg="cream"
-        style={{ minHeight: "100vh", padding: "15vh 0", paddingBottom: "60vh" }}
+        style={{ minHeight: "100vh", padding: "15vh 0 18vh" }}
       >
         {/* Signature */}
         <div
@@ -379,59 +379,81 @@ export default function Manifesto() {
                   my real stack, and a real outcome. No agency overhead, no filler.
                 </p>
 
-                {/* Tech stack */}
+                {/* Tech stack — replaces the generic pill row with a typographic
+                    register: huge count on the left, stack names as a vertical
+                    ticker of uppercase lines. Each line hovers to darken. */}
                 <div>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-inter), sans-serif",
-                      fontSize: "0.7rem",
-                      fontWeight: 600,
-                      letterSpacing: "0.3em",
-                      textTransform: "uppercase",
-                      color: "rgba(26,24,22,0.4)",
-                      marginBottom: "1.25rem",
-                    }}
-                  >
-                    Tech stack
-                  </p>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: "0.5rem",
-                    }}
-                  >
-                    {[
-                      "Next.js",
-                      "React",
-                      "TypeScript",
-                      "Tailwind",
-                      "Sanity",
-                      "GSAP",
-                      "Framer Motion",
-                      "OpenAI",
-                      "n8n",
-                      "Supabase",
-                    ].map((tool) => (
-                      <span
-                        key={tool}
+                  <div className="flex items-start gap-6">
+                    <span
+                      style={{
+                        fontFamily: "var(--font-inter), sans-serif",
+                        fontSize: "clamp(3rem, 4vw, 4rem)",
+                        fontWeight: 900,
+                        lineHeight: 0.9,
+                        letterSpacing: "-0.05em",
+                        color: "#1a1816",
+                        fontVariantNumeric: "tabular-nums",
+                      }}
+                    >
+                      10
+                    </span>
+                    <div className="flex-1 pt-1">
+                      <p
                         style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          padding: "0.6rem 1rem",
-                          borderRadius: "100px",
-                          backgroundColor: "rgba(26,24,22,0.04)",
-                          border: "1px solid rgba(26,24,22,0.08)",
                           fontFamily: "var(--font-inter), sans-serif",
-                          fontSize: "0.82rem",
-                          fontWeight: 500,
-                          color: "rgba(26,24,22,0.7)",
-                          letterSpacing: "0.01em",
+                          fontSize: "0.62rem",
+                          fontWeight: 600,
+                          letterSpacing: "0.3em",
+                          textTransform: "uppercase",
+                          color: "rgba(26,24,22,0.4)",
+                          marginBottom: "0.65rem",
                         }}
                       >
-                        {tool}
-                      </span>
-                    ))}
+                        Tools in rotation
+                      </p>
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        {[
+                          "NEXT.JS",
+                          "REACT",
+                          "TYPESCRIPT",
+                          "TAILWIND",
+                          "SANITY",
+                          "GSAP",
+                          "FRAMER MOTION",
+                          "OPENAI",
+                          "N8N",
+                          "SUPABASE",
+                        ].map((tool, i, arr) => (
+                          <span key={tool} className="inline-flex items-center">
+                            <span
+                              className="transition-colors duration-300 hover:text-[#1a1816] cursor-default"
+                              style={{
+                                fontFamily: "var(--font-inter), sans-serif",
+                                fontSize: "0.78rem",
+                                fontWeight: 700,
+                                letterSpacing: "0.12em",
+                                color: "rgba(26,24,22,0.55)",
+                              }}
+                            >
+                              {tool}
+                            </span>
+                            {i < arr.length - 1 && (
+                              <span
+                                aria-hidden="true"
+                                style={{
+                                  display: "inline-block",
+                                  width: 3,
+                                  height: 3,
+                                  borderRadius: "50%",
+                                  backgroundColor: "rgba(26,24,22,0.25)",
+                                  margin: "0 0.55rem",
+                                }}
+                              />
+                            )}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -487,88 +509,89 @@ export default function Manifesto() {
                 {SERVICES.map((service, i) => {
                   const isDimmed =
                     hoveredServiceIdx !== null && hoveredServiceIdx !== i;
-                  const icons = [
-                    <svg key="01" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="4" width="18" height="16" rx="2" />
-                      <path d="M3 9h18M7 13h6M7 17h4" />
-                    </svg>,
-                    <svg key="02" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M13 2L4.5 13h7l-1.5 9 8.5-11h-7l1.5-9z" />
-                    </svg>,
-                    <svg key="03" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="16 18 22 12 16 6" />
-                      <polyline points="8 6 2 12 8 18" />
-                    </svg>,
-                  ];
+                  const isActive = hoveredServiceIdx === i;
                   return (
                     <div
                       key={service.number}
-                      className="group"
+                      className="group relative"
                       onMouseEnter={() => setHoveredServiceIdx(i)}
                       onMouseLeave={() => setHoveredServiceIdx(null)}
                       style={{
                         display: "flex",
+                        alignItems: "baseline",
                         gap: "clamp(1.25rem, 2vw, 1.75rem)",
-                        padding: "clamp(1.25rem, 2vh, 1.75rem) 0",
+                        padding: "clamp(1.5rem, 2.5vh, 2rem) 0",
                         borderBottom: "1px solid rgba(26,24,22,0.08)",
                         cursor: "default",
-                        opacity: isDimmed ? 0.35 : 1,
+                        opacity: isDimmed ? 0.32 : 1,
                         transition:
-                          "opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
+                          "opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1)",
                       }}
                     >
-                      {/* Icon */}
-                      <div
-                        className="shrink-0 transition-colors duration-300 group-hover:bg-[#78736c]"
+                      {/* Numeric monogram — reads as an editorial callout, not a
+                          UI chip. Slides right + darkens on hover so the active
+                          row carries weight without adding lucide-stock iconography. */}
+                      <span
+                        className="shrink-0 transition-all duration-500 ease-out"
                         style={{
-                          width: 52,
-                          height: 52,
-                          borderRadius: "50%",
-                          backgroundColor: "#1a1816",
-                          color: "#f3f1ee",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
+                          fontFamily: "var(--font-inter), sans-serif",
+                          fontSize: "clamp(2.75rem, 4.5vw, 4.25rem)",
+                          fontWeight: 900,
+                          lineHeight: 0.85,
+                          letterSpacing: "-0.05em",
+                          color: isActive ? "#1a1816" : "rgba(26,24,22,0.2)",
+                          fontVariantNumeric: "tabular-nums",
+                          transform: isActive ? "translateX(-4px)" : "translateX(0)",
+                          minWidth: "2.3ch",
                         }}
                       >
-                        {icons[i]}
-                      </div>
+                        {service.number}
+                      </span>
 
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         <div
                           className="flex items-baseline justify-between gap-4"
-                          style={{ marginBottom: "0.5rem" }}
+                          style={{ marginBottom: "0.6rem" }}
                         >
                           <h3
                             style={{
                               fontFamily: "var(--font-inter), sans-serif",
-                              fontSize: "clamp(1.25rem, 1.6vw, 1.6rem)",
+                              fontSize: "clamp(1.35rem, 1.75vw, 1.75rem)",
                               fontWeight: 800,
-                              letterSpacing: "-0.02em",
+                              letterSpacing: "-0.022em",
                               color: "#1a1816",
                             }}
                           >
                             {service.name}
                           </h3>
                           <span
+                            className="transition-all duration-400 ease-out"
                             style={{
                               fontFamily: "var(--font-inter), sans-serif",
-                              fontSize: "0.72rem",
-                              fontWeight: 600,
-                              letterSpacing: "0.2em",
-                              color: "rgba(26,24,22,0.3)",
+                              fontSize: "0.68rem",
+                              fontWeight: 700,
+                              letterSpacing: "0.22em",
+                              textTransform: "uppercase",
+                              color: isActive
+                                ? "#1a1816"
+                                : "rgba(26,24,22,0.3)",
+                              transform: isActive
+                                ? "translateX(0)"
+                                : "translateX(-4px)",
+                              opacity: isActive ? 1 : 0.6,
                             }}
                           >
-                            {service.number}
+                            {isActive ? "Preview ↗" : "Service"}
                           </span>
                         </div>
                         <p
                           style={{
                             fontFamily: "var(--font-inter), sans-serif",
-                            fontSize: "clamp(0.92rem, 1.05vw, 1.05rem)",
+                            fontSize: "clamp(0.95rem, 1.05vw, 1.05rem)",
                             lineHeight: 1.55,
                             color: "rgba(26,24,22,0.6)",
+                            maxWidth: 480,
                           }}
                         >
                           {service.desc}
