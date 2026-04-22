@@ -55,9 +55,15 @@ export default function ProofCard({ item, featured = false }: { item: ProofItem;
       className="group block"
       aria-label={`Read case study for ${item.company}`}
     >
+      {/* suppressHydrationWarning silences a known framer-motion 12 SSR
+          quirk: motion.div expands shorthand CSS (border, boxShadow) into
+          longhand properties on mount, so React sees a computed-style diff
+          against the serialized attribute. It's a cosmetic warning, not
+          a real mismatch. */}
       <motion.div
         ref={ref}
         data-proof-card
+        suppressHydrationWarning
         variants={cardHoverVariants}
         initial="rest"
         whileHover="hover"
