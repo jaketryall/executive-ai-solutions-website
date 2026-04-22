@@ -4,14 +4,9 @@ import { motion } from "framer-motion";
 import { TransitionLink } from "@/components/PageTransition";
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { gsap, SplitText } from "@/lib/gsap-setup";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText as SplitTextHooks, useSplitTextReveal } from "@/lib/hooks";
 import { prefersReducedMotion } from "@/lib/microInteractions";
 import AvailabilityWidget from "./homepage/AvailabilityWidget";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 // Cinematic warm color palette — used by MobileContact
 const accentColor = "rgba(229, 225, 219, 1)";
