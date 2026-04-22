@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useLayoutEffect } from "react";
-import { gsap, ScrollTrigger } from "@/lib/gsap-setup";
+import { gsap, ScrollTrigger, SplitText } from "@/lib/gsap-setup";
 import { prefersReducedMotion } from "@/lib/microInteractions";
 
 const useIsomorphicLayoutEffect =
@@ -57,6 +57,7 @@ const TAB_PATH = "M 0 100 L 24 10 Q 24 0 34 0 L 66 0 Q 76 0 76 10 L 100 100 Z";
 export default function Seam4InkFlood() {
   const cardRef = useRef<HTMLDivElement>(null);
   const tabRef = useRef<HTMLDivElement>(null);
+  const cleanupRef = useRef<(() => void) | null>(null);
 
   useIsomorphicLayoutEffect(() => {
     if (prefersReducedMotion()) return;
@@ -120,9 +121,38 @@ export default function Seam4InkFlood() {
           },
         });
       }
+
+      // Beat 5 — Form labels type in via SplitText chars + mask.
+      // Each <label data-seam-label> gets its chars split; chars yPercent
+      // 110 → 0 staggered so labels appear to rise into place.
+      const labels = enterEl.querySelectorAll<HTMLElement>("[data-seam-label]");
+      const labelSplits: InstanceType<typeof SplitText>[] = [];
+      labels.forEach((label, i) => {
+        const split = SplitText.create(label, { type: "chars", mask: "chars" });
+        labelSplits.push(split);
+        gsap.set(split.chars, { yPercent: 110 });
+        gsap.to(split.chars, {
+          yPercent: 0,
+          stagger: 0.02,
+          ease: "appleOut",
+          scrollTrigger: {
+            trigger: enterEl,
+            start: `top ${60 - i * 4}%`,
+            end: `top ${30 - i * 4}%`,
+            scrub: 0.5,
+          },
+        });
+      });
+
+      // SplitText wraps the label's text in <span> elements; gsap.context
+      // handles the tweens, but SplitText's DOM wrapping needs explicit revert.
+      cleanupRef.current = () => labelSplits.forEach((s) => s.revert());
     });
 
-    return () => ctx.revert();
+    return () => {
+      cleanupRef.current?.();
+      ctx.revert();
+    };
   }, []);
 
   return (

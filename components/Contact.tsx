@@ -354,7 +354,7 @@ function DesktopContact() {
             <DesktopField label="Email" name="email" type="email" required />
 
             <div>
-              <label className="block text-xs uppercase tracking-[0.2em] mb-2" style={{ color: "rgba(229,225,219,0.5)" }}>
+              <label data-seam-label className="block text-xs uppercase tracking-[0.2em] mb-2" style={{ color: "rgba(229,225,219,0.5)" }}>
                 Project type
               </label>
               <div className="flex flex-wrap gap-2">
