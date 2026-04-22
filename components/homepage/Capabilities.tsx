@@ -1248,7 +1248,6 @@ export default function Capabilities() {
       <TopoBackground />
       <ScrollSpine />
       <div className="relative z-10">
-        <BridgeMoment />
         <SectionHeader />
         <div data-chapter="chapter-1">
           <ChapterOne />
