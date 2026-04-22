@@ -430,14 +430,17 @@ function DesktopField({
           className="w-full bg-transparent border-0 focus:outline-none py-2 text-sm"
           style={{ color: "#e5e1db" }}
         />
-        {/* Class-only styling to avoid SSR hydration mismatches —
-            inline `height: 1` and `transform: scaleX(0)` normalize to
-            `1px` and `scale(0, 1)` in the DOM, which Next 16 + Turbopack
-            flags as a mismatch. GSAP still overrides `transform` on
-            scroll via Seam4_InkFlood's scrollTrigger. */}
+        {/* Base styling lives on classes (no inline style). GSAP / Seam 4
+            animates `transform` at runtime, and in Next.js 16 with
+            streaming hydration, Seam4's effect can run before Contact's
+            subtree finishes hydrating — so the DOM is already mutated
+            when React checks it. suppressHydrationWarning is React's
+            documented escape hatch for exactly this: elements mutated
+            by external code whose attributes React shouldn't enforce. */}
         <span
           aria-hidden
           data-seam-underline
+          suppressHydrationWarning
           className="absolute left-0 right-0 bottom-0 block h-px bg-[rgba(229,225,219,0.2)] origin-left scale-x-0 will-change-transform"
         />
       </div>
