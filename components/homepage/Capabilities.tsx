@@ -2,19 +2,13 @@
 
 import { useRef, useEffect, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
-import { gsap, ScrollTrigger, SplitText, DrawSVGPlugin, MotionPathPlugin } from "@/lib/gsap-setup";
+import { gsap, ScrollTrigger, SplitText } from "@/lib/gsap-setup";
 import {
   cardHoverVariants,
   tagHoverVariants,
   tweenCounter,
   prefersReducedMotion,
 } from "@/lib/microInteractions";
-
-// Suppress unused import warning — DrawSVGPlugin and MotionPathPlugin are
-// already registered via gsap-setup; importing here ensures the module is
-// evaluated before this component renders.
-void DrawSVGPlugin;
-void MotionPathPlugin;
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -244,7 +238,7 @@ function DesignDemo() {
     if (reduce) return;
 
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ repeat: -1, repeatDelay: 3 });
+      const tl = gsap.timeline({ repeat: -1, repeatDelay: 3, paused: true });
 
       // Wireframe → hi-fi: each block gets a distinct accent color
       tl.to(".dd-block", {
@@ -265,6 +259,16 @@ function DesignDemo() {
           },
           "+=1.5"
         );
+
+      ScrollTrigger.create({
+        trigger: ref.current!,
+        start: "top bottom",
+        end: "bottom top",
+        onEnter: () => tl.play(),
+        onEnterBack: () => tl.play(),
+        onLeave: () => tl.pause(),
+        onLeaveBack: () => tl.pause(),
+      });
     }, ref);
 
     return () => ctx.revert();
@@ -313,8 +317,10 @@ function AutomationDemo() {
     if (reduce) return;
 
     const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ repeat: -1, paused: true });
+
       // Packet travels the dashed path, looping
-      gsap.to(".ad-packet", {
+      tl.to(".ad-packet", {
         motionPath: {
           path: "#ad-path",
           align: "#ad-path",
@@ -323,10 +329,9 @@ function AutomationDemo() {
         },
         duration: 3.5,
         ease: "none",
-        repeat: -1,
       });
 
-      // Node pulse on each pass — staggered scale bounce
+      // Node pulse on each pass — staggered scale bounce (runs in parallel via separate repeating tween)
       gsap.to([".ad-node-inbox", ".ad-node-classify", ".ad-node-slack"], {
         scale: 1.15,
         duration: 0.25,
@@ -335,6 +340,30 @@ function AutomationDemo() {
         repeat: -1,
         yoyo: true,
         transformOrigin: "50% 50%",
+        paused: true,
+        id: "ad-pulse",
+      });
+
+      ScrollTrigger.create({
+        trigger: ref.current!,
+        start: "top bottom",
+        end: "bottom top",
+        onEnter: () => {
+          tl.play();
+          gsap.getById("ad-pulse")?.play();
+        },
+        onEnterBack: () => {
+          tl.play();
+          gsap.getById("ad-pulse")?.play();
+        },
+        onLeave: () => {
+          tl.pause();
+          gsap.getById("ad-pulse")?.pause();
+        },
+        onLeaveBack: () => {
+          tl.pause();
+          gsap.getById("ad-pulse")?.pause();
+        },
       });
     }, ref);
 
@@ -351,6 +380,9 @@ function AutomationDemo() {
         className="w-full h-auto max-w-[320px]"
         aria-hidden="true"
       >
+        {/* NOTE: #ad-path is a global ID. This component assumes single instance per page.
+            If this section is ever rendered multiple times (A/B, Storybook), unique-ify the id
+            via a useId() hook and pass to the motionPath path option. */}
         {/* Dashed connecting path */}
         <path
           id="ad-path"
@@ -446,6 +478,11 @@ function SoftwareDemo() {
     const reduce = prefersReducedMotion();
 
     const ctx = gsap.context(() => {
+      // Establish DrawSVG initial state explicitly so it controls dasharray from the start
+      if (ringRef.current) {
+        gsap.set(ringRef.current, { drawSVG: "0% 0%" });
+      }
+
       ScrollTrigger.create({
         trigger: ref.current!,
         start: "top 80%",
@@ -532,7 +569,6 @@ function SoftwareDemo() {
             strokeWidth="6"
             strokeLinecap="round"
             pathLength="100"
-            strokeDasharray="0 100"
           />
         </svg>
 
