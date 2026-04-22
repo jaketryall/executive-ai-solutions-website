@@ -47,14 +47,25 @@ export default function Manifesto() {
       ref={sectionRef}
       id="manifesto"
       data-bg="cream"
+      data-seam-enter="seam-2"
+      data-seam-exit="seam-3"
       className="py-32 px-6"
       style={{ backgroundColor: "#f3f1ee" }}
     >
       <div className="max-w-[1100px] mx-auto">
         {/* Kicker */}
-        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] mb-8" style={{ color: "#78736c" }}>
+        <p data-seam-kicker className="text-[11px] font-semibold uppercase tracking-[0.28em] mb-8" style={{ color: "#78736c" }}>
           The Manifesto
         </p>
+        {/* Seam 2's horizontal rule — grows scaleX 0→1 as Capabilities
+            transitions into Manifesto. suppressHydrationWarning because
+            GSAP mutates transform before Manifesto's subtree hydrates. */}
+        <div
+          data-seam-rule-2
+          suppressHydrationWarning
+          className="h-px w-full mb-8 origin-center scale-x-0"
+          style={{ background: "rgba(26,24,22,0.12)" }}
+        />
 
         {/* Mantra */}
         <div className="mb-12">

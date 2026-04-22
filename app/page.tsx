@@ -26,8 +26,17 @@ const Footer = dynamic(() => import("@/components/Footer"), {
 const Seam1FanToKicker = dynamic(
   () => import("@/components/homepage/transitions/Seam1_FanToKicker"),
 );
+const Seam2CapabilitiesToManifesto = dynamic(
+  () => import("@/components/homepage/transitions/Seam2_CapabilitiesToManifesto"),
+);
+const Seam3ManifestoToTestimonials = dynamic(
+  () => import("@/components/homepage/transitions/Seam3_ManifestoToTestimonials"),
+);
 const Seam4InkFlood = dynamic(
   () => import("@/components/homepage/transitions/Seam4_InkFlood"),
+);
+const Seam5ContactToFooter = dynamic(
+  () => import("@/components/homepage/transitions/Seam5_ContactToFooter"),
 );
 
 export default function Home() {
@@ -39,10 +48,13 @@ export default function Home() {
         <Seam1FanToKicker />
         <Work />
         <Capabilities />
+        <Seam2CapabilitiesToManifesto />
         <Manifesto />
+        <Seam3ManifestoToTestimonials />
         <Testimonials />
         <Seam4InkFlood />
         <Contact />
+        <Seam5ContactToFooter />
       </main>
       <Footer />
     </TransitionProvider>

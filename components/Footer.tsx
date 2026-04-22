@@ -28,12 +28,13 @@ export default function Footer() {
 
   return (
     <footer
+      data-seam-enter="seam-5"
       className="px-6 pt-20 pb-8"
       style={{ backgroundColor: "#0a0908", color: "#e5e1db" }}
     >
       <div className="max-w-[1280px] mx-auto">
         {/* 3-col grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
+        <div data-seam-footer-grid suppressHydrationWarning className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
           {/* Col 1 — mark + name */}
           <div>
             <button

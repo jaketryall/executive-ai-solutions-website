@@ -83,6 +83,7 @@ export default function Testimonials() {
     <section
       ref={sectionRef}
       id="testimonials"
+      data-seam-enter="seam-3"
       data-seam-exit="seam-4"
       data-bg="cream"
       className="py-32 px-6"
@@ -92,12 +93,16 @@ export default function Testimonials() {
         {/* Header */}
         <div className="mb-12">
           <p
+            data-seam-proof-kicker
             className="text-[11px] font-semibold uppercase tracking-[0.28em] mb-4"
             style={{ color: "#78736c" }}
           >
             Proof
           </p>
           <h2
+            data-seam-proof-title
+            suppressHydrationWarning
+            aria-label="What clients say after launch."
             className="proof-title font-black tracking-tight"
             style={{
               fontFamily: "var(--font-inter)",

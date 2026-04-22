@@ -1249,6 +1249,7 @@ export default function Capabilities() {
       id="capabilities"
       data-bg="cream"
       data-seam-enter="seam-1"
+      data-seam-exit="seam-2"
       className="relative overflow-hidden"
       style={{ background: CREAM }}
     >
