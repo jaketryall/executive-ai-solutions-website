@@ -21,7 +21,7 @@ const SOCIALS = [
 
 // Humanizing tidbits — Jake updates these manually as projects ship.
 const STATUS =
-  "Last shipped: Apr 2026 · Currently building: Internal CMS for a Phoenix studio";
+  "Last shipped: Apr 2026 · Currently building: Internal CMS for a Sacramento studio";
 
 export default function Footer() {
   const [markHovered, setMarkHovered] = useState(false);

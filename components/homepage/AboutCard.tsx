@@ -37,7 +37,7 @@ export default function AboutCard() {
           Jake Ryall
         </p>
         <p className="text-sm mt-1" style={{ color: "rgba(26,24,22,0.6)" }}>
-          Designer & Developer · Phoenix, AZ
+          Designer & Developer · Rocklin, CA
         </p>
       </div>
 
