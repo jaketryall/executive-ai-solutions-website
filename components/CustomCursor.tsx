@@ -30,9 +30,12 @@ export default function CustomCursor() {
     const handleElementHover = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
 
-      // Check for card elements
-      const isCard = target.closest('[data-card], .card-hover, .group');
-      if (isCard && target.closest('a')) {
+      // "View" card cursor only fires on explicitly-marked project cards
+      // (data-card). Using `.group` was too broad — every TransitionLink in
+      // the hero masthead / availability badge / rating row / shipping card
+      // was triggering the expanded card cursor unintentionally.
+      const isCard = target.closest('[data-card]');
+      if (isCard) {
         setVariant("card");
         return;
       }
@@ -96,7 +99,7 @@ export default function CustomCursor() {
           animate={{
             width: isExpanded ? 80 : 40,
             height: isExpanded ? 80 : 40,
-            borderColor: variant === "card" ? "#ffc896" : "#ffffff",
+            borderColor: variant === "card" ? "#e5e1db" : "#ffffff",
           }}
           transition={{ duration: 0.2, ease: "easeOut" }}
         />
