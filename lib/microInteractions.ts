@@ -1,11 +1,12 @@
-"use client";
-
 import { gsap } from "@/lib/gsap-setup";
 import type { Variants } from "framer-motion";
 
 /**
  * Animate a number from 0 (or `from`) to `target` over `duration` seconds.
  * Snaps to integers by default. Designed to fire once on viewport entry.
+ *
+ * Cleanup: store the returned tween and call `.kill()` in your effect cleanup
+ * to avoid writing to a detached DOM node if the element unmounts mid-animation.
  */
 export function tweenCounter(
   el: HTMLElement,
@@ -31,12 +32,12 @@ export function tweenCounter(
 export const cardHoverVariants: Variants = {
   rest: {
     y: 0,
-    boxShadow: "0 8px 24px rgba(0,0,0,0.06)",
+    boxShadow: "0 8px 24px rgba(60,40,20,0.08)",
     transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
   },
   hover: {
     y: -2,
-    boxShadow: "0 16px 40px rgba(0,0,0,0.10)",
+    boxShadow: "0 16px 40px rgba(60,40,20,0.14)",
     transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
   },
 };
