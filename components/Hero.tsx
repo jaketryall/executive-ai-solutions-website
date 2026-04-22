@@ -231,7 +231,11 @@ function HeroFanCards({
   };
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: -1 }}>
+    <div
+      data-seam-fan
+      className="absolute inset-0 flex items-center justify-center pointer-events-none"
+      style={{ zIndex: -1 }}
+    >
       {heroProjects.map((project, i) => {
         const offset = getHoverOffset(i);
         const isHovered = hoveredIndex === i;
@@ -770,6 +774,7 @@ function DesktopHero() {
         ref={sectionRef}
         className="relative"
         data-bg="cream"
+        data-seam-exit="seam-1"
       >
         <div className="relative min-h-screen w-full">
 

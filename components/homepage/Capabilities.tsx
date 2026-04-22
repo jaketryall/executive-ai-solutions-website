@@ -99,10 +99,16 @@ function SectionHeader() {
           Vol. II · Capabilities
         </p>
       </div>
-      <div className="h-px w-full mb-10" style={{ background: "rgba(26,24,22,0.12)" }} />
+      <div
+        data-seam-rule
+        className="h-px w-full mb-10 origin-center scale-x-0"
+        style={{ background: "rgba(26,24,22,0.12)" }}
+      />
 
       {/* Title with serif italic accent on one word */}
       <h2
+        data-seam-title
+        aria-label="Three things I ship for clients."
         className="cap-title font-black tracking-tight"
         style={{
           fontFamily: "var(--font-inter)",
@@ -1235,6 +1241,7 @@ export default function Capabilities() {
     <section
       id="capabilities"
       data-bg="cream"
+      data-seam-enter="seam-1"
       className="relative overflow-hidden"
       style={{ background: CREAM }}
     >
