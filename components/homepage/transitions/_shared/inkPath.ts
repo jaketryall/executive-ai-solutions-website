@@ -1,37 +1,62 @@
 /**
  * Generates a `clip-path: polygon(...)` value for the ink flood effect.
  *
- * The returned polygon has:
- *   - A wavy top edge at Y = (100 - progress*100)%, with 12 vertices
- *     offset by sine wobble so the edge feels like liquid, not a ruler line.
- *   - Two anchor vertices at bottom-right and bottom-left so the interior
- *     of the polygon is the "ink" fill below the wavy edge.
+ * The shape is a clean rectangular "card" that rises from the bottom of
+ * the viewport, with a smaller rectangular "tab" protruding above the
+ * card's top edge — like a manila folder tab or a dashboard drawer
+ * handle. The tab reads as an intentional designed object rather than
+ * an organic liquid wave.
  *
- * @param progress  0 → 1. 0 = ink entirely below viewport (invisible),
- *                  1 = ink entirely covers the viewport.
+ * Geometry (clockwise from top-left of the tab):
+ *
+ *                 ┌───────┐            ← tabTop
+ *   ──────────────┘       └─────────── ← cardTop
+ *   │                                 │
+ *   │          dark card body         │
+ *   │                                 │
+ *   └─────────────────────────────────┘ ← 100% (bottom of viewport)
+ *
+ * At progress=0, cardTop sits at 100% so the card body has zero height;
+ * only a small tab peeks above the viewport floor. At progress=1 the
+ * card top reaches 0%, the tab has scrolled off the top, and the entire
+ * viewport is dark.
+ *
+ * @param progress  0 → 1. 0 = nothing visible (card below viewport),
+ *                  1 = card fully covers viewport (tab off-screen above).
  * @returns a polygon() string suitable for CSS `clip-path`.
  */
 export function generateInkPath(progress: number): string {
   const clamped = Math.max(0, Math.min(1, progress));
-  const numEdgeVertices = 12;
-  // Y position of the wave's base (in % of viewport height).
-  // progress 0 → 100% (below viewport). progress 1 → 0% (at top).
-  const baseY = 100 - clamped * 100;
-  // Wobble amplitude in % — keep subtle so the edge reads as "liquid" not "cartoon".
-  const amplitude = 2;
-  // Phase shifts with progress so the waves visibly travel, not just rise in place.
-  const phase = clamped * Math.PI * 2;
 
-  const vertices: string[] = [];
-  for (let i = 0; i <= numEdgeVertices; i++) {
-    const x = (i / numEdgeVertices) * 100;
-    const wobble = Math.sin(i * 0.8 + phase) * amplitude;
-    // Clamp to [0, 100] so we never exit the visible box.
-    const y = Math.max(0, Math.min(100, baseY + wobble));
-    vertices.push(`${x.toFixed(2)}% ${y.toFixed(2)}%`);
-  }
-  // Close the polygon via the bottom-right and bottom-left anchors.
-  vertices.push("100% 100%", "0% 100%");
+  // Tab dimensions (% of viewport). Tuned to read as a proper "tab" —
+  // narrow enough to look intentional, tall enough to be clearly visible.
+  const TAB_HEIGHT = 5;
+  const TAB_WIDTH = 15;
+  // Center the tab horizontally. Offset (e.g., 35%) would feel editorial;
+  // centered reads as "clean and deliberate," which matches the card metaphor.
+  const TAB_CENTER_X = 50;
+  const tabStart = TAB_CENTER_X - TAB_WIDTH / 2;
+  const tabEnd = TAB_CENTER_X + TAB_WIDTH / 2;
+
+  // Card body's top edge — rises from the viewport floor (100%) to its
+  // ceiling (0%) as progress completes.
+  const cardTop = 100 - clamped * 100;
+  // Tab sits a fixed distance above the card's top edge. At progress=0,
+  // tabTop = 95% — a sliver of tab is visible near the bottom of the
+  // viewport. At progress=1, tabTop = -5% — the tab has scrolled off
+  // the top while the card fills everything below.
+  const tabTop = cardTop - TAB_HEIGHT;
+
+  const vertices = [
+    `${tabStart}% ${tabTop}%`,
+    `${tabEnd}% ${tabTop}%`,
+    `${tabEnd}% ${cardTop}%`,
+    `100% ${cardTop}%`,
+    `100% 100%`,
+    `0% 100%`,
+    `0% ${cardTop}%`,
+    `${tabStart}% ${cardTop}%`,
+  ];
 
   return `polygon(${vertices.join(", ")})`;
 }
