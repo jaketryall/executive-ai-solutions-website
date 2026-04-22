@@ -5,8 +5,7 @@ import { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import AnimatedLogo from "./AnimatedLogo";
 import { TransitionLink } from "./PageTransition";
-import { SplitText as SplitTextComponent, useSplitTextReveal } from "@/lib/hooks";
-import { gsap, SplitText, DrawSVGPlugin } from "@/lib/gsap-setup";
+import { gsap, SplitText } from "@/lib/gsap-setup";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -292,7 +291,7 @@ function HeroFanCards({
    strikes through "beautiful" and rises "converting" into its place ─── */
 function HeroCorrectionText() {
   const [skipAnimation, setSkipAnimation] = useState(false);
-  const [phase, setPhase] = useState<"typing" | "pause" | "striking" | "rising" | "done">("typing");
+  const [phase, setPhase] = useState<"typing" | "striking" | "rising" | "done">("typing");
   const [typedCount, setTypedCount] = useState(0);
   const beautifulRef = useRef<HTMLSpanElement>(null);
   const strikeLineRef = useRef<SVGLineElement>(null);
@@ -315,26 +314,17 @@ function HeroCorrectionText() {
   useEffect(() => {
     if (phase !== "typing" || skipAnimation) return;
     if (typedCount >= fullSentence.length) {
-      const t = setTimeout(() => setPhase("pause"), 400);
+      const t = setTimeout(() => setPhase("striking"), 400);
       return () => clearTimeout(t);
     }
     const t = setTimeout(() => setTypedCount((c) => c + 1), 35);
     return () => clearTimeout(t);
   }, [phase, typedCount, skipAnimation]);
 
-  // Phase: pause -> striking
-  useEffect(() => {
-    if (phase !== "pause") return;
-    const t = setTimeout(() => setPhase("striking"), 0);
-    return () => clearTimeout(t);
-  }, [phase]);
-
   // Phase: striking — DrawSVG line across "beautiful" + fade word to 30%
   useEffect(() => {
     if (phase !== "striking") return;
     if (typeof window === "undefined") return;
-    // Register DrawSVGPlugin here (safe in effect — client only)
-    gsap.registerPlugin(DrawSVGPlugin);
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ onComplete: () => setPhase("rising") });
       if (strikeLineRef.current) {
@@ -399,6 +389,7 @@ function HeroCorrectionText() {
 
   return (
     <h1
+      aria-label="I build converting websites."
       style={{
         fontFamily: "var(--font-inter), sans-serif",
         fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
@@ -421,7 +412,7 @@ function HeroCorrectionText() {
             </motion.span>
           )}
         </>
-      ) : (phase === "done" && skipAnimation) ? (
+      ) : phase === "done" ? (
         <>I build converting websites.</>
       ) : (
         <>
@@ -466,7 +457,7 @@ function HeroCorrectionText() {
                 left: 0,
                 top: 0,
                 color: "#1a1816",
-                visibility: phase === "rising" || phase === "done" ? "visible" : "hidden",
+                visibility: phase === "rising" ? "visible" : "hidden",
                 opacity: 0,
                 whiteSpace: "nowrap",
               }}
