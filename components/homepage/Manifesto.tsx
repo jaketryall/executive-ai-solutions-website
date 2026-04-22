@@ -2,16 +2,7 @@
 
 import { useRef, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
-import { CustomEase } from "gsap/CustomEase";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, SplitText, CustomEase);
-  CustomEase.create("appleOut", "0.16, 1, 0.3, 1");
-  CustomEase.create("appleSnap", "0.76, 0, 0.24, 1");
-}
+import { gsap, ScrollTrigger, SplitText } from "@/lib/gsap-setup";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -98,17 +89,26 @@ export default function Manifesto() {
       let leadSplit: SplitText | null = null;
       let punchSplit: SplitText | null = null;
       if (leadEl) {
-        leadSplit = new SplitText(leadEl, { type: "words", wordsClass: "m-word" });
+        leadSplit = SplitText.create(leadEl, {
+          type: "words",
+          mask: "words",
+          wordsClass: "m-word",
+        });
         splits.push(leadSplit);
       }
       if (punchEl) {
-        punchSplit = new SplitText(punchEl, { type: "words", wordsClass: "m-word m-word-punch" });
+        punchSplit = SplitText.create(punchEl, {
+          type: "words",
+          mask: "words",
+          wordsClass: "m-word m-word-punch",
+        });
         splits.push(punchSplit);
       }
 
-      // Starting state — all hidden below
-      if (leadSplit) gsap.set(leadSplit.words, { yPercent: 110, opacity: 0 });
-      if (punchSplit) gsap.set(punchSplit.words, { yPercent: 110, opacity: 0 });
+      // Starting state — below the mask. The word-level mask clips overflow,
+      // so we don't need opacity to hide them.
+      if (leadSplit) gsap.set(leadSplit.words, { yPercent: 110 });
+      if (punchSplit) gsap.set(punchSplit.words, { yPercent: 110 });
       if (eyebrowEl) gsap.set(eyebrowEl, { opacity: 0, y: 12 });
       if (sublineEl) gsap.set(sublineEl, { opacity: 0, y: 16 });
 
@@ -128,14 +128,14 @@ export default function Manifesto() {
       if (leadSplit) {
         mantraTl.to(
           leadSplit.words,
-          { yPercent: 0, opacity: 1, stagger: 0.04, ease: "appleOut", duration: 0.8 },
+          { yPercent: 0, stagger: 0.04, ease: "appleOut", duration: 0.8 },
           0.1
         );
       }
       if (punchSplit) {
         mantraTl.to(
           punchSplit.words,
-          { yPercent: 0, opacity: 1, stagger: 0.05, ease: "appleOut", duration: 0.9 },
+          { yPercent: 0, stagger: 0.05, ease: "appleOut", duration: 0.9 },
           0.6
         );
       }
@@ -190,12 +190,17 @@ export default function Manifesto() {
         const numberEl = card.querySelector<HTMLElement>(".ms-number");
 
         if (nameEl) {
-          const split = new SplitText(nameEl, { type: "chars", charsClass: "ms-char" });
+          // `mask: "chars"` masks each glyph individually for a razor-clean
+          // character rise — no opacity fade needed.
+          const split = SplitText.create(nameEl, {
+            type: "chars",
+            mask: "chars",
+            charsClass: "ms-char",
+          });
           splits.push(split);
-          gsap.set(split.chars, { yPercent: 110, opacity: 0 });
+          gsap.set(split.chars, { yPercent: 110 });
           gsap.to(split.chars, {
             yPercent: 0,
-            opacity: 1,
             stagger: 0.018,
             duration: 0.7,
             ease: "appleOut",
@@ -286,19 +291,26 @@ export default function Manifesto() {
       let leadSplit: SplitText | null = null;
       let punchSplit: SplitText | null = null;
       if (leadEl) {
-        leadSplit = new SplitText(leadEl, { type: "words", wordsClass: "m-word" });
+        leadSplit = SplitText.create(leadEl, {
+          type: "words",
+          mask: "words",
+          wordsClass: "m-word",
+        });
         splits.push(leadSplit);
       }
       if (punchEl) {
-        punchSplit = new SplitText(punchEl, { type: "words", wordsClass: "m-word" });
+        punchSplit = SplitText.create(punchEl, {
+          type: "words",
+          mask: "words",
+          wordsClass: "m-word",
+        });
         splits.push(punchSplit);
       }
 
       if (leadSplit) {
-        gsap.set(leadSplit.words, { yPercent: 110, opacity: 0 });
+        gsap.set(leadSplit.words, { yPercent: 110 });
         gsap.to(leadSplit.words, {
           yPercent: 0,
-          opacity: 1,
           stagger: 0.04,
           ease: "appleOut",
           duration: 0.7,
@@ -311,10 +323,9 @@ export default function Manifesto() {
         });
       }
       if (punchSplit) {
-        gsap.set(punchSplit.words, { yPercent: 110, opacity: 0 });
+        gsap.set(punchSplit.words, { yPercent: 110 });
         gsap.to(punchSplit.words, {
           yPercent: 0,
-          opacity: 1,
           stagger: 0.05,
           ease: "appleOut",
           duration: 0.7,

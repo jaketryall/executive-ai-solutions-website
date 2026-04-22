@@ -2,18 +2,8 @@
 
 import { useRef, useEffect, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
-import { CustomEase } from "gsap/CustomEase";
+import { gsap, ScrollTrigger, SplitText } from "@/lib/gsap-setup";
 import { TransitionLink } from "@/components/PageTransition";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, SplitText, CustomEase);
-  // Apple-cubic + a slightly sharper "snap" curve used for panel transitions.
-  CustomEase.create("appleOut", "0.16, 1, 0.3, 1");
-  CustomEase.create("appleSnap", "0.76, 0, 0.24, 1");
-}
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -137,16 +127,19 @@ export default function Testimonials() {
         // ---- Quote: SplitText word stagger-in ----
         const quoteEl = panel.querySelector<HTMLElement>(".t-quote");
         if (quoteEl) {
-          const split = new SplitText(quoteEl, {
+          // `mask: "words"` wraps every word in its own `overflow: clip`
+          // container so the yPercent rise is cleanly clipped — no relying
+          // on a parent overflow: hidden + opacity fade.
+          const split = SplitText.create(quoteEl, {
             type: "lines,words",
+            mask: "words",
             linesClass: "t-split-line",
             wordsClass: "t-split-word",
           });
           splits.push(split);
-          gsap.set(split.words, { yPercent: 110, opacity: 0 });
+          gsap.set(split.words, { yPercent: 110 });
           gsap.to(split.words, {
             yPercent: 0,
-            opacity: 1,
             duration: 0.85,
             stagger: 0.025,
             ease: "appleOut",

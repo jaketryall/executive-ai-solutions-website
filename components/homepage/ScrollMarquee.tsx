@@ -1,16 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useLayoutEffect } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
-import { CustomEase } from "gsap/CustomEase";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, SplitText, CustomEase);
-  CustomEase.create("appleOut", "0.16, 1, 0.3, 1");
-  CustomEase.create("appleSnap", "0.76, 0, 0.24, 1");
-}
+import { gsap, ScrollTrigger, SplitText } from "@/lib/gsap-setup";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -68,13 +59,20 @@ export default function ScrollMarquee() {
 
         let labelSplit: SplitText | null = null;
         if (labelEl) {
-          labelSplit = new SplitText(labelEl, { type: "chars", charsClass: "sm-char" });
+          // Mask each char for a clean rise-out / rise-in reveal. The
+          // `mask: "chars"` wrappers have overflow: clip so the yPercent
+          // animations are cleanly clipped.
+          labelSplit = SplitText.create(labelEl, {
+            type: "chars",
+            mask: "chars",
+            charsClass: "sm-char",
+          });
           splits.push(labelSplit);
         }
 
         // Starting state — hide everything
         gsap.set(phrase, { autoAlpha: 0 });
-        if (labelSplit) gsap.set(labelSplit.words ?? labelSplit.chars, { yPercent: 110 });
+        if (labelSplit) gsap.set(labelSplit.chars, { yPercent: 110 });
         if (captionEl) gsap.set(captionEl, { y: 20, opacity: 0 });
         if (metaEl) gsap.set(metaEl, { opacity: 0 });
 
