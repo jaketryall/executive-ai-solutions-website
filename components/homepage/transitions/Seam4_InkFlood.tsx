@@ -102,6 +102,24 @@ export default function Seam4InkFlood() {
           },
         });
       }
+
+      // Beat 4 — Form field underline reveal.
+      // Each <span data-seam-underline> scaleX 0 → 1, staggered, so underlines
+      // draw themselves in left-to-right as Contact enters the viewport.
+      const underlines = enterEl.querySelectorAll<HTMLElement>("[data-seam-underline]");
+      if (underlines.length > 0) {
+        gsap.to(underlines, {
+          scaleX: 1,
+          ease: "power2.out",
+          stagger: 0.08,
+          scrollTrigger: {
+            trigger: enterEl,
+            start: "top 70%",
+            end: "top 30%",
+            scrub: 0.5,
+          },
+        });
+      }
     });
 
     return () => ctx.revert();

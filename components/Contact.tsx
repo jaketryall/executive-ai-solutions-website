@@ -410,18 +410,37 @@ function DesktopField({
 }) {
   return (
     <div>
-      <label htmlFor={name} className="block text-xs uppercase tracking-[0.2em] mb-2" style={{ color: "rgba(229,225,219,0.5)" }}>
+      <label
+        htmlFor={name}
+        data-seam-label
+        className="block text-xs uppercase tracking-[0.2em] mb-2"
+        style={{ color: "rgba(229,225,219,0.5)" }}
+      >
         {label}
       </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        maxLength={maxLength}
-        required={required}
-        className="w-full bg-transparent border-0 border-b focus:outline-none focus:border-[#e5e1db] py-2 text-sm"
-        style={{ borderBottomColor: "rgba(229,225,219,0.2)", color: "#e5e1db" }}
-      />
+      <div className="relative">
+        <input
+          id={name}
+          name={name}
+          type={type}
+          maxLength={maxLength}
+          required={required}
+          className="w-full bg-transparent border-0 focus:outline-none py-2 text-sm"
+          style={{ color: "#e5e1db" }}
+        />
+        <span
+          aria-hidden
+          data-seam-underline
+          className="absolute left-0 right-0 bottom-0 block"
+          style={{
+            height: 1,
+            backgroundColor: "rgba(229,225,219,0.2)",
+            transformOrigin: "left center",
+            transform: "scaleX(0)",
+            willChange: "transform",
+          }}
+        />
+      </div>
     </div>
   );
 }
