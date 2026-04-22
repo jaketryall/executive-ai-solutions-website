@@ -68,7 +68,7 @@ export default function Manifesto() {
           >
             I don&apos;t ship pretty.
           </p>
-          <p
+          <h2
             className="m-punch font-black tracking-tight"
             style={{
               fontFamily: "var(--font-inter)",
@@ -79,7 +79,7 @@ export default function Manifesto() {
             }}
           >
             I ship results.
-          </p>
+          </h2>
         </div>
 
         {/* Drop-cap paragraph */}
