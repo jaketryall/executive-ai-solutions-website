@@ -2,14 +2,21 @@
 
 import { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import MagneticButton from "./ui/MagneticButton";
 import HoverText from "./ui/HoverText";
 import { gsap, SplitText } from "@/lib/gsap-setup";
+import { computeFanPositions } from "@/lib/motion/primitives";
 import { ease } from "@/lib/motion";
+import { projects } from "@/lib/data";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+// Featured projects for the fan — 4 cards radiating out from the showreel.
+// Matches the bento order so the hero fan reads as a preview of the rest.
+const FAN_PROJECTS = projects.slice(0, 4);
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -17,26 +24,28 @@ export default function Hero() {
   const subjectRef = useRef<HTMLDivElement>(null);
   const handwritingRef = useRef<HTMLSpanElement>(null);
   const cornersRef = useRef<HTMLDivElement>(null);
+  const fanRef = useRef<HTMLDivElement>(null);
 
-  // Live session timer — ticks every second from page load. Shows in the
-  // status card corner. Part of the manifest-theme vocabulary.
+  // Live session timer — ticks every second from page load.
   const [sessionSeconds, setSessionSeconds] = useState(0);
   useEffect(() => {
     const id = window.setInterval(() => setSessionSeconds((s) => s + 1), 1000);
     return () => window.clearInterval(id);
   }, []);
 
-  // Entrance choreography + scroll-out
+  // Entrance choreography + scroll-out + fan-out
   useIsomorphicLayoutEffect(() => {
     const section = sectionRef.current;
     const wordmark = wordmarkRef.current;
     const subject = subjectRef.current;
     const handwriting = handwritingRef.current;
     const corners = cornersRef.current;
-    if (!section || !wordmark || !subject || !handwriting || !corners) return;
+    const fan = fanRef.current;
+    if (!section || !wordmark || !subject || !handwriting || !corners || !fan)
+      return;
 
     const ctx = gsap.context(() => {
-      // Wordmark — SHIP. letters cascade up from below
+      // ─── Entrance ──────────────────────────────────────────────────────
       const wmSplit = SplitText.create(wordmark, {
         type: "chars",
         mask: "chars",
@@ -51,7 +60,6 @@ export default function Hero() {
         onComplete: () => wmSplit.revert(),
       });
 
-      // Floating subject — drops in from above with a small tilt-to-settle
       gsap.from(subject, {
         y: -60,
         opacity: 0,
@@ -62,7 +70,6 @@ export default function Hero() {
         delay: 0.55,
       });
 
-      // Handwritten flourish — per-char reveal with marker jitter
       const hwSplit = SplitText.create(handwriting, { type: "chars" });
       gsap.from(hwSplit.chars, {
         opacity: 0,
@@ -75,7 +82,6 @@ export default function Hero() {
         onComplete: () => hwSplit.revert(),
       });
 
-      // Corner metadata — stagger-up
       gsap.from(corners.querySelectorAll<HTMLElement>("[data-corner]"), {
         y: 18,
         opacity: 0,
@@ -85,9 +91,32 @@ export default function Hero() {
         delay: 1.25,
       });
 
+      // ─── Fan — initial state (stacked behind the showreel) ─────────────
+      const fanCards = gsap.utils.toArray<HTMLElement>(
+        fan.querySelectorAll("[data-fan-card]")
+      );
+      const fanPositions = computeFanPositions({
+        count: fanCards.length,
+        spread: 26, // ±13° rotation
+        depth: 80, // outer cards recede 80px
+        radius: 460, // outer cards sit ±460px from center
+        tiltY: 6, // slight inward tilt toward viewer
+      });
+      fanCards.forEach((card) => {
+        gsap.set(card, {
+          x: 0,
+          y: 0,
+          z: 0,
+          rotation: 0,
+          rotationY: 0,
+          opacity: 0,
+          scale: 0.9,
+          transformOrigin: "center center",
+        });
+      });
+
       // ─── Scroll-out choreography ───────────────────────────────────────
-      // Handwriting fades first (flourish leaves), then subject drifts up,
-      // then wordmark fades. Corners stay the longest.
+      // Handwriting peels off first (20vh of scroll).
       gsap.to(handwriting, {
         opacity: 0,
         y: -30,
@@ -95,15 +124,43 @@ export default function Hero() {
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "20% top",
+          end: "18% top",
           scrub: true,
         },
       });
 
+      // Fan emerges between 10–50% of the section's scroll. Cards deal out
+      // to their fanned positions in a staircase stagger.
+      const fanTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: "55% top",
+          scrub: 0.6,
+        },
+      });
+      fanCards.forEach((card, i) => {
+        fanTl.to(
+          card,
+          {
+            x: fanPositions[i].x,
+            y: fanPositions[i].y,
+            z: fanPositions[i].z,
+            rotation: fanPositions[i].rotation,
+            rotationY: fanPositions[i].rotationY,
+            opacity: 1,
+            scale: 1,
+            duration: 1,
+            ease: "expo.out",
+          },
+          i * 0.12
+        );
+      });
+
+      // The showreel itself drifts up slightly and fades as the fan spreads.
       gsap.to(subject, {
-        y: -100,
-        opacity: 0,
-        scale: 0.86,
+        y: -40,
+        scale: 0.92,
         ease: "none",
         scrollTrigger: {
           trigger: section,
@@ -113,27 +170,28 @@ export default function Hero() {
         },
       });
 
+      // Wordmark fades in parallel so it doesn't compete with the fan.
       gsap.to(wordmark, {
-        scale: 0.96,
         opacity: 0,
+        scale: 0.96,
         y: -20,
         ease: "none",
         scrollTrigger: {
           trigger: section,
           start: "10% top",
-          end: "70% top",
+          end: "55% top",
           scrub: true,
         },
       });
 
-      gsap.to(corners.querySelectorAll<HTMLElement>("[data-corner]"), {
+      // Final exit: everything still on-screen dissolves into the seam.
+      gsap.to([subject, fan, corners], {
         opacity: 0,
-        y: -30,
         ease: "none",
         scrollTrigger: {
           trigger: section,
-          start: "25% top",
-          end: "70% top",
+          start: "55% top",
+          end: "85% top",
           scrub: true,
         },
       });
@@ -154,7 +212,7 @@ export default function Hero() {
         minHeight: "100vh",
       }}
     >
-      {/* Soft radial glow behind the subject — atmospheric depth */}
+      {/* Radial glow behind subject */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none z-0"
@@ -164,7 +222,7 @@ export default function Hero() {
         }}
       />
 
-      {/* Subtle grain overlay — adds tactility to the paper field */}
+      {/* Grain */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none z-0 bg-noise opacity-[0.35]"
@@ -187,36 +245,72 @@ export default function Hero() {
         </h1>
       </div>
 
-      {/* Floating subject — Desert Wings laptop */}
+      {/* Fan cards — radiate out from behind the showreel on scroll.
+          Perspective enables the rotationY tilt to feel 3D. */}
+      <div
+        ref={fanRef}
+        className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
+        style={{ perspective: "1400px" }}
+      >
+        {FAN_PROJECTS.map((p, i) => (
+          <FanCard key={p.slug} project={p} index={i} />
+        ))}
+      </div>
+
+      {/* Showreel — the center hub */}
       <motion.div
         ref={subjectRef}
-        className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
+        className="absolute inset-0 flex items-center justify-center pointer-events-none z-30"
         animate={{ y: [-10, 10, -10] }}
         transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
       >
         <div
-          className="relative"
+          className="relative rounded-[18px] overflow-hidden pointer-events-auto"
           style={{
-            width: "min(58vw, 820px)",
+            width: "min(52vw, 720px)",
             aspectRatio: "16 / 10",
-            filter:
-              "drop-shadow(0 40px 60px rgba(26,24,22,0.22)) drop-shadow(0 80px 120px rgba(122,30,39,0.12))",
+            boxShadow:
+              "0 40px 80px -20px rgba(26,24,22,0.28), 0 80px 140px -40px rgba(122,30,39,0.22)",
+            border: "1px solid rgba(26,24,22,0.08)",
           }}
         >
-          <Image
-            src="/Celestial Laptop Mockup.webp"
-            alt="Desert Wings Flight School website"
-            fill
-            priority
-            sizes="(max-width: 768px) 90vw, 58vw"
-            className="object-contain"
+          <video
+            src="/final-comp.mp4"
+            poster="/video-poster.webp"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            className="absolute inset-0 w-full h-full object-cover"
           />
+          {/* Subtle film grain + tiny chrome for a "showreel" feel */}
+          <div
+            aria-hidden
+            className="absolute top-3 left-3 flex items-center gap-1.5"
+          >
+            <span
+              className="w-1.5 h-1.5 rounded-full animate-pulse"
+              style={{ background: "var(--oxblood)" }}
+            />
+            <span
+              className="font-mono uppercase"
+              style={{
+                color: "rgba(243,241,238,0.9)",
+                fontSize: "9px",
+                letterSpacing: "0.22em",
+                textShadow: "0 1px 2px rgba(0,0,0,0.5)",
+              }}
+            >
+              Showreel · 2026
+            </span>
+          </div>
         </div>
       </motion.div>
 
       {/* Handwritten overlay — "don't slide." */}
       <div
-        className="absolute inset-0 flex items-end justify-center pointer-events-none z-30"
+        className="absolute inset-0 flex items-end justify-center pointer-events-none z-40"
         style={{ paddingBottom: "18%" }}
       >
         <span
@@ -238,12 +332,8 @@ export default function Hero() {
         </span>
       </div>
 
-      {/* Corner UI layer */}
-      <div
-        ref={cornersRef}
-        className="absolute inset-0 z-40 pointer-events-none"
-      >
-        {/* Top-left — manifest stamp */}
+      {/* Corner UI */}
+      <div ref={cornersRef} className="absolute inset-0 z-50 pointer-events-none">
         <div
           data-corner
           className="absolute left-6 md:left-12 lg:left-20"
@@ -262,7 +352,6 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Bottom-left — body copy + CTA */}
         <div
           data-corner
           className="absolute left-6 md:left-12 lg:left-20"
@@ -287,7 +376,6 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Bottom-right — status card */}
         <div
           data-corner
           className="absolute right-6 md:right-12 lg:right-20 pointer-events-auto"
@@ -300,7 +388,95 @@ export default function Hero() {
   );
 }
 
-// ─── Start a project CTA ─────────────────────────────────────────────────────
+// ─── Fan card ─────────────────────────────────────────────────────────────────
+function FanCard({
+  project,
+  index,
+}: {
+  project: (typeof projects)[number];
+  index: number;
+}) {
+  return (
+    <div
+      data-fan-card
+      className="absolute pointer-events-auto"
+      style={{
+        width: "clamp(180px, 16vw, 260px)",
+        aspectRatio: "4 / 5",
+        willChange: "transform, opacity",
+      }}
+    >
+      <Link
+        href={`/work/${project.slug}`}
+        data-card
+        className="block w-full h-full"
+      >
+        <article
+          className="relative w-full h-full rounded-[14px] overflow-hidden press"
+          style={{
+            background: project.color,
+            border: "1px solid rgba(26,24,22,0.08)",
+            boxShadow: "0 20px 50px -20px rgba(26,24,22,0.35)",
+          }}
+        >
+          <div className="absolute inset-0">
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              className={
+                project.image.includes("Mockup")
+                  ? "object-cover object-top"
+                  : "object-cover"
+              }
+              sizes="(max-width: 768px) 40vw, 20vw"
+              priority={index < 2}
+            />
+          </div>
+
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(14,13,12,0.78) 0%, rgba(14,13,12,0.3) 45%, transparent 70%)",
+            }}
+          />
+
+          {/* Category label — top-left */}
+          <div
+            className="absolute top-3 left-3 font-mono uppercase"
+            style={{
+              color: "rgba(243,241,238,0.75)",
+              fontSize: "9px",
+              letterSpacing: "0.22em",
+            }}
+          >
+            {project.category}
+          </div>
+
+          {/* Title — bottom-left */}
+          <div
+            className="absolute bottom-3 left-3 right-3 font-display font-bold"
+            style={{
+              color: "var(--paper)",
+              fontSize: "0.92rem",
+              letterSpacing: "-0.02em",
+              lineHeight: 1.15,
+            }}
+          >
+            {toSentence(project.title)}
+          </div>
+        </article>
+      </Link>
+    </div>
+  );
+}
+
+function toSentence(s: string) {
+  return s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+// ─── CTA ──────────────────────────────────────────────────────────────────────
 function StartProjectCTA() {
   const [hovered, setHovered] = useState(false);
   return (
@@ -340,13 +516,12 @@ function StartProjectCTA() {
   );
 }
 
-// ─── Status card (bottom-right) ──────────────────────────────────────────────
+// ─── Status card ──────────────────────────────────────────────────────────────
 function StatusCard({ sessionSeconds }: { sessionSeconds: number }) {
   const mins = Math.floor(sessionSeconds / 60)
     .toString()
     .padStart(2, "0");
   const secs = (sessionSeconds % 60).toString().padStart(2, "0");
-
   return (
     <div
       className="relative rounded-[16px] px-5 py-4 overflow-hidden"
@@ -360,7 +535,6 @@ function StatusCard({ sessionSeconds }: { sessionSeconds: number }) {
         minWidth: "240px",
       }}
     >
-      {/* Soft oxblood halo — echoes the reference's purple accent */}
       <div
         aria-hidden
         className="absolute top-0 right-0 w-24 h-24 pointer-events-none"
@@ -369,7 +543,6 @@ function StatusCard({ sessionSeconds }: { sessionSeconds: number }) {
             "radial-gradient(ellipse at top right, rgba(122,30,39,0.28) 0%, transparent 65%)",
         }}
       />
-
       <div className="relative flex flex-col gap-1.5">
         <div className="flex items-center gap-2">
           <span
@@ -387,7 +560,6 @@ function StatusCard({ sessionSeconds }: { sessionSeconds: number }) {
             Q3 · 2 slots left
           </span>
         </div>
-
         <div
           className="font-display font-bold"
           style={{
@@ -399,7 +571,6 @@ function StatusCard({ sessionSeconds }: { sessionSeconds: number }) {
         >
           Next opening: June 4
         </div>
-
         <div className="flex items-center gap-3 mt-1.5">
           <span
             className="font-mono tabular-nums"
