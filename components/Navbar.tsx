@@ -29,7 +29,7 @@ function AvailabilityChip({ dark }: { dark: boolean }) {
         className="pulse-dot w-1.5 h-1.5 rounded-full"
         style={{ backgroundColor: "#19c37d", color: "#19c37d" }}
       />
-      <span>Available · Q3 2026</span>
+      <span>Available Q3 · 2 slots</span>
     </div>
   );
 }
@@ -181,10 +181,13 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
               jr
             </motion.span>
             <span
-              className="text-[13px] font-medium tracking-tight"
-              style={{ color: darkSurface ? "var(--ink)" : "var(--paper)" }}
+              className="text-[12px] font-semibold tracking-[0.14em] uppercase"
+              style={{
+                color: darkSurface ? "var(--ink)" : "var(--paper)",
+                fontFamily: "var(--font-geist-mono), monospace",
+              }}
             >
-              Jake Ryall
+              EAS
             </span>
           </Link>
 
@@ -231,10 +234,13 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
               jr
             </span>
             <span
-              className="text-[13px] font-medium"
-              style={{ color: darkSurface ? "var(--ink)" : "var(--paper)" }}
+              className="text-[12px] font-semibold tracking-[0.14em] uppercase"
+              style={{
+                color: darkSurface ? "var(--ink)" : "var(--paper)",
+                fontFamily: "var(--font-geist-mono), monospace",
+              }}
             >
-              Jake Ryall
+              EAS
             </span>
           </Link>
 
@@ -298,7 +304,7 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
                   className="pulse-dot w-2 h-2 rounded-full"
                   style={{ backgroundColor: "#19c37d", color: "#19c37d" }}
                 />
-                <span className="text-sm tracking-tight text-putty">Available · Q3 2026</span>
+                <span className="text-sm tracking-tight text-putty">Available Q3 · 2 slots</span>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
