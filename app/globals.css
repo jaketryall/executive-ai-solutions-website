@@ -6,6 +6,7 @@
     --paper: #e5e1db;       /* primary bg — warm cream */
     --paper-warm: #efebe4;  /* card bg lift */
     --ink: #1a1816;         /* primary text */
+    --ink-deep: #0e0d0c;    /* cinema black — dark-flip section bg */
     --taupe: #78736c;       /* muted text, rules, metadata */
     --oxblood: #7a1e27;     /* single deep accent */
     --ox-deep: #5a1520;     /* oxblood pressed / layered shadow */
@@ -101,7 +102,19 @@
   .bg-paper { background-color: var(--paper); }
   .bg-putty { background-color: var(--putty); }
   .bg-ink { background-color: var(--ink); }
+  .bg-ink-deep { background-color: var(--ink-deep); }
   .bg-ink-soft { background-color: var(--ink-soft); }
+
+  /* Outlined / stroke text — used for Mission manifesto emphasis */
+  .text-stroke-ink {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--ink);
+  }
+  .text-stroke-paper {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--paper);
+  }
+
   .text-ink { color: var(--ink); }
   .text-paper { color: var(--paper); }
   .text-putty { color: var(--putty); }
