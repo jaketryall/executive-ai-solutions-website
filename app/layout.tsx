@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import SmoothScroll from "@/components/SmoothScroll";
-import CustomCursor from "@/components/CustomCursor";
+import ActionTag from "@/components/ui/ActionTag";
 import { SoundProvider } from "@/components/SoundManager";
 import { PageTransitionProvider } from "@/components/PageTransition";
 import ScrollProgress from "@/components/ui/ScrollProgress";
@@ -67,7 +67,7 @@ export default function RootLayout({
         <SoundProvider>
           <PageTransitionProvider>
             <ScrollProgress />
-            <CustomCursor />
+            <ActionTag />
             <SmoothScroll>{children}</SmoothScroll>
           </PageTransitionProvider>
         </SoundProvider>
