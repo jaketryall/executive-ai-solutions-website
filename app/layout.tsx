@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
@@ -8,10 +8,17 @@ import { PageTransitionProvider } from "@/components/PageTransition";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import "./globals.css";
 
-const inter = Inter({
+const geist = Geist({
   subsets: ["latin"],
+  variable: "--font-geist",
   display: "swap",
-  variable: "--font-inter",
+  weight: "variable",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+  display: "swap",
 });
 
 export const viewport: Viewport = {
@@ -56,7 +63,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preload" href="/video-poster.webp" as="image" type="image/webp" />
       </head>
-      <body className={`${inter.variable} font-sans`}>
+      <body className={`${geist.variable} ${geistMono.variable} font-sans`}>
         <SoundProvider>
           <PageTransitionProvider>
             <ScrollProgress />
