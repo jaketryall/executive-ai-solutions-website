@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Caveat } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ActionTag from "@/components/ui/ActionTag";
 import { SoundProvider } from "@/components/SoundManager";
@@ -17,6 +17,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-geist-mono",
   display: "swap",
+});
+
+// Handwritten accent for Hero's overlay flourish. Weight 700 for a confident
+// marker-pen feel over the backdrop wordmark.
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-caveat",
+  display: "swap",
+  weight: ["700"],
 });
 
 export const viewport: Viewport = {
@@ -61,7 +70,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preload" href="/video-poster.webp" as="image" type="image/webp" />
       </head>
-      <body className={`${geist.variable} ${geistMono.variable} font-sans`}>
+      <body className={`${geist.variable} ${geistMono.variable} ${caveat.variable} font-sans`}>
         <SoundProvider>
           <ScrollProgress />
           <ActionTag />
