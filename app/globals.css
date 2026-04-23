@@ -2,22 +2,31 @@
 
 @layer base {
   :root {
-    /* Warm palette — Apple × motion, warmed */
-    --paper: #f3f1ee;       /* primary bg */
-    --putty: #e5e1db;       /* secondary bg, hairlines */
-    --ink: #1a1816;         /* primary text / dark sections */
-    --ink-soft: #141210;    /* slightly warmer than ink for dark cards */
-    --taupe: #78736c;       /* muted text, rules */
-    --signal: #2e5bff;      /* one accent — warm-shifted blue */
-    --accent-warm: #e5e1db; /* legacy alias for the warm accent text used throughout */
+    /* Warm palette — redesign 2026-04-22 */
+    --paper: #e5e1db;       /* primary bg — warm cream */
+    --paper-warm: #efebe4;  /* card bg lift */
+    --ink: #1a1816;         /* primary text */
+    --taupe: #78736c;       /* muted text, rules, metadata */
+    --oxblood: #7a1e27;     /* single deep accent */
+    --ox-deep: #5a1520;     /* oxblood pressed / layered shadow */
 
-    /* Dark-section tokens (used when body bg is ink) */
-    --bg-dark: var(--ink-soft);
-    --text-primary: var(--putty);
+    /* Font variables — mapped to Geist set in app/layout.tsx */
+    --font-display: var(--font-geist);
+    --font-mono: var(--font-geist-mono);
+
+    /* Legacy aliases — keep until dependent components are rewritten
+       (Hero.tsx and several marketing components still reference these).
+       Remove in a later cleanup task once all references are gone. */
+    --putty: var(--paper);              /* old putty was #e5e1db = new paper */
+    --ink-soft: var(--ink);             /* collapse dark variant onto ink */
+    --signal: var(--oxblood);           /* blue accent → oxblood */
+    --accent-warm: var(--paper);
+    --font-inter: var(--font-geist);    /* old inline fontFamily refs still resolve */
+    --bg-dark: var(--ink);
+    --text-primary: var(--paper);
     --text-secondary: rgba(229, 225, 219, 0.65);
     --text-muted: rgba(229, 225, 219, 0.45);
     --text-accent: #ffffff;
-
     --border: rgba(229, 225, 219, 0.10);
     --border-light: rgba(229, 225, 219, 0.18);
 
@@ -75,12 +84,18 @@
 @layer utilities {
   body.page-transitioning #site-footer { visibility: hidden !important; }
 
-  .font-sans { font-family: var(--font-inter), system-ui, sans-serif; }
-  .font-display { font-family: var(--font-inter), system-ui, sans-serif; letter-spacing: -0.035em; }
-  .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .font-sans { font-family: var(--font-geist), system-ui, sans-serif; }
+  .font-display { font-family: var(--font-geist), system-ui, sans-serif; letter-spacing: -0.035em; }
+  .font-mono { font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace; }
 
   .text-balance { text-wrap: balance; }
   .text-pretty { text-wrap: pretty; }
+
+  /* Redesign palette helpers */
+  .bg-paper-warm { background-color: var(--paper-warm); }
+  .bg-oxblood { background-color: var(--oxblood); }
+  .text-oxblood { color: var(--oxblood); }
+  .border-oxblood { border-color: var(--oxblood); }
 
   /* Palette helpers */
   .bg-paper { background-color: var(--paper); }
