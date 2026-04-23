@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import CountUp from "@/components/ui/CountUp";
 import { gsap, ScrollTrigger } from "@/lib/gsap-setup";
 import { useIsomorphicLayoutEffect } from "@/lib/motion/primitives";
@@ -27,6 +28,8 @@ const STATS: Stat[] = [
 export default function Mission() {
   const sectionRef = useRef<HTMLElement>(null);
   const manifestoRef = useRef<HTMLHeadingElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const statsInView = useInView(statsRef, { once: true, amount: 0.3 });
 
   useIsomorphicLayoutEffect(() => {
     const section = sectionRef.current;
@@ -126,38 +129,23 @@ export default function Mission() {
           </h2>
         </div>
 
-        {/* Hairline divider */}
-        <div
+        {/* Hairline divider — draws from left on scroll-enter */}
+        <motion.div
           aria-hidden
-          className="w-full h-px"
+          className="w-full h-px origin-left"
           style={{ background: "rgba(26,24,22,0.15)" }}
+          initial={{ scaleX: 0 }}
+          animate={statsInView ? { scaleX: 1 } : undefined}
+          transition={{ duration: 0.9, ease: [0.19, 1, 0.22, 1] }}
         />
 
         {/* Stats row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 py-10 md:py-14">
+        <div
+          ref={statsRef}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 py-10 md:py-14"
+        >
           {STATS.map((s, i) => (
-            <div key={i} className="flex flex-col gap-3">
-              <CountUp
-                value={s.value}
-                duration={1600}
-                className="font-display font-black leading-none tabular-nums"
-                style={{
-                  color: s.oxblood ? "var(--oxblood)" : "var(--ink)",
-                  fontSize: "clamp(3rem, 6vw, 5rem)",
-                  letterSpacing: "-0.04em",
-                }}
-              />
-              <span
-                className="font-mono uppercase"
-                style={{
-                  color: "var(--taupe)",
-                  fontSize: "11px",
-                  letterSpacing: "0.18em",
-                }}
-              >
-                {s.legend}
-              </span>
-            </div>
+            <StatCard key={i} stat={s} delay={0.15 + i * 0.1} inView={statsInView} />
           ))}
         </div>
       </div>
@@ -203,5 +191,62 @@ function OutlinedWord({ text }: { text: string }) {
         {text}
       </span>
     </span>
+  );
+}
+
+// Stat card — rises in on scroll, lifts on hover with a legend underline draw.
+function StatCard({
+  stat,
+  delay,
+  inView,
+}: {
+  stat: Stat;
+  delay: number;
+  inView: boolean;
+}) {
+  return (
+    <motion.div
+      className="flex flex-col gap-3 cursor-default"
+      initial={{ opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : undefined}
+      transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1], delay }}
+      whileHover="hover"
+    >
+      <motion.div
+        variants={{ hover: { y: -4 } }}
+        transition={{ duration: 0.45, ease: [0.19, 1, 0.22, 1] }}
+      >
+        <CountUp
+          value={stat.value}
+          duration={1600}
+          className="font-display font-black leading-none tabular-nums"
+          style={{
+            color: stat.oxblood ? "var(--oxblood)" : "var(--ink)",
+            fontSize: "clamp(3rem, 6vw, 5rem)",
+            letterSpacing: "-0.04em",
+          }}
+        />
+      </motion.div>
+      <div className="flex flex-col gap-1">
+        <span
+          className="font-mono uppercase"
+          style={{
+            color: "var(--taupe)",
+            fontSize: "11px",
+            letterSpacing: "0.18em",
+          }}
+        >
+          {stat.legend}
+        </span>
+        <motion.span
+          aria-hidden
+          className="h-px origin-left"
+          style={{ background: stat.oxblood ? "var(--oxblood)" : "var(--ink)" }}
+          initial={{ scaleX: 0 }}
+          variants={{ hover: { scaleX: 1 } }}
+          transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
+        />
+      </div>
+    </motion.div>
   );
 }
