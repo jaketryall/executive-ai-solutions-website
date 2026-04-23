@@ -2,35 +2,58 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { projects } from "@/lib/data";
 import { ease } from "@/lib/motion";
 import HoverText from "@/components/ui/HoverText";
+import SectionHeader from "@/components/ui/SectionHeader";
+import { useSectionReveal } from "@/lib/hooks/useSectionReveal";
 
 export default function FeaturedWork() {
-  const featured = projects.slice(0, 3);
+  const sectionRef = useRef<HTMLElement>(null);
+  const { progress } = useSectionReveal(sectionRef);
+  const featured = projects.slice(0, 4);
 
   return (
     <section
-      className="relative pb-32 md:pb-48 px-6 md:px-12 lg:px-24"
+      ref={sectionRef}
+      className="relative pb-32 md:pb-48 px-6 md:px-12 lg:px-24 pt-20 md:pt-28"
       style={{ backgroundColor: "var(--paper)" }}
     >
       <div className="max-w-[1400px] mx-auto">
-        <div className="flex items-end justify-between gap-6 mb-14 md:mb-20">
-          <h3
-            className="font-display font-semibold leading-[1] text-balance max-w-[18ch]"
-            style={{ color: "var(--ink)", fontSize: "clamp(2.2rem, 5vw, 4.8rem)", letterSpacing: "-0.035em" }}
-          >
-            Three recent pieces.
-          </h3>
-          <AllWorkLink />
+        <div className="mb-14 md:mb-20">
+          <SectionHeader
+            sectionRef={sectionRef}
+            number="03"
+            name="Selected Work"
+            sku="EAS/2026/Q2"
+            progress={progress}
+          />
+          <div className="flex items-end justify-between gap-6 mt-10">
+            <h3
+              className="font-display font-black leading-[0.96] text-balance max-w-[20ch]"
+              style={{
+                color: "var(--ink)",
+                fontSize: "clamp(2.4rem, 5.5vw, 5rem)",
+                letterSpacing: "-0.04em",
+              }}
+              data-reveal
+            >
+              Four things we&apos;ve built<br />that actually <span style={{ color: "var(--oxblood)" }}>run.</span>
+            </h3>
+            <AllWorkLink />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6">
           {featured.map((p, i) => {
-            const colSpan = i === 0 ? "md:col-span-7" : i === 1 ? "md:col-span-5" : "md:col-span-12";
-            const aspect = i === 2 ? "aspect-[21/9]" : "aspect-[4/3]";
+            const colSpan =
+              i === 0 ? "md:col-span-7"
+              : i === 1 ? "md:col-span-5"
+              : i === 2 ? "md:col-span-5"
+              : "md:col-span-7";
+            const aspect = "aspect-[4/3]";
             return <Card key={p.slug} project={p} index={i} colSpan={colSpan} aspect={aspect} />;
           })}
         </div>
@@ -99,7 +122,10 @@ function Card({
             <div className={`relative ${aspect} overflow-hidden`}>
               <motion.div
                 className="absolute inset-0"
-                animate={{ scale: hovered ? 1.06 : 1 }}
+                animate={{
+                  scale: hovered ? 1.06 : 1,
+                  filter: hovered ? "contrast(1.08) saturate(1.06)" : "contrast(1) saturate(1)",
+                }}
                 transition={{ duration: 1.0, ease: ease.expoOut }}
               >
                 <Image
