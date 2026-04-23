@@ -730,9 +730,10 @@ function DesktopHero() {
       const fanCards = gsap.utils.toArray<HTMLElement>(videoBox.querySelectorAll(".hero-fan-card"));
       const fanPositions = computeFanPositions({
         count: 4,
-        spread: 44,   // total arc degrees (matches old -14..14 range)
-        depth: 120,   // z-axis depth for outers
-        radius: 520,  // x spread (matches old far-left/right)
+        spread: 32,   // ±16° rotation (was ±22° — too aggressive)
+        depth: 60,    // 60px z push on outers (was 120 — felt too deep)
+        radius: 520,  // keep — matches original horizontal spread
+        tiltY: 8,     // ±8° 3D tilt toward viewer (was ±18° — cards looked disoriented)
       });
 
       fanCards.forEach((card) => {

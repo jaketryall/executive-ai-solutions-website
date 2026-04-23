@@ -32,10 +32,11 @@ export type FanOptions = {
   spread: number; // total arc in degrees
   depth: number;  // max |z| for outermost card
   radius: number; // max |x| for outermost card
+  tiltY?: number; // Max rotationY for outermost cards in degrees. Default: 0 (flat).
 };
 
 export function computeFanPositions(opts: FanOptions): FanPosition[] {
-  const { count, spread, depth, radius } = opts;
+  const { count, spread, depth, radius, tiltY = 0 } = opts;
   if (count <= 0) return [];
   if (count === 1) return [{ x: 0, y: 0, z: 0, rotation: 0, rotationY: 0 }];
 
@@ -47,7 +48,7 @@ export function computeFanPositions(opts: FanOptions): FanPosition[] {
       y: Math.abs(t) * 20,       // outer cards drift slightly down (arc bottom)
       z: -Math.abs(t) * depth,   // outer cards pull back from viewer
       rotation: t * (spread / 2),
-      rotationY: t * 18,         // 3D tilt toward viewer for outer cards
+      rotationY: t * tiltY,      // 3D tilt toward viewer for outer cards
     };
   });
 }
