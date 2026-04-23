@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import TestimonialMarquee from "@/components/marketing/TestimonialMarquee";
 import FeaturedWork from "@/components/marketing/FeaturedWork";
+import Mission from "@/components/marketing/Mission";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
         <Hero />
         <TestimonialMarquee />
         <FeaturedWork />
+        <Mission />
       </main>
       <Footer />
     </>
