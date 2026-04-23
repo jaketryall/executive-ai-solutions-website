@@ -179,6 +179,8 @@ export default function TestimonialMarquee() {
     <section
       ref={sectionRef}
       data-bg="ink-deep"
+      data-nav-num="02"
+      data-nav-name="TESTIMONIALS"
       className="relative overflow-hidden"
       style={{ background: "var(--ink-deep)" }}
     >

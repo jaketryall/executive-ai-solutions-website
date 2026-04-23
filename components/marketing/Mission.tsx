@@ -84,6 +84,8 @@ export default function Mission() {
     <section
       ref={sectionRef}
       data-bg="paper"
+      data-nav-num="05"
+      data-nav-name="MISSION"
       className="relative"
       style={{
         background: "var(--paper)",

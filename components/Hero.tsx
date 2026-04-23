@@ -793,7 +793,9 @@ function DesktopHero() {
       <section
         ref={sectionRef}
         className="relative"
-        data-bg="cream"
+        data-bg="paper"
+        data-nav-num="01"
+        data-nav-name="HERO"
         data-seam-exit="seam-1"
       >
         <div className="relative min-h-screen w-full">

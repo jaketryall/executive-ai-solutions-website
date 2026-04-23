@@ -81,6 +81,8 @@ export default function Services() {
     <section
       ref={sectionRef}
       data-bg="ink-deep"
+      data-nav-num="06"
+      data-nav-name="SERVICES"
       className="relative"
       style={{ background: "var(--ink-deep)" }}
     >

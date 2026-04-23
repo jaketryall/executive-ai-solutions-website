@@ -99,6 +99,9 @@ export default function About() {
   return (
     <section
       ref={sectionRef}
+      data-bg="paper"
+      data-nav-num="09"
+      data-nav-name="ABOUT"
       className="relative py-28 md:py-40 px-6 md:px-12 lg:px-24 overflow-hidden"
       style={{ background: "var(--paper)" }}
     >

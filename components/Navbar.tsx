@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -14,10 +14,44 @@ const NAV_LINKS = [
   { href: "/contact", label: "Contact" },
 ];
 
+// Probe line (y coordinate in viewport) used to detect which section sits
+// under the nav. Roughly equals nav top padding + pill height.
+const PROBE_Y = 80;
+
+type SectionState = {
+  bg: "paper" | "ink-deep";
+  num: string;
+  name: string;
+};
+
+const DEFAULT_SECTION: SectionState = {
+  bg: "paper",
+  num: "01",
+  name: "HERO",
+};
+
+// ─── Live clock chip — D ─────────────────────────────────────────────────────
+function formatPhoenixTime(): string {
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "America/Phoenix",
+  }).format(new Date());
+}
+
 function AvailabilityChip({ dark }: { dark: boolean }) {
+  const [time, setTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    setTime(formatPhoenixTime());
+    const id = window.setInterval(() => setTime(formatPhoenixTime()), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
+
   return (
     <div
-      className="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide press"
+      className="hidden lg:inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full text-xs tracking-tight press"
       style={{
         border: `1px solid ${dark ? "rgba(26,24,22,0.12)" : "rgba(229,225,219,0.16)"}`,
         color: dark ? "rgba(26,24,22,0.75)" : "rgba(229,225,219,0.85)",
@@ -29,21 +63,28 @@ function AvailabilityChip({ dark }: { dark: boolean }) {
         className="pulse-dot w-1.5 h-1.5 rounded-full"
         style={{ backgroundColor: "#19c37d", color: "#19c37d" }}
       />
-      <span>Available Q3 · 2 slots</span>
+      <span className="font-mono tabular-nums tracking-tight">
+        {time ?? "--:--"}
+      </span>
+      <span
+        aria-hidden
+        style={{ opacity: 0.35 }}
+      >
+        MST
+      </span>
+      <span aria-hidden style={{ opacity: 0.35 }}>·</span>
+      <span className="font-mono tracking-[0.14em] uppercase text-[10px]">
+        2 slots Q3
+      </span>
     </div>
   );
 }
 
+// ─── CTA ─────────────────────────────────────────────────────────────────────
 function NavCTA({ dark, onClick }: { dark: boolean; onClick?: () => void }) {
   const [hovered, setHovered] = useState(false);
   return (
-    <MagneticButton
-      as="link"
-      href="/contact"
-      onClick={onClick}
-      strength={12}
-      childStrength={5}
-    >
+    <MagneticButton as="link" href="/contact" onClick={onClick} strength={12} childStrength={5}>
       <span
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -89,17 +130,22 @@ function Arrow() {
   );
 }
 
+// ─── NavLink — A (oxblood pill with shared layout morph) ─────────────────────
 function NavLink({
   href,
   label,
-  active,
+  isCurrent,
   dark,
+  onMouseEnter,
+  onMouseLeave,
   onClick,
 }: {
   href: string;
   label: string;
-  active: boolean;
+  isCurrent: boolean;
   dark: boolean;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
   onClick?: () => void;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -107,56 +153,162 @@ function NavLink({
     <Link
       href={href}
       onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="relative px-3 py-2 text-[13px] tracking-tight"
-      style={{
-        color: active || hovered
-          ? dark ? "var(--ink)" : "var(--paper)"
-          : dark ? "rgba(26,24,22,0.6)" : "rgba(229,225,219,0.7)",
-        transition: "color 350ms var(--ease-expo-out)",
+      onMouseEnter={() => {
+        setHovered(true);
+        onMouseEnter?.();
       }}
+      onMouseLeave={() => {
+        setHovered(false);
+        onMouseLeave?.();
+      }}
+      className="relative inline-flex items-center px-4 py-2 rounded-full text-[13px] tracking-tight"
     >
-      <HoverText text={label} trigger={hovered} />
-      {active && (
+      {isCurrent && (
         <motion.span
-          layoutId="nav-underline"
-          className="absolute left-3 right-3 -bottom-0.5 h-px"
-          style={{ backgroundColor: dark ? "var(--ink)" : "var(--paper)" }}
-          transition={{ duration: 0.45, ease: ease.expoOut }}
+          layoutId="nav-pill"
+          className="absolute inset-0 rounded-full"
+          style={{ background: "var(--oxblood)" }}
+          transition={{ type: "spring", stiffness: 380, damping: 34 }}
         />
       )}
+      <motion.span
+        className="relative z-10"
+        animate={{
+          color: isCurrent
+            ? "var(--paper)"
+            : dark
+              ? "rgba(26,24,22,0.65)"
+              : "rgba(229,225,219,0.72)",
+        }}
+        transition={{ duration: 0.3, ease: ease.expoOut }}
+      >
+        <HoverText text={label} trigger={hovered} />
+      </motion.span>
     </Link>
   );
 }
 
+// ─── Navbar ──────────────────────────────────────────────────────────────────
 export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
   const pathname = usePathname();
   const { scrollY } = useScroll();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [showNow, setShowNow] = useState(false);
 
-  useMotionValueEvent(scrollY, "change", (v) => setIsScrolled(v > 40));
+  // Current section under the nav — drives surface color + NOW label.
+  const [section, setSection] = useState<SectionState>(() =>
+    lightHero ? DEFAULT_SECTION : { bg: "ink-deep", num: "01", name: "" }
+  );
+  const sectionRef = useRef<SectionState>(section);
 
-  const darkSurface = lightHero && !isScrolled;
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+  // Track hovered route index separate from pathname so the pill can morph
+  // to follow the cursor then return to the active route.
+  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
+
+  useMotionValueEvent(scrollY, "change", (v) => {
+    setIsScrolled(v > 40);
+    setShowNow(v > 160);
+  });
+
+  // Scroll-driven section detection — the section whose top/bottom straddle
+  // the probe line (80px from viewport top) is "current".
+  useEffect(() => {
+    let rafId = 0;
+
+    const update = () => {
+      rafId = 0;
+      const nodes = document.querySelectorAll<HTMLElement>("[data-bg]");
+      for (let i = 0; i < nodes.length; i++) {
+        const rect = nodes[i].getBoundingClientRect();
+        if (rect.top <= PROBE_Y && rect.bottom > PROBE_Y) {
+          const bg = nodes[i].getAttribute("data-bg");
+          if (bg !== "paper" && bg !== "ink-deep") return;
+          const num = nodes[i].getAttribute("data-nav-num") ?? "";
+          const name = nodes[i].getAttribute("data-nav-name") ?? "";
+          const next: SectionState = { bg, num, name };
+          const prev = sectionRef.current;
+          if (prev.bg !== next.bg || prev.num !== next.num) {
+            sectionRef.current = next;
+            setSection(next);
+          }
+          return;
+        }
+      }
+    };
+
+    const schedule = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  // Dark-aware surface: darkSurface=true means we're over a LIGHT section,
+  // so nav paints with ink (preserving the existing prop semantics).
+  const darkSurface = section.bg === "paper";
+
+  // Active route index — used as the pill's default resting position.
+  const activeIdx = NAV_LINKS.findIndex((l) =>
+    l.href === "/" ? pathname === "/" : pathname.startsWith(l.href)
+  );
+  const currentIdx = hoverIdx !== null ? hoverIdx : activeIdx;
 
   return (
     <>
+      {/* Desktop */}
       <motion.header
         initial={{ y: -60, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, delay: 0.1, ease: ease.expoOut }}
-        className="fixed top-0 left-0 right-0 z-50 hidden md:flex justify-center pt-5"
+        className="fixed top-0 left-0 right-0 z-50 hidden md:flex flex-col items-center gap-2 pt-3"
       >
+        {/* NOW label — C */}
+        <div className="h-4 overflow-visible">
+          <AnimatePresence mode="wait">
+            {showNow && section.num && section.name && (
+              <motion.div
+                key={`${section.num}-${section.name}`}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.35, ease: ease.expoOut }}
+                className="font-mono uppercase select-none pointer-events-none"
+                style={{
+                  color: darkSurface
+                    ? "rgba(26,24,22,0.55)"
+                    : "rgba(229,225,219,0.6)",
+                  fontSize: "10px",
+                  letterSpacing: "0.22em",
+                }}
+              >
+                <span style={{ color: "var(--oxblood)" }}>●</span>{" "}
+                {section.num} · {section.name}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Nav pill */}
         <motion.nav
           animate={{
             background: isScrolled
-              ? (darkSurface ? "rgba(243,241,238,0.72)" : "rgba(20,18,16,0.72)")
+              ? darkSurface
+                ? "rgba(243,241,238,0.72)"
+                : "rgba(20,18,16,0.72)"
               : "rgba(0,0,0,0)",
             borderColor: isScrolled
-              ? (darkSurface ? "rgba(26,24,22,0.08)" : "rgba(229,225,219,0.10)")
+              ? darkSurface
+                ? "rgba(26,24,22,0.08)"
+                : "rgba(229,225,219,0.10)"
               : "rgba(0,0,0,0)",
             paddingInline: isScrolled ? "10px" : "18px",
           }}
@@ -180,26 +332,52 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
             >
               jr
             </motion.span>
-            <span
-              className="text-[12px] font-semibold tracking-[0.14em] uppercase"
-              style={{
+            <motion.span
+              animate={{
                 color: darkSurface ? "var(--ink)" : "var(--paper)",
-                fontFamily: "var(--font-geist-mono), monospace",
               }}
+              transition={{ duration: 0.4, ease: ease.expoOut }}
+              className="text-[12px] font-semibold tracking-[0.14em] uppercase"
+              style={{ fontFamily: "var(--font-geist-mono), monospace" }}
             >
               EAS
-            </span>
+            </motion.span>
           </Link>
 
-          <span className="mx-1 h-5 w-px" style={{ backgroundColor: darkSurface ? "rgba(26,24,22,0.1)" : "rgba(229,225,219,0.12)" }} />
+          <motion.span
+            className="mx-1 h-5 w-px"
+            animate={{
+              backgroundColor: darkSurface
+                ? "rgba(26,24,22,0.1)"
+                : "rgba(229,225,219,0.12)",
+            }}
+            transition={{ duration: 0.4 }}
+          />
 
+          {/* Links with oxblood pill */}
           <div className="flex items-center">
-            {NAV_LINKS.map((l) => (
-              <NavLink key={l.href} href={l.href} label={l.label} active={isActive(l.href)} dark={darkSurface} />
+            {NAV_LINKS.map((l, i) => (
+              <NavLink
+                key={l.href}
+                href={l.href}
+                label={l.label}
+                isCurrent={currentIdx === i}
+                dark={darkSurface}
+                onMouseEnter={() => setHoverIdx(i)}
+                onMouseLeave={() => setHoverIdx(null)}
+              />
             ))}
           </div>
 
-          <span className="mx-1 h-5 w-px" style={{ backgroundColor: darkSurface ? "rgba(26,24,22,0.1)" : "rgba(229,225,219,0.12)" }} />
+          <motion.span
+            className="mx-1 h-5 w-px"
+            animate={{
+              backgroundColor: darkSurface
+                ? "rgba(26,24,22,0.1)"
+                : "rgba(229,225,219,0.12)",
+            }}
+            transition={{ duration: 0.4 }}
+          />
 
           <AvailabilityChip dark={darkSurface} />
 
@@ -214,11 +392,15 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
         transition={{ duration: 0.5 }}
         className="fixed top-0 left-0 right-0 z-50 md:hidden"
       >
-        <nav
+        <motion.nav
+          animate={{
+            background: darkSurface ? "rgba(243,241,238,0.80)" : "rgba(20,18,16,0.80)",
+            borderColor: darkSurface ? "rgba(26,24,22,0.08)" : "rgba(229,225,219,0.10)",
+          }}
+          transition={{ duration: 0.4, ease: ease.expoOut }}
           className="mx-3 mt-3 px-4 py-3 rounded-2xl flex items-center justify-between"
           style={{
-            background: darkSurface ? "rgba(243,241,238,0.80)" : "rgba(20,18,16,0.80)",
-            border: `1px solid ${darkSurface ? "rgba(26,24,22,0.08)" : "rgba(229,225,219,0.10)"}`,
+            border: "1px solid",
             backdropFilter: "blur(16px) saturate(1.1)",
             WebkitBackdropFilter: "blur(16px) saturate(1.1)",
           }}
@@ -263,9 +445,10 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
               />
             </div>
           </button>
-        </nav>
+        </motion.nav>
       </motion.header>
 
+      {/* Mobile overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -288,7 +471,12 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
                     href={l.href}
                     onClick={() => setIsOpen(false)}
                     className="block text-5xl font-semibold tracking-tight py-2"
-                    style={{ color: isActive(l.href) ? "var(--paper)" : "rgba(229,225,219,0.55)" }}
+                    style={{
+                      color:
+                        activeIdx === i
+                          ? "var(--paper)"
+                          : "rgba(229,225,219,0.55)",
+                    }}
                   >
                     {l.label}
                   </Link>

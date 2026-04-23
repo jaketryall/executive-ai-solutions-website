@@ -110,6 +110,9 @@ export default function Contact() {
   return (
     <section
       ref={sectionRef}
+      data-bg="paper"
+      data-nav-num="10"
+      data-nav-name="CONTACT"
       className="relative py-28 md:py-40 px-6 md:px-12 lg:px-24 overflow-hidden"
       style={{ background: "var(--paper)" }}
     >

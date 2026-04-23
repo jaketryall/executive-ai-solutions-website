@@ -79,6 +79,8 @@ export default function FeaturedWork() {
     <section
       ref={sectionRef}
       data-bg="ink-deep"
+      data-nav-num="03"
+      data-nav-name="FEATURED WORK"
       className="relative pb-32 md:pb-48 px-6 md:px-12 lg:px-24 pt-20 md:pt-28"
       style={{ backgroundColor: "var(--ink-deep)" }}
     >
