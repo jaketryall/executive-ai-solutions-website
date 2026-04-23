@@ -257,14 +257,16 @@ export default function Hero() {
         ))}
       </div>
 
-      {/* Showreel — the center hub */}
-      <motion.div
+      {/* Showreel — center hub. Outer div is GSAP-controlled for entrance
+          and scroll choreography; inner motion.div owns the ambient y-float
+          loop. Nesting prevents Framer and GSAP from fighting over transform. */}
+      <div
         ref={subjectRef}
         className="absolute inset-0 flex items-center justify-center pointer-events-none z-30"
-        animate={{ y: [-10, 10, -10] }}
-        transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
       >
-        <div
+        <motion.div
+          animate={{ y: [-10, 10, -10] }}
+          transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
           className="relative rounded-[18px] overflow-hidden pointer-events-auto"
           style={{
             width: "min(52vw, 720px)",
@@ -284,7 +286,6 @@ export default function Hero() {
             preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
           />
-          {/* Subtle film grain + tiny chrome for a "showreel" feel */}
           <div
             aria-hidden
             className="absolute top-3 left-3 flex items-center gap-1.5"
@@ -305,8 +306,8 @@ export default function Hero() {
               Showreel · 2026
             </span>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
 
       {/* Handwritten overlay — "don't slide." */}
       <div
