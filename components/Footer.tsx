@@ -38,7 +38,7 @@ export default function Footer() {
             color: "var(--paper)",
           }}
         >
-          jake ryall.
+          EAS
         </span>
       </div>
 
@@ -52,7 +52,7 @@ export default function Footer() {
               onMouseLeave={() => setMarkHovered(false)}
               className="inline-flex items-center gap-3 press"
               style={{ background: "transparent", border: 0, padding: 0 }}
-              aria-label="Jake Ryall"
+              aria-label="Executive AI Solutions"
             >
               <span
                 className="rounded-full flex items-center justify-center font-semibold"
@@ -68,11 +68,11 @@ export default function Footer() {
                 jr
               </span>
               <span className="text-sm font-medium tracking-tight" style={{ color: "var(--paper)" }}>
-                Jake Ryall
+                Executive AI Solutions
               </span>
             </button>
             <p className="text-[13px] mt-4 max-w-[240px]" style={{ color: "rgba(229,225,219,0.5)" }}>
-              Motion-forward design engineer. Building interfaces that move, for teams that ship.
+              A two-person studio. We ship software, not slides.
             </p>
           </div>
 
@@ -121,10 +121,10 @@ export default function Footer() {
               Studio
             </p>
             <p className="text-[13px]" style={{ color: "rgba(229,225,219,0.5)" }}>
-              Rocklin, CA — working worldwide
+              Rocklin, California · working worldwide
             </p>
             <p className="text-[13px] mt-2" style={{ color: "rgba(229,225,219,0.5)" }}>
-              Availability, pricing, and case studies live upstairs.
+              Two projects per quarter. Fixed-price proposals in 48h.
             </p>
           </div>
         </div>
@@ -135,14 +135,14 @@ export default function Footer() {
           style={{ borderTop: "1px solid rgba(229,225,219,0.08)" }}
         >
           <p className="text-[12px]" style={{ color: "rgba(229,225,219,0.4)" }}>
-            © {year} Jake Ryall · Built in Next.js, GSAP, Framer Motion
+            © {year} Executive AI Solutions LLC · Built by Jake Ryall
           </p>
           <a
-            href="mailto:jake@jakeryall.com"
+            href="mailto:hello@executiveai.solutions"
             className="text-[13px] link-hover"
             style={{ color: "var(--paper)" }}
           >
-            jake@jakeryall.com
+            hello@executiveai.solutions
           </a>
         </div>
       </div>
