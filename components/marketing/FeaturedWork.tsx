@@ -9,11 +9,69 @@ import { ease } from "@/lib/motion";
 import HoverText from "@/components/ui/HoverText";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { useSectionReveal } from "@/lib/hooks/useSectionReveal";
+import { gsap } from "@/lib/gsap-setup";
+import { useIsomorphicLayoutEffect } from "@/lib/motion/primitives";
 
 export default function FeaturedWork() {
   const sectionRef = useRef<HTMLElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const { progress } = useSectionReveal(sectionRef);
   const featured = projects.slice(0, 4);
+
+  useIsomorphicLayoutEffect(() => {
+    const grid = gridRef.current;
+    const section = sectionRef.current;
+    if (!grid || !section) return;
+
+    const ctx = gsap.context(() => {
+      const cards = gsap.utils.toArray<HTMLElement>(
+        grid.querySelectorAll("[data-work-card]")
+      );
+      if (cards.length !== 4) return;
+
+      const entries = [
+        { x: -200, rotationY: 22,  rotation: -2   }, // card 0 — wide left
+        { x: 150,  rotationY: -15, rotation: 2    }, // card 1 — narrow right
+        { x: -150, rotationY: 15,  rotation: -1.5 }, // card 2 — narrow left
+        { x: 200,  rotationY: -22, rotation: 2    }, // card 3 — wide right
+      ];
+
+      cards.forEach((card, i) => {
+        const e = entries[i];
+        gsap.set(card, {
+          x: e.x,
+          y: 40,
+          z: -120,
+          rotation: e.rotation,
+          rotationY: e.rotationY,
+          scale: 0.92,
+          opacity: 0,
+          transformOrigin: "center center",
+        });
+      });
+
+      gsap.to(cards, {
+        x: 0,
+        y: 0,
+        z: 0,
+        rotation: 0,
+        rotationY: 0,
+        scale: 1,
+        opacity: 1,
+        stagger: { each: 0.12, from: "start" },
+        duration: 1.2,
+        ease: "expo.out",
+        scrollTrigger: {
+          trigger: grid,
+          start: "top 80%",
+          end: "top 25%",
+          scrub: 0.8,
+        },
+      });
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section
@@ -46,7 +104,11 @@ export default function FeaturedWork() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6">
+        <div
+          ref={gridRef}
+          className="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6"
+          style={{ perspective: "1600px" }}
+        >
           {featured.map((p, i) => {
             const colSpan =
               i === 0 ? "md:col-span-7"
@@ -102,12 +164,10 @@ function Card({
   const [hovered, setHovered] = useState(false);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 36 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-10%" }}
-      transition={{ duration: 0.9, delay: index * 0.08, ease: ease.expoOut }}
+    <div
       className={colSpan}
+      data-work-card
+      style={{ transformStyle: "preserve-3d", willChange: "transform, opacity" }}
     >
       <Link href={`/work/${project.slug}`} data-card>
           <article
@@ -250,7 +310,7 @@ function Card({
             </div>
           </article>
       </Link>
-    </motion.div>
+    </div>
   );
 }
 
