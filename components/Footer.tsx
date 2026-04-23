@@ -14,7 +14,7 @@ const SOCIALS = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/jake-ryall" },
   { label: "GitHub", href: "https://github.com/jaketryall" },
   { label: "Dribbble", href: "https://dribbble.com/jake-ryall" },
-  { label: "Email", href: "mailto:jake@jakeryall.com" },
+  { label: "Email", href: "mailto:hello@executiveai.solutions" },
 ];
 
 export default function Footer() {

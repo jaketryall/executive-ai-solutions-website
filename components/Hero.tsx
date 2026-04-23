@@ -855,7 +855,7 @@ function DesktopHero() {
                   color: "rgba(26,24,22,0.7)",
                 }}
               >
-                Jake Ryall — Design Engineer
+                EAS · A Two-Person Studio
               </span>
               <div
                 className="transition-all duration-500 ease-out group-hover:w-20 group-hover:bg-[rgba(26,24,22,0.4)]"
@@ -872,7 +872,7 @@ function DesktopHero() {
                   gap: "0.4rem",
                 }}
               >
-                <span>Vol. 1 · 2026</span>
+                <span>Vol. 2026 · Q2</span>
                 <span
                   className="opacity-0 -translate-x-1 group-hover:opacity-60 group-hover:translate-x-0 transition-all duration-300"
                   style={{ color: "#1a1816", fontSize: "0.62rem", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600 }}
