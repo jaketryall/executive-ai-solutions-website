@@ -899,12 +899,26 @@ function DesktopHero() {
                   marginBottom: "1.5rem",
                 }}
               >
-                Jake Ryall · Design Engineer · Available Q3 2026
+                EAS — Executive AI Solutions · Rocklin, CA
               </motion.p>
 
-              {/* Step 1.2 — Strikethrough headline */}
-              <div style={{ maxWidth: 900 }}>
-                <HeroCorrectionText />
+              {/* Step 1.2 — EAS monumental headline (static — SplitText reveal added in Task 20) */}
+              <div style={{ maxWidth: 1100 }}>
+                <h1
+                  data-hero-headline
+                  style={{
+                    fontFamily: "var(--font-geist), system-ui, sans-serif",
+                    fontSize: "clamp(4rem, 10vw, 11rem)",
+                    fontWeight: 900,
+                    lineHeight: 0.85,
+                    letterSpacing: "-0.055em",
+                    color: "var(--ink)",
+                    margin: 0,
+                  }}
+                >
+                  Ship, don&apos;t<br />
+                  <span style={{ color: "var(--oxblood)" }}>slide.</span>
+                </h1>
               </div>
 
               {/* Step 1.3 — Updated subline */}
@@ -921,7 +935,7 @@ function DesktopHero() {
                   lineHeight: 1.6,
                 }}
               >
-                I'm a motion-forward design engineer. Most of my time goes into the 400ms after a click — where trust gets built.
+                A two-person studio building the software small operators actually need — custom CRMs, AI voice receptionists, real marketing sites. We ship in weeks, not quarters.
               </motion.p>
 
               {/* Step 1.4 — Dual CTA: primary dark + ghost secondary */}
@@ -1313,7 +1327,7 @@ function DesktopHero() {
                     transition: "color 0.3s ease",
                   }}
                 >
-                  Scroll to work
+                  Selected work
                 </span>
               </button>
               {/* Session timer + pulsing "live" dot */}
