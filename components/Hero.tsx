@@ -631,6 +631,21 @@ function DesktopHero() {
     if (!section || !videoBox || !heroContent) return;
 
     const ctx = gsap.context(() => {
+      // Headline reveal on page load — letters stagger up from a mask
+      const headline = heroContent.querySelector<HTMLElement>("[data-hero-headline]");
+      if (headline) {
+        const split = SplitText.create(headline, { type: "chars, lines", mask: "lines" });
+        gsap.from(split.chars, {
+          yPercent: 110,
+          opacity: 0,
+          stagger: 0.02,
+          duration: 0.9,
+          ease: "expo.out",
+          delay: 0.4,
+          onComplete: () => split.revert(),
+        });
+      }
+
       // Hero text moves up faster than scroll + fades out
       gsap.to(heroContent, {
         y: -150,
