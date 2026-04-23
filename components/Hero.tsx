@@ -6,6 +6,7 @@ import Image from "next/image";
 import AnimatedLogo from "./AnimatedLogo";
 import Link from "next/link";
 import { gsap, SplitText } from "@/lib/gsap-setup";
+import { computeFanPositions } from "@/lib/motion/primitives";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -234,7 +235,7 @@ function HeroFanCards({
     <div
       data-seam-fan
       className="absolute inset-0 flex items-center justify-center pointer-events-none"
-      style={{ zIndex: -1 }}
+      style={{ zIndex: -1, perspective: "1800px", transformStyle: "preserve-3d" }}
     >
       {heroProjects.map((project, i) => {
         const offset = getHoverOffset(i);
@@ -244,6 +245,7 @@ function HeroFanCards({
           <div
             key={project.slug}
             className="hero-fan-card absolute pointer-events-auto will-change-transform"
+            style={{ transformStyle: "preserve-3d" }}
             onMouseEnter={() => setHoveredIndex(i)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
@@ -711,15 +713,15 @@ function DesktopHero() {
 
       // Fan cards emerge from behind the video card
       const fanCards = gsap.utils.toArray<HTMLElement>(videoBox.querySelectorAll(".hero-fan-card"));
-      const fanPositions = [
-        { x: -520, y: 90, rotation: -14 },    // Far left
-        { x: -320, y: 40, rotation: -8 },     // Left
-        { x: 320, y: 40, rotation: 8 },       // Right
-        { x: 520, y: 90, rotation: 14 },      // Far right
-      ];
+      const fanPositions = computeFanPositions({
+        count: 4,
+        spread: 44,   // total arc degrees (matches old -14..14 range)
+        depth: 120,   // z-axis depth for outers
+        radius: 520,  // x spread (matches old far-left/right)
+      });
 
       fanCards.forEach((card) => {
-        gsap.set(card, { x: 0, y: 0, rotation: 0, opacity: 0, scale: 0.9 });
+        gsap.set(card, { x: 0, y: 0, z: 0, rotation: 0, rotationY: 0, opacity: 0, scale: 0.9 });
       });
 
       // Fan out starts slightly after the shrink begins
@@ -727,7 +729,9 @@ function DesktopHero() {
         shrinkTl.to(card, {
           x: fanPositions[i].x,
           y: fanPositions[i].y,
+          z: fanPositions[i].z,
           rotation: fanPositions[i].rotation,
+          rotationY: fanPositions[i].rotationY,
           opacity: 1,
           scale: 1,
           duration: 1,
