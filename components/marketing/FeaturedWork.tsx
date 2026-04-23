@@ -4,13 +4,39 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { projects } from "@/lib/data";
+import { projects, type Project } from "@/lib/data";
 import { ease } from "@/lib/motion";
 import HoverText from "@/components/ui/HoverText";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { useSectionReveal } from "@/lib/hooks/useSectionReveal";
-import { gsap } from "@/lib/gsap-setup";
+import { gsap, ScrollTrigger } from "@/lib/gsap-setup";
 import { useIsomorphicLayoutEffect } from "@/lib/motion/primitives";
+
+// Desktop 5-col bento layout — two hero tiles (3×2, 2×2) then two supporting
+// tiles (2, 3) below. Mobile stacks single-column.
+const TILE_LAYOUT = [
+  "md:col-span-3 md:row-span-2",
+  "md:col-span-2 md:row-span-2",
+  "md:col-span-2 md:row-span-1",
+  "md:col-span-3 md:row-span-1",
+];
+
+// Short per-project stack label, surfaced inside the chrome bar on hover.
+const STACK: Record<string, string> = {
+  "desert-wings": "Next.js · Sanity",
+  "riled-up": "Next.js · Postgres",
+  "wings-n-wheels": "Next.js · Tailwind",
+  "adventure-air": "Wix",
+};
+
+function hostFromUrl(url: string | undefined): string {
+  if (!url) return "";
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
 
 export default function FeaturedWork() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -18,57 +44,33 @@ export default function FeaturedWork() {
   const { progress } = useSectionReveal(sectionRef);
   const featured = projects.slice(0, 4);
 
+  // Entrance: ScrollTrigger.batch staircase (opacity + 40px rise).
   useIsomorphicLayoutEffect(() => {
     const grid = gridRef.current;
-    const section = sectionRef.current;
-    if (!grid || !section) return;
+    if (!grid) return;
 
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray<HTMLElement>(
         grid.querySelectorAll("[data-work-card]")
       );
-      if (cards.length !== 4) return;
+      if (!cards.length) return;
 
-      const entries = [
-        { x: -200, rotationY: 22,  rotation: -2   }, // card 0 — wide left
-        { x: 150,  rotationY: -15, rotation: 2    }, // card 1 — narrow right
-        { x: -150, rotationY: 15,  rotation: -1.5 }, // card 2 — narrow left
-        { x: 200,  rotationY: -22, rotation: 2    }, // card 3 — wide right
-      ];
+      gsap.set(cards, { opacity: 0, y: 40 });
 
-      cards.forEach((card, i) => {
-        const e = entries[i];
-        gsap.set(card, {
-          x: e.x,
-          y: 40,
-          z: -120,
-          rotation: e.rotation,
-          rotationY: e.rotationY,
-          scale: 0.92,
-          opacity: 0,
-          transformOrigin: "center center",
-        });
+      ScrollTrigger.batch(cards, {
+        start: "top 85%",
+        once: true,
+        onEnter: (batch) =>
+          gsap.to(batch, {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.08,
+            ease: "expo.out",
+            overwrite: "auto",
+          }),
       });
-
-      gsap.to(cards, {
-        x: 0,
-        y: 0,
-        z: 0,
-        rotation: 0,
-        rotationY: 0,
-        scale: 1,
-        opacity: 1,
-        stagger: { each: 0.12, from: "start" },
-        duration: 1.2,
-        ease: "expo.out",
-        scrollTrigger: {
-          trigger: grid,
-          start: "top 80%",
-          end: "top 25%",
-          scrub: 0.8,
-        },
-      });
-    }, section);
+    }, grid);
 
     return () => ctx.revert();
   }, []);
@@ -76,8 +78,9 @@ export default function FeaturedWork() {
   return (
     <section
       ref={sectionRef}
+      data-bg="ink-deep"
       className="relative pb-32 md:pb-48 px-6 md:px-12 lg:px-24 pt-20 md:pt-28"
-      style={{ backgroundColor: "var(--paper)" }}
+      style={{ backgroundColor: "var(--ink-deep)" }}
     >
       <div className="max-w-[1400px] mx-auto">
         <div className="mb-14 md:mb-20">
@@ -92,35 +95,36 @@ export default function FeaturedWork() {
             <h3
               className="font-display font-black leading-[0.96] text-balance max-w-[20ch]"
               style={{
-                color: "var(--ink)",
+                color: "var(--paper)",
                 fontSize: "clamp(2.4rem, 5.5vw, 5rem)",
                 letterSpacing: "-0.04em",
               }}
               data-reveal
             >
-              Four things we&apos;ve built<br />that actually <span style={{ color: "var(--oxblood)" }}>run.</span>
+              Four things we&apos;ve built<br />that actually{" "}
+              <span style={{ color: "var(--oxblood)" }}>run.</span>
             </h3>
-            <AllWorkLink />
+            <div className="hidden md:block">
+              <AllWorkLink />
+            </div>
           </div>
         </div>
 
         <div
           ref={gridRef}
-          className="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6"
-          style={{ perspective: "1600px" }}
+          className="grid grid-cols-1 md:grid-cols-5 gap-5 md:gap-6 md:auto-rows-[260px] lg:auto-rows-[280px]"
         >
-          {featured.map((p, i) => {
-            const colSpan =
-              i === 0 ? "md:col-span-7"
-              : i === 1 ? "md:col-span-5"
-              : i === 2 ? "md:col-span-5"
-              : "md:col-span-7";
-            const aspect = "aspect-[4/3]";
-            return <Card key={p.slug} project={p} index={i} colSpan={colSpan} aspect={aspect} />;
-          })}
+          {featured.map((p, i) => (
+            <Tile
+              key={p.slug}
+              project={p}
+              index={i}
+              spanClass={TILE_LAYOUT[i]}
+            />
+          ))}
         </div>
 
-        <div className="md:hidden mt-8">
+        <div className="md:hidden mt-10">
           <AllWorkLink />
         </div>
       </div>
@@ -135,8 +139,8 @@ function AllWorkLink() {
       href="/work"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="inline-flex items-center gap-2 text-sm"
-      style={{ color: "var(--ink)" }}
+      className="inline-flex items-center gap-2 text-sm transition-colors"
+      style={{ color: hovered ? "var(--oxblood)" : "var(--paper)" }}
     >
       <HoverText text="View all work" trigger={hovered} />
       <motion.span
@@ -150,175 +154,180 @@ function AllWorkLink() {
   );
 }
 
-function Card({
+function Tile({
   project,
   index,
-  colSpan,
-  aspect,
+  spanClass,
 }: {
-  project: (typeof projects)[number];
+  project: Project;
   index: number;
-  colSpan: string;
-  aspect: string;
+  spanClass: string;
 }) {
   const [hovered, setHovered] = useState(false);
+  const host = hostFromUrl(project.liveUrl);
+  const stack = STACK[project.slug] ?? "";
+  const isHero = index < 2;
 
   return (
     <div
-      className={colSpan}
       data-work-card
-      style={{ transformStyle: "preserve-3d", willChange: "transform, opacity" }}
+      className={`${spanClass} aspect-4/3 md:aspect-auto`}
+      style={{ willChange: "transform, opacity" }}
     >
-      <Link href={`/work/${project.slug}`} data-card>
-          <article
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            className="group relative rounded-[28px] overflow-hidden press"
+      <Link
+        href={`/work/${project.slug}`}
+        data-card
+        className="block h-full"
+      >
+        <motion.article
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          animate={{ scale: hovered ? 1.03 : 1 }}
+          transition={{ duration: 0.55, ease: ease.expoOut }}
+          className="group relative rounded-[20px] overflow-hidden h-full"
+          style={{
+            background: project.color,
+            border: "1px solid rgba(243,241,238,0.08)",
+            boxShadow:
+              "0 30px 80px -30px rgba(0,0,0,0.6), 0 0 0 1px rgba(243,241,238,0.02)",
+            transformOrigin: "center center",
+          }}
+        >
+          {/* Full-bleed project image */}
+          <div className="absolute inset-0">
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              className={
+                project.image.includes("Mockup")
+                  ? "object-cover object-top"
+                  : "object-cover"
+              }
+              sizes={isHero ? "(max-width: 768px) 100vw, 60vw" : "(max-width: 768px) 100vw, 40vw"}
+              priority={index < 2}
+            />
+          </div>
+
+          {/* Bottom gradient for title legibility */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none"
             style={{
-              background: "var(--ink-soft)",
-              border: "1px solid rgba(26,24,22,0.06)",
+              background:
+                "linear-gradient(to top, rgba(10,9,8,0.82) 0%, rgba(10,9,8,0.35) 55%, transparent 100%)",
+            }}
+          />
+
+          {/* Darken overlay — fades in on hover (0 → 0.15) */}
+          <motion.div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: "rgb(10,9,8)" }}
+            initial={false}
+            animate={{ opacity: hovered ? 0.15 : 0 }}
+            transition={{ duration: 0.45, ease: ease.expoOut }}
+          />
+
+          {/* Chrome bar — slides down from top on hover */}
+          <motion.div
+            aria-hidden
+            initial={false}
+            animate={{ y: hovered ? 0 : "-105%" }}
+            transition={{ duration: 0.5, ease: ease.expoOut }}
+            className="absolute top-0 left-0 right-0 px-4 md:px-5 py-2.5 flex items-center gap-3 md:gap-4 overflow-hidden"
+            style={{
+              background: "rgba(14,13,12,0.78)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              borderBottom: "1px solid rgba(243,241,238,0.08)",
             }}
           >
-            <div className={`relative ${aspect} overflow-hidden`}>
-              <motion.div
-                className="absolute inset-0"
-                animate={{
-                  scale: hovered ? 1.06 : 1,
-                  filter: hovered ? "contrast(1.08) saturate(1.06)" : "contrast(1) saturate(1)",
-                }}
-                transition={{ duration: 1.0, ease: ease.expoOut }}
-              >
-                <Image
-                  src={project.image}
-                  alt={project.title}
-                  fill
-                  className={project.image.includes("Mockup") ? "object-cover object-top" : "object-cover"}
-                  sizes="(max-width: 768px) 100vw, 60vw"
-                  priority={index < 2}
-                />
-              </motion.div>
-
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(to top, rgba(10,9,8,0.85) 0%, rgba(10,9,8,0.38) 42%, transparent 78%)",
-                }}
+            {/* Traffic lights */}
+            <div className="flex gap-1.5 shrink-0">
+              <span
+                className="w-2 h-2 rounded-full"
+                style={{ background: "rgba(243,241,238,0.3)" }}
               />
-
-              {/* Top row */}
-              <div className="absolute top-5 left-5 right-5 flex items-center justify-between z-10">
-                <span
-                  className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] tracking-tight"
-                  style={{
-                    background: "rgba(243,241,238,0.14)",
-                    color: "var(--paper)",
-                    backdropFilter: "blur(8px)",
-                  }}
-                >
-                  <span className="w-1 h-1 rounded-full" style={{ background: "var(--paper)" }} />
-                  {project.category}
-                </span>
-                <motion.span
-                  animate={{ x: hovered ? 0 : 4, opacity: hovered ? 1 : 0.55 }}
-                  transition={{ duration: 0.4, ease: ease.expoOut }}
-                  className="text-[12px] tabular-nums"
-                  style={{ color: "rgba(243,241,238,0.75)" }}
-                >
-                  {project.year} / {String(index + 1).padStart(2, "0")}
-                </motion.span>
-              </div>
-
-              {/* Bottom content */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 flex items-end justify-between gap-6 z-10">
-                <div className="flex-1 min-w-0">
-                  <motion.h4
-                    animate={{ y: hovered ? -4 : 0 }}
-                    transition={{ duration: 0.5, ease: ease.expoOut }}
-                    className="font-display font-semibold leading-tight mb-2"
-                    style={{
-                      color: "var(--paper)",
-                      fontSize: "clamp(1.4rem, 2.4vw, 2.2rem)",
-                      letterSpacing: "-0.03em",
-                    }}
-                  >
-                    {toSentence(project.title)}
-                  </motion.h4>
-                  <motion.p
-                    animate={{ y: hovered ? -4 : 0, opacity: hovered ? 1 : 0.75 }}
-                    transition={{ duration: 0.5, delay: 0.03, ease: ease.expoOut }}
-                    className="text-[14px]"
-                    style={{ color: "rgba(243,241,238,0.7)" }}
-                  >
-                    {project.tagline}
-                  </motion.p>
-
-                  {/* Reveal on hover — meta pill row */}
-                  <motion.div
-                    initial={false}
-                    animate={{ height: hovered ? "auto" : 0, opacity: hovered ? 1 : 0 }}
-                    transition={{ duration: 0.5, ease: ease.expoOut }}
-                    className="overflow-hidden"
-                  >
-                    <div className="pt-4 flex flex-wrap gap-1.5">
-                      {["Design", "Engineering", "Motion"].map((t, i) => (
-                        <motion.span
-                          key={t}
-                          initial={{ y: 10, opacity: 0 }}
-                          animate={{ y: hovered ? 0 : 10, opacity: hovered ? 1 : 0 }}
-                          transition={{ duration: 0.45, delay: 0.12 + i * 0.05, ease: ease.expoOut }}
-                          className="text-[11px] px-2 py-1 rounded-full"
-                          style={{
-                            background: "rgba(243,241,238,0.08)",
-                            color: "rgba(243,241,238,0.8)",
-                            border: "1px solid rgba(243,241,238,0.1)",
-                          }}
-                        >
-                          {t}
-                        </motion.span>
-                      ))}
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Arrow disc — rotates + scales */}
-                <motion.div
-                  animate={{
-                    rotate: hovered ? 0 : -45,
-                    scale: hovered ? 1.05 : 0.9,
-                  }}
-                  transition={{ duration: 0.55, ease: ease.expoOut }}
-                  className="relative w-12 h-12 rounded-full flex items-center justify-center shrink-0 overflow-hidden"
-                  style={{ background: "var(--paper)", color: "var(--ink)" }}
-                >
-                  <motion.span
-                    animate={{ x: hovered ? 20 : 0, opacity: hovered ? 0 : 1 }}
-                    transition={{ duration: 0.35, ease: ease.expoOut }}
-                    className="absolute"
-                  >
-                    <Arrow />
-                  </motion.span>
-                  <motion.span
-                    animate={{ x: hovered ? 0 : -20, opacity: hovered ? 1 : 0 }}
-                    transition={{ duration: 0.35, ease: ease.expoOut }}
-                    className="absolute"
-                  >
-                    <Arrow />
-                  </motion.span>
-                </motion.div>
-              </div>
+              <span
+                className="w-2 h-2 rounded-full"
+                style={{ background: "rgba(243,241,238,0.3)" }}
+              />
+              <span
+                className="w-2 h-2 rounded-full"
+                style={{ background: "rgba(243,241,238,0.3)" }}
+              />
             </div>
-          </article>
+            <span
+              className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.14em] truncate"
+              style={{ color: "rgba(243,241,238,0.78)" }}
+            >
+              {host}
+            </span>
+            {stack && (
+              <>
+                <span
+                  aria-hidden
+                  className="hidden md:inline font-mono text-[11px]"
+                  style={{ color: "rgba(243,241,238,0.35)" }}
+                >
+                  ·
+                </span>
+                <span
+                  className="hidden md:inline font-mono text-[11px] uppercase tracking-[0.14em] truncate"
+                  style={{ color: "rgba(243,241,238,0.55)" }}
+                >
+                  {project.year}
+                </span>
+                <span
+                  aria-hidden
+                  className="hidden lg:inline font-mono text-[11px]"
+                  style={{ color: "rgba(243,241,238,0.35)" }}
+                >
+                  ·
+                </span>
+                <span
+                  className="hidden lg:inline font-mono text-[11px] uppercase tracking-[0.14em] truncate"
+                  style={{ color: "rgba(243,241,238,0.55)" }}
+                >
+                  {stack}
+                </span>
+              </>
+            )}
+          </motion.div>
+
+          {/* Category label — top-left, hides under chrome bar on hover */}
+          <motion.span
+            initial={false}
+            animate={{ opacity: hovered ? 0 : 1 }}
+            transition={{ duration: 0.25, ease: ease.expoOut }}
+            className="absolute top-5 left-5 font-mono uppercase"
+            style={{
+              color: "rgba(243,241,238,0.6)",
+              fontSize: "10px",
+              letterSpacing: "0.2em",
+            }}
+          >
+            {project.category}
+          </motion.span>
+
+          {/* Title — bottom-left */}
+          <div className="absolute bottom-5 left-5 right-5 md:bottom-6 md:left-6">
+            <h4
+              className="font-display font-bold leading-tight"
+              style={{
+                color: "var(--paper)",
+                fontSize: isHero
+                  ? "clamp(1.3rem, 1.8vw, 1.75rem)"
+                  : "clamp(1.1rem, 1.4vw, 1.35rem)",
+                letterSpacing: "-0.025em",
+              }}
+            >
+              {toSentence(project.title)}
+            </h4>
+          </div>
+        </motion.article>
       </Link>
     </div>
-  );
-}
-
-function Arrow() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 12h14M13 5l7 7-7 7" />
-    </svg>
   );
 }
 
