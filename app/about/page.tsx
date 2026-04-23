@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { TransitionLink } from "@/components/PageTransition";
+import Link from "next/link";
 import { ease } from "@/lib/motion";
 
 const PRINCIPLES = [
@@ -219,7 +219,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="md:col-span-5 flex md:justify-end items-end">
-              <TransitionLink
+              <Link
                 href="/contact"
                 className="group inline-flex items-center gap-2 h-12 pl-6 pr-2 rounded-full press"
                 style={{ background: "var(--ink)", color: "var(--paper)" }}
@@ -233,7 +233,7 @@ export default function AboutPage() {
                     <path d="M5 12h14M13 5l7 7-7 7" />
                   </svg>
                 </span>
-              </TransitionLink>
+              </Link>
             </div>
           </div>
         </section>

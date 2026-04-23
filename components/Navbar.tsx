@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { TransitionLink } from "./PageTransition";
+import Link from "next/link";
 import MagneticButton from "./ui/MagneticButton";
 import HoverText from "./ui/HoverText";
 import { ease } from "@/lib/motion";
@@ -104,7 +104,7 @@ function NavLink({
 }) {
   const [hovered, setHovered] = useState(false);
   return (
-    <TransitionLink
+    <Link
       href={href}
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
@@ -126,7 +126,7 @@ function NavLink({
           transition={{ duration: 0.45, ease: ease.expoOut }}
         />
       )}
-    </TransitionLink>
+    </Link>
   );
 }
 
@@ -168,7 +168,7 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
           }}
           className="flex items-center gap-2 h-14 rounded-full"
         >
-          <TransitionLink href="/" className="pl-3 pr-2 flex items-center gap-2 press group">
+          <Link href="/" className="pl-3 pr-2 flex items-center gap-2 press group">
             <motion.span
               whileHover={{ rotate: -15 }}
               transition={{ type: "spring", stiffness: 300, damping: 14 }}
@@ -186,7 +186,7 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
             >
               Jake Ryall
             </span>
-          </TransitionLink>
+          </Link>
 
           <span className="mx-1 h-5 w-px" style={{ backgroundColor: darkSurface ? "rgba(26,24,22,0.1)" : "rgba(229,225,219,0.12)" }} />
 
@@ -220,7 +220,7 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
             WebkitBackdropFilter: "blur(16px) saturate(1.1)",
           }}
         >
-          <TransitionLink href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <span
               className="inline-flex items-center justify-center w-7 h-7 rounded-full text-[11px] font-semibold"
               style={{
@@ -236,7 +236,7 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
             >
               Jake Ryall
             </span>
-          </TransitionLink>
+          </Link>
 
           <button onClick={() => setIsOpen((v) => !v)} className="p-2 -mr-2" aria-label="Toggle menu">
             <div className="w-6 h-4 relative flex flex-col justify-between">
@@ -278,14 +278,14 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 + i * 0.06, ease: ease.expoOut, duration: 0.6 }}
                 >
-                  <TransitionLink
+                  <Link
                     href={l.href}
                     onClick={() => setIsOpen(false)}
                     className="block text-5xl font-semibold tracking-tight py-2"
                     style={{ color: isActive(l.href) ? "var(--paper)" : "rgba(229,225,219,0.55)" }}
                   >
                     {l.label}
-                  </TransitionLink>
+                  </Link>
                 </motion.div>
               ))}
               <motion.div

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import AnimatedLogo from "./AnimatedLogo";
-import { TransitionLink } from "./PageTransition";
+import Link from "next/link";
 import { gsap, SplitText } from "@/lib/gsap-setup";
 
 const useIsomorphicLayoutEffect =
@@ -62,7 +62,7 @@ function StaggerButton({
   const letters = text.split("");
 
   return (
-    <TransitionLink
+    <Link
       href={href}
       className={`relative overflow-hidden inline-flex items-center ${className}`}
       onMouseEnter={() => setHovered(true)}
@@ -103,7 +103,7 @@ function StaggerButton({
           </span>
         ))}
       </span>
-    </TransitionLink>
+    </Link>
   );
 }
 
@@ -130,7 +130,7 @@ function SplashNavItem({
       transition={{ duration: 0.5, delay: 0.2 + index * 0.06, ease: [0.22, 1, 0.36, 1] }}
       className="border-b border-white/5"
     >
-      <TransitionLink
+      <Link
         href={href}
         onClick={onNavigate}
         onMouseEnter={() => setHovered(true)}
@@ -190,7 +190,7 @@ function SplashNavItem({
         >
           <path d="M7 17L17 7M17 7H7M17 7V17" />
         </motion.svg>
-      </TransitionLink>
+      </Link>
     </motion.div>
   );
 }
@@ -247,7 +247,7 @@ function HeroFanCards({
             onMouseEnter={() => setHoveredIndex(i)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
-            <TransitionLink href={`/work/${project.slug}`} data-card>
+            <Link href={`/work/${project.slug}`} data-card>
               <div
                 className="relative overflow-hidden cursor-pointer"
                 style={{
@@ -283,7 +283,7 @@ function HeroFanCards({
                   </h3>
                 </div>
               </div>
-            </TransitionLink>
+            </Link>
           </div>
         );
       })}
@@ -788,7 +788,7 @@ function DesktopHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <TransitionLink href="/" className="block" style={{ color: "#1a1816" }}>
+            <Link href="/" className="block" style={{ color: "#1a1816" }}>
               <svg
                 viewBox="30 30 600 250"
                 fill="none"
@@ -803,7 +803,7 @@ function DesktopHero() {
                   strokeLinejoin="round"
                 />
               </svg>
-            </TransitionLink>
+            </Link>
             {/* Corner ghost CTA removed — global nav handles "Start a project". */}
           </motion.div>
 
@@ -820,7 +820,7 @@ function DesktopHero() {
               left: "clamp(1.25rem, 3vw, 3rem)",
             }}
           >
-            <TransitionLink
+            <Link
               href="/about"
               className="group flex flex-col"
               style={{ gap: "0.45rem" }}
@@ -861,7 +861,7 @@ function DesktopHero() {
                   → About
                 </span>
               </span>
-            </TransitionLink>
+            </Link>
           </motion.div>
 
           {/* Availability chip removed — global nav owns it to avoid duplicate status. */}
@@ -928,7 +928,7 @@ function DesktopHero() {
                 style={{ marginTop: "2rem" }}
               >
                 <div className="flex items-center gap-4 flex-wrap">
-                  <TransitionLink
+                  <Link
                     href="/contact"
                     className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full transition-colors duration-300 hover:bg-[#78736c] group"
                     style={{ backgroundColor: "#1a1816", color: "#f3f1ee" }}
@@ -947,9 +947,9 @@ function DesktopHero() {
                     >
                       <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
-                  </TransitionLink>
+                  </Link>
 
-                  <TransitionLink
+                  <Link
                     href="/work"
                     className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full transition-colors duration-300 hover:border-[rgba(26,24,22,0.45)]"
                     style={{
@@ -962,7 +962,7 @@ function DesktopHero() {
                       See my work
                     </span>
                     <span aria-hidden>→</span>
-                  </TransitionLink>
+                  </Link>
                 </div>
               </motion.div>
               {/* Rating row removed — moved to Proof section (Task 4) */}
@@ -1020,7 +1020,7 @@ function DesktopHero() {
                     ⏸ PAUSED
                   </motion.span>
                 </div>
-                <TransitionLink
+                <Link
                   href={`/work/${CURRENTLY_SHIPPING[activeShippingIdx].slug}`}
                   className="group block"
                 >
@@ -1094,7 +1094,7 @@ function DesktopHero() {
                       </motion.div>
                     </AnimatePresence>
                   </div>
-                </TransitionLink>
+                </Link>
                 {/* Progress segments — click to jump to that project */}
                 <div
                   className="flex items-center"
@@ -1163,7 +1163,7 @@ function DesktopHero() {
                   Recent Projects
                 </h2>
               </div>
-              <TransitionLink href="/work/desert-wings" data-card>
+              <Link href="/work/desert-wings" data-card>
               <div
                 className="video-frame relative overflow-hidden mx-auto cursor-pointer"
                 onMouseEnter={() => setHoveredFanIndex(-1)}
@@ -1216,7 +1216,7 @@ function DesktopHero() {
                   <source src="/final-comp.mp4?v=6" type="video/mp4" />
                 </video>
               </div>
-              </TransitionLink>
+              </Link>
 
               {/* Fan cards — emerge from behind the video card */}
               <HeroFanCards hoveredIndex={hoveredFanIndex} setHoveredIndex={setHoveredFanIndex} videoCardIndex={-1} />
@@ -1350,7 +1350,7 @@ function DesktopHero() {
               zIndex: 30,
             }}
           >
-            <TransitionLink
+            <Link
               href="/work"
               className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full transition-all duration-300 text-[#1a1816] hover:bg-[#1a1816] hover:border-[#1a1816] hover:text-[#f3f1ee]"
               style={{
@@ -1376,7 +1376,7 @@ function DesktopHero() {
               >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
-            </TransitionLink>
+            </Link>
           </div>
 
         </div>

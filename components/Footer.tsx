@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TransitionLink } from "@/components/PageTransition";
+import Link from "next/link";
 
 const SITEMAP = [
   { label: "Home", href: "/" },
@@ -83,13 +83,13 @@ export default function Footer() {
             <ul className="space-y-2">
               {SITEMAP.map((l) => (
                 <li key={l.href}>
-                  <TransitionLink
+                  <Link
                     href={l.href}
                     className="text-sm link-hover"
                     style={{ color: "rgba(229,225,219,0.8)" }}
                   >
                     {l.label}
-                  </TransitionLink>
+                  </Link>
                 </li>
               ))}
             </ul>

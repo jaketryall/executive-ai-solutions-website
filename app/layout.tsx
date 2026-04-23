@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ActionTag from "@/components/ui/ActionTag";
 import { SoundProvider } from "@/components/SoundManager";
-import { PageTransitionProvider } from "@/components/PageTransition";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import "./globals.css";
 
@@ -64,11 +63,9 @@ export default function RootLayout({
       </head>
       <body className={`${geist.variable} ${geistMono.variable} font-sans`}>
         <SoundProvider>
-          <PageTransitionProvider>
-            <ScrollProgress />
-            <ActionTag />
-            {children}
-          </PageTransitionProvider>
+          <ScrollProgress />
+          <ActionTag />
+          {children}
         </SoundProvider>
         <SpeedInsights />
       </body>

@@ -6,7 +6,7 @@ import { useRef, use } from "react";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { TransitionLink } from "@/components/PageTransition";
+import Link from "next/link";
 import { getProjectBySlug, getNextProject } from "@/lib/data";
 import { ease } from "@/lib/motion";
 import CountUp from "@/components/ui/CountUp";
@@ -246,7 +246,7 @@ export default function CaseStudyPage({ params }: { params: Promise<{ slug: stri
         {/* Next */}
         {next && (
           <section className="px-6 md:px-12 lg:px-24 py-24 md:py-32" style={{ background: "var(--ink-soft)" }}>
-            <TransitionLink href={`/work/${next.slug}`}>
+            <Link href={`/work/${next.slug}`}>
               <motion.div
                 whileHover={{ x: 4 }}
                 transition={{ duration: 0.5, ease: ease.expoOut }}
@@ -286,7 +286,7 @@ export default function CaseStudyPage({ params }: { params: Promise<{ slug: stri
                   />
                 </div>
               </motion.div>
-            </TransitionLink>
+            </Link>
           </section>
         )}
       </main>

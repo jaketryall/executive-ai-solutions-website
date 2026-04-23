@@ -3,7 +3,6 @@
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useRef, ReactNode } from "react";
 import Link from "next/link";
-import { TransitionLink } from "@/components/PageTransition";
 
 type Common = {
   children: ReactNode;
@@ -95,9 +94,9 @@ export default function MagneticButton(props: Props) {
       );
     }
     return (
-      <TransitionLink href={props.href} onClick={props.onClick} aria-label={props.ariaLabel} className="inline-flex">
+      <Link href={props.href} onClick={props.onClick} aria-label={props.ariaLabel} className="inline-flex">
         {content}
-      </TransitionLink>
+      </Link>
     );
   }
 

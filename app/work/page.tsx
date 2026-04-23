@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { TransitionLink } from "@/components/PageTransition";
+import Link from "next/link";
 import { projects } from "@/lib/data";
 import { ease } from "@/lib/motion";
 import HoverText from "@/components/ui/HoverText";
@@ -111,7 +111,7 @@ function WorkCard({ project, index }: { project: (typeof projects)[number]; inde
       viewport={{ once: true, margin: "-8%" }}
       transition={{ duration: 0.9, delay: (index % 2) * 0.08, ease: ease.expoOut }}
     >
-      <TransitionLink href={`/work/${project.slug}`} data-card>
+      <Link href={`/work/${project.slug}`} data-card>
           <article
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
@@ -205,7 +205,7 @@ function WorkCard({ project, index }: { project: (typeof projects)[number]; inde
               </div>
             </div>
           </article>
-      </TransitionLink>
+      </Link>
     </motion.div>
   );
 }

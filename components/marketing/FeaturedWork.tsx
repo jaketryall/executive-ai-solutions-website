@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
-import { TransitionLink } from "@/components/PageTransition";
+import Link from "next/link";
 import { projects } from "@/lib/data";
 import { ease } from "@/lib/motion";
 import HoverText from "@/components/ui/HoverText";
@@ -46,7 +46,7 @@ export default function FeaturedWork() {
 function AllWorkLink() {
   const [hovered, setHovered] = useState(false);
   return (
-    <TransitionLink
+    <Link
       href="/work"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -61,7 +61,7 @@ function AllWorkLink() {
       >
         →
       </motion.span>
-    </TransitionLink>
+    </Link>
   );
 }
 
@@ -86,7 +86,7 @@ function Card({
       transition={{ duration: 0.9, delay: index * 0.08, ease: ease.expoOut }}
       className={colSpan}
     >
-      <TransitionLink href={`/work/${project.slug}`} data-card>
+      <Link href={`/work/${project.slug}`} data-card>
           <article
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
@@ -223,7 +223,7 @@ function Card({
               </div>
             </div>
           </article>
-      </TransitionLink>
+      </Link>
     </motion.div>
   );
 }
