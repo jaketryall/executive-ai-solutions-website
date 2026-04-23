@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import TestimonialMarquee from "@/components/marketing/TestimonialMarquee";
 import FeaturedWork from "@/components/marketing/FeaturedWork";
 import Mission from "@/components/marketing/Mission";
+import Services from "@/components/marketing/Services";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
         <TestimonialMarquee />
         <FeaturedWork />
         <Mission />
+        <Services />
       </main>
       <Footer />
     </>
