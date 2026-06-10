@@ -1,11 +1,15 @@
 "use client";
 
+// Letter-stagger "swap" — the visible label slides up, an identical copy
+// slides in from below. Used everywhere: nav links, CTA labels, chips.
+//
+// Written against framer-motion v12. Under the `motion` package, change the
+// import to "motion/react" (API identical).
+
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { ease } from "@/lib/motion";
+import { ease } from "./motion";
 
-// Letter-stagger "swap" — the visible label slides up, an identical copy slides in from below.
-// Used everywhere: nav links, CTA labels, filter chips.
 export default function HoverText({
   text,
   className,
@@ -39,7 +43,7 @@ export default function HoverText({
             transition={{ duration: 0.45, delay: i * stagger, ease: ease.expoOut }}
             className="whitespace-pre"
           >
-            {c === " " ? " " : c}
+            {c === " " ? " " : c}
           </motion.span>
         ))}
       </span>
@@ -53,7 +57,7 @@ export default function HoverText({
             transition={{ duration: 0.45, delay: i * stagger, ease: ease.expoOut }}
             className="whitespace-pre"
           >
-            {c === " " ? " " : c}
+            {c === " " ? " " : c}
           </motion.span>
         ))}
       </span>

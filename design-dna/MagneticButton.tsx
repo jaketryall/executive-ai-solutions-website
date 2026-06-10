@@ -1,5 +1,12 @@
 "use client";
 
+// Magnetic wrapper — the whole button drifts toward the cursor on springs,
+// while the inner content lags slightly behind (parallax). Part of the
+// signature pill-in-pill CTA.
+//
+// Written against framer-motion v12. Under the `motion` package, change the
+// import to "motion/react" (API identical).
+
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useRef, ReactNode } from "react";
 import Link from "next/link";
@@ -16,7 +23,7 @@ type Common = {
   style?: React.CSSProperties;
 };
 type AsButton = Common & { as?: "button"; type?: "submit" | "button"; disabled?: boolean };
-type AsLink = Common & { as: "link"; href: string; transition?: boolean; external?: boolean };
+type AsLink = Common & { as: "link"; href: string; external?: boolean };
 
 type Props = AsButton | AsLink;
 
@@ -57,15 +64,6 @@ export default function MagneticButton(props: Props) {
     cy.set(0);
   };
 
-  const Inner = (
-    <motion.div
-      style={{ x: csx, y: csy }}
-      className="relative will-change-transform inline-flex items-center"
-    >
-      {props.children}
-    </motion.div>
-  );
-
   const content = (
     <motion.div
       ref={ref}
@@ -74,7 +72,12 @@ export default function MagneticButton(props: Props) {
       style={{ x: sx, y: sy, ...props.style }}
       className={`relative inline-flex will-change-transform ${props.className ?? ""}`}
     >
-      {Inner}
+      <motion.div
+        style={{ x: csx, y: csy }}
+        className="relative will-change-transform inline-flex items-center"
+      >
+        {props.children}
+      </motion.div>
     </motion.div>
   );
 
@@ -84,13 +87,6 @@ export default function MagneticButton(props: Props) {
         <a href={props.href} target="_blank" rel="noopener noreferrer" aria-label={props.ariaLabel} className="inline-flex">
           {content}
         </a>
-      );
-    }
-    if (props.transition === false) {
-      return (
-        <Link href={props.href} onClick={props.onClick} aria-label={props.ariaLabel} className="inline-flex">
-          {content}
-        </Link>
       );
     }
     return (
