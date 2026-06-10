@@ -26,13 +26,6 @@ export default function Hero() {
   const cornersRef = useRef<HTMLDivElement>(null);
   const fanRef = useRef<HTMLDivElement>(null);
 
-  // Live session timer — ticks every second from page load.
-  const [sessionSeconds, setSessionSeconds] = useState(0);
-  useEffect(() => {
-    const id = window.setInterval(() => setSessionSeconds((s) => s + 1), 1000);
-    return () => window.clearInterval(id);
-  }, []);
-
   // Entrance choreography + scroll-out + fan-out
   useIsomorphicLayoutEffect(() => {
     const section = sectionRef.current;
@@ -258,15 +251,12 @@ export default function Hero() {
       </div>
 
       {/* Showreel — center hub. Outer div is GSAP-controlled for entrance
-          and scroll choreography; inner motion.div owns the ambient y-float
-          loop. Nesting prevents Framer and GSAP from fighting over transform. */}
+          and scroll choreography; inner div holds the frame styling. */}
       <div
         ref={subjectRef}
         className="absolute inset-0 flex items-center justify-center pointer-events-none z-30"
       >
-        <motion.div
-          animate={{ y: [-10, 10, -10] }}
-          transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
+        <div
           className="relative rounded-[18px] overflow-hidden pointer-events-auto"
           style={{
             width: "min(52vw, 720px)",
@@ -306,7 +296,7 @@ export default function Hero() {
               Showreel · 2026
             </span>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Handwritten overlay — "don't slide." */}
@@ -338,24 +328,6 @@ export default function Hero() {
         <div
           data-corner
           className="absolute left-6 md:left-12 lg:left-20"
-          style={{ top: "clamp(6rem, 10vh, 8rem)" }}
-        >
-          <div
-            className="font-mono uppercase"
-            style={{
-              color: "var(--taupe)",
-              fontSize: "10px",
-              letterSpacing: "0.22em",
-            }}
-          >
-            <span style={{ color: "var(--oxblood)" }}>●</span>{" "}
-            01 · Hero · SKU EAS/2026/Q2 · In Transit
-          </div>
-        </div>
-
-        <div
-          data-corner
-          className="absolute left-6 md:left-12 lg:left-20"
           style={{ bottom: "clamp(1.75rem, 5vh, 3.5rem)" }}
         >
           <p
@@ -382,7 +354,7 @@ export default function Hero() {
           className="absolute right-6 md:right-12 lg:right-20 pointer-events-auto"
           style={{ bottom: "clamp(1.75rem, 5vh, 3.5rem)" }}
         >
-          <StatusCard sessionSeconds={sessionSeconds} />
+          <StatusCard />
         </div>
       </div>
     </section>
@@ -518,11 +490,7 @@ function StartProjectCTA() {
 }
 
 // ─── Status card ──────────────────────────────────────────────────────────────
-function StatusCard({ sessionSeconds }: { sessionSeconds: number }) {
-  const mins = Math.floor(sessionSeconds / 60)
-    .toString()
-    .padStart(2, "0");
-  const secs = (sessionSeconds % 60).toString().padStart(2, "0");
+function StatusCard() {
   return (
     <div
       className="relative rounded-[16px] px-5 py-4 overflow-hidden"
@@ -530,20 +498,12 @@ function StatusCard({ sessionSeconds }: { sessionSeconds: number }) {
         background: "rgba(243,241,238,0.88)",
         border: "1px solid rgba(26,24,22,0.1)",
         boxShadow:
-          "0 24px 64px -24px rgba(122,30,39,0.28), 0 4px 12px -4px rgba(26,24,22,0.08)",
+          "0 24px 64px -24px rgba(26,24,22,0.22), 0 4px 12px -4px rgba(26,24,22,0.08)",
         backdropFilter: "blur(14px)",
         WebkitBackdropFilter: "blur(14px)",
         minWidth: "240px",
       }}
     >
-      <div
-        aria-hidden
-        className="absolute top-0 right-0 w-24 h-24 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at top right, rgba(122,30,39,0.28) 0%, transparent 65%)",
-        }}
-      />
       <div className="relative flex flex-col gap-1.5">
         <div className="flex items-center gap-2">
           <span
@@ -571,29 +531,6 @@ function StatusCard({ sessionSeconds }: { sessionSeconds: number }) {
           }}
         >
           Next opening: June 4
-        </div>
-        <div className="flex items-center gap-3 mt-1.5">
-          <span
-            className="font-mono tabular-nums"
-            style={{
-              color: "var(--taupe)",
-              fontSize: "11px",
-              letterSpacing: "0.08em",
-            }}
-          >
-            {mins}:{secs}
-          </span>
-          <span
-            className="font-mono uppercase"
-            style={{
-              color: "var(--taupe)",
-              fontSize: "9px",
-              letterSpacing: "0.22em",
-              opacity: 0.55,
-            }}
-          >
-            Session
-          </span>
         </div>
       </div>
     </div>

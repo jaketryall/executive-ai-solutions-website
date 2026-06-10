@@ -269,10 +269,10 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
         initial={{ y: -60, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, delay: 0.1, ease: ease.expoOut }}
-        className="fixed top-0 left-0 right-0 z-50 hidden md:flex flex-col items-center gap-2 pt-3"
+        className="fixed top-0 left-0 right-0 z-50 hidden md:flex flex-col gap-2 pt-3 px-4 lg:px-8"
       >
         {/* NOW label — C */}
-        <div className="h-4 overflow-visible">
+        <div className="h-4 overflow-visible self-center">
           <AnimatePresence mode="wait">
             {showNow && section.num && section.name && (
               <motion.div
@@ -318,7 +318,7 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
             WebkitBackdropFilter: isScrolled ? "blur(16px) saturate(1.1)" : "none",
             border: "1px solid transparent",
           }}
-          className="flex items-center gap-2 h-14 rounded-full"
+          className="relative w-full flex items-center justify-between gap-2 h-14 rounded-full"
         >
           <Link href="/" className="pl-3 pr-2 flex items-center gap-2 press group">
             <motion.span
@@ -344,18 +344,8 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
             </motion.span>
           </Link>
 
-          <motion.span
-            className="mx-1 h-5 w-px"
-            animate={{
-              backgroundColor: darkSurface
-                ? "rgba(26,24,22,0.1)"
-                : "rgba(229,225,219,0.12)",
-            }}
-            transition={{ duration: 0.4 }}
-          />
-
-          {/* Links with oxblood pill */}
-          <div className="flex items-center">
+          {/* Links with oxblood pill — centered in the wide bar */}
+          <div className="absolute left-1/2 -translate-x-1/2 flex items-center">
             {NAV_LINKS.map((l, i) => (
               <NavLink
                 key={l.href}
@@ -369,19 +359,10 @@ export default function Navbar({ lightHero = false }: { lightHero?: boolean }) {
             ))}
           </div>
 
-          <motion.span
-            className="mx-1 h-5 w-px"
-            animate={{
-              backgroundColor: darkSurface
-                ? "rgba(26,24,22,0.1)"
-                : "rgba(229,225,219,0.12)",
-            }}
-            transition={{ duration: 0.4 }}
-          />
-
-          <AvailabilityChip dark={darkSurface} />
-
-          <NavCTA dark={darkSurface} />
+          <div className="flex items-center gap-2">
+            <AvailabilityChip dark={darkSurface} />
+            <NavCTA dark={darkSurface} />
+          </div>
         </motion.nav>
       </motion.header>
 
