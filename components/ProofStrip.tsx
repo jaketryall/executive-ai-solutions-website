@@ -32,7 +32,7 @@ export default function ProofStrip() {
   return (
     <section
       aria-label="Brands we've worked with"
-      className="relative border-t border-(--line) pt-9 pb-20"
+      className="relative border-t border-(--line) pt-9 pb-32 md:pb-36"
     >
       <p className="micro text-(--fg-muted) text-center">
         Trusted by owners who needed results
