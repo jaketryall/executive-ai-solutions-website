@@ -9,6 +9,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import PillCTA from "./PillCTA";
+import { replayEntrance } from "@/lib/scroll";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -137,35 +138,6 @@ export default function WorkSection() {
             },
           },
         );
-
-        // Replay-on-entry pattern with a LATE reset: the entrance replays
-        // each time you scroll down to it, but the hidden state is only
-        // restored once the element is fully below the viewport — never
-        // while it's still visible (no pop-out when scrolling back up).
-        const replayEntrance = (
-          targets: gsap.TweenTarget,
-          trigger: HTMLElement,
-          vars: { from: gsap.TweenVars; to: gsap.TweenVars; start: string },
-        ) => {
-          const tween = gsap.fromTo(targets, vars.from, {
-            ...vars.to,
-            paused: true,
-          });
-          ScrollTrigger.create({
-            trigger,
-            start: vars.start,
-            onEnter: () => tween.restart(),
-            // If the page loads/refreshes already past the start, show it.
-            onRefresh: (self) => {
-              if (self.progress > 0) tween.progress(1);
-            },
-          });
-          ScrollTrigger.create({
-            trigger,
-            start: "top bottom",
-            onLeaveBack: () => tween.pause(0),
-          });
-        };
 
         // Headline lines rise out of their masks.
         replayEntrance(".hero-line", sectionRef.current!, {
