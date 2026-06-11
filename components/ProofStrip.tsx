@@ -1,5 +1,17 @@
-// Proof strip — slow infinite marquee of client wordmarks, hairline-anchored.
-// Pauses on hover; static under prefers-reduced-motion.
+"use client";
+
+// Proof strip — infinite marquee of client wordmarks that reacts to scroll:
+// scroll down fast and it accelerates, scroll up and it runs backwards,
+// settle and it eases back to its cruise speed. Pauses on hover.
+
+import { useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(useGSAP, ScrollTrigger);
+}
 
 // TODO(owner): confirm/extend the client list — pulled from visible project work.
 const BRANDS = [
@@ -29,8 +41,68 @@ function Sequence({ hidden = false }: { hidden?: boolean }) {
 }
 
 export default function ProofStrip() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const tween = gsap.to(".marquee", {
+          xPercent: -50,
+          duration: 28,
+          ease: "none",
+          repeat: -1,
+        });
+
+        // Scroll velocity drives the playhead; it eases home to 1× after.
+        const proxy = { ts: 1 };
+        const apply = () => tween.timeScale(proxy.ts);
+        let hovered = false;
+
+        ScrollTrigger.create({
+          onUpdate: (self) => {
+            if (hovered) return;
+            const v = gsap.utils.clamp(-2400, 2400, self.getVelocity());
+            gsap.to(proxy, {
+              ts: 1 + v / 500,
+              duration: 0.2,
+              overwrite: true,
+              onUpdate: apply,
+            });
+            gsap.to(proxy, {
+              ts: 1,
+              duration: 1.4,
+              delay: 0.3,
+              ease: "power2.out",
+              onUpdate: apply,
+            });
+          },
+        });
+
+        const wrap = sectionRef.current!.querySelector(".marquee-wrap")!;
+        const onEnter = () => {
+          hovered = true;
+          gsap.to(proxy, { ts: 0, duration: 0.5, overwrite: true, onUpdate: apply });
+        };
+        const onLeave = () => {
+          hovered = false;
+          gsap.to(proxy, { ts: 1, duration: 0.6, overwrite: true, onUpdate: apply });
+        };
+        wrap.addEventListener("mouseenter", onEnter);
+        wrap.addEventListener("mouseleave", onLeave);
+        return () => {
+          wrap.removeEventListener("mouseenter", onEnter);
+          wrap.removeEventListener("mouseleave", onLeave);
+        };
+      });
+    },
+    { scope: sectionRef },
+  );
+
   return (
     <section
+      ref={sectionRef}
       aria-label="Brands we've worked with"
       className="relative border-t border-(--line) pt-9 pb-32 md:pb-36"
     >

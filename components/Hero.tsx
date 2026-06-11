@@ -140,8 +140,12 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Showreel card cluster — the centerpiece */}
-      <div className="relative mt-14 w-full aspect-16/10 lg:absolute lg:mt-0 lg:right-[4vw] lg:bottom-[12%] lg:w-[clamp(380px,35vw,560px)] z-10">
+      {/* Showreel card cluster — the centerpiece. data-lag: trails the
+          scroll slightly so the hero moves in layers. */}
+      <div
+        data-lag="0.18"
+        className="relative mt-14 w-full aspect-16/10 lg:absolute lg:mt-0 lg:right-[4vw] lg:bottom-[12%] lg:w-[clamp(380px,35vw,560px)] z-10"
+      >
         <div data-hero-card className="absolute inset-0">
           <div data-hero-entrance className="absolute inset-0">
             {/* Deck peeks — a tidy stack of cards waiting beneath the reel */}

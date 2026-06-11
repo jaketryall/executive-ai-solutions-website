@@ -44,9 +44,16 @@ const WORKS = [
 
 const HEADLINE = ["Proof,", "not promises"];
 
-function WorkCard({ work }: { work: (typeof WORKS)[number] }) {
+function WorkCard({
+  work,
+  lag,
+}: {
+  work: (typeof WORKS)[number];
+  lag?: string;
+}) {
   return (
     <article data-work-card className="group">
+      <div data-lag={lag}>
       <div className="relative aspect-4/3 rounded-[28px] overflow-hidden border border-(--line) bg-ink">
         <div data-card-img className="absolute -inset-y-[8%] inset-x-0">
           <Image
@@ -78,6 +85,7 @@ function WorkCard({ work }: { work: (typeof WORKS)[number] }) {
         </span>
       </div>
       <CardMeta title={work.title} outcome={work.outcome} category={work.category} />
+      </div>
     </article>
   );
 }
@@ -189,6 +197,25 @@ export default function WorkSection() {
               },
             },
           );
+
+          // Pin the header while the card columns scroll past (CSS sticky
+          // can't engage inside ScrollSmoother's transformed content).
+          const headerEl = sectionRef.current!.querySelector<HTMLElement>(
+            "[data-work-header]",
+          );
+          const grid = sectionRef.current!.querySelector<HTMLElement>(
+            "[data-work-grid]",
+          );
+          if (headerEl && grid) {
+            ScrollTrigger.create({
+              trigger: grid,
+              start: "top 112",
+              end: () => `bottom ${112 + headerEl.offsetHeight}`,
+              pin: headerEl,
+              pinSpacing: false,
+              invalidateOnRefresh: true,
+            });
+          }
         },
       );
     },
@@ -204,7 +231,10 @@ export default function WorkSection() {
       <div className="lg:grid lg:grid-cols-12 lg:gap-10">
         {/* Pinned header — sticks while the work scrolls past */}
         <header className="lg:col-span-4">
-          <div className="lg:sticky lg:top-28 flex flex-col items-start">
+          {/* lg:sticky is the no-JS/reduced-motion fallback; under
+              ScrollSmoother (transformed ancestor) sticky is inert and the
+              ScrollTrigger pin below takes over. */}
+          <div data-work-header className="lg:sticky lg:top-28 flex flex-col items-start">
             <p className="micro text-(--fg-faint)">Selected work — 2024 to now</p>
             <h2 className="mt-5 font-extrabold uppercase tracking-[-0.04em] leading-[0.94] text-[clamp(2.4rem,5.5vw,3.8rem)]">
               {HEADLINE.map((line, i) => (
@@ -239,14 +269,14 @@ export default function WorkSection() {
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Right column — the anchored spine */}
             <div className="space-y-14 lg:order-2">
-              <WorkCard work={WORKS[1]} />
-              <WorkCard work={WORKS[3]} />
+              <WorkCard work={WORKS[1]} lag="0.06" />
+              <WorkCard work={WORKS[3]} lag="0.1" />
             </div>
 
             {/* Left column (drifts faster on scroll) */}
             <div data-col-drift className="space-y-14 lg:order-1 lg:pt-36">
-              <WorkCard work={WORKS[0]} />
-              <WorkCard work={WORKS[2]} />
+              <WorkCard work={WORKS[0]} lag="0.14" />
+              <WorkCard work={WORKS[2]} lag="0.18" />
             </div>
           </div>
         </div>

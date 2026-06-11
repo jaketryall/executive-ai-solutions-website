@@ -155,7 +155,8 @@ main {
     opacity: 0;
   }
 
-  /* Infinite brand marquee — two identical sequences, track loops -50% */
+  /* Infinite brand marquee — two identical sequences; GSAP drives the loop
+     and reacts to scroll velocity (see ProofStrip.tsx) */
   .marquee-wrap {
     overflow: hidden;
     mask-image: linear-gradient(
@@ -169,22 +170,12 @@ main {
   .marquee {
     display: flex;
     width: max-content;
-    animation: marquee 36s linear infinite;
-  }
-  .marquee-wrap:hover .marquee {
-    animation-play-state: paused;
   }
   .marquee-seq {
     display: flex;
     align-items: center;
     gap: clamp(2.5rem, 5vw, 4.5rem);
     padding-right: clamp(2.5rem, 5vw, 4.5rem);
-  }
-}
-
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
   }
 }
 
@@ -212,9 +203,6 @@ main {
     opacity: 1;
   }
   .pulse-dot::after {
-    animation: none;
-  }
-  .marquee {
     animation: none;
   }
 }
