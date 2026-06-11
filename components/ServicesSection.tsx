@@ -140,18 +140,23 @@ export default function ServicesSection() {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // The paper surface grows into place over the dark work section.
+        // Different transition from work's grow-in: as the paper sheet docks,
+        // the dark work section recedes beneath it — scales back toward the
+        // seam and dims. Same language as the cards covering each other.
+        // (Element reference — selector strings are scoped to this section.)
+        const workSection = document.getElementById("work");
         gsap.fromTo(
-          "[data-services-bg]",
-          { scale: 0.92, y: 60, transformOrigin: "50% 0%" },
+          workSection,
+          { scale: 1, filter: "brightness(1)" },
           {
-            scale: 1,
-            y: 0,
+            scale: 0.95,
+            filter: "brightness(0.5)",
+            transformOrigin: "50% 100%",
             ease: "none",
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: "top 98%",
-              end: "top 45%",
+              start: "top bottom",
+              end: "top 15%",
               scrub: 0.6,
               invalidateOnRefresh: true,
             },
