@@ -355,6 +355,16 @@ export default function ContactSection({
         <p className="micro text-(--fg-faint)">
           © 2026 Executive AI Solutions
         </p>
+        <a href="/faq" className="micro text-(--fg) focus-ring">
+          <span className="slot-link">
+            <span className="slot-link-stack">
+              <span className="slot-link-inner">FAQ</span>
+              <span className="slot-link-clone" aria-hidden>
+                FAQ
+              </span>
+            </span>
+          </span>
+        </a>
         <a href="#top" className="micro text-(--fg) focus-ring">
           <span className="slot-link">
             <span className="slot-link-stack">

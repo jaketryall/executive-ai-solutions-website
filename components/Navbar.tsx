@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import PillCTA from "./PillCTA";
 import { ease } from "@/lib/motion";
@@ -30,6 +31,9 @@ function SlotLabel({ text }: { text: string }) {
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  // Off the home page, section anchors must route home first.
+  const pathname = usePathname();
+  const anchor = (href: string) => (pathname === "/" ? href : `/${href}`);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -81,7 +85,7 @@ export default function Navbar() {
           <ul className="hidden lg:flex items-center gap-8">
             {LINKS.map((l) => (
               <li key={l.label}>
-                <a href={l.href} className="micro text-(--fg) focus-ring">
+                <a href={anchor(l.href)} className="micro text-(--fg) focus-ring">
                   <SlotLabel text={l.label} />
                 </a>
               </li>
@@ -143,7 +147,7 @@ export default function Navbar() {
                     className="block"
                   >
                     <a
-                      href={l.href}
+                      href={anchor(l.href)}
                       onClick={() => setOpen(false)}
                       className="block text-[13vw] leading-[1.02] font-extrabold uppercase tracking-[-0.04em]"
                     >

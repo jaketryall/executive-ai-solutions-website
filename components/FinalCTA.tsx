@@ -79,6 +79,34 @@ export default function FinalCTA() {
         <p className="max-w-sm text-[15px] leading-relaxed text-(--fg-muted)">
           Strategy call this week, design next, live within the month.
         </p>
+        <a
+          href="/faq"
+          className="group inline-flex items-center gap-2 text-[13px] font-medium tracking-tight focus-ring"
+        >
+          <span className="slot-link">
+            <span className="slot-link-stack">
+              <span className="slot-link-inner">Questions first? Read the FAQ</span>
+              <span className="slot-link-clone" aria-hidden>
+                Questions first? Read the FAQ
+              </span>
+            </span>
+          </span>
+          <svg
+            width="11"
+            height="11"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.25"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="transition-transform duration-400 group-hover:translate-x-1"
+            style={{ transitionTimingFunction: "var(--ease-expo-out)" }}
+            aria-hidden
+          >
+            <path d="M5 12h14M13 5l7 7-7 7" />
+          </svg>
+        </a>
       </div>
     </section>
   );
