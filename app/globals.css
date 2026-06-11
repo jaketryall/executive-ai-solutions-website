@@ -48,6 +48,17 @@ main {
   color: var(--fg);
 }
 
+/* Dark-zone token override — sections that live on ink-deep set this class
+   and every token-reading child (text, hairlines, pills) adapts. */
+.zone-dark {
+  --bg: #0e0d0c;
+  --fg: #e5e1db;
+  --fg-muted: rgba(229, 225, 219, 0.6);
+  --fg-faint: rgba(229, 225, 219, 0.4);
+  --line: rgba(229, 225, 219, 0.14);
+  --surface: #1a1816;
+}
+
 ::selection {
   background-color: var(--color-ink);
   color: var(--color-paper);

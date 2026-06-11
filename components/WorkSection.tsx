@@ -1,9 +1,7 @@
 "use client";
 
-// Work — the conversion engine. No card edges here: the chromatic zone
-// darkens the whole page as this section arrives. Header pins left while
-// two card columns scroll at different speeds; the hero showreel lands as
-// the top card of the right column.
+// Work — the conversion engine. Dark dock over the paper, header pins left
+// while two card columns scroll at different speeds.
 
 import { useRef } from "react";
 import Image from "next/image";
@@ -114,10 +112,6 @@ export default function WorkSection() {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // The flying hero card provides the showreel visual; hide the
-        // slot's static poster (it only shows under reduced motion / no JS).
-        gsap.set("[data-slot-poster]", { autoAlpha: 0 });
-
         // Headline lines rise out of their masks — replay on every entry.
         gsap.fromTo(
           ".hero-line",
@@ -175,9 +169,8 @@ export default function WorkSection() {
         });
       });
 
-      // Dual-speed columns — the left column drifts up faster than the page.
-      // The right column stays static: the flight landing math depends on a
-      // transform-free slot, and an anchored column reads as the spine.
+      // Dual-speed columns — the left column drifts up faster than the page;
+      // the right column is the anchored spine.
       mm.add(
         "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
         () => {
@@ -206,7 +199,7 @@ export default function WorkSection() {
     <section
       ref={sectionRef}
       id="work"
-      className="relative px-5 md:px-10 pt-28 md:pt-36 pb-28"
+      className="zone-dark relative z-20 -mt-8 rounded-t-[40px] bg-ink-deep px-5 md:px-10 pt-28 md:pt-36 pb-28 shadow-[0_-32px_80px_rgba(14,13,12,0.4)] text-(--fg)"
     >
       <div className="lg:grid lg:grid-cols-12 lg:gap-10">
         {/* Pinned header — sticks while the work scrolls past */}
@@ -235,7 +228,7 @@ export default function WorkSection() {
               {/* TODO(owner): point at /work once the index page exists */}
               <PillCTA label="All work" href="#work" />
               <span className="micro text-(--fg-faint) tabular-nums">
-                {String(WORKS.length + 1).padStart(2, "0")}
+                {String(WORKS.length).padStart(2, "0")}
               </span>
             </div>
           </div>
@@ -244,30 +237,8 @@ export default function WorkSection() {
         {/* Dual-speed card columns */}
         <div data-work-grid className="mt-16 lg:mt-0 lg:col-span-8">
           <div className="grid gap-6 lg:grid-cols-2">
-            {/* Right column (static — the flight lands here) */}
+            {/* Right column — the anchored spine */}
             <div className="space-y-14 lg:order-2">
-              <article className="group">
-                <div
-                  id="showreel-slot"
-                  className="relative aspect-4/3 rounded-[28px] overflow-hidden border border-(--line) bg-ink"
-                >
-                  <Image
-                    src="/video-poster.webp"
-                    alt="Executive AI Solutions showreel"
-                    fill
-                    sizes="(min-width: 1024px) 31vw, 100vw"
-                    className="object-cover"
-                    data-slot-poster
-                  />
-                </div>
-                <div data-work-card>
-                  <CardMeta
-                    title="The Showreel"
-                    outcome="Every build in sixty seconds — straight from the timeline."
-                    category="Film · '26"
-                  />
-                </div>
-              </article>
               <WorkCard work={WORKS[1]} />
               <WorkCard work={WORKS[3]} />
             </div>

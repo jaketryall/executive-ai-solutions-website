@@ -1,8 +1,6 @@
 "use client";
 
 // Hero — stacked-statement headline with the showreel card as centerpiece.
-// Three transform layers on the card: scroll parallax (outer) → entrance
-// (middle) → ambient float (inner), so the writes never fight each other.
 
 import { useRef } from "react";
 import gsap from "gsap";
@@ -61,89 +59,6 @@ export default function Hero() {
           .to('[data-line-cell="0"]', { yPercent: -34 }, 0)
           .to('[data-line-cell="1"]', { yPercent: -20 }, 0)
           .to('[data-line-cell="2"]', { yPercent: -10 }, 0);
-
-        // The morph chain — the showreel flies out of the hero and lands as
-        // the first cell of the work grid. All deltas are document-space, so
-        // once p hits 1 the card stays glued to its slot (both scroll together).
-        // Width/height are interpolated (not scale) so the video re-crops
-        // through the 16:10 → 4:3 aspect change instead of stretching.
-        const stack = sectionRef.current!.querySelector<HTMLElement>(
-          "[data-reel-stack]",
-        );
-        const fadeEls = sectionRef.current!.querySelectorAll<HTMLElement>(
-          "[data-flight-fade]",
-        );
-        const deckEls = sectionRef.current!.querySelectorAll<HTMLElement>(
-          "[data-deck-rest]",
-        );
-        const slot = document.getElementById("showreel-slot");
-
-        if (stack && slot) {
-          let dx = 0,
-            dy = 0,
-            sW = 1,
-            sH = 1,
-            tW = 1,
-            tH = 1,
-            endY = 400,
-            lastP = 0;
-
-          const tick = (p: number) => {
-            lastP = p;
-            gsap.set(stack, {
-              x: dx * p,
-              y: dy * p,
-              width: gsap.utils.interpolate(sW, tW, p),
-              height: gsap.utils.interpolate(sH, tH, p),
-              rotation: -6 * p * (1 - p), // gentle banking mid-flight, level at both ends
-              force3D: true,
-            });
-            const fade = gsap.utils.clamp(0, 1, 1 - p / 0.16);
-            fadeEls.forEach((el) => gsap.set(el, { opacity: fade }));
-            // The deck lingers after liftoff, fading once the reel is well away.
-            const deckFade = gsap.utils.clamp(0, 1, 1 - (p - 0.55) / 0.25);
-            deckEls.forEach((el) => gsap.set(el, { opacity: deckFade }));
-          };
-
-          // offsetTop/offsetLeft chains: layout-only coordinates, immune to
-          // the entrance/flight transforms that may be mid-play when we measure.
-          const docRect = (el: HTMLElement) => {
-            let x = 0,
-              y = 0,
-              n: HTMLElement | null = el;
-            while (n) {
-              x += n.offsetLeft;
-              y += n.offsetTop;
-              n = n.offsetParent as HTMLElement | null;
-            }
-            return { x, y, w: el.offsetWidth, h: el.offsetHeight };
-          };
-
-          const measure = () => {
-            gsap.set(stack, { clearProps: "width,height" });
-            const s = docRect(stack);
-            const t = docRect(slot);
-            sW = s.w;
-            sH = s.h;
-            tW = t.w;
-            tH = t.h;
-            dx = t.x - s.x;
-            dy = t.y - s.y;
-            endY = t.y - window.innerHeight * 0.78;
-            tick(lastP);
-          };
-
-          ScrollTrigger.create({
-            start: 0,
-            end: () => {
-              measure();
-              return Math.max(endY, 300);
-            },
-            scrub: 0.4,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => tick(self.progress),
-          });
-        }
       });
 
       mm.add("(prefers-reduced-motion: reduce)", () => {
@@ -225,26 +140,20 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Showreel card cluster — the centerpiece. The cluster is a fixed-size
-          spacer; the stack inside it flies to the work grid on scroll. */}
-      <div className="relative mt-14 w-full aspect-16/10 lg:absolute lg:mt-0 lg:right-[4vw] lg:bottom-[12%] lg:w-[clamp(380px,35vw,560px)] z-30">
+      {/* Showreel card cluster — the centerpiece */}
+      <div className="relative mt-14 w-full aspect-16/10 lg:absolute lg:mt-0 lg:right-[4vw] lg:bottom-[12%] lg:w-[clamp(380px,35vw,560px)] z-10">
         <div data-hero-card className="absolute inset-0">
           <div data-hero-entrance className="absolute inset-0">
-            {/* Deck peeks — stay behind in the hero when the reel lifts off,
-                then fade late in the flight */}
+            {/* Deck peeks — a tidy stack of cards waiting beneath the reel */}
             <div
-              data-deck-rest
               className="absolute inset-0 rounded-[28px] border border-(--line) bg-paper-warm origin-bottom rotate-[1.75deg] translate-y-2.5 scale-[0.985]"
               aria-hidden
             />
             <div
-              data-deck-rest
-              className="absolute inset-0 rounded-[28px] border border-(--line) bg-paper-warm origin-bottom rotate-[-1.5deg] translate-y-5 scale-[0.97] flex items-center justify-center"
+              className="absolute inset-0 rounded-[28px] border border-(--line) bg-paper-warm origin-bottom rotate-[-1.5deg] translate-y-5 scale-[0.97]"
               aria-hidden
-            >
-              <span className="micro text-(--fg-muted)/70">More work below ↓</span>
-            </div>
-            <div data-reel-stack className="absolute inset-0">
+            />
+            <div className="absolute inset-0">
               {/* The showreel */}
               <div className="absolute inset-0 rounded-[28px] overflow-hidden border border-(--line) bg-ink-deep shadow-[0_24px_60px_rgba(14,13,12,0.28)]">
                 <video
@@ -266,7 +175,6 @@ export default function Hero() {
               </div>
 
               <p
-                data-flight-fade
                 className="font-hand absolute -bottom-10 right-3 -rotate-4 text-2xl text-(--fg-muted) select-none"
                 aria-hidden
               >
