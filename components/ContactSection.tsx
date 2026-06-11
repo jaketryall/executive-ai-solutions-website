@@ -178,7 +178,7 @@ export default function ContactSection({
     <section
       ref={sectionRef}
       id="contact"
-      className="zone-dark relative z-40 -mt-8 rounded-t-[40px] bg-ink-deep px-5 md:px-10 pt-24 md:pt-32 pb-10 text-(--fg) shadow-[0_-32px_80px_rgba(14,13,12,0.4)]"
+      className="zone-dark relative z-40 -mt-8 rounded-t-[40px] bg-ink-deep px-5 md:px-10 pt-24 md:pt-32 pb-28 text-(--fg) shadow-[0_-32px_80px_rgba(14,13,12,0.4)]"
     >
       <div className="lg:grid lg:grid-cols-12 lg:gap-14">
         {/* Left — kill the hesitation */}
@@ -350,32 +350,6 @@ export default function ContactSection({
         </div>
       </div>
 
-      {/* Mini footer */}
-      <div className="mt-20 pt-6 border-t border-(--line) flex flex-wrap items-center justify-between gap-4">
-        <p className="micro text-(--fg-faint)">
-          © 2026 Executive AI Solutions
-        </p>
-        <a href="/faq" className="micro text-(--fg) focus-ring">
-          <span className="slot-link">
-            <span className="slot-link-stack">
-              <span className="slot-link-inner">FAQ</span>
-              <span className="slot-link-clone" aria-hidden>
-                FAQ
-              </span>
-            </span>
-          </span>
-        </a>
-        <a href="#top" className="micro text-(--fg) focus-ring">
-          <span className="slot-link">
-            <span className="slot-link-stack">
-              <span className="slot-link-inner">Back to top ↑</span>
-              <span className="slot-link-clone" aria-hidden>
-                Back to top ↑
-              </span>
-            </span>
-          </span>
-        </a>
-      </div>
     </section>
   );
 }

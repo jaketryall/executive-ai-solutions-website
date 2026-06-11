@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import PillCTA from "@/components/PillCTA";
 import FaqList, { type Faq } from "@/components/FaqList";
 
@@ -99,6 +100,8 @@ export default function FaqPage() {
           </div>
         </div>
       </section>
+
+      <Footer contactEmail={process.env.CONTACT_EMAIL} />
 
       {/* FAQPage structured data — search + AI answer engines */}
       <script

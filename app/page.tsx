@@ -6,6 +6,7 @@ import ServicesSection from "@/components/ServicesSection";
 import AboutSection from "@/components/AboutSection";
 import FinalCTA from "@/components/FinalCTA";
 import ContactSection from "@/components/ContactSection";
+import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
 
 export default function Home() {
@@ -21,6 +22,7 @@ export default function Home() {
         <AboutSection />
         <FinalCTA />
         <ContactSection contactEmail={process.env.CONTACT_EMAIL} />
+        <Footer contactEmail={process.env.CONTACT_EMAIL} />
       </SmoothScroll>
     </main>
   );
