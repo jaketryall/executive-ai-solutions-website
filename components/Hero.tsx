@@ -1,6 +1,7 @@
 "use client";
 
-// Hero — stacked-statement headline with the showreel card as centerpiece.
+// Hero — one bold statement of what we do, sitting in space. The work
+// speaks next (the box right below); this just has to say it straight.
 
 import { useRef } from "react";
 import gsap from "gsap";
@@ -12,8 +13,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);
 }
 
-const LINES = ["Websites", "that move", "people"];
-const LINE_INDENTS = ["", "pl-[8vw]", "pl-[2vw]"];
+const LINES = ["We design, build and", "automate websites", "that book clients"];
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -23,28 +23,15 @@ export default function Hero() {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Entrance — one composed beat: lines, card, then meta together.
-        gsap.set("[data-hero-entrance]", { y: 70, scale: 0.97 });
-
+        // Entrance — one composed beat.
         const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
-        tl.to(".hero-line", { y: 0, duration: 1.1, stagger: 0.09 }, 0.15)
-          .to(
-            "[data-hero-card]",
-            { opacity: 1, duration: 0.9, ease: "power2.out" },
-            0.45,
-          )
-          .to(
-            "[data-hero-entrance]",
-            { y: 0, scale: 1, duration: 1.3 },
-            0.45,
-          )
-          .to(
-            "[data-hero-fade]",
-            { opacity: 1, y: 0, duration: 0.9, stagger: 0.09 },
-            0.65,
-          );
+        tl.to(".hero-line", { y: 0, duration: 1.1, stagger: 0.09 }, 0.15).to(
+          "[data-hero-fade]",
+          { opacity: 1, y: 0, duration: 0.9, stagger: 0.09 },
+          0.55,
+        );
 
-        // Scroll parallax — each headline line drifts at its own rate.
+        // Scroll parallax — each statement line drifts at its own rate.
         gsap
           .timeline({
             defaults: { ease: "none" },
@@ -62,9 +49,7 @@ export default function Hero() {
       });
 
       mm.add("(prefers-reduced-motion: reduce)", () => {
-        gsap.set(".hero-line, [data-hero-fade], [data-hero-card]", {
-          clearProps: "all",
-        });
+        gsap.set(".hero-line, [data-hero-fade]", { clearProps: "all" });
       });
     },
     { scope: sectionRef },
@@ -74,45 +59,44 @@ export default function Hero() {
     <section
       ref={sectionRef}
       id="top"
-      className="relative min-h-svh flex flex-col px-5 md:px-10 pt-28 pb-16 lg:pb-12"
+      className="relative min-h-[92svh] flex flex-col px-5 md:px-10 pt-28 pb-14"
     >
-      {/* Eyebrow + scarcity */}
-      <div data-hero-fade className="flex flex-wrap items-center gap-x-5 gap-y-3">
-        <p className="micro text-(--fg-muted)">Premium web design — built to convert</p>
-        <span className="hidden md:block h-px w-12 bg-(--line)" aria-hidden />
-        <span className="inline-flex items-center gap-2.5 h-9 pl-1.5 pr-4 rounded-full border border-(--line) bg-(--surface)">
-          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-oxblood/10">
-            <span className="w-1.5 h-1.5 rounded-full bg-oxblood text-oxblood pulse-dot" />
+      {/* The statement — vertically centered in the space */}
+      <div className="my-auto">
+        <div data-hero-fade className="flex flex-wrap items-center gap-x-5 gap-y-3">
+          <p className="micro text-(--fg-muted)">
+            Executive AI Solutions — premium web design
+          </p>
+          <span className="hidden md:block h-px w-12 bg-(--line)" aria-hidden />
+          <span className="inline-flex items-center gap-2.5 h-9 pl-1.5 pr-4 rounded-full border border-(--line) bg-(--surface)">
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-oxblood/10">
+              <span className="w-1.5 h-1.5 rounded-full bg-oxblood text-oxblood pulse-dot" />
+            </span>
+            <span className="micro text-(--fg)">2 spots left for July</span>
           </span>
-          <span className="micro text-(--fg)">2 spots left for July</span>
-        </span>
-      </div>
+        </div>
 
-      {/* Stacked statement */}
-      <h1 className="mt-7 font-extrabold uppercase tracking-[-0.045em] leading-[0.92] text-[clamp(2.9rem,12.5vw,9.5rem)] lg:text-[clamp(2.9rem,min(10vw,16svh),9.5rem)]">
-        {LINES.map((line, i) => (
-          <span key={line} data-line-cell={i} className={`block ${LINE_INDENTS[i]}`}>
-            <span className="hero-line-mask">
-              <span className="hero-line">
-                {line}
-                {i === LINES.length - 1 && (
-                  <span className="text-oxblood">.</span>
-                )}
+        <h1 className="mt-8 max-w-5xl font-bold tracking-[-0.04em] leading-[1.04] text-[clamp(2.5rem,6.2vw,5.5rem)]">
+          {LINES.map((line, i) => (
+            <span key={line} data-line-cell={i} className="block">
+              <span className="hero-line-mask">
+                <span className="hero-line">
+                  {line}
+                  {i === LINES.length - 1 && (
+                    <span className="text-oxblood">.</span>
+                  )}
+                </span>
               </span>
             </span>
-          </span>
-        ))}
-      </h1>
+          ))}
+        </h1>
 
-      {/* Description + CTAs — pinned to hero bottom on desktop */}
-      <div className="mt-12 lg:mt-auto lg:pt-10 max-w-sm relative z-20">
-        <p data-hero-fade className="text-[15px] leading-relaxed text-(--fg-muted)">
-          We design and build premium, conversion-led websites with motion you
-          can feel. Strategy, design and build — one team, no hand-offs.
-        </p>
-        <div data-hero-fade className="mt-6 flex items-center gap-7">
+        <div data-hero-fade className="mt-9 flex items-center gap-7">
           <PillCTA label="Start a project" href="#contact" />
-          <a href="#work" className="group inline-flex items-center gap-2 text-[13px] font-medium tracking-tight focus-ring">
+          <a
+            href="#work"
+            className="group inline-flex items-center gap-2 text-[13px] font-medium tracking-tight focus-ring"
+          >
             <span className="slot-link">
               <span className="slot-link-stack">
                 <span className="slot-link-inner">See the work</span>
@@ -137,55 +121,6 @@ export default function Hero() {
               <path d="M12 5v14M5 12l7 7 7-7" />
             </svg>
           </a>
-        </div>
-      </div>
-
-      {/* Showreel card cluster — the centerpiece. data-lag: trails the
-          scroll slightly so the hero moves in layers. */}
-      <div
-        data-lag="0.18"
-        className="relative mt-14 w-full aspect-16/10 lg:absolute lg:mt-0 lg:right-[4vw] lg:bottom-[12%] lg:w-[clamp(380px,35vw,560px)] z-10"
-      >
-        <div data-hero-card className="absolute inset-0">
-          <div data-hero-entrance className="absolute inset-0">
-            {/* Deck peeks — a tidy stack of cards waiting beneath the reel */}
-            <div
-              className="absolute inset-0 rounded-[28px] border border-(--line) bg-paper-warm origin-bottom rotate-[1.75deg] translate-y-2.5 scale-[0.985]"
-              aria-hidden
-            />
-            <div
-              className="absolute inset-0 rounded-[28px] border border-(--line) bg-paper-warm origin-bottom rotate-[-1.5deg] translate-y-5 scale-[0.97]"
-              aria-hidden
-            />
-            <div className="absolute inset-0">
-              {/* The showreel */}
-              <div className="absolute inset-0 rounded-[28px] overflow-hidden border border-(--line) bg-ink-deep shadow-[0_24px_60px_rgba(14,13,12,0.28)]">
-                <video
-                  src="/final-comp.mp4"
-                  poster="/video-poster.webp"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <span className="absolute left-4 bottom-4 inline-flex items-center gap-2.5 h-8 px-3.5 rounded-full bg-ink-deep/70 backdrop-blur-sm text-paper">
-                  <span className="w-1.5 h-1.5 rounded-full bg-oxblood text-oxblood pulse-dot" />
-                  <span className="font-mono text-[9px] uppercase tracking-[0.18em]">
-                    Showreel — &rsquo;26
-                  </span>
-                </span>
-              </div>
-
-              <p
-                className="font-hand absolute -bottom-10 right-3 -rotate-4 text-2xl text-(--fg-muted) select-none"
-                aria-hidden
-              >
-                real client work ↑
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </section>

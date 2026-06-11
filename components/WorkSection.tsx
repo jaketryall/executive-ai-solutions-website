@@ -121,10 +121,10 @@ export default function WorkSection() {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // The dock surface grows into place as the section arrives…
+        // The box starts small and grows into place as the section arrives…
         gsap.fromTo(
           "[data-work-bg]",
-          { scale: 0.92, y: 60, transformOrigin: "50% 0%" },
+          { scale: 0.8, y: 120, transformOrigin: "50% 0%" },
           {
             scale: 1,
             y: 0,
@@ -132,7 +132,7 @@ export default function WorkSection() {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top 98%",
-              end: "top 45%",
+              end: "top 30%",
               scrub: 0.6,
               invalidateOnRefresh: true,
             },
@@ -145,20 +145,27 @@ export default function WorkSection() {
           "[data-work-bg]",
           { scale: 1, y: 0 },
           {
-            scale: 0.92,
-            y: 60,
+            scale: 0.8,
+            y: 120,
             transformOrigin: "50% 0%",
             ease: "none",
             immediateRender: false,
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: "bottom 55%",
+              start: "bottom 70%",
               end: "bottom 2%",
               scrub: 0.6,
               invalidateOnRefresh: true,
             },
           },
         );
+
+        // The reel content rides the growing box — fades up as the box lands.
+        replayEntrance("[data-work-reel]", sectionRef.current!, {
+          from: { y: 60, opacity: 0 },
+          to: { y: 0, opacity: 1, duration: 1, ease: "expo.out" },
+          start: "top 70%",
+        });
 
         // Headline lines rise out of their masks.
         replayEntrance(".hero-line", sectionRef.current!, {
@@ -246,17 +253,39 @@ export default function WorkSection() {
     <section
       ref={sectionRef}
       id="work"
-      className="zone-dark relative z-20 -mt-8 px-5 md:px-10 pt-28 md:pt-36 pb-28 text-(--fg)"
+      className="zone-dark relative z-20 mt-10 px-5 md:px-10 pt-5 md:pt-8 pb-28 text-(--fg)"
     >
-      {/* The dock surface — its own layer so the grow-in entrance can scale
-          it without transforming the pinned header inside the content. */}
+      {/* The box — its own layer so the grow-in entrance can scale it
+          without transforming the pinned header inside the content. */}
       <div
         data-work-bg
         aria-hidden
         className="absolute inset-0 rounded-[40px] bg-ink-deep shadow-[0_-32px_80px_rgba(14,13,12,0.4),0_32px_80px_rgba(14,13,12,0.45)]"
       />
 
-      <div className="relative lg:grid lg:grid-cols-12 lg:gap-10">
+      {/* The showreel opens the box — the work, moving */}
+      <div data-work-reel className="relative">
+        <div className="relative aspect-video rounded-[32px] overflow-hidden border border-(--line) bg-ink">
+          <video
+            src="/final-comp.mp4"
+            poster="/video-poster.webp"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <span className="absolute left-5 bottom-5 inline-flex items-center gap-2.5 h-8 px-3.5 rounded-full bg-ink-deep/70 backdrop-blur-sm text-paper">
+            <span className="w-1.5 h-1.5 rounded-full bg-oxblood text-oxblood pulse-dot" />
+            <span className="font-mono text-[9px] uppercase tracking-[0.18em]">
+              Showreel — &rsquo;26
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <div className="relative mt-20 md:mt-28 lg:grid lg:grid-cols-12 lg:gap-10">
         {/* Pinned header — sticks while the work scrolls past */}
         <header className="lg:col-span-4">
           {/* Sticky ONLY under reduced motion (no smoother, no GSAP pin
