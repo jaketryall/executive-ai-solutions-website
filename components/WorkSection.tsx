@@ -232,7 +232,7 @@ export default function WorkSection() {
       <div
         data-work-bg
         aria-hidden
-        className="absolute inset-0 rounded-t-[40px] bg-ink-deep shadow-[0_-32px_80px_rgba(14,13,12,0.4)]"
+        className="absolute inset-0 rounded-[40px] bg-ink-deep shadow-[0_-32px_80px_rgba(14,13,12,0.4),0_32px_80px_rgba(14,13,12,0.45)]"
       />
 
       <div className="relative lg:grid lg:grid-cols-12 lg:gap-10">

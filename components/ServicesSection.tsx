@@ -140,23 +140,38 @@ export default function ServicesSection() {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Different transition from work's grow-in: as the paper sheet docks,
-        // the dark work section recedes beneath it — scales back toward the
-        // seam and dims. Same language as the cards covering each other.
-        // (Element reference — selector strings are scoped to this section.)
-        const workSection = document.getElementById("work");
+        // Revealed-from-beneath: services sits UNDER the work sheet (lower
+        // z), counter-parallaxed up behind it so it reads as already in
+        // place while work lifts away; a shade fades off as it's uncovered.
+        // Triggers track the WORK section's bottom edge — work carries no
+        // transform, so its measurements stay stable (this section's own
+        // parallax transform would corrupt trigger positions on refresh).
+        const workSheet = document.getElementById("work");
         gsap.fromTo(
-          workSection,
-          { scale: 1, filter: "brightness(1)" },
+          sectionRef.current,
+          { y: () => -window.innerHeight * 0.6 },
           {
-            scale: 0.95,
-            filter: "brightness(0.5)",
-            transformOrigin: "50% 100%",
+            y: 0,
             ease: "none",
             scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top bottom",
-              end: "top 15%",
+              trigger: workSheet,
+              start: "bottom bottom",
+              end: "bottom top",
+              scrub: 0.6,
+              invalidateOnRefresh: true,
+            },
+          },
+        );
+        gsap.fromTo(
+          "[data-services-shade]",
+          { opacity: 0.45 },
+          {
+            opacity: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: workSheet,
+              start: "bottom bottom",
+              end: "bottom 15%",
               scrub: 0.6,
               invalidateOnRefresh: true,
             },
@@ -257,13 +272,13 @@ export default function ServicesSection() {
     <section
       ref={sectionRef}
       id="services"
-      className="relative z-30 -mt-8 px-5 md:px-10 pt-28 md:pt-36 pb-28 text-(--fg)"
+      className="relative z-10 px-5 md:px-10 pt-28 md:pt-36 pb-28 text-(--fg)"
     >
-      {/* The paper dock surface — separate layer for the grow-in entrance */}
+      {/* Paper surface — sits beneath the work sheet, no card edge of its own */}
       <div
         data-services-bg
         aria-hidden
-        className="absolute inset-0 rounded-t-[40px] bg-paper shadow-[0_-32px_80px_rgba(14,13,12,0.4)]"
+        className="absolute inset-0 bg-paper"
       />
 
       {/* Header */}
@@ -297,6 +312,13 @@ export default function ServicesSection() {
           <ServiceCard key={service.label} service={service} />
         ))}
       </div>
+
+      {/* Depth shade — fades off as the work sheet lifts away */}
+      <div
+        data-services-shade
+        aria-hidden
+        className="absolute inset-0 bg-ink-deep opacity-0 pointer-events-none"
+      />
     </section>
   );
 }
