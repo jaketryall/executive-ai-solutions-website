@@ -140,44 +140,6 @@ export default function ServicesSection() {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Revealed-from-beneath: services sits UNDER the work sheet (lower
-        // z), counter-parallaxed up behind it so it reads as already in
-        // place while work lifts away; a shade fades off as it's uncovered.
-        // Triggers track the WORK section's bottom edge — work carries no
-        // transform, so its measurements stay stable (this section's own
-        // parallax transform would corrupt trigger positions on refresh).
-        const workSheet = document.getElementById("work");
-        gsap.fromTo(
-          sectionRef.current,
-          { y: () => -window.innerHeight * 0.6 },
-          {
-            y: 0,
-            ease: "none",
-            scrollTrigger: {
-              trigger: workSheet,
-              start: "bottom bottom",
-              end: "bottom top",
-              scrub: 0.6,
-              invalidateOnRefresh: true,
-            },
-          },
-        );
-        gsap.fromTo(
-          "[data-services-shade]",
-          { opacity: 0.45 },
-          {
-            opacity: 0,
-            ease: "none",
-            scrollTrigger: {
-              trigger: workSheet,
-              start: "bottom bottom",
-              end: "bottom 15%",
-              scrub: 0.6,
-              invalidateOnRefresh: true,
-            },
-          },
-        );
-
         // Headline lines rise out of their masks.
         replayEntrance(".hero-line", sectionRef.current!, {
           from: { y: "115%" },
@@ -272,14 +234,8 @@ export default function ServicesSection() {
     <section
       ref={sectionRef}
       id="services"
-      className="relative z-10 px-5 md:px-10 pt-28 md:pt-36 pb-28 text-(--fg)"
+      className="relative px-5 md:px-10 pt-24 md:pt-32 pb-28 text-(--fg)"
     >
-      {/* Paper surface — sits beneath the work sheet, no card edge of its own */}
-      <div
-        data-services-bg
-        aria-hidden
-        className="absolute inset-0 bg-paper"
-      />
 
       {/* Header */}
       <div className="relative flex flex-wrap items-end justify-between gap-6">
@@ -312,13 +268,6 @@ export default function ServicesSection() {
           <ServiceCard key={service.label} service={service} />
         ))}
       </div>
-
-      {/* Depth shade — fades off as the work sheet lifts away */}
-      <div
-        data-services-shade
-        aria-hidden
-        className="absolute inset-0 bg-ink-deep opacity-0 pointer-events-none"
-      />
     </section>
   );
 }

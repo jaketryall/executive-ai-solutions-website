@@ -121,7 +121,7 @@ export default function WorkSection() {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // The dock surface grows into place as the section arrives.
+        // The dock surface grows into place as the section arrives…
         gsap.fromTo(
           "[data-work-bg]",
           { scale: 0.92, y: 60, transformOrigin: "50% 0%" },
@@ -133,6 +133,27 @@ export default function WorkSection() {
               trigger: sectionRef.current,
               start: "top 98%",
               end: "top 45%",
+              scrub: 0.6,
+              invalidateOnRefresh: true,
+            },
+          },
+        );
+        // …and shrinks back out the same way as it leaves — the exit is the
+        // entrance in reverse. immediateRender:false so this tween's from
+        // state doesn't stomp the entrance's initial state at load.
+        gsap.fromTo(
+          "[data-work-bg]",
+          { scale: 1, y: 0 },
+          {
+            scale: 0.92,
+            y: 60,
+            transformOrigin: "50% 0%",
+            ease: "none",
+            immediateRender: false,
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "bottom 55%",
+              end: "bottom 2%",
               scrub: 0.6,
               invalidateOnRefresh: true,
             },
