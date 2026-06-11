@@ -61,9 +61,9 @@ export default function Hero() {
       id="top"
       className="relative min-h-[92svh] flex flex-col px-5 md:px-10 pt-28 pb-14"
     >
-      {/* The statement — vertically centered in the space */}
-      <div className="my-auto">
-        <div data-hero-fade className="flex flex-wrap items-center gap-x-5 gap-y-3">
+      {/* The statement — centered in the space */}
+      <div className="my-auto flex flex-col items-center text-center">
+        <div data-hero-fade className="flex flex-wrap items-center justify-center gap-x-5 gap-y-3">
           <p className="micro text-(--fg-muted)">
             Executive AI Solutions — premium web design
           </p>
@@ -91,7 +91,7 @@ export default function Hero() {
           ))}
         </h1>
 
-        <div data-hero-fade className="mt-9 flex items-center gap-7">
+        <div data-hero-fade className="mt-9 flex items-center justify-center gap-7">
           <PillCTA label="Start a project" href="#contact" />
           <a
             href="#work"

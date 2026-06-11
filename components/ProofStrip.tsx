@@ -104,7 +104,7 @@ export default function ProofStrip() {
     <section
       ref={sectionRef}
       aria-label="Brands we've worked with"
-      className="relative border-y border-(--line) py-7"
+      className="relative py-7"
     >
       <p className="micro text-(--fg-faint) text-center">
         Trusted by owners who needed results
