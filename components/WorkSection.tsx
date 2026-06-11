@@ -4,11 +4,11 @@
 // while two card columns scroll at different speeds.
 
 import { useRef } from "react";
-import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import PillCTA from "./PillCTA";
+import AutoVideo from "./AutoVideo";
 import { replayEntrance } from "@/lib/scroll";
 
 if (typeof window !== "undefined") {
@@ -21,25 +21,25 @@ const WORKS = [
     title: "Riled Up Pickleball",
     outcome: "Coaching platform that books itself — sessions, schedule, client CRM.",
     category: "Web app · Bookings",
-    image: "/custom-dashboard-mockup.webp",
+    video: "/final-comp.mp4",
   },
   {
     title: "Desert Wings",
     outcome: "A flight school site that turns curiosity into discovery flights.",
     category: "Flight school · Web design",
-    image: "/Celestial Laptop Mockup.webp",
+    video: "/final-comp.mp4",
   },
   {
     title: "Wings N Wheels",
     outcome: "Premium detailing brand with a quote pipeline that fills itself.",
     category: "Local service · Web design",
-    image: "/Rubber iPhone Mockup.webp",
+    video: "/final-comp.mp4",
   },
   {
     title: "AZ Gyro Tours",
     outcome: "Tourism site selling the thrill before the booking.",
     category: "Tourism · Web design",
-    image: "/Elegant Black Laptop Mockup.webp",
+    video: "/final-comp.mp4",
   },
 ];
 
@@ -48,21 +48,25 @@ const HEADLINE = ["Proof,", "not promises"];
 function WorkCard({
   work,
   lag,
+  startAt,
 }: {
   work: (typeof WORKS)[number];
   lag?: string;
+  startAt?: number;
 }) {
   return (
     <article data-work-card className="group">
       <div data-lag={lag}>
       <div className="relative aspect-4/3 rounded-[28px] overflow-hidden border border-(--line) bg-ink">
         <div data-card-img className="absolute -inset-y-[8%] inset-x-0">
-          <Image
-            src={work.image}
-            alt={work.title}
-            fill
-            sizes="(min-width: 1024px) 31vw, 100vw"
-            className="object-cover transition-transform duration-700 group-hover:scale-[1.045]"
+          {/* TODO(owner): per-project screen recordings replace the shared
+              reel here — one ~10s clip per client site. */}
+          <AutoVideo
+            src={work.video}
+            poster="/video-poster.webp"
+            label={work.title}
+            startAt={startAt}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.045]"
             style={{ transitionTimingFunction: "var(--ease-expo-out)" }}
           />
         </div>
@@ -266,14 +270,10 @@ export default function WorkSection() {
       {/* The showreel opens the box — the work, moving */}
       <div data-work-reel className="relative">
         <div className="relative aspect-video rounded-[32px] overflow-hidden border border-(--line) bg-ink">
-          <video
+          <AutoVideo
             src="/final-comp.mp4"
             poster="/video-poster.webp"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
+            label="Executive AI Solutions showreel"
             className="absolute inset-0 w-full h-full object-cover"
           />
           <span className="absolute left-5 bottom-5 inline-flex items-center gap-2.5 h-8 px-3.5 rounded-full bg-ink-deep/70 backdrop-blur-sm text-paper">
@@ -327,14 +327,14 @@ export default function WorkSection() {
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Right column — the anchored spine */}
             <div className="space-y-14 lg:order-2">
-              <WorkCard work={WORKS[1]} lag="0.06" />
-              <WorkCard work={WORKS[3]} lag="0.1" />
+              <WorkCard work={WORKS[1]} lag="0.06" startAt={8} />
+              <WorkCard work={WORKS[3]} lag="0.1" startAt={24} />
             </div>
 
             {/* Left column (drifts faster on scroll) */}
             <div data-col-drift className="space-y-14 lg:order-1 lg:pt-36">
-              <WorkCard work={WORKS[0]} lag="0.14" />
-              <WorkCard work={WORKS[2]} lag="0.18" />
+              <WorkCard work={WORKS[0]} lag="0.14" startAt={16} />
+              <WorkCard work={WORKS[2]} lag="0.18" startAt={32} />
             </div>
           </div>
         </div>
