@@ -22,7 +22,7 @@ function HeadChip({ startAt }: { startAt: number }) {
     <a
       href="#work"
       aria-label="See the work"
-      className="group/chip inline-flex align-middle mx-[0.1em] -translate-y-[0.06em] h-[0.62em] w-[1.2em] hover:w-[1.7em] rounded-full overflow-hidden border border-(--line) bg-ink relative transition-all duration-500 focus-ring"
+      className="group/chip inline-flex align-middle mx-[0.1em] -translate-y-[0.05em] h-[0.78em] w-[1.6em] hover:w-[2.1em] rounded-full overflow-hidden border border-(--line) bg-ink relative transition-all duration-500 focus-ring"
       style={{ transitionTimingFunction: "var(--ease-expo-out)" }}
     >
       <AutoVideo
