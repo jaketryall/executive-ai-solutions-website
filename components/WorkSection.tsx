@@ -120,40 +120,67 @@ export default function WorkSection() {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Headline lines rise out of their masks — replay on every entry.
+        // The dock surface grows into place as the section arrives.
         gsap.fromTo(
-          ".hero-line",
-          { y: "115%" },
+          "[data-work-bg]",
+          { scale: 0.92, y: 60, transformOrigin: "50% 0%" },
           {
+            scale: 1,
             y: 0,
-            duration: 1.05,
-            stagger: 0.1,
-            ease: "expo.out",
+            ease: "none",
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: "top 62%",
-              toggleActions: "restart none none reset",
+              start: "top 98%",
+              end: "top 45%",
+              scrub: 0.6,
+              invalidateOnRefresh: true,
             },
           },
         );
 
-        // Cards rise in as they reach the viewport; reset when scrolled back above.
-        gsap.utils.toArray<HTMLElement>("[data-work-card]").forEach((card) => {
-          gsap.fromTo(
-            card,
-            { y: 90, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 1,
-              ease: "expo.out",
-              scrollTrigger: {
-                trigger: card,
-                start: "top 85%",
-                toggleActions: "restart none none reset",
-              },
+        // Replay-on-entry pattern with a LATE reset: the entrance replays
+        // each time you scroll down to it, but the hidden state is only
+        // restored once the element is fully below the viewport — never
+        // while it's still visible (no pop-out when scrolling back up).
+        const replayEntrance = (
+          targets: gsap.TweenTarget,
+          trigger: HTMLElement,
+          vars: { from: gsap.TweenVars; to: gsap.TweenVars; start: string },
+        ) => {
+          const tween = gsap.fromTo(targets, vars.from, {
+            ...vars.to,
+            paused: true,
+          });
+          ScrollTrigger.create({
+            trigger,
+            start: vars.start,
+            onEnter: () => tween.restart(),
+            // If the page loads/refreshes already past the start, show it.
+            onRefresh: (self) => {
+              if (self.progress > 0) tween.progress(1);
             },
-          );
+          });
+          ScrollTrigger.create({
+            trigger,
+            start: "top bottom",
+            onLeaveBack: () => tween.pause(0),
+          });
+        };
+
+        // Headline lines rise out of their masks.
+        replayEntrance(".hero-line", sectionRef.current!, {
+          from: { y: "115%" },
+          to: { y: 0, duration: 1.05, stagger: 0.1, ease: "expo.out" },
+          start: "top 62%",
+        });
+
+        // Cards rise in as they reach the viewport.
+        gsap.utils.toArray<HTMLElement>("[data-work-card]").forEach((card) => {
+          replayEntrance(card, card, {
+            from: { y: 90, opacity: 0 },
+            to: { y: 0, opacity: 1, duration: 1, ease: "expo.out" },
+            start: "top 85%",
+          });
 
           // Continuous image parallax inside the frame while the card is on screen.
           const img = card.querySelector("[data-card-img]");
@@ -226,9 +253,17 @@ export default function WorkSection() {
     <section
       ref={sectionRef}
       id="work"
-      className="zone-dark relative z-20 -mt-8 rounded-t-[40px] bg-ink-deep px-5 md:px-10 pt-28 md:pt-36 pb-28 shadow-[0_-32px_80px_rgba(14,13,12,0.4)] text-(--fg)"
+      className="zone-dark relative z-20 -mt-8 px-5 md:px-10 pt-28 md:pt-36 pb-28 text-(--fg)"
     >
-      <div className="lg:grid lg:grid-cols-12 lg:gap-10">
+      {/* The dock surface — its own layer so the grow-in entrance can scale
+          it without transforming the pinned header inside the content. */}
+      <div
+        data-work-bg
+        aria-hidden
+        className="absolute inset-0 rounded-t-[40px] bg-ink-deep shadow-[0_-32px_80px_rgba(14,13,12,0.4)]"
+      />
+
+      <div className="relative lg:grid lg:grid-cols-12 lg:gap-10">
         {/* Pinned header — sticks while the work scrolls past */}
         <header className="lg:col-span-4">
           {/* lg:sticky is the no-JS/reduced-motion fallback; under
@@ -283,7 +318,7 @@ export default function WorkSection() {
       </div>
 
       {/* Conversion nudge */}
-      <div className="mt-24 lg:mt-32 pt-10 border-t border-(--line) flex flex-wrap items-center justify-between gap-6">
+      <div className="relative mt-24 lg:mt-32 pt-10 border-t border-(--line) flex flex-wrap items-center justify-between gap-6">
         <div>
           <p className="micro text-(--fg-faint)">Next opening — July</p>
           <p className="mt-2 text-lg font-semibold tracking-tight">
