@@ -52,6 +52,10 @@ export default function WorkSection() {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // The flying hero card provides the showreel visual; hide the
+        // slot's static poster (it only shows under reduced motion / no JS).
+        gsap.set("[data-slot-poster]", { autoAlpha: 0 });
+
         // Headline lines rise out of their masks — replay on every entry.
         gsap.fromTo(
           ".hero-line",
@@ -145,11 +149,43 @@ export default function WorkSection() {
 
       {/* Staggered grid */}
       <div className="mt-16 md:mt-24 grid lg:grid-cols-2 gap-x-6 gap-y-16 lg:gap-y-28">
+        {/* Showreel slot — the hero card lands here mid-scroll. The frame
+            stays static (flight math needs a stable rect); only the meta
+            row animates in. */}
+        <article className="group">
+          <div
+            id="showreel-slot"
+            className="relative aspect-4/3 rounded-[28px] overflow-hidden border border-paper/10 bg-ink"
+          >
+            <Image
+              src="/video-poster.webp"
+              alt="Executive AI Solutions showreel"
+              fill
+              sizes="(min-width: 1024px) 46vw, 100vw"
+              className="object-cover"
+              data-slot-poster
+            />
+          </div>
+          <div data-work-card className="mt-5 flex items-start justify-between gap-4">
+            <div>
+              <h3 className="text-xl md:text-2xl font-bold tracking-tight">
+                The Showreel
+              </h3>
+              <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-paper/50">
+                Every build in sixty seconds — straight from the timeline.
+              </p>
+            </div>
+            <p className="micro text-paper/40 pt-2.5 whitespace-nowrap">
+              Film · &rsquo;26
+            </p>
+          </div>
+        </article>
+
         {WORKS.map((work, i) => (
           <article
             key={work.title}
             data-work-card
-            className={`group ${i % 2 === 1 ? "lg:relative lg:top-24" : ""}`}
+            className={`group ${i % 2 === 0 ? "lg:relative lg:top-24" : ""}`}
           >
             <div className="relative aspect-4/3 rounded-[28px] overflow-hidden border border-paper/10 bg-ink">
               <div data-card-img className="absolute -inset-y-[8%] inset-x-0">
