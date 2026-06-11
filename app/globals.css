@@ -129,6 +129,38 @@ body {
   [data-hero-card] {
     opacity: 0;
   }
+
+  /* Infinite brand marquee — two identical sequences, track loops -50% */
+  .marquee-wrap {
+    overflow: hidden;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 10%,
+      black 90%,
+      transparent
+    );
+  }
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 36s linear infinite;
+  }
+  .marquee-wrap:hover .marquee {
+    animation-play-state: paused;
+  }
+  .marquee-seq {
+    display: flex;
+    align-items: center;
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+    padding-right: clamp(2.5rem, 5vw, 4.5rem);
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes pulseDot {
@@ -155,6 +187,9 @@ body {
     opacity: 1;
   }
   .pulse-dot::after {
+    animation: none;
+  }
+  .marquee {
     animation: none;
   }
 }

@@ -1,20 +1,24 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import ProofStrip from "@/components/ProofStrip";
+import WorkSection from "@/components/WorkSection";
 
 export default function Home() {
   return (
     <main>
       <Navbar />
       <Hero />
+      <ProofStrip />
+      <WorkSection />
 
-      {/* Work — stub. The morph chain (hero card → first work card) lands here. */}
+      {/* Services — stub, docks over the dark work section. */}
       <section
-        id="work"
-        className="relative z-20 -mt-8 rounded-t-[40px] bg-ink-deep text-paper px-5 md:px-10 py-36 min-h-[80vh] shadow-[0_-32px_80px_rgba(14,13,12,0.4)]"
+        id="services"
+        className="relative z-30 -mt-8 rounded-t-[40px] bg-paper px-5 md:px-10 py-36 min-h-[60vh]"
       >
-        <p className="micro text-paper/40">Work — landing here next</p>
+        <p className="micro text-taupe">Services — landing here next</p>
         <h2 className="mt-6 max-w-3xl font-extrabold tracking-[-0.035em] leading-[1.02] text-[clamp(2rem,5vw,4rem)]">
-          The work section docks in here, and the hero card morphs into it.
+          Websites, motion, AI — the service stack docks in here.
         </h2>
       </section>
     </main>
