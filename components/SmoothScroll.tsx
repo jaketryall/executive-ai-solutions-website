@@ -36,6 +36,20 @@ export default function SmoothScroll({
         smoothTouch: false, // native feel + perf on touch devices
       });
 
+      // Browsers scroll the overflow:hidden wrapper internally on
+      // scrollIntoView / focus (e.g. tabbing into the contact form), which
+      // splits scrolling across two systems and corrupts the view.
+      // Transfer any wrapper scroll back to the smoother.
+      const wrapper = wrapRef.current!;
+      const onWrapperScroll = () => {
+        if (wrapper.scrollTop) {
+          const offset = wrapper.scrollTop;
+          wrapper.scrollTop = 0;
+          smoother.scrollTo(smoother.scrollTop() + offset, false);
+        }
+      };
+      wrapper.addEventListener("scroll", onWrapperScroll);
+
       // Anchor links glide through the smoother instead of teleporting.
       const onClick = (e: MouseEvent) => {
         const a = (e.target as HTMLElement).closest?.('a[href^="#"]');
@@ -50,6 +64,7 @@ export default function SmoothScroll({
       document.addEventListener("click", onClick);
 
       return () => {
+        wrapper.removeEventListener("scroll", onWrapperScroll);
         document.removeEventListener("click", onClick);
         smoother.kill();
       };
