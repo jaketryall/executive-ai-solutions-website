@@ -50,7 +50,7 @@ export default function Navbar() {
       <header
         className={`fixed inset-x-0 top-0 z-70 transition-all duration-500 ${
           scrolled && !open
-            ? "bg-paper/75 backdrop-blur-md border-b border-ink/10"
+            ? "bg-[color-mix(in_srgb,var(--bg)_78%,transparent)] backdrop-blur-md border-b border-(--line)"
             : "border-b border-transparent"
         }`}
         style={{ transitionTimingFunction: "var(--ease-expo-out)" }}
@@ -63,7 +63,7 @@ export default function Navbar() {
         >
           {/* Logo — ink chip (the mark is white) + wordmark */}
           <Link href="/" className="group flex items-center gap-2.5 focus-ring" aria-label="Executive AI Solutions — home">
-            <span className="flex items-center justify-center w-9 h-9 rounded-full bg-ink overflow-hidden transition-transform duration-500 group-hover:rotate-[-10deg] group-hover:scale-105" style={{ transitionTimingFunction: "var(--ease-expo-out)" }}>
+            <span className="flex items-center justify-center w-9 h-9 rounded-full bg-ink border border-(--line) overflow-hidden transition-transform duration-500 group-hover:rotate-[-10deg] group-hover:scale-105" style={{ transitionTimingFunction: "var(--ease-expo-out)" }}>
               <Image
                 src="/Executive Ai Solutions Logo.svg"
                 alt=""
@@ -72,7 +72,7 @@ export default function Navbar() {
                 priority
               />
             </span>
-            <span className={`text-[15px] font-semibold tracking-tight transition-colors duration-300 ${open ? "text-paper" : "text-ink"}`}>
+            <span className={`text-[15px] font-semibold tracking-tight transition-colors duration-300 ${open ? "text-paper" : "text-(--fg)"}`}>
               <SlotLabel text="Executive AI" />
             </span>
           </Link>
@@ -81,7 +81,7 @@ export default function Navbar() {
           <ul className="hidden lg:flex items-center gap-8">
             {LINKS.map((l) => (
               <li key={l.label}>
-                <a href={l.href} className="micro text-ink focus-ring">
+                <a href={l.href} className="micro text-(--fg) focus-ring">
                   <SlotLabel text={l.label} />
                 </a>
               </li>
@@ -100,18 +100,18 @@ export default function Navbar() {
               aria-expanded={open}
               onClick={() => setOpen(!open)}
               className={`lg:hidden relative z-70 flex flex-col items-center justify-center gap-[5px] w-11 h-11 rounded-full border press focus-ring transition-colors duration-300 ${
-                open ? "border-paper/25" : "border-ink/15"
+                open ? "border-paper/25" : "border-(--line)"
               }`}
             >
               <motion.span
                 animate={{ rotate: open ? 45 : 0, y: open ? 3.25 : 0 }}
                 transition={{ duration: 0.4, ease: ease.expoOut }}
-                className={`block w-[18px] h-[1.5px] rounded-full transition-colors duration-300 ${open ? "bg-paper" : "bg-ink"}`}
+                className={`block w-[18px] h-[1.5px] rounded-full transition-colors duration-300 ${open ? "bg-paper" : "bg-(--fg)"}`}
               />
               <motion.span
                 animate={{ rotate: open ? -45 : 0, y: open ? -3.25 : 0 }}
                 transition={{ duration: 0.4, ease: ease.expoOut }}
-                className={`block w-[18px] h-[1.5px] rounded-full transition-colors duration-300 ${open ? "bg-paper" : "bg-ink"}`}
+                className={`block w-[18px] h-[1.5px] rounded-full transition-colors duration-300 ${open ? "bg-paper" : "bg-(--fg)"}`}
               />
             </button>
           </div>

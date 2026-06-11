@@ -24,14 +24,16 @@ export default function PillCTA({
 }: {
   label?: string;
   href?: string;
-  /** invert: paper pill with ink circle (for dark surfaces) */
+  /** Default tracks the chromatic zone (auto-inverts in dark zones).
+      invert: literal paper pill — only for permanently dark surfaces
+      outside the zone system (e.g. the mobile menu overlay). */
   invert?: boolean;
   size?: keyof typeof sizes;
   onClick?: () => void;
 }) {
   const [hovered, setHovered] = useState(false);
-  const bg = invert ? "var(--color-paper)" : "var(--color-ink)";
-  const fg = invert ? "var(--color-ink)" : "var(--color-paper)";
+  const bg = invert ? "var(--color-paper)" : "var(--fg)";
+  const fg = invert ? "var(--color-ink)" : "var(--bg)";
   const s = sizes[size];
 
   return (

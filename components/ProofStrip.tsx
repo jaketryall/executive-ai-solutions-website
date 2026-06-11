@@ -15,7 +15,7 @@ function Sequence({ hidden = false }: { hidden?: boolean }) {
     <span className="marquee-seq" aria-hidden={hidden || undefined}>
       {BRANDS.map((b) => (
         <span key={b} className="flex items-center gap-[inherit]">
-          <span className="text-lg font-semibold tracking-tight text-ink/55 whitespace-nowrap uppercase">
+          <span className="text-lg font-semibold tracking-tight text-(--fg-muted) whitespace-nowrap uppercase">
             {b}
           </span>
           <span
@@ -32,9 +32,9 @@ export default function ProofStrip() {
   return (
     <section
       aria-label="Brands we've worked with"
-      className="relative border-t border-ink/8 pt-9 pb-20"
+      className="relative border-t border-(--line) pt-9 pb-20"
     >
-      <p className="micro text-taupe text-center">
+      <p className="micro text-(--fg-muted) text-center">
         Trusted by owners who needed results
       </p>
       <div className="marquee-wrap mt-6">

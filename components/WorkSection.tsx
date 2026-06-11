@@ -1,7 +1,9 @@
 "use client";
 
-// Work — the conversion engine. Dark dock over the hero, staggered editorial
-// grid, per-card image parallax, entrances that replay on every visit.
+// Work — the conversion engine. No card edges here: the chromatic zone
+// darkens the whole page as this section arrives. Header pins left while
+// two card columns scroll at different speeds; the hero showreel lands as
+// the top card of the right column.
 
 import { useRef } from "react";
 import Image from "next/image";
@@ -43,6 +45,66 @@ const WORKS = [
 ];
 
 const HEADLINE = ["Proof,", "not promises"];
+
+function WorkCard({ work }: { work: (typeof WORKS)[number] }) {
+  return (
+    <article data-work-card className="group">
+      <div className="relative aspect-4/3 rounded-[28px] overflow-hidden border border-(--line) bg-ink">
+        <div data-card-img className="absolute -inset-y-[8%] inset-x-0">
+          <Image
+            src={work.image}
+            alt={work.title}
+            fill
+            sizes="(min-width: 1024px) 31vw, 100vw"
+            className="object-cover transition-transform duration-700 group-hover:scale-[1.045]"
+            style={{ transitionTimingFunction: "var(--ease-expo-out)" }}
+          />
+        </div>
+        <span
+          className="absolute top-4 right-4 flex items-center justify-center w-10 h-10 rounded-full bg-(--fg) text-(--bg) opacity-0 translate-y-2 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0"
+          style={{ transitionTimingFunction: "var(--ease-expo-out)" }}
+          aria-hidden
+        >
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.25"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M7 17L17 7M9 7h8v8" />
+          </svg>
+        </span>
+      </div>
+      <CardMeta title={work.title} outcome={work.outcome} category={work.category} />
+    </article>
+  );
+}
+
+function CardMeta({
+  title,
+  outcome,
+  category,
+}: {
+  title: string;
+  outcome: string;
+  category: string;
+}) {
+  return (
+    <div className="mt-5 flex items-start justify-between gap-4">
+      <div>
+        <h3 className="text-xl md:text-2xl font-bold tracking-tight">{title}</h3>
+        <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-(--fg-muted)">
+          {outcome}
+        </p>
+      </div>
+      <p className="micro text-(--fg-faint) pt-2.5 whitespace-nowrap">{category}</p>
+    </div>
+  );
+}
 
 export default function WorkSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -112,6 +174,30 @@ export default function WorkSection() {
           }
         });
       });
+
+      // Dual-speed columns — the left column drifts up faster than the page.
+      // The right column stays static: the flight landing math depends on a
+      // transform-free slot, and an anchored column reads as the spine.
+      mm.add(
+        "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          gsap.fromTo(
+            "[data-col-drift]",
+            { y: 60 },
+            {
+              y: -160,
+              ease: "none",
+              scrollTrigger: {
+                trigger: "[data-work-grid]",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.6,
+                invalidateOnRefresh: true,
+              },
+            },
+          );
+        },
+      );
     },
     { scope: sectionRef },
   );
@@ -120,129 +206,90 @@ export default function WorkSection() {
     <section
       ref={sectionRef}
       id="work"
-      className="relative z-20 -mt-8 rounded-t-[40px] bg-ink-deep text-paper px-5 md:px-10 pt-24 md:pt-32 pb-24 lg:pb-32 shadow-[0_-32px_80px_rgba(14,13,12,0.4)]"
+      className="relative px-5 md:px-10 pt-28 md:pt-36 pb-28"
     >
-      {/* Header */}
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <p className="micro text-paper/40">Selected work — 2024 to now</p>
-          <h2 className="mt-5 font-extrabold uppercase tracking-[-0.04em] leading-[0.94] text-[clamp(2.6rem,7.5vw,6.5rem)]">
-            {HEADLINE.map((line, i) => (
-              <span key={line} className="block">
-                <span className="hero-line-mask">
-                  <span className="hero-line">
-                    {line}
-                    {i === HEADLINE.length - 1 && (
-                      <span className="text-oxblood">.</span>
-                    )}
+      <div className="lg:grid lg:grid-cols-12 lg:gap-10">
+        {/* Pinned header — sticks while the work scrolls past */}
+        <header className="lg:col-span-4">
+          <div className="lg:sticky lg:top-28 flex flex-col items-start">
+            <p className="micro text-(--fg-faint)">Selected work — 2024 to now</p>
+            <h2 className="mt-5 font-extrabold uppercase tracking-[-0.04em] leading-[0.94] text-[clamp(2.4rem,5.5vw,3.8rem)]">
+              {HEADLINE.map((line, i) => (
+                <span key={line} className="block">
+                  <span className="hero-line-mask">
+                    <span className="hero-line">
+                      {line}
+                      {i === HEADLINE.length - 1 && (
+                        <span className="text-oxblood">.</span>
+                      )}
+                    </span>
                   </span>
                 </span>
-              </span>
-            ))}
-          </h2>
-        </div>
-        <p className="max-w-xs text-[15px] leading-relaxed text-paper/50 pb-2">
-          Every build has one job: turn visitors into booked work. Here&rsquo;s
-          what that looks like.
-        </p>
-      </div>
-
-      {/* Staggered grid */}
-      <div className="mt-16 md:mt-24 grid lg:grid-cols-2 gap-x-6 gap-y-16 lg:gap-y-28">
-        {/* Showreel slot — the hero card lands here mid-scroll. The frame
-            stays static (flight math needs a stable rect); only the meta
-            row animates in. */}
-        <article className="group">
-          <div
-            id="showreel-slot"
-            className="relative aspect-4/3 rounded-[28px] overflow-hidden border border-paper/10 bg-ink"
-          >
-            <Image
-              src="/video-poster.webp"
-              alt="Executive AI Solutions showreel"
-              fill
-              sizes="(min-width: 1024px) 46vw, 100vw"
-              className="object-cover"
-              data-slot-poster
-            />
-          </div>
-          <div data-work-card className="mt-5 flex items-start justify-between gap-4">
-            <div>
-              <h3 className="text-xl md:text-2xl font-bold tracking-tight">
-                The Showreel
-              </h3>
-              <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-paper/50">
-                Every build in sixty seconds — straight from the timeline.
-              </p>
-            </div>
-            <p className="micro text-paper/40 pt-2.5 whitespace-nowrap">
-              Film · &rsquo;26
+              ))}
+            </h2>
+            <p className="mt-6 max-w-xs text-[15px] leading-relaxed text-(--fg-muted)">
+              Every build has one job: turn visitors into booked work.
+              Here&rsquo;s what that looks like.
             </p>
-          </div>
-        </article>
-
-        {WORKS.map((work, i) => (
-          <article
-            key={work.title}
-            data-work-card
-            className={`group ${i % 2 === 0 ? "lg:relative lg:top-24" : ""}`}
-          >
-            <div className="relative aspect-4/3 rounded-[28px] overflow-hidden border border-paper/10 bg-ink">
-              <div data-card-img className="absolute -inset-y-[8%] inset-x-0">
-                <Image
-                  src={work.image}
-                  alt={work.title}
-                  fill
-                  sizes="(min-width: 1024px) 46vw, 100vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-[1.045]"
-                  style={{ transitionTimingFunction: "var(--ease-expo-out)" }}
-                />
-              </div>
-              <span
-                className="absolute top-4 right-4 flex items-center justify-center w-10 h-10 rounded-full bg-paper text-ink opacity-0 translate-y-2 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0"
-                style={{ transitionTimingFunction: "var(--ease-expo-out)" }}
-                aria-hidden
-              >
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.25"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M7 17L17 7M9 7h8v8" />
-                </svg>
+            <div className="mt-8 flex items-center gap-4">
+              {/* TODO(owner): point at /work once the index page exists */}
+              <PillCTA label="All work" href="#work" />
+              <span className="micro text-(--fg-faint) tabular-nums">
+                {String(WORKS.length + 1).padStart(2, "0")}
               </span>
             </div>
-            <div className="mt-5 flex items-start justify-between gap-4">
-              <div>
-                <h3 className="text-xl md:text-2xl font-bold tracking-tight">
-                  {work.title}
-                </h3>
-                <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-paper/50">
-                  {work.outcome}
-                </p>
-              </div>
-              <p className="micro text-paper/40 pt-2.5 whitespace-nowrap">
-                {work.category}
-              </p>
+          </div>
+        </header>
+
+        {/* Dual-speed card columns */}
+        <div data-work-grid className="mt-16 lg:mt-0 lg:col-span-8">
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Right column (static — the flight lands here) */}
+            <div className="space-y-14 lg:order-2">
+              <article className="group">
+                <div
+                  id="showreel-slot"
+                  className="relative aspect-4/3 rounded-[28px] overflow-hidden border border-(--line) bg-ink"
+                >
+                  <Image
+                    src="/video-poster.webp"
+                    alt="Executive AI Solutions showreel"
+                    fill
+                    sizes="(min-width: 1024px) 31vw, 100vw"
+                    className="object-cover"
+                    data-slot-poster
+                  />
+                </div>
+                <div data-work-card>
+                  <CardMeta
+                    title="The Showreel"
+                    outcome="Every build in sixty seconds — straight from the timeline."
+                    category="Film · '26"
+                  />
+                </div>
+              </article>
+              <WorkCard work={WORKS[1]} />
+              <WorkCard work={WORKS[3]} />
             </div>
-          </article>
-        ))}
+
+            {/* Left column (drifts faster on scroll) */}
+            <div data-col-drift className="space-y-14 lg:order-1 lg:pt-36">
+              <WorkCard work={WORKS[0]} />
+              <WorkCard work={WORKS[2]} />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Conversion nudge */}
-      <div className="mt-20 lg:mt-28 pt-10 border-t border-paper/10 flex flex-wrap items-center justify-between gap-6">
+      <div className="mt-24 lg:mt-32 pt-10 border-t border-(--line) flex flex-wrap items-center justify-between gap-6">
         <div>
-          <p className="micro text-paper/40">Next opening — July</p>
+          <p className="micro text-(--fg-faint)">Next opening — July</p>
           <p className="mt-2 text-lg font-semibold tracking-tight">
             Your project could be here.
           </p>
         </div>
-        <PillCTA label="Start a project" href="#contact" invert />
+        <PillCTA label="Start a project" href="#contact" />
       </div>
     </section>
   );

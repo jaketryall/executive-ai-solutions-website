@@ -163,13 +163,13 @@ export default function Hero() {
     >
       {/* Eyebrow + scarcity */}
       <div data-hero-fade className="flex flex-wrap items-center gap-x-5 gap-y-3">
-        <p className="micro text-taupe">Premium web design — built to convert</p>
-        <span className="hidden md:block h-px w-12 bg-ink/15" aria-hidden />
-        <span className="inline-flex items-center gap-2.5 h-9 pl-1.5 pr-4 rounded-full border border-ink/10 bg-paper-warm">
+        <p className="micro text-(--fg-muted)">Premium web design — built to convert</p>
+        <span className="hidden md:block h-px w-12 bg-(--line)" aria-hidden />
+        <span className="inline-flex items-center gap-2.5 h-9 pl-1.5 pr-4 rounded-full border border-(--line) bg-(--surface)">
           <span className="flex items-center justify-center w-6 h-6 rounded-full bg-oxblood/10">
             <span className="w-1.5 h-1.5 rounded-full bg-oxblood text-oxblood pulse-dot" />
           </span>
-          <span className="micro text-ink">2 spots left for July</span>
+          <span className="micro text-(--fg)">2 spots left for July</span>
         </span>
       </div>
 
@@ -191,13 +191,13 @@ export default function Hero() {
 
       {/* Description + CTAs — pinned to hero bottom on desktop */}
       <div className="mt-12 lg:mt-auto lg:pt-10 max-w-sm relative z-20">
-        <p data-hero-fade className="text-[15px] leading-relaxed text-taupe">
+        <p data-hero-fade className="text-[15px] leading-relaxed text-(--fg-muted)">
           We design and build premium, conversion-led websites with motion you
           can feel. Strategy, design and build — one team, no hand-offs.
         </p>
         <div data-hero-fade className="mt-6 flex items-center gap-7">
           <PillCTA label="Start a project" href="#contact" />
-          <a href="#work" className="group inline-flex items-center gap-2 text-[13px] font-medium tracking-tight text-ink focus-ring">
+          <a href="#work" className="group inline-flex items-center gap-2 text-[13px] font-medium tracking-tight focus-ring">
             <span className="slot-link">
               <span className="slot-link-stack">
                 <span className="slot-link-inner">See the work</span>
@@ -234,19 +234,19 @@ export default function Hero() {
                 then fade late in the flight */}
             <div
               data-deck-rest
-              className="absolute inset-0 rounded-[28px] border border-ink/10 bg-paper-warm origin-bottom rotate-[1.75deg] translate-y-2.5 scale-[0.985]"
+              className="absolute inset-0 rounded-[28px] border border-(--line) bg-paper-warm origin-bottom rotate-[1.75deg] translate-y-2.5 scale-[0.985]"
               aria-hidden
             />
             <div
               data-deck-rest
-              className="absolute inset-0 rounded-[28px] border border-ink/10 bg-paper-warm origin-bottom rotate-[-1.5deg] translate-y-5 scale-[0.97] flex items-center justify-center"
+              className="absolute inset-0 rounded-[28px] border border-(--line) bg-paper-warm origin-bottom rotate-[-1.5deg] translate-y-5 scale-[0.97] flex items-center justify-center"
               aria-hidden
             >
-              <span className="micro text-taupe/70">More work below ↓</span>
+              <span className="micro text-(--fg-muted)/70">More work below ↓</span>
             </div>
             <div data-reel-stack className="absolute inset-0">
               {/* The showreel */}
-              <div className="absolute inset-0 rounded-[28px] overflow-hidden border border-ink/10 bg-ink-deep shadow-[0_24px_60px_rgba(14,13,12,0.28)]">
+              <div className="absolute inset-0 rounded-[28px] overflow-hidden border border-(--line) bg-ink-deep shadow-[0_24px_60px_rgba(14,13,12,0.28)]">
                 <video
                   src="/final-comp.mp4"
                   poster="/video-poster.webp"
@@ -267,7 +267,7 @@ export default function Hero() {
 
               <p
                 data-flight-fade
-                className="font-hand absolute -bottom-10 right-3 -rotate-4 text-2xl text-taupe select-none"
+                className="font-hand absolute -bottom-10 right-3 -rotate-4 text-2xl text-(--fg-muted) select-none"
                 aria-hidden
               >
                 real client work ↑

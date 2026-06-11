@@ -26,12 +26,26 @@
   --dur-comp: 400ms;
   --dur-section: 700ms;
   --dur-cinematic: 1200ms;
+
+  /* Chromatic zone tokens — GSAP morphs these between light and dark zones
+     on scroll. Everything reads color from these, never from raw palette. */
+  --bg: #e5e1db;
+  --fg: #1a1816;
+  --fg-muted: #78736c;
+  --fg-faint: rgba(26, 24, 22, 0.45);
+  --line: rgba(26, 24, 22, 0.12);
+  --surface: #efebe4;
 }
 
 body {
-  background: var(--color-paper);
-  color: var(--color-ink);
+  background: var(--bg);
+  color: var(--fg);
   -webkit-font-smoothing: antialiased;
+}
+
+main {
+  background: var(--bg);
+  color: var(--fg);
 }
 
 ::selection {
@@ -52,7 +66,7 @@ body {
 
   /* Keyboard focus */
   .focus-ring:focus-visible {
-    outline: 2px solid var(--color-ink);
+    outline: 2px solid var(--fg);
     outline-offset: 3px;
     border-radius: 9999px;
   }
