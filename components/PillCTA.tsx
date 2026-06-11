@@ -11,8 +11,25 @@ import HoverText from "./HoverText";
 import { ease } from "@/lib/motion";
 
 const sizes = {
-  default: { pill: "h-11 pl-5 pr-2 gap-2", circle: "w-8 h-8", travel: 20 },
-  compact: { pill: "h-10 pl-4 pr-1.5 gap-2", circle: "w-7 h-7", travel: 18 },
+  default: {
+    pill: "h-11 pl-5 pr-2 gap-2",
+    circle: "w-8 h-8",
+    travel: 20,
+    label: "text-[13px]",
+  },
+  compact: {
+    pill: "h-10 pl-4 pr-1.5 gap-2",
+    circle: "w-7 h-7",
+    travel: 18,
+    label: "text-[13px]",
+  },
+  /** Oversized — lives inline inside display headlines (final CTA) */
+  mega: {
+    pill: "h-14 md:h-18 pl-7 md:pl-9 pr-2.5 md:pr-3 gap-3",
+    circle: "w-10 h-10 md:w-13 md:h-13",
+    travel: 26,
+    label: "text-[15px] md:text-lg",
+  },
 } as const;
 
 export default function PillCTA({
@@ -48,7 +65,7 @@ export default function PillCTA({
       <HoverText
         text={label}
         trigger={hovered}
-        className="text-[13px] font-medium tracking-tight"
+        className={`${s.label} font-medium tracking-tight`}
       />
       <span
         className={`relative ${s.circle} rounded-full flex items-center justify-center overflow-hidden`}
