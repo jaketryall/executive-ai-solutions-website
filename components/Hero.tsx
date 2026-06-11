@@ -5,7 +5,6 @@
 // (middle) → ambient float (inner), so the writes never fight each other.
 
 import { useRef } from "react";
-import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -46,16 +45,6 @@ export default function Hero() {
             { opacity: 1, y: 0, duration: 0.9, stagger: 0.09 },
             0.65,
           );
-
-        // Ambient float — starts once the entrance has landed.
-        gsap.to("[data-hero-float]", {
-          y: -10,
-          duration: 3.6,
-          delay: 1.8,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1,
-        });
 
         // Scroll parallax — each line drifts at its own rate, card lags.
         gsap
@@ -161,35 +150,19 @@ export default function Hero() {
       >
         <div data-hero-card>
           <div data-hero-entrance>
-            <div data-hero-float className="relative">
-              {/* Deck peeks — the work, waiting behind the reel */}
+            <div className="relative">
+              {/* Deck peeks — a tidy stack of cards waiting beneath the reel */}
               <div
-                className="absolute inset-0 rounded-3xl overflow-hidden border border-ink/10 bg-paper-warm rotate-[4.5deg] translate-x-5 translate-y-3"
+                className="absolute inset-0 rounded-[28px] border border-ink/10 bg-paper-warm origin-bottom rotate-[1.75deg] translate-y-2.5 scale-[0.985]"
                 aria-hidden
-              >
-                <Image
-                  src="/Celestial Laptop Mockup.webp"
-                  alt=""
-                  fill
-                  sizes="(min-width: 1024px) 36vw, 100vw"
-                  className="object-cover"
-                />
-              </div>
+              />
               <div
-                className="absolute inset-0 rounded-3xl overflow-hidden border border-ink/10 bg-paper-warm -rotate-4 -translate-x-4 translate-y-5"
+                className="absolute inset-0 rounded-[28px] border border-ink/10 bg-paper-warm origin-bottom rotate-[-1.5deg] translate-y-5 scale-[0.97]"
                 aria-hidden
-              >
-                <Image
-                  src="/custom-dashboard-mockup.webp"
-                  alt=""
-                  fill
-                  sizes="(min-width: 1024px) 36vw, 100vw"
-                  className="object-cover"
-                />
-              </div>
+              />
 
               {/* The showreel */}
-              <div className="relative aspect-16/10 rounded-[28px] overflow-hidden border border-ink/10 bg-ink-deep -rotate-2 shadow-[0_32px_80px_rgba(14,13,12,0.35)]">
+              <div className="relative aspect-16/10 rounded-[28px] overflow-hidden border border-ink/10 bg-ink-deep shadow-[0_24px_60px_rgba(14,13,12,0.28)]">
                 <video
                   src="/final-comp.mp4"
                   poster="/video-poster.webp"
