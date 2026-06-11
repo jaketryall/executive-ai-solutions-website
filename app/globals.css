@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+@theme {
+  /* Palette — design-dna/tokens.css */
+  --color-paper: #e5e1db;
+  --color-paper-warm: #efebe4;
+  --color-ink: #1a1816;
+  --color-ink-deep: #0e0d0c;
+  --color-taupe: #78736c;
+  --color-oxblood: #7a1e27;
+  --color-ox-deep: #5a1520;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist);
+  --font-mono: var(--font-geist-mono);
+  --font-hand: var(--font-caveat);
+}
+
+:root {
+  /* Motion — Apple-style easing + duration ramp */
+  --ease-expo-out: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-expo-in-out: cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --dur-micro: 200ms;
+  --dur-comp: 400ms;
+  --dur-section: 700ms;
+  --dur-cinematic: 1200ms;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: var(--color-ink);
+  color: var(--color-paper);
+}
+
+@layer components {
+  /* Tactile button press */
+  .press {
+    transition:
+      transform 150ms var(--ease-soft),
+      background-color 400ms var(--ease-expo-out);
+  }
+  .press:active {
+    transform: scale(0.97);
+  }
+
+  /* Keyboard focus */
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 9999px;
+  }
+
+  /* Availability / status dot pulse — set `color` to the dot color */
+  .pulse-dot {
+    position: relative;
+  }
+  .pulse-dot::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 9999px;
+    background: currentColor;
+    opacity: 0.3;
+    animation: pulseDot 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Mono micro-label */
+  .micro {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+  }
+
+  /* Slot-reveal link — original lifts out, clone (oxblood) arrives from below */
+  .slot-link {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    line-height: 1.2;
+    cursor: pointer;
+  }
+  .slot-link-stack {
+    display: inline-grid;
+    grid-template-areas: "stack";
+    transition: transform 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+    will-change: transform;
+  }
+  .slot-link-inner,
+  .slot-link-clone {
+    grid-area: stack;
+    display: inline-block;
+  }
+  .slot-link-clone {
+    transform: translateY(110%);
+    color: var(--color-oxblood);
+  }
+  .slot-link:hover .slot-link-stack,
+  .slot-link:focus-visible .slot-link-stack,
+  a:hover > .slot-link .slot-link-stack,
+  a:focus-visible > .slot-link .slot-link-stack {
+    transform: translateY(-110%);
+  }
+
+  /* Hero stacked-word masks — lines start hidden below until GSAP runs */
+  .hero-line-mask {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+  .hero-line {
+    display: block;
+    will-change: transform;
+    transform: translateY(115%);
+  }
+
+  [data-hero-fade] {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  [data-hero-card] {
+    opacity: 0;
+  }
+}
+
+@keyframes pulseDot {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-line {
+    transform: none;
+  }
+  [data-hero-fade] {
+    opacity: 1;
+    transform: none;
+  }
+  [data-hero-card] {
+    opacity: 1;
+  }
+  .pulse-dot::after {
+    animation: none;
+  }
+}
