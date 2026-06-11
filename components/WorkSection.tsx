@@ -185,7 +185,7 @@ export default function WorkSection() {
             "[data-col-drift]",
             { y: 60 },
             {
-              y: -160,
+              y: -110,
               ease: "none",
               scrollTrigger: {
                 trigger: "[data-work-grid]",
@@ -238,10 +238,11 @@ export default function WorkSection() {
       <div className="relative lg:grid lg:grid-cols-12 lg:gap-10">
         {/* Pinned header — sticks while the work scrolls past */}
         <header className="lg:col-span-4">
-          {/* lg:sticky is the no-JS/reduced-motion fallback; under
-              ScrollSmoother (transformed ancestor) sticky is inert and the
-              ScrollTrigger pin below takes over. */}
-          <div data-work-header className="lg:sticky lg:top-28 flex flex-col items-start">
+          {/* Sticky ONLY under reduced motion (no smoother, no GSAP pin
+              there). With motion on, CSS sticky still half-engages inside
+              ScrollSmoother's transformed content and stacks with the
+              ScrollTrigger pin — two pinning systems fighting. */}
+          <div data-work-header className="motion-reduce:lg:sticky motion-reduce:lg:top-28 flex flex-col items-start">
             <p className="micro text-(--fg-faint)">Selected work — 2024 to now</p>
             <h2 className="mt-5 font-extrabold uppercase tracking-[-0.04em] leading-[0.94] text-[clamp(2.4rem,5.5vw,3.8rem)]">
               {HEADLINE.map((line, i) => (
@@ -290,7 +291,7 @@ export default function WorkSection() {
       </div>
 
       {/* Conversion nudge */}
-      <div className="relative mt-24 lg:mt-32 pt-10 border-t border-(--line) flex flex-wrap items-center justify-between gap-6">
+      <div className="relative mt-14 lg:mt-16 pt-10 border-t border-(--line) flex flex-wrap items-center justify-between gap-6">
         <div>
           <p className="micro text-(--fg-faint)">Next opening — July</p>
           <p className="mt-2 text-lg font-semibold tracking-tight">
