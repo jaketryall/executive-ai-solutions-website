@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import PillCTA from "@/components/PillCTA";
 import FaqList, { type Faq } from "@/components/FaqList";
@@ -70,9 +71,12 @@ export default function FaqPage() {
               </h1>
               <p className="mt-6 max-w-xs text-[15px] leading-relaxed text-(--fg-muted)">
                 The straight version — no sales gloss. Anything missing,{" "}
-                <a href="/#contact" className="text-(--fg) font-medium underline underline-offset-4 decoration-(--line) hover:decoration-current transition-colors">
+                <Link
+                  href="/#contact"
+                  className="text-(--fg) font-medium underline underline-offset-4 decoration-(--line) hover:decoration-current transition-colors"
+                >
                   ask directly
-                </a>
+                </Link>
                 .
               </p>
               <div className="mt-9 hidden lg:block">
