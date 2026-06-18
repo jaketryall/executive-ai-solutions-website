@@ -38,6 +38,8 @@ export default function PillCTA({
   invert = false,
   size = "default",
   onClick,
+  hovered: controlledHovered,
+  onHoverChange,
 }: {
   label?: string;
   href?: string;
@@ -47,8 +49,13 @@ export default function PillCTA({
   invert?: boolean;
   size?: keyof typeof sizes;
   onClick?: () => void;
+  /** Controlled hover — lets a parent drive the swap (e.g. the nav's
+      seam-split renders two synced copies of this pill). */
+  hovered?: boolean;
+  onHoverChange?: (hovered: boolean) => void;
 }) {
-  const [hovered, setHovered] = useState(false);
+  const [local, setLocal] = useState(false);
+  const hovered = controlledHovered ?? local;
   const bg = invert ? "var(--color-paper)" : "var(--fg)";
   const fg = invert ? "var(--color-ink)" : "var(--bg)";
   const s = sizes[size];
@@ -57,8 +64,14 @@ export default function PillCTA({
     <Link
       href={href}
       onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={() => {
+        setLocal(true);
+        onHoverChange?.(true);
+      }}
+      onMouseLeave={() => {
+        setLocal(false);
+        onHoverChange?.(false);
+      }}
       className={`relative inline-flex items-center ${s.pill} rounded-full press focus-ring hover:-translate-y-0.5 transition-transform duration-300`}
       style={{ background: bg, color: fg }}
     >

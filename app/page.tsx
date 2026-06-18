@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import ProofStrip from "@/components/ProofStrip";
 import WorkSection from "@/components/WorkSection";
 import ServicesSection from "@/components/ServicesSection";
+import ProcessSection from "@/components/ProcessSection";
 import AboutSection from "@/components/AboutSection";
 import FinalCTA from "@/components/FinalCTA";
 import ContactSection from "@/components/ContactSection";
@@ -19,6 +20,7 @@ export default function Home() {
         <ProofStrip />
         <WorkSection />
         <ServicesSection />
+        <ProcessSection />
         <AboutSection />
         <FinalCTA />
         <ContactSection contactEmail={process.env.CONTACT_EMAIL} />

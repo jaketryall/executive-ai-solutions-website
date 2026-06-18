@@ -27,6 +27,10 @@ export default function SmoothScroll({
         return;
       }
 
+      // Mobile URL-bar show/hide fires resize → ScrollTrigger.refresh storms
+      // (the trace's refreshHeight / _maxScroll / _getBounds reads). Ignore it.
+      ScrollTrigger.config({ ignoreMobileResize: true });
+
       const smoother = ScrollSmoother.create({
         wrapper: wrapRef.current!,
         content: wrapRef.current!.firstElementChild as HTMLElement,

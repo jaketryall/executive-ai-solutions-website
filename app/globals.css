@@ -75,6 +75,20 @@ main {
     transform: scale(0.97);
   }
 
+  /* Nav expanding-tray reveal — children rise + fade once the dock opens.
+     Per-element delay is set inline so the stagger is easy to retune. */
+  .nav-reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.55s var(--ease-expo-out),
+      transform 0.55s var(--ease-expo-out);
+  }
+  .nav-open .nav-reveal {
+    opacity: 1;
+    transform: none;
+  }
+
   /* Keyboard focus */
   .focus-ring:focus-visible {
     outline: 2px solid var(--fg);
@@ -191,6 +205,41 @@ main {
   }
 }
 
+/* Hero sparkle field — the dots are static; the whole SVG layer gently
+   breathes its opacity as ONE compositor animation (GPU-composited), instead
+   of 88 independent per-element keyframes re-rastering every frame. */
+.sparkle-field {
+  animation: sparkleFieldBreathe 7s ease-in-out infinite;
+  will-change: opacity;
+}
+
+@keyframes sparkleFieldBreathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.72;
+  }
+}
+
+/* Hero "SHOW REEL" marquee — seamless right-to-left loop. Two identical copies
+   sit side by side; shifting the track by one copy's width (-50%) lands on an
+   identical frame, so the loop is invisible. Transform-only = GPU-composited. */
+.marquee-track {
+  animation: marqueeRTL 50s linear infinite;
+  will-change: transform;
+}
+
+@keyframes marqueeRTL {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-line {
     transform: none;
@@ -203,6 +252,12 @@ main {
     opacity: 1;
   }
   .pulse-dot::after {
+    animation: none;
+  }
+  .sparkle-field {
+    animation: none;
+  }
+  .marquee-track {
     animation: none;
   }
 }
