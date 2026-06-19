@@ -28,6 +28,15 @@ const COVER_IMAGES = [
   "/Rubber iPhone Mockup.webp",
 ];
 
+// client wordmarks for the trust carousel that rises in under the formed reel
+const REEL_BRANDS = [
+  "Riled Up",
+  "Desert Wings",
+  "Wings N Wheels",
+  "Lando",
+  "AZ Gyro Tours",
+];
+
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
   const [slide, setSlide] = useState(0);
@@ -47,19 +56,22 @@ export default function Hero() {
       const shrink = root.querySelector<HTMLElement>("[data-shrink]");
       const cover = root.querySelector<HTMLElement>("[data-cover]");
       const chrome = root.querySelector<HTMLElement>("[data-hero-chrome]");
+      const proof = root.querySelector<HTMLElement>("[data-reel-proof]");
       if (!shrink || !cover) return;
 
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduce) return; // static cover — scrolls away normally
+      if (reduce) return; // static cover (carousel shown via CSS) — scrolls away
 
       // Snappy: short scroll distance + tight scrub + a punchy ease, so the
       // reel forms decisively (Lando completes its shrink in well under a
       // screen of scroll) and holds briefly before the pin releases.
+      // Shorter pin distance so it forms decisively without the user feeling
+      // stuck scrolling in place.
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: root,
           start: "top top",
-          end: "+=85%",
+          end: "+=52%",
           pin: true,
           scrub: 0.5,
           anticipatePin: 1,
@@ -67,11 +79,45 @@ export default function Hero() {
         },
       });
 
-      tl.to(shrink, { scale: 0.6, borderRadius: 30, ease: "power3.inOut", duration: 0.72 }, 0)
-        .to(cover, { opacity: 0, ease: "power2.in", duration: 0.5 }, 0)
-        .to(chrome, { opacity: 0, ease: "power2.in", duration: 0.4 }, 0)
-        // hold the formed reel briefly before the pin releases
-        .to({}, { duration: 0.22 });
+      // carousel starts low + hidden (CSS holds opacity:0 pre-JS, so no flash)
+      if (proof) gsap.set(proof, { y: 20 });
+
+      tl.to(shrink, { scale: 0.6, borderRadius: 30, ease: "power3.inOut", duration: 0.7 }, 0)
+        .to(cover, { opacity: 0, ease: "power2.in", duration: 0.46 }, 0)
+        .to(chrome, { opacity: 0, ease: "power2.in", duration: 0.38 }, 0);
+
+      // carousel rises in EARLY — overlapping the tail of the shrink — so it
+      // reads quickly instead of tacking length onto the pin
+      if (proof) {
+        tl.to(proof, { opacity: 1, y: 0, ease: "power2.out", duration: 0.32 }, 0.46);
+      }
+
+      // brief settle before the pin releases
+      tl.to({}, { duration: 0.08 });
+
+      // ── Seamless trust marquee — translate the track by exactly one sequence
+      //    width and loop, so the join is invisible. Enough sequences are
+      //    rendered to overflow any monitor; re-measure on refresh (resize) and
+      //    once fonts load, since the inter-brand gap is viewport-relative. ──
+      const track = root.querySelector<HTMLElement>("[data-reel-track]");
+      const seq = root.querySelector<HTMLElement>("[data-reel-seq]");
+      const relayout = () => {
+        if (!track || !seq) return;
+        gsap.killTweensOf(track);
+        gsap.set(track, { x: 0 });
+        const w = seq.getBoundingClientRect().width;
+        if (w) {
+          gsap.to(track, { x: -w, duration: w / 70, ease: "none", repeat: -1 });
+        }
+      };
+      relayout();
+      document.fonts?.ready.then(relayout);
+      ScrollTrigger.addEventListener("refreshInit", relayout);
+
+      return () => {
+        ScrollTrigger.removeEventListener("refreshInit", relayout);
+        if (track) gsap.killTweensOf(track);
+      };
     },
     { scope: ref },
   );
@@ -169,6 +215,43 @@ export default function Hero() {
             <br />
             found on Google &amp; booked solid.
           </p>
+        </div>
+      </div>
+
+      {/* ── Trust carousel — rises in at the foot of the formed reel ── */}
+      <div
+        data-reel-proof
+        className="pointer-events-none absolute inset-x-0 bottom-[6%]"
+      >
+        <p className="micro text-center text-paper/45">
+          Trusted by owners who needed results
+        </p>
+        <div className="marquee-wrap mt-3.5">
+          {/* Enough identical sequences to overflow any monitor; GSAP loops the
+              track by exactly one sequence width, so the join is seamless at
+              any screen size (see the marquee loop in useGSAP). */}
+          <div data-reel-track className="flex w-max will-change-transform">
+            {Array.from({ length: 8 }).map((_, copy) => (
+              <div
+                key={copy}
+                data-reel-seq
+                className="flex shrink-0 items-center"
+                aria-hidden={copy > 0 || undefined}
+              >
+                {REEL_BRANDS.map((b) => (
+                  <span
+                    key={b}
+                    className="flex shrink-0 items-center gap-[clamp(1.75rem,4vw,3rem)] pr-[clamp(1.75rem,4vw,3rem)]"
+                  >
+                    <span className="whitespace-nowrap text-base font-semibold uppercase tracking-tight text-paper/50 md:text-lg">
+                      {b}
+                    </span>
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-oxblood/40" aria-hidden />
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

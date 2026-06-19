@@ -1,6 +1,5 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import ProofStrip from "@/components/ProofStrip";
 import WorkSection from "@/components/WorkSection";
 import ServicesSection from "@/components/ServicesSection";
 import ProcessSection from "@/components/ProcessSection";
@@ -17,7 +16,6 @@ export default function Home() {
       <Navbar />
       <SmoothScroll>
         <Hero />
-        <ProofStrip />
         <WorkSection />
         <ServicesSection />
         <ProcessSection />

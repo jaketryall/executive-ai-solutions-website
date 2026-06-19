@@ -240,6 +240,14 @@ main {
   }
 }
 
+/* Trust carousel inside the showreel — held hidden until the hero pin reveals
+   it (so the pre-JS paint, where the hero is in view, can't flash it). Stays
+   hidden under reduced motion too: there the hero is a static cover and the
+   pin — and thus the reveal — never runs, so it shouldn't overlap the cover. */
+[data-reel-proof] {
+  opacity: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-line {
     transform: none;

@@ -27,11 +27,11 @@ function Sequence({ hidden = false }: { hidden?: boolean }) {
     <span className="marquee-seq" aria-hidden={hidden || undefined}>
       {BRANDS.map((b) => (
         <span key={b} className="flex items-center gap-[inherit]">
-          <span className="text-lg font-semibold tracking-tight text-(--fg-muted) whitespace-nowrap uppercase">
+          <span className="text-2xl md:text-3xl font-semibold tracking-tight text-(--fg-muted) whitespace-nowrap uppercase">
             {b}
           </span>
           <span
-            className="w-1.5 h-1.5 rounded-full bg-oxblood/40 shrink-0"
+            className="w-2 h-2 rounded-full bg-oxblood/40 shrink-0"
             aria-hidden
           />
         </span>
@@ -104,7 +104,11 @@ export default function ProofStrip() {
     <section
       ref={sectionRef}
       aria-label="Brands we've worked with"
-      className="relative py-7"
+      // Pull-up under the reel is gated on `html.eas-ready` (set once the hero
+      // is pinned) — otherwise the SSR/pre-JS paint, where the hero is a single
+      // screen, flashes this strip into the first viewport. -mt-px holds the
+      // dark-section seam until then.
+      className="zone-dark relative -mt-px bg-ink-deep py-10 text-(--fg) [html.eas-ready_&]:mt-[-16vh]"
     >
       <p className="micro text-(--fg-faint) text-center">
         Trusted by owners who needed results

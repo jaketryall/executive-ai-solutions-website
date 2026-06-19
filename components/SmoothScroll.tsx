@@ -27,6 +27,14 @@ export default function SmoothScroll({
         return;
       }
 
+      // Mark the page ready BEFORE creating the smoother. Layout that only makes
+      // sense once the hero is pinned (the proof strip's pull-up under the reel)
+      // is gated on `html.eas-ready`, so the server-rendered / pre-JS paint —
+      // where the hero is just one screen tall — can't yank the proof into the
+      // first screen. Setting it before create() lets the smoother's refresh
+      // measure the pulled-up layout in the same pass.
+      document.documentElement.classList.add("eas-ready");
+
       // Mobile URL-bar show/hide fires resize → ScrollTrigger.refresh storms
       // (the trace's refreshHeight / _maxScroll / _getBounds reads). Ignore it.
       ScrollTrigger.config({ ignoreMobileResize: true });
@@ -70,6 +78,7 @@ export default function SmoothScroll({
       return () => {
         wrapper.removeEventListener("scroll", onWrapperScroll);
         document.removeEventListener("click", onClick);
+        document.documentElement.classList.remove("eas-ready");
         smoother.kill();
       };
     },
