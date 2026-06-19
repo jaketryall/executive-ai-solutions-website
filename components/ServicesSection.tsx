@@ -52,8 +52,8 @@ function ServiceCard({ service }: { service: (typeof SERVICES)[number] }) {
       data-service-card
       className={`relative overflow-hidden rounded-[40px] border text-(--fg) ${
         service.dark
-          ? "zone-dark bg-ink-deep border-paper/10"
-          : "bg-paper-warm border-ink/10"
+          ? "zone-dark bg-ink border-paper/10"
+          : "zone-light bg-paper-warm border-ink/10"
       }`}
     >
       <div
@@ -234,7 +234,7 @@ export default function ServicesSection() {
     <section
       ref={sectionRef}
       id="services"
-      className="relative px-5 md:px-10 pt-24 md:pt-32 pb-28 text-(--fg)"
+      className="zone-dark relative -mt-px bg-ink-deep px-5 md:px-10 pt-24 md:pt-32 pb-28 text-(--fg)"
     >
 
       {/* Header */}

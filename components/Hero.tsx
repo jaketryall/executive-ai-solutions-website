@@ -37,7 +37,14 @@ const REEL_BRANDS = [
   "AZ Gyro Tours",
 ];
 
-export default function Hero() {
+// `tagline` is resolved server-side (ad campaign + geo) and passed in, so the
+// matched copy renders with no flicker. Defaults to the studio's standard line
+// for bots/direct visitors. See lib/personalize.ts.
+export default function Hero({
+  tagline = "Websites that get local brands found on Google & booked solid.",
+}: {
+  tagline?: string;
+}) {
   const ref = useRef<HTMLElement>(null);
   const [slide, setSlide] = useState(0);
 
@@ -211,9 +218,7 @@ export default function Hero() {
 
           {/* tagline, bottom-left */}
           <p className="absolute bottom-[9%] left-4 max-w-xs text-[13px] font-medium uppercase leading-snug tracking-[0.04em] text-paper/90 md:left-10 md:text-sm">
-            Websites that get local brands
-            <br />
-            found on Google &amp; booked solid.
+            {tagline}
           </p>
         </div>
       </div>

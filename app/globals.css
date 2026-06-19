@@ -59,6 +59,18 @@ main {
   --surface: #1a1816;
 }
 
+/* Light-zone token override — the complement of .zone-dark, for light cards or
+   islands that sit INSIDE a dark section (resets tokens so their text reads
+   dark again instead of inheriting the section's light text). */
+.zone-light {
+  --bg: #e5e1db;
+  --fg: #1a1816;
+  --fg-muted: #78736c;
+  --fg-faint: rgba(26, 24, 22, 0.45);
+  --line: rgba(26, 24, 22, 0.12);
+  --surface: #efebe4;
+}
+
 ::selection {
   background-color: var(--color-ink);
   color: var(--color-paper);
