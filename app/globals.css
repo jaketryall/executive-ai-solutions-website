@@ -173,6 +173,27 @@ main {
     transform: translateY(115%);
   }
 
+  /* STUDIO→WORK letter morph — per-letter clip masks for two right-aligned
+     words stacked in the same box (see Hero.tsx [data-morph]; the swap is
+     driven from WorkSection.tsx as that section rises). Reuses the
+     .hero-line-mask idiom at letter granularity: each mask clips one glyph.
+     STUDIO letters rest at y:0 (shown) and rise up + out; WORK letters rest at
+     translateY(100%) (clipped below) and rise up into the same slot from under.
+     Transform-only, no opacity. Pre-JS / reduced-motion rest state = STUDIO
+     only (WORK stays clipped below), identical to the old static wordmark. */
+  .morph-mask {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+  }
+  .morph-letter {
+    display: block;
+    will-change: transform;
+  }
+  .morph-letter-in {
+    transform: translateY(100%);
+  }
+
   [data-hero-fade] {
     opacity: 0;
     transform: translateY(24px);
@@ -260,6 +281,13 @@ main {
   opacity: 0;
 }
 
+/* Mini marquee — small services ticker under the hero statement. Reuses the
+   seamless RTL loop (two copies, shifted -50%), just faster than the big one. */
+.mini-marquee {
+  animation: marqueeRTL 24s linear infinite;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-line {
     transform: none;
@@ -278,6 +306,9 @@ main {
     animation: none;
   }
   .marquee-track {
+    animation: none;
+  }
+  .mini-marquee {
     animation: none;
   }
 }

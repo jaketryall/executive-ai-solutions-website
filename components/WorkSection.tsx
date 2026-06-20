@@ -121,17 +121,16 @@ export default function WorkSection() {
       const trigger = sectionRef.current;
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Entrance is scroll-LINKED (scrub), not a one-shot: the frame grows +
-        // fades in as the section rises, then the content staggers in just
-        // behind it. Both fade up from opacity 0, so nothing is ever seen
-        // sitting still — and there's NO invalidateOnRefresh, so a refresh
-        // (fonts/images loading) can't flash it visible→hidden.
+        // Entrance is scroll-LINKED (scrub), not a one-shot: the frame grows
+        // (scale) as the section rises and the content slides up (y) just behind
+        // it — but NO opacity fades, so the box and everything in it stay fully
+        // visible the whole time, just settling into place. No invalidateOnRefresh
+        // either, so a refresh (fonts/images loading) can't flash anything.
         gsap.fromTo(
           "[data-work-frame]",
-          { scale: 0.92, opacity: 0 },
+          { scale: 0.92 },
           {
             scale: 1,
-            opacity: 1,
             ease: "none",
             scrollTrigger: { trigger, start: "top 88%", end: "top 50%", scrub: 0.5 },
           },
@@ -139,10 +138,9 @@ export default function WorkSection() {
 
         gsap.fromTo(
           "[data-work-reveal]",
-          { y: 52, opacity: 0 },
+          { y: 52 },
           {
             y: 0,
-            opacity: 1,
             ease: "none",
             stagger: 0.06,
             scrollTrigger: { trigger, start: "top 82%", end: "top 40%", scrub: 0.5 },
@@ -211,6 +209,49 @@ export default function WorkSection() {
               scrollTrigger: { trigger, start: "top bottom", end: "bottom top", scrub: 1 },
             },
           );
+
+          // ── STUDIO → WORK letter morph ────────────────────────────────────
+          // The hero's bottom-right wordmark reads STUDIO; as this section rises
+          // into view it morphs into WORK, letter by letter — each STUDIO glyph
+          // rising up + out of its clip mask while the WORK glyph rises in from
+          // under (transform-only, no opacity). The word lives in the HERO, so
+          // it's queried from the document (NOT the useGSAP scope), and the
+          // letters are driven by element refs. Only the inner letters get a
+          // transform here (yPercent); the word's own y has no other authority
+          // (its hero parallax drift was removed), so nothing fights. The word
+          // moves at scroll speed, staying just ahead of the rising dark box
+          // over the light hero, so the dark ink letters never go ink-on-ink.
+          const morph = document.querySelector<HTMLElement>("[data-morph]");
+          if (morph) {
+            const outs = gsap.utils.toArray<HTMLElement>(
+              morph.querySelectorAll("[data-morph-out]"),
+            );
+            const ins = gsap.utils.toArray<HTMLElement>(
+              morph.querySelectorAll("[data-morph-in]"),
+            );
+            // One scrubbed timeline. STUDIO(6) leaves left→right; WORK(4) enters
+            // aligned to STUDIO's trailing four slots (so S,T leave into nothing
+            // and the right edge never shifts). No .from()/invalidateOnRefresh
+            // on this one — the CSS rest state equals the tween start, so a
+            // refresh can't flash.
+            const swap = gsap.timeline({
+              scrollTrigger: { trigger, start: "top 92%", end: "top 28%", scrub: 0.5 },
+            });
+            outs.forEach((el, i) => {
+              swap.to(el, { yPercent: -100, ease: "none", duration: 1 }, i * 0.5);
+            });
+            // CSS pre-hides the WORK letters with translateY(100%) for a FOUC-safe
+            // first paint. GSAP parses that as a px `y`, which would STACK with a
+            // `yPercent` tween (the bug that left WORK doubly pushed down, never
+            // rising in). Reset `y` to 0 so yPercent is the sole vertical channel,
+            // then reveal yPercent 100 → 0.
+            gsap.set(ins, { y: 0, yPercent: 100 });
+            ins.forEach((el, i) => {
+              swap.to(el, { yPercent: 0, ease: "none", duration: 1 }, (i + 2) * 0.5 + 0.15);
+            });
+          } else if (process.env.NODE_ENV !== "production") {
+            console.warn("[morph] [data-morph] not found — STUDIO→WORK swap skipped");
+          }
         },
       );
     },
@@ -221,23 +262,23 @@ export default function WorkSection() {
     <section
       ref={sectionRef}
       id="work"
-      // No zone-dark here: the box interior is the site's light paper tone, so
-      // the section reads the default (light) tokens — token-based text goes
-      // dark automatically. The ink-deep stays only on the thin p-2/p-3 margin
-      // that frames the light box and carries the seam down from the dark hero.
-      className="relative z-20 -mt-px bg-ink-deep p-2 text-(--fg) md:p-3"
+      // Light-on-light: the page background is paper (continuing the hero), and
+      // the work lives INSIDE a dark rounded box that floats on the paper. The
+      // content wrapper below is zone-dark so its text/pills read light against
+      // the box, while the paper margin around it stays the warm light tone.
+      className="relative z-20 -mt-px bg-paper-warm p-3 text-(--fg) md:p-5"
     >
-      {/* The light box fills the screen (a thin dark inset frames it), on its
-          own layer so it grows independently of its content. */}
+      {/* The dark box: a rounded ink card floating on the light paper, lifted
+          with a soft shadow + hairline so it reads as an object on the page. */}
       <div
         data-work-frame
         aria-hidden
-        className="absolute inset-2 rounded-[40px] bg-paper-warm will-change-transform md:inset-3"
+        className="absolute inset-3 rounded-[40px] border border-ink/10 bg-ink shadow-[0_50px_120px_-50px_rgba(26,24,22,0.55)] will-change-transform md:inset-5"
       />
 
       {/* Content — centred + capped for readability, revealed in timed beats
           inside the settled frame. */}
-      <div className="relative mx-auto max-w-[1900px] px-6 pb-14 pt-14 md:px-14 md:pb-20 md:pt-20">
+      <div className="zone-dark relative mx-auto max-w-[1900px] px-6 pb-14 pt-14 md:px-14 md:pb-20 md:pt-20">
         <div className="lg:grid lg:grid-cols-12 lg:gap-8">
           {/* self-start so the column doesn't stretch — we measure its natural
               height to know how far to keep it docked. The reveal lives on an
