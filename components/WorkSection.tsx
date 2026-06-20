@@ -121,20 +121,42 @@ export default function WorkSection() {
       const trigger = sectionRef.current;
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Entrance is scroll-LINKED (scrub), not a one-shot: the frame grows
-        // (scale) as the section rises and the content slides up (y) just behind
-        // it — but NO opacity fades, so the box and everything in it stay fully
-        // visible the whole time, just settling into place. No invalidateOnRefresh
-        // either, so a refresh (fonts/images loading) can't flash anything.
-        gsap.fromTo(
-          "[data-work-frame]",
-          { scale: 0.92 },
-          {
-            scale: 1,
-            ease: "none",
-            scrollTrigger: { trigger, start: "top 88%", end: "top 50%", scrub: 0.5 },
-          },
-        );
+        // Entrance is scroll-LINKED (scrub), not a one-shot, and transform/clip
+        // only — NO opacity fades, so the box and everything in it stay fully
+        // visible the whole time. The content slides up (y) just behind the box.
+        //
+        // The dark box GROWS from a floating rounded card into a full-bleed panel
+        // as the section rises, then clamps and scrolls on full-bleed. This is a
+        // LAYOUT grow — animating the real inset (top/right/bottom/left) + radius
+        // — NOT clip-path / transform / box-shadow. A layout grow re-rasterizes
+        // the box into the page layer each frame, so it never becomes its own
+        // compositor layer and there's no feathered edge to draw a 1px line under
+        // ScrollSmoother on retina. No blur shadow (that re-render was the lag).
+        // The `from` reads the rest inset off the element so it matches per
+        // breakpoint (inset-6 mobile / inset-14 desktop) with no jump.
+        const frame = trigger?.querySelector<HTMLElement>("[data-work-frame]");
+        if (frame) {
+          const gut = parseFloat(getComputedStyle(frame).top) || 0;
+          gsap.fromTo(
+            frame,
+            { top: gut, right: gut, bottom: gut, left: gut, borderRadius: 40 },
+            {
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 0,
+              borderRadius: 0,
+              ease: "none",
+              scrollTrigger: {
+                trigger,
+                start: "top bottom",
+                end: "top top",
+                scrub: 0.6,
+                invalidateOnRefresh: true,
+              },
+            },
+          );
+        }
 
         gsap.fromTo(
           "[data-work-reveal]",
@@ -268,12 +290,14 @@ export default function WorkSection() {
       // the box, while the paper margin around it stays the warm light tone.
       className="relative z-20 -mt-px bg-paper-warm p-3 text-(--fg) md:p-5"
     >
-      {/* The dark box: a rounded ink card floating on the light paper, lifted
-          with a soft shadow + hairline so it reads as an object on the page. */}
+      {/* The dark box: a rounded ink-deep card inset from the paper at rest, that
+          grows to full-bleed by animating its INSET (layout, not clip/transform —
+          see globals .work-frame for why). rounded-[40px] + the inset are the
+          rest/reduced-motion state; the grow drives them to 0. */}
       <div
         data-work-frame
         aria-hidden
-        className="absolute inset-3 rounded-[40px] border border-ink/10 bg-ink shadow-[0_50px_120px_-50px_rgba(26,24,22,0.55)] will-change-transform md:inset-5"
+        className="absolute inset-6 rounded-[40px] bg-ink-deep shadow-[0_4px_36px_rgba(14,13,12,0.34)] md:inset-14"
       />
 
       {/* Content — centred + capped for readability, revealed in timed beats

@@ -38,13 +38,17 @@
 }
 
 body {
-  background: var(--bg);
+  /* paper-warm (not --bg #e5e1db): the light sections are all paper-warm, and
+     the page bg only ever peeks at section SEAMS. Matching it kills the faint
+     #e5e1db↔#efebe4 color delta that the work box's anti-aliased clip-path edge
+     exposes as a 1px line while scrolling on retina under ScrollSmoother. */
+  background: var(--color-paper-warm);
   color: var(--fg);
   -webkit-font-smoothing: antialiased;
 }
 
 main {
-  background: var(--bg);
+  background: var(--color-paper-warm);
   color: var(--fg);
 }
 
@@ -193,6 +197,16 @@ main {
   .morph-letter-in {
     transform: translateY(100%);
   }
+
+  /* Work section dark box. The card→full-bleed grow animates the actual INSET
+     (top/right/bottom/left) + border-radius — a LAYOUT grow, NOT clip-path /
+     transform / box-shadow. Why: every GPU-composited approach promotes the box
+     to its own layer whose hard edge feathers a 1px line against the page under
+     ScrollSmoother's fractional transform on retina. A layout grow re-rasterizes
+     the box crisply INTO the page layer every frame, so there is no separate
+     layer and no feathered edge. There's deliberately NO blur drop-shadow (that
+     re-render was the earlier lag). The rest state (inset card) is set by the
+     Tailwind classes on the element, so reduced-motion / no-JS shows the card. */
 
   [data-hero-fade] {
     opacity: 0;
