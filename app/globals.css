@@ -208,6 +208,40 @@ main {
      re-render was the earlier lag). The rest state (inset card) is set by the
      Tailwind classes on the element, so reduced-motion / no-JS shows the card. */
 
+  /* Hero/Work seam TAB — see [data-work-tab] in WorkSection.tsx. The tab's
+     right edge equals the frame's right inset (--seam-gutter) so they share one
+     vertical line and read as ONE dark shape. Only `top` animates (layout). */
+  #work {
+    --seam-gutter: 24px;   /* == inset-6, the frame's rest right inset (mobile) */
+    --tab-rise: 240px;     /* how far the tab climbs up into the hero (fits 7vw STUDIO) */
+    --tab-h: 170px;        /* tab body below the work top — overlaps the frame  */
+    --tab-w: clamp(380px, 46vw, 720px);
+  }
+  @media (min-width: 768px) {
+    #work {
+      --seam-gutter: 56px; /* == inset-14 (desktop) */
+    }
+  }
+  .work-tab-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* matches the [data-work-frame] shadow so tab + frame read as one object,
+       and the small blur masks the dark-on-light retina edge-AA. STATIC paint —
+       never animate this filter (animated filter under the smoother = the line). */
+    filter: drop-shadow(0 4px 36px rgba(14, 13, 12, 0.34));
+  }
+
+  /* Hero TOP NAV LIP silhouette — same family as .work-tab-svg: a STATIC dark
+     paint with a small soft drop-shadow that grounds the die-cut band on the
+     light panel and masks the dark-on-light retina edge-AA. Never animated. */
+  .hero-lip-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 5px 30px rgba(14, 13, 12, 0.28));
+  }
+
   [data-hero-fade] {
     opacity: 0;
     transform: translateY(24px);

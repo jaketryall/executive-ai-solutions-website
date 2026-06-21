@@ -114,6 +114,8 @@ function WorkCard({ work }: { work: (typeof WORKS)[number] }) {
 
 export default function WorkSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  // The STUDIO box (shape + reel + STUDIO→WORK morph) now lives in the Hero as a
+  // self-contained card; this section just drives the morph as it rises into view.
 
   useGSAP(
     () => {
@@ -121,43 +123,10 @@ export default function WorkSection() {
       const trigger = sectionRef.current;
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Entrance is scroll-LINKED (scrub), not a one-shot, and transform/clip
-        // only — NO opacity fades, so the box and everything in it stay fully
-        // visible the whole time. The content slides up (y) just behind the box.
-        //
-        // The dark box GROWS from a floating rounded card into a full-bleed panel
-        // as the section rises, then clamps and scrolls on full-bleed. This is a
-        // LAYOUT grow — animating the real inset (top/right/bottom/left) + radius
-        // — NOT clip-path / transform / box-shadow. A layout grow re-rasterizes
-        // the box into the page layer each frame, so it never becomes its own
-        // compositor layer and there's no feathered edge to draw a 1px line under
-        // ScrollSmoother on retina. No blur shadow (that re-render was the lag).
-        // The `from` reads the rest inset off the element so it matches per
-        // breakpoint (inset-6 mobile / inset-14 desktop) with no jump.
-        const frame = trigger?.querySelector<HTMLElement>("[data-work-frame]");
-        if (frame) {
-          const gut = parseFloat(getComputedStyle(frame).top) || 0;
-          gsap.fromTo(
-            frame,
-            { top: gut, right: gut, bottom: gut, left: gut, borderRadius: 40 },
-            {
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 0,
-              borderRadius: 0,
-              ease: "none",
-              scrollTrigger: {
-                trigger,
-                start: "top bottom",
-                end: "top top",
-                scrub: 0.6,
-                invalidateOnRefresh: true,
-              },
-            },
-          );
-        }
-
+        // The work region is a FULL-WIDTH dark panel (the section bg is ink-deep).
+        // It rises into view over the hero's self-contained STUDIO box; the
+        // STUDIO→WORK morph (below, desktop-only) fires while the box is still on
+        // screen. Dark-on-(dark page) keeps these transforms edge-line-safe.
         gsap.fromTo(
           "[data-work-reveal]",
           { y: 52 },
@@ -284,22 +253,12 @@ export default function WorkSection() {
     <section
       ref={sectionRef}
       id="work"
-      // Light-on-light: the page background is paper (continuing the hero), and
-      // the work lives INSIDE a dark rounded box that floats on the paper. The
-      // content wrapper below is zone-dark so its text/pills read light against
-      // the box, while the paper margin around it stays the warm light tone.
-      className="relative z-20 -mt-px bg-paper-warm p-3 text-(--fg) md:p-5"
+      // NEW DIRECTION: the work region is now a FULL-WIDTH DARK panel (no more
+      // light paper gutter + floating card). The section bg IS ink-deep and the
+      // section is .zone-dark so its content reads light. The work box "moves up
+      // into" the studio-box hero rather than growing from a card.
+      className="zone-dark relative z-20 -mt-px bg-ink-deep p-3 text-(--fg) md:p-5"
     >
-      {/* The dark box: a rounded ink-deep card inset from the paper at rest, that
-          grows to full-bleed by animating its INSET (layout, not clip/transform —
-          see globals .work-frame for why). rounded-[40px] + the inset are the
-          rest/reduced-motion state; the grow drives them to 0. */}
-      <div
-        data-work-frame
-        aria-hidden
-        className="absolute inset-6 rounded-[40px] bg-ink-deep shadow-[0_4px_36px_rgba(14,13,12,0.34)] md:inset-14"
-      />
-
       {/* Content — centred + capped for readability, revealed in timed beats
           inside the settled frame. */}
       <div className="zone-dark relative mx-auto max-w-[1900px] px-6 pb-14 pt-14 md:px-14 md:pb-20 md:pt-20">
