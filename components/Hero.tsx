@@ -87,30 +87,37 @@ function sideLipPath(side: "left" | "right", W: number, H: number, r = 12) {
   const Ld = Math.hypot(W, topRise) || 1;
   const ux = (W / Ld) * r;
   const uy = (topRise / Ld) * r;
+  // The frame side rides the panel edge (the gap), so its corners are CONCAVE
+  // fillets, not convex rounds: the slant curves smoothly INTO the vertical
+  // panel edge like a valley. Key trick — the frame fillet's vertical tangent
+  // point sits just OUTSIDE the slant junction (at -uy above the top, +uy below
+  // the bottom) so the curve hugs the edge inward and never bulges past it (no
+  // light sliver) nor spikes (no acute point). The inner side keeps the convex
+  // rounds (obtuse, so they read smooth).
   if (side === "left") {
     // top slant "\" (frame high → inner low), bottom slant "/" (mirror)
     return [
-      `M 0 ${r}`, // frame edge, below the frame-top corner
-      `Q 0 0 ${ux} ${uy}`, // round frame-top onto the top slant
+      `M 0 ${-uy}`, // frame edge, just ABOVE the top junction — tangent vertical
+      `Q 0 0 ${ux} ${uy}`, // concave fillet: panel edge → top slant
       `L ${W - ux} ${topRise - uy}`, // TOP slant "\"
-      `Q ${W} ${topRise} ${W} ${topRise + r}`, // round inner-top onto the inner edge
+      `Q ${W} ${topRise} ${W} ${topRise + r}`, // convex round → inner edge
       `L ${W} ${H - topRise - r}`, // inner edge down (shorter)
-      `Q ${W} ${H - topRise} ${W - ux} ${H - topRise + uy}`, // round inner-bottom onto the bottom slant
+      `Q ${W} ${H - topRise} ${W - ux} ${H - topRise + uy}`, // convex round → bottom slant
       `L ${ux} ${H - uy}`, // BOTTOM slant "/" (mirror)
-      `Q 0 ${H} 0 ${H - r}`, // round frame-bottom onto the frame edge
+      `Q 0 ${H} 0 ${H + uy}`, // concave fillet: bottom slant → panel edge
       "Z", // frame edge up
     ].join(" ");
   }
   // right: top slant "/" (frame high → inner low), bottom slant "\" (mirror)
   return [
-    `M ${W} ${r}`, // frame edge, below the frame-top corner
-    `Q ${W} 0 ${W - ux} ${uy}`, // round frame-top onto the top slant
+    `M ${W} ${-uy}`, // frame edge, just ABOVE the top junction — tangent vertical
+    `Q ${W} 0 ${W - ux} ${uy}`, // concave fillet: panel edge → top slant
     `L ${ux} ${topRise - uy}`, // TOP slant "/"
-    `Q 0 ${topRise} 0 ${topRise + r}`, // round inner-top onto the inner edge
+    `Q 0 ${topRise} 0 ${topRise + r}`, // convex round → inner edge
     `L 0 ${H - topRise - r}`, // inner edge down (shorter)
-    `Q 0 ${H - topRise} ${ux} ${H - topRise + uy}`, // round inner-bottom onto the bottom slant
+    `Q 0 ${H - topRise} ${ux} ${H - topRise + uy}`, // convex round → bottom slant
     `L ${W - ux} ${H - uy}`, // BOTTOM slant "\" (mirror)
-    `Q ${W} ${H} ${W} ${H - r}`, // round frame-bottom onto the frame edge
+    `Q ${W} ${H} ${W} ${H + uy}`, // concave fillet: bottom slant → panel edge
     "Z", // frame edge up
   ].join(" ");
 }
@@ -318,12 +325,12 @@ export default function Hero({
             {W >= 1024 && (
               <>
                 <path
-                  d={sideLipPath("left", 50, sideLeftH)}
-                  transform={`translate(0,${H / 2 - sideLeftH / 2})`}
+                  d={sideLipPath("left", 50 - PANEL_INSET, sideLeftH)}
+                  transform={`translate(${PANEL_INSET},${H / 2 - sideLeftH / 2})`}
                   fill="#000"
                 />
                 <path
-                  d={sideLipPath("right", 50, sideRightH)}
+                  d={sideLipPath("right", 50 - PANEL_INSET, sideRightH)}
                   transform={`translate(${W - 50},${H / 2 - sideRightH / 2})`}
                   fill="#000"
                 />
