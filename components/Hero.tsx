@@ -122,34 +122,35 @@ function sideLipPath(side: "left" | "right", W: number, H: number, r = 12) {
   ].join(" ");
 }
 
-// SVG silhouette for the STUDIO box — a self-contained die-cut card in the hero's
-// bottom-right (the mirror of the nav lip). Lives entirely in the hero so its
-// rounded corners are all in view (the old work-tab bridged two sections and its
-// round fell off-screen). The RIGHT edge runs straight to x=W (the page edge,
-// where it merges into the dark frame); the visible boundary against the light
-// panel — top edge, left side, bottom edge — gets curves: a SLANT cut into the
-// upper-left (rounded ends), a rounded TOP-RIGHT corner (the corner created by
-// extending to the page edge), and a rounded BOTTOM-LEFT corner. 1 viewBox
-// unit = 1px so the radii stay circular. `slant` = the diagonal's run.
-function studioBoxPath(W: number, H: number, sx = 230, sy = 195, r = 24) {
-  // The dark STUDIO pocket (bottom-right). Right + bottom edges merge into the
-  // page edge. The TOP-LEFT is ONE straight SLANT — the EXACT OPPOSITE diagonal
-  // to the nav band's slant (nav leans "\", this leans "/") — with rounded ends
-  // to match. sx = where the slant meets the top edge; sy = where it meets the left.
-  const dx = sx;
-  const dy = -sy;
-  const L = Math.hypot(dx, dy) || 1;
-  const ux = (dx / L) * r;
-  const uy = (dy / L) * r;
+// SVG silhouette for the STUDIO box — the TRUE MIRROR of the nav band, flipped to
+// the bottom-right. The RIGHT (x=W) + BOTTOM (y=H) edges run straight into the
+// dark frame. Tracing the visible boundary from the bottom up and to the right
+// (the way the band's left shoulder reads): the panel-bottom line → a ROUND up
+// into the SLANT ("/" at the design angle — the exact opposite diagonal of the
+// nav's "\") → a round onto the TOP edge → the top edge → a rounded TOP-RIGHT
+// corner where it meets the dark right frame. NO vertical left edge — the slant
+// runs the whole way from the bottom to the top. M = panel inset so the slant
+// lands on the panel surface, not in the frame margin. 1 unit = 1px.
+function studioBoxPath(W: number, H: number, xBase = 22, r = 24) {
+  const M = 16; // panel inset — the slant's foot sits on the panel-bottom line
+  const rise = H - M; // the slant spans panel-bottom → top
+  const run = rise / DESIGN_SLOPE; // run for the design angle
+  const xTop = xBase + run; // where the slant meets the top edge
+  const Ln = Math.hypot(run, rise) || 1;
+  const ux = (run / Ln) * r; // rounded-corner offset along the slant (x)
+  const uy = (rise / Ln) * r; // …and (y)
+  const k = r * 0.72; // base-round offset along the panel-bottom line
   return [
-    `M ${sx + r} 0`, // top edge, right of the slant-top round
-    `L ${W} 0`, // top edge → right (merges)
+    `M ${xTop + r} 0`, // top edge, right of the slant-top round
+    `L ${W - r} 0`, // top edge → toward the top-right corner
+    `Q ${W} 0 ${W} ${-r}`, // round the TOP-RIGHT corner UP into the right frame
     `L ${W} ${H}`, // right edge down (merges)
     `L 0 ${H}`, // bottom edge ← left (merges)
-    `L 0 ${sy + r}`, // left edge up to the slant base
-    `Q 0 ${sy} ${ux} ${sy + uy}`, // round slant-base onto the diagonal
-    `L ${sx - ux} ${-uy}`, // the SLANT (straight, "/") up to the top
-    `Q ${sx} 0 ${sx + r} 0`, // round slant-top onto the top edge
+    `L 0 ${H - M}`, // short left edge up to the panel-bottom line (in the frame)
+    `L ${xBase - k} ${H - M}`, // panel-bottom line → toward the slant foot
+    `Q ${xBase} ${H - M} ${xBase + ux} ${H - M - uy}`, // round up onto the slant
+    `L ${xTop - ux} ${uy}`, // the SLANT "/" up to the top
+    `Q ${xTop} 0 ${xTop + r} 0`, // round the slant-top onto the top edge
     "Z",
   ].join(" ");
 }
@@ -269,8 +270,10 @@ export default function Hero({
   const PANEL_INSET = 16; // matches md:inset-4
   const navX = cl(440, 0.4 * W, 820); // nav band starts after DESIGN
   const studioW = cl(440, 0.44 * W, 720);
-  const studioH = 300;
-  const studioGap = 48; // bottom-12
+  // STUDIO pocket runs flush to the bottom page edge (merges with the dark frame
+  // like the nav band merges with the top). Height tuned so the slant + top edge
+  // don't climb too high — the slant runs the full pocket height at the design angle.
+  const studioH = 290;
   const sideLeftH = 250;
   const sideRightH = 320;
 
@@ -317,7 +320,7 @@ export default function Hero({
             {W >= 768 && (
               <path
                 d={studioBoxPath(studioW, studioH)}
-                transform={`translate(${W - studioW},${H - studioGap - studioH})`}
+                transform={`translate(${W - studioW},${H - studioH})`}
                 fill="#000"
               />
             )}
