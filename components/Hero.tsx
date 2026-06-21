@@ -513,8 +513,24 @@ export default function Hero({
               </li>
             ))}
           </ul>
-          <SocialIcons />
         </div>
+      </div>
+
+      {/* WHITE SOCIAL SWOOP — a separate plain rounded div that sits OVER the
+          dark nav band in the top-right corner, carrying the socials. (A
+          clip-path / SVG shape here composites onto its own layer and corrupts
+          the masked panel under ScrollSmoother, so the shape is plain
+          border-radius — convex curve only.) Desktop only. */}
+      <div
+        className="absolute right-4 top-4 z-30 hidden lg:flex items-start justify-end pr-6 pt-3 text-ink"
+        style={{
+          width: 190,
+          height: 88,
+          background: "#efebe4",
+          borderRadius: "0 30px 0 88px",
+        }}
+      >
+        <SocialIcons />
       </div>
 
       {/* mobile chrome — the lip is a desktop composition; on phones keep a
