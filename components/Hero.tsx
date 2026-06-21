@@ -155,6 +155,31 @@ function studioBoxPath(W: number, H: number, xBase = 22, r = 24) {
   ].join(" ");
 }
 
+// Shift a path's M/L/Q/Z coords by (dx,dy). Lets the notch helpers (which emit
+// local coords) be composed into the panel's single clip-path in panel space.
+function shiftPath(d: string, dx: number, dy: number): string {
+  const t = d.match(/[MLQZ]|-?\d*\.?\d+/g);
+  if (!t) return d;
+  const out: string[] = [];
+  let i = 0;
+  while (i < t.length) {
+    const cmd = t[i++];
+    out.push(cmd);
+    if (cmd === "Z") continue;
+    const n = cmd === "Q" ? 4 : 2;
+    for (let j = 0; j < n; j++) {
+      const v = parseFloat(t[i++]);
+      out.push(String(j % 2 === 0 ? v + dx : v + dy));
+    }
+  }
+  return out.join(" ");
+}
+
+// Rounded-rectangle outline path.
+function roundRectPath(x: number, y: number, w: number, h: number, r: number): string {
+  return `M ${x + r} ${y} L ${x + w - r} ${y} Q ${x + w} ${y} ${x + w} ${y + r} L ${x + w} ${y + h - r} Q ${x + w} ${y + h} ${x + w - r} ${y + h} L ${x + r} ${y + h} Q ${x} ${y + h} ${x} ${y + h - r} L ${x} ${y + r} Q ${x} ${y} ${x + r} ${y} Z`;
+}
+
 // The three social anchors, color-inherited (currentColor) so the same markup
 // reads light on the dark lip and dark on the mobile light panel.
 function SocialIcons({ className = "" }: { className?: string }) {
@@ -277,72 +302,49 @@ export default function Hero({
   const sideLeftH = 250;
   const sideRightH = 320;
 
+  // ── Panel silhouette as ONE clip-path (replaces the SVG mask, which is flaky
+  // and re-composites every frame under ScrollSmoother). A rounded rect with the
+  // notches subtracted via the evenodd rule. Coords are panel-local — the panel
+  // div sits at inset PANEL_INSET, so each notch transform is offset by -PI and
+  // the box naturally clips the frame overhang. Reuses the exact notch geometry.
+  const PI = PANEL_INSET;
+  const panelClip = [
+    roundRectPath(0, 0, W - PI * 2, H - PI * 2, 44),
+    W >= 1024 ? shiftPath(topLipPath(W - navX, 78), navX - PI, -PI) : "",
+    W >= 768
+      ? shiftPath(studioBoxPath(studioW, studioH), W - studioW - PI, H - studioH - PI)
+      : "",
+    W >= 1024
+      ? shiftPath(sideLipPath("left", 50 - PI, sideLeftH), 0, H / 2 - sideLeftH / 2 - PI)
+      : "",
+    W >= 1024
+      ? shiftPath(sideLipPath("right", 50 - PI, sideRightH), W - 50 - PI, H / 2 - sideRightH / 2 - PI)
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <section
       ref={ref}
       id="top"
       className="relative h-svh overflow-hidden bg-ink-deep text-ink"
     >
-      {/* ── THE LIGHT PANEL — ONE shape. A rounded-rectangle masked so the die-cut
-          notches (nav band top, STUDIO bottom-right, portfolio left, scroll right)
-          are punched OUT of it, letting the dark hero bg show through. The notch
-          silhouettes reuse the same path helpers as before, now as black mask
-          cutouts instead of dark overlays. Recomputed from the hero's px size, so
-          the whole composition just re-flows at any screen width. The content
-          (nav, socials, STUDIO, labels) sits on top, over the cutouts. */}
-      <svg
+      {/* ── THE LIGHT PANEL — ONE shape, drawn with a single CSS clip-path: a
+          rounded rect with the die-cut notches (nav band, STUDIO, side tabs)
+          subtracted via the evenodd rule, letting the dark hero bg show through.
+          Replaces the old SVG mask, which corrupted whenever a composited overlay
+          (the social swoop) sat over it and re-rendered every frame under
+          ScrollSmoother. The content (nav, socials, STUDIO, labels) sits on top. */}
+      <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 h-full w-full"
-        width={W}
-        height={H}
-        viewBox={`0 0 ${W} ${H}`}
-      >
-        <defs>
-          <mask id="hero-panel-mask">
-            {/* white = keep (the panel); black = cut away (dark shows through) */}
-            <rect
-              x={PANEL_INSET}
-              y={PANEL_INSET}
-              width={W - PANEL_INSET * 2}
-              height={H - PANEL_INSET * 2}
-              rx={44}
-              fill="#fff"
-            />
-            {/* nav band — lg+ (below that, nav is the compact mobile cluster) */}
-            {W >= 1024 && (
-              <path
-                d={topLipPath(W - navX, 78)}
-                transform={`translate(${navX},0)`}
-                fill="#000"
-              />
-            )}
-            {/* STUDIO — md+ (below that, the static mobile STUDIO wordmark) */}
-            {W >= 768 && (
-              <path
-                d={studioBoxPath(studioW, studioH)}
-                transform={`translate(${W - studioW},${H - studioH})`}
-                fill="#000"
-              />
-            )}
-            {/* side labels — lg+ only */}
-            {W >= 1024 && (
-              <>
-                <path
-                  d={sideLipPath("left", 50 - PANEL_INSET, sideLeftH)}
-                  transform={`translate(${PANEL_INSET},${H / 2 - sideLeftH / 2})`}
-                  fill="#000"
-                />
-                <path
-                  d={sideLipPath("right", 50 - PANEL_INSET, sideRightH)}
-                  transform={`translate(${W - 50},${H / 2 - sideRightH / 2})`}
-                  fill="#000"
-                />
-              </>
-            )}
-          </mask>
-        </defs>
-        <rect width={W} height={H} fill="#efebe4" mask="url(#hero-panel-mask)" />
-      </svg>
+        className="pointer-events-none absolute"
+        style={{
+          inset: PANEL_INSET,
+          background: "#efebe4",
+          clipPath: `path(evenodd, "${panelClip}")`,
+        }}
+      />
 
       {/* centered mockup card sitting on the light background */}
       <div className="absolute inset-0 flex items-center justify-center px-6">
@@ -516,21 +518,23 @@ export default function Hero({
         </div>
       </div>
 
-      {/* WHITE SOCIAL SWOOP — a separate plain rounded div that sits OVER the
-          dark nav band in the top-right corner, carrying the socials. (A
-          clip-path / SVG shape here composites onto its own layer and corrupts
-          the masked panel under ScrollSmoother, so the shape is plain
-          border-radius — convex curve only.) Desktop only. */}
+      {/* WHITE SOCIAL SWOOP — its own separate shape that sits OVER the dark nav
+          band in the top-right corner, carrying the socials. Now that the panel
+          is a clip-path (not an SVG mask), this clip-path overlay no longer
+          corrupts it. Desktop only. */}
       <div
-        className="absolute right-4 top-4 z-30 hidden lg:flex items-start justify-end pr-6 pt-3 text-ink"
+        className="absolute right-4 top-4 z-30 hidden lg:block"
         style={{
-          width: 190,
-          height: 88,
+          width: 200,
+          height: 92,
           background: "#efebe4",
-          borderRadius: "0 30px 0 88px",
+          clipPath:
+            'path("M200 0 L200 92 L0 92 L0 70 Q0 48 38 46 L70 46 Q98 46 100 22 Q102 0 130 0 Z")',
         }}
       >
-        <SocialIcons />
+        <div className="pointer-events-auto absolute inset-x-0 top-0 flex h-[56px] items-center justify-end pr-6 text-ink">
+          <SocialIcons />
+        </div>
       </div>
 
       {/* mobile chrome — the lip is a desktop composition; on phones keep a
