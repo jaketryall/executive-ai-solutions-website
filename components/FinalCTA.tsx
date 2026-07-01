@@ -56,15 +56,16 @@ export default function FinalCTA() {
         </span>
         <span className="block">
           <span className="hero-line-mask">
-            <span className="hero-line flex items-center gap-4 md:gap-7 flex-wrap">
-              <PillCTA label="Start a project" href="#contact" size="mega" />
-              <span>
-                you are<span className="text-oxblood">.</span>
-              </span>
+            <span className="hero-line">
+              you are<span className="text-oxblood">.</span>
             </span>
           </span>
         </span>
       </h2>
+
+      <div className="mt-6">
+        <PillCTA label="Start a project" href="#contact" size="mega" />
+      </div>
 
       <div
         data-cta-meta

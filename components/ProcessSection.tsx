@@ -327,7 +327,7 @@ export default function ProcessSection() {
       className="relative px-5 md:px-10 pt-24 md:pt-32 pb-28 text-(--fg)"
     >
       {/* Header */}
-      <div className="relative flex flex-wrap items-end justify-between gap-6">
+      <div className="relative mx-auto max-w-[1600px] flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="micro text-(--fg-faint)">
             How it works — first call to long-term growth
@@ -354,7 +354,7 @@ export default function ProcessSection() {
       </div>
 
       {/* The steps — each a card with a looping micro-scene up top */}
-      <ol className="relative mt-16 md:mt-24 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <ol className="relative mx-auto max-w-[1600px] mt-16 md:mt-24 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {STEPS.map(({ n, title, body, Scene }) => (
           <li
             key={n}
@@ -388,7 +388,7 @@ export default function ProcessSection() {
       {/* Low-friction close — the foot in the door is a free call */}
       <div
         data-process-cta
-        className="mt-16 flex flex-wrap items-center gap-x-6 gap-y-4"
+        className="mx-auto max-w-[1600px] mt-16 flex flex-wrap items-center gap-x-6 gap-y-4"
       >
         <PillCTA label="Book the free call" href="#contact" />
         <p className="micro text-(--fg-faint)">

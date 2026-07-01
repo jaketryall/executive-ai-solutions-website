@@ -37,6 +37,13 @@
   --surface: #efebe4;
 }
 
+html {
+  /* Backstop so a vw/clamp overshoot can never create a horizontal scrollbar.
+     `clip` (not `hidden`) so it doesn't become a scroll container that would
+     fight ScrollSmoother / position:sticky. */
+  overflow-x: clip;
+}
+
 body {
   /* paper-warm (not --bg #e5e1db): the light sections are all paper-warm, and
      the page bg only ever peeks at section SEAMS. Matching it kills the faint
@@ -213,13 +220,27 @@ main {
      vertical line and read as ONE dark shape. Only `top` animates (layout). */
   #work {
     --seam-gutter: 24px;   /* == inset-6, the frame's rest right inset (mobile) */
-    --tab-rise: 240px;     /* how far the tab climbs up into the hero (fits 7vw STUDIO) */
-    --tab-h: 170px;        /* tab body below the work top — overlaps the frame  */
-    --tab-w: clamp(380px, 46vw, 720px);
+    /* mobile-first: rise/height shrink with vw to match the 11vw mobile STUDIO
+       and never overrun a short phone; the 768px block resets to fixed desktop
+       values (tuned for 7vw STUDIO). --tab-w floor is capped at 88vw so it can't
+       exceed a 320-375px viewport and leak horizontal scroll. */
+    --tab-rise: clamp(180px, 24vw, 240px);
+    --tab-h: clamp(120px, 18vw, 170px);
+    --tab-w: clamp(min(380px, 88vw), 46vw, 720px);
   }
   @media (min-width: 768px) {
     #work {
       --seam-gutter: 56px; /* == inset-14 (desktop) */
+      --tab-rise: 240px;
+      --tab-h: 170px;
+    }
+  }
+  @media (min-width: 1920px) {
+    /* ultrawide: let the inset + tab grow with the frame instead of pinning at
+       the 768px values, so the seam tab doesn't read as tiny against a vast frame. */
+    #work {
+      --seam-gutter: clamp(56px, 4vw, 120px);
+      --tab-w: clamp(380px, 30vw, 920px);
     }
   }
   .work-tab-svg {
@@ -254,11 +275,13 @@ main {
      and reacts to scroll velocity (see ProofStrip.tsx) */
   .marquee-wrap {
     overflow: hidden;
+    /* px-ish fade band (clamped) so on a 320px phone the edges don't eat ~32px
+       each and half-cut the first/last logo; stays proportional on wide screens. */
     mask-image: linear-gradient(
       to right,
       transparent,
-      black 10%,
-      black 90%,
+      black clamp(24px, 8%, 80px),
+      black calc(100% - clamp(24px, 8%, 80px)),
       transparent
     );
   }

@@ -58,7 +58,7 @@ function ServiceCard({ service }: { service: (typeof SERVICES)[number] }) {
     >
       <div
         data-card-inner
-        className="grid lg:grid-cols-2 items-center gap-7 lg:gap-16 p-6 md:p-12 lg:p-16 lg:min-h-[64vh]"
+        className="grid lg:grid-cols-2 items-center gap-7 lg:gap-16 p-6 md:p-12 lg:p-16 lg:min-h-[min(64vh,640px)]"
       >
         <div>
           <p className="micro text-(--fg-faint) flex items-center gap-2.5">
@@ -116,7 +116,7 @@ function ServiceCard({ service }: { service: (typeof SERVICES)[number] }) {
             src={service.image}
             alt={service.title}
             fill
-            sizes="(min-width: 1024px) 42vw, 100vw"
+            sizes="(min-width: 1600px) 760px, (min-width: 1024px) 42vw, 100vw"
             className="object-cover"
           />
         </div>
@@ -238,7 +238,7 @@ export default function ServicesSection() {
     >
 
       {/* Header */}
-      <div className="relative flex flex-wrap items-end justify-between gap-6">
+      <div className="relative mx-auto max-w-[1600px] flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="micro text-(--fg-faint)">Services — pick one or take the stack</p>
           <h2 className="mt-5 font-extrabold uppercase tracking-[-0.04em] leading-[0.94] text-[clamp(2.4rem,5.5vw,3.8rem)]">
@@ -263,7 +263,7 @@ export default function ServicesSection() {
       </div>
 
       {/* The stack */}
-      <div className="relative mt-16 md:mt-24 space-y-6">
+      <div className="relative mx-auto max-w-[1600px] mt-16 md:mt-24 space-y-6">
         {SERVICES.map((service) => (
           <ServiceCard key={service.label} service={service} />
         ))}

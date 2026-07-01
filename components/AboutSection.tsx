@@ -53,10 +53,10 @@ export default function AboutSection() {
       id="about"
       className="relative border-t border-(--line) px-5 md:px-10 pt-24 md:pt-32 pb-24 md:pb-28"
     >
-      <div className="lg:grid lg:grid-cols-12 lg:gap-14 items-center">
+      <div className="mx-auto max-w-[1440px] lg:grid lg:grid-cols-12 lg:gap-14 items-center">
         {/* Portrait card — deck language, one peek behind */}
         <div data-about-card className="lg:col-span-5">
-          <div data-lag="0.1" className="relative max-w-md mx-auto lg:mx-0">
+          <div data-lag="0.1" className="relative max-w-md mx-auto lg:mx-0 mb-10 lg:mb-0">
             <div
               className="absolute inset-0 rounded-[40px] border border-(--line) bg-paper-warm origin-bottom rotate-[2deg] translate-y-3 scale-[0.98]"
               aria-hidden
@@ -83,15 +83,15 @@ export default function AboutSection() {
                   <span className="micro text-paper/40">Jake Ryall</span>
                 </div>
               )}
-              <span className="absolute left-4 bottom-4 inline-flex items-center gap-2.5 h-8 px-3.5 rounded-full bg-ink-deep/70 backdrop-blur-sm text-paper">
+              <span className="absolute left-4 bottom-4 inline-flex items-center gap-2.5 h-8 px-3.5 rounded-full bg-ink-deep/70 backdrop-blur-sm text-paper max-w-[calc(100%-2rem)]">
                 <span className="w-1.5 h-1.5 rounded-full bg-oxblood text-oxblood pulse-dot" />
-                <span className="font-mono text-[9px] uppercase tracking-[0.18em]">
+                <span className="font-mono text-[9px] uppercase tracking-[0.18em] truncate">
                   Founder — builds every project
                 </span>
               </span>
             </div>
             <p
-              className="font-hand absolute -bottom-9 right-4 -rotate-4 text-2xl text-(--fg-muted) select-none"
+              className="font-hand absolute -bottom-6 sm:-bottom-9 right-4 -rotate-4 text-2xl text-(--fg-muted) select-none"
               aria-hidden
             >
               the whole team ↑

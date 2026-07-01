@@ -18,7 +18,7 @@ const sizes = {
     label: "text-[13px]",
   },
   compact: {
-    pill: "h-10 pl-4 pr-1.5 gap-2",
+    pill: "h-11 md:h-10 pl-4 pr-1.5 gap-2",
     circle: "w-7 h-7",
     travel: 18,
     label: "text-[13px]",

@@ -29,13 +29,13 @@ export default function FaqList({ faqs }: { faqs: Faq[] }) {
               type="button"
               aria-expanded={open}
               onClick={() => setOpenIdx(open ? null : i)}
-              className="w-full flex items-center justify-between gap-6 text-left px-6 md:px-8 py-5 md:py-6 cursor-pointer focus-ring rounded-[28px]"
+              className="w-full flex items-center justify-between gap-4 md:gap-6 text-left px-6 md:px-8 py-5 md:py-6 cursor-pointer focus-ring rounded-[28px]"
             >
               <span className="text-[15px] md:text-lg font-semibold tracking-tight">
                 {faq.q}
               </span>
               <span
-                className={`relative w-9 h-9 shrink-0 rounded-full border flex items-center justify-center transition-all duration-400 ${
+                className={`relative w-11 h-11 md:w-9 md:h-9 shrink-0 rounded-full border flex items-center justify-center transition-all duration-400 ${
                   open ? "bg-ink text-paper border-ink" : "border-ink/15 text-ink"
                 }`}
                 style={{ transitionTimingFunction: "var(--ease-expo-out)" }}

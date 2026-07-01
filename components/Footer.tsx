@@ -154,10 +154,10 @@ export default function Footer({ contactEmail }: { contactEmail?: string }) {
       </div>
 
       {/* The sign-off — giant wordmark cropped by the page edge */}
-      <div aria-hidden className="relative mt-8 h-[13vw] md:h-[11vw] select-none">
+      <div aria-hidden className="relative mt-8 h-[clamp(3rem,13vw,12rem)] md:h-[clamp(3rem,11vw,12rem)] select-none">
         <p
           data-footer-mark
-          className="absolute inset-x-0 bottom-0 text-center whitespace-nowrap font-extrabold uppercase tracking-[-0.04em] leading-none text-[14vw] text-paper"
+          className="absolute inset-x-0 bottom-0 text-center whitespace-nowrap font-extrabold uppercase tracking-[-0.04em] leading-none text-[clamp(4rem,14vw,16rem)] text-paper"
         >
           Executive AI
         </p>

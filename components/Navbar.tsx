@@ -396,7 +396,7 @@ export default function Navbar() {
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((o) => !o)}
-            className="press focus-ring flex h-10 w-10 flex-col items-center justify-center gap-[5px] rounded-[10px] lg:hidden"
+            className="press focus-ring flex h-11 w-11 flex-col items-center justify-center gap-[5px] rounded-[10px] lg:hidden"
           >
             <motion.span
               animate={{ rotate: menuOpen ? 45 : 0, y: menuOpen ? 3.5 : 0 }}
@@ -475,13 +475,13 @@ export default function Navbar() {
               }`}
             >
               <div
-                className={`relative hidden h-[332px] border-t border-paper/10 lg:block ${
+                className={`relative hidden h-[300px] border-t border-paper/10 lg:block xl:h-[332px] ${
                   !collapsed ? "nav-open" : ""
                 }`}
               >
                 {/* WORK panel */}
                 <div
-                  className="absolute inset-0 grid grid-cols-[1fr_1.3fr] gap-9 px-9 pb-16 pt-7 transition-opacity duration-500"
+                  className="absolute inset-0 grid grid-cols-[1fr_1.3fr] gap-9 px-6 pb-16 pt-7 transition-opacity duration-500 xl:px-9"
                   style={{
                     opacity: displayTab === "work" ? 1 : 0,
                     visibility: displayTab === "work" ? "visible" : "hidden",
@@ -554,7 +554,7 @@ export default function Navbar() {
 
                 {/* SERVICES panel */}
                 <div
-                  className="absolute inset-0 grid grid-cols-[1fr_1.3fr] gap-9 px-9 pb-16 pt-7 transition-opacity duration-500"
+                  className="absolute inset-0 grid grid-cols-[1fr_1.3fr] gap-9 px-6 pb-16 pt-7 transition-opacity duration-500 xl:px-9"
                   style={{
                     opacity: displayTab === "services" ? 1 : 0,
                     visibility: displayTab === "services" ? "visible" : "hidden",
@@ -623,7 +623,7 @@ export default function Navbar() {
 
                 {/* Footer strip — availability + CTA, shared across tabs */}
                 <div
-                  className="nav-reveal absolute inset-x-0 bottom-0 flex items-center justify-between border-t border-paper/10 px-9 py-3.5"
+                  className="nav-reveal absolute inset-x-0 bottom-0 flex items-center justify-between border-t border-paper/10 px-6 py-3.5 xl:px-9"
                   style={{ transitionDelay: open ? "0.26s" : "0s" }}
                 >
                   <span className="flex items-center gap-2.5 text-[12.5px] text-paper/70">
@@ -692,13 +692,13 @@ export default function Navbar() {
                       {l.label}
                     </a>
                     {l.tab === "work" && (
-                      <div className="mb-1 mt-1 flex flex-wrap gap-x-4 gap-y-1">
+                      <div className="mb-1 mt-1 flex flex-wrap gap-x-5 gap-y-2">
                         {WORKS.map((w) => (
                           <a
                             key={w.title}
                             href={anchor("#work")}
                             onClick={() => setMenuOpen(false)}
-                            className="text-[13px] text-paper/50"
+                            className="inline-flex items-center min-h-[44px] py-2 text-[13px] text-paper/50"
                           >
                             {w.title}
                           </a>
@@ -706,13 +706,13 @@ export default function Navbar() {
                       </div>
                     )}
                     {l.tab === "services" && (
-                      <div className="mb-1 mt-1 flex flex-wrap gap-x-4 gap-y-1">
+                      <div className="mb-1 mt-1 flex flex-wrap gap-x-5 gap-y-2">
                         {SERVICES.map((s) => (
                           <a
                             key={s.name}
                             href={anchor("#services")}
                             onClick={() => setMenuOpen(false)}
-                            className="text-[13px] text-paper/50"
+                            className="inline-flex items-center min-h-[44px] py-2 text-[13px] text-paper/50"
                           >
                             {s.name}
                           </a>

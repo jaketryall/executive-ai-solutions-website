@@ -8,7 +8,8 @@
 // is scroll-linked GPU transform — no per-frame layout reads (jank), no
 // invalidateOnRefresh on the reveal (flash).
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -53,11 +54,9 @@ const WORKS = [
   },
 ];
 
-const HEADLINE = ["Proof,", "not promises"];
-
 function WorkCard({ work }: { work: (typeof WORKS)[number] }) {
   return (
-    <article data-work-reveal className="group relative overflow-hidden rounded-[28px] border border-(--line) bg-ink">
+    <article data-card-in className="group relative overflow-hidden rounded-[28px] border border-(--line) bg-ink">
       {/* full-bleed visual; the oversized wrapper lets it parallax within the
           frame without revealing edges (hover-scale on the image so it never
           fights the parallax transform on the wrapper) */}
@@ -68,6 +67,9 @@ function WorkCard({ work }: { work: (typeof WORKS)[number] }) {
             alt={work.title}
             fill
             sizes="(max-width: 1024px) 90vw, 42vw"
+            // eager — these are held hidden then revealed on scroll; lazy-loading
+            // made them fetch+decode ON the reveal frame, which was the stutter
+            loading="eager"
             className="object-cover transition-transform duration-700 group-hover:scale-[1.05]"
             style={{ transitionTimingFunction: "var(--ease-expo-out)" }}
           />
@@ -114,8 +116,17 @@ function WorkCard({ work }: { work: (typeof WORKS)[number] }) {
 
 export default function WorkSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const [reelOpen, setReelOpen] = useState(false);
   // The STUDIO box (shape + reel + STUDIO→WORK morph) now lives in the Hero as a
   // self-contained card; this section just drives the morph as it rises into view.
+
+  // Pre-decode the card images once they've loaded so the scroll-in reveal frame
+  // does ZERO image work (the fetch+decode-on-reveal was the scroll stutter).
+  useEffect(() => {
+    sectionRef.current
+      ?.querySelectorAll<HTMLImageElement>("[data-card-in] img")
+      .forEach((img) => img.decode?.().catch(() => {}));
+  }, []);
 
   useGSAP(
     () => {
@@ -129,9 +140,10 @@ export default function WorkSection() {
         // screen. Dark-on-(dark page) keeps these transforms edge-line-safe.
         gsap.fromTo(
           "[data-work-reveal]",
-          { y: 52 },
+          { y: 52, opacity: 0 },
           {
             y: 0,
+            opacity: 1,
             ease: "none",
             stagger: 0.06,
             scrollTrigger: { trigger, start: "top 82%", end: "top 40%", scrub: 0.5 },
@@ -155,13 +167,52 @@ export default function WorkSection() {
       mm.add(
         "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
         () => {
-          // Sticky headline: counter-translate it DOWN at scroll speed so it
-          // stays docked while the cards scroll past, then release. (CSS sticky
-          // doesn't survive ScrollSmoother's transformed content — same reason
-          // the Services stack fakes its pin this way.)
+          // ── PINNED MOMENT — the wordmark travels into the panel during a HELD
+          // page-pin, so its motion is ONE constant speed with NO scroll-flow under
+          // it. The hero-ride happens BEFORE the pin as ordinary scroll; then Work
+          // reaches the top, the page PINS, the word glides from pocket to panel over
+          // TRAVEL px of held scroll, the page releases, and the cards scroll past
+          // the stuck panel.
+          //   Sequence (heroEl scroll): 0–220 MORPH in place · 240–440 BLURB up ·
+          //   then Work hits the top → PIN + one-speed travel → release → CARDS.
           const sticky = trigger?.querySelector<HTMLElement>("[data-work-sticky]");
           const cards = trigger?.querySelector<HTMLElement>("[data-work-cards]");
-          if (sticky && cards) {
+          const heroEl = document.querySelector<HTMLElement>("#top");
+          const anchorWord = document.querySelector<HTMLElement>("[data-anchor-word]");
+          const carry = trigger?.querySelector<HTMLElement>("[data-carry]");
+          const carryWord = carry?.querySelector<HTMLElement>("[data-morph]");
+
+          if (sticky && cards && heroEl && anchorWord && carry && carryWord && trigger) {
+            const TRAVEL = 460; // px of HELD scroll the word travels over (one speed)
+
+            // Lift = the natural pocket→panel document distance. Measured ONCE here,
+            // BEFORE any pin exists, so it's un-transformed + scroll-independent (a
+            // mid-section reload can't corrupt it).
+            gsap.set(carry, { x: 0, y: 0 });
+            const a0 = anchorWord.getBoundingClientRect();
+            const c0 = carryWord.getBoundingClientRect();
+            const dx = a0.right - c0.right;
+            const dy = a0.top - c0.top;
+            const place = (p: number) => gsap.set(carry, { x: dx, y: dy * (1 - p) });
+            place(0); // start lifted into the hero pocket (rides the hero until the pin)
+
+            // PINNED MOMENT — pin the whole section so the page holds; the word
+            // glides pocket→panel at one constant (linear) speed driven by the pin.
+            ScrollTrigger.create({
+              trigger,
+              start: "top top",
+              end: `+=${TRAVEL}`,
+              pin: true,
+              pinSpacing: true,
+              scrub: true,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+              onUpdate: (self) => place(self.progress),
+            });
+
+            // STICKY — after the moment, hold the panel while the cards scroll past,
+            // then release (counter-translate; CSS sticky can't survive the
+            // smoother's transformed content).
             const dist = () => Math.max(0, cards.offsetHeight - sticky.offsetHeight);
             gsap.fromTo(
               sticky,
@@ -171,7 +222,7 @@ export default function WorkSection() {
                 ease: "none",
                 scrollTrigger: {
                   trigger: sticky,
-                  start: "top 100px",
+                  start: "top 16%",
                   end: () => `+=${dist()}`,
                   scrub: true,
                   invalidateOnRefresh: true,
@@ -179,6 +230,27 @@ export default function WorkSection() {
               },
             );
           }
+
+          // BLURB — paragraph + button fade up right after the morph and BEFORE
+          // the carry slide, so they're read while the wordmark is still parked.
+          const panelReveal = trigger?.querySelector<HTMLElement>("[data-panel-reveal]");
+          if (heroEl && panelReveal) {
+            gsap.fromTo(
+              panelReveal,
+              { y: 24, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                ease: "none",
+                scrollTrigger: { trigger: heroEl, start: "top top-=240", end: "top top-=440", scrub: 0.5 },
+              },
+            );
+          }
+
+          // CARDS — no entrance animation. They simply scroll into view (the
+          // opacity/transform reveal on the big image grid was a compositing hitch
+          // that jumped the whole frame, WORK text included). Eager-load + decode
+          // (above) keep that natural scroll-in smooth.
 
           // Dual-speed column drift — the two columns slide at slightly
           // different rates as the section transits, for masonry depth.
@@ -205,13 +277,8 @@ export default function WorkSection() {
           // The hero's bottom-right wordmark reads STUDIO; as this section rises
           // into view it morphs into WORK, letter by letter — each STUDIO glyph
           // rising up + out of its clip mask while the WORK glyph rises in from
-          // under (transform-only, no opacity). The word lives in the HERO, so
-          // it's queried from the document (NOT the useGSAP scope), and the
-          // letters are driven by element refs. Only the inner letters get a
-          // transform here (yPercent); the word's own y has no other authority
-          // (its hero parallax drift was removed), so nothing fights. The word
-          // moves at scroll speed, staying just ahead of the rising dark box
-          // over the light hero, so the dark ink letters never go ink-on-ink.
+          // under (transform-only, no opacity). The word lives in the HERO carry,
+          // so it's queried from the document, and the letters are driven by refs.
           const morph = document.querySelector<HTMLElement>("[data-morph]");
           if (morph) {
             const outs = gsap.utils.toArray<HTMLElement>(
@@ -221,21 +288,22 @@ export default function WorkSection() {
               morph.querySelectorAll("[data-morph-in]"),
             );
             // One scrubbed timeline. STUDIO(6) leaves left→right; WORK(4) enters
-            // aligned to STUDIO's trailing four slots (so S,T leave into nothing
-            // and the right edge never shifts). No .from()/invalidateOnRefresh
-            // on this one — the CSS rest state equals the tween start, so a
-            // refresh can't flash.
+            // aligned to STUDIO's trailing four slots. The CSS rest state equals
+            // the tween start, so a refresh can't flash.
             const swap = gsap.timeline({
-              scrollTrigger: { trigger, start: "top 92%", end: "top 28%", scrub: 0.5 },
+              // STUDIO→WORK morphs IN PLACE the instant you scroll (~220px) — the
+              // wordmark itself doesn't travel here (the carry holds until 440), so
+              // the only motion is the text changing + page scroll.
+              scrollTrigger: heroEl
+                ? { trigger: heroEl, start: "top top", end: "top top-=220", scrub: 0.5 }
+                : { trigger, start: "top 92%", end: "top 28%", scrub: 0.5 },
             });
             outs.forEach((el, i) => {
               swap.to(el, { yPercent: -100, ease: "none", duration: 1 }, i * 0.5);
             });
-            // CSS pre-hides the WORK letters with translateY(100%) for a FOUC-safe
-            // first paint. GSAP parses that as a px `y`, which would STACK with a
-            // `yPercent` tween (the bug that left WORK doubly pushed down, never
-            // rising in). Reset `y` to 0 so yPercent is the sole vertical channel,
-            // then reveal yPercent 100 → 0.
+            // CSS pre-hides the WORK letters with translateY(100%). GSAP parses that
+            // as a px `y`, which would STACK with a yPercent tween — reset y to 0 so
+            // yPercent is the sole vertical channel, then reveal yPercent 100 → 0.
             gsap.set(ins, { y: 0, yPercent: 100 });
             ins.forEach((el, i) => {
               swap.to(el, { yPercent: 0, ease: "none", duration: 1 }, (i + 2) * 0.5 + 0.15);
@@ -245,6 +313,18 @@ export default function WorkSection() {
           }
         },
       );
+
+      // Mobile / reduced-motion fallback — the carry + morph above are desktop +
+      // no-preference only. Snap the morph to its END state (WORK) so the Work
+      // panel always reads WORK there. (The hero's mobile STUDIO is a separate
+      // h1 wordmark.)
+      mm.add("(max-width: 1023px), (prefers-reduced-motion: reduce)", () => {
+        const morph = document.querySelector<HTMLElement>("[data-morph]");
+        if (morph) {
+          gsap.set(morph.querySelectorAll("[data-morph-out]"), { yPercent: -100 });
+          gsap.set(morph.querySelectorAll("[data-morph-in]"), { y: 0, yPercent: 0 });
+        }
+      });
     },
     { scope: sectionRef },
   );
@@ -263,38 +343,9 @@ export default function WorkSection() {
           inside the settled frame. */}
       <div className="zone-dark relative mx-auto max-w-[1900px] px-6 pb-14 pt-14 md:px-14 md:pb-20 md:pt-20">
         <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-          {/* self-start so the column doesn't stretch — we measure its natural
-              height to know how far to keep it docked. The reveal lives on an
-              inner wrapper so the entrance transform never fights the sticky
-              counter-translate on the header itself. */}
-          <header data-work-sticky className="lg:col-span-3 lg:self-start">
-            <div data-work-reveal>
-              <p className="micro text-(--fg-faint)">Selected work — 2024 to now</p>
-              <h2 className="mt-5 font-extrabold uppercase leading-[0.94] tracking-[-0.04em] text-[clamp(2.4rem,5.5vw,3.8rem)]">
-                {HEADLINE.map((line, i) => (
-                  <span key={line} className="block">
-                    {line}
-                    {i === HEADLINE.length - 1 && <span className="text-oxblood">.</span>}
-                  </span>
-                ))}
-              </h2>
-              <p className="mt-6 max-w-xs text-[15px] leading-relaxed text-(--fg-muted)">
-                Every build has one job: turn visitors into booked work.
-                Here&rsquo;s what that looks like.
-              </p>
-              <div className="mt-8 flex items-center gap-4">
-                <PillCTA label="All work" href="#work" />
-                <span className="micro tabular-nums text-(--fg-faint)">
-                  {String(WORKS.length).padStart(2, "0")}
-                </span>
-              </div>
-            </div>
-          </header>
-
-          {/* Two-column masonry of big full-bleed cards (OFF+BRAND) that the
-              sticky headline scrolls alongside; one column drops down so the
-              rows interlock. */}
-          <div data-work-cards className="mt-14 lg:col-span-9 lg:mt-0">
+          {/* Cards LEFT — two-column masonry that scrolls PAST the sticky panel;
+              one column drops down so the rows interlock. */}
+          <div data-work-cards className="lg:order-1 lg:col-span-8">
             <div className="grid gap-5 md:gap-6 lg:grid-cols-2">
               <div data-work-col-a className="space-y-5 md:space-y-6">
                 <WorkCard work={WORKS[0]} />
@@ -306,6 +357,81 @@ export default function WorkSection() {
               </div>
             </div>
           </div>
+
+          {/* Sticky panel RIGHT — show reel + WORK wordmark + blurb + All-work.
+              The reel/morph handed off from the hero lands here (Step 2 wires the
+              STUDIO→WORK morph onto the wordmark). self-start so the column
+              doesn't stretch; the reveal lives on an inner wrapper so the
+              entrance transform never fights the sticky counter-translate. */}
+          <aside
+            data-work-sticky
+            className="mt-14 lg:order-2 lg:col-span-4 lg:mt-0 lg:self-start"
+          >
+            {/* CARRY — reel + STUDIO→WORK morph travel here from the hero: while
+                the hero is in view GSAP lifts this whole block UP into the hero's
+                STUDIO slot, then slides it down into place as you scroll, morphing
+                STUDIO→WORK on the way. ONE element, no duplicate. */}
+            <div data-carry className="flex flex-col items-start gap-3 will-change-transform lg:items-end lg:text-right">
+              <button
+                type="button"
+                onClick={() => setReelOpen(true)}
+                aria-label="Watch the show reel"
+                className="group focus-ring flex items-center gap-3"
+              >
+                <span className="relative block h-12 w-20 overflow-hidden rounded-lg border border-paper/15 shadow-lg shadow-ink-deep/40">
+                  <video src="/final-comp.mp4" muted loop autoPlay playsInline aria-hidden className="h-full w-full object-cover" />
+                  <span className="absolute inset-0 flex items-center justify-center bg-ink/20 transition-colors group-hover:bg-ink/5">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-paper/90 text-ink shadow-sm">
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </span>
+                  </span>
+                </span>
+                <span className="text-left">
+                  <span className="micro block text-(--fg-faint)">Show reel</span>
+                  <span className="text-sm font-semibold tracking-tight">Watch ↗</span>
+                </span>
+              </button>
+
+              <span
+                data-morph
+                aria-hidden
+                className="grid items-end justify-items-end font-black uppercase leading-[0.82] tracking-[-0.05em] text-paper text-[11vw] will-change-transform md:text-[clamp(4rem,7vw,8.5rem)]"
+              >
+                <span className="[grid-area:1/1] whitespace-nowrap">
+                  {"STUDIO".split("").map((c, i) => (
+                    <span key={`s${i}`} className="morph-mask">
+                      <span data-morph-out className="morph-letter">{c}</span>
+                    </span>
+                  ))}
+                </span>
+                <span className="[grid-area:1/1] whitespace-nowrap">
+                  {"WORK".split("").map((c, i) => (
+                    <span key={`w${i}`} className="morph-mask">
+                      <span data-morph-in className="morph-letter morph-letter-in">{c}</span>
+                    </span>
+                  ))}
+                </span>
+              </span>
+
+              {/* blurb rides INSIDE the carry so it fades in directly under WORK
+                  (and travels with it), instead of waiting alone at the panel home */}
+              <div data-panel-reveal className="mt-3 flex flex-col items-start lg:items-end lg:text-left">
+              <p className="max-w-xs text-[15px] leading-relaxed text-(--fg-muted) lg:ml-auto">
+                Every build has one job: turn visitors into booked work.
+                Here&rsquo;s what that looks like.
+              </p>
+
+              <div className="mt-8 flex items-center gap-4">
+                <PillCTA label="All work" href="#work" />
+                <span className="micro tabular-nums text-(--fg-faint)">
+                  {String(WORKS.length).padStart(2, "0")}
+                </span>
+              </div>
+              </div>
+            </div>
+          </aside>
         </div>
 
         <div
@@ -321,6 +447,36 @@ export default function WorkSection() {
           <PillCTA label="Start a project" href="#contact" />
         </div>
       </div>
+
+      {/* show-reel lightbox — portaled to body so position:fixed survives the
+          ScrollSmoother transform. Relocated here with the reel from the hero. */}
+      {reelOpen &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-100 flex items-center justify-center bg-ink-deep/92 p-6 backdrop-blur-sm"
+            onClick={() => setReelOpen(false)}
+          >
+            <button
+              type="button"
+              onClick={() => setReelOpen(false)}
+              aria-label="Close show reel"
+              className="focus-ring absolute right-6 top-6 flex h-11 w-11 items-center justify-center rounded-full border border-paper/25 text-paper transition-colors hover:bg-paper/10"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
+            <video
+              src="/final-comp.mp4"
+              autoPlay
+              controls
+              playsInline
+              onClick={(e) => e.stopPropagation()}
+              className="max-h-[85vh] w-auto max-w-[92vw] rounded-2xl shadow-2xl"
+            />
+          </div>,
+          document.body,
+        )}
     </section>
   );
 }

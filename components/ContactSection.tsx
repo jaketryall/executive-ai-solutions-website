@@ -180,7 +180,7 @@ export default function ContactSection({
       id="contact"
       className="zone-dark relative z-40 -mt-8 rounded-t-[40px] bg-ink-deep px-5 md:px-10 pt-24 md:pt-32 pb-28 text-(--fg) shadow-[0_-32px_80px_rgba(14,13,12,0.4)]"
     >
-      <div className="lg:grid lg:grid-cols-12 lg:gap-14">
+      <div className="mx-auto max-w-[1440px] lg:grid lg:grid-cols-12 lg:gap-14">
         {/* Left — kill the hesitation */}
         <div className="lg:col-span-5">
           <p className="micro text-(--fg-faint)">Contact</p>
@@ -307,7 +307,7 @@ export default function ContactSection({
                             className="peer sr-only"
                           />
                           <span
-                            className="micro inline-flex items-center h-9 px-4 rounded-full border border-ink/15 text-ink/60 transition-all duration-300 peer-checked:bg-ink peer-checked:text-paper peer-checked:border-ink peer-focus-visible:outline-2 peer-focus-visible:outline-ink hover:border-ink/40"
+                            className="micro inline-flex items-center h-11 md:h-9 px-4 rounded-full border border-ink/15 text-ink/60 transition-all duration-300 peer-checked:bg-ink peer-checked:text-paper peer-checked:border-ink peer-focus-visible:outline-2 peer-focus-visible:outline-ink hover:border-ink/40"
                             style={{ transitionTimingFunction: "var(--ease-expo-out)" }}
                           >
                             {t}
@@ -325,7 +325,7 @@ export default function ContactSection({
                     placeholder="What are you building, and what should it do for the business?"
                   />
 
-                  <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <SubmitPill pending={pending} />
                     <p className="micro text-ink/40">Reply within 24h</p>
                   </div>
