@@ -1,1 +1,1118 @@
 @import "tailwindcss";
+
+@theme {
+  /* ─── Color (cool carried into every neutral; accent = "click" only)
+     near-black ink · gray secondary · steel blue-gray accent ─── */
+  --color-canvas: #ebecea;
+  --color-ink: #131413;
+  --color-panel: #dee0de;
+  --color-dark: #101111;
+  --color-dark-2: #191b1a;
+  --color-paper: #eff0ee;
+  --color-accent: #4c6b7c;
+  --color-accent-bright: #a6bfcc;
+
+  /* ─── Fibonacci spacing scale ─── */
+  --spacing-fib-1: 8px;
+  --spacing-fib-2: 13px;
+  --spacing-fib-3: 21px;
+  --spacing-fib-4: 34px;
+  --spacing-fib-5: 55px;
+  --spacing-fib-6: 89px;
+  --spacing-fib-7: 144px;
+  --spacing-fib-8: 233px;
+
+  --font-display: var(--font-bricolage);
+  --font-body: var(--font-instrument);
+
+  /* ─── The two curves (+ the one loop) — CSS mirrors of ease.ts ─── */
+  --ease-structure: cubic-bezier(0.62, 0.05, 0.1, 1);
+  --ease-ui: cubic-bezier(0.26, 1, 0.42, 1);
+  --ease-loop: cubic-bezier(0.42, 0, 0.58, 1);
+}
+
+/* ───────────────────────── base ───────────────────────── */
+
+html {
+  scroll-behavior: auto; /* Lenis owns smoothing; reduced-motion falls back to instant */
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* no-JS fallback for the footer reveal — JS refines this to the measured height */
+main {
+  margin-bottom: clamp(480px, 78vh, 760px);
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.dark-chapter :focus-visible,
+.ov :focus-visible {
+  outline-color: var(--color-accent-bright);
+}
+
+/* ─── type tiers (no sizes outside these) ─── */
+
+.t-display-mega {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(7.25rem, 17vw, 16rem);
+  line-height: 0.85;
+  letter-spacing: -0.03em;
+}
+.t-display-hero {
+  font-family: var(--font-display);
+  font-weight: 800;
+  /* full-width hero statement — capped by svh so short laptops keep the reel peek */
+  font-size: clamp(3.1rem, min(9.6vw, 20svh), 9rem);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+.t-display-xl {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.9rem, 7.4vw, 7.25rem);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.t-display-xl--tight {
+  line-height: 0.92;
+}
+.t-display-lg {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2rem, 4.4vw, 3.9rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.t-numeral {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(6rem, 13vw, 11rem);
+  line-height: 0.8;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.t-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.55rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.t-meta {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+.t-num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* optical centering for pill / nav / chip labels (progressive enhancement) */
+.text-trim {
+  text-box: trim-both cap alphabetic;
+}
+
+/* ─── page-start gate: pre-hide only what the JS will reveal ─── */
+@media (prefers-reduced-motion: no-preference) {
+  html.has-js [data-anim] {
+    opacity: 0;
+  }
+  html.has-js .mask-line > .mask-inner {
+    transform: translateY(118%);
+  }
+}
+.mask-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.15em;
+  margin-bottom: -0.15em;
+}
+.mask-line > .mask-inner {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* ───────────────────── micro-interaction language ───────────────────── */
+
+/* pill-in-pill CTA — Jake's signature: outer pill + inner circle, arrow swap + per-letter roll */
+.cta-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 13px 13px 26px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  isolation: isolate;
+  cursor: pointer;
+  border: none;
+  transition:
+    transform 0.25s var(--ease-ui),
+    box-shadow 0.25s var(--ease-ui);
+}
+.cta-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(19, 20, 19, 0.18);
+}
+.cta-pill:active {
+  transform: translateY(0) scale(0.98);
+}
+.cta-pill--accent {
+  background: var(--color-accent);
+  color: var(--color-paper);
+}
+.cta-pill--ink {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.cta-pill--paper {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+.cta-pill .cta-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: inline-flex;
+}
+.cta-pill--accent .cta-dot {
+  background: var(--color-paper);
+  color: var(--color-accent);
+}
+.cta-pill--ink .cta-dot {
+  background: var(--color-accent);
+  color: var(--color-paper);
+}
+.cta-pill--paper .cta-dot {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.cta-pill .cta-dot svg {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 13px;
+  height: 13px;
+  transition: transform 0.4s var(--ease-ui);
+}
+.cta-pill .cta-dot svg:nth-child(1) {
+  transform: translate(0, 0);
+}
+.cta-pill .cta-dot svg:nth-child(2) {
+  transform: translate(-200%, 200%);
+}
+.cta-pill:hover .cta-dot svg:nth-child(1) {
+  transform: translate(200%, -200%);
+}
+.cta-pill:hover .cta-dot svg:nth-child(2) {
+  transform: translate(0, 0);
+}
+/* per-letter roll rows (built by JS); width held by a hidden spacer */
+.cta-label {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+  font-kerning: none;
+  line-height: 1.3;
+}
+.cta-label .row {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+.cta-label .row span {
+  white-space: pre;
+  will-change: transform;
+}
+
+/* nav / footer link roll (two stacked copies inside a dedicated mask;
+   the outer link carries the 44px hit area) */
+.roll-link {
+  position: relative;
+  display: inline-block;
+  line-height: 1.3;
+  text-decoration: none;
+  color: inherit;
+  padding: 13px 0;
+  margin: -13px 0;
+}
+.roll-link .roll-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+}
+.roll-link .roll-stack {
+  display: inline-grid;
+  grid-template-areas: "s";
+  transition: transform 0.5s var(--ease-structure);
+  will-change: transform;
+}
+.roll-link .roll-stack > span {
+  grid-area: s;
+  display: inline-block;
+}
+.roll-link .roll-stack > span:last-child {
+  transform: translateY(130%);
+  color: var(--color-accent); /* light grounds; dark grounds override below */
+}
+.dark-chapter .roll-link .roll-stack > span:last-child,
+.site-nav[data-theme="dark"] .roll-link .roll-stack > span:last-child,
+.site-nav.is-scrolled .roll-link .roll-stack > span:last-child {
+  color: var(--color-accent-bright);
+}
+.roll-link:hover .roll-stack,
+.roll-link:focus-visible .roll-stack {
+  transform: translateY(-130%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .roll-link .roll-stack {
+    transition: none;
+  }
+  .roll-link:hover .roll-stack {
+    transform: none;
+  }
+}
+
+/* inline links — underline draw */
+.u-link {
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+}
+.u-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1.5px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--ease-ui);
+}
+.u-link:hover::after,
+.u-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* segmented selector — pill-in-pill variant B (sliding thumb) */
+.seg {
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(239, 240, 238, 0.07);
+  isolation: isolate;
+}
+.seg button {
+  position: relative;
+  z-index: 2;
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(239, 240, 238, 0.68);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.4s var(--ease-ui);
+  min-height: 44px;
+}
+.seg button:hover {
+  color: rgba(239, 240, 238, 0.85);
+}
+.seg button:active {
+  transform: scale(0.98);
+}
+.seg button[aria-pressed="true"],
+.seg button[aria-selected="true"] {
+  color: var(--color-paper);
+}
+.seg .seg-thumb {
+  position: absolute;
+  z-index: 1;
+  top: 4px;
+  bottom: 4px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  transition:
+    left 0.45s var(--ease-structure),
+    width 0.45s var(--ease-structure);
+}
+
+/* feature toggle chips (estimator) */
+.chip-toggle {
+  appearance: none;
+  border: 1.5px solid rgba(239, 240, 238, 0.22);
+  background: transparent;
+  color: rgba(239, 240, 238, 0.75);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  min-height: 44px;
+  transition:
+    background 0.35s var(--ease-ui),
+    border-color 0.35s var(--ease-ui),
+    color 0.35s var(--ease-ui),
+    transform 0.2s var(--ease-ui);
+}
+.chip-toggle:hover {
+  border-color: rgba(239, 240, 238, 0.5);
+  color: var(--color-paper);
+}
+.chip-toggle:active {
+  transform: scale(0.98);
+}
+.chip-toggle[aria-pressed="true"] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-paper);
+}
+
+/* form fields (dark chapter) */
+.field {
+  position: relative;
+  display: block;
+}
+.field input,
+.field textarea {
+  width: 100%;
+  background: rgba(239, 240, 238, 0.05);
+  border: 1.5px solid rgba(239, 240, 238, 0.16);
+  border-radius: 14px;
+  color: var(--color-paper);
+  padding: 21px 21px 13px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition:
+    border-color 0.35s var(--ease-ui),
+    background 0.35s var(--ease-ui);
+}
+.field input:hover,
+.field textarea:hover {
+  border-color: rgba(239, 240, 238, 0.3);
+}
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--color-accent-bright);
+  background: rgba(239, 240, 238, 0.08);
+}
+.field label {
+  position: absolute;
+  left: 21px;
+  top: 17px;
+  font-size: 1rem;
+  color: rgba(239, 240, 238, 0.62);
+  pointer-events: none;
+  transform-origin: left top;
+  transition:
+    transform 0.3s var(--ease-ui),
+    color 0.3s var(--ease-ui);
+}
+.field input:focus + label,
+.field textarea:focus + label,
+.field.has-value label {
+  transform: translateY(-11px) scale(0.72);
+  color: rgba(239, 240, 238, 0.7);
+}
+.field .field-error {
+  display: none;
+  margin-top: 8px;
+  font-size: 0.8125rem;
+  color: #d8a08a;
+}
+.field.is-invalid input,
+.field.is-invalid textarea {
+  border-color: #b06a4e;
+}
+.field.is-invalid .field-error {
+  display: block;
+  animation: err-rise 0.3s var(--ease-ui);
+}
+@keyframes err-rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ───────────────────── nav ───────────────────── */
+
+.site-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  color: var(--color-ink);
+  transition: color 0.6s var(--ease-structure);
+}
+.site-nav[data-theme="dark"] {
+  color: var(--color-paper);
+}
+.site-nav > div:first-of-type {
+  position: relative;
+  z-index: 2;
+}
+.nav-cluster {
+  border-radius: 999px;
+  padding: 4px 4px 4px 13px;
+  transition:
+    background-color 0.5s var(--ease-structure),
+    backdrop-filter 0.5s var(--ease-structure),
+    box-shadow 0.5s var(--ease-structure);
+}
+.nav-brand {
+  border-radius: 999px;
+  padding: 10px 16px;
+  margin-left: -16px;
+  transition:
+    background-color 0.5s var(--ease-structure),
+    backdrop-filter 0.5s var(--ease-structure),
+    color 0.5s var(--ease-structure);
+}
+.site-nav.is-scrolled .nav-cluster,
+.site-nav.is-scrolled .nav-brand {
+  background: rgba(16, 17, 17, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--color-paper);
+  box-shadow: 0 8px 30px rgba(19, 20, 19, 0.14);
+}
+.site-nav.is-scrolled .nav-brand {
+  margin-left: 0;
+  box-shadow: none;
+}
+.nav-cta {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 0.875rem;
+}
+.nav-cta .cta-dot {
+  width: 26px;
+  height: 26px;
+}
+.ov {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+}
+.ov-item {
+  color: var(--color-paper);
+  text-decoration: none;
+}
+.ov-item:hover {
+  color: var(--color-accent-bright);
+}
+
+/* ───────────────────── surfaces ───────────────────── */
+
+.dark-chapter {
+  background: linear-gradient(180deg, var(--color-dark) 0%, var(--color-dark-2) 100%);
+  color: var(--color-paper);
+}
+
+/* tonal chips (deliverables, "New for 2026") — sentence case, real data only */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(19, 20, 19, 0.06);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(19, 20, 19, 0.75);
+}
+.dark-chapter .chip {
+  background: rgba(239, 240, 238, 0.08);
+  color: rgba(239, 240, 238, 0.75);
+}
+
+/* proof cards — browser + phone frames drawn in the site's own tonal language.
+   Paper surface: these sit ON the gray services panel, card-on-card */
+.browser-card {
+  display: block;
+  border-radius: 14px;
+  background: var(--color-paper);
+  box-shadow: 0 24px 60px -24px rgba(19, 20, 19, 0.35);
+  overflow: hidden;
+  transition:
+    transform 0.5s var(--ease-ui),
+    box-shadow 0.5s var(--ease-ui);
+}
+.browser-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 34px 72px -28px rgba(19, 20, 19, 0.42);
+}
+.browser-chrome .monogram {
+  width: 13px;
+  height: 13px;
+}
+.browser-chrome {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(19, 20, 19, 0.65);
+}
+.browser-shot {
+  display: block;
+  overflow: hidden;
+}
+.browser-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.9s var(--ease-structure);
+}
+.browser-card:hover .browser-shot img {
+  transform: scale(1.03);
+}
+.phone-card {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 18px 44px -18px rgba(19, 20, 19, 0.45);
+  border: 4px solid var(--color-panel);
+  background: var(--color-panel);
+}
+.phone-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+/* services rail progress (functional, scroll-scrubbed) */
+.rail-bar {
+  width: 89px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(19, 20, 19, 0.1);
+  overflow: hidden;
+}
+.rail-bar-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: var(--color-ink);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* SERP artifact — the client's real listing, drawn in our tonal language */
+.serp-card {
+  background: var(--color-paper);
+  border-radius: 18px;
+  padding: 34px;
+}
+.serp-url {
+  font-size: 0.8125rem;
+  color: rgba(19, 20, 19, 0.72);
+}
+.serp-path {
+  color: rgba(19, 20, 19, 0.65);
+}
+.serp-title {
+  margin-top: 8px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #2a4a8a;
+}
+.serp-desc {
+  margin-top: 8px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: rgba(19, 20, 19, 0.7);
+}
+.serp-tag {
+  margin-top: 21px;
+  color: rgba(19, 20, 19, 0.72);
+}
+
+/* chat artifact — the ask-this-site surface, shown as itself */
+.chat-card {
+  background: var(--color-paper);
+  border-radius: 18px;
+  padding: 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.chat-q {
+  align-self: flex-end;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  border-radius: 16px 16px 4px 16px;
+  padding: 13px 18px;
+  font-size: 0.9375rem;
+  max-width: 85%;
+}
+.chat-a {
+  display: flex;
+  gap: 13px;
+  align-self: flex-start;
+  background: rgba(19, 20, 19, 0.05);
+  border-radius: 16px 16px 16px 4px;
+  padding: 13px 18px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: rgba(19, 20, 19, 0.8);
+  max-width: 92%;
+}
+
+/* process numerals — outline at rest, ink fills bottom-up on scroll */
+.num {
+  display: inline-block;
+}
+.num .num-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(19, 20, 19, 0.28);
+}
+.num .num-fill {
+  position: absolute;
+  inset: 0;
+  color: var(--color-ink);
+  clip-path: inset(100% 0 0 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .num .num-fill {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* work card (itsjay-decoded DNA, our tuning): near-black frame, media well,
+   demo panel opens from a center slit on hover; open by default on touch */
+.work-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 13px 13px 21px;
+  border-radius: 18px;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  transition:
+    transform 0.5s var(--ease-ui),
+    box-shadow 0.5s var(--ease-ui);
+}
+a.work-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 34px 72px -28px rgba(0, 0, 0, 0.45);
+}
+.work-card .wc-well {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.work-card .wc-base {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* screenshots anchor to their own top-left so cover-crop never eats the
+     page's nav/headline — the right-side scenery absorbs it */
+  object-position: left top;
+}
+.work-card .wc-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: rgba(16, 17, 17, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-ui);
+}
+.work-card .wc-demo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(240px, 72%, 560px);
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 20;
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
+}
+.work-card .wc-demo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+@media (hover: hover) and (pointer: fine) {
+  .work-card .wc-demo {
+    clip-path: polygon(30% 50%, 70% 50%, 70% 50%, 30% 50%);
+    transform: translate(-50%, -42%);
+    transition:
+      clip-path 0.7s var(--ease-structure),
+      transform 0.7s var(--ease-structure);
+  }
+  .work-card:hover .wc-veil,
+  .work-card:focus-visible .wc-veil {
+    opacity: 1;
+  }
+  .work-card:hover .wc-demo,
+  .work-card:focus-visible .wc-demo {
+    clip-path: polygon(0 100%, 100% 100%, 100% 0, 0 0);
+    transform: translate(-50%, -50%);
+  }
+}
+@media (hover: none), (pointer: coarse) {
+  /* touch: the demo rests open over a permanently veiled base */
+  .work-card .wc-veil {
+    opacity: 1;
+  }
+  .work-card .wc-demo {
+    transform: translate(-50%, -50%);
+  }
+}
+.work-card .wc-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 13px;
+  padding: 0 8px;
+}
+/* card typography (the itsjay register, Jake-requested): heavy tracked
+   uppercase name vs light gray uppercase meta — weight contrast is the look */
+.work-card .wc-client {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.work-card .wc-meta {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(239, 240, 238, 0.55);
+}
+/* circular logo holder (the itsjay avatar chip) */
+.work-card .wc-avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(239, 240, 238, 0.09);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.work-card .wc-avatar img {
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+}
+/* bottom tag marquee — calm constant loop (proof register: no scroll reactivity).
+   Track holds exactly TWO copies of the set, so -50% wraps seamlessly. */
+.work-card .wc-marquee {
+  overflow: hidden;
+  margin: 0 8px;
+  /* flex item: min-width:auto would force the card as wide as the whole
+     tag track (blows up single-column mobile layouts) */
+  min-width: 0;
+}
+.work-card .wc-track {
+  display: flex;
+  width: max-content;
+  animation: wc-ticker 36s linear infinite;
+}
+.work-card .wc-set {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(239, 240, 238, 0.5);
+}
+.work-card .wc-set span {
+  display: inline-flex;
+  align-items: center;
+}
+.work-card .wc-set span::after {
+  content: "·";
+  margin: 0 13px;
+  opacity: 0.6;
+}
+@keyframes wc-ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+/* parallax layer — overscan comes from a slight SCALE (a taller box would
+   change the cover-fit aspect and crop the shot's sides) */
+.work-card .wc-par {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+/* reel cursor chip — "Play showreel" rides the pointer over the reel.
+   Three layers so transforms never fight: outer = GSAP x/y follower,
+   mid = CSS centering, pill = GSAP show/hide scale */
+.reel-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 30;
+  pointer-events: none;
+  will-change: transform;
+}
+.reel-cursor .rc-center {
+  display: block;
+  transform: translate(-50%, -50%);
+}
+.reel-cursor .rc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 21px;
+  border-radius: 999px;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+}
+.reel-cursor .rc-pill svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* hero trust ticker — REAL claims on a calm constant loop (proof register:
+   no scroll reactivity), edges faded so it reads embedded, not pasted */
+.trust-ticker {
+  overflow: hidden;
+  min-width: 0;
+  mask-image: linear-gradient(90deg, transparent 0, #000 34px, #000 calc(100% - 34px), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 34px, #000 calc(100% - 34px), transparent 100%);
+}
+.trust-ticker .tt-track {
+  display: flex;
+  width: max-content;
+  animation: wc-ticker 44s linear infinite;
+}
+.trust-ticker .tt-set {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(19, 20, 19, 0.55);
+}
+.trust-ticker .tt-set > span {
+  display: inline-flex;
+  align-items: center;
+}
+.trust-ticker .tt-set .monogram {
+  width: 11px;
+  height: 11px;
+  margin: 0 21px;
+  opacity: 0.35;
+}
+
+/* manifesto inline image chip — opens between words on scroll (width 0 → auto);
+   rest state (no JS / mobile / reduced-motion) is OPEN */
+.ms-chip {
+  display: inline-flex;
+  vertical-align: -0.04em;
+  height: 0.68em;
+  width: auto;
+  margin: 0 0.12em;
+  border-radius: 0.18em;
+  overflow: hidden;
+}
+.ms-chip img {
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: none;
+}
+
+/* EA monogram as a recolorable mask */
+.monogram {
+  display: inline-block;
+  background: currentColor;
+  mask-image: url("/Executive%20Ai%20Solutions%20Logo.png");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: url("/Executive%20Ai%20Solutions%20Logo.png");
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+}
+
+/* hamburger → X (two genuine lines, squeeze) */
+.hamb {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+.hamb span {
+  position: absolute;
+  left: 11px;
+  right: 11px;
+  height: 2px;
+  background: currentColor;
+  transition:
+    transform 0.45s var(--ease-structure),
+    top 0.45s var(--ease-structure);
+}
+.hamb span:nth-child(1) {
+  top: 18px;
+}
+.hamb span:nth-child(2) {
+  top: 26px;
+}
+.hamb.is-open span:nth-child(1) {
+  top: 22px;
+  transform: rotate(45deg);
+}
+.hamb.is-open span:nth-child(2) {
+  top: 22px;
+  transform: rotate(-45deg);
+}
+
+/* estimator output card — neutral elevation on the dark ground */
+.est-output {
+  background: rgba(239, 240, 238, 0.045);
+  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.55);
+}
+
+/* mobile sticky estimate bar */
+.est-bar {
+  position: fixed;
+  left: 13px;
+  right: 13px;
+  bottom: calc(13px + env(safe-area-inset-bottom));
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 13px 13px 21px;
+  border-radius: 999px;
+  background: rgba(16, 17, 17, 0.9);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--color-paper);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  transform: translateY(150%);
+  transition: transform 0.5s var(--ease-structure);
+  pointer-events: none;
+}
+.est-bar.is-live {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.est-bar-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: var(--color-paper);
+}
+.est-bar-cta svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* odometer wheels */
+.od {
+  display: inline-flex;
+  overflow: hidden;
+  height: 1em;
+  line-height: 1;
+}
+.od .od-col {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+.od .od-col span {
+  height: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.od .od-sep {
+  display: flex;
+  align-items: center;
+}
+
+/* view transitions for future internal pages */
+@view-transition {
+  navigation: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* build-marker: nav-brand-v2 */
+
+
+/* build-marker: wc-marquee-minw */

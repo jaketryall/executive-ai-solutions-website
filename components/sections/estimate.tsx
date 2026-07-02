@@ -1,0 +1,433 @@
+"use client";
+
+import { useMemo, useRef, useState, type FormEvent } from "react";
+import {
+  gsap,
+  ScrollTrigger,
+  useGSAP,
+  EASE_STRUCTURE,
+  EASE_UI,
+  reducedMotion,
+} from "@/components/anim/ease";
+import { CTA } from "@/components/ui/cta";
+import { Monogram } from "@/components/ui/monogram";
+import { Odometer } from "@/components/estimator/odometer";
+import {
+  PROJECT_TYPES,
+  PAGE_BANDS,
+  FEATURES,
+  MONTHLY,
+  TIERS,
+  DEFAULT_STATE,
+  compute,
+  summarize,
+  type EstimateState,
+} from "@/components/estimator/pricing";
+
+type FormStatus = "idle" | "sending" | "success" | "error";
+
+export function Estimate() {
+  const root = useRef<HTMLElement>(null!);
+  const [est, setEst] = useState<EstimateState>(DEFAULT_STATE);
+  const [armed, setArmed] = useState(false);
+  const [status, setStatus] = useState<FormStatus>("idle");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const result = useMemo(() => compute(est), [est]);
+  const summary = useMemo(() => summarize(est), [est]);
+  const tierIndex = TIERS.findIndex((t) => t.name === result.tier.name);
+
+  useGSAP(
+    () => {
+      const q = gsap.utils.selector(root);
+
+      if (reducedMotion()) {
+        gsap.set(q("[data-anim]"), { autoAlpha: 1 });
+        gsap.set(q(".mask-inner"), { yPercent: 0, y: 0 });
+        setArmed(true);
+        // the mobile output bar is state, not motion — keep it working
+        const bar = q(".est-bar")[0];
+        const grid = q(".est-grid")[0];
+        if (bar && grid) {
+          ScrollTrigger.create({
+            trigger: grid,
+            start: "top 55%",
+            end: "bottom 30%",
+            onToggle: (self) => bar.classList.toggle("is-live", self.isActive),
+          });
+        }
+        return;
+      }
+
+      // ── entrance: named one-at-a-time (head → controls → output LAST) ──
+      const tl = gsap.timeline({
+        // fire while the dark chapter is still rising — the slab must never sit empty
+        scrollTrigger: { trigger: root.current, start: "top 68%" },
+        defaults: { ease: EASE_STRUCTURE },
+        onComplete: () => setArmed(true),
+      });
+      tl.fromTo(
+        q(".est-head .mask-inner"),
+        { yPercent: 118, y: 0 },
+        { yPercent: 0, y: 0, duration: 0.95, stagger: 0.08 }
+      )
+        .fromTo(
+          q("[data-anim='est-sub']"),
+          { autoAlpha: 0, y: 13 },
+          { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
+          "-=0.5"
+        )
+        .fromTo(
+          q("[data-anim='ctrl']"),
+          { autoAlpha: 0, x: -21 },
+          { autoAlpha: 1, x: 0, duration: 0.7, stagger: 0.09 },
+          "-=0.35"
+        )
+        .fromTo(
+          q("[data-anim='out']"),
+          { autoAlpha: 0, scale: 0.96 },
+          { autoAlpha: 1, scale: 1, duration: 0.9 },
+          "-=0.3"
+        )
+        .add(() => setArmed(true), "-=0.5");
+
+      // form zone: quiet proximity rise
+      gsap.fromTo(
+        q("[data-anim='form']"),
+        { autoAlpha: 0, y: 21 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.8,
+          ease: EASE_STRUCTURE,
+          stagger: 0.06,
+          scrollTrigger: { trigger: q(".quote-grid")[0], start: "top 78%" },
+        }
+      );
+
+      // ── E9 rise + dim: this chapter covers the process panel ──
+      const mm = gsap.matchMedia();
+      // mobile: a compact sticky output bar rides along while the controls scroll
+      mm.add("(max-width: 820px)", () => {
+        const bar = q(".est-bar")[0];
+        if (!bar) return;
+        const st = ScrollTrigger.create({
+          trigger: q(".est-grid")[0],
+          start: "top 55%",
+          end: "bottom 30%",
+          onToggle: (self) => bar.classList.toggle("is-live", self.isActive),
+        });
+        return () => {
+          st.kill();
+          bar.classList.remove("is-live");
+        };
+      });
+    },
+    { scope: root }
+  );
+
+  // tier label rolls when the tier crosses
+  const tierStackRef = useRef<HTMLDivElement>(null!);
+  useGSAP(
+    () => {
+      if (!tierStackRef.current) return;
+      // translate each row by its OWN height, not the stack's (yPercent is self-relative)
+      const rows = tierStackRef.current.children;
+      if (reducedMotion()) {
+        gsap.set(rows, { yPercent: -tierIndex * 100 });
+        return;
+      }
+      gsap.to(rows, { yPercent: -tierIndex * 100, duration: 0.5, ease: EASE_UI });
+    },
+    { dependencies: [tierIndex] }
+  );
+
+  const toggle = (key: "features" | "monthly", id: string) =>
+    setEst((s) => ({
+      ...s,
+      [key]: s[key].includes(id) ? s[key].filter((x) => x !== id) : [...s[key], id],
+    }));
+
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (status === "sending") return;
+    const form = e.currentTarget;
+    const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+    const errs: Record<string, string> = {};
+    if (!data.name?.trim()) errs.name = "We need a name to reply to";
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email ?? "")) errs.email = "That email doesn't look right";
+    if (!data.message?.trim()) errs.message = "Tell us a little about the project";
+    setErrors(errs);
+    if (Object.keys(errs).length) {
+      const first = ["name", "email", "message"].find((k) => errs[k]);
+      if (first) (form.querySelector(`[name='${first}']`) as HTMLElement)?.focus();
+      return;
+    }
+
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...data, summary: summary.text }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      setStatus("success");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <section
+      id="estimate"
+      ref={root}
+      data-nav="dark"
+      className="dark-chapter relative z-10 mx-[8px] mt-[8px] rounded-[24px] md:mx-[13px] md:-mt-[89px]"
+    >
+      {/* ── the instant estimate ── */}
+      <div className="mx-auto max-w-[1280px] px-[21px] pt-[89px] md:px-[55px] md:pt-[144px]">
+        <h2 className="est-head t-display-lg max-w-[14ch]">
+          <span className="mask-line">
+            <span className="mask-inner">What would</span>
+          </span>
+          <span className="mask-line">
+            <span className="mask-inner">yours cost?</span>
+          </span>
+        </h2>
+        <p data-anim="est-sub" className="mt-[21px] max-w-[46ch] text-paper/70">
+          Pick what your business needs and watch the number move. It computes
+          from our real pricing, not a marketing funnel.
+        </p>
+
+        <div className="est-grid mt-[55px] grid gap-[34px] md:grid-cols-[42fr_58fr] md:gap-[55px]">
+          {/* controls */}
+          <div className="flex flex-col gap-[34px]">
+            <fieldset data-anim="ctrl">
+              <legend className="t-meta mb-[13px] text-paper/60">The project</legend>
+              <Segmented
+                options={PROJECT_TYPES.map((t) => ({ id: t.id, label: t.label }))}
+                value={est.projectType}
+                onChange={(id) => setEst((s) => ({ ...s, projectType: id as EstimateState["projectType"] }))}
+              />
+            </fieldset>
+
+            <fieldset data-anim="ctrl">
+              <legend className="t-meta mb-[13px] text-paper/60">How big</legend>
+              <div className="flex flex-wrap gap-[8px]">
+                {PAGE_BANDS.map((b) => (
+                  <button
+                    key={b.id}
+                    type="button"
+                    className="chip-toggle"
+                    aria-pressed={est.pageBand === b.id}
+                    onClick={() => setEst((s) => ({ ...s, pageBand: b.id }))}
+                  >
+                    {b.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+
+            <fieldset data-anim="ctrl">
+              <legend className="t-meta mb-[13px] text-paper/60">What it needs</legend>
+              <div className="flex flex-wrap gap-[8px]">
+                {FEATURES.map((f) => (
+                  <button
+                    key={f.id}
+                    type="button"
+                    className="chip-toggle"
+                    aria-pressed={est.features.includes(f.id)}
+                    onClick={() => toggle("features", f.id)}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+
+            <fieldset data-anim="ctrl">
+              <legend className="t-meta mb-[13px] text-paper/60">Keep it growing</legend>
+              <div className="flex flex-wrap gap-[8px]">
+                {MONTHLY.map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    className="chip-toggle"
+                    aria-pressed={est.monthly.includes(m.id)}
+                    onClick={() => toggle("monthly", m.id)}
+                  >
+                    {m.label}
+                    <span className="ml-[8px] opacity-60">{m.note}</span>
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+          </div>
+
+          {/* live output — the main character */}
+          <div data-anim="out" className="est-output relative self-start rounded-[18px] p-[34px]">
+            <Monogram
+              className={`absolute right-[34px] top-[34px] h-[34px] w-[34px] transition-colors duration-500 ${
+                tierIndex === 2 ? "text-accent-bright" : tierIndex === 1 ? "text-paper/70" : "text-paper/40"
+              }`}
+            />
+            <p className="t-meta text-paper/60">Your estimate</p>
+            <p className="t-display-lg mt-[13px] flex items-baseline" aria-live="polite">
+              <span aria-hidden>$</span>
+              <Odometer value={armed ? result.total : 0} />
+              <span className="sr-only">{`$${result.total.toLocaleString()} estimated`}</span>
+            </p>
+            <div className="mt-[21px] flex items-center gap-[13px]">
+              <div className="t-title overflow-hidden" style={{ height: "1.3em", lineHeight: 1.3 }}>
+                <div ref={tierStackRef}>
+                  {TIERS.map((t) => (
+                    <span key={t.name} className="block" style={{ height: "1.3em", lineHeight: 1.3 }}>
+                      {t.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <span className="t-meta text-paper/60">{result.tier.blurb}</span>
+            </div>
+            {(result.monthly > 0 || result.aiSelected) && (
+              <p className="t-meta mt-[13px] text-paper/60">
+                {result.monthly > 0 && `Plus from $${result.monthly.toLocaleString()}/mo ongoing`}
+                {result.monthly > 0 && result.aiSelected && " · "}
+                {result.aiSelected && "AI automation quoted per project"}
+              </p>
+            )}
+            <p className="t-meta mt-[21px] max-w-[38ch] text-paper/60">
+              A realistic range, not a promise. Every project is quoted
+              individually.
+            </p>
+            <div className="mt-[34px]">
+              <CTA href="#contact" label="Get your exact quote" tone="accent" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* mobile sticky output bar — the number rides with the controls */}
+      <div className="est-bar md:hidden">
+        <span className="t-title flex items-baseline">
+          <span aria-hidden>$</span>
+          <Odometer value={armed ? result.total : 0} />
+          <span className="sr-only">{`$${result.total.toLocaleString()} estimated, ${result.tier.name} tier`}</span>
+          <span aria-hidden className="ml-[8px] text-[0.9375rem] text-paper/60">· {result.tier.name}</span>
+        </span>
+        <a href="#contact" className="est-bar-cta" aria-label="Get your exact quote">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden>
+            <path d="M3 13 13 3M5.5 3H13v7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </a>
+      </div>
+
+      {/* ── the quote form (the one action) ── */}
+      <div id="contact" className="mx-auto max-w-[1280px] px-[21px] pb-[144px] pt-[144px] md:px-[55px]">
+        <h2 data-anim="form" className="t-display-lg max-w-[16ch]">
+          Tell us about your business
+        </h2>
+
+        <div className="quote-grid mt-[55px] grid items-start gap-[34px] md:grid-cols-[58fr_42fr] md:gap-[55px]">
+          {status === "success" ? (
+            <div className="est-output rounded-[18px] p-[34px]" role="status">
+              <Monogram className="h-[34px] w-[34px] text-accent-bright" />
+              <p className="t-title mt-[21px]">Got it. We&apos;ll reply within one business day</p>
+              <p className="mt-[13px] max-w-[44ch] text-paper/70">
+                Your estimate came through with the message, so the first reply
+                you get will already talk real numbers.
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={onSubmit} noValidate className="flex flex-col gap-[21px]">
+              <div className="grid gap-[21px] sm:grid-cols-2">
+                <div className={`field ${errors.name ? "is-invalid" : ""}`} data-anim="form">
+                  <input id="q-name" name="name" type="text" autoComplete="name" placeholder=" " aria-invalid={!!errors.name} aria-describedby={errors.name ? "q-name-err" : undefined} onInput={(e) => e.currentTarget.parentElement!.classList.toggle("has-value", !!e.currentTarget.value)} />
+                  <label htmlFor="q-name">Your name</label>
+                  <p className="field-error" id="q-name-err" role="alert">{errors.name}</p>
+                </div>
+                <div className={`field ${errors.email ? "is-invalid" : ""}`} data-anim="form">
+                  <input id="q-email" name="email" type="email" autoComplete="email" placeholder=" " aria-invalid={!!errors.email} aria-describedby={errors.email ? "q-email-err" : undefined} onInput={(e) => e.currentTarget.parentElement!.classList.toggle("has-value", !!e.currentTarget.value)} />
+                  <label htmlFor="q-email">Email</label>
+                  <p className="field-error" id="q-email-err" role="alert">{errors.email}</p>
+                </div>
+              </div>
+              <div className="field" data-anim="form">
+                <input id="q-business" name="business" type="text" autoComplete="organization" placeholder=" " onInput={(e) => e.currentTarget.parentElement!.classList.toggle("has-value", !!e.currentTarget.value)} />
+                <label htmlFor="q-business">Business name</label>
+              </div>
+              <div className={`field ${errors.message ? "is-invalid" : ""}`} data-anim="form">
+                <textarea id="q-message" name="message" rows={5} placeholder=" " aria-invalid={!!errors.message} aria-describedby={errors.message ? "q-message-err" : undefined} onInput={(e) => e.currentTarget.parentElement!.classList.toggle("has-value", !!e.currentTarget.value)} />
+                <label htmlFor="q-message">What do you need?</label>
+                <p className="field-error" id="q-message-err" role="alert">{errors.message}</p>
+              </div>
+              <div data-anim="form" className="flex flex-wrap items-center gap-[21px]">
+                <CTA
+                  type="submit"
+                  label={status === "sending" ? "Sending" : "Send it over"}
+                  tone="accent"
+                  disabled={status === "sending"}
+                />
+                {status === "error" && (
+                  <p className="t-meta text-[#d8a08a]" role="alert">
+                    That didn&apos;t send. Try again, or email us directly.
+                  </p>
+                )}
+              </div>
+            </form>
+          )}
+
+          {/* sticky estimate summary rides along */}
+          <aside data-anim="form" className="est-output rounded-[18px] p-[34px] md:sticky md:top-[89px]">
+            <div className="flex items-start justify-between">
+              <p className="t-meta text-paper/60">Attached to your message</p>
+              <Monogram className="h-[21px] w-[21px] text-paper/40" />
+            </div>
+            <p className="t-title mt-[21px] flex items-baseline">
+              <span aria-hidden>$</span>
+              <Odometer value={armed ? result.total : 0} />
+              <span className="ml-[8px] text-paper/60">· {result.tier.name}</span>
+              <span className="sr-only">{`$${result.total.toLocaleString()}, ${result.tier.name} tier`}</span>
+            </p>
+            <p className="mt-[13px] text-[0.9375rem] leading-[1.5] text-paper/60">{summary.text}</p>
+            <p className="t-meta mt-[21px] text-paper/60">
+              Change it any time in the estimator above
+            </p>
+          </aside>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// segmented pill with a sliding thumb (pill-in-pill variant B)
+function Segmented({
+  options,
+  value,
+  onChange,
+}: {
+  options: { id: string; label: string }[];
+  value: string;
+  onChange: (id: string) => void;
+}) {
+  const idx = Math.max(0, options.findIndex((o) => o.id === value));
+  const n = options.length;
+  return (
+    <div className="seg" role="group">
+      {options.map((o) => (
+        <button key={o.id} type="button" aria-pressed={o.id === value} onClick={() => onChange(o.id)}>
+          {o.label}
+        </button>
+      ))}
+      <span
+        className="seg-thumb"
+        aria-hidden
+        style={{
+          left: `calc(4px + ${idx} * (100% - 8px) / ${n})`,
+          width: `calc((100% - 8px) / ${n})`,
+        }}
+      />
+    </div>
+  );
+}
