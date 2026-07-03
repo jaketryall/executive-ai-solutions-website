@@ -29,8 +29,8 @@ export function Nav() {
       const resolve = () => {
         let theme: string | null = null;
         for (const e of entries) if (e.active) theme = e.sec.dataset.nav!;
-        // nothing active (e.g. over the fixed footer) → keep the previous theme
-        if (theme) nav.setAttribute("data-theme", theme);
+        // nothing active = over the fixed footer, which is a light ground
+        nav.setAttribute("data-theme", theme ?? "light");
       };
       const triggers = entries.map((e) =>
         ScrollTrigger.create({

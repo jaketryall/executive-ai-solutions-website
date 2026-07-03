@@ -216,9 +216,9 @@ export function ManifestoWork() {
             </div>
           </div>
           <p className="max-w-[38ch] text-[1.0625rem] leading-[1.5] text-ink/75 md:text-right">
-            Desert Wings Flight School came to us for a site that could carry real
-            ad spend. We designed it, built it, and wired every enquiry to
-            measurable conversion data.
+            We design, build, and grow websites for serious local businesses.
+            Custom design, SEO and Google Ads, and AI automation. No templates,
+            no retainers you can&apos;t explain.
           </p>
         </div>
       </div>

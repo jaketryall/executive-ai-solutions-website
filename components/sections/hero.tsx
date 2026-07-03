@@ -12,12 +12,7 @@ import {
 import { CTA } from "@/components/ui/cta";
 import { Monogram } from "@/components/ui/monogram";
 
-// staggered indents zigzag the statement across the canvas — composed, not centered
-const H1_LINES = [
-  { text: "Websites", indent: "" },
-  { text: "that win", indent: "md:pl-[min(11vw,160px)]" },
-  { text: "customers", indent: "md:pl-[min(4vw,58px)]" },
-];
+const H1_LINES = ["Websites", "that win", "customers"];
 
 // every claim is true today — swap in social icons here once the accounts exist
 const TRUST = [
@@ -88,19 +83,19 @@ export function Hero() {
   return (
     <section id="top" ref={root} data-nav="light" className="hero relative overflow-hidden">
       {/* height leaves ~8–10rem of viewport 1 for the showreel's top edge (the peek) */}
-      <div className="hero-in mx-auto flex min-h-[calc(100svh-10rem)] w-full max-w-[1280px] flex-col px-[21px] pb-[34px] pt-[110px] md:min-h-[calc(100svh-9rem)] md:justify-between md:px-[55px] md:pt-[121px]">
+      <div className="hero-in mx-auto flex min-h-[calc(100svh-10rem)] w-full max-w-[1280px] flex-col px-[21px] pb-[34px] pt-[105px] md:min-h-[calc(100svh-9rem)] md:justify-between md:px-[55px] md:pt-[110px]">
         {/* ── the statement (the only loud thing on screen — no paragraph under it) ── */}
-        <h1 className="hero-h1 t-display-hero">
+        <h1 className="hero-h1 t-display-hero text-center">
           {H1_LINES.map((line) => (
-            <span key={line.text} className={`mask-line ${line.indent}`}>
-              <span className="mask-inner">{line.text}</span>
+            <span key={line} className="mask-line">
+              <span className="mask-inner">{line}</span>
             </span>
           ))}
         </h1>
 
-        {/* ── the foot: ask left, live trust ticker right ── */}
-        <div className="mt-[55px] flex flex-col gap-[34px] md:flex-row md:items-center md:justify-between">
-          <div data-anim="ctas" className="flex shrink-0 flex-wrap items-center gap-[13px]">
+        {/* ── the foot: centered ask, live trust ticker beneath ── */}
+        <div className="mt-[34px] flex flex-col items-center gap-[21px]">
+          <div data-anim="ctas" className="flex flex-wrap items-center justify-center gap-[13px]">
             <CTA href="#estimate" label="Get an instant estimate" tone="ink" />
             <a href="#work" className="u-link t-meta py-[13px]">
               See the work
@@ -108,7 +103,7 @@ export function Hero() {
           </div>
           <div
             data-anim="ticker"
-            className="trust-ticker w-full md:w-[min(46vw,560px)]"
+            className="trust-ticker w-full md:w-[min(72vw,880px)]"
             aria-label="Every project includes: live client work, hand-coded Next.js, Google Ads and conversion tracking, local SEO from day one, AI automation, projects from $2.5k"
           >
             <div className="tt-track" aria-hidden>

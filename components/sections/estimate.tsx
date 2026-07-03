@@ -265,8 +265,8 @@ export function Estimate() {
             </fieldset>
           </div>
 
-          {/* live output — the main character */}
-          <div data-anim="out" className="est-output relative self-start rounded-[18px] p-[34px]">
+          {/* live output — the main character; rides along as the controls scroll */}
+          <div data-anim="out" className="est-output relative self-start rounded-[18px] p-[34px] md:sticky md:top-[89px]">
             <Monogram
               className={`absolute right-[34px] top-[34px] h-[34px] w-[34px] transition-colors duration-500 ${
                 tierIndex === 2 ? "text-accent-bright" : tierIndex === 1 ? "text-paper/70" : "text-paper/40"
@@ -394,6 +394,20 @@ export function Estimate() {
             <p className="t-meta mt-[21px] text-paper/60">
               Change it any time in the estimator above
             </p>
+
+            {/* the human on the other end — the form's anonymity killer.
+                PHOTO NEEDED: drop public/jake.jpg (desaturated reads best on
+                this ground) and swap the Monogram for
+                <img src="/jake.jpg" alt="" className="h-full w-full object-cover" /> */}
+            <div className="mt-[34px] flex items-center gap-[13px] border-t border-paper/10 pt-[21px]">
+              <span className="flex h-[44px] w-[44px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-paper/10">
+                <Monogram className="h-[18px] w-[18px] opacity-70" />
+              </span>
+              <p className="text-[0.9375rem] leading-[1.5] text-paper/70">
+                I&apos;m Jake — I read every message myself and reply within one
+                business day.
+              </p>
+            </div>
           </aside>
         </div>
       </div>

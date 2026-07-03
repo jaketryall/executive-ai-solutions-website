@@ -13,14 +13,11 @@ import {
 
 /* The showreel sits directly under the hero and its top edge PEEKS into the
    first viewport — a moving thing half-seen is the scroll bait. It's a wide
-   static card at the same inset as the section panels; the film-dissolve
-   cycle is the only motion (no grow, no rise — it scrolls like furniture). */
+   static card at the same inset as the section panels; on desktop the real
+   showreel video plays in the 16:9 frame uncropped (no grow, no rise — it
+   scrolls like furniture). The portrait mobile stage keeps its art-directed
+   phone captures: a 16:9 reel would cover-crop to a useless center slice. */
 
-const DESKTOP_SLIDES = [
-  { src: "/work/desert-wings-tall.png", alt: "The Desert Wings Flight School homepage" },
-  { src: "/work/desert-wings-proof.png", alt: "The Desert Wings testimonials section" },
-  { src: "/work/desert-wings-team.png", alt: "The Desert Wings team section" },
-];
 const MOBILE_SLIDES = [
   { src: "/work/desert-wings-mobile.png", alt: "The Desert Wings homepage on a phone" },
   { src: "/work/desert-wings-mobile-2.png", alt: "The Desert Wings team section on a phone" },
@@ -28,15 +25,17 @@ const MOBILE_SLIDES = [
 
 export function Showreel() {
   const root = useRef<HTMLElement>(null!);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useGSAP(
     (context) => {
       const q = gsap.utils.selector(root);
-      const media = q("[data-grow-media]")[0];
+      const media = q("[data-grow-media]")[0] as HTMLElement;
+      const video = videoRef.current;
 
       if (reducedMotion()) {
         gsap.set(q("[data-anim]"), { autoAlpha: 1 });
-        return;
+        return; // the video stays on its poster (no autoplay attr — we drive play())
       }
 
       // ── entrance: a plain fade with the hero's beat — no travel ──
@@ -82,57 +81,36 @@ export function Showreel() {
         };
       });
 
-      // ── contained parallax: every slide drifts inside the fixed frame as
-      //    the card travels the viewport (desktop only; the overscan scale
-      //    means the drift can never expose an edge). All slides share one
-      //    tween so the drift stays continuous across crossfades. ──
-      const mm = gsap.matchMedia();
-      mm.add("(min-width: 821px)", () => {
-        const shots = gsap.utils.toArray<HTMLElement>(q("[data-reel] img"));
-        gsap.set(shots, { scale: 1.12, willChange: "transform" });
-        const tw = gsap.fromTo(
-          shots,
-          { yPercent: -5 },
-          {
-            yPercent: 5,
-            ease: "none",
-            scrollTrigger: {
-              trigger: media,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1,
-              invalidateOnRefresh: true,
-            },
-          }
-        );
-        return () => {
-          tw.kill();
-          gsap.set(shots, { clearProps: "transform" });
-        };
-      });
+      // ── the reel itself: plays only while on screen, the tab is visible,
+      //    AND the desktop stage is showing — below md the video is
+      //    display:none and playing it would just burn bandwidth ──
+      let inView = false;
+      const desktopStage = window.matchMedia("(min-width: 768px)");
+      const syncPlayback = () => {
+        if (!video) return;
+        if (inView && !document.hidden && desktopStage.matches) video.play().catch(() => {});
+        else video.pause();
+      };
+      desktopStage.addEventListener("change", syncPlayback);
+      context.add(() => () => desktopStage.removeEventListener("change", syncPlayback));
+      document.addEventListener("visibilitychange", syncPlayback);
+      context.add(() => () => document.removeEventListener("visibilitychange", syncPlayback));
 
-      // ── the reel cycle: timed z-stack crossfade (film dissolve, one slide
-      //    at a time), paused while offscreen or the tab is hidden ──
+      // ── the mobile stage cycle: timed z-stack crossfade (film dissolve),
+      //    paused while offscreen or the tab is hidden ──
       let cancelled = false;
       context.add(() => () => {
         cancelled = true;
       });
-      const sets = [
-        gsap.utils.toArray<HTMLElement>(q("[data-reel='d']")),
-        gsap.utils.toArray<HTMLElement>(q("[data-reel='m']")),
-      ];
+      const slides = gsap.utils.toArray<HTMLElement>(q("[data-reel='m']"));
       let reelIdx = 0;
-      let inView = false;
       let z = 1;
       const advance = () => {
-        if (!inView || document.hidden) return;
+        if (!inView || document.hidden || slides.length < 2) return;
         reelIdx += 1;
-        sets.forEach((slides) => {
-          if (slides.length < 2) return;
-          const next = slides[reelIdx % slides.length];
-          gsap.set(next, { zIndex: ++z });
-          gsap.fromTo(next, { autoAlpha: 0 }, { autoAlpha: 1, duration: 1.0, ease: EASE_STRUCTURE });
-        });
+        const next = slides[reelIdx % slides.length];
+        gsap.set(next, { zIndex: ++z });
+        gsap.fromTo(next, { autoAlpha: 0 }, { autoAlpha: 1, duration: 1.0, ease: EASE_STRUCTURE });
       };
       // recursive delayedCalls escape the context — the cancelled flag (set on
       // cleanup) stops the chain so StrictMode/unmount never double-cycles
@@ -148,20 +126,43 @@ export function Showreel() {
         end: "bottom top",
         onToggle: (self) => {
           inView = self.isActive;
+          syncPlayback();
         },
       });
     },
     { scope: root }
   );
 
+  // the pill's promise: the reel again, but loud and full-screen. Sound is
+  // re-muted on exit so the inline card never keeps talking.
+  const playLoud = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    const onFsChange = () => {
+      if (!document.fullscreenElement) {
+        v.muted = true;
+        document.removeEventListener("fullscreenchange", onFsChange);
+      }
+    };
+    v.muted = false;
+    v.play().catch(() => {});
+    if (v.requestFullscreen) {
+      document.addEventListener("fullscreenchange", onFsChange);
+      v.requestFullscreen().catch(() => {});
+    } else {
+      // Safari's video-only fullscreen path
+      (v as HTMLVideoElement & { webkitEnterFullscreen?: () => void }).webkitEnterFullscreen?.();
+    }
+  };
+
   return (
     <section ref={root} aria-label="Showreel" className="relative">
-      {/* the card — a true 16:9 frame at full gutter width on desktop (a real
-          showreel video drops in uncropped; on short screens you scroll
-          through it). Mobile stage matches the phone captures' aspect. */}
+      {/* the card — a true 16:9 frame at full gutter width on desktop (the
+          showreel plays uncropped; on short screens you scroll through it).
+          Mobile stage matches the phone captures' aspect. */}
       <div
         data-anim="reel"
-        className="mx-[8px] h-[min(86svh,calc((100vw-16px)*1.482))] md:mx-[13px] md:aspect-video md:h-auto"
+        className="mx-fib-1 h-[min(86svh,calc((100vw-16px)*1.482))] md:mx-fib-2 md:aspect-video md:h-auto"
       >
         <div
           data-grow-media
@@ -170,21 +171,20 @@ export function Showreel() {
           role="group"
           aria-label="Showreel: pages from live client work"
         >
-          {/* art-directed slide sets — a UI screenshot must never cover-crop
-              its own nav: desktop cycles 1.6:1 captures, the portrait mobile
-              stage cycles their real phone renderings */}
-          {DESKTOP_SLIDES.map((s, i) => (
-            <div key={s.src} data-reel="d" className="absolute inset-0 hidden md:block" style={{ opacity: i === 0 ? 1 : 0 }}>
-              <Image
-                src={s.src}
-                alt={s.alt}
-                fill
-                sizes="100vw"
-                priority={i === 0}
-                className="object-cover object-top"
-              />
-            </div>
-          ))}
+          {/* the reel (desktop) — muted inline, driven by scroll visibility */}
+          <video
+            ref={videoRef}
+            className="absolute inset-0 hidden h-full w-full object-cover md:block"
+            src="/showreel.mp4"
+            poster="/showreel-poster.jpg"
+            muted
+            loop
+            playsInline
+            preload="metadata"
+          />
+
+          {/* the portrait mobile stage cycles real phone renderings — a UI
+              screenshot must never cover-crop its own nav */}
           {MOBILE_SLIDES.map((s, i) => (
             <div key={s.src} data-reel="m" className="absolute inset-0 md:hidden" style={{ opacity: i === 0 ? 1 : 0 }}>
               <Image
@@ -197,6 +197,15 @@ export function Showreel() {
               />
             </div>
           ))}
+
+          {/* click target: the whole frame plays the reel loud + fullscreen
+              (desktop only — mobile shows captures, not the video) */}
+          <button
+            type="button"
+            onClick={playLoud}
+            className="absolute inset-0 z-10 hidden cursor-none md:block"
+            aria-label="Play the showreel fullscreen with sound"
+          />
 
           {/* "Play showreel" pointer chip (fine-pointer only; clipped by the
               card's own overflow so it can never escape the frame) */}

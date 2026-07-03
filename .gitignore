@@ -41,6 +41,8 @@ yarn-error.log*
 next-env.d.ts
 .env*.local
 public/backups/
+# 4K showreel master — the web copy is public/showreel.mp4
+public/Final Comp.mp4
 
 # superpowers brainstorm scratch
 .superpowers/

@@ -70,7 +70,7 @@ export function Footer() {
   );
 
   return (
-    <footer ref={root} className="fixed inset-x-0 bottom-0 z-0 overflow-hidden bg-paper text-ink">
+    <footer ref={root} className="fixed inset-x-0 bottom-0 z-0 overflow-hidden bg-canvas text-ink">
       <div className="mx-auto max-w-[1280px] px-[21px] pt-[89px] md:px-[55px] md:pt-[144px]">
         <div className="flex flex-col justify-between gap-[55px] md:flex-row md:items-start">
           {/* contact block — the diagonal counterweight */}
@@ -108,7 +108,7 @@ export function Footer() {
           <div className="footer-mark mb-[21px] shrink-0 text-ink/25">
             <Monogram className="h-[55px] w-[55px] md:h-[89px] md:w-[89px]" label="Executive AI Solutions monogram" />
           </div>
-          <p className="t-meta mb-[21px] shrink-0 text-ink/60">
+          <p className="t-meta mb-[21px] shrink-0 text-ink/55">
             © 2026 Executive AI Solutions
           </p>
         </div>

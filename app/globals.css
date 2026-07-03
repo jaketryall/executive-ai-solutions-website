@@ -102,6 +102,15 @@ main {
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
+.t-display-drift {
+  /* the closer's one-line statement — sized so the nowrap line runs ~1.7× the
+     card and the scrubbed drift stays readable (hero-scale would triple it) */
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.4rem, 5.8vw, 5.8rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
 .t-numeral {
   font-family: var(--font-display);
   font-weight: 800;
@@ -546,6 +555,17 @@ main {
   color: var(--color-paper);
 }
 
+/* the closer — the page's ONE full-color surface. The accent is the click
+   color everywhere else, so the final ask is the one card allowed to wear it
+   full-bleed: the whole panel reads as the click. */
+.closer-card {
+  background:
+    radial-gradient(120% 150% at 88% 118%, rgba(166, 191, 204, 0.32) 0%, transparent 56%),
+    radial-gradient(130% 130% at 6% -18%, rgba(16, 17, 17, 0.55) 0%, transparent 58%),
+    linear-gradient(112deg, #314c5b 0%, var(--color-accent) 58%, #5d7d8f 100%);
+  color: var(--color-paper);
+}
+
 /* tonal chips (deliverables, "New for 2026") — sentence case, real data only */
 .chip {
   display: inline-flex;
@@ -568,7 +588,7 @@ main {
 .browser-card {
   display: block;
   border-radius: 14px;
-  background: var(--color-paper);
+  background: var(--color-panel);
   box-shadow: 0 24px 60px -24px rgba(19, 20, 19, 0.35);
   overflow: hidden;
   transition:
@@ -620,6 +640,22 @@ main {
   border-radius: 12px;
 }
 
+/* services on the dark panel: the paper artifact cards keep their
+   light-surface language; the rail flips to paper */
+.dark-chapter .svc-row {
+  color: var(--color-ink);
+}
+.dark-chapter .svc-row .chip {
+  background: rgba(19, 20, 19, 0.06);
+  color: rgba(19, 20, 19, 0.75);
+}
+.dark-chapter .rail-bar {
+  background: rgba(239, 240, 238, 0.16);
+}
+.dark-chapter .rail-bar-fill {
+  background: var(--color-paper);
+}
+
 /* services rail progress (functional, scroll-scrubbed) */
 .rail-bar {
   width: 89px;
@@ -640,7 +676,7 @@ main {
 
 /* SERP artifact — the client's real listing, drawn in our tonal language */
 .serp-card {
-  background: var(--color-paper);
+  background: var(--color-panel);
   border-radius: 18px;
   padding: 34px;
 }
@@ -671,7 +707,7 @@ main {
 
 /* chat artifact — the ask-this-site surface, shown as itself */
 .chat-card {
-  background: var(--color-paper);
+  background: var(--color-panel);
   border-radius: 18px;
   padding: 34px;
   display: flex;
@@ -698,6 +734,165 @@ main {
   line-height: 1.5;
   color: rgba(19, 20, 19, 0.8);
   max-width: 92%;
+}
+
+/* ── build-a-site stage (the process demo) ──
+   Rests in its FINISHED state so no-JS / reduced-motion read the completed
+   story; has-js pre-hides the moving layers and process.tsx drives them. */
+.stage-frame {
+  position: relative;
+  border-radius: 18px;
+  background: var(--color-panel);
+  box-shadow: 0 34px 80px -32px rgba(19, 20, 19, 0.38);
+  overflow: hidden;
+  will-change: transform;
+}
+.st-canvas {
+  position: relative;
+  aspect-ratio: 16 / 10.8;
+  background: var(--color-paper);
+  padding: 13px;
+  overflow: hidden;
+}
+@media (min-width: 821px) {
+  .st-canvas {
+    padding: 26px;
+  }
+}
+
+/* sketch geometry — gray placeholders that restyle when the frame is [data-built] */
+.st-fill,
+.st-word,
+.st-btn,
+.st-thumb,
+.st-card,
+.st-hero {
+  transition:
+    background-color 0.65s var(--ease-structure),
+    color 0.65s var(--ease-structure);
+}
+.st-fill {
+  display: block;
+  border-radius: 4px;
+  background: rgba(19, 20, 19, 0.09);
+}
+.st-word {
+  display: inline-block;
+  border-radius: 4px;
+  background: rgba(19, 20, 19, 0.11);
+  color: transparent;
+}
+.st-btn {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 13px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(19, 20, 19, 0.11);
+  color: transparent;
+}
+.st-thumb {
+  display: block;
+  border-radius: 6px;
+  background: rgba(19, 20, 19, 0.07);
+}
+.st-himg {
+  display: block;
+  background: rgba(19, 20, 19, 0.09);
+  transition: background-color 0.65s var(--ease-structure);
+}
+.st-card {
+  background: rgba(19, 20, 19, 0.04);
+}
+.st-hero {
+  border-radius: 10px;
+  background: rgba(19, 20, 19, 0.05);
+}
+
+/* the paint pass — the sketch resolves into the brand */
+.stage-frame[data-built] .st-word {
+  background: transparent;
+  color: inherit;
+}
+.stage-frame[data-built] .st-btn {
+  background: var(--color-accent);
+  color: var(--color-paper);
+}
+.stage-frame[data-built] .st-hero {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.stage-frame[data-built] .st-hero .st-fill {
+  background: rgba(239, 240, 238, 0.26);
+}
+.stage-frame[data-built] .st-thumb {
+  background: rgba(76, 107, 124, 0.18);
+}
+.stage-frame[data-built] .st-himg {
+  background: rgba(166, 191, 204, 0.32);
+}
+.stage-frame[data-built] .st-card {
+  background: var(--color-panel);
+}
+
+/* moving layers: pre-hidden only when JS will drive them */
+@media (prefers-reduced-motion: no-preference) {
+  html.has-js :is(.st-mini, .st-score, .st-chart) {
+    opacity: 0;
+  }
+}
+.st-quote,
+.st-score {
+  opacity: 0; /* per-step artifacts; the state machine reveals them */
+}
+.st-dot {
+  transform-box: fill-box;
+}
+
+/* build report rows (03) */
+.sc-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+}
+@media (min-width: 821px) {
+  .sc-row {
+    font-size: 12px;
+  }
+}
+.sc-label {
+  width: 68px;
+  flex-shrink: 0;
+  color: rgba(239, 240, 238, 0.62);
+}
+.sc-track {
+  flex: 1;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(239, 240, 238, 0.14);
+  overflow: hidden;
+}
+.sc-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: var(--color-accent-bright);
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.sc-fill--load {
+  width: 88%;
+}
+.sc-val {
+  width: 34px;
+  flex-shrink: 0;
+  text-align: right;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 /* process numerals — outline at rest, ink fills bottom-up on scroll */
@@ -890,6 +1085,81 @@ a.work-card:hover {
   position: absolute;
   inset: 0;
   will-change: transform;
+}
+
+/* FAQ accordion cards — the answer expands via the grid 0fr→1fr trick
+   (smooth height animation, no measuring); the plus rotates into an × */
+.faq-card {
+  border-radius: 18px;
+  background: var(--color-panel);
+}
+.faq-card .faq-q {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 21px;
+  padding: 21px;
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+  text-align: left;
+  cursor: pointer;
+}
+@media (min-width: 821px) {
+  .faq-card .faq-q {
+    padding: 26px 34px;
+  }
+}
+.faq-card .faq-x {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  transition: transform 0.45s var(--ease-structure);
+}
+.faq-card .faq-x::before,
+.faq-card .faq-x::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  background: currentColor;
+}
+.faq-card .faq-x::before {
+  width: 16px;
+  height: 2px;
+}
+.faq-card .faq-x::after {
+  width: 2px;
+  height: 16px;
+}
+.faq-card.is-open .faq-x {
+  transform: rotate(135deg);
+}
+.faq-card .faq-a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s var(--ease-structure);
+}
+.faq-card .faq-a > div {
+  overflow: hidden;
+}
+.faq-card .faq-a p {
+  padding: 0 21px 21px;
+}
+@media (min-width: 821px) {
+  .faq-card .faq-a p {
+    padding: 0 34px 26px;
+  }
+}
+.faq-card.is-open .faq-a {
+  grid-template-rows: 1fr;
 }
 
 /* reel cursor chip — "Play showreel" rides the pointer over the reel.
@@ -1116,3 +1386,9 @@ a.work-card:hover {
 
 
 /* build-marker: wc-marquee-minw */
+
+/* build-marker: closer-drift-tier */
+
+/* build-marker: closer-bloom-032 */
+
+/* build-marker: footer-light */

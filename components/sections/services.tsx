@@ -101,17 +101,17 @@ export function Services() {
   );
 
   return (
-    <section id="services" ref={root} data-nav="light" className="relative">
-      {/* the section IS a card — a paper panel floating on the canvas, so the
-          artifact cards inside sit surface-on-surface instead of loose type */}
-      <div className="mx-[8px] rounded-[24px] bg-panel py-[89px] md:mx-[13px] md:py-[144px]">
-      <div className="mx-auto grid max-w-[1280px] gap-[55px] px-[21px] md:grid-cols-[240px_1fr] md:gap-[89px] md:px-[55px]">
+    <section id="services" ref={root} data-nav="dark" className="relative">
+      {/* the section IS a card — a dark panel floating on the canvas, so the
+          paper artifact cards inside pop surface-on-surface */}
+      <div className="dark-chapter mx-[8px] rounded-[24px] py-[89px] md:mx-[13px] md:py-[144px]">
+      <div className="mx-auto grid max-w-[1280px] gap-[55px] px-[21px] md:grid-cols-[minmax(300px,380px)_1fr] md:gap-[89px] md:px-[55px]">
         {/* ── the rail (pins on desktop) ── */}
         <div>
           <div className="md:sticky md:top-[144px]">
             <h2 className="t-display-lg">What we do</h2>
             <div className="mt-[34px] hidden md:block">
-              <p className="t-meta mb-[8px] text-ink/65">Reading</p>
+              <p className="t-meta mb-[8px] text-paper/65">Reading</p>
               <div className="t-meta overflow-hidden font-[600]" style={{ height: "1.4em", lineHeight: 1.4 }}>
                 <div className="rail-label-stack">
                   {ROWS.map((r) => (
@@ -126,15 +126,16 @@ export function Services() {
               </div>
             </div>
             <div className="mt-[34px] hidden md:block">
-              <CTA href="#estimate" label="Price your project" tone="ink" />
+              <CTA href="#estimate" label="Price your project" tone="paper" />
             </div>
           </div>
         </div>
 
-        {/* ── the roster (all visible, nothing gated) ── */}
-        <div className="flex flex-col gap-[89px]">
+        {/* ── the roster (all visible, nothing gated) — each service is its
+            own paper card on the panel, same register as the step cards ── */}
+        <div className="flex flex-col gap-[13px] md:gap-[21px]">
           {/* 01 · flagship — Websites */}
-          <article data-svc-row className="svc-row">
+          <article data-svc-row className="svc-row rounded-[18px] bg-paper p-[21px] md:p-[34px]">
             <h3 data-anim="head" className="t-display-lg">
               Websites
             </h3>
@@ -173,7 +174,7 @@ export function Services() {
           </article>
 
           {/* 02 — SEO and Google Ads */}
-          <article data-svc-row className="svc-row grid items-start gap-[34px] md:grid-cols-2">
+          <article data-svc-row className="svc-row grid items-start gap-[34px] rounded-[18px] bg-paper p-[21px] md:grid-cols-2 md:p-[34px]">
             <div>
               <h3 data-anim="head" className="t-title">
                 SEO and Google Ads
@@ -206,7 +207,7 @@ export function Services() {
           </article>
 
           {/* 03 — AI automation */}
-          <article data-svc-row className="svc-row grid items-start gap-[34px] md:grid-cols-2">
+          <article data-svc-row className="svc-row grid items-start gap-[34px] rounded-[18px] bg-paper p-[21px] md:grid-cols-2 md:p-[34px]">
             <div>
               <div className="flex items-center gap-[13px]">
                 <h3 data-anim="head" className="t-title">
