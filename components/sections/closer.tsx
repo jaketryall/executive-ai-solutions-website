@@ -3,7 +3,9 @@
 import { useRef } from "react";
 import {
   gsap,
+  ScrollTrigger,
   useGSAP,
+  EASE_UI,
   reducedMotion,
 } from "@/components/anim/ease";
 import { CTA } from "@/components/ui/cta";
@@ -20,7 +22,7 @@ export function Closer() {
   const root = useRef<HTMLElement>(null!);
 
   useGSAP(
-    () => {
+    (context) => {
       const q = gsap.utils.selector(root);
       const card = q(".closer-card")[0] as HTMLElement;
       const drift = q("[data-drift]")[0] as HTMLElement;
@@ -34,47 +36,118 @@ export function Closer() {
 
       const pad = () => Math.min(89, window.innerWidth * 0.06);
 
-      // scroll is the clock: the read maps onto the pin (ease:"none" + scrub)
+      // the hold — a bare pin; every animation lives on the master clock
+      // below. NO anticipatePin: it pre-shifts the pinned element by scroll
+      // velocity (a visible pop at engage) and Lenis's lerped scroll doesn't
+      // have the native lag it exists to mask.
+      ScrollTrigger.create({
+        trigger: root.current,
+        start: "top top",
+        end: "+=160%",
+        pin: q(".closer-stage")[0],
+        invalidateOnRefresh: true,
+      });
+
+      /* ONE master scrubbed timeline across the whole section — approach
+         (1 viewport) · hold (1.6, the pin) · exit (0.45) — durations in
+         viewport units so the playhead maps 1:1 onto scroll. A single
+         timeline means a single writer per property: the grow and shrink
+         can never race each other during fast traversals (two separate
+         scrubbed tweens on the same props CAN, mid-smoothing). */
       const tl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
           trigger: root.current,
-          start: "top top",
-          end: "+=180%",
-          pin: q(".closer-stage")[0],
+          start: "top bottom",
+          end: "bottom 55%",
           scrub: 0.5,
-          anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       });
 
-      // the read — the FULL statement passes while the box is pinned and
-      // fully visible (never mid-arrival), landing on the ask
+      // 1 · the approach — the card grows to full bleed a beat BEFORE the
+      //     pin (0.88 of the approach ≈ 12vh early). With scrub smoothing the
+      //     scale lags the scroll ~a third of a second, so ending at the pin
+      //     itself meant the card's edges were still visible — and visibly
+      //     hard-stopping — right at engage (the "snap"). Ending early, the
+      //     boundary hits a true full-bleed wall: nothing on screen has edges
+      //     left to snap, and the drift carries the motion through.
       tl.fromTo(
-        drift,
-        { x: () => window.innerWidth * 0.3 },
-        { x: () => -(drift.offsetWidth - card.clientWidth + pad()), duration: 0.85 },
+        card,
+        { scale: 0.92, borderRadius: 28 },
+        { scale: 1, borderRadius: 0, duration: 0.88 },
         0
       );
 
-      // the pill arrives as the ask lands
+      // 2 · the read — ONE continuous drift across approach + hold, landing
+      //     on the ask at release. Starts fully OFFSCREEN right (110vw) so
+      //     the first words slide in during the approach. A single tween
+      //     keeps the horizontal speed CONSTANT through the pin boundary —
+      //     splitting it into approach/hold segments put a 3.6× speed jump
+      //     exactly where the pin engages, which read as a snap.
+      tl.fromTo(
+        drift,
+        { x: () => window.innerWidth * 1.1 },
+        {
+          x: () => -(drift.offsetWidth - card.clientWidth + pad()),
+          duration: 2.6,
+        },
+        0
+      );
       if (cta) {
         tl.fromTo(
           cta,
           { autoAlpha: 0, y: 21 },
-          { autoAlpha: 1, y: 0, duration: 0.12 },
-          0.72
+          { autoAlpha: 1, y: 0, duration: 0.16 },
+          2.28
         );
       }
+
+      // 3 · the exit — after release the wall folds back into a card in the
+      //     BACKGROUND while the footer reveal is the show. y compensates the
+      //     center-origin shrink so the bottom edge stays flush with the
+      //     section end — no dead canvas band sliding over the footer.
+      tl.fromTo(
+        card,
+        { scale: 1, borderRadius: 0, y: 0 },
+        {
+          scale: 0.92,
+          borderRadius: 28,
+          y: () => card.offsetHeight * 0.04,
+          duration: 0.45,
+          immediateRender: false,
+        },
+        2.6
+      );
+
+      // the lean — the line skews with scroll velocity, so even the hold
+      // feels alive the instant you move (and settles when you stop)
+      const skewTo = gsap.quickTo(drift, "skewX", { duration: 0.4, ease: EASE_UI });
+      let idle: ReturnType<typeof setTimeout>;
+      ScrollTrigger.create({
+        trigger: root.current,
+        start: "top bottom",
+        end: "bottom top",
+        onUpdate: (self) => {
+          skewTo(gsap.utils.clamp(-5, 5, self.getVelocity() / -400));
+          clearTimeout(idle);
+          idle = setTimeout(() => skewTo(0), 120);
+        },
+      });
+      context.add(() => () => clearTimeout(idle));
     },
     { scope: root }
   );
 
   return (
     <section ref={root} data-nav="dark" aria-label="Start your project" className="relative">
-      {/* the pinned stage — one viewport, the box at the system's own inset */}
-      <div className="closer-stage h-svh w-full p-fib-1 md:p-fib-2">
-        <div className="closer-card flex h-full w-full flex-col justify-center overflow-hidden rounded-[24px]">
+      {/* the pinned stage — one full viewport; the card's inset/radius live in
+          the scale+radius tweens (reduced motion rests the inset card) */}
+      <div className="closer-stage h-svh w-full motion-reduce:p-fib-1 md:motion-reduce:p-fib-2">
+        {/* 1px overbleed on every side: the scale transform rounds to
+            subpixels on retina, and without it the light footer layer
+            beneath feathers through as a hairline under the full-bleed edge */}
+        <div className="closer-card -ml-px -mt-px flex h-[calc(100%+2px)] w-[calc(100%+2px)] flex-col justify-center overflow-hidden will-change-transform motion-reduce:rounded-[24px]">
           {/* the statement — nowrap + wider than the frame so the pinned read
               has a story to tell; reduced motion wraps it centered */}
           <p

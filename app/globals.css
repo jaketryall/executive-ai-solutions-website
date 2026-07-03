@@ -736,6 +736,48 @@ main {
   max-width: 92%;
 }
 
+/* ── testimonial rotator ──
+   Slides overlay in one grid cell (height = tallest slide, no shift on swap);
+   no-JS rests on the first quote. The bar is the light-ground sibling of the
+   services rail bar. */
+.tst-stack {
+  display: grid;
+}
+.tst-slide {
+  grid-area: 1 / 1;
+}
+html:not(.has-js) .tst-slide + .tst-slide {
+  visibility: hidden;
+}
+.tst-bar {
+  height: 2px;
+  width: 89px;
+  background: rgba(19, 20, 19, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.tst-bar-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.tst-idx {
+  font-variant-numeric: tabular-nums;
+  color: rgba(19, 20, 19, 0.45);
+  transition: color 0.3s var(--ease-ui);
+  padding: 8px;
+  margin: -8px;
+}
+.tst-idx:hover {
+  color: rgba(19, 20, 19, 0.75);
+}
+.tst-idx[data-active="true"] {
+  color: var(--color-accent);
+}
+
 /* ── build-a-site stage (the process demo) ──
    Rests in its FINISHED state so no-JS / reduced-motion read the completed
    story; has-js pre-hides the moving layers and process.tsx drives them. */
@@ -1392,3 +1434,5 @@ a.work-card:hover {
 /* build-marker: closer-bloom-032 */
 
 /* build-marker: footer-light */
+
+/* build-marker: tst-rotator */

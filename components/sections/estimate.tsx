@@ -378,8 +378,9 @@ export function Estimate() {
             </form>
           )}
 
-          {/* sticky estimate summary rides along */}
-          <aside data-anim="form" className="est-output rounded-[18px] p-[34px] md:sticky md:top-[89px]">
+          {/* estimate summary sits beside the form (short zone — sticky here
+              just made it shadow the fields) */}
+          <aside data-anim="form" className="est-output rounded-[18px] p-[34px]">
             <div className="flex items-start justify-between">
               <p className="t-meta text-paper/60">Attached to your message</p>
               <Monogram className="h-[21px] w-[21px] text-paper/40" />
