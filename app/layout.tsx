@@ -4,6 +4,7 @@ import "./globals.css";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { SmoothScroll } from "@/components/anim/smooth-scroll";
+import { ViewTransitions } from "@/components/anim/view-transition";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -21,11 +22,11 @@ const SITE_URL = "https://executiveaisolutions.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Executive AI Solutions | Websites that win customers",
+  title: "Executive AI Solutions | Websites that bring local business more customers",
   description:
     "Custom web design, SEO and Google Ads, and AI automation for serious local businesses. No templates. Every project individually quoted, from $2.5k.",
   openGraph: {
-    title: "Executive AI Solutions | Websites that win customers",
+    title: "Executive AI Solutions | Websites that bring local business more customers",
     description:
       "Custom web design, SEO and Google Ads, and AI automation for serious local businesses. Every project individually quoted.",
     url: SITE_URL,
@@ -74,6 +75,7 @@ export default function RootLayout({
         <main className="bg-canvas relative z-10">{children}</main>
         <Footer />
         <SmoothScroll />
+        <ViewTransitions />
       </body>
     </html>
   );

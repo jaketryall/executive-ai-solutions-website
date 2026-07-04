@@ -2,21 +2,29 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { gsap, ScrollTrigger, useGSAP, EASE_STRUCTURE, EASE_UI, reducedMotion } from "@/components/anim/ease";
 import { Monogram } from "@/components/ui/monogram";
 import { RollLink } from "@/components/ui/roll-link";
 import { CTA } from "@/components/ui/cta";
 
 const LINKS = [
-  { href: "#work", label: "Work" },
-  { href: "#services", label: "Services" },
-  { href: "#estimate", label: "Pricing" },
+  { href: "/work", label: "Work" },
+  { href: "/#services", label: "Services" },
+  { href: "/#estimate", label: "Pricing" },
 ];
 
 export function Nav() {
   const root = useRef<HTMLElement>(null!);
   const overlayRef = useRef<HTMLDivElement>(null!);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  // a route change swaps every [data-nav] section — close the overlay and
+  // rebuild the theme triggers against the new page
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   // Color-adaptive: sections declare the ground they present behind the nav.
   useGSAP(
@@ -52,7 +60,7 @@ export function Nav() {
         window.removeEventListener("scroll", onScroll);
       };
     },
-    { scope: root }
+    { scope: root, dependencies: [pathname], revertOnUpdate: true }
   );
 
   // Overlay menu open/close
@@ -169,7 +177,7 @@ export function Nav() {
               </RollLink>
             ))}
           </nav>
-          <CTA href="#estimate" label="Get an estimate" tone="accent" className="nav-cta hidden sm:inline-flex" />
+          <CTA href="/#estimate" label="Get an estimate" tone="accent" className="nav-cta hidden sm:inline-flex" />
           <button
             ref={hambRef}
             className={`hamb md:hidden ${open ? "is-open" : ""}`}
@@ -188,7 +196,7 @@ export function Nav() {
       <div ref={overlayRef} id="site-menu" className="ov dark-chapter" role="dialog" aria-modal="true" aria-label="Menu" style={{ display: "none" }}>
         <div className="flex h-full w-full flex-col justify-between px-[21px] pb-[34px] pt-[89px]">
           <nav className="flex flex-col gap-[13px]" aria-label="Menu">
-            {[...LINKS, { href: "#contact", label: "Contact" }].map((l) => (
+            {[...LINKS, { href: "/#contact", label: "Contact" }].map((l) => (
               <span key={l.href} className="mask-line">
                 <span className="mask-inner">
                   <Link href={l.href} className="ov-item t-display-lg" onClick={() => setOpen(false)}>

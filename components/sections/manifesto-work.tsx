@@ -3,6 +3,8 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { Monogram } from "@/components/ui/monogram";
+import { TagMarquee } from "@/components/work/tag-marquee";
+import { RollLink } from "@/components/ui/roll-link";
 import {
   gsap,
   ScrollTrigger,
@@ -16,23 +18,6 @@ const CHIPS = ["Custom design and build", "Google Ads + conversion tracking", "L
 
 const DW_TAGS = ["Custom design", "Next.js", "Google Ads", "Conversion tracking", "Local SEO"];
 const EAS_TAGS = ["Custom design", "Next.js", "GSAP", "Instant estimator", "AI automation"];
-
-// two identical sets → the -50% keyframe wraps seamlessly
-function TagMarquee({ tags }: { tags: string[] }) {
-  return (
-    <span className="wc-marquee" aria-hidden>
-      <span className="wc-track">
-        {[0, 1].map((set) => (
-          <span key={set} className="wc-set">
-            {tags.map((t) => (
-              <span key={t}>{t}</span>
-            ))}
-          </span>
-        ))}
-      </span>
-    </span>
-  );
-}
 
 export function ManifestoWork() {
   const root = useRef<HTMLElement>(null!);
@@ -183,13 +168,12 @@ export function ManifestoWork() {
       className="relative pb-[89px] pt-[144px] md:pb-[144px] md:pt-[233px]"
     >
       {/* THE statement peak — the page's one centered element. Lands right
-          after the reel: you just scrolled the proof it's talking about.
-          The chip trio (the<chip>proof) is whitespace-free so it can never break. */}
+          after the reel: the chip opens on "looks great" as the evidence.
+          The chip trio (looks<chip>great) is whitespace-free so it can never break. */}
       <div className="mx-auto max-w-[1280px] px-[21px] md:px-[55px]">
         <p className="manifesto-line t-display-xl mx-auto max-w-[19ch] text-center">
-          <span className="ms-line block">Most agencies show you a deck.</span>
           <span className="ms-line block">
-            You&apos;re scrolling the
+            Design that looks
             <span className="ms-chip" aria-hidden>
               <Image
                 src="/work/desert-wings-hero.png"
@@ -199,14 +183,24 @@ export function ManifestoWork() {
                 sizes="180px"
               />
             </span>
-            proof
+            great.
+          </span>
+          {/* the payoff word is steel, same rule as the hero's outcome line —
+              SplitText keeps the nested span intact as its own word */}
+          <span className="ms-line block">
+            And <span className="text-accent">converts</span> even better.
           </span>
         </p>
 
         {/* icomat foot: label + chips hard-left · meta paragraph hard-right · open center */}
         <div className="mt-[clamp(89px,14vh,144px)] flex flex-col gap-[34px] md:flex-row md:items-end md:justify-between">
           <div className="max-w-[420px]">
-            <p className="t-meta text-ink/70">The work</p>
+            <div className="flex items-baseline gap-[21px]">
+              <p className="t-meta text-ink/70">The work</p>
+              <RollLink href="/work" className="t-meta text-accent">
+                All work
+              </RollLink>
+            </div>
             <div className="mt-[13px] flex flex-wrap gap-[8px]">
               {CHIPS.map((c) => (
                 <span key={c} className="chip">

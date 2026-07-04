@@ -17,9 +17,15 @@ export function SmoothScroll() {
     gsap.ticker.lagSmoothing(0);
 
     const onAnchor = (e: Event) => {
-      const a = (e.target as HTMLElement).closest?.('a[href^="#"]') as HTMLAnchorElement | null;
+      const a = (e.target as HTMLElement).closest?.(
+        'a[href^="#"], a[href^="/#"]'
+      ) as HTMLAnchorElement | null;
       if (!a) return;
-      const el = document.querySelector(a.getAttribute("href")!);
+      const href = a.getAttribute("href")!;
+      // "/#section" links smooth-scroll only when we're already home;
+      // elsewhere they're real navigations the router owns
+      if (href.startsWith("/#") && location.pathname !== "/") return;
+      const el = document.querySelector(href.replace(/^\//, ""));
       if (!el) return;
       e.preventDefault();
       lenis.scrollTo(el as HTMLElement, { offset: -72 });

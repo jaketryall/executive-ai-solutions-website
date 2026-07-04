@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import {
   gsap,
   ScrollTrigger,
@@ -11,7 +11,10 @@ import {
 } from "@/components/anim/ease";
 import { CTA } from "@/components/ui/cta";
 import { Monogram } from "@/components/ui/monogram";
+import { Segmented } from "@/components/ui/segmented";
 import { Odometer } from "@/components/estimator/odometer";
+import { getBuild, getBuildServer, subscribeBuild } from "@/components/builder/store";
+import { buildPath, describeBuild } from "@/components/builder/packs";
 import {
   PROJECT_TYPES,
   PAGE_BANDS,
@@ -35,6 +38,8 @@ export function Estimate() {
 
   const result = useMemo(() => compute(est), [est]);
   const summary = useMemo(() => summarize(est), [est]);
+  // what they made in the builder rides along with the message
+  const build = useSyncExternalStore(subscribeBuild, getBuild, getBuildServer);
   const tierIndex = TIERS.findIndex((t) => t.name === result.tier.name);
 
   useGSAP(
@@ -169,7 +174,14 @@ export function Estimate() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, summary: summary.text }),
+        body: JSON.stringify({
+          ...data,
+          summary: summary.text,
+          ...(build && {
+            build: describeBuild(build),
+            buildUrl: window.location.origin + buildPath(build),
+          }),
+        }),
       });
       if (!res.ok) throw new Error(String(res.status));
       setStatus("success");
@@ -392,6 +404,11 @@ export function Estimate() {
               <span className="sr-only">{`$${result.total.toLocaleString()}, ${result.tier.name} tier`}</span>
             </p>
             <p className="mt-[13px] text-[0.9375rem] leading-[1.5] text-paper/60">{summary.text}</p>
+            {build && (
+              <p className="mt-[13px] text-[0.9375rem] leading-[1.5] text-paper/60">
+                Your build: <span className="text-paper/85">{describeBuild(build)}</span>
+              </p>
+            )}
             <p className="t-meta mt-[21px] text-paper/60">
               Change it any time in the estimator above
             </p>
@@ -413,36 +430,5 @@ export function Estimate() {
         </div>
       </div>
     </section>
-  );
-}
-
-// segmented pill with a sliding thumb (pill-in-pill variant B)
-function Segmented({
-  options,
-  value,
-  onChange,
-}: {
-  options: { id: string; label: string }[];
-  value: string;
-  onChange: (id: string) => void;
-}) {
-  const idx = Math.max(0, options.findIndex((o) => o.id === value));
-  const n = options.length;
-  return (
-    <div className="seg" role="group">
-      {options.map((o) => (
-        <button key={o.id} type="button" aria-pressed={o.id === value} onClick={() => onChange(o.id)}>
-          {o.label}
-        </button>
-      ))}
-      <span
-        className="seg-thumb"
-        aria-hidden
-        style={{
-          left: `calc(4px + ${idx} * (100% - 8px) / ${n})`,
-          width: `calc((100% - 8px) / ${n})`,
-        }}
-      />
-    </div>
   );
 }

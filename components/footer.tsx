@@ -80,7 +80,7 @@ export function Footer() {
               One call, a fixed quote, and a website that finally earns its keep
             </p>
             <div className="mt-[34px] flex flex-wrap items-center gap-[21px]">
-              <CTA href="#estimate" label="Get an estimate" tone="ink" />
+              <CTA href="/#estimate" label="Get an estimate" tone="ink" />
               <a href="mailto:hello@executiveaisolutions.com" className="u-link t-meta text-ink/70">
                 hello@executiveaisolutions.com
               </a>
@@ -88,13 +88,13 @@ export function Footer() {
           </div>
 
           <nav className="flex flex-col items-start gap-[13px] md:items-end" aria-label="Footer">
-            <RollLink href="#work" className="t-meta text-ink/70">
+            <RollLink href="/work" className="t-meta text-ink/70">
               Work
             </RollLink>
-            <RollLink href="#services" className="t-meta text-ink/70">
+            <RollLink href="/#services" className="t-meta text-ink/70">
               Services
             </RollLink>
-            <RollLink href="#estimate" className="t-meta text-ink/70">
+            <RollLink href="/#estimate" className="t-meta text-ink/70">
               Pricing
             </RollLink>
             <RollLink href="#top" className="t-meta text-ink/70">

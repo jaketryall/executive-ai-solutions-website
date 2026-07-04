@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  /* ─── Color (cool carried into every neutral; accent = "click" only)
-     near-black ink · gray secondary · steel blue-gray accent ─── */
+  /* ─── Color (cool carried into every neutral; accent = "click" + the
+     payoff words that point at it) near-black ink · gray secondary ·
+     steel blue-gray accent ─── */
   --color-canvas: #ebecea;
   --color-ink: #131413;
   --color-panel: #dee0de;
@@ -93,6 +94,13 @@ main {
 }
 .t-display-xl--tight {
   line-height: 0.92;
+}
+.t-display-xl--hero {
+  /* the three-line statement: one notch under display-xl so three lines
+     read as a sentence, not a wall. Line-height matches the roll masks
+     (1.06em) exactly — one pitch for all three lines, plain or rolling. */
+  font-size: clamp(2.7rem, 6.2vw, 6rem);
+  line-height: 1.06;
 }
 .t-display-lg {
   font-family: var(--font-display);
@@ -1239,6 +1247,86 @@ a.work-card:hover {
   height: 10px;
 }
 
+/* the statement on small screens — sized so "for flight schools." holds one
+   line; a clean two-line statement beats a big four-line stumble */
+@media (max-width: 820px) {
+  .hero-h1 {
+    font-size: clamp(1.9rem, 9vw, 2.5rem);
+  }
+}
+
+/* hero orbit — the floating artifacts; position/rotation come inline from
+   the ORBIT table in hero.tsx so geometry and motion live together */
+.orb-item {
+  position: absolute;
+  will-change: transform;
+}
+
+/* the statement's rolling industry window — inline in line 2, width pinned
+   by the widest word (the stack is a column, so its width IS the widest),
+   words centered inside so shorter industries don't list to one side */
+.h1-roll {
+  display: inline-block;
+  overflow: hidden;
+  height: 1.06em;
+  vertical-align: bottom;
+}
+.h1-roll-stack {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+.h1-roll-word {
+  display: block;
+  height: 1.06em;
+  line-height: 1.06;
+  white-space: nowrap;
+  /* left-aligned in the fixed-width window: short words hug "for" and the
+     slack hides in the trailing space (centering split it into a gap) */
+  text-align: left;
+}
+/* the paired roll — words stacked in place inside a line mask; the letters
+   (.rc) do the moving, so no wrap clone. The FIRST word stays in normal flow
+   and gives the mask its natural size (no-JS fallback included); the rest
+   stack absolutely on top and stay hidden until GSAP releases them. */
+.mask-line > .mask-inner.mask-inner--block {
+  display: block; /* outranks the inline-block base rule */
+}
+.h1-roll--pair {
+  display: block;
+  position: relative;
+  height: 1.06em;
+  /* overflow:hidden alone can leak composited (3D-transformed) children
+     mid-tween on this stack (see ScrollSmoother artifacts) — clip-path
+     clips the layer itself, so mid-wave letters can never escape */
+  clip-path: inset(0);
+}
+.h1-roll--pair .h1-roll-word {
+  text-align: center;
+}
+.h1-roll--pair .h1-roll-word:not(:first-child) {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  visibility: hidden;
+}
+/* the who-line window rides inline after "bring" — width is animated per
+   cycle (in em, so it survives resize) and the centered line re-seats itself */
+.h1-roll--pair.h1-roll--inline {
+  display: inline-block;
+  vertical-align: bottom;
+}
+.h1-roll--inline .h1-roll-word {
+  text-align: left;
+}
+.h1-roll--inline .h1-roll-word:not(:first-child) {
+  right: auto; /* natural width — these words size themselves */
+}
+.rc {
+  display: inline-block;
+}
+
 /* hero trust ticker — REAL claims on a calm constant loop (proof register:
    no scroll reactivity), edges faded so it reads embedded, not pasted */
 .trust-ticker {
@@ -1409,9 +1497,1345 @@ a.work-card:hover {
   align-items: center;
 }
 
+/* ── the 60-second builder ──
+   The mini client site the visitor makes their own. Skins are one attribute:
+   every surface inside the canvas reads from --ms-* custom props and
+   transitions its colors, so flipping data-skin MORPHS the site live instead
+   of swapping it. The browser frame itself (chrome, panel, shadow — via
+   .stage-frame) stays neutral on both skins: the browser isn't the website. */
+.ms-canvas {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 13px;
+  overflow: hidden;
+  background: var(--ms-bg);
+  color: var(--ms-fg);
+  transition: background-color 0.6s var(--ease-structure), color 0.6s var(--ease-structure);
+}
+.ms-canvas .ms-hero {
+  min-height: 118px;
+}
+@media (min-width: 821px) {
+  .ms-canvas {
+    gap: 16px;
+    padding: 26px;
+    /* the browser ratio only above the breakpoint — the real-text content
+       (wrapping headlines, card titles) overflows it on narrow screens */
+    aspect-ratio: 16 / 10.8;
+  }
+  .ms-canvas .ms-hero {
+    min-height: 0;
+  }
+}
+
+/* warm & clean — paper ground, ink hero. EVERY colored surface derives from
+   --ms-acc (set inline by the swatch choice), so one click re-inks the
+   button, thumbs, stars, toast dot, and the photo's duotone together.
+   .ms-skin is the shared variable system: the mini frame AND the fullscreen
+   demo site both wear it, so they can never drift apart. */
+.ms-skin {
+  --ms-acc: #4c6b7c;
+  --ms-bg: var(--color-paper);
+  --ms-fg: var(--color-ink);
+  --ms-mut: rgba(19, 20, 19, 0.09);
+  --ms-card: var(--color-panel);
+  --ms-thumb: color-mix(in oklab, var(--ms-acc) 18%, transparent);
+  --ms-hero-bg: var(--color-ink);
+  --ms-hero-fg: var(--color-paper);
+  --ms-hero-fill: rgba(239, 240, 238, 0.26);
+  --ms-btn-bg: var(--ms-acc);
+  --ms-btn-fg: var(--color-paper);
+  --ms-line: color-mix(in oklab, var(--ms-fg) 14%, transparent);
+}
+/* dark & bold — ink ground; the accent lifts toward white so it stays the
+   brightest thing on the page */
+.ms-skin[data-skin="dark"] {
+  --ms-bg: #131413;
+  --ms-fg: var(--color-paper);
+  --ms-mut: rgba(239, 240, 238, 0.16);
+  --ms-card: rgba(239, 240, 238, 0.07);
+  --ms-thumb: color-mix(
+    in oklab,
+    color-mix(in oklab, var(--ms-acc), white 35%) 22%,
+    transparent
+  );
+  --ms-hero-bg: rgba(239, 240, 238, 0.08);
+  --ms-hero-fg: var(--color-paper);
+  --ms-hero-fill: rgba(239, 240, 238, 0.22);
+  --ms-btn-bg: color-mix(in oklab, var(--ms-acc), white 42%);
+  --ms-btn-fg: var(--color-ink);
+}
+
+.ms-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: -0.01em;
+  min-width: 0;
+}
+.ms-nav {
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.65;
+  white-space: nowrap;
+}
+.ms-head {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.ms-card-title {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+@media (min-width: 821px) {
+  .ms-brand {
+    font-size: 13px;
+  }
+  .ms-nav {
+    font-size: 11px;
+  }
+  .ms-head {
+    font-size: 19px;
+  }
+  .ms-card-title {
+    font-size: 11px;
+  }
+}
+.ms-fill,
+.ms-card,
+.ms-thumb,
+.ms-img,
+.ms-hero,
+.ms-btn {
+  transition: background-color 0.6s var(--ease-structure), color 0.6s var(--ease-structure);
+}
+.ms-fill {
+  display: block;
+  border-radius: 4px;
+  background: var(--ms-mut);
+}
+.ms-hero {
+  border-radius: 10px;
+  background: var(--ms-hero-bg);
+  color: var(--ms-hero-fg);
+}
+.ms-hero .ms-fill {
+  background: var(--ms-hero-fill);
+}
+.ms-btn {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 13px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--ms-btn-bg);
+  color: var(--ms-btn-fg);
+}
+.ms-card {
+  background: var(--ms-card);
+}
+.ms-thumb {
+  display: block;
+  border-radius: 6px;
+  background: var(--ms-thumb);
+}
+/* the photo — real imagery, duotone-graded toward the chosen accent (the
+   color blend keeps the photo's light, swaps its hue). isolation keeps the
+   blend inside the span instead of sampling the hero behind it. */
+.ms-img {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  isolation: isolate;
+  background-color: var(--ms-thumb);
+  background-size: cover;
+  background-position: center;
+}
+.ms-img::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ms-acc);
+  mix-blend-mode: color;
+  opacity: 0.55;
+  transition: background-color 0.6s var(--ease-structure);
+}
+
+/* the social-proof strip */
+.ms-review {
+  background: var(--ms-card);
+  transition: background-color 0.6s var(--ease-structure);
+}
+.ms-stars {
+  color: var(--ms-acc);
+  font-size: 10px;
+  letter-spacing: 2px;
+  white-space: nowrap;
+  transition: color 0.6s var(--ease-structure);
+}
+.ms-frame[data-skin="dark"] .ms-stars {
+  color: var(--ms-btn-bg);
+}
+.ms-review-quote {
+  min-width: 0;
+  font-size: 10px;
+  line-height: 1.3;
+}
+.ms-review-author {
+  opacity: 0.55;
+}
+.ms-foot {
+  font-size: 9px;
+  opacity: 0.45;
+}
+@media (min-width: 821px) {
+  .ms-stars {
+    font-size: 11px;
+  }
+  .ms-review-quote {
+    font-size: 11px;
+  }
+  .ms-foot {
+    font-size: 10px;
+  }
+}
+
+/* ── the alive layer: ghost cursor + enquiry toast (JS-driven; rest hidden) ── */
+.ms-cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 30;
+  width: 20px;
+  height: 20px;
+  opacity: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.35));
+}
+.ms-cursor svg {
+  width: 100%;
+  height: 100%;
+}
+.ms-cursor svg path {
+  fill: var(--ms-fg);
+  stroke: var(--ms-bg);
+}
+.ms-toast {
+  position: absolute;
+  top: 42px; /* below the mini-nav line — a toast can cover the hero, not the nav */
+  right: 10px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 10.5px;
+  font-weight: 600;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  box-shadow: 0 13px 34px -13px rgba(0, 0, 0, 0.45);
+}
+.ms-frame[data-skin="dark"] .ms-toast {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+.ms-toast-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--ms-btn-bg);
+}
+
+/* ── the fullscreen demo site — their build at real scale ──
+   Wears .ms-skin, so every surface derives from the same --ms-acc/--ms-*
+   system as the mini frame. builder.tsx FLIPs .demo-root open from the frame
+   rect and drives the entrance + scroll choreography. */
+.demo-root {
+  position: fixed;
+  z-index: 80;
+  overflow: hidden;
+  background: var(--ms-bg);
+  color: var(--ms-fg);
+  visibility: hidden; /* JS reveals at the FLIP start */
+}
+.demo-scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* their nav — sticky inside the scroller */
+.demo-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 21px;
+  padding: 18px 76px 18px 21px; /* right clears the fixed close button */
+  background: color-mix(in oklab, var(--ms-bg) 94%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.demo-brand {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1875rem;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.demo-links {
+  display: flex;
+  gap: 21px;
+}
+.demo-links button {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 0.3s var(--ease-ui);
+}
+.demo-links button:hover {
+  opacity: 1;
+}
+@media (max-width: 640px) {
+  .demo-links,
+  .demo-nav .demo-btn--sm {
+    /* the fixed close button owns the top-right corner on small screens */
+    display: none;
+  }
+  .demo-nav {
+    padding-right: 21px;
+  }
+}
+
+/* the real-scale pill — their click color, alive on hover */
+.demo-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 26px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  background: var(--ms-btn-bg);
+  color: var(--ms-btn-fg);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    transform 0.35s var(--ease-ui),
+    box-shadow 0.35s var(--ease-ui),
+    background-color 0.6s var(--ease-structure);
+}
+.demo-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 13px 34px -13px color-mix(in oklab, var(--ms-acc) 65%, transparent);
+}
+.demo-btn--sm {
+  padding: 9px 18px;
+  font-size: 0.8125rem;
+}
+
+/* shared band container */
+.demo-hero,
+.demo-band,
+.demo-foot-inner {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 21px;
+}
+@media (min-width: 821px) {
+  .demo-hero,
+  .demo-band,
+  .demo-foot-inner {
+    padding-inline: 55px;
+  }
+}
+
+/* hero */
+.demo-hero {
+  display: grid;
+  gap: 34px;
+  align-items: center;
+  padding-top: 55px;
+  padding-bottom: 76px;
+}
+@media (min-width: 821px) {
+  .demo-hero {
+    grid-template-columns: 55fr 45fr;
+    gap: 34px;
+    min-height: 72vh;
+    padding-top: 34px;
+    padding-bottom: 89px;
+  }
+  /* the copy rides OVER the photo's left edge — the overlap is what makes
+     the layout read designed instead of templated */
+  .demo-hero-copy {
+    position: relative;
+    z-index: 2;
+    margin-right: -76px;
+  }
+}
+.demo-head {
+  font-family: var(--font-display);
+  font-weight: 800;
+  /* statement-sized but client-site plausible — hero-scale wrapped to five
+     lines in the split column and read as a poster, not a page */
+  font-size: clamp(2.3rem, 4.8vw, 4.3rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.demo-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  margin-right: 0.24em;
+  padding-bottom: 0.06em;
+}
+.demo-word-inner {
+  display: inline-block;
+  will-change: transform;
+}
+.demo-sub {
+  margin-top: 21px;
+  max-width: 46ch;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  opacity: 0.75;
+}
+.demo-hero .demo-btn {
+  margin-top: 34px;
+}
+.demo-photo {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 18px;
+  background-color: var(--ms-thumb);
+  background-size: cover;
+  background-position: center;
+}
+.demo-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ms-acc);
+  mix-blend-mode: color;
+  opacity: 0.45;
+  transition: background-color 0.6s var(--ease-structure);
+}
+.demo-hero-photo {
+  aspect-ratio: 4 / 5;
+  height: min(64vh, 620px);
+  width: 100%;
+}
+@media (max-width: 820px) {
+  .demo-hero-photo {
+    aspect-ratio: 16 / 10;
+    height: auto;
+    max-height: none;
+  }
+}
+
+/* bands */
+.demo-band {
+  padding-top: 76px;
+  padding-bottom: 76px;
+}
+@media (min-width: 821px) {
+  .demo-band {
+    padding-top: 110px;
+    padding-bottom: 110px;
+  }
+}
+.demo-kicker {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+/* accent-colored text, lifted on the dark skin */
+.demo-row-num,
+.demo-stars,
+.demo-stat-val,
+.demo-ticker-dot {
+  color: var(--ms-acc);
+  transition: color 0.6s var(--ease-structure);
+}
+.ms-skin[data-skin="dark"] .demo-row-num,
+.ms-skin[data-skin="dark"] .demo-stars,
+.ms-skin[data-skin="dark"] .demo-stat-val,
+.ms-skin[data-skin="dark"] .demo-ticker-dot {
+  color: var(--ms-btn-bg);
+}
+
+/* the ticker — full-bleed strip, content doubled for the seamless loop
+   (the global reduced-motion rule freezes the keyframe, leaving a static row) */
+.demo-ticker {
+  overflow: hidden;
+  border-block: 1px solid var(--ms-line);
+  padding-block: 14px;
+}
+.demo-ticker-track {
+  display: flex;
+  width: max-content;
+  animation: demo-tick 30s linear infinite;
+}
+.demo-ticker-item {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.demo-ticker-dot {
+  margin-inline: 28px;
+  font-size: 0.625rem;
+}
+@keyframes demo-tick {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* kicker with a trailing hairline — editorial section header */
+.demo-kicker-row {
+  display: flex;
+  align-items: center;
+  gap: 21px;
+}
+.demo-kicker-row::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--ms-line);
+}
+
+/* services — numbered rows; the arrow answers the hover */
+.demo-rows {
+  margin-top: 21px;
+  border-bottom: 1px solid var(--ms-line);
+}
+.demo-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: 21px;
+  row-gap: 8px;
+  padding: 28px 13px;
+  margin-inline: -13px;
+  border-top: 1px solid var(--ms-line);
+  border-radius: 12px;
+  transition: background-color 0.35s var(--ease-ui);
+}
+@media (min-width: 821px) {
+  .demo-row {
+    grid-template-columns: 76px 1fr 1.2fr auto;
+    column-gap: 34px;
+    padding: 34px 21px;
+    margin-inline: -21px;
+  }
+}
+.demo-row:hover {
+  background: var(--ms-card);
+}
+.demo-row-num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.0625rem;
+}
+.demo-row h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.4375rem;
+  letter-spacing: -0.01em;
+}
+.demo-row p {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  opacity: 0.72;
+  grid-column: 2 / -1;
+}
+@media (min-width: 821px) {
+  .demo-row p {
+    grid-column: auto;
+  }
+}
+.demo-row-arrow {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1.5px solid var(--ms-line);
+  transition:
+    background-color 0.35s var(--ease-ui),
+    color 0.35s var(--ease-ui),
+    border-color 0.35s var(--ease-ui),
+    transform 0.35s var(--ease-ui);
+}
+.demo-row-arrow svg {
+  width: 12px;
+  height: 12px;
+}
+.demo-row:hover .demo-row-arrow {
+  background: var(--ms-btn-bg);
+  color: var(--ms-btn-fg);
+  border-color: transparent;
+  transform: translate(2px, -2px);
+}
+
+/* about */
+.demo-about {
+  display: grid;
+  gap: 34px;
+  align-items: center;
+}
+@media (min-width: 821px) {
+  .demo-about {
+    grid-template-columns: 45fr 55fr;
+    gap: 76px;
+  }
+}
+.demo-about-photo-wrap {
+  position: relative;
+}
+.demo-about-photo {
+  aspect-ratio: 3 / 2;
+  width: 100%;
+}
+/* the headline stat floats over the photo's corner — layering reads custom */
+.demo-stat-float {
+  position: absolute;
+  right: -8px;
+  bottom: 21px;
+  padding: 18px 26px;
+  border-radius: 14px;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  box-shadow: 0 21px 55px -18px rgba(0, 0, 0, 0.5);
+}
+@media (min-width: 821px) {
+  .demo-stat-float {
+    right: -21px;
+    bottom: 34px;
+  }
+}
+.demo-stat-float .demo-stat-val {
+  color: color-mix(in oklab, var(--ms-acc), white 42%);
+}
+.demo-about-text {
+  margin-top: 21px;
+  font-size: 1.1875rem;
+  line-height: 1.55;
+}
+.demo-stats {
+  margin-top: 34px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 34px;
+}
+.demo-stat-val {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+}
+.demo-stat-label {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8125rem;
+  opacity: 0.6;
+}
+
+/* the review, full size */
+.demo-quote {
+  text-align: center;
+}
+.demo-quote .demo-stars {
+  font-size: 1.0625rem;
+  letter-spacing: 4px;
+}
+.demo-quote blockquote {
+  margin: 21px auto 0;
+  max-width: 24ch;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.demo-quote-author {
+  margin-top: 13px;
+  opacity: 0.6;
+}
+
+/* contact footer band — their hero surface returns for the ask */
+.demo-foot-band {
+  background: var(--ms-hero-bg);
+  color: var(--ms-hero-fg);
+  text-align: center;
+  padding: 89px 21px 0;
+  overflow: hidden; /* crops the wordmark's descenders at the page edge */
+  transition: background-color 0.6s var(--ease-structure);
+}
+/* their name, enormous — the site signs itself. Wraps (balanced) rather than
+   nowrap so long business names crop gracefully instead of overflowing. */
+.demo-mark {
+  margin-top: 34px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.8rem, 9.5vw, 9.5rem);
+  line-height: 0.82;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  transform: translateY(10%);
+  opacity: 0.96;
+}
+.demo-foot-line {
+  margin-inline: auto;
+  max-width: 26ch;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.8vw, 2.4rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.demo-foot-band .demo-btn {
+  margin-top: 34px;
+}
+.demo-foot-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 21px;
+  max-width: 1280px;
+  margin: 55px auto 0;
+  font-size: 0.8125rem;
+  opacity: 0.5;
+}
+
+/* ── the EAS bar — the one piece that isn't their site ── */
+.demo-bar {
+  position: absolute;
+  bottom: 13px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 8px 8px 8px 21px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  box-shadow: 0 21px 55px -13px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+}
+.demo-bar-line {
+  font-size: 0.9375rem;
+  color: rgba(239, 240, 238, 0.75);
+}
+.demo-bar-strong {
+  font-weight: 700;
+  color: var(--color-paper);
+}
+.demo-bar-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-radius: 999px;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition:
+    background-color 0.3s var(--ease-ui),
+    transform 0.3s var(--ease-ui);
+}
+.demo-bar-cta:hover {
+  background: var(--color-accent-bright);
+  transform: scale(1.03);
+}
+.demo-bar-cta svg {
+  width: 12px;
+  height: 12px;
+}
+@media (max-width: 560px) {
+  .demo-bar {
+    left: 13px;
+    right: 13px;
+    transform: none;
+    justify-content: space-between;
+  }
+  .demo-bar-line {
+    font-size: 0.8125rem;
+  }
+  .demo-bar-tail {
+    display: none;
+  }
+}
+
+/* close — inverse of the site's ground so it reads on both skins */
+.demo-close {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--ms-fg);
+  color: var(--ms-bg);
+  cursor: pointer;
+  transition: transform 0.25s var(--ease-ui);
+}
+.demo-close:hover {
+  transform: scale(1.08);
+}
+.demo-close svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* "See it live" — the builder's own click: accent ground, real pill */
+.bld-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 28px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: var(--color-paper);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition:
+    transform 0.3s var(--ease-ui),
+    box-shadow 0.3s var(--ease-ui),
+    background-color 0.3s var(--ease-ui);
+}
+.bld-open:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 13px 34px -13px rgba(76, 107, 124, 0.65);
+}
+.bld-open:active {
+  transform: scale(0.97);
+}
+.bld-open svg {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.3s var(--ease-ui);
+}
+.bld-open:hover svg {
+  transform: translate(1px, -1px);
+}
+
+/* accent swatches (builder controls) */
+.bld-swatch {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 2px solid rgba(19, 20, 19, 0.12);
+  cursor: pointer;
+  transition:
+    transform 0.2s var(--ease-ui),
+    box-shadow 0.3s var(--ease-ui);
+}
+.bld-swatch:hover {
+  transform: scale(1.12);
+}
+.bld-swatch:active {
+  transform: scale(0.95);
+}
+.bld-swatch[aria-pressed="true"] {
+  box-shadow:
+    0 0 0 3px var(--color-canvas),
+    0 0 0 5px var(--color-ink);
+}
+
+/* the builder's controls sit on the LIGHT ground — re-ink the dark-chapter
+   control language (seg, chips, field) instead of inventing a second one */
+.bld .seg {
+  background: rgba(19, 20, 19, 0.06);
+}
+.bld .seg button {
+  color: rgba(19, 20, 19, 0.62);
+}
+.bld .seg button:hover {
+  color: rgba(19, 20, 19, 0.85);
+}
+.bld .seg button[aria-pressed="true"],
+.bld .seg button[aria-selected="true"] {
+  color: var(--color-paper);
+}
+.bld .chip-toggle {
+  border-color: rgba(19, 20, 19, 0.22);
+  color: rgba(19, 20, 19, 0.72);
+}
+.bld .chip-toggle:hover {
+  border-color: rgba(19, 20, 19, 0.5);
+  color: var(--color-ink);
+}
+.bld .chip-toggle[aria-pressed="true"] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-paper);
+}
+.bld .field input {
+  background: rgba(19, 20, 19, 0.04);
+  border-color: rgba(19, 20, 19, 0.16);
+  color: var(--color-ink);
+}
+.bld .field input:hover {
+  border-color: rgba(19, 20, 19, 0.32);
+}
+.bld .field input:focus {
+  border-color: var(--color-accent);
+  background: rgba(19, 20, 19, 0.06);
+}
+.bld .field label {
+  color: rgba(19, 20, 19, 0.55);
+}
+.bld .field input:focus + label,
+.bld .field.has-value label {
+  color: rgba(19, 20, 19, 0.6);
+}
+
 /* view transitions for future internal pages */
 @view-transition {
   navigation: auto;
+}
+
+/* ───────────── route transitions — the stack (view-transition.tsx) ─────────────
+   The old page sinks back and dims; the new page sheets up over it with a
+   rounded lip. Root sheets are driven from JS (WAAPI on the pseudo-elements);
+   here we zero the UA defaults, set the paint order, and let the nav + the
+   work-card↔case-hero morphs ride ABOVE both sheets. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+  ::view-transition-old(root) {
+    z-index: 1;
+  }
+  ::view-transition-new(root) {
+    z-index: 50;
+  }
+  ::view-transition-image-pair(root) {
+    isolation: isolate;
+    will-change: transform, opacity;
+  }
+
+  /* the nav stays put, crossfading in place while the sheets move */
+  .site-nav {
+    view-transition-name: site-nav;
+  }
+  ::view-transition-group(site-nav) {
+    z-index: 60;
+  }
+
+  /* the shared-element morph: index card well ↔ case-study hero */
+  ::view-transition-group(vt-desert-wings),
+  ::view-transition-group(vt-executive-ai-solutions) {
+    z-index: 55;
+    animation-duration: 0.8s;
+    animation-timing-function: var(--ease-structure);
+  }
+  ::view-transition-old(vt-desert-wings),
+  ::view-transition-new(vt-desert-wings),
+  ::view-transition-old(vt-executive-ai-solutions),
+  ::view-transition-new(vt-executive-ai-solutions) {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    animation-duration: 0.8s;
+    animation-timing-function: var(--ease-structure);
+  }
+  /* a named element with no counterpart on the other page exits/enters fast
+     instead of lingering over the moving sheets */
+  ::view-transition-old(vt-desert-wings):only-child,
+  ::view-transition-old(vt-executive-ai-solutions):only-child {
+    animation: vt-lone-out 0.3s var(--ease-ui) both;
+  }
+  ::view-transition-new(vt-desert-wings):only-child,
+  ::view-transition-new(vt-executive-ai-solutions):only-child {
+    animation: vt-lone-in 0.45s var(--ease-ui) both;
+  }
+}
+@keyframes vt-lone-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-lone-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ───────────────────── the work film (/work) ─────────────────────
+   Full-screen chapters, one per project. Default (mobile / reduced motion /
+   no JS): chapters stack in normal flow, still full-bleed. ≥821px with the
+   driver alive (.is-film) the stage pins and each chapter rises OVER the
+   previous — the route transition's stack gesture at viewport scale. */
+.wf {
+  position: relative;
+  background: var(--color-dark);
+  color: var(--color-paper);
+}
+.wf-run {
+  position: relative;
+}
+.wf-stage {
+  position: relative;
+}
+.wf-chapter {
+  position: relative;
+  display: block;
+  min-height: 92svh;
+  overflow: clip;
+  text-decoration: none;
+  color: var(--color-paper);
+  background: var(--color-dark);
+}
+.wf-media {
+  position: absolute;
+  inset: 0;
+  display: block;
+  will-change: transform;
+}
+.wf-zoom {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.wf-img {
+  object-fit: cover;
+  object-position: center top;
+  filter: brightness(0.84);
+}
+/* directional grade: heavy at the base where the title sits, a breath at the
+   top so the paper nav stays legible over bright skies */
+.wf-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(10, 11, 11, 0.38) 0%,
+      rgba(10, 11, 11, 0.06) 30%,
+      rgba(10, 11, 11, 0.18) 56%,
+      rgba(10, 11, 11, 0.84) 100%
+    ),
+    linear-gradient(90deg, rgba(10, 11, 11, 0.42) 0%, transparent 52%);
+}
+.wf-content {
+  position: absolute;
+  left: 21px;
+  right: 21px;
+  bottom: 26px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  will-change: transform;
+}
+.wf-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  color: rgba(239, 240, 238, 0.8);
+  text-transform: uppercase;
+}
+.wf-name {
+  color: var(--color-paper);
+  text-shadow: 0 2px 34px rgba(0, 0, 0, 0.45);
+}
+.wf-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: rgba(239, 240, 238, 0.88);
+  text-transform: uppercase;
+}
+.wf-open svg {
+  width: 11px;
+  height: 11px;
+  transition: transform 0.35s var(--ease-ui);
+}
+.wf-chapter:hover .wf-open svg,
+.wf-chapter:focus-visible .wf-open svg {
+  transform: translate(2px, -2px);
+}
+.wf-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: #070708;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* the final reel — the ask on the closer's full-color surface */
+.wf-chapter--open .wf-name {
+  /* no shadow band over the flat gradient */
+  text-shadow: none;
+}
+.wf-content--open {
+  inset: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 13px;
+  padding: 21px;
+}
+.wf-open-sub {
+  max-width: 36ch;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: rgba(239, 240, 238, 0.85);
+}
+.wx-open-pill {
+  margin-top: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 21px;
+  border-radius: 999px;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  transition: transform 0.3s var(--ease-ui);
+}
+.wx-open-pill svg {
+  width: 12px;
+  height: 12px;
+}
+.wf-chapter:hover .wx-open-pill,
+.wf-chapter:focus-visible .wx-open-pill {
+  transform: scale(1.06);
+}
+
+/* chrome — the only furniture on the film */
+.wf-label {
+  position: absolute;
+  top: calc(72px + 13px);
+  left: 21px;
+  z-index: 5;
+  color: rgba(239, 240, 238, 0.72);
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.wf-count {
+  display: none;
+  position: absolute;
+  bottom: 26px;
+  right: 21px;
+  z-index: 5;
+  color: rgba(239, 240, 238, 0.62);
+  pointer-events: none;
+}
+.wf-rail {
+  display: none;
+  position: absolute;
+  right: 21px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  flex-direction: column;
+  gap: 4px;
+}
+.wf-rail button {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 8px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(239, 240, 238, 0.42);
+  cursor: pointer;
+  transition: color 0.3s var(--ease-ui);
+}
+.wf-rail button:hover {
+  color: rgba(239, 240, 238, 0.85);
+}
+.wf-rail button[data-active='true'] {
+  color: var(--color-paper);
+}
+.wf-cursor {
+  display: none;
+}
+
+@media (min-width: 821px) {
+  .wf-content {
+    left: 55px;
+    right: 55px;
+    bottom: 55px;
+  }
+  .wf-label {
+    left: 55px;
+  }
+  .wf-count {
+    right: 55px;
+    bottom: 34px;
+  }
+  .wf-rail {
+    display: flex;
+    right: 21px;
+  }
+  .wf-cursor {
+    display: block;
+  }
+  /* the cursor pill replaces the static cue on fine pointers */
+  @media (hover: hover) and (pointer: fine) {
+    .wf-open {
+      display: none;
+    }
+  }
+
+  /* film mode — only while the driver is alive */
+  .is-film {
+    height: calc(100svh + var(--wf-steps) * 90svh);
+  }
+  .is-film .wf-stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: clip;
+  }
+  .is-film .wf-chapter {
+    position: absolute;
+    inset: 0;
+    min-height: 0;
+    will-change: transform;
+  }
+  /* overscan below the frame so the media's reveal-lag never opens a gap */
+  .is-film .wf-chapter .wf-media {
+    inset: 0 0 -30% 0;
+  }
+  .is-film .wf-count {
+    display: block;
+  }
+}
+
+/* outline→fill display link grammar (used by the case-study next link) */
+.wx-name {
+  position: relative;
+  display: inline-block;
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.6rem, 5.2vw, 5.2rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  transition: transform 0.5s var(--ease-ui);
+}
+.wx-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(19, 20, 19, 0.3);
+  transition: -webkit-text-stroke-color 0.5s var(--ease-ui);
+}
+.wx-fill {
+  /* the box extends past the glyph edges (then pads back) so the wipe-open
+     clip never shears ascenders or descenders */
+  position: absolute;
+  top: -0.12em;
+  bottom: -0.18em;
+  left: 0;
+  right: 0;
+  padding: 0.12em 0 0.18em;
+  color: var(--color-ink);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.7s var(--ease-structure);
+}
+
+/* ───────────────────── case studies (/work/[slug]) ───────────────────── */
+.cs-hero-well {
+  position: relative;
+  height: clamp(340px, 62svh, 680px);
+  border-radius: 18px;
+  overflow: clip;
+  background: var(--color-ink);
+}
+.cs-img {
+  object-fit: cover;
+  object-position: left top;
+}
+.cs-fig-well {
+  position: relative;
+  height: clamp(240px, 36vw, 460px);
+  border-radius: 14px;
+  overflow: clip;
+  background: var(--color-panel);
+}
+.cs-fig-well--wide {
+  height: clamp(280px, 44vw, 620px);
+}
+.cs-phones {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 21px;
+  padding: 55px 21px 0;
+  border-radius: 14px;
+  background: var(--color-panel);
+  overflow: clip;
+}
+.cs-phone {
+  width: clamp(140px, 26vw, 300px);
+  flex-shrink: 1;
+  margin-bottom: -34px;
+}
+.cs-phone--1 {
+  margin-top: 34px;
+}
+.cs-next {
+  text-decoration: none;
+  color: inherit;
+}
+/* the index's outline→fill grammar, re-wired for this lone link */
+.cs-next .wx-outline {
+  -webkit-text-stroke-color: rgba(19, 20, 19, 0.45);
+}
+.cs-next:hover .wx-name,
+.cs-next:focus-visible .wx-name {
+  transform: translateX(8px);
+}
+.cs-next:hover .wx-fill,
+.cs-next:focus-visible .wx-fill {
+  clip-path: inset(0 0 0 0);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1436,3 +2860,15 @@ a.work-card:hover {
 /* build-marker: footer-light */
 
 /* build-marker: tst-rotator */
+
+/* build-marker: bld-60s-builder */
+
+/* build-marker: bld-move1-alive */
+
+/* build-marker: demo-reveal-v1 */
+
+/* build-marker: demo-editorial-v2 */
+
+/* build-marker: hero-wall-v1 */
+
+/* build-marker: hero-orbit-v1 */
