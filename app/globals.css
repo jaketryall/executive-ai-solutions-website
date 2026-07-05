@@ -959,6 +959,97 @@ html:not(.has-js) .tst-slide + .tst-slide {
   color: var(--color-ink);
   clip-path: inset(100% 0 0 0);
 }
+
+/* ─── the dark room — the page canvas itself dips to dark for this zone
+   (GSAP scrubs body background across the seams); the section's content
+   is dark-native, so these remap the ink-tuned pieces ─── */
+.zone-dark .num .num-outline {
+  -webkit-text-stroke-color: rgba(239, 240, 238, 0.24);
+}
+.zone-dark .num .num-fill {
+  color: var(--color-paper);
+}
+.zone-dark .chip {
+  background: rgba(239, 240, 238, 0.09);
+  color: rgba(239, 240, 238, 0.85);
+}
+/* no-JS: the body never darkens, so the zone paints its own ground */
+html:not(.has-js) .zone-dark {
+  background: var(--color-dark);
+}
+
+/* ─── horizontal process (applied by GSAP on desktop, motion-safe only —
+   default DOM is the vertical flow, so mobile / reduced-motion / no-JS
+   never see a sideways layout) ─── */
+.is-horizontal .process-in {
+  height: 100svh;
+  justify-content: center;
+  padding-block: 0;
+}
+.is-horizontal .px-window {
+  overflow: hidden;
+  /* composited (transformed) track layers can slip overflow:hidden on this
+     stack — clip-path clips the layer itself (same fix as the hero roll) */
+  clip-path: inset(0);
+  /* the fade at both edges sells panels sliding THROUGH a space */
+  mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
+}
+/* grid, not flex: auto-columns resolve against the track's own width (= the
+   window, since it's a normal block child), so every panel is exactly one
+   window wide and the overflow runs sideways — no %-of-content circularity */
+.is-horizontal .px-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  margin-top: 0;
+}
+.is-horizontal .px-track > [data-step] {
+  min-height: 0;
+  padding-block: 0;
+  /* left inset keeps resting content clear of the window's edge fade;
+     right air separates the numeral from the incoming panel */
+  padding-left: 21px;
+  padding-right: 55px;
+}
+/* in the ride the TEXT is the protagonist — display-scale title, near-full
+   copy contrast; the glowing stage must not out-shout it */
+.is-horizontal [data-step] h3 {
+  font-size: clamp(2.4rem, 3.3vw, 3.4rem);
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+.is-horizontal [data-step] [data-step-body] p {
+  font-size: clamp(1.25rem, 1.55vw, 1.55rem);
+  line-height: 1.5;
+  color: rgba(239, 240, 238, 0.92);
+  max-width: 32ch;
+}
+.is-horizontal [data-step] .chip {
+  font-size: 0.9375rem;
+  padding: 10px 16px;
+}
+.is-horizontal .px-stage {
+  position: static;
+}
+/* the progress rail — only exists in the horizontal ride */
+.px-rail {
+  display: none;
+}
+.is-horizontal .px-rail {
+  display: block;
+  height: 2px;
+  background: rgba(239, 240, 238, 0.14);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.px-rail-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--color-accent-bright);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
 @media (prefers-reduced-motion: reduce) {
   .num .num-fill {
     clip-path: inset(0 0 0 0);

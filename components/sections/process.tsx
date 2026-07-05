@@ -49,6 +49,11 @@ export function Process() {
       const frame = q(".stage-frame")[0] as HTMLElement | undefined;
       if (!frame) return;
 
+      // context re-runs (StrictMode remount, revertOnUpdate) revert the DOM
+      // to its CSS rest, so the state machine must forget where it was —
+      // otherwise setStage(same) no-ops against a reset stage
+      state.current = -1;
+
       const mini = q(".st-mini");
       const blocks = q(".st-mini [data-blk]");
       const quote = q(".st-quote");
@@ -62,7 +67,29 @@ export function Process() {
       const line = q(".st-line")[0] as unknown as SVGPathElement | undefined;
       const lineLen = line ? line.getTotalLength() : 0;
 
+      /* ── the dark room — the page canvas itself dips to dark for this
+         chapter (Lando-style full-bg swap, not a card). Crossfades live on
+         the seams: down as the section approaches, back up as it leaves.
+         The section's content is dark-native, so the blend must complete
+         before real reading starts — hence fast windows. ── */
+      const rootStyle = getComputedStyle(document.documentElement);
+      const CANVAS = rootStyle.getPropertyValue("--color-canvas").trim();
+      const DARK = rootStyle.getPropertyValue("--color-dark").trim();
+
+      // <main> paints the page ground (body sits behind the footer-reveal
+      // stack), so the room change tweens main, not body
+      const ground = document.querySelector("main");
+
       if (reducedMotion()) {
+        // instant room change (a color state, not a scrubbed blend)
+        ScrollTrigger.create({
+          trigger: root.current,
+          start: "top 60%",
+          end: "bottom 40%",
+          onToggle: (self) => {
+            if (ground) (ground as HTMLElement).style.backgroundColor = self.isActive ? DARK : "";
+          },
+        });
         // clean end-state: the finished, earning site in one frame
         gsap.set(q("[data-anim]"), { autoAlpha: 1 });
         q(".num-fill").forEach((el) => gsap.set(el, { clipPath: "inset(0% 0 0 0)" }));
@@ -72,6 +99,37 @@ export function Process() {
         gsap.set(scoreBars, { scaleX: 1 });
         return; // CSS rests quote+score hidden, chart+chart-line shown
       }
+
+      /* ONE writer owns the ground color. A scrubbed fade plus threshold
+         tweens on the same property raced each other on fast reversals
+         (fast up-scroll left the whole page dark), and a pinned section's
+         own positions lie by a spacer-length. So the room is a simple
+         boolean state: thresholds flip it, one 0.8s fade executes it —
+         which is how the Lando reference behaves anyway. */
+      let roomOn = false;
+      const setRoom = (on: boolean, instant = false) => {
+        if (roomOn === on) return;
+        roomOn = on;
+        const backgroundColor = on ? DARK : CANVAS;
+        if (instant) gsap.set(ground, { backgroundColor });
+        else
+          gsap.to(ground, {
+            backgroundColor,
+            duration: 0.8,
+            ease: EASE_UI,
+            overwrite: "auto",
+          });
+      };
+
+      // enter threshold — anchored to the PREVIOUS section's bottom (honest,
+      // unpinned geometry; this section's own start inflates by the spacer)
+      const prevSec = root.current.previousElementSibling as HTMLElement | null;
+      ScrollTrigger.create({
+        trigger: prevSec ?? root.current,
+        start: prevSec ? "bottom 60%" : "top 60%",
+        onEnter: () => setRoom(true),
+        onLeaveBack: () => setRoom(false),
+      });
 
       if (line) gsap.set(line, { strokeDasharray: lineLen, strokeDashoffset: lineLen });
 
@@ -249,49 +307,183 @@ export function Process() {
         );
       };
 
-      steps.forEach((el, i) => {
+      // numerals fill up to (and including) the active index — the horizontal
+      // ride drives this from pin progress; the vertical read scrubs per step
+      const fills = steps.map((el) => el.querySelector(".num-fill"));
+      const setFills = (i: number) =>
+        fills.forEach(
+          (f, j) =>
+            f &&
+            gsap.to(f, {
+              clipPath: j <= i ? "inset(0% 0 0 0)" : "inset(100% 0 0 0)",
+              duration: 0.5,
+              ease: EASE_STRUCTURE,
+              overwrite: "auto",
+            })
+        );
+
+      const mm = gsap.matchMedia();
+
+      /* ── desktop: the horizontal ride. The section pins for ~2.4 screens,
+         the step panels slide past the anchored stage, and the pin progress
+         drives the same state machine the vertical read uses. The layout
+         only goes sideways when this block applies (reduced motion returns
+         early above, so it never sees a pin). ── */
+      mm.add("(min-width: 821px)", () => {
+        const sec = root.current;
+        sec.classList.add("is-horizontal");
+        const track = q(".px-track")[0];
+        const railFill = q(".px-rail-fill")[0];
+        const n = steps.length;
+        let last = -1;
+
+        // text leads, stage follows: the panel/numeral react instantly, the
+        // stage answers a beat later so the eye reads before it watches
+        let stageCall: gsap.core.Tween | null = null;
+        const activateTextFirst = (i: number) => {
+          bodies.forEach((b, j) =>
+            gsap.to(b, {
+              opacity: j === i ? 1 : 0.45,
+              duration: 0.45,
+              ease: EASE_UI,
+              overwrite: "auto",
+            })
+          );
+          setFills(i);
+          stageCall?.kill();
+          stageCall = gsap.delayedCall(0.4, () => setStage(i));
+        };
+
+        // panel copy sits behind the FOUC gate — release it as the pin nears
         gsap.fromTo(
-          el.querySelectorAll("[data-anim]"),
+          q("[data-step] [data-anim]"),
           { autoAlpha: 0, y: 21 },
           {
             autoAlpha: 1,
             y: 0,
             duration: 0.7,
             ease: EASE_STRUCTURE,
-            stagger: 0.08,
-            scrollTrigger: { trigger: el, start: "top 76%" },
+            stagger: 0.06,
+            scrollTrigger: { trigger: sec, start: "top 55%" },
           }
         );
 
-        const fillEl = el.querySelector(".num-fill");
-        if (fillEl) {
-          gsap.fromTo(
-            fillEl,
-            { clipPath: "inset(100% 0 0 0)" },
-            {
-              clipPath: "inset(0% 0 0 0)",
-              ease: "none",
-              scrollTrigger: {
-                trigger: el,
-                start: "top 70%",
-                end: "top 34%",
-                scrub: 0.5,
-                invalidateOnRefresh: true,
-              },
-            }
-          );
-        }
-
-        ScrollTrigger.create({
-          trigger: el,
-          start: "top 58%",
-          end: "bottom 58%",
-          onToggle: (self) => self.isActive && activate(i),
+        gsap.to(track, {
+          // the grid track is ONE panel wide (columns overflow it), so each
+          // panel-step is a full -100%. force3D:false — a GPU-promoted track
+          // can slip the window's clipping mid-scrub
+          xPercent: -100 * (n - 1),
+          force3D: false,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sec,
+            start: "top top",
+            end: "+=240%",
+            pin: true,
+            scrub: 0.6,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            snap: {
+              snapTo: 1 / (n - 1),
+              duration: { min: 0.2, max: 0.6 },
+              delay: 0.1,
+              ease: EASE_UI,
+              // nearest point from CURRENT progress — with velocity projection
+              // (inertia) a hard flick predicts a landing past the ride's end
+              // and the snap yeets the whole way there
+              directional: false,
+              inertia: false,
+            },
+            onUpdate(self) {
+              if (railFill) gsap.set(railFill, { scaleX: self.progress });
+              const i = Math.min(n - 1, Math.round(self.progress * (n - 1)));
+              if (i !== last) {
+                last = i;
+                activateTextFirst(i);
+              }
+            },
+            // leaving the ride is leaving the room — the exit hangs off the
+            // pin's own lifecycle, immune to spacer position math; onRefresh
+            // re-syncs the state when a restored load lands mid/past-zone
+            onLeave: () => setRoom(false),
+            onEnterBack: () => setRoom(true),
+            onRefresh: (self) => {
+              if (self.progress >= 1) setRoom(false, true);
+              else if (self.progress > 0) setRoom(true, true);
+            },
+          },
         });
+
+        requestAnimationFrame(() => {
+          if (state.current === -1) {
+            last = 0;
+            activateTextFirst(0);
+          }
+        });
+        return () => {
+          stageCall?.kill();
+          sec.classList.remove("is-horizontal");
+        };
       });
 
-      requestAnimationFrame(() => {
-        if (state.current === -1) activate(0);
+      /* ── narrow screens: the original vertical read — sticky stage,
+         steps scroll past, per-step scrubbed numeral fills ── */
+      mm.add("(max-width: 820px)", () => {
+        // no pin here, so the section's own bottom is honest — exit fade
+        ScrollTrigger.create({
+          trigger: root.current,
+          start: "bottom 70%",
+          onEnter: () => setRoom(false),
+          onLeaveBack: () => setRoom(true),
+          onRefresh: (self) => {
+            if (self.progress > 0) setRoom(false, true);
+          },
+        });
+
+        steps.forEach((el, i) => {
+          gsap.fromTo(
+            el.querySelectorAll("[data-anim]"),
+            { autoAlpha: 0, y: 21 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.7,
+              ease: EASE_STRUCTURE,
+              stagger: 0.08,
+              scrollTrigger: { trigger: el, start: "top 76%" },
+            }
+          );
+
+          const fillEl = el.querySelector(".num-fill");
+          if (fillEl) {
+            gsap.fromTo(
+              fillEl,
+              { clipPath: "inset(100% 0 0 0)" },
+              {
+                clipPath: "inset(0% 0 0 0)",
+                ease: "none",
+                scrollTrigger: {
+                  trigger: el,
+                  start: "top 70%",
+                  end: "top 34%",
+                  scrub: 0.5,
+                  invalidateOnRefresh: true,
+                },
+              }
+            );
+          }
+
+          ScrollTrigger.create({
+            trigger: el,
+            start: "top 58%",
+            end: "bottom 58%",
+            onToggle: (self) => self.isActive && activate(i),
+          });
+        });
+
+        requestAnimationFrame(() => {
+          if (state.current === -1) activate(0);
+        });
       });
     },
     { scope: root }
@@ -301,24 +493,27 @@ export function Process() {
     <section
       id="process"
       ref={root}
-      data-nav="light"
-      className="relative z-0 pb-[89px] pt-[89px] md:pb-[144px] md:pt-[144px]"
+      data-nav="dark"
+      className="zone-dark relative z-0 text-paper"
     >
-      <div className="mx-auto max-w-[1280px] px-[21px] md:px-[55px]">
-        <h2 className="t-display-lg max-w-[16ch]">How a project runs</h2>
-        <p className="mt-[13px] max-w-[44ch] text-ink/70">
-          Four steps from first call to a site that earns. Watch one get built
-          as you scroll.
-        </p>
-      </div>
+      {/* .process-in is the pinned viewport in horizontal mode */}
+      <div className="process-in mx-auto flex max-w-[1280px] flex-col pb-[89px] pt-[89px] md:pb-[144px] md:pt-[144px]">
+        <div className="px-[21px] md:px-[55px]">
+          <h2 className="t-display-lg max-w-[16ch]">How a project runs</h2>
+          <p className="mt-[13px] max-w-[44ch] text-paper/70">
+            Four steps from first call to a site that earns. Watch one get
+            built as you scroll.
+          </p>
+        </div>
 
-      {/* stage LEFT, words RIGHT — the demo grabs the eye first, and the LTR
-          reading sweep then lands on the step copy instead of fighting it
-          (words-left/motion-right made every stage change yank attention away
-          from the text) */}
-      <div className="mx-auto mt-[34px] max-w-[1280px] px-[21px] md:mt-[55px] md:grid md:grid-cols-[1.15fr_minmax(300px,0.85fr)] md:items-start md:gap-x-[89px] md:px-[55px]">
-        {/* ── the stage: a browser that builds itself (sticky both breakpoints) ── */}
-        <div className="sticky top-[76px] z-10 md:col-start-1 md:row-start-1 md:top-[121px]">
+        {/* words LEFT, stage RIGHT — on the dark ground the light stage glows,
+            so the text needs the reading-start position to win the first
+            glance; the stage reacts a beat AFTER each step lands (see the
+            delayed setStage below), so motion never fights the reading */}
+        <div className="process-grid mt-[34px] px-[21px] md:mt-[55px] md:grid md:grid-cols-[minmax(360px,1.1fr)_0.9fr] md:items-center md:gap-x-[89px] md:px-[55px]">
+        {/* ── the stage: a browser that builds itself (sticky in the vertical
+            flow; a fixed anchor inside the pin when horizontal) ── */}
+        <div className="px-stage sticky top-[76px] z-10 md:col-start-2 md:row-start-1 md:top-[121px]">
           <div className="stage-frame" data-built="" data-anim>
             <span className="browser-chrome">
               <Monogram className="h-[13px] w-[13px] opacity-70" />
@@ -445,36 +640,44 @@ export function Process() {
           </div>
         </div>
 
-        {/* ── the steps (numeral index; the in-view step drives the stage) ── */}
-        <div className="mt-[34px] flex flex-col md:col-start-2 md:row-start-1 md:mt-0">
-          {STEPS.map((s) => (
-            <div
-              key={s.n}
-              data-step
-              className="flex min-h-[52svh] flex-col justify-center py-[34px] md:min-h-[68vh]"
-            >
-              <span
-                className="num t-numeral relative block select-none leading-[0.8]"
-                aria-hidden
+        {/* ── the steps (vertical flow by default; a sliding track when the
+            desktop pin takes over — the in-view step drives the stage) ── */}
+        <div className="px-window md:col-start-1 md:row-start-1">
+          <div className="px-track mt-[34px] flex flex-col md:mt-0">
+            {STEPS.map((s) => (
+              <div
+                key={s.n}
+                data-step
+                className="flex min-h-[52svh] flex-col justify-center py-[34px] md:min-h-[68vh]"
               >
-                <span className="num-outline">{s.n}</span>
-                <span className="num-fill">{s.n}</span>
-              </span>
-              <div data-step-body className="mt-[21px] md:mt-[34px]">
-                <div data-anim className="flex flex-wrap items-center gap-[13px]">
-                  <h3 className="t-title">
-                    <span className="sr-only">{`Step ${s.n}: `}</span>
-                    {s.title}
-                  </h3>
-                  <span className="chip">{s.meta}</span>
+                <span
+                  className="num t-numeral relative block select-none leading-[0.8]"
+                  aria-hidden
+                >
+                  <span className="num-outline">{s.n}</span>
+                  <span className="num-fill">{s.n}</span>
+                </span>
+                <div data-step-body className="mt-[21px] md:mt-[34px]">
+                  <div data-anim className="flex flex-wrap items-center gap-[13px]">
+                    <h3 className="t-title">
+                      <span className="sr-only">{`Step ${s.n}: `}</span>
+                      {s.title}
+                    </h3>
+                    <span className="chip">{s.meta}</span>
+                  </div>
+                  <p data-anim className="mt-[13px] max-w-[42ch] text-paper/75">
+                    {s.copy}
+                  </p>
                 </div>
-                <p data-anim className="mt-[13px] max-w-[42ch] text-ink/75">
-                  {s.copy}
-                </p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          {/* the ride's odometer — horizontal mode only */}
+          <span className="px-rail mt-[34px]" aria-hidden>
+            <span className="px-rail-fill" />
+          </span>
         </div>
+      </div>
       </div>
     </section>
   );
