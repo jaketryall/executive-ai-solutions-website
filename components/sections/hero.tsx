@@ -131,7 +131,8 @@ export function Hero() {
         const n = rollLines[0].children.length;
         const HOLD = 3.2; // seconds each pair rests
         const LAG = 0.14; // the outcome line's trailing beat
-        roll = gsap.timeline({ paused: true, repeat: -1 });
+        const rollTl = gsap.timeline({ paused: true, repeat: -1 });
+        roll = rollTl; // narrow once — TS can't see the assignment inside closures
         rollLines.forEach((line, li) => {
           const isInline = line.classList.contains("h1-roll--inline");
           const words = Array.from(line.children) as HTMLElement[];
@@ -148,13 +149,13 @@ export function Hero() {
             // the inline window re-sizes to the incoming word while the
             // letters swap, so the centered line re-seats itself smoothly
             if (isInline) {
-              roll.to(
+              rollTl.to(
                 line,
                 { width: () => `${whoEms[k % n]}em`, duration: 0.6, ease: EASE_STRUCTURE },
                 t + 0.1
               );
             }
-            roll
+            rollTl
               // force3D:false keeps the letters 2D — GPU-promoted glyphs can
               // slip the mask mid-tween (composited layers vs overflow:hidden)
               .to(

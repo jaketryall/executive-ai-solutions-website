@@ -182,13 +182,17 @@ export function Services() {
             <h3 data-anim="head" className="t-title t-title--lg">
               SEO and Google Ads
             </h3>
-            <div className="mt-[21px] grid items-center gap-[34px] md:grid-cols-2">
+            <div className="mt-[21px] grid gap-[34px] md:grid-cols-[0.85fr_1.15fr]">
+            {/* copy hugs the title, the price chip anchors the bottom edge —
+                the column spans the artifact, so there is no dead zone */}
+            <div className="flex flex-col justify-between gap-[21px]">
             <div>
               <p data-anim="copy" className="max-w-[44ch] text-ink/75">
                 Get found, get chosen. Local SEO, search-ready builds, and managed
                 Google Ads with conversion tracking you can actually read.
               </p>
-              <div data-anim="copy" className="mt-[13px] flex flex-wrap gap-[8px]">
+              </div>
+              <div data-anim="copy" className="flex flex-wrap gap-[8px]">
                 <span className="chip">From $500/mo + ad spend</span>
               </div>
             </div>
@@ -203,9 +207,8 @@ export function Services() {
                 Field
               </p>
               <p className="serp-desc">
-                Career-pilot training at Falcon Field, Mesa AZ. PPL through CFI on
-                a single path, built from the outcomes of every pilot we&apos;ve
-                graduated.
+                Career-pilot training at Falcon Field, Mesa AZ. PPL through CFI
+                on a single path.
               </p>
               <p className="serp-tag t-meta">Their live listing on Google</p>
             </div>
@@ -223,14 +226,18 @@ export function Services() {
                 New for 2026
               </span>
             </div>
-            <div className="mt-[21px] grid items-center gap-[34px] md:grid-cols-2">
+            <div className="mt-[21px] grid gap-[34px] md:grid-cols-[0.85fr_1.15fr]">
+            {/* copy hugs the title, the price chip anchors the bottom edge —
+                the column spans the artifact, so there is no dead zone */}
+            <div className="flex flex-col justify-between gap-[21px]">
             <div>
               <p data-anim="copy" className="max-w-[44ch] text-ink/75">
                 Chat that answers from your own site, follow-ups that send
                 themselves, and pages that adapt to each visitor. Built and
                 managed for you.
               </p>
-              <div data-anim="copy" className="mt-[13px] flex flex-wrap gap-[8px]">
+              </div>
+              <div data-anim="copy" className="flex flex-wrap gap-[8px]">
                 <span className="chip">Quoted per project</span>
               </div>
             </div>
