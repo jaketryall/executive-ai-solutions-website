@@ -133,7 +133,9 @@ export function Services() {
 
         {/* ── the roster (all visible, nothing gated) — each service is its
             own paper card on the panel, same register as the step cards ── */}
-        <div className="flex flex-col gap-[13px] md:gap-[21px]">
+        {/* gap ≥ card padding so each card reads as its own object on the
+            panel, not slices of one surface */}
+        <div className="flex flex-col gap-[21px] md:gap-[34px]">
           {/* 01 · flagship — Websites */}
           <article data-svc-row className="svc-row rounded-[18px] bg-paper p-[21px] md:p-[34px]">
             <h3 data-anim="head" className="t-display-lg">
@@ -174,9 +176,9 @@ export function Services() {
           </article>
 
           {/* 02 — SEO and Google Ads */}
-          <article data-svc-row className="svc-row grid items-start gap-[34px] rounded-[18px] bg-paper p-[21px] md:grid-cols-2 md:p-[34px]">
+          <article data-svc-row className="svc-row grid items-center gap-[34px] rounded-[18px] bg-paper p-[21px] md:grid-cols-2 md:p-[34px]">
             <div>
-              <h3 data-anim="head" className="t-title">
+              <h3 data-anim="head" className="t-title t-title--lg">
                 SEO and Google Ads
               </h3>
               <p data-anim="copy" className="mt-[21px] max-w-[44ch] text-ink/75">
@@ -207,10 +209,10 @@ export function Services() {
           </article>
 
           {/* 03 — AI automation */}
-          <article data-svc-row className="svc-row grid items-start gap-[34px] rounded-[18px] bg-paper p-[21px] md:grid-cols-2 md:p-[34px]">
+          <article data-svc-row className="svc-row grid items-center gap-[34px] rounded-[18px] bg-paper p-[21px] md:grid-cols-2 md:p-[34px]">
             <div>
-              <div className="flex items-center gap-[13px]">
-                <h3 data-anim="head" className="t-title">
+              <div className="flex flex-wrap items-center gap-[13px]">
+                <h3 data-anim="head" className="t-title t-title--lg">
                   AI automation
                 </h3>
                 <span data-anim="head" className="chip bg-accent/10 text-accent">
@@ -232,8 +234,8 @@ export function Services() {
               <div className="chat-a">
                 <Monogram className="mt-[3px] h-[16px] w-[16px] shrink-0 opacity-70" />
                 <p>
-                  Yes. Saturday and Sunday mornings from Falcon Field. You can
-                  book one directly here, or I can have an instructor call you.
+                  Yes — Saturday and Sunday mornings from Falcon Field. Want me
+                  to book you one?
                 </p>
               </div>
               <p className="serp-tag t-meta">Ask-this-site chat, answering from your pages</p>
