@@ -593,6 +593,11 @@ main {
   letter-spacing: 0.02em;
   color: rgba(19, 20, 19, 0.75);
 }
+.chip--sm {
+  /* compact badge — rides inline beside a t-title--lg without wrapping */
+  padding: 6px 11px;
+  font-size: 0.75rem;
+}
 .dark-chapter .chip {
   background: rgba(239, 240, 238, 0.08);
   color: rgba(239, 240, 238, 0.75);

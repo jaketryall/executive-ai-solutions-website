@@ -176,12 +176,15 @@ export function Services() {
           </article>
 
           {/* 02 — SEO and Google Ads */}
-          <article data-svc-row className="svc-row grid items-center gap-[34px] rounded-[18px] bg-paper p-[21px] md:grid-cols-2 md:p-[34px]">
+          <article data-svc-row className="svc-row rounded-[18px] bg-paper p-[21px] md:p-[34px]">
+            {/* full-width title row (same crown as the flagship card), then
+                the two columns — the 300px text column can't host big titles */}
+            <h3 data-anim="head" className="t-title t-title--lg">
+              SEO and Google Ads
+            </h3>
+            <div className="mt-[21px] grid items-center gap-[34px] md:grid-cols-2">
             <div>
-              <h3 data-anim="head" className="t-title t-title--lg">
-                SEO and Google Ads
-              </h3>
-              <p data-anim="copy" className="mt-[21px] max-w-[44ch] text-ink/75">
+              <p data-anim="copy" className="max-w-[44ch] text-ink/75">
                 Get found, get chosen. Local SEO, search-ready builds, and managed
                 Google Ads with conversion tracking you can actually read.
               </p>
@@ -206,20 +209,23 @@ export function Services() {
               </p>
               <p className="serp-tag t-meta">Their live listing on Google</p>
             </div>
+            </div>
           </article>
 
           {/* 03 — AI automation */}
-          <article data-svc-row className="svc-row grid items-center gap-[34px] rounded-[18px] bg-paper p-[21px] md:grid-cols-2 md:p-[34px]">
+          <article data-svc-row className="svc-row rounded-[18px] bg-paper p-[21px] md:p-[34px]">
+            {/* full-width title row — the badge rides beside the title again */}
+            <div className="flex flex-wrap items-center gap-[11px]">
+              <h3 data-anim="head" className="t-title t-title--lg">
+                AI automation
+              </h3>
+              <span data-anim="head" className="chip chip--sm bg-accent/10 text-accent">
+                New for 2026
+              </span>
+            </div>
+            <div className="mt-[21px] grid items-center gap-[34px] md:grid-cols-2">
             <div>
-              <div className="flex flex-wrap items-center gap-[13px]">
-                <h3 data-anim="head" className="t-title t-title--lg">
-                  AI automation
-                </h3>
-                <span data-anim="head" className="chip bg-accent/10 text-accent">
-                  New for 2026
-                </span>
-              </div>
-              <p data-anim="copy" className="mt-[21px] max-w-[44ch] text-ink/75">
+              <p data-anim="copy" className="max-w-[44ch] text-ink/75">
                 Chat that answers from your own site, follow-ups that send
                 themselves, and pages that adapt to each visitor. Built and
                 managed for you.
@@ -239,6 +245,7 @@ export function Services() {
                 </p>
               </div>
               <p className="serp-tag t-meta">Ask-this-site chat, answering from your pages</p>
+            </div>
             </div>
           </article>
         </div>
