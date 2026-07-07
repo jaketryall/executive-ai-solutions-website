@@ -119,11 +119,11 @@ main {
   line-height: 0.92;
 }
 .t-display-xl--hero {
-  /* the hero statement: one notch under display-xl so the rolling lines
+  /* the hero statement: one notch under display-xl so the two lines
      read as a sentence, not a wall. Line-height matches the roll masks
      (1.06em) exactly — one pitch for all three lines, plain or rolling. */
-  font-size: clamp(2.6rem, 5.7vw, 5.2rem);
-  line-height: 1.06;
+  font-size: clamp(2.5rem, 5.2vw, 4.7rem);
+  line-height: 1.08;
 }
 .t-display-lg {
   font-family: var(--font-display);

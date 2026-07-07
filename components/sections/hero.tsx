@@ -60,7 +60,6 @@ export function Hero() {
     if (i && ROLL_LOCK[i] !== undefined) setLocked(ROLL_LOCK[i]);
   }, []);
 
-  const rollPairs = locked !== null ? [ROLL_PAIRS[locked]] : ROLL_PAIRS;
   const ariaPair = ROLL_PAIRS[locked ?? 0];
 
   useGSAP(
@@ -85,62 +84,15 @@ export function Hero() {
         return; // static: assembled search, the ad on top
       }
 
-      /* ── the paired roll — a character wave through both lines: the old
-         pair's letters exit up staggered, the new pair's rise from below
-         through the same mask, the industry line trailing the outcome line
-         by a beat. Starts after the entrance lands, pauses off-screen. ── */
-      const rollLines = q(".h1-roll--pair") as HTMLElement[];
       let entranceDone = false;
       let inView = false;
       let cycleTl: gsap.core.Timeline | null = null;
       let pendingNext = false;
       // assigned below, referenced by sync once cycles begin
       let startCycle: (first: boolean) => void = () => {};
-      let roll: gsap.core.Timeline | undefined;
-      if (rollLines.length && rollLines[0].children.length > 1) {
-        const n = rollLines[0].children.length;
-        const HOLD = 3.2;
-        const LAG = 0.14;
-        const rollTl = gsap.timeline({ paused: true, repeat: -1 });
-        roll = rollTl;
-        rollLines.forEach((line, li) => {
-          const words = Array.from(line.children) as HTMLElement[];
-          words.forEach((w, wi) => {
-            if (wi > 0) gsap.set(w.children, { yPercent: 115 });
-            gsap.set(w, { autoAlpha: 1 });
-          });
-          for (let k = 1; k <= n; k++) {
-            const t = k * HOLD + li * LAG;
-            const out = words[k - 1].children;
-            const inn = words[k % n].children;
-            rollTl
-              // force3D:false keeps glyphs 2D — composited letters can slip
-              // the clip mid-tween
-              .to(
-                out,
-                { yPercent: -115, duration: 0.45, ease: EASE_UI, stagger: 0.02, force3D: false },
-                t
-              )
-              .set(out, { yPercent: 115 }, t + 0.45 + 0.02 * out.length)
-              .fromTo(
-                inn,
-                { yPercent: 115 },
-                {
-                  yPercent: 0,
-                  duration: 0.75,
-                  ease: EASE_STRUCTURE,
-                  stagger: 0.02,
-                  force3D: false,
-                  immediateRender: false, // the wrap tween must not pre-render
-                },
-                t + 0.18
-              );
-          }
-        });
-      }
+
       const sync = () => {
         const on = entranceDone && inView && !document.hidden;
-        if (roll) (on ? roll.play() : roll.pause());
         if (cycleTl) (on ? cycleTl.play() : cycleTl.pause());
         if (on && pendingNext) {
           pendingNext = false;
@@ -343,7 +295,7 @@ export function Hero() {
       {/* grid ratio matches the proof section exactly (62/38) so the ad card
           column and the proof anchor zone share the same edges — the straddle
           lands flush, not "almost" */}
-      <div className="hero-in wrap relative z-10 grid min-h-[92svh] items-center gap-fib-5 pb-0 pt-[120px] md:grid-cols-[minmax(0,62fr)_minmax(0,38fr)] md:pt-fib-6">
+      <div className="hero-in wrap relative z-10 grid min-h-[92svh] items-center gap-fib-5 pb-0 pt-[120px] md:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] md:pt-fib-6">
         {/* ── left zone: the statement (outcome leads, industry follows) ── */}
         <div className="hero-left">
           <h1
@@ -352,34 +304,10 @@ export function Hero() {
           >
             <span aria-hidden>
               <span className="mask-line">
-                <span className="mask-inner mask-inner--block">
-                  <span className="h1-roll h1-roll--pair text-accent-bright">
-                    {rollPairs.map((p, wi) => (
-                      <span key={`${p.out}-${wi}`} className="h1-roll-word">
-                        {[...p.out].map((c, ci) => (
-                          <span key={ci} className="rc">
-                            {c === " " ? " " : c}
-                          </span>
-                        ))}
-                      </span>
-                    ))}
-                  </span>
-                </span>
+                <span className="mask-inner text-accent-bright">{ariaPair.out}</span>
               </span>
               <span className="mask-line">
-                <span className="mask-inner mask-inner--block">
-                  <span className="h1-roll h1-roll--pair">
-                    {rollPairs.map((p, wi) => (
-                      <span key={`${p.who}-${wi}`} className="h1-roll-word">
-                        {[...p.who].map((c, ci) => (
-                          <span key={ci} className="rc">
-                            {c === " " ? " " : c}
-                          </span>
-                        ))}
-                      </span>
-                    ))}
-                  </span>
-                </span>
+                <span className="mask-inner">{ariaPair.who}</span>
               </span>
             </span>
           </h1>
