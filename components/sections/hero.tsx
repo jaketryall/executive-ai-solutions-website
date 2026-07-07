@@ -248,7 +248,7 @@ export function Hero() {
   );
 
   return (
-    <section id="top" ref={root} className="hero relative">
+    <section id="top" ref={root} className="hero dark-chapter relative">
       {/* grid ratio matches the proof section exactly (62/38) so the ad card
           column and the proof anchor zone share the same edges — the straddle
           lands flush, not "almost" */}
@@ -262,7 +262,7 @@ export function Hero() {
             <span aria-hidden>
               <span className="mask-line">
                 <span className="mask-inner mask-inner--block">
-                  <span className="h1-roll h1-roll--pair text-accent">
+                  <span className="h1-roll h1-roll--pair text-accent-bright">
                     {rollPairs.map((p, wi) => (
                       <span key={`${p.out}-${wi}`} className="h1-roll-word">
                         {[...p.out].map((c, ci) => (
@@ -295,14 +295,14 @@ export function Hero() {
 
           <p
             data-anim="support"
-            className="mt-fib-4 max-w-[40ch] text-[1.0625rem] leading-[1.55] text-ink/70"
+            className="mt-fib-4 max-w-[40ch] text-[1.0625rem] leading-[1.55] text-paper/70"
           >
             We run the ads. We build the page they land on. One team,
             accountable for the whole click.
           </p>
 
           <div data-anim="ctas" className="mt-fib-3 flex flex-wrap items-center gap-fib-2">
-            <CTA href="#estimate" label="Get an instant estimate" tone="ink" />
+            <CTA href="#estimate" label="Get an instant estimate" tone="paper" />
             <a href="#builder" className="u-link t-meta py-fib-2">
               Build your site in 60 seconds
             </a>
