@@ -121,12 +121,18 @@ export function Hero() {
         { autoAlpha: 1, y: 0, duration: 0.8, clearProps: "transform" },
         0.05
       )
-        // track A — the statement rises as one quiet block
+        // track A — the eyebrow sets the category, the statement rises
+        .fromTo(
+          q("[data-anim='eyebrow']"),
+          { autoAlpha: 0, y: 13 },
+          { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
+          0.1
+        )
         .fromTo(
           q("[data-anim='statement']"),
           { autoAlpha: 0, y: 34 },
           { autoAlpha: 1, y: 0, duration: 1.0 },
-          0.1
+          0.22
         )
         // track B — the enactment, concurrent
         .fromTo(
@@ -292,13 +298,16 @@ export function Hero() {
       <div className="hero-in wrap relative z-10 grid min-h-[92svh] items-center gap-fib-5 pb-fib-6 pt-[120px] md:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] md:pt-fib-6">
         {/* ── left zone: the statement (outcome leads, industry follows) ── */}
         <div className="hero-left">
-          <h1 data-anim="statement" className="t-statement max-w-[36ch]">
+          <p data-anim="eyebrow" className="t-meta uppercase text-paper/45">
+            Full-funnel ads agency
+          </p>
+          <h1 data-anim="statement" className="t-statement mt-fib-2 max-w-[36ch]">
             <span className="text-paper">
               {ariaPair.out} {ariaPair.who}.
             </span>{" "}
             <span className="text-paper/40">
-              We run the ads, build the page they land on, and answer for
-              the whole click.
+              We run the ads, build the landing page, and answer for the
+              whole click.
             </span>
           </h1>
 
