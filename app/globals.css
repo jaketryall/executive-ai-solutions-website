@@ -857,6 +857,33 @@ main {
   user-select: none;
 }
 
+/* ── the trust marquee (value reframe): the page's one perpetual loop.
+   Constant velocity, edge-faded, no rules fencing it, no dot prefixes. ── */
+.lm {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent 0, #000 55px, #000 calc(100% - 55px), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 55px, #000 calc(100% - 55px), transparent 100%);
+}
+.lm-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+.lm-set {
+  display: flex;
+  align-items: center;
+  gap: 89px;
+  padding-right: 89px;
+}
+.lm-mark {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.375rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: rgba(19, 20, 19, 0.28);
+}
+
 .ov {
   position: fixed;
   inset: 0;
