@@ -92,6 +92,10 @@ export function Hero() {
       const rollLines = q(".h1-roll--pair") as HTMLElement[];
       let entranceDone = false;
       let inView = false;
+      let cycleTl: gsap.core.Timeline | null = null;
+      let pendingNext = false;
+      // assigned below, referenced by sync once cycles begin
+      let startCycle: (first: boolean) => void = () => {};
       let roll: gsap.core.Timeline | undefined;
       if (rollLines.length && rollLines[0].children.length > 1) {
         const n = rollLines[0].children.length;
@@ -137,6 +141,11 @@ export function Hero() {
       const sync = () => {
         const on = entranceDone && inView && !document.hidden;
         if (roll) (on ? roll.play() : roll.pause());
+        if (cycleTl) (on ? cycleTl.play() : cycleTl.pause());
+        if (on && pendingNext) {
+          pendingNext = false;
+          startCycle(false);
+        }
       };
       ScrollTrigger.create({
         trigger: root.current,
@@ -181,28 +190,85 @@ export function Hero() {
           0.2
         );
 
-      /* the climb — measured at runtime, transforms only; on landing the
-         DOM order becomes the truth and the row lights up as the ad */
+      /* ── the enactment, as a CYCLE: buried results → lift-off → the row
+         flies OVER the others (they duck down in a cascade as it passes) →
+         sets down on top → lights up as the ad → holds → resets and plays
+         again. Pauses off-screen and on hidden tabs, like the roll. ── */
       const list = q("[data-glist]")[0] as HTMLElement;
       const you = q("[data-you]")[0] as HTMLElement;
-      const settle = () => {
-        if (!list || !you) return;
-        list.insertBefore(you, list.firstChild);
-        gsap.set(Array.from(list.children), { clearProps: "transform" });
-        you.classList.add("is-lit");
+      const ghostEls = list
+        ? (Array.from(list.children).filter((el) => el !== you) as HTMLElement[])
+        : [];
+      const allRows = list ? ([...ghostEls, you] as HTMLElement[]) : [];
+      const climbInto = (c: gsap.core.Timeline) => {
+        // measured at flight start, BEFORE the flying-card class pads the row
+        let lift = 0;
+        let push = 0;
+        c.addLabel("flight")
+          .call(
+            () => {
+              lift = you.offsetTop - (list.children[0] as HTMLElement).offsetTop;
+              push = you.offsetHeight + 14; // the list gap
+              you.classList.add("is-flying"); // picks up a white card + shadow
+            },
+            [],
+            "flight"
+          )
+          // lift off the surface…
+          .to(you, { scale: 1.035, duration: 0.22, ease: EASE_UI }, "flight")
+          // …fly over the others…
+          .to(you, { y: () => -lift, duration: 0.85, ease: EASE_STRUCTURE }, "flight+=0.12")
+          // …which duck down in a cascade as the row passes them
+          .to(ghostEls[1], { y: () => push, duration: 0.55, ease: EASE_STRUCTURE }, "flight+=0.24")
+          .to(ghostEls[0], { y: () => push, duration: 0.55, ease: EASE_STRUCTURE }, "flight+=0.4")
+          // …and set down
+          .to(you, { scale: 1, duration: 0.28, ease: EASE_UI }, "flight+=0.72")
+          .call(
+            () => {
+              you.classList.remove("is-flying");
+              list.insertBefore(you, list.firstChild); // DOM order becomes truth
+              gsap.set(allRows, { clearProps: "transform" });
+              you.classList.add("is-lit"); // Sponsored + steel + unfold
+            },
+            [],
+            "flight+=1.05"
+          );
       };
-      const runClimb = () => {
+
+      startCycle = (first: boolean) => {
         if (!list || !you) return;
-        const ghosts = Array.from(list.children).filter(
-          (el) => el !== you
-        ) as HTMLElement[];
-        const delta = you.offsetTop - (list.children[0] as HTMLElement).offsetTop;
-        const push = you.offsetHeight + 14; // the list gap
-        gsap
-          .timeline({ defaults: { ease: EASE_STRUCTURE } })
-          .to(you, { y: -delta, duration: 0.8 })
-          .to(ghosts, { y: push, duration: 0.8 }, 0)
-          .call(settle);
+        const c = gsap.timeline({
+          onComplete: () => {
+            cycleTl = null;
+            queueNext();
+          },
+        });
+        cycleTl = c;
+        if (first) {
+          // the entrance already staged the buried list — hold the beat
+          c.addLabel("flight", 0.45);
+        } else {
+          // reset: results sweep out, return buried, arrive again
+          c.to(allRows, { autoAlpha: 0, y: 8, duration: 0.35, stagger: 0.04, ease: EASE_UI })
+            .call(() => {
+              you.classList.remove("is-lit");
+              list.appendChild(you); // back to the bottom of the pile
+              gsap.set(allRows, { clearProps: "transform" });
+              gsap.set(allRows, { autoAlpha: 0, y: 13 });
+            })
+            .to(
+              allRows,
+              { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.1, ease: EASE_STRUCTURE },
+              "+=0.2"
+            )
+            .addLabel("flight", "+=0.45");
+        }
+        climbInto(c);
+        c.to({}, { duration: 4.5 }); // the lit hold before the next pass
+      };
+      const queueNext = () => {
+        if (entranceDone && inView && !document.hidden) startCycle(false);
+        else pendingNext = true;
       };
 
       // the enactment plays on every load — it IS the hero moment
@@ -228,8 +294,8 @@ export function Hero() {
           { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.1 },
           1.15
         )
-        // a beat to read the injustice, then the climb
-        .call(runClimb, [], "+=0.45");
+        // a beat lives inside the first cycle; launch it
+        .call(() => startCycle(true));
 
       tl
         // the resolve — the sequence lands on the one action
