@@ -133,6 +133,15 @@ main {
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
+.t-statement {
+  /* the reading statement (Lesse register: ~43px at 1440, generous leading).
+     A paragraph the fill paces you through; set for reading, not display. */
+  font-family: var(--font-display);
+  font-weight: 650;
+  font-size: clamp(1.7rem, 2.95vw, 2.7rem);
+  line-height: 1.42;
+  letter-spacing: -0.02em;
+}
 .t-display-drift {
   /* the closer's one-line statement — sized so the nowrap line runs ~1.7× the
      card and the scrubbed drift stays readable (hero-scale would triple it) */
@@ -878,10 +887,10 @@ main {
 .lm-mark {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 1.375rem;
+  font-size: 1.125rem;
   letter-spacing: -0.01em;
   white-space: nowrap;
-  color: rgba(19, 20, 19, 0.28);
+  color: rgba(19, 20, 19, 0.26);
 }
 
 .ov {

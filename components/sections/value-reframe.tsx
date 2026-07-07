@@ -82,7 +82,7 @@ export function ValueReframe() {
       if (track) {
         const loop = gsap.to(track, {
           xPercent: -50,
-          duration: 36,
+          duration: 64,
           repeat: -1,
           ease: "none",
           paused: true,
@@ -110,12 +110,12 @@ export function ValueReframe() {
 
   return (
     <section ref={root} className="relative">
-      <div className="wrap py-fib-6 md:py-fib-7">
+      <div className="wrap pt-fib-6 md:pt-fib-7">
         <div className="grid gap-fib-4 md:grid-cols-[minmax(180px,240px)_1fr] md:gap-fib-5">
           <p data-anim="label" className="t-meta pt-[0.6em] uppercase text-ink/45">
             Our approach
           </p>
-          <p className="vr-line t-display-lg max-w-[30ch]">
+          <p className="vr-line t-statement max-w-[34ch]">
             Ads without a page that converts is paying rent on strangers. A
             beautiful site nobody finds is a brochure in a drawer. You need
             the whole click.
@@ -125,7 +125,7 @@ export function ValueReframe() {
 
       {/* the trust row — what the machine runs on. Calm, constant, unfenced. */}
       <div
-        className="lm mt-fib-4 pb-fib-6"
+        className="lm mt-fib-6 pb-fib-6 md:mt-fib-7 md:pb-fib-7"
         role="list"
         aria-label={`Built on ${STACK.join(", ")}`}
       >
