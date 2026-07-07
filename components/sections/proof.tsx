@@ -117,11 +117,10 @@ export function Proof() {
       <div className="wrap pb-fib-6 pt-fib-6">
         {/* band 1 · header — the hero's search surface hangs over the right */}
         <header data-anim="head" className="max-w-[46ch]">
-          <h2 className="t-display-lg">The whole click, working</h2>
+          <h2 className="t-display-lg">Where the click lands</h2>
           <p className="mt-fib-3 text-ink/70">
-            Desert Wings Flight School runs on our ads, our site, and our
-            tracking. Search for them and you land on work you are looking
-            at right now.
+            That ad above is real. This is the page it lands on: designed,
+            built, and tracked by us for Desert Wings Flight School.
           </p>
         </header>
 
@@ -130,19 +129,19 @@ export function Proof() {
           <ArtifactFrame
             variant="chrome"
             tone="ink"
-            url="desertwingsflightschool.com/fleet"
-            label="The Desert Wings fleet page we designed and built"
+            url="desertwingsflightschool.com"
+            label="The Desert Wings homepage the ad lands on, designed and built by us"
             bodyClassName="p-0! pt-0!"
           >
-            <div className="overflow-hidden rounded-[10px]">
+            <div className="overflow-hidden rounded-[10px]" style={{ aspectRatio: "1.9" }}>
               <Image
                 data-proof-parallax
-                src="/work/desert-wings-fleet.png"
-                alt="The custom fleet page built for Desert Wings Flight School"
-                width={1440}
-                height={810}
+                src="/hero/dw-hero.jpg"
+                alt="The Desert Wings Flight School homepage the ad lands on"
+                width={1200}
+                height={800}
                 sizes="(min-width: 821px) 82vw, 92vw"
-                className="block h-auto w-full scale-[1.09]"
+                className="block h-full w-full scale-[1.09] object-cover object-top"
               />
             </div>
           </ArtifactFrame>

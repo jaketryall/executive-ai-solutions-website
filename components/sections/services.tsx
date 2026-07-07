@@ -189,15 +189,15 @@ export function Services() {
                 <ArtifactFrame
                   variant="chrome"
                   tone="ink"
-                  url="desertwingsflightschool.com"
-                  label="The Desert Wings landing page we built"
+                  url="desertwingsflightschool.com/fleet"
+                  label="The Desert Wings fleet page we designed and built"
                   bodyClassName="!p-0"
                 >
                   <div className="overflow-hidden rounded-[10px]" style={{ aspectRatio: "1.65" }}>
                     <Image
                       data-svc-parallax
-                      src="/hero/dw-hero.jpg"
-                      alt="The Desert Wings Flight School homepage"
+                      src="/work/desert-wings-fleet.png"
+                      alt="The custom fleet page built for Desert Wings Flight School"
                       width={1200}
                       height={800}
                       sizes="(min-width: 821px) 46vw, 92vw"
