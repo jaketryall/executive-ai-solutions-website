@@ -121,18 +121,12 @@ export function Hero() {
         { autoAlpha: 1, y: 0, duration: 0.8, clearProps: "transform" },
         0.05
       )
-        // track A — the protagonist rises at t~0
+        // track A — the statement rises as one quiet block
         .fromTo(
-          q(".hero-h1 .mask-inner"),
-          { yPercent: 118, y: 0 },
-          { yPercent: 0, y: 0, duration: 1.05, stagger: 0.09 },
+          q("[data-anim='statement']"),
+          { autoAlpha: 0, y: 34 },
+          { autoAlpha: 1, y: 0, duration: 1.0 },
           0.1
-        )
-        .fromTo(
-          q("[data-anim='support']"),
-          { autoAlpha: 0, y: 13 },
-          { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
-          0.85
         )
         // track B — the enactment, concurrent
         .fromTo(
@@ -255,7 +249,7 @@ export function Hero() {
           q("[data-anim='ctas']"),
           { autoAlpha: 0, y: 18 },
           { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
-          1.35
+          0.95
         )
         .call(() => {
           entranceDone = true;
@@ -295,30 +289,18 @@ export function Hero() {
       {/* grid ratio matches the proof section exactly (62/38) so the ad card
           column and the proof anchor zone share the same edges — the straddle
           lands flush, not "almost" */}
-      <div className="hero-in wrap relative z-10 grid min-h-[92svh] items-center gap-fib-5 pb-0 pt-[120px] md:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] md:pt-fib-6">
+      <div className="hero-in wrap relative z-10 grid min-h-[92svh] items-center gap-fib-5 pb-fib-6 pt-[120px] md:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] md:pt-fib-6">
         {/* ── left zone: the statement (outcome leads, industry follows) ── */}
         <div className="hero-left">
-          <h1
-            className="hero-h1 t-display-xl t-display-xl--hero"
-            aria-label={`${ariaPair.out} ${ariaPair.who}. We run the ads and build the page they land on.`}
-          >
-            <span aria-hidden>
-              <span className="mask-line">
-                <span className="mask-inner text-accent-bright">{ariaPair.out}</span>
-              </span>
-              <span className="mask-line">
-                <span className="mask-inner">{ariaPair.who}</span>
-              </span>
+          <h1 data-anim="statement" className="t-statement max-w-[36ch]">
+            <span className="text-paper">
+              {ariaPair.out} {ariaPair.who}.
+            </span>{" "}
+            <span className="text-paper/40">
+              We run the ads, build the page they land on, and answer for
+              the whole click.
             </span>
           </h1>
-
-          <p
-            data-anim="support"
-            className="mt-fib-4 max-w-[40ch] text-[1.0625rem] leading-[1.55] text-paper/70"
-          >
-            We run the ads. We build the page they land on. One team,
-            accountable for the whole click.
-          </p>
 
           <div data-anim="ctas" className="mt-fib-3 flex flex-wrap items-center gap-fib-2">
             <CTA href="#estimate" label="Get an instant estimate" tone="paper" />
@@ -328,12 +310,12 @@ export function Hero() {
           </div>
         </div>
 
-        {/* ── right zone: the enactment. The card overhangs the seam (fib-55
-            desktop / fib-21 mobile) — the overlap IS the layout, and the
-            step-3 scrub docks it into the proof section's anchor slot. ── */}
+        {/* ── right zone: the enactment, centered with the statement — the
+            hero's one living thing. The dark→light seam below is earned by
+            the proof section rising over this chapter with a rounded top. ── */}
         <div
           data-dock-card
-          className="relative z-20 -mb-fib-3 md:-mb-fib-5 md:self-end"
+          className="relative z-20 md:mt-fib-4 md:self-start"
         >
           <ArtifactFrame
             variant="card"

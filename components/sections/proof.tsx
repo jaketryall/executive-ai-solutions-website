@@ -113,8 +113,8 @@ export function Proof() {
   );
 
   return (
-    <section id="proof" ref={root} className="relative">
-      <div className="wrap pb-fib-6 pt-fib-4">
+    <section id="proof" ref={root} className="relative z-10 -mt-fib-4 rounded-t-[24px] bg-canvas">
+      <div className="wrap pb-fib-6 pt-fib-6">
         {/* band 1 · header — the hero's search surface hangs over the right */}
         <header data-anim="head" className="max-w-[46ch]">
           <h2 className="t-display-lg">The whole click, working</h2>
