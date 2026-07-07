@@ -267,7 +267,7 @@ export function Hero() {
       {/* grid ratio matches the proof section exactly (62/38) so the ad card
           column and the proof anchor zone share the same edges — the straddle
           lands flush, not "almost" */}
-      <div className="hero-in wrap relative z-10 grid min-h-[92svh] items-center gap-fib-5 pb-0 pt-[120px] md:grid-cols-[62fr_38fr] md:pt-fib-6">
+      <div className="hero-in wrap relative z-10 grid min-h-[92svh] items-center gap-fib-5 pb-0 pt-[120px] md:grid-cols-[minmax(0,62fr)_minmax(0,38fr)] md:pt-fib-6">
         {/* ── left zone: the statement (outcome leads, industry follows) ── */}
         <div className="hero-left">
           <h1
@@ -310,7 +310,7 @@ export function Hero() {
 
           <p
             data-anim="support"
-            className="mt-fib-3 max-w-[40ch] text-[1.0625rem] leading-[1.55] text-ink/70"
+            className="mt-fib-4 max-w-[40ch] text-[1.0625rem] leading-[1.55] text-ink/70"
           >
             We run the ads. We build the page they land on. One team,
             accountable for the whole click.
@@ -323,7 +323,7 @@ export function Hero() {
             </a>
           </div>
 
-          <div data-anim="chips" className="mt-fib-4 flex flex-wrap gap-fib-1">
+          <div data-anim="chips" className="mt-fib-4 flex max-w-[480px] flex-wrap gap-fib-1">
             {CHIPS.map((c) => (
               <span key={c} className="chip">
                 {c}
@@ -343,7 +343,7 @@ export function Hero() {
             variant="card"
             tone="paper"
             label={`Google search for ${QUERY}, showing the Desert Wings Flight School ad`}
-            className="ad-artifact"
+            className="ad-artifact w-full"
           >
             <div className="g-search" aria-hidden>
               <svg viewBox="0 0 16 16" fill="none" className="g-glass">
@@ -358,6 +358,11 @@ export function Hero() {
               <p className="g-url">{AD.url}</p>
               <p className="g-title">{AD.title}</p>
               <p className="g-desc">{AD.desc}</p>
+              <div className="g-ext">
+                <a>Discovery flights</a>
+                <a>Fleet and rates</a>
+                <a>Book a tour</a>
+              </div>
             </div>
           </ArtifactFrame>
         </div>

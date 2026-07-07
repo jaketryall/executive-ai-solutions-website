@@ -119,10 +119,10 @@ main {
   line-height: 0.92;
 }
 .t-display-xl--hero {
-  /* the three-line statement: one notch under display-xl so three lines
+  /* the hero statement: one notch under display-xl so the rolling lines
      read as a sentence, not a wall. Line-height matches the roll masks
      (1.06em) exactly — one pitch for all three lines, plain or rolling. */
-  font-size: clamp(2.7rem, 6.2vw, 6rem);
+  font-size: clamp(2.6rem, 5.7vw, 5.2rem);
   line-height: 1.06;
 }
 .t-display-lg {
@@ -763,7 +763,7 @@ main {
 /* ── the search enactment (hero artifact). Hairlines in here are diegetic —
    they replicate the real Google surface, in our tonal language. ── */
 .ad-artifact {
-  width: min(100%, 460px);
+  width: 100%; /* the grid column is the cap — edges align with the proof zone */
 }
 .ad-artifact .af-body {
   padding: 21px;
