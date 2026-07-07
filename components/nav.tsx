@@ -80,7 +80,6 @@ function LinksCapsule() {
       {mini(
         "/#services",
         <>
-          <span className="nav-mini-n">01</span>
           <span className="text-trim">The click</span>
           <span className="nav-mini-meta">$500/mo + spend</span>
         </>,
@@ -89,7 +88,6 @@ function LinksCapsule() {
       {mini(
         "/#services",
         <>
-          <span className="nav-mini-n">02</span>
           <span className="text-trim">The landing</span>
           <span className="nav-mini-meta">From $2.5k</span>
         </>,
@@ -98,7 +96,6 @@ function LinksCapsule() {
       {mini(
         "/#services",
         <>
-          <span className="nav-mini-n">03</span>
           <span className="text-trim">The follow-up</span>
           <span className="nav-mini-meta">Per project</span>
         </>,

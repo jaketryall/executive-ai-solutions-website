@@ -14,9 +14,8 @@ import { Monogram } from "@/components/ui/monogram";
 
 /* Services — the funnel, as three stages in order. The ARTIFACT is each
    row's main character (the medium is the message: every stage is proved by
-   its real surface — the ad, the landing page, the chat). The numerals are
-   an outline watermark spine bleeding off the left margin: giant, structural,
-   deliberately losing the contrast contest. Offset-weight alternation runs
+   its real surface — the ad, the landing page, the chat). No numbering —
+   the funnel order lives in the copy. Offset-weight alternation runs
    R / L / R down the section. Light canvas — the dark chapter starts at
    Process, one seam later. */
 
@@ -126,10 +125,7 @@ export function Services() {
 
         <div className="mt-fib-6 flex flex-col gap-fib-6">
           {/* ── 01 · THE CLICK — artifact right ── */}
-          <article data-svc-row className="relative md:pl-fib-6">
-            <span className="svc-num" aria-hidden>
-              01
-            </span>
+          <article data-svc-row className="relative">
             <div className="relative z-[1] grid items-center gap-fib-4 rounded-panel bg-panel/60 p-fib-4 md:grid-cols-2 md:gap-fib-5 md:p-fib-5">
               <div>
                 <h3 data-anim="copy" className="t-title--lg font-display font-bold">
@@ -173,10 +169,7 @@ export function Services() {
           </article>
 
           {/* ── 02 · THE LANDING — artifact left ── */}
-          <article data-svc-row className="relative md:pl-fib-6">
-            <span className="svc-num" aria-hidden>
-              02
-            </span>
+          <article data-svc-row className="relative">
             <div className="relative z-[1] grid items-center gap-fib-4 rounded-panel bg-panel/60 p-fib-4 md:grid-cols-2 md:gap-fib-5 md:p-fib-5">
               <div className="md:order-2">
                 <h3 data-anim="copy" className="t-title--lg font-display font-bold">
@@ -217,10 +210,7 @@ export function Services() {
           </article>
 
           {/* ── 03 · THE FOLLOW-UP — artifact right ── */}
-          <article data-svc-row className="relative md:pl-fib-6">
-            <span className="svc-num" aria-hidden>
-              03
-            </span>
+          <article data-svc-row className="relative">
             <div className="relative z-[1] grid items-center gap-fib-4 rounded-panel bg-panel/60 p-fib-4 md:grid-cols-2 md:gap-fib-5 md:p-fib-5">
               <div>
                 <div className="flex flex-wrap items-center gap-fib-2">
