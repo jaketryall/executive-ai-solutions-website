@@ -885,12 +885,13 @@ main {
   padding-right: 89px;
 }
 .lm-mark {
+  /* sized like the reference's glyph row; quiet via contrast, not size */
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1.125rem;
-  letter-spacing: -0.01em;
+  font-weight: 650;
+  font-size: clamp(1.5rem, 2.1vw, 1.95rem);
+  letter-spacing: -0.015em;
   white-space: nowrap;
-  color: rgba(19, 20, 19, 0.26);
+  color: rgba(19, 20, 19, 0.24);
 }
 
 .ov {
