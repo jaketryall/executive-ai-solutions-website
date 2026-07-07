@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ScrollTrigger, reducedMotion } from "@/components/anim/ease";
+import { beginArrival, releaseArrival } from "@/components/anim/arrival";
 
 // Route transitions via the same-document View Transitions API.
 //
@@ -48,12 +49,16 @@ export function ViewTransitions() {
     return () => cancelAnimationFrame(raf);
   }, [pathname]);
 
+  // never leave the arrival gate armed if this provider unmounts mid-flight
+  useEffect(() => releaseArrival, []);
+
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if (e.defaultPrevented || e.button !== 0) return;
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const a = (e.target as HTMLElement).closest?.("a");
-      if (!a || a.target || a.hasAttribute("download") || "noVt" in a.dataset) return;
+      if (!a || a.target || a.hasAttribute("download") || "noVt" in a.dataset)
+        return;
       const url = new URL(a.href, location.href);
       if (url.origin !== location.origin) return;
       if (url.hash) return; // anchor scrolls and hash-carrying navs skip the sheet
@@ -64,6 +69,18 @@ export function ViewTransitions() {
 
       e.preventDefault(); // Next's Link handler sees this and stands down
       const href = url.pathname + url.search;
+
+      // the vt-<slug> cover↔hero morphs only make sense between the work
+      // index and a case study; on any other nav a lone full-frame snapshot
+      // would flash over the sheets — suppress the names for this transition
+      const isWork = (p: string) => p === "/work" || p.startsWith("/work/");
+      document.documentElement.toggleAttribute(
+        "data-vt-case",
+        isWork(location.pathname) && isWork(url.pathname),
+      );
+
+      // entrances on the incoming page hold until the sheet lands
+      beginArrival();
 
       const vt = doc.startViewTransition(() => {
         router.push(href);
@@ -79,10 +96,17 @@ export function ViewTransitions() {
           // old page: buried under the new sheet — up, smaller, dimmer
           document.documentElement.animate(
             {
-              transform: ["translateY(0) scale(1)", "translateY(-89px) scale(0.95)"],
+              transform: [
+                "translateY(0) scale(1)",
+                "translateY(-89px) scale(0.95)",
+              ],
               opacity: [1, 0.45],
             },
-            { duration: DUR, easing: EASE, pseudoElement: "::view-transition-old(root)" }
+            {
+              duration: DUR,
+              easing: EASE,
+              pseudoElement: "::view-transition-old(root)",
+            },
           );
           // new page: rises as a rounded-top sheet, squares off as it lands
           document.documentElement.animate(
@@ -90,10 +114,24 @@ export function ViewTransitions() {
               transform: ["translateY(100%)", "translateY(0)"],
               borderRadius: ["26px 26px 0 0", "0px 0px 0px 0px"],
             },
-            { duration: DUR, easing: EASE, pseudoElement: "::view-transition-new(root)" }
+            {
+              duration: DUR,
+              easing: EASE,
+              pseudoElement: "::view-transition-new(root)",
+            },
           );
         })
         .catch(() => {}); // aborted transitions (rapid double-click) are fine
+
+      // settled or aborted, the page has arrived — release held entrances,
+      // then remeasure now that the real layout is on screen
+      vt.finished
+        .catch(() => {})
+        .finally(() => {
+          document.documentElement.removeAttribute("data-vt-case");
+          releaseArrival();
+          ScrollTrigger.refresh();
+        });
     };
 
     document.addEventListener("click", onClick, true);

@@ -10,8 +10,6 @@ import {
   EASE_UI,
   reducedMotion,
 } from "@/components/anim/ease";
-import { CTA } from "@/components/ui/cta";
-import { Segmented } from "@/components/ui/segmented";
 import { MiniSite } from "@/components/builder/mini-site";
 import { DemoSite } from "@/components/builder/demo-site";
 import { setBuild } from "@/components/builder/store";
@@ -20,14 +18,16 @@ import {
   INDUSTRIES,
   SKINS,
   getPack,
-  getSkin,
   type SkinId,
 } from "@/components/builder/packs";
 
-/* The 60-second builder — the "see yours before you buy it" tool. The visitor
-   picks an industry, types their name, chooses a look and a color, and the
-   mini site in the browser frame becomes THEIRS while they watch (the process
-   stage just showed one being built; this one hands them the keys). What they
+/* The 60-second builder — the "see yours before you buy it" toy. No form:
+   the controls live on the browser fiction itself (industries are the mini
+   browser's TABS, colors and the look are a dot-dock floating on the frame),
+   and the one written ask is a display-sized type-your-name line. While
+   nobody has touched it, a ghost cursor DEMOS the toy — flips a tab, lets
+   the site reassemble, clicks its CTA, catches the enquiry toast — so even
+   a fast scroller sees that this thing is alive and playable. What they
    make is written to the build store, rides the contact email, and the email
    carries a /?i=..&s=..&a=..&n=..#builder link that reopens the page with
    their build loaded — which is also how those links pre-seed this section
@@ -37,6 +37,8 @@ export function Builder() {
   const root = useRef<HTMLElement>(null!);
   const demoRef = useRef<HTMLDivElement>(null);
   const closingRef = useRef(false);
+  const ghostRef = useRef<gsap.core.Timeline | null>(null);
+  const touchedRef = useRef(false);
   const [industry, setIndustry] = useState(INDUSTRIES[0].id);
   const [skin, setSkin] = useState<SkinId>("warm");
   const [accent, setAccent] = useState(ACCENTS[0].id);
@@ -45,6 +47,7 @@ export function Builder() {
   const [open, setOpen] = useState(false);
 
   const pack = getPack(industry);
+  const brand = name.trim() || pack.defaultName;
 
   // a reopened build link (or a labeled ad click) pre-loads the choices —
   // and o=1 (the emailed link) walks them straight into their site
@@ -73,11 +76,27 @@ export function Builder() {
 
   const touch = () => setTouched(true);
 
-  // entrance — controls read first, the reward frame lands last
+  // the ghost yields the moment the visitor takes over
+  useEffect(() => {
+    touchedRef.current = touched;
+    if (touched && ghostRef.current) {
+      ghostRef.current.kill();
+      ghostRef.current = null;
+      const layers = root.current?.querySelectorAll(".ms-cursor, .ms-toast");
+      if (layers?.length) gsap.set(layers, { autoAlpha: 0 });
+    }
+  }, [touched]);
+
+  // entrance — the ask reads first, the toy lands, the dock docks. An
+  // emailed build link (o=1) lands INSIDE the fullscreen demo: the entrance
+  // would play unseen behind the overlay (and can wedge hidden when the
+  // overlay freezes the page scroll), so the section rests shown instead.
   useGSAP(
     () => {
       const q = gsap.utils.selector(root);
-      if (reducedMotion()) {
+      const landsInDemo =
+        new URLSearchParams(window.location.search).get("o") === "1";
+      if (reducedMotion() || landsInDemo) {
         gsap.set(q("[data-anim]"), { autoAlpha: 1 });
         return;
       }
@@ -91,22 +110,30 @@ export function Builder() {
           { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08 }
         )
         .fromTo(
-          q("[data-anim='bld-ctrl']"),
-          { autoAlpha: 0, x: -21 },
-          { autoAlpha: 1, x: 0, duration: 0.7, stagger: 0.09 },
-          "-=0.45"
-        )
-        .fromTo(
           q("[data-anim='bld-stage']"),
           { autoAlpha: 0, y: 34, scale: 0.97 },
           { autoAlpha: 1, y: 0, scale: 1, duration: 0.9 },
-          "-=0.4"
+          "-=0.45"
+        )
+        // opacity only — the dock is positioned by a CSS % transform, and a
+        // GSAP x-tween would bake it to px inline (breaks on breakpoint flip)
+        .fromTo(
+          q("[data-anim='bld-dock']"),
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.6, ease: EASE_UI },
+          "-=0.3"
+        )
+        .fromTo(
+          q("[data-anim='bld-after']"),
+          { autoAlpha: 0, y: 13 },
+          { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
+          "-=0.35"
         );
     },
     { scope: root }
   );
 
-  // industry swaps re-assemble the page (skin/accent swaps morph via CSS
+  // tab swaps re-assemble the page (skin/accent swaps morph via CSS
   // color transitions instead — re-staggering them would read as a glitch)
   useGSAP(
     () => {
@@ -121,41 +148,57 @@ export function Builder() {
     { scope: root, dependencies: [pack.id] }
   );
 
-  /* ── the alive layer — their site, working. A ghost cursor drifts in,
-     clicks their CTA, and an enquiry toast lands. Runs on the showreel's
-     clock rules (in view, tab visible, not while they're playing with it) and
-     rebuilds per industry since the CTA moves. ── */
+  /* ── the ghost self-demo — while nobody has touched the toy, a cursor
+     drifts in, flips to the second tab, waits for the site to reassemble,
+     clicks its CTA, and an enquiry toast lands. Plays ONCE, on the
+     showreel's clock rules (in view, tab visible), and dies for good the
+     moment the visitor hovers or touches anything — a demo should never
+     fight the player for the controls. ── */
   useGSAP(
     (context) => {
       if (reducedMotion()) return;
-      const q = gsap.utils.selector(root);
-      const frame = q(".ms-frame")[0] as HTMLElement;
-      const canvas = q(".ms-canvas")[0] as HTMLElement;
-      const cursor = q(".ms-cursor")[0] as HTMLElement;
-      const toast = q(".ms-toast")[0] as HTMLElement;
-      const btn = q(".ms-btn")[0] as HTMLElement;
-      if (!frame || !canvas || !cursor || !toast || !btn) return;
+      const frame = root.current?.querySelector(".ms-frame") as HTMLElement | null;
+      const cursor = root.current?.querySelector(".ms-cursor") as HTMLElement | null;
+      const toast = root.current?.querySelector(".ms-toast") as HTMLElement | null;
+      if (!frame || !cursor || !toast) return;
 
       const rest = () => gsap.set([cursor, toast], { autoAlpha: 0 });
       rest();
 
-      // where the click lands, relative to the canvas
-      const target = () => {
-        const c = canvas.getBoundingClientRect();
-        const b = btn.getBoundingClientRect();
+      // a point inside a (lazily queried) element, relative to the frame —
+      // lazy because tab flips re-render the canvas under the cursor
+      const spot = (sel: string, fx: number, fy: number) => {
+        const el = frame.querySelector(sel) as HTMLElement | null;
+        if (!el) return { x: 0, y: 0 };
+        const f = frame.getBoundingClientRect();
+        const b = el.getBoundingClientRect();
         return {
-          x: b.left - c.left + b.width * 0.72,
-          y: b.top - c.top + b.height * 0.78,
+          x: b.left - f.left + b.width * fx,
+          y: b.top - f.top + b.height * fy,
         };
       };
+      const sx = (sel: string, fx = 0.62, fy = 0.72) => () => spot(sel, fx, fy).x;
+      const sy = (sel: string, fx = 0.62, fy = 0.72) => () => spot(sel, fx, fy).y;
 
-      const tl = gsap
-        .timeline({ paused: true, repeat: -1, repeatDelay: 6, delay: 1.6 })
-        .set(cursor, { x: () => target().x + 89, y: () => target().y + 47, scale: 1 })
+      const flipTo = INDUSTRIES[1].id;
+      const tabSel = `[data-tab="${flipTo}"]`;
+
+      const tl = gsap.timeline({ paused: true });
+      tl.to({}, { duration: 1.8 }) // let the entrance settle first
+        .set(cursor, { x: sx(".ms-canvas", 0.58, 0.42), y: sy(".ms-canvas", 0.58, 0.42), scale: 1 })
         .to(cursor, { autoAlpha: 1, duration: 0.35, ease: EASE_UI })
-        .to(cursor, { x: () => target().x, y: () => target().y, duration: 1.15, ease: EASE_STRUCTURE }, 0.05)
-        .to(cursor, { scale: 0.82, duration: 0.11, yoyo: true, repeat: 1, ease: EASE_UI }, ">-0.05")
-        .to(btn, { scale: 0.94, duration: 0.11, yoyo: true, repeat: 1, ease: EASE_UI }, "<")
+        .to(cursor, { x: sx(tabSel, 0.55, 0.62), y: sy(tabSel, 0.55, 0.62), duration: 1.15, ease: EASE_STRUCTURE }, "<+0.05")
+        .to(cursor, { scale: 0.82, duration: 0.11, yoyo: true, repeat: 1, ease: EASE_UI })
+        .call(() => {
+          if (!touchedRef.current) setIndustry(flipTo);
+        })
+        .to({}, { duration: 1.6 }) // watch it reassemble
+        .to(cursor, { x: sx(".ms-btn"), y: sy(".ms-btn"), duration: 1.1, ease: EASE_STRUCTURE })
+        .to(cursor, { scale: 0.82, duration: 0.11, yoyo: true, repeat: 1, ease: EASE_UI })
+        .call(() => {
+          const btn = frame.querySelector(".ms-btn");
+          if (btn) gsap.fromTo(btn, { scale: 0.94 }, { scale: 1, duration: 0.3, ease: EASE_UI });
+        })
         .fromTo(
           toast,
           { autoAlpha: 0, y: -13 },
@@ -164,43 +207,47 @@ export function Builder() {
         )
         .to(cursor, { autoAlpha: 0, duration: 0.4 }, ">+0.35")
         .to(toast, { autoAlpha: 0, y: -8, duration: 0.45, ease: EASE_UI }, ">+1.7");
+      ghostRef.current = tl;
 
       let inView = false;
-      let hovered = false;
+      let played = false;
+      tl.eventCallback("onComplete", () => {
+        played = true;
+      });
       const sync = () => {
-        if (inView && !hovered && !document.hidden) tl.play();
+        if (touchedRef.current || played) return;
+        if (inView && !document.hidden) tl.play();
         else tl.pause();
       };
       ScrollTrigger.create({
         trigger: frame,
-        start: "top 85%",
-        end: "bottom 15%",
+        start: "top 80%",
+        end: "bottom 10%",
         onToggle: (self) => {
           inView = self.isActive;
           sync();
         },
+        // late refreshes (fonts, images, the pinned chapters above settling)
+        // can silently flip the window while the page sits still — re-sync
+        onRefresh: (self) => {
+          inView = self.isActive;
+          sync();
+        },
       });
-      // while they're playing, the ghost gets out of the way and restarts clean
+      // they're reaching for it — the demo gets out of the way for good
       const onEnter = () => {
-        hovered = true;
-        tl.progress(0).pause();
+        tl.kill();
+        ghostRef.current = null;
         rest();
-        gsap.set(btn, { scale: 1 });
-      };
-      const onLeave = () => {
-        hovered = false;
-        sync();
       };
       frame.addEventListener("pointerenter", onEnter);
-      frame.addEventListener("pointerleave", onLeave);
       document.addEventListener("visibilitychange", sync);
       context.add(() => () => {
         frame.removeEventListener("pointerenter", onEnter);
-        frame.removeEventListener("pointerleave", onLeave);
         document.removeEventListener("visibilitychange", sync);
       });
     },
-    { scope: root, dependencies: [pack.id] }
+    { scope: root }
   );
 
   /* ── the reveal: the frame they built grows into their actual site.
@@ -214,7 +261,7 @@ export function Builder() {
     const done = () => {
       closingRef.current = false;
       setOpen(false);
-      (root.current?.querySelector(".bld-open") as HTMLElement | null)?.focus();
+      (root.current?.querySelector(".ms-open") as HTMLElement | null)?.focus();
     };
     if (reducedMotion() || toContact) {
       // heading to the form: get out of the way, the page scroll is the show
@@ -340,124 +387,111 @@ export function Builder() {
       data-nav="light"
       className="bld relative pb-fib-7 pt-fib-6 md:pt-fib-7"
     >
-      <div className="mx-auto max-w-[1280px] px-fib-3 md:px-fib-5">
+      <div className="wrap">
         <p data-anim="bld-head" className="t-meta text-ink/60">
           Build yours
         </p>
         <h2 data-anim="bld-head" className="t-display-lg mt-fib-2 max-w-[15ch]">
           What would yours look like?
         </h2>
-        <p data-anim="bld-head" className="mt-fib-3 max-w-[46ch] text-ink/70">
-          You just watched one get built. Now make it yours — pick your
-          industry, type your name, choose a look. Sixty seconds, no signup.
+        <p data-anim="bld-head" className="mt-fib-3 max-w-[52ch] text-ink/70">
+          You just watched one get built. This one is yours: type your name,
+          flip through the tabs, tap a color. Sixty seconds, no signup.
         </p>
 
-        <div className="mt-fib-5 grid items-start gap-fib-4 md:grid-cols-[42fr_58fr] md:gap-fib-5">
-          {/* the choices */}
-          <div className="flex flex-col gap-fib-4 md:col-start-1 md:row-start-1">
-            <div data-anim="bld-ctrl" className={`field ${name ? "has-value" : ""}`}>
-              <input
-                id="bld-name"
-                type="text"
-                maxLength={40}
-                autoComplete="organization"
-                placeholder=" "
-                value={name}
-                onInput={(e) => {
-                  setName(e.currentTarget.value);
-                  touch();
-                }}
-              />
-              <label htmlFor="bld-name">Your business name</label>
-            </div>
-
-            <fieldset data-anim="bld-ctrl">
-              <legend className="t-meta mb-fib-2 text-ink/60">Your industry</legend>
-              <div className="flex flex-wrap gap-fib-1">
-                {INDUSTRIES.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    className="chip-toggle"
-                    aria-pressed={industry === p.id}
-                    onClick={() => {
-                      setIndustry(p.id);
-                      touch();
-                    }}
-                  >
-                    {p.label}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-
-            <fieldset data-anim="bld-ctrl">
-              <legend className="t-meta mb-fib-2 text-ink/60">The look</legend>
-              <Segmented
-                options={SKINS}
-                value={skin}
-                onChange={(id) => {
-                  setSkin(id as SkinId);
-                  touch();
-                }}
-              />
-            </fieldset>
-
-            <fieldset data-anim="bld-ctrl">
-              <legend className="t-meta mb-fib-2 text-ink/60">The color</legend>
-              <div className="flex items-center gap-fib-2">
-                {ACCENTS.map((a) => (
-                  <button
-                    key={a.id}
-                    type="button"
-                    className="bld-swatch"
-                    style={{ background: a.hex }}
-                    aria-pressed={accent === a.id}
-                    aria-label={`Accent color: ${a.label}`}
-                    title={a.label}
-                    onClick={() => {
-                      setAccent(a.id);
-                      touch();
-                    }}
-                  />
-                ))}
-              </div>
-            </fieldset>
-
-            <div data-anim="bld-ctrl" className="mt-fib-1 flex flex-wrap items-center gap-fib-3">
-              <button
-                type="button"
-                className="bld-open"
-                onClick={() => {
-                  touch();
-                  setOpen(true);
-                }}
-              >
-                See it live
-                <svg viewBox="0 0 16 16" fill="none" aria-hidden>
-                  <path
-                    d="M3 13 13 3M5.5 3H13v7.5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-              <CTA href="#contact" label="Make it real" tone="ink" />
-            </div>
-            <p data-anim="bld-ctrl" className="t-meta max-w-[34ch] text-ink/55">
-              What you build rides along with your message
-            </p>
+        <div className="mt-fib-4 flex flex-col gap-fib-4 md:mt-fib-5">
+          {/* the one written ask — your name, at display size */}
+          <div data-anim="bld-head" className="bld-nameline max-md:order-2">
+            <input
+              className="bld-name"
+              type="text"
+              maxLength={40}
+              autoComplete="organization"
+              placeholder="Type your business name"
+              aria-label="Your business name"
+              value={name}
+              onInput={(e) => {
+                setName(e.currentTarget.value);
+                touch();
+              }}
+            />
           </div>
 
-          {/* the reward — their site, live (first on mobile so typing a name
-              changes something you can actually see above the keyboard) */}
-          <div data-anim="bld-stage" className="max-md:-order-1 md:col-start-2 md:row-start-1">
-            <MiniSite pack={pack} skin={skin} accent={accent} name={name} />
-            <p className="t-meta mt-fib-2 text-right text-ink/45" aria-hidden>
-              {getSkin(skin).label} · a sketch — open it to walk through
+          {/* the toy — tabs on the frame, the dot-dock on its edge */}
+          <div data-anim="bld-stage" className="bld-stagewrap max-md:order-1">
+            <MiniSite
+              pack={pack}
+              skin={skin}
+              accent={accent}
+              name={name}
+              onOpen={() => {
+                touch();
+                setOpen(true);
+              }}
+              onPickIndustry={(id) => {
+                setIndustry(id);
+                touch();
+              }}
+            />
+            <div
+              data-anim="bld-dock"
+              className="bld-dock"
+              role="group"
+              aria-label="Color and look"
+            >
+              {ACCENTS.map((a) => (
+                <button
+                  key={a.id}
+                  type="button"
+                  className="dock-dot"
+                  style={{ background: a.hex }}
+                  aria-pressed={accent === a.id}
+                  aria-label={`Accent color: ${a.label}`}
+                  title={a.label}
+                  onClick={() => {
+                    setAccent(a.id);
+                    touch();
+                  }}
+                />
+              ))}
+              <span className="dock-sep" aria-hidden />
+              {SKINS.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className={`dock-dot dock-skin--${s.id}`}
+                  aria-pressed={skin === s.id}
+                  aria-label={`The look: ${s.label}`}
+                  title={s.label}
+                  onClick={() => {
+                    setSkin(s.id as SkinId);
+                    touch();
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* the follow-through */}
+          <div
+            data-anim="bld-after"
+            className="bld-after max-md:order-3 flex flex-wrap items-center justify-between gap-fib-3 md:justify-end md:gap-fib-4"
+          >
+            <p className="t-meta text-ink/45">
+              {brand} · sketched in 60 seconds
             </p>
+            <a href="#contact" className="bld-real">
+              make it real
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden>
+                <path
+                  d="M3 13 13 3M5.5 3H13v7.5"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </a>
           </div>
         </div>
       </div>

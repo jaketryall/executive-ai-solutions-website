@@ -25,8 +25,8 @@ export const FEATURES = [
 ] as const;
 
 export const MONTHLY = [
-  { id: "seo", label: "SEO and content", monthly: 600, note: "from $600/mo" },
   { id: "ads", label: "Google Ads management", monthly: 500, note: "from $500/mo + ad spend" },
+  { id: "seo", label: "SEO and content", monthly: 600, note: "from $600/mo" },
   { id: "ai", label: "AI automation", monthly: 0, note: "quoted per project" },
 ] as const;
 

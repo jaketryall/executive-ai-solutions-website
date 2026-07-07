@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import {
   gsap,
   ScrollTrigger,
@@ -38,6 +38,16 @@ export function Estimate() {
 
   const result = useMemo(() => compute(est), [est]);
   const summary = useMemo(() => summarize(est), [est]);
+
+  // the persistent CTA capsule carries the visitor's live total once they
+  // have TOUCHED the estimator (est leaves its default reference on first
+  // change) — an untouched default price in the pill would read as a claim
+  useEffect(() => {
+    if (est === DEFAULT_STATE) return;
+    window.dispatchEvent(
+      new CustomEvent("eas:estimate", { detail: { total: result.total } })
+    );
+  }, [est, result.total]);
   // what they made in the builder rides along with the message
   const build = useSyncExternalStore(subscribeBuild, getBuild, getBuildServer);
   const tierIndex = TIERS.findIndex((t) => t.name === result.tier.name);
@@ -198,7 +208,7 @@ export function Estimate() {
       className="dark-chapter relative z-10 mx-[8px] mt-[8px] rounded-[24px] md:mx-[13px] md:-mt-[89px]"
     >
       {/* ── the instant estimate ── */}
-      <div className="mx-auto max-w-[1280px] px-[21px] pt-[89px] md:px-[55px] md:pt-[144px]">
+      <div className="wrap pt-[89px]">
         <h2 className="est-head t-display-lg max-w-[14ch]">
           <span className="mask-line">
             <span className="mask-inner">What would</span>
@@ -212,9 +222,9 @@ export function Estimate() {
           from our real pricing, not a marketing funnel.
         </p>
 
-        <div className="est-grid mt-[55px] grid gap-[34px] md:grid-cols-[42fr_58fr] md:gap-[55px]">
+        <div className="est-grid mt-[34px] grid gap-[34px] md:grid-cols-[42fr_58fr] md:gap-[55px]">
           {/* controls */}
-          <div className="flex flex-col gap-[34px]">
+          <div className="flex flex-col gap-[21px]">
             <fieldset data-anim="ctrl">
               <legend className="t-meta mb-[13px] text-paper/60">The project</legend>
               <Segmented
@@ -335,8 +345,9 @@ export function Estimate() {
         </a>
       </div>
 
-      {/* ── the quote form (the one action) ── */}
-      <div id="contact" className="mx-auto max-w-[1280px] px-[21px] pb-[144px] pt-[144px] md:px-[55px]">
+      {/* ── the quote form (the one action). The client quote lives in the
+          proof section now — this chapter stays all business. ── */}
+      <div id="contact" className="wrap pb-fib-5 pt-fib-6 md:pb-fib-6">
         <h2 data-anim="form" className="t-display-lg max-w-[16ch]">
           Tell us about your business
         </h2>
@@ -422,7 +433,7 @@ export function Estimate() {
                 <Monogram className="h-[18px] w-[18px] opacity-70" />
               </span>
               <p className="text-[0.9375rem] leading-[1.5] text-paper/70">
-                I&apos;m Jake — I read every message myself and reply within one
+                I&apos;m Jake. I read every message myself and reply within one
                 business day.
               </p>
             </div>

@@ -22,12 +22,13 @@ export const DemoSite = forwardRef<
   const domain = toDomain(name, pack.defaultName);
   const d = pack.demo;
 
+  // nav[i] maps past the hero: services, about, review
   const jump = (idx: number) => (e: React.MouseEvent) => {
     e.preventDefault();
     const scroller = (e.currentTarget as HTMLElement).closest(".demo-scroll");
     scroller
       ?.querySelectorAll("[data-demo-section]")
-      [idx]?.scrollIntoView({ behavior: "smooth", block: "start" });
+      [idx + 1]?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -90,7 +91,7 @@ export const DemoSite = forwardRef<
 
         {/* ── services — numbered editorial rows ── */}
         <section className="demo-band" data-demo-section>
-          <p className="demo-kicker demo-kicker-row" data-demo-anim>
+          <p className="demo-kicker" data-demo-anim>
             {pack.nav[0]}
           </p>
           <div className="demo-rows">
@@ -128,7 +129,7 @@ export const DemoSite = forwardRef<
             </div>
           </div>
           <div className="demo-about-copy">
-            <p className="demo-kicker demo-kicker-row" data-demo-anim>
+            <p className="demo-kicker" data-demo-anim>
               {d.aboutKicker}
             </p>
             <p className="demo-about-text" data-demo-anim>

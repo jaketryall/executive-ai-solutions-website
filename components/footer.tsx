@@ -29,6 +29,7 @@ export function Footer() {
       // rAF-debounced so raw resize events don't thrash ScrollTrigger
       let raf = 0;
       const setH = () => {
+        if (!root.current) return; // resize can race an unmount
         if (main) main.style.marginBottom = `${root.current.offsetHeight}px`;
         cancelAnimationFrame(raf);
         raf = requestAnimationFrame(() => ScrollTrigger.refresh());
@@ -43,7 +44,8 @@ export function Footer() {
         st = ScrollTrigger.create({
           trigger: main,
           start: "bottom bottom",
-          end: () => `bottom ${Math.max(120, window.innerHeight - root.current.offsetHeight)}px`,
+          end: () =>
+            `bottom ${Math.max(120, window.innerHeight - (root.current?.offsetHeight ?? 0))}px`,
           scrub: true,
           invalidateOnRefresh: true,
           onUpdate: (self) => gsap.set(wordmark, { yPercent: 55 * (1 - self.progress) }),
@@ -71,7 +73,7 @@ export function Footer() {
 
   return (
     <footer ref={root} className="fixed inset-x-0 bottom-0 z-0 overflow-hidden bg-canvas text-ink">
-      <div className="mx-auto max-w-[1280px] px-[21px] pt-[89px] md:px-[55px] md:pt-[144px]">
+      <div className="wrap pt-[89px] md:pt-[144px]">
         <div className="flex flex-col justify-between gap-[55px] md:flex-row md:items-start">
           {/* contact block — the diagonal counterweight */}
           <div className="max-w-[440px]">

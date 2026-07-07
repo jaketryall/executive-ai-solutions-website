@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/nav";
+import { PersistentCta } from "@/components/ui/persistent-cta";
 import { Footer } from "@/components/footer";
 import { SmoothScroll } from "@/components/anim/smooth-scroll";
 import { ViewTransitions } from "@/components/anim/view-transition";
@@ -22,13 +23,13 @@ const SITE_URL = "https://executiveaisolutions.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Executive AI Solutions | Websites that bring local business more customers",
+  title: "Executive AI Solutions | Google Ads and websites that bring local business more customers",
   description:
-    "Custom web design, SEO and Google Ads, and AI automation for serious local businesses. No templates. Every project individually quoted, from $2.5k.",
+    "We run the ads and build the page they land on. Google Ads management from $500/mo, hand-built websites from $2.5k, AI follow-up. One team, accountable for the whole click.",
   openGraph: {
-    title: "Executive AI Solutions | Websites that bring local business more customers",
+    title: "Executive AI Solutions | Google Ads and websites that bring local business more customers",
     description:
-      "Custom web design, SEO and Google Ads, and AI automation for serious local businesses. Every project individually quoted.",
+      "We run the ads and build the page they land on. Google Ads management, hand-built websites, AI follow-up. One team, accountable for the whole click.",
     url: SITE_URL,
     siteName: "Executive AI Solutions",
     type: "website",
@@ -43,10 +44,10 @@ const jsonLd = {
   url: SITE_URL,
   logo: `${SITE_URL}/Executive%20Ai%20Solutions%20Logo.png`,
   description:
-    "Web design agency building custom websites, running SEO and Google Ads, and shipping AI automation for local businesses.",
+    "Ads agency running Google Ads, building the custom websites they land on, and shipping AI follow-up for local businesses. One team accountable for the whole click.",
   makesOffer: [
+    { "@type": "Offer", itemOffered: { "@type": "Service", name: "Google Ads management and conversion tracking" } },
     { "@type": "Offer", itemOffered: { "@type": "Service", name: "Custom website design and build" } },
-    { "@type": "Offer", itemOffered: { "@type": "Service", name: "SEO and Google Ads management" } },
     { "@type": "Offer", itemOffered: { "@type": "Service", name: "AI automation for business websites" } },
   ],
 };
@@ -72,6 +73,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <Nav />
+        <PersistentCta />
         <main className="bg-canvas relative z-10">{children}</main>
         <Footer />
         <SmoothScroll />

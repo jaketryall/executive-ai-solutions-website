@@ -13,17 +13,24 @@ import {
   EASE_STRUCTURE,
   reducedMotion,
 } from "@/components/anim/ease";
+import { whenArrived } from "@/components/anim/arrival";
 
 // One case study. The hero well carries the same view-transition-name as its
 // index card, so arriving here the card MORPHS into this hero while the page
 // sheets up underneath it — which is why the hero itself gets no entrance
 // tween (the morph is its entrance; a direct load just shows it standing).
 
-export function CaseStudy({ project, next }: { project: Project; next: Project }) {
+export function CaseStudy({
+  project,
+  next,
+}: {
+  project: Project;
+  next: Project;
+}) {
   const root = useRef<HTMLElement>(null!);
 
   useGSAP(
-    () => {
+    (_, contextSafe) => {
       const q = gsap.utils.selector(root);
 
       // the nav lives OUTSIDE this scope; on a direct load it's still parked
@@ -34,76 +41,88 @@ export function CaseStudy({ project, next }: { project: Project; next: Project }
         gsap.set([navEl, ...q("[data-anim]")], { autoAlpha: 1 });
         return;
       }
-      if (navEl) gsap.to(navEl, { autoAlpha: 1, duration: 0.6, ease: EASE_STRUCTURE });
 
-      // ── entrance: the text settles while the sheet lands ──
-      gsap
-        .timeline({ defaults: { ease: EASE_STRUCTURE }, delay: 0.15 })
-        .fromTo(
-          q("[data-anim='cs-title']"),
-          { yPercent: 118, y: 0, autoAlpha: 1 },
-          { yPercent: 0, y: 0, duration: 0.9 }
-        )
-        .fromTo(
-          q("[data-anim='cs-meta']"),
-          { autoAlpha: 0, y: 13 },
-          { autoAlpha: 1, y: 0, duration: 0.55 },
-          "-=0.6"
-        )
-        .fromTo(
-          q("[data-anim='cs-chip']"),
-          { autoAlpha: 0, y: 13 },
-          { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.05 },
-          "-=0.4"
-        );
+      // everything holds behind the arrival gate: on a soft nav the sheet is
+      // still riding at mount, and an entrance played under it lands mid-flight
+      const enter = contextSafe!(() => {
+        if (navEl)
+          gsap.to(navEl, { autoAlpha: 1, duration: 0.6, ease: EASE_STRUCTURE });
 
-      // ── body copy reads itself in on scroll ──
-      const reveals = q("[data-anim='cs-reveal']") as HTMLElement[];
-      reveals.forEach((el) => {
-        gsap.fromTo(
-          el,
-          { autoAlpha: 0, y: 26 },
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.8,
-            ease: EASE_STRUCTURE,
-            scrollTrigger: { trigger: el, start: "top 85%" },
-          }
-        );
-      });
-
-      // ── figures: contained parallax inside their wells (desktop only) ──
-      const mm = gsap.matchMedia();
-      mm.add("(min-width: 821px)", () => {
-        const pars = q(".cs-par") as HTMLElement[];
-        gsap.set(pars, { scale: 1.14, transformOrigin: "50% 50%" });
-        const tweens = pars.map((par) =>
-          gsap.fromTo(
-            par,
-            { yPercent: -5.5 },
-            {
-              yPercent: 5.5,
-              ease: "none",
-              scrollTrigger: {
-                trigger: par.closest("[data-well]"),
-                start: "top bottom",
-                end: "bottom top",
-                scrub: 1,
-                invalidateOnRefresh: true,
-              },
-            }
+        // ── entrance: the text settles as the sheet lands ──
+        gsap
+          .timeline({ defaults: { ease: EASE_STRUCTURE } })
+          .fromTo(
+            q("[data-anim='cs-title']"),
+            { yPercent: 118, y: 0, autoAlpha: 1 },
+            { yPercent: 0, y: 0, duration: 0.9 },
           )
-        );
-        return () => {
-          tweens.forEach((t) => t.kill());
-          gsap.set(pars, { clearProps: "transform" });
-        };
-      });
+          .fromTo(
+            q("[data-anim='cs-meta']"),
+            { autoAlpha: 0, y: 13 },
+            { autoAlpha: 1, y: 0, duration: 0.55 },
+            "-=0.6",
+          )
+          .fromTo(
+            q("[data-anim='cs-chip']"),
+            { autoAlpha: 0, y: 13 },
+            { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.05 },
+            "-=0.4",
+          );
 
-      ScrollTrigger.refresh();
+        // ── body copy reads itself in on scroll ──
+        const reveals = q("[data-anim='cs-reveal']") as HTMLElement[];
+        reveals.forEach((el) => {
+          gsap.fromTo(
+            el,
+            { autoAlpha: 0, y: 26 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.8,
+              ease: EASE_STRUCTURE,
+              scrollTrigger: { trigger: el, start: "top 85%" },
+            },
+          );
+        });
+
+        // ── figures: contained parallax inside their wells (desktop only) ──
+        const mm = gsap.matchMedia();
+        mm.add("(min-width: 821px)", () => {
+          const pars = q(".cs-par") as HTMLElement[];
+          gsap.set(pars, { scale: 1.14, transformOrigin: "50% 50%" });
+          const tweens = pars.map((par) =>
+            gsap.fromTo(
+              par,
+              { yPercent: -5.5 },
+              {
+                yPercent: 5.5,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: par.closest("[data-well]"),
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: 1,
+                  invalidateOnRefresh: true,
+                },
+              },
+            ),
+          );
+          return () => {
+            tweens.forEach((t) => t.kill());
+            gsap.set(pars, { clearProps: "transform" });
+          };
+        });
+
+        ScrollTrigger.refresh();
+      }); // end enter()
+
+      let dead = false;
+      whenArrived().then(() => !dead && enter());
+      return () => {
+        dead = true;
+      };
     },
-    { scope: root }
+    { scope: root },
   );
 
   return (
@@ -115,7 +134,8 @@ export function CaseStudy({ project, next }: { project: Project; next: Project }
           className="flex flex-wrap items-baseline justify-between gap-[13px]"
         >
           <p className="t-meta text-ink/60">
-            Case study · {project.kind} · <span className="t-num">{project.year}</span>
+            Case study · {project.kind} ·{" "}
+            <span className="t-num">{project.year}</span>
           </p>
           {project.url ? (
             <a
@@ -148,7 +168,12 @@ export function CaseStudy({ project, next }: { project: Project; next: Project }
 
       {/* ── hero media: the morph target ── */}
       <div className="mx-auto mt-[55px] max-w-[1280px] px-[21px] md:mt-[89px] md:px-[55px]">
-        <div className="cs-hero-well" data-well style={{ viewTransitionName: vtName(project.slug) }}>
+        <div
+          className="cs-hero-well"
+          data-well
+          data-vt-media
+          style={{ viewTransitionName: vtName(project.slug) }}
+        >
           <div className="cs-par absolute inset-0">
             <Image
               src={project.cover.src}
@@ -211,7 +236,9 @@ export function CaseStudy({ project, next }: { project: Project; next: Project }
                   />
                 </div>
               </div>
-              <figcaption className="t-meta mt-[13px] text-ink/55">{fig.caption}</figcaption>
+              <figcaption className="t-meta mt-[13px] text-ink/55">
+                {fig.caption}
+              </figcaption>
             </figure>
           ))}
 
@@ -219,7 +246,10 @@ export function CaseStudy({ project, next }: { project: Project; next: Project }
             <figure data-anim="cs-reveal" className="md:col-span-2">
               <div className="cs-phones">
                 {project.phones.map((ph, i) => (
-                  <div key={ph.src} className={`phone-card cs-phone cs-phone--${i}`}>
+                  <div
+                    key={ph.src}
+                    className={`phone-card cs-phone cs-phone--${i}`}
+                  >
                     <Image
                       src={ph.src}
                       alt={ph.alt}
@@ -231,7 +261,8 @@ export function CaseStudy({ project, next }: { project: Project; next: Project }
                 ))}
               </div>
               <figcaption className="t-meta mt-[13px] text-ink/55">
-                Most visitors arrive on a phone, so the phone view is designed first-class
+                Most visitors arrive on a phone, so the phone view is designed
+                first-class
               </figcaption>
             </figure>
           )}

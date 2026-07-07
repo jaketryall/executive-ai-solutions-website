@@ -14,6 +14,10 @@ import { CTA } from "@/components/ui/cta";
    below makes this block quotable by search + answer engines (AEO). */
 const FAQS = [
   {
+    q: "What does Google Ads management cost?",
+    a: "Management is $500/mo plus whatever you spend on the ads themselves. You approve the budget, the tracking shows what every lead cost, and there is no minimum term. If we also built your landing page, we tune both from the same data.",
+  },
+  {
     q: "What does a website cost?",
     a: "Projects start at $2.5k and every project is quoted individually. The estimator above computes a live number from our real pricing: pick what you need and watch it move. After a twenty-minute call you get a fixed quote within two days.",
   },
@@ -83,9 +87,9 @@ export function Faq() {
       id="faq"
       ref={root}
       data-nav="light"
-      className="relative py-[89px] md:py-[144px]"
+      className="relative py-[89px]"
     >
-      <div className="mx-auto grid max-w-[1280px] gap-[34px] px-[21px] md:grid-cols-[minmax(300px,380px)_1fr] md:gap-[89px] md:px-[55px]">
+      <div className="wrap grid gap-[34px] md:grid-cols-[minmax(300px,380px)_1fr] md:gap-[89px]">
         <div>
           {/* the rail sticks with the cards; the CTA catches whoever got here
               with a question the cards didn't answer (the form attaches their

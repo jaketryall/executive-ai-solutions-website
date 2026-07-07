@@ -2,10 +2,11 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { CustomEase } from "gsap/CustomEase";
+import { Observer } from "gsap/Observer";
 import { useGSAP } from "@gsap/react";
 
 // Single registration point for the whole app. Import gsap from here, never from "gsap".
-gsap.registerPlugin(ScrollTrigger, SplitText, CustomEase, useGSAP);
+gsap.registerPlugin(ScrollTrigger, SplitText, CustomEase, Observer, useGSAP);
 
 // The two project curves (+ the one sanctioned loop). Referenced by name everywhere;
 // a raw cubic-bezier string passed to gsap silently no-ops.
@@ -33,4 +34,4 @@ export const maskRiseVars = {
   to: { yPercent: 0, y: 0 },
 };
 
-export { gsap, ScrollTrigger, SplitText, useGSAP };
+export { gsap, ScrollTrigger, SplitText, Observer, useGSAP };

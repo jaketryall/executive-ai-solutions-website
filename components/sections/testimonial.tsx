@@ -180,7 +180,7 @@ export function Testimonial() {
       aria-label="What our clients say"
       className="relative pb-fib-6 pt-fib-6 md:pb-fib-7 md:pt-fib-7"
     >
-      <div className="mx-auto max-w-[1280px] px-fib-3 md:px-fib-5">
+      <div className="wrap">
         <p data-anim className="t-meta text-ink/60">
           What clients say
         </p>

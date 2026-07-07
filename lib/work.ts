@@ -20,6 +20,8 @@ export type Project = {
   listName: string;
   client: string;
   kind: string;
+  /** industry label for the index's sector rail (jump-nav now, filter as the list grows) */
+  sector: string;
   year: string;
   status: string;
   url?: string;
@@ -49,6 +51,7 @@ export const PROJECTS: Project[] = [
     listName: "Desert Wings",
     client: "Desert Wings Flight School",
     kind: "Website · Ads · SEO",
+    sector: "Aviation",
     year: "2026",
     status: "Live",
     url: "https://www.desertwingsflightschool.com",
@@ -67,7 +70,7 @@ export const PROJECTS: Project[] = [
       height: 741,
       alt: "The Desert Wings hero: a Piper over the Arizona desert",
     },
-    backdropCrop: { zoom: 1.85, origin: "92% 58%" },
+    backdropCrop: { zoom: 1.32, origin: "84% 50%" },
     demo: {
       src: "/work/desert-wings-fleet.png",
       width: 1400,
@@ -141,6 +144,7 @@ export const PROJECTS: Project[] = [
     listName: "Executive AI",
     client: "Executive AI Solutions",
     kind: "Website · AI",
+    sector: "AI & Web",
     year: "2026",
     status: "You're on it",
     tags: ["Custom design", "Next.js", "GSAP", "Instant estimator", "AI automation"],

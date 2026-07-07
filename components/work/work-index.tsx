@@ -5,376 +5,718 @@ import Image from "next/image";
 import Link from "next/link";
 import { PROJECTS, vtName } from "@/lib/work";
 import { Monogram } from "@/components/ui/monogram";
+import { CTA } from "@/components/ui/cta";
+import { whenArrived } from "@/components/anim/arrival";
 import {
   gsap,
+  Observer,
   ScrollTrigger,
   useGSAP,
   EASE_STRUCTURE,
   EASE_UI,
+  EASE_LOOP,
   reducedMotion,
 } from "@/components/anim/ease";
 
-// The work index as a FILM: no header, no cards — you land inside a
-// full-screen chapter per project (full-bleed cover, graded dark, the name
-// huge in the lower-left) and each scroll pulls the next chapter up OVER the
-// current one, which sinks back and dims. It's the route transition's stack
-// gesture at viewport scale, so scrolling the index and opening a case read
-// as one physical space. Chapter media carries the view-transition-name and
-// morphs down into the case-study hero on click.
+// The work index as a LEDGER THAT NEVER ENDS. Split stage: the left side is
+// a rolling reel of project names (ghosted paper type; the focused entry
+// fills to full paper), the right side is one fixed imagery frame where
+// covers trade places with a directional wipe. A wheel tick / swipe / arrow key turns the ledger one entry; the
+// list loops forever, so "This spot is open" comes back around every cycle —
+// the loop itself is the pitch.
 //
-// Below 821px (or reduced motion / no JS) nothing pins: the chapters stack
-// in normal flow, each still full-bleed — the film survives, uncut.
+// No document scroll in stage mode: GSAP Observer owns the input, the page
+// is one viewport, and the geometry is static — which is exactly what the
+// route-transition morphs need. Below 821px / reduced motion / no JS the
+// stage yields to a normal-flow list (.wki-flow): same content, no tricks.
 
-const OPEN_SLOT = {
-  listName: "Your business",
-  kind: "The next build",
-  year: "2026",
-  href: "/#estimate",
+type Slot = {
+  key: string;
+  name: string;
+  sector: string;
+  meta: string;
+  desc: string;
+  href: string;
+  cta: string;
+  project?: (typeof PROJECTS)[number];
 };
 
-const SLOTS = PROJECTS.length + 1;
+const SLOTS: Slot[] = [
+  ...PROJECTS.map((p) => ({
+    key: p.slug,
+    name: p.listName,
+    sector: p.sector,
+    meta: `${p.kind} · ${p.year} · ${p.status}`,
+    desc: p.lede,
+    href: `/work/${p.slug}`,
+    cta: "Open the case",
+    project: p,
+  })),
+  {
+    key: "open-slot",
+    name: "This spot is open",
+    sector: "Your industry",
+    meta: "The next build · 2026",
+    desc: "Price your project in about sixty seconds and see what your business looks like on this screen.",
+    href: "/#estimate",
+    cta: "Get an estimate",
+  },
+];
+
+const N = SLOTS.length;
+const COPIES = 4; // reel repeats; the wrap-jump inside one copy is invisible
 
 export function WorkIndex() {
   const root = useRef<HTMLElement>(null!);
 
   useGSAP(
-    () => {
+    (_, contextSafe) => {
       const q = gsap.utils.selector(root);
-      const rail = q(".wf-rail button") as HTMLElement[];
-      const count = q(".wf-count")[0];
-
-      const setActive = (idx: number) => {
-        rail.forEach((el, i) => el.setAttribute("data-active", String(i === idx)));
-        if (count) count.textContent = `0${idx + 1} / 0${SLOTS}`;
-      };
-
-      // the nav lives OUTSIDE this scope; on a direct load it's still parked
-      // at opacity 0 (the homepage hero normally reveals it)
       const navEl = document.querySelector(".site-nav");
 
       if (reducedMotion()) {
         gsap.set([navEl, ...q("[data-anim]")], { autoAlpha: 1 });
-        return;
+        return; // flow list, standing still
       }
-      if (navEl) gsap.to(navEl, { autoAlpha: 1, duration: 0.6, ease: EASE_STRUCTURE });
 
-      // ── the establishing shot: chapter 1 settles, chrome fades up ──
-      const allChapters = q(".wf-chapter") as HTMLElement[];
-      gsap
-        .timeline({ defaults: { ease: EASE_STRUCTURE } })
-        .fromTo(
-          allChapters[0].querySelector(".wf-img"),
-          { scale: 1.08 },
-          { scale: 1, duration: 1.4 }
-        )
-        .fromTo(
-          allChapters[0].querySelectorAll(".mask-inner"),
-          { yPercent: 118, y: 0 },
-          { yPercent: 0, y: 0, duration: 0.9, stagger: 0.09 },
-          0.15
-        )
-        .fromTo(
-          q("[data-anim='wf-chrome']"),
-          { autoAlpha: 0, y: 8 },
-          { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08, ease: EASE_UI },
-          0.6
-        );
-
-      // later chapters' names: mask-rise as their chapter approaches on
-      // mobile flow; instant-visible in film mode (their motion is the rise)
-      const laterMasks = allChapters
-        .slice(1)
-        .flatMap((c) => Array.from(c.querySelectorAll(".mask-inner")));
-      const mmNames = gsap.matchMedia();
-      mmNames.add("(max-width: 820px)", () => {
-        const tweens = laterMasks.map((m) =>
-          gsap.fromTo(
-            m,
-            { yPercent: 118, y: 0 },
-            {
-              yPercent: 0,
-              y: 0,
-              duration: 0.9,
-              ease: EASE_STRUCTURE,
-              scrollTrigger: { trigger: m.closest(".wf-chapter"), start: "top 70%" },
-            }
-          )
-        );
-        return () => tweens.forEach((t) => t.kill());
-      });
-      mmNames.add("(min-width: 821px)", () => {
-        gsap.set(laterMasks, { yPercent: 0, y: 0 });
-      });
-
-      // ── the projector: sheets rise, the covered chapter sinks ──
       const mm = gsap.matchMedia();
+
+      // ─────────────────────────── the stage (≥821px) ───────────────────────────
       mm.add("(min-width: 821px)", () => {
-        const run = q(".wf-run")[0] as HTMLElement;
-        const chapters = q(".wf-chapter") as HTMLElement[];
-        const medias = chapters.map((c) => c.querySelector(".wf-media"));
-        const contents = chapters.map((c) => c.querySelector(".wf-content"));
-        const shades = q(".wf-shade") as HTMLElement[];
-        const N = chapters.length;
+        const section = root.current;
+        section.classList.add("is-live");
+        document.documentElement.classList.add("wki-lock");
 
-        run.classList.add("is-film");
-        gsap.set(chapters.slice(1), { yPercent: 100 });
-        setActive(0);
+        const stage = q(".wki-stage")[0] as HTMLElement;
+        const reel = q(".wki-reel")[0] as HTMLElement;
+        const rows = q(".wki-reel .wki-row") as HTMLElement[];
+        const windowEl = q(".wki-reel-window")[0] as HTMLElement;
+        const frame = q(".wki-frame")[0] as HTMLElement;
+        const layers = q(".wki-layer") as HTMLElement[];
+        const imgs = layers.map((l) => l.querySelector(".wki-media"));
+        const veils = layers.map((l) => l.querySelector(".wki-veil"));
+        const infos = q(".wki-info-item") as HTMLElement[];
+        const chips = q(".wki-chip") as HTMLElement[];
+        const count = q(".wki-count .t-num")[0] as HTMLElement;
+        const frameLink = q(".wki-frame-link")[0] as HTMLAnchorElement;
 
-        const clamp01 = gsap.utils.clamp(0, 1);
-        const st = ScrollTrigger.create({
-          trigger: run,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 0.5,
-          invalidateOnRefresh: true,
-          snap: {
-            snapTo: 1 / (N - 1),
-            duration: { min: 0.25, max: 0.6 },
-            ease: EASE_UI,
-            delay: 0.08,
-            directional: false,
-          },
-          onUpdate(self) {
-            const f = self.progress * (N - 1);
-            for (let i = 0; i < N; i++) {
-              const tIn = i === 0 ? 1 : clamp01(f - (i - 1)); // risen this far
-              const tOut = i === N - 1 ? 0 : clamp01(f - i); // buried this far
-              gsap.set(chapters[i], {
-                yPercent: 100 * (1 - tIn) - 7 * tOut,
-                scale: 1 - 0.04 * tOut,
+        // pos is an unbounded reel index; the visible slot is pos % N.
+        // Start in the second copy so there's always a copy above and below.
+        let pos = N;
+        let drift: gsap.core.Tween | null = null;
+        let animating = false;
+        const slotOf = (p: number) => ((p % N) + N) % N;
+        const rowH = () => rows[0].offsetHeight;
+
+        const paint = (p: number) => {
+          const s = slotOf(p);
+          rows.forEach((r, i) => {
+            r.setAttribute("data-active", String(i === p));
+            // only the focused row navigates; the rest turn the reel
+            // (data-no-vt also tells the transition provider to stand down)
+            r.toggleAttribute("data-no-vt", i !== p);
+          });
+          infos.forEach((el, i) => (el.dataset.on = String(i === s)));
+          chips.forEach((c) =>
+            c.setAttribute(
+              "data-active",
+              String(c.dataset.sector === SLOTS[s].sector),
+            ),
+          );
+          if (count) count.textContent = `0${s + 1} / 0${N}`;
+          // the morph rides the frame only for a real project; JS owns the
+          // name so the hidden flow list never duplicates it
+          const slug = SLOTS[s].project?.slug;
+          frame.style.viewTransitionName = slug ? vtName(slug) : "";
+          frame.setAttribute("data-open", SLOTS[s].project ? "false" : "true");
+          if (frameLink) {
+            frameLink.href = SLOTS[s].href;
+            frameLink.setAttribute(
+              "aria-label",
+              SLOTS[s].project
+                ? `${SLOTS[s].name}: open the case study`
+                : SLOTS[s].cta,
+            );
+          }
+        };
+
+        const setReel = (p: number) => {
+          gsap.set(reel, { y: -(p - 1) * rowH() });
+        };
+
+        // the ambient: the focused cover breathes, slowly (the one ambient)
+        const breathe = (s: number) => {
+          drift?.kill();
+          const img = imgs[s];
+          if (!img) return;
+          drift = gsap.fromTo(
+            img,
+            { scale: 1 },
+            {
+              scale: 1.05,
+              duration: 9,
+              ease: EASE_LOOP,
+              yoyo: true,
+              repeat: -1,
+            },
+          );
+        };
+
+        // ── the turn: one dramatic step, direction-aware ──
+        const step = (dir: 1 | -1, jumpTo?: number) => {
+          if (animating) return;
+          const from = slotOf(pos);
+          const nextPos = jumpTo !== undefined ? jumpTo : pos + dir;
+          const to = slotOf(nextPos);
+          if (to === from) return;
+          animating = true;
+          drift?.kill();
+
+          const inLayer = layers[to];
+          const inImg = imgs[to];
+          const outLayer = layers[from];
+
+          // incoming rides on top and wipes open against the travel direction
+          gsap.set(inLayer, {
+            zIndex: 3,
+            clipPath: dir > 0 ? "inset(100% 0% 0% 0%)" : "inset(0% 0% 100% 0%)",
+            scale: 1,
+            autoAlpha: 1,
+          });
+          if (veils[to]) gsap.set(veils[to], { opacity: 0 });
+          if (inImg) gsap.set(inImg, { scale: 1.14 });
+
+          const tl = gsap.timeline({
+            defaults: { ease: EASE_STRUCTURE },
+            onComplete: () => {
+              // outgoing sinks back to the pile, cleaned for its next turn
+              gsap.set(outLayer, {
+                zIndex: 1,
+                autoAlpha: 0,
+                clipPath: "inset(0% 0% 0% 0%)",
+                scale: 1,
               });
-              // the sheet's inner layers lag it — the media (overscanned 30%
-              // below via CSS) reveals against the rise, the title settles
-              // last: depth inside the moving chapter
-              gsap.set(medias[i], { y: -window.innerHeight * 0.3 * (1 - tIn) });
-              gsap.set(contents[i], { yPercent: 26 * (1 - tIn) - 12 * tOut });
-              if (shades[i]) shades[i].style.opacity = (0.55 * tOut).toFixed(3);
-            }
-            setActive(Math.round(f));
-          },
+              if (veils[from]) gsap.set(veils[from], { opacity: 0 });
+              gsap.set(inLayer, { zIndex: 2 });
+              // seamless wrap: re-center pos inside the middle copies
+              // (full repaint — data-active AND data-no-vt must follow the move)
+              if (pos < N || pos >= 3 * N) {
+                pos += pos < N ? N : -N;
+                setReel(pos);
+                paint(pos);
+              }
+              breathe(to);
+              animating = false;
+            },
+          });
+
+          // the reel turns one entry
+          pos = jumpTo !== undefined ? jumpTo : pos + dir;
+          tl.to(reel, { y: -(pos - 1) * rowH(), duration: 0.85 }, 0);
+
+          // the covers trade places
+          tl.to(
+            inLayer,
+            { clipPath: "inset(0% 0% 0% 0%)", duration: 0.9 },
+            0.02,
+          )
+            .to(inImg, { scale: 1, duration: 1.15 }, 0.02)
+            .to(outLayer, { scale: 0.94, duration: 0.9 }, 0);
+          if (veils[from])
+            tl.to(veils[from], { opacity: 0.45, duration: 0.6 }, 0);
+
+          // the ledger line swaps
+          tl.to(
+            infos[from],
+            { autoAlpha: 0, y: -12, duration: 0.3, ease: EASE_UI },
+            0,
+          ).fromTo(
+            infos[to],
+            { autoAlpha: 0, y: 14 },
+            { autoAlpha: 1, y: 0, duration: 0.55, ease: EASE_UI },
+            0.3,
+          );
+
+          // the counter ticks
+          if (count) {
+            tl.to(
+              count,
+              { yPercent: -60, autoAlpha: 0, duration: 0.22, ease: EASE_UI },
+              0,
+            ).add(() => {
+              count.textContent = `0${to + 1} / 0${N}`;
+            });
+            tl.fromTo(
+              count,
+              { yPercent: 60, autoAlpha: 0 },
+              { yPercent: 0, autoAlpha: 1, duration: 0.3, ease: EASE_UI },
+              0.26,
+            );
+          }
+
+          paint(pos);
+        };
+
+        // jump with the shortest turn (chips, inactive rows)
+        const jump = (targetSlot: number) => {
+          const cur = slotOf(pos);
+          if (targetSlot === cur || animating) return;
+          let delta = targetSlot - cur;
+          if (delta > N / 2) delta -= N;
+          if (delta < -N / 2) delta += N;
+          step(delta > 0 ? 1 : -1, pos + delta);
+        };
+
+        // ── input: the Observer owns the wheel/touch; keys mirror it ──
+        const obs = Observer.create({
+          target: stage,
+          type: "wheel,touch",
+          wheelSpeed: -1,
+          tolerance: 12,
+          preventDefault: true,
+          onDown: () => step(-1),
+          onUp: () => step(1),
         });
 
-        // the rail is functional: a number takes you to its chapter
-        const jump = (i: number) => {
-          const runTop = run.getBoundingClientRect().top + window.scrollY;
-          window.scrollTo({
-            top: runTop + ((run.offsetHeight - window.innerHeight) * i) / (N - 1),
-            behavior: "smooth",
-          });
+        const onKey = (e: KeyboardEvent) => {
+          if (e.key === "ArrowDown" || e.key === "PageDown") {
+            e.preventDefault();
+            step(1);
+          } else if (e.key === "ArrowUp" || e.key === "PageUp") {
+            e.preventDefault();
+            step(-1);
+          }
         };
-        const handlers = rail.map((btn, i) => {
-          const h = () => jump(i);
-          btn.addEventListener("click", h);
+        window.addEventListener("keydown", onKey);
+
+        // rows: the focused row is a real link; the others turn the reel
+        const rowHandlers = rows.map((row, i) => {
+          const h = (e: MouseEvent) => {
+            if (i !== pos) {
+              e.preventDefault();
+              jump(slotOf(i));
+            }
+          };
+          row.addEventListener("click", h);
+          return h;
+        });
+        const chipHandlers = chips.map((chip) => {
+          const h = () => {
+            const idx = SLOTS.findIndex(
+              (s) => s.sector === chip.dataset.sector,
+            );
+            if (idx >= 0) jump(idx);
+          };
+          chip.addEventListener("click", h);
           return h;
         });
 
-        ScrollTrigger.refresh();
-        return () => {
-          st.kill();
-          run.classList.remove("is-film");
-          rail.forEach((btn, i) => btn.removeEventListener("click", handlers[i]));
-          gsap.set(chapters, { clearProps: "transform" });
-          medias.forEach((m) => m && gsap.set(m, { clearProps: "transform" }));
-          contents.forEach((c) => c && gsap.set(c, { clearProps: "transform" }));
-          shades.forEach((s) => (s.style.opacity = ""));
-          setActive(0);
-        };
-      });
-
-      // ── the cursor pill: "Open the case" rides the pointer (reel grammar) ──
-      mm.add("(min-width: 821px) and (hover: hover) and (pointer: fine)", () => {
-        const cursor = q(".wf-cursor")[0] as HTMLElement;
-        const pill = cursor?.querySelector(".rc-pill");
-        const stage = q(".wf-stage")[0] as HTMLElement;
-        if (!cursor || !pill || !stage) return;
-
-        const xTo = gsap.quickTo(cursor, "x", { duration: 0.35, ease: EASE_UI });
-        const yTo = gsap.quickTo(cursor, "y", { duration: 0.35, ease: EASE_UI });
-        let shown = false;
-        const move = (e: MouseEvent) => {
-          const r = stage.getBoundingClientRect();
-          xTo(e.clientX - r.left);
-          yTo(e.clientY - r.top);
-          // only over a project chapter — the open slot has its own pill
-          const over = (e.target as HTMLElement).closest?.("a.wf-chapter[data-case]");
-          if (!!over !== shown) {
-            shown = !!over;
-            gsap.to(pill, {
-              scale: shown ? 1 : 0.5,
-              autoAlpha: shown ? 1 : 0,
+        // ── the cursor pill over the frame (reel grammar) ──
+        let pillCleanup: (() => void) | undefined;
+        if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+          const cursor = q(".wki-cursor")[0] as HTMLElement;
+          const pill = cursor?.querySelector(".rc-pill") as HTMLElement | null;
+          if (cursor && pill) {
+            const xTo = gsap.quickTo(cursor, "x", {
               duration: 0.35,
               ease: EASE_UI,
             });
+            const yTo = gsap.quickTo(cursor, "y", {
+              duration: 0.35,
+              ease: EASE_UI,
+            });
+            let shown = false;
+            const move = (e: MouseEvent) => {
+              const r = frame.getBoundingClientRect();
+              xTo(e.clientX - r.left);
+              yTo(e.clientY - r.top);
+              const over = frame.getAttribute("data-open") !== "true";
+              if (over !== shown) {
+                shown = over;
+                gsap.to(pill, {
+                  scale: over ? 1 : 0.5,
+                  autoAlpha: over ? 1 : 0,
+                  duration: 0.35,
+                  ease: EASE_UI,
+                });
+              }
+            };
+            const leave = () => {
+              shown = false;
+              gsap.to(pill, {
+                scale: 0.5,
+                autoAlpha: 0,
+                duration: 0.3,
+                ease: EASE_UI,
+              });
+            };
+            gsap.set(pill, { scale: 0.5, autoAlpha: 0 });
+            frame.addEventListener("mousemove", move);
+            frame.addEventListener("mouseleave", leave);
+            pillCleanup = () => {
+              frame.removeEventListener("mousemove", move);
+              frame.removeEventListener("mouseleave", leave);
+            };
           }
-        };
-        const leave = () => {
-          shown = false;
-          gsap.to(pill, { scale: 0.5, autoAlpha: 0, duration: 0.3, ease: EASE_UI });
-        };
-        gsap.set(pill, { scale: 0.5, autoAlpha: 0 });
-        stage.addEventListener("mousemove", move);
-        stage.addEventListener("mouseleave", leave);
+        }
+
+        // ── first paint + the held entrance ──
+        layers.forEach((l, i) =>
+          gsap.set(l, { autoAlpha: i === slotOf(pos) ? 1 : 0 }),
+        );
+        // the cover rides the transition sheet at its entrance start-scale so
+        // the settle begins from what was already on screen (no pop at landing)
+        if (imgs[slotOf(pos)]) gsap.set(imgs[slotOf(pos)], { scale: 1.1 });
+        setReel(pos);
+        paint(pos);
+        const onResize = () => setReel(pos);
+        window.addEventListener("resize", onResize);
+
+        let dead = false;
+        const enter = contextSafe!(() => {
+          if (navEl)
+            gsap.to(navEl, {
+              autoAlpha: 1,
+              duration: 0.6,
+              ease: EASE_STRUCTURE,
+            });
+          gsap
+            .timeline({ defaults: { ease: EASE_STRUCTURE } })
+            .fromTo(
+              imgs[slotOf(pos)],
+              { scale: 1.1 },
+              {
+                scale: 1,
+                duration: 1.3,
+                onComplete: () => breathe(slotOf(pos)),
+              },
+            )
+            .fromTo(
+              windowEl,
+              { autoAlpha: 0 },
+              { autoAlpha: 1, duration: 0.5, ease: EASE_UI },
+              0.1,
+            )
+            .fromTo(
+              rows.slice(Math.max(0, pos - 1), pos + 2),
+              { yPercent: 45 },
+              { yPercent: 0, duration: 0.9, stagger: 0.07 },
+              0.1,
+            )
+            .fromTo(
+              q("[data-anim='wki-chrome']"),
+              { autoAlpha: 0, y: 10 },
+              {
+                autoAlpha: 1,
+                y: 0,
+                duration: 0.55,
+                stagger: 0.07,
+                ease: EASE_UI,
+              },
+              0.45,
+            )
+            .fromTo(
+              infos[slotOf(pos)],
+              { autoAlpha: 0, y: 14 },
+              { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
+              0.55,
+            );
+        });
+        whenArrived().then(() => !dead && enter());
+
         return () => {
-          stage.removeEventListener("mousemove", move);
-          stage.removeEventListener("mouseleave", leave);
+          dead = true;
+          obs.kill();
+          drift?.kill();
+          window.removeEventListener("keydown", onKey);
+          window.removeEventListener("resize", onResize);
+          rows.forEach((r, i) =>
+            r.removeEventListener("click", rowHandlers[i]),
+          );
+          chips.forEach((c, i) =>
+            c.removeEventListener("click", chipHandlers[i]),
+          );
+          pillCleanup?.();
+          frame.style.viewTransitionName = "";
+          section.classList.remove("is-live");
+          document.documentElement.classList.remove("wki-lock");
+        };
+      });
+
+      // ─────────────────────── the flow (mobile / fallback) ───────────────────────
+      mm.add("(max-width: 820px)", () => {
+        // the morphs ride the flow wells here; assigned in JS so the two
+        // subtrees never carry duplicate view-transition-names at once
+        const wells = q(".wki-fcard [data-slug]") as HTMLElement[];
+        wells.forEach(
+          (w) => (w.style.viewTransitionName = vtName(w.dataset.slug!)),
+        );
+
+        let dead = false;
+        const enter = contextSafe!(() => {
+          if (navEl)
+            gsap.to(navEl, {
+              autoAlpha: 1,
+              duration: 0.6,
+              ease: EASE_STRUCTURE,
+            });
+          gsap.fromTo(
+            q("[data-anim='wki-head']"),
+            { autoAlpha: 0, y: 13 },
+            { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08, ease: EASE_UI },
+          );
+          const cards = q(".wki-fcard") as HTMLElement[];
+          cards.forEach((card) => {
+            gsap.fromTo(
+              card,
+              { autoAlpha: 0, y: 34 },
+              {
+                autoAlpha: 1,
+                y: 0,
+                duration: 0.8,
+                ease: EASE_STRUCTURE,
+                scrollTrigger: { trigger: card, start: "top 85%" },
+              },
+            );
+          });
+          ScrollTrigger.refresh();
+        });
+        whenArrived().then(() => !dead && enter());
+
+        return () => {
+          dead = true;
+          wells.forEach((w) => (w.style.viewTransitionName = ""));
         };
       });
     },
-    { scope: root }
+    { scope: root },
   );
 
+  const sectors = SLOTS.map((s) => s.sector);
+
   return (
-    <section ref={root} data-nav="dark" className="wf" aria-label="The work">
+    <section ref={root} data-nav="dark" className="wki" aria-label="The work">
       <h1 className="sr-only">The work</h1>
 
-      <div className="wf-run" style={{ ["--wf-steps" as string]: SLOTS - 1 }}>
-        <div className="wf-stage">
-          {PROJECTS.map((p, i) => {
-            const bg = p.backdrop ?? p.cover;
-            return (
-              <Link
-                key={p.slug}
-                href={`/work/${p.slug}`}
-                className="wf-chapter"
-                data-case
-                aria-label={`${p.client}: open the case study`}
-                style={{ viewTransitionName: vtName(p.slug) }}
-              >
-                <span className="wf-media">
-                  {/* the crop zoom lives on its own wrapper — GSAP tweens the
-                      img and normalizes (wipes) any scale set there */}
-                  <span
-                    className="wf-zoom"
-                    style={
-                      p.backdropCrop
-                        ? {
-                            transform: `scale(${p.backdropCrop.zoom})`,
-                            transformOrigin: p.backdropCrop.origin,
-                          }
-                        : undefined
+      {/* ═══════════ the stage (desktop, driver alive) ═══════════ */}
+      <div className="wki-stage" aria-hidden={false}>
+        {/* left — the ledger */}
+        <div className="wki-left">
+          <div className="wki-top">
+            <p className="wki-label t-meta" data-anim="wki-chrome">
+              The work
+            </p>
+            <div
+              className="wki-sectors"
+              data-anim="wki-chrome"
+              role="group"
+              aria-label="Sectors"
+            >
+              {sectors.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  className="wki-chip"
+                  data-sector={s}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="wki-reel-window" data-anim>
+            <div className="wki-reel">
+              {Array.from({ length: COPIES }).flatMap((_, c) =>
+                SLOTS.map((s, i) => (
+                  <Link
+                    key={`${c}-${s.key}`}
+                    href={s.href}
+                    className="wki-row"
+                    data-active="false"
+                    tabIndex={c === 1 ? 0 : -1}
+                    aria-label={
+                      s.project
+                        ? `${s.project.client}: open the case study`
+                        : s.name
                     }
                   >
-                    <Image
-                      src={bg.src}
-                      alt={bg.alt}
-                      fill
-                      sizes="100vw"
-                      className="wf-img"
-                      priority={i === 0}
-                      style={
-                        p.backdropCrop
-                          ? { objectPosition: p.backdropCrop.origin }
-                          : undefined
-                      }
-                    />
-                  </span>
-                  <span className="wf-scrim" aria-hidden />
-                </span>
-                <span className="wf-content">
-                  <span className="wf-meta t-meta">
-                    <span className="t-num">0{i + 1}</span>
-                    <span aria-hidden>·</span>
-                    <span>{p.kind}</span>
-                    <span aria-hidden>·</span>
-                    <span className="t-num">{p.year}</span>
-                    <span aria-hidden>·</span>
-                    <span>{p.status}</span>
-                  </span>
-                  <span className="wf-name t-display-hero">
-                    <span className="mask-line">
-                      <span className="mask-inner">{p.listName}</span>
-                    </span>
-                  </span>
-                  <span className="wf-open t-meta" aria-hidden>
-                    Open the case
-                    <svg viewBox="0 0 16 16" fill="none">
-                      <path
-                        d="M3 13 13 3M5.5 3H13v7.5"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </span>
-                </span>
-                <span className="wf-shade" aria-hidden />
-              </Link>
-            );
-          })}
+                    {s.name}
+                  </Link>
+                )),
+              )}
+            </div>
+          </div>
 
-          {/* the final reel: the ask, full screen */}
-          <Link
-            href={OPEN_SLOT.href}
-            className="wf-chapter wf-chapter--open"
-            aria-label="Your business could be next: price your project with the instant estimator"
-          >
-            <span className="wf-media closer-card" aria-hidden />
-            <span className="wf-content wf-content--open">
-              <Monogram className="h-[34px] w-[34px] opacity-80" />
-              <span className="wf-meta t-meta">
-                <span className="t-num">0{SLOTS}</span>
-                <span aria-hidden>·</span>
-                <span>{OPEN_SLOT.kind}</span>
-              </span>
-              <span className="wf-name t-display-hero">
-                <span className="mask-line">
-                  <span className="mask-inner">This spot is open</span>
-                </span>
-              </span>
-              <span className="wf-open-sub">
-                Price your project in about sixty seconds and see what your
-                business looks like on this screen.
-              </span>
-              <span className="wx-open-pill" aria-hidden>
-                Get an estimate
-                <svg viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M3 13 13 3M5.5 3H13v7.5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-            </span>
-            <span className="wf-shade" aria-hidden />
-          </Link>
-
-          {/* chrome — label, counter, rail (desktop film mode) */}
-          <p className="wf-label t-meta" data-anim="wf-chrome">
-            The work
-          </p>
-          <p className="wf-count t-meta t-num" data-anim="wf-chrome" aria-hidden>
-            01 / 0{SLOTS}
-          </p>
-          <nav className="wf-rail" data-anim="wf-chrome" aria-label="Jump to project">
-            {[...PROJECTS.map((p) => p.listName), OPEN_SLOT.listName].map((name, i) => (
-              <button key={name} type="button" data-active={i === 0 ? "true" : "false"} aria-label={`Go to ${name}`}>
-                0{i + 1}
-              </button>
+          <div className="wki-infos">
+            {SLOTS.map((s, i) => (
+              <div
+                key={s.key}
+                className="wki-info-item"
+                data-on={String(i === 0)}
+              >
+                <p className="t-meta wki-kicker">
+                  <span className="t-num">0{i + 1}</span> · {s.meta} ·{" "}
+                  {s.sector}
+                </p>
+                <p className="wki-desc">{s.desc}</p>
+                <CTA
+                  href={s.href}
+                  label={s.cta}
+                  tone="paper"
+                  className="mt-fib-3"
+                />
+              </div>
             ))}
-          </nav>
-
-          {/* the pointer pill (reel-cursor grammar) */}
-          <div className="reel-cursor wf-cursor" aria-hidden>
-            <span className="rc-center">
-              <span className="rc-pill">
-                Open the case
-                <svg viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M3 13 13 3M5.5 3H13v7.5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-            </span>
           </div>
         </div>
+
+        {/* right — the frame */}
+        <div className="wki-right">
+          <div className="wki-frame" data-open="false">
+            {SLOTS.map((s) => (
+              <div key={s.key} className="wki-layer">
+                {s.project ? (
+                  <>
+                    <div className="wki-media">
+                      {/* the crop zoom lives on its own wrapper — GSAP tweens
+                          the media node and would wipe a static scale there */}
+                      <span
+                        className="wki-zoom"
+                        style={
+                          s.project.backdropCrop
+                            ? {
+                                transform: `scale(${s.project.backdropCrop.zoom})`,
+                                transformOrigin: s.project.backdropCrop.origin,
+                              }
+                            : undefined
+                        }
+                      >
+                        <Image
+                          src={(s.project.backdrop ?? s.project.cover).src}
+                          alt={(s.project.backdrop ?? s.project.cover).alt}
+                          fill
+                          sizes="(min-width: 821px) 52vw, 100vw"
+                          className="wki-img"
+                          priority={s.key === SLOTS[0].key}
+                          style={
+                            s.project.backdropCrop
+                              ? {
+                                  objectPosition: s.project.backdropCrop.origin,
+                                }
+                              : undefined
+                          }
+                        />
+                      </span>
+                    </div>
+                    <span className="wki-grade" aria-hidden />
+                  </>
+                ) : (
+                  <div className="wki-media closer-card wki-open-face">
+                    <Monogram className="h-fib-4 w-fib-4 opacity-80" />
+                    <p className="t-display-lg">
+                      Your business, on this screen
+                    </p>
+                    <span className="wki-open-pill" aria-hidden>
+                      Get an estimate
+                      <svg viewBox="0 0 16 16" fill="none">
+                        <path
+                          d="M3 13 13 3M5.5 3H13v7.5"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                )}
+                <span className="wki-veil" aria-hidden />
+              </div>
+            ))}
+
+            {/* the click target — a real anchor so the route transition
+                (document-level link listener) owns the navigation */}
+            <a
+              className="wki-frame-link"
+              href={SLOTS[0].href}
+              aria-label={`${SLOTS[0].name}: open the case study`}
+            />
+
+            {/* the pointer pill (reel-cursor grammar) */}
+            <div className="reel-cursor wki-cursor" aria-hidden>
+              <span className="rc-center">
+                <span className="rc-pill">
+                  Open the case
+                  <svg viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M3 13 13 3M5.5 3H13v7.5"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+              </span>
+            </div>
+          </div>
+          <p className="wki-count t-meta" data-anim="wki-chrome" aria-hidden>
+            <span className="t-num">01 / 0{N}</span>
+          </p>
+        </div>
+      </div>
+
+      {/* ═══════════ the flow (mobile / reduced motion / no JS) ═══════════ */}
+      <div className="wki-flow">
+        <header className="wki-fhead">
+          <p className="t-meta wki-label" data-anim="wki-head">
+            The work
+          </p>
+          <div className="wki-sectors" data-anim="wki-head">
+            {sectors.map((s, i) => (
+              <a key={s} href={`#wki-${SLOTS[i].key}`} className="wki-chip">
+                {s}
+              </a>
+            ))}
+          </div>
+        </header>
+
+        {SLOTS.map((s, i) => (
+          <article key={s.key} id={`wki-${s.key}`} className="wki-fcard">
+            <Link href={s.href} className="wki-fwell-link" aria-label={s.name}>
+              {s.project ? (
+                <span className="wki-fwell" data-slug={s.project.slug}>
+                  <Image
+                    src={s.project.cover.src}
+                    alt={s.project.cover.alt}
+                    fill
+                    sizes="92vw"
+                    className="wki-img"
+                  />
+                </span>
+              ) : (
+                <span className="wki-fwell closer-card wki-open-face">
+                  <Monogram className="h-[26px] w-[26px] opacity-80" />
+                  <span className="t-display-lg">Your business, here</span>
+                </span>
+              )}
+            </Link>
+            <p className="t-meta wki-kicker">
+              <span className="t-num">0{i + 1}</span> · {s.meta} · {s.sector}
+            </p>
+            <Link href={s.href} className="wki-fname t-display-lg">
+              {s.name}
+            </Link>
+            <p className="wki-desc">{s.desc}</p>
+            <CTA
+              href={s.href}
+              label={s.cta}
+              tone="paper"
+              className="mt-fib-3"
+            />
+          </article>
+        ))}
       </div>
     </section>
   );

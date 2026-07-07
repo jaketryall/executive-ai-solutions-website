@@ -43,13 +43,13 @@ export function Closer() {
       ScrollTrigger.create({
         trigger: root.current,
         start: "top top",
-        end: "+=160%",
+        end: "+=100%",
         pin: q(".closer-stage")[0],
         invalidateOnRefresh: true,
       });
 
       /* ONE master scrubbed timeline across the whole section — approach
-         (1 viewport) · hold (1.6, the pin) · exit (0.45) — durations in
+         (1 viewport) · hold (1.0, the pin) · exit (0.45) — durations in
          viewport units so the playhead maps 1:1 onto scroll. A single
          timeline means a single writer per property: the grow and shrink
          can never race each other during fast traversals (two separate
@@ -90,7 +90,7 @@ export function Closer() {
         { x: () => window.innerWidth * 1.1 },
         {
           x: () => -(drift.offsetWidth - card.clientWidth + pad()),
-          duration: 2.6,
+          duration: 2.0,
         },
         0
       );
@@ -98,8 +98,8 @@ export function Closer() {
         tl.fromTo(
           cta,
           { autoAlpha: 0, y: 21 },
-          { autoAlpha: 1, y: 0, duration: 0.16 },
-          2.28
+          { autoAlpha: 1, y: 0, duration: 0.12 },
+          1.88
         );
       }
 
@@ -117,7 +117,7 @@ export function Closer() {
           duration: 0.45,
           immediateRender: false,
         },
-        2.6
+        2.0
       );
 
       // the lean — the line skews with scroll velocity, so even the hold
