@@ -70,9 +70,6 @@ export function Hero() {
       const typeEl = q(".g-q")[0] as HTMLElement;
       const searchCard = q("[data-dock-card]")[0] as HTMLElement;
 
-      // revisits skip the enactment — the ad is already a known fact
-      const seen = sessionStorage.getItem("eas-hero-seen") === "1";
-
       if (reducedMotion()) {
         gsap.set([navEl, ...q("[data-anim]")], { autoAlpha: 1 });
         gsap.set(q(".mask-inner"), { yPercent: 0, y: 0 });
@@ -208,36 +205,31 @@ export function Hero() {
           .call(settle);
       };
 
-      if (seen) {
-        // revisit: the result is a known fact — no typing, no climb
-        if (typeEl) typeEl.textContent = QUERY;
-        tl.set(q(".g-list > *"), { autoAlpha: 1 }, 0.2).call(settle, [], 0.2);
-      } else {
-        const typeState = { n: 0 };
-        tl.to(
-          typeState,
-          {
-            n: QUERY.length,
-            duration: 0.7,
-            // diegetic typing: constant character rate, not an easing choice
-            ease: "none",
-            snap: { n: 1 },
-            onUpdate: () => {
-              if (typeEl) typeEl.textContent = QUERY.slice(0, typeState.n);
-            },
+      // the enactment plays on every load — it IS the hero moment
+      const typeState = { n: 0 };
+      tl.to(
+        typeState,
+        {
+          n: QUERY.length,
+          duration: 0.7,
+          // diegetic typing: constant character rate, not an easing choice
+          ease: "none",
+          snap: { n: 1 },
+          onUpdate: () => {
+            if (typeEl) typeEl.textContent = QUERY.slice(0, typeState.n);
           },
-          0.45
+        },
+        0.45
+      )
+        // the results arrive — and the client is buried at the bottom
+        .fromTo(
+          q(".g-list > *"),
+          { autoAlpha: 0, y: 13 },
+          { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.1 },
+          1.15
         )
-          // the results arrive — and the client is buried at the bottom
-          .fromTo(
-            q(".g-list > *"),
-            { autoAlpha: 0, y: 13 },
-            { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.1 },
-            1.15
-          )
-          // a beat to read the injustice, then the climb
-          .call(runClimb, [], "+=0.45");
-      }
+        // a beat to read the injustice, then the climb
+        .call(runClimb, [], "+=0.45");
 
       tl
         // the resolve — the sequence lands on the one action
@@ -249,7 +241,6 @@ export function Hero() {
         )
         .call(() => {
           entranceDone = true;
-          sessionStorage.setItem("eas-hero-seen", "1");
           sync();
         });
 
