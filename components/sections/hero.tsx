@@ -68,7 +68,6 @@ export function Hero() {
       const q = gsap.utils.selector(root);
       const navEl = document.querySelector(".site-nav");
       const typeEl = q(".g-q")[0] as HTMLElement;
-      const adEl = q("[data-ad]")[0] as HTMLElement;
       const searchCard = q("[data-dock-card]")[0] as HTMLElement;
 
       // revisits skip the enactment — the ad is already a known fact
@@ -78,8 +77,15 @@ export function Hero() {
         gsap.set([navEl, ...q("[data-anim]")], { autoAlpha: 1 });
         gsap.set(q(".mask-inner"), { yPercent: 0, y: 0 });
         if (typeEl) typeEl.textContent = QUERY;
-        gsap.set([searchCard, adEl], { autoAlpha: 1, y: 0 });
-        return; // static: assembled search, first roll pair resting
+        gsap.set([searchCard, ...q(".g-list > *")], { autoAlpha: 1, y: 0 });
+        // rest state: the climb already happened
+        const list = q("[data-glist]")[0] as HTMLElement;
+        const you = q("[data-you]")[0] as HTMLElement;
+        if (list && you) {
+          list.insertBefore(you, list.firstChild);
+          you.classList.add("is-lit");
+        }
+        return; // static: assembled search, the ad on top
       }
 
       /* ── the paired roll — a character wave through both lines: the old
@@ -178,10 +184,34 @@ export function Hero() {
           0.2
         );
 
+      /* the climb — measured at runtime, transforms only; on landing the
+         DOM order becomes the truth and the row lights up as the ad */
+      const list = q("[data-glist]")[0] as HTMLElement;
+      const you = q("[data-you]")[0] as HTMLElement;
+      const settle = () => {
+        if (!list || !you) return;
+        list.insertBefore(you, list.firstChild);
+        gsap.set(Array.from(list.children), { clearProps: "transform" });
+        you.classList.add("is-lit");
+      };
+      const runClimb = () => {
+        if (!list || !you) return;
+        const ghosts = Array.from(list.children).filter(
+          (el) => el !== you
+        ) as HTMLElement[];
+        const delta = you.offsetTop - (list.children[0] as HTMLElement).offsetTop;
+        const push = you.offsetHeight + 14; // the list gap
+        gsap
+          .timeline({ defaults: { ease: EASE_STRUCTURE } })
+          .to(you, { y: -delta, duration: 0.8 })
+          .to(ghosts, { y: push, duration: 0.8 }, 0)
+          .call(settle);
+      };
+
       if (seen) {
-        // revisit: the ad is already assembled, no typing
+        // revisit: the result is a known fact — no typing, no climb
         if (typeEl) typeEl.textContent = QUERY;
-        tl.set(adEl, { autoAlpha: 1, y: 0 }, 0.2);
+        tl.set(q(".g-list > *"), { autoAlpha: 1 }, 0.2).call(settle, [], 0.2);
       } else {
         const typeState = { n: 0 };
         tl.to(
@@ -197,12 +227,16 @@ export function Hero() {
             },
           },
           0.45
-        ).fromTo(
-          adEl,
-          { autoAlpha: 0, y: 13 },
-          { autoAlpha: 1, y: 0, duration: 0.7 },
-          1.15
-        );
+        )
+          // the results arrive — and the client is buried at the bottom
+          .fromTo(
+            q(".g-list > *"),
+            { autoAlpha: 0, y: 13 },
+            { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.1 },
+            1.15
+          )
+          // a beat to read the injustice, then the climb
+          .call(runClimb, [], "+=0.45");
       }
 
       tl
@@ -330,25 +364,32 @@ export function Hero() {
               <span className="g-q" />
               <span className="g-caret" />
             </div>
-            <div data-ad className="g-ad" aria-hidden>
-              <p className="g-sponsored">Sponsored</p>
-              <p className="g-url">{AD.url}</p>
-              <p className="g-title">{AD.title}</p>
-              <p className="g-desc">{AD.desc}</p>
-              <div className="g-ext">
-                <a>Discovery flights</a>
-                <a>Fleet and rates</a>
-                <a>Book a tour</a>
-              </div>
-            </div>
-            <div className="g-org" aria-hidden>
+            {/* the results list — the client starts BURIED under the
+                directories, then climbs to the top and lights up as the ad.
+                The pitch, enacted. */}
+            <div className="g-list" data-glist aria-hidden>
               <div className="g-org-row">
-                <p className="g-org-title">Best flight schools near Phoenix, ranked</p>
                 <p className="g-org-url">somedirectory.com &rsaquo; arizona</p>
+                <p className="g-org-title">Best flight schools near Phoenix, ranked</p>
               </div>
               <div className="g-org-row">
-                <p className="g-org-title">Learning to fly: costs, schools and licenses</p>
                 <p className="g-org-url">aviationforum.com &rsaquo; threads</p>
+                <p className="g-org-title">Learning to fly: costs, schools and licenses</p>
+              </div>
+              <div className="g-row" data-you>
+                <p className="g-sponsored">Sponsored</p>
+                <p className="g-url">{AD.url}</p>
+                <p className="g-title">{AD.title}</p>
+                <div className="g-expand">
+                  <div className="g-expand-in">
+                    <p className="g-desc">{AD.desc}</p>
+                    <div className="g-ext">
+                      <a>Discovery flights</a>
+                      <a>Fleet and rates</a>
+                      <a>Book a tour</a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </ArtifactFrame>

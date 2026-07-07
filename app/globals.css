@@ -871,9 +871,10 @@ main {
   color: rgba(19, 20, 19, 0.24);
 }
 
-/* ghosted organic results — the rest of the page, deliberately dim: the ad
-   sits above them (the argument, made diegetically) */
-.g-org {
+/* the results list — ghosted organics + the client's row. The client
+   starts buried, climbs to the top (transforms, then DOM order becomes
+   truth), and lights up as the ad. Dim vs lit is the whole story. */
+.g-list {
   margin-top: 21px;
   padding-top: 18px;
   border-top: 1px solid rgba(19, 20, 19, 0.08);
@@ -887,9 +888,54 @@ main {
   color: rgba(19, 20, 19, 0.38);
 }
 .g-org-url {
-  margin-top: 2px;
   font-size: 0.75rem;
   color: rgba(19, 20, 19, 0.26);
+}
+.g-org-row .g-org-title {
+  margin-top: 2px;
+}
+/* the client's row — pre-climb it reads as one more organic (title a
+   shade brighter: findable, not lit); post-climb .is-lit turns it into
+   the ad: Sponsored appears, the title takes the click color, the desc
+   and sitelinks unfold (grid-rows, no measuring) */
+.g-row .g-sponsored {
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-ui);
+}
+.g-row.is-lit .g-sponsored {
+  height: auto;
+  opacity: 1;
+}
+.g-row .g-url {
+  margin-top: 0;
+}
+.g-row .g-title {
+  color: rgba(19, 20, 19, 0.55);
+  transition: color 0.45s var(--ease-ui);
+}
+.g-row.is-lit .g-title {
+  color: var(--color-accent);
+}
+.g-expand {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s var(--ease-ui);
+}
+.g-row.is-lit .g-expand {
+  grid-template-rows: 1fr;
+}
+.g-expand-in {
+  overflow: hidden;
+  min-height: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .g-row .g-sponsored,
+  .g-row .g-title,
+  .g-expand {
+    transition: none;
+  }
 }
 
 .ov {
