@@ -871,6 +871,27 @@ main {
   color: rgba(19, 20, 19, 0.24);
 }
 
+/* ghosted organic results — the rest of the page, deliberately dim: the ad
+   sits above them (the argument, made diegetically) */
+.g-org {
+  margin-top: 21px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(19, 20, 19, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.g-org-title {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: rgba(19, 20, 19, 0.38);
+}
+.g-org-url {
+  margin-top: 2px;
+  font-size: 0.75rem;
+  color: rgba(19, 20, 19, 0.26);
+}
+
 .ov {
   position: fixed;
   inset: 0;

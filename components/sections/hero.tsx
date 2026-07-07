@@ -37,15 +37,6 @@ const ROLL_LOCK: Record<string, number> = {
   other: 0,
 };
 
-/* static proof chips (the old marquee, retired to glanceable rest — prices a
-   buyer can read in one second, no motion) */
-const CHIPS = [
-  "Ads managed from $500/mo",
-  "Sites from $2.5k",
-  "Fixed quote in 2 days",
-  "Hand-coded, no templates",
-];
-
 const QUERY = "flight school near me";
 
 /* PLACEHOLDER — swap with the real Desert Wings ad, verbatim from Google Ads
@@ -222,12 +213,6 @@ export function Hero() {
           { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
           1.35
         )
-        .fromTo(
-          q("[data-anim='chips']"),
-          { autoAlpha: 0 },
-          { autoAlpha: 1, duration: 0.5, ease: EASE_UI },
-          1.55
-        )
         .call(() => {
           entranceDone = true;
           sessionStorage.setItem("eas-hero-seen", "1");
@@ -322,14 +307,6 @@ export function Hero() {
               Build your site in 60 seconds
             </a>
           </div>
-
-          <div data-anim="chips" className="mt-fib-4 flex max-w-[480px] flex-wrap gap-fib-1">
-            {CHIPS.map((c) => (
-              <span key={c} className="chip">
-                {c}
-              </span>
-            ))}
-          </div>
         </div>
 
         {/* ── right zone: the enactment. The card overhangs the seam (fib-55
@@ -362,6 +339,16 @@ export function Hero() {
                 <a>Discovery flights</a>
                 <a>Fleet and rates</a>
                 <a>Book a tour</a>
+              </div>
+            </div>
+            <div className="g-org" aria-hidden>
+              <div className="g-org-row">
+                <p className="g-org-title">Best flight schools near Phoenix, ranked</p>
+                <p className="g-org-url">somedirectory.com &rsaquo; arizona</p>
+              </div>
+              <div className="g-org-row">
+                <p className="g-org-title">Learning to fly: costs, schools and licenses</p>
+                <p className="g-org-url">aviationforum.com &rsaquo; threads</p>
               </div>
             </div>
           </ArtifactFrame>

@@ -117,25 +117,6 @@ export function Proof() {
             </p>
           </header>
 
-          {/* 1 · the click — their live listing (real) */}
-          <div data-anim="support" data-drift="-2" className="w-[min(100%,420px)]">
-            <ArtifactFrame
-              variant="card"
-              tone="paper"
-              label="Desert Wings Flight School's live Google listing"
-            >
-              <div className="g-ad mt-0! border-t-0! pt-0!">
-                <p className="g-url">desertwingsflightschool.com</p>
-                <p className="g-title">Flight Training in Mesa, AZ | Desert Wings Flight School</p>
-                <p className="g-desc">
-                  Career-pilot training at Falcon Field, Mesa AZ. PPL through
-                  CFI on a single path.
-                </p>
-                <p className="mt-fib-2 t-meta text-ink/50">Their live listing on Google</p>
-              </div>
-            </ArtifactFrame>
-          </div>
-
           {/* 2 · the landing — the FLAGSHIP at full river width, bleeding
               fib-34 into the gutter */}
           <div data-anim="flagship" data-drift="-5" className="md:-mr-fib-4">
