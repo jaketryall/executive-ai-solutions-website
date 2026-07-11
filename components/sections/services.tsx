@@ -4,8 +4,10 @@ import Image from "next/image";
 import { useRef } from "react";
 import {
   gsap,
+  ScrollTrigger,
   useGSAP,
   EASE_STRUCTURE,
+  EASE_UI,
   reducedMotion,
 } from "@/components/anim/ease";
 import { CTA } from "@/components/ui/cta";
@@ -19,20 +21,20 @@ import { Monogram } from "@/components/ui/monogram";
    R / L / R down the section. Light canvas — the dark chapter starts at
    Process, one seam later. */
 
-const CHAT_Q = "Do you offer discovery flights on weekends?";
 
 export function Services() {
   const root = useRef<HTMLElement>(null!);
 
   useGSAP(
-    () => {
+    (context) => {
       const q = gsap.utils.selector(root);
 
       if (reducedMotion()) {
         gsap.set(q("[data-anim]"), { autoAlpha: 1, x: 0, y: 0, scale: 1 });
-        const chatQ = q(".chat-q")[0] as HTMLElement;
-        if (chatQ) chatQ.textContent = CHAT_Q;
-        return;
+        q("[data-svc-ad]")[0]?.classList.add("is-lit");
+        const typing = q("[data-ctyping]")[0];
+        if (typing) gsap.set(typing, { display: "none" });
+        return; // static: lit ad, tour resting, full chat exchange
       }
 
       /* per-row choreography: copy first, artifact scales-and-settles LAST
@@ -55,59 +57,72 @@ export function Services() {
           "-=0.35"
         );
 
-        /* loop-once micro-demo per artifact (viewport-triggered, one action) */
-        if (i === 0) {
-          // 01 · the ad's sitelink extension ticks in
-          tl.fromTo(
-            row.querySelectorAll(".g-ext a"),
-            { autoAlpha: 0, y: 8 },
-            { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.1 },
-            "+=0.2"
-          );
-        }
-        if (i === 2) {
-          // 03 · the chat types its one question, then the answer arrives
-          const chatQ = row.querySelector(".chat-q") as HTMLElement;
-          const state = { n: 0 };
-          tl.to(
-            state,
-            {
-              n: CHAT_Q.length,
-              duration: 0.9,
-              ease: "none", // diegetic typing, constant rate
-              snap: { n: 1 },
-              onUpdate: () => {
-                if (chatQ) chatQ.textContent = CHAT_Q.slice(0, state.n);
-              },
-            },
-            "+=0.15"
-          ).fromTo(
-            row.querySelector(".chat-a"),
-            { autoAlpha: 0, y: 10 },
-            { autoAlpha: 1, y: 0, duration: 0.55 },
-            ">-0.05"
-          );
-        }
       });
 
-      // 02 · contained one-plane parallax on the landing screenshot
-      const shot = q("[data-svc-parallax]")[0] as HTMLElement;
-      if (shot) {
-        gsap.fromTo(
-          shot,
-          { yPercent: -6 },
-          {
-            yPercent: 6,
-            ease: "none",
-            scrollTrigger: {
-              trigger: shot.closest("[data-svc-row]"),
-              start: "top bottom",
-              end: "bottom top",
-              scrub: true,
-            },
-          }
-        );
+      /* ── the three stage demos, LOOPING (visibility-governed): each
+         artifact runs its stage the way it actually behaves ── */
+      const loops: gsap.core.Timeline[] = [];
+
+      // 01 · the promotion cycle: listing lights up as the ad, holds, dims
+      const ad = q("[data-svc-ad]")[0] as HTMLElement;
+      if (ad) {
+        const c = gsap.timeline({ repeat: -1, paused: true });
+        c.call(() => ad.classList.add("is-lit"))
+          .to({}, { duration: 3.4 })
+          .call(() => ad.classList.remove("is-lit"))
+          .to({}, { duration: 1.8 });
+        loops.push(c);
       }
+
+      // 02 · the site tour, self-scrolling: glide down, settle, ease back up
+      const tourImg = q("[data-svc-tour]")[0] as HTMLElement;
+      if (tourImg) {
+        // visible window = w/1.65 of a 1.544w-tall image → ~61% travel
+        const c = gsap.timeline({ repeat: -1, paused: true });
+        c.to(tourImg, { yPercent: -60.7, duration: 15, ease: "none" })
+          .to({}, { duration: 0.9 })
+          .to(tourImg, { yPercent: 0, duration: 2.4, ease: EASE_STRUCTURE })
+          .to({}, { duration: 1.1 });
+        loops.push(c);
+      }
+
+      // 03 · the exchange as it actually feels: sent → typing → answered
+      const chat = q("[data-svc-chat]")[0] as HTMLElement;
+      if (chat) {
+        const cq = chat.querySelector("[data-cq]");
+        const typing = chat.querySelector("[data-ctyping]");
+        const ca = chat.querySelector("[data-ca]");
+        const c = gsap.timeline({ repeat: -1, paused: true });
+        c.set([cq, ca], { autoAlpha: 0, y: 8 })
+          .set(typing, { autoAlpha: 0 })
+          .to({}, { duration: 0.5 })
+          .to(cq, { autoAlpha: 1, y: 0, duration: 0.4, ease: EASE_UI })
+          .to(typing, { autoAlpha: 1, duration: 0.25, ease: EASE_UI }, "+=0.55")
+          .to(typing, { autoAlpha: 0, duration: 0.2, ease: EASE_UI }, "+=1.5")
+          .to(ca, { autoAlpha: 1, y: 0, duration: 0.45, ease: EASE_UI }, "<0.1")
+          .to({}, { duration: 3.6 });
+        loops.push(c);
+      }
+
+      // the demos run only while the card is on screen and the tab is visible
+      let demosInView = false;
+      const syncLoops = () => {
+        const on = demosInView && !document.hidden;
+        loops.forEach((l) => (on ? l.play() : l.pause()));
+      };
+      ScrollTrigger.create({
+        trigger: root.current,
+        start: "top bottom",
+        end: "bottom top",
+        onToggle: (self) => {
+          demosInView = self.isActive;
+          syncLoops();
+        },
+      });
+      document.addEventListener("visibilitychange", syncLoops);
+      context.add(() => () =>
+        document.removeEventListener("visibilitychange", syncLoops)
+      );
     },
     { scope: root }
   );
@@ -155,20 +170,26 @@ export function Services() {
                   tone="paper"
                   label="The Desert Wings search ad with sitelink extensions"
                 >
-                  <div className="g-ad mt-0! border-t-0! pt-0!">
+                  {/* the promotion, looping in miniature: a plain listing
+                      lights up as the ad, holds, dims, repeats */}
+                  <div className="g-row" data-svc-ad>
                     <p className="g-sponsored">Sponsored</p>
                     <p className="g-url">desertwingsflightschool.com</p>
                     {/* PLACEHOLDER — swap with the real Desert Wings ad, verbatim */}
                     <p className="g-title">
                       Desert Wings Flight School | Learn to Fly at Falcon Field
                     </p>
-                    <p className="g-desc">
-                      Discovery flights and PPL through CFI training in Mesa, AZ.
-                    </p>
-                    <div className="g-ext" aria-hidden>
-                      <a>Discovery flights</a>
-                      <a>Fleet and rates</a>
-                      <a>Book a tour</a>
+                    <div className="g-expand">
+                      <div className="g-expand-in">
+                        <p className="g-desc">
+                          Discovery flights and PPL through CFI training in Mesa, AZ.
+                        </p>
+                        <div className="g-ext" aria-hidden>
+                          <a>Discovery flights</a>
+                          <a>Fleet and rates</a>
+                          <a>Book a tour</a>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </ArtifactFrame>
@@ -197,19 +218,19 @@ export function Services() {
                 <ArtifactFrame
                   variant="chrome"
                   tone="paper"
-                  url="desertwingsflightschool.com/fleet"
-                  label="The Desert Wings fleet page we designed and built"
+                  url="desertwingsflightschool.com"
+                  label="The Desert Wings site we designed and built, scrolling"
                   bodyClassName="!p-0"
                 >
                   <div className="overflow-hidden rounded-[10px]" style={{ aspectRatio: "1.65" }}>
                     <Image
-                      data-svc-parallax
-                      src="/work/desert-wings-fleet.png"
-                      alt="The custom fleet page built for Desert Wings Flight School"
-                      width={1200}
-                      height={800}
+                      data-svc-tour
+                      src="/work/dw-tour.jpg"
+                      alt="The Desert Wings site we designed and built, scrolling"
+                      width={2880}
+                      height={4446}
                       sizes="(min-width: 821px) 46vw, 92vw"
-                      className="block h-[112%] w-full object-cover object-top"
+                      className="block h-auto w-full"
                     />
                   </div>
                 </ArtifactFrame>
@@ -245,10 +266,17 @@ export function Services() {
                   tone="paper"
                   label="Ask-this-site chat answering a visitor"
                 >
-                  <div className="chat-card mt-0! flex-none! border-0! bg-transparent! p-fib-1!">
-                    <p className="chat-q" />
-                    <div className="chat-a">
-                      <Monogram className="mt-[3px] h-[16px] w-[16px] shrink-0 opacity-70" />
+                  <div className="chat-thread" data-svc-chat>
+                    <div className="chat-b chat-b--user" data-cq>
+                      <p>Do you offer discovery flights on weekends?</p>
+                    </div>
+                    <div className="chat-b chat-b--bot chat-b--typing" data-ctyping aria-hidden>
+                      <span className="ct-dot" />
+                      <span className="ct-dot" />
+                      <span className="ct-dot" />
+                    </div>
+                    <div className="chat-b chat-b--bot" data-ca>
+                      <Monogram className="mt-[3px] h-[15px] w-[15px] shrink-0 opacity-70" />
                       <p>
                         Yes. Saturday and Sunday mornings from Falcon Field.
                         Want me to book you one?
