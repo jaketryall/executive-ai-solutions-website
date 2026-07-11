@@ -194,7 +194,7 @@ export function Process() {
         ScrollTrigger.create({
           trigger: root.current,
           start: "top 60%",
-          end: "bottom 40%",
+          end: "bottom 12%",
           onToggle: (self) => {
             if (ground)
               (ground as HTMLElement).style.backgroundColor = self.isActive ? DARK : "";
@@ -224,7 +224,7 @@ export function Process() {
       ScrollTrigger.create({
         trigger: root.current,
         start: "top 60%",
-        end: "bottom 40%",
+        end: "bottom 12%",
         onToggle: (self) => setRoom(self.isActive),
         onRefresh: (self) => setRoom(self.isActive, true),
       });
@@ -309,15 +309,24 @@ export function Process() {
 
       const mm = gsap.matchMedia();
 
-      /* ── desktop: the row lands as one cascade, L→R — column, numeral fill,
-         then its demo plays; the whole story runs once in ~2.5s ── */
+      /* ── desktop: the GUIDED build, no pin (Jake: no scroll-jack) — the
+         same L→R sequence scrubbed to the section's NATURAL travel through
+         the viewport: steps arrive one at a time as the row rises, each
+         staying as the next lands, and the scroll never gets captured.
+         Scrolling back rewinds the build — guided both ways. ── */
       mm.add("(min-width: 821px)", () => {
         const tl = gsap.timeline({
           defaults: { ease: EASE_STRUCTURE, overwrite: "auto" },
-          scrollTrigger: { trigger: q(".pd-steps")[0], start: "top 72%", once: true },
+          scrollTrigger: {
+            trigger: q(".pd-steps")[0],
+            start: "top 94%",
+            end: "top 22%",
+            scrub: 0.5,
+            invalidateOnRefresh: true,
+          },
         });
         steps.forEach((el, i) => {
-          const at = i * 0.14;
+          const at = i * 1.9;
           tl.fromTo(
             el,
             { autoAlpha: 0, y: 26 },
@@ -330,11 +339,18 @@ export function Process() {
               f,
               { clipPath: "inset(100% 0 0 0)" },
               { clipPath: "inset(0% 0 0 0)", duration: 0.5 },
-              at + 0.25
+              at + 0.45
             );
-          players[i](tl, at + 0.4);
+          players[i](tl, at + 0.7);
         });
-        if (cta) tl.fromTo(cta, { autoAlpha: 0, y: 13 }, { autoAlpha: 1, y: 0, duration: 0.6 }, 1.1);
+        if (cta)
+          tl.fromTo(
+            cta,
+            { autoAlpha: 0, y: 13 },
+            { autoAlpha: 1, y: 0, duration: 0.6 },
+            steps.length * 1.9 - 0.4
+          );
+        tl.to({}, { duration: 0.9 }); // the settle — the full path holds before release
       });
 
       /* ── narrow screens: steps stack, each reveals + plays on its own ── */
@@ -379,9 +395,9 @@ export function Process() {
       data-nav="dark"
       className="zone-dark relative z-0 text-paper"
     >
-      <div className="wrap pb-[89px] pt-[89px] md:pb-[144px] md:pt-[144px]">
+      <div className="wrap py-fib-6">
         <div>
-          <h2 className="t-display-lg max-w-[16ch]">How a project runs</h2>
+          <h2 className="t-display-lg">How a project runs</h2>
           <p className="mt-[13px] max-w-[44ch] text-paper/70">
             Four steps from first call to a site that earns. Fixed quote up
             front, no surprises after.
@@ -390,7 +406,7 @@ export function Process() {
 
         {/* the whole path, visible at once — four steps, each with its own
             little artifact. The row steps down toward the handoff. */}
-        <div className="pd-steps mt-[34px] grid grid-cols-1 gap-y-[55px] md:mt-[55px] md:grid-cols-2 md:gap-x-[21px] md:gap-y-[68px] lg:grid-cols-4">
+        <div className="pd-steps mt-[34px] grid grid-cols-1 gap-y-[55px] md:mt-fib-4 md:grid-cols-2 md:gap-x-[21px] md:gap-y-[68px] lg:grid-cols-4">
           {STEPS.map((s, i) => {
             const Demo = DEMOS[i];
             return (

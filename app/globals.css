@@ -1024,6 +1024,18 @@ main {
   transform: rotate(1deg);
 }
 
+/* witness avatars — person marks in tinted circles (PLACEHOLDER: swap for
+   real owner photos as quotes land; faces read the most personal) */
+.pb-av {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
 .ov {
   position: fixed;
   inset: 0;

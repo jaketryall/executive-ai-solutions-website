@@ -10,6 +10,17 @@ import {
 } from "@/components/anim/ease";
 import { CTA } from "@/components/ui/cta";
 
+function PersonIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden className="h-[14px] w-[14px]">
+      <circle cx="10" cy="6.5" r="3.4" />
+      <path d="M10 11.4c-3.6 0-6.1 1.9-6.6 4.8-.1.5.3.9.8.9h11.6c.5 0 .9-.4.8-.9-.5-2.9-3-4.8-6.6-4.8Z" />
+    </svg>
+  );
+}
+
+const AV_TINTS = ["bg-accent/70 text-paper", "bg-ink/70 text-paper", "bg-accent-bright/50 text-ink"];
+
 /* ═══ PLACEHOLDER TRACKING — Jake is collecting three real quotes ═══
    Swap each QUOTES entry (text + name) as they land. Card 1 shares the DW
    voice with the proof section until his real band quote arrives; cards 2-3
@@ -111,8 +122,11 @@ export function PriceBeat() {
           &ldquo;{QUOTES[i].text}&rdquo;
         </p>
       </blockquote>
-      <figcaption className="t-meta mt-fib-2 text-ink/45">
-        {QUOTES[i].name}
+      <figcaption className="mt-fib-2 flex items-center gap-[8px]">
+        <span className={`pb-av ${AV_TINTS[i]}`}>
+          <PersonIcon />
+        </span>
+        <span className="t-meta text-ink/45">{QUOTES[i].name}</span>
       </figcaption>
     </figure>
   );
@@ -155,8 +169,11 @@ export function PriceBeat() {
                 &ldquo;{quo.text}&rdquo;
               </p>
             </blockquote>
-            <figcaption className="t-meta mt-fib-2 text-ink/45">
-              {quo.name}
+            <figcaption className="mt-fib-2 flex items-center gap-[8px]">
+              <span className={`pb-av ${AV_TINTS[QUOTES.indexOf(quo)]}`}>
+                <PersonIcon />
+              </span>
+              <span className="t-meta text-ink/45">{quo.name}</span>
             </figcaption>
           </figure>
         ))}
