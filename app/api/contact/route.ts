@@ -5,7 +5,9 @@ export async function POST(req: Request) {
   try {
     const { name, email, business, message, summary, build, buildUrl } = await req.json();
 
-    if (!name?.trim() || !email?.trim() || !message?.trim()) {
+    // email-first: it is the only required field (cognitive-ease signup);
+    // name/business/message enrich the lead when present
+    if (!email?.trim()) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
@@ -25,16 +27,15 @@ export async function POST(req: Request) {
       from: "Executive AI Solutions <onboarding@resend.dev>",
       to,
       replyTo: email,
-      subject: `Quote request from ${name}${business ? ` (${business})` : ""}`,
+      subject: `Quote request from ${name?.trim() ? name : email}${business ? ` (${business})` : ""}`,
       html: `
         <h2>New quote request</h2>
-        <p><strong>Name:</strong> ${esc(name)}</p>
+        ${name?.trim() ? `<p><strong>Name:</strong> ${esc(name)}</p>` : ""}
         <p><strong>Email:</strong> ${esc(email)}</p>
         ${business ? `<p><strong>Business:</strong> ${esc(business)}</p>` : ""}
         ${summary ? `<p><strong>Estimator summary:</strong> ${esc(summary)}</p>` : ""}
         ${build ? `<p><strong>Their build:</strong> ${esc(String(build).slice(0, 200))}${typeof buildUrl === "string" && /^https?:\/\/[^"'<>\s]+$/.test(buildUrl) ? ` — <a href="${esc(buildUrl.slice(0, 300))}">open it</a>` : ""}</p>` : ""}
-        <p><strong>Message:</strong></p>
-        <p>${esc(message).replace(/\n/g, "<br/>")}</p>
+        ${message?.trim() ? `<p><strong>Message:</strong></p><p>${esc(message).replace(/\n/g, "<br/>")}</p>` : "<p><em>Email-only quick request — the estimate context above is the brief.</em></p>"}
       `,
     });
 

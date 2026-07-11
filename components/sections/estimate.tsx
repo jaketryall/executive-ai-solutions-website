@@ -169,13 +169,10 @@ export function Estimate() {
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
     const errs: Record<string, string> = {};
-    if (!data.name?.trim()) errs.name = "We need a name to reply to";
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email ?? "")) errs.email = "That email doesn't look right";
-    if (!data.message?.trim()) errs.message = "Tell us a little about the project";
     setErrors(errs);
-    if (Object.keys(errs).length) {
-      const first = ["name", "email", "message"].find((k) => errs[k]);
-      if (first) (form.querySelector(`[name='${first}']`) as HTMLElement)?.focus();
+    if (errs.email) {
+      (form.querySelector("[name='email']") as HTMLElement)?.focus();
       return;
     }
 
@@ -363,41 +360,34 @@ export function Estimate() {
               </p>
             </div>
           ) : (
-            <form onSubmit={onSubmit} noValidate className="flex flex-col gap-[21px]">
-              <div className="grid gap-[21px] sm:grid-cols-2">
-                <div className={`field ${errors.name ? "is-invalid" : ""}`} data-anim="form">
-                  <input id="q-name" name="name" type="text" autoComplete="name" placeholder=" " aria-invalid={!!errors.name} aria-describedby={errors.name ? "q-name-err" : undefined} onInput={(e) => e.currentTarget.parentElement!.classList.toggle("has-value", !!e.currentTarget.value)} />
-                  <label htmlFor="q-name">Your name</label>
-                  <p className="field-error" id="q-name-err" role="alert">{errors.name}</p>
-                </div>
-                <div className={`field ${errors.email ? "is-invalid" : ""}`} data-anim="form">
+            <form onSubmit={onSubmit} noValidate className="flex flex-col gap-fib-3">
+              <p className="t-title max-w-[30ch]">
+                Get your estimate and a fixed quote. Just an email.
+              </p>
+              <div className="flex flex-col gap-fib-2 sm:flex-row sm:items-start">
+                <div className={`field flex-1 ${errors.email ? "is-invalid" : ""}`} data-anim="form">
                   <input id="q-email" name="email" type="email" autoComplete="email" placeholder=" " aria-invalid={!!errors.email} aria-describedby={errors.email ? "q-email-err" : undefined} onInput={(e) => e.currentTarget.parentElement!.classList.toggle("has-value", !!e.currentTarget.value)} />
-                  <label htmlFor="q-email">Email</label>
+                  <label htmlFor="q-email">Your email</label>
                   <p className="field-error" id="q-email-err" role="alert">{errors.email}</p>
                 </div>
+                <div data-anim="form" className="sm:pt-[6px]">
+                  <CTA
+                    type="submit"
+                    label={status === "sending" ? "Sending" : "Send it over"}
+                    tone="accent"
+                    disabled={status === "sending"}
+                  />
+                </div>
               </div>
-              <div className="field" data-anim="form">
-                <input id="q-business" name="business" type="text" autoComplete="organization" placeholder=" " onInput={(e) => e.currentTarget.parentElement!.classList.toggle("has-value", !!e.currentTarget.value)} />
-                <label htmlFor="q-business">Business name</label>
-              </div>
-              <div className={`field ${errors.message ? "is-invalid" : ""}`} data-anim="form">
-                <textarea id="q-message" name="message" rows={5} placeholder=" " aria-invalid={!!errors.message} aria-describedby={errors.message ? "q-message-err" : undefined} onInput={(e) => e.currentTarget.parentElement!.classList.toggle("has-value", !!e.currentTarget.value)} />
-                <label htmlFor="q-message">What do you need?</label>
-                <p className="field-error" id="q-message-err" role="alert">{errors.message}</p>
-              </div>
-              <div data-anim="form" className="flex flex-wrap items-center gap-[21px]">
-                <CTA
-                  type="submit"
-                  label={status === "sending" ? "Sending" : "Send it over"}
-                  tone="accent"
-                  disabled={status === "sending"}
-                />
-                {status === "error" && (
-                  <p className="t-meta text-[#d8a08a]" role="alert">
-                    That didn&apos;t send. Try again, or email us directly.
-                  </p>
-                )}
-              </div>
+              <p data-anim="form" className="t-meta text-paper/50">
+                Your estimate rides along automatically. No call, no spam,
+                one reply with your fixed quote.
+              </p>
+              {status === "error" && (
+                <p className="t-meta text-[#d8a08a]" role="alert">
+                  That didn&apos;t send. Try again, or email us directly.
+                </p>
+              )}
             </form>
           )}
 

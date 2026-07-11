@@ -41,9 +41,10 @@ export function PersistentCta() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
-    const zones = ["#estimate"]
-      .map((s) => document.querySelector(s))
-      .filter(Boolean) as Element[];
+    const zones = [
+      document.querySelector("#estimate"),
+      ...Array.from(document.querySelectorAll("[data-pcta-hide]")),
+    ].filter(Boolean) as Element[];
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {

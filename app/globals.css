@@ -961,6 +961,19 @@ main {
   }
 }
 
+/* ── the proof grow stage: reserves the full-bleed footprint so nothing
+   reflows while the framed landing page opens (clip-path only) ── */
+.proof-grow-stage {
+  position: relative;
+  width: 100%;
+  height: clamp(30rem, 82vh, 56rem);
+  margin-top: 55px;
+}
+.proof-grow-media {
+  position: absolute;
+  inset: 0;
+}
+
 .ov {
   position: fixed;
   inset: 0;

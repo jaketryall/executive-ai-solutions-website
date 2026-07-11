@@ -1,5 +1,6 @@
 import { Hero } from "@/components/sections/hero";
 import { Proof } from "@/components/sections/proof";
+import { PriceBeat } from "@/components/sections/price-beat";
 import { ValueReframe } from "@/components/sections/value-reframe";
 import { Services } from "@/components/sections/services";
 import { Process } from "@/components/sections/process";
@@ -13,6 +14,7 @@ export default function Home() {
     <>
       <Hero />
       <Proof />
+      <PriceBeat />
       <ValueReframe />
       <Services />
       <Process />

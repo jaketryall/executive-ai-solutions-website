@@ -115,10 +115,14 @@ export function ValueReframe() {
           <p data-anim="label" className="t-meta pt-[0.6em] uppercase text-ink/45">
             Our approach
           </p>
-          <p className="vr-line t-statement max-w-[34ch]">
-            Ads without a page that converts is paying rent on strangers. A
-            beautiful site nobody finds is a brochure in a drawer. You need
-            the whole click.
+          <p className="t-statement max-w-[34ch]">
+            <span>
+              Ads without a page that converts is paying rent on strangers.
+            </span>{" "}
+            <span className="vr-line">
+              A beautiful site nobody finds is a brochure in a drawer. You
+              need the whole click.
+            </span>
           </p>
         </div>
       </div>

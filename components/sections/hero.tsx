@@ -367,9 +367,6 @@ export function Hero() {
 
           <div data-anim="ctas" className="mt-fib-3 flex flex-wrap items-center gap-fib-2">
             <CTA href="#estimate" label="Get an instant estimate" tone="paper" />
-            <a href="#builder" className="u-link t-meta py-fib-2">
-              Build your site in 60 seconds
-            </a>
           </div>
         </div>
 
