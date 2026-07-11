@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { usePathname } from "next/navigation";
 import {
   gsap,
   ScrollTrigger,
@@ -17,6 +18,8 @@ import { RollLink } from "@/components/ui/roll-link";
 // the bottom viewport edge — the page's single intentional break.
 export function Footer() {
   const root = useRef<HTMLElement>(null!);
+  const pathname = usePathname();
+  const estimateHref = pathname === "/" ? "/#estimate" : "/pricing#estimate";
 
   useGSAP(
     () => {
@@ -82,7 +85,7 @@ export function Footer() {
               One call, a fixed quote, and a website that finally earns its keep
             </p>
             <div className="mt-[34px] flex flex-wrap items-center gap-[21px]">
-              <CTA href="/#estimate" label="Get an estimate" tone="ink" />
+              <CTA href={estimateHref} label="Get an estimate" tone="ink" />
               <a href="mailto:hello@executiveaisolutions.com" className="u-link t-meta text-ink/70">
                 hello@executiveaisolutions.com
               </a>
@@ -96,8 +99,11 @@ export function Footer() {
             <RollLink href="/#services" className="t-meta text-ink/70">
               Services
             </RollLink>
-            <RollLink href="/#estimate" className="t-meta text-ink/70">
+            <RollLink href="/pricing" className="t-meta text-ink/70">
               Pricing
+            </RollLink>
+            <RollLink href="/contact" className="t-meta text-ink/70">
+              Contact
             </RollLink>
             <RollLink href="#top" className="t-meta text-ink/70">
               Back to top

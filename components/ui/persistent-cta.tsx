@@ -74,7 +74,7 @@ export function PersistentCta() {
   return (
     <div ref={root} className="pcta">
       <CTA
-        href="/#estimate"
+        href={pathname === "/" ? "/#estimate" : "/pricing#estimate"}
         label="Get an instant estimate"
         meta={total !== null ? `$${total.toLocaleString()}` : undefined}
         tone="accent"

@@ -29,7 +29,7 @@ import {
 
 type FormStatus = "idle" | "sending" | "success" | "error";
 
-export function Estimate() {
+export function Estimate({ standalone = false }: { standalone?: boolean } = {}) {
   const root = useRef<HTMLElement>(null!);
   const [est, setEst] = useState<EstimateState>(DEFAULT_STATE);
   const [armed, setArmed] = useState(false);
@@ -202,7 +202,9 @@ export function Estimate() {
       id="estimate"
       ref={root}
       data-nav="dark"
-      className="dark-chapter relative z-10 mx-[8px] mt-[8px] rounded-[24px] md:mx-[13px] md:-mt-[89px]"
+      className={`dark-chapter relative z-10 mx-[8px] rounded-[24px] md:mx-[13px] ${
+        standalone ? "mt-[8px]" : "mt-[8px] md:-mt-[89px]"
+      }`}
     >
       {/* ── the instant estimate ── */}
       <div className="wrap pt-[89px]">

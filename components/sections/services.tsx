@@ -83,6 +83,7 @@ export function Services() {
           requestAnimationFrame(() => {
             expand.style.transition = "";
             spon.style.transition = "";
+            ScrollTrigger.refresh(); // late layout change: re-measure triggers
           });
         });
         const c = gsap.timeline({ repeat: -1, paused: true });
@@ -119,7 +120,10 @@ export function Services() {
           .to(typing, { autoAlpha: 1, duration: 0.25, ease: EASE_UI }, "+=0.55")
           .to(typing, { autoAlpha: 0, duration: 0.2, ease: EASE_UI }, "+=1.5")
           .to(ca, { autoAlpha: 1, y: 0, duration: 0.45, ease: EASE_UI }, "<0.1")
-          .to({}, { duration: 3.6 });
+          .to({}, { duration: 3.4 })
+          // the exchange closes softly before the next one begins
+          .to([cq, ca], { autoAlpha: 0, duration: 0.4, ease: EASE_UI, stagger: 0.06 })
+          .to({}, { duration: 0.4 });
         loops.push(c);
       }
 
@@ -198,11 +202,11 @@ export function Services() {
                     <p className="g-title">
                       Desert Wings Flight School | Learn to Fly at Falcon Field
                     </p>
+                    <p className="g-desc">
+                      Discovery flights and PPL through CFI training in Mesa, AZ.
+                    </p>
                     <div className="g-expand">
                       <div className="g-expand-in">
-                        <p className="g-desc">
-                          Discovery flights and PPL through CFI training in Mesa, AZ.
-                        </p>
                         <div className="g-ext" aria-hidden>
                           <a>Discovery flights</a>
                           <a>Fleet and rates</a>

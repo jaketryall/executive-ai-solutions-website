@@ -4,9 +4,10 @@
 
 ## Services
 
-- Custom website design and build: designed from your business, not a template. Tiers: Launch ($2.5k–$4.5k), Growth ($4.5k–$9k), Flagship ($9k–$18k+). Every project individually quoted.
-- SEO and Google Ads: local SEO, search-ready builds, managed Google Ads with conversion tracking. From $500/mo plus ad spend; SEO and content from $600/mo.
-- AI automation (new for 2026): ask-this-site chat answering from the client's own content, AI follow-ups, per-visitor page personalization. Quoted per project.
+- Google Ads management (https://executiveaisolutions.com/services/google-ads): campaigns built on real searches, conversion tracking, monthly cost-per-lead reporting. $500/mo plus ad spend, no minimum term.
+- Custom website design and build (https://executiveaisolutions.com/services/websites): designed from your business, not a template. Tiers: Launch ($2.5k–$4.5k), Growth ($4.5k–$9k), Flagship ($9k–$18k+). Every project individually quoted.
+- AI automation (https://executiveaisolutions.com/services/ai, new for 2026): ask-this-site chat answering from the client's own content, AI follow-ups, per-visitor page personalization. Quoted per project.
+- Full pricing sheet: https://executiveaisolutions.com/pricing (instant estimator included; fixed quote within two days).
 
 ## Proof
 
@@ -21,5 +22,6 @@
 
 ## Contact
 
-- Website: https://executiveaisolutions.com (instant estimate tool on the homepage)
+- Website: https://executiveaisolutions.com (instant estimate tool on the homepage and /pricing)
+- Contact page: https://executiveaisolutions.com/contact (reply within one business day)
 - Email: hello@executiveaisolutions.com

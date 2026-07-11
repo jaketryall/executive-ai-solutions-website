@@ -133,6 +133,15 @@ main {
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
+.t-display-title {
+  /* interior-page H1 (service / contact split heroes): one notch under
+     display-xl so a statement holds its mask-lines inside a split column */
+  font-family: var(--font-display);
+  font-weight: 650;
+  font-size: clamp(3rem, 5.8vw, 5.8rem);
+  line-height: 0.94;
+  letter-spacing: -0.03em;
+}
 .t-statement {
   /* the reading statement (Lesse register: ~43px at 1440, generous leading).
      A paragraph the fill paces you through; set for reading, not display. */
@@ -941,6 +950,13 @@ main {
 .g-row.is-lit .g-title {
   color: var(--color-accent);
 }
+.g-row .g-desc {
+  color: rgba(19, 20, 19, 0.42);
+  transition: color 0.45s var(--ease-ui);
+}
+.g-row.is-lit .g-desc {
+  color: rgba(19, 20, 19, 0.7);
+}
 .g-expand {
   display: grid;
   grid-template-rows: 0fr;
@@ -948,6 +964,9 @@ main {
 }
 .g-row.is-lit .g-expand {
   grid-template-rows: 1fr;
+  /* the sitelinks unfold a beat AFTER the colors turn — the light-up reads
+     as a sequence, not a switch-flip */
+  transition-delay: 0.22s;
 }
 .g-expand-in {
   overflow: hidden;

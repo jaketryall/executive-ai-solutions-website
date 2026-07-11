@@ -129,8 +129,10 @@ export function ServicePage({ service }: { service: ServiceDef }) {
   useGSAP(
     (_, contextSafe) => {
       const q = gsap.utils.selector(root);
+      const nav = document.querySelector(".site-nav");
 
       if (reducedMotion()) {
+        if (nav) gsap.set(nav, { autoAlpha: 1 });
         gsap.set(q("[data-anim]"), { autoAlpha: 1, x: 0, y: 0, scale: 1 });
         gsap.set(q(".mask-inner"), { yPercent: 0, y: 0 });
         gsap.set(q(".g-ext a"), { autoAlpha: 1 });
@@ -145,6 +147,9 @@ export function ServicePage({ service }: { service: ServiceDef }) {
       if (chatQEl) chatQEl.textContent = "";
       const enter = contextSafe!(() => {
         const tl = gsap.timeline({ defaults: { ease: EASE_STRUCTURE } });
+        // the nav is pre-hidden site-wide; a soft nav arrives with it visible
+        // (to() from 1 is a no-op), a hard load fades it in with the statement
+        if (nav) tl.to(nav, { autoAlpha: 1, duration: 0.6, ease: EASE_UI }, 0.1);
         tl.fromTo(
           q(".svc-hero .mask-inner"),
           { yPercent: 118, y: 0 },
@@ -395,7 +400,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
             <span data-anim="h-sub" className="chip">
               Stage {service.stageIndex} · {service.stage}
             </span>
-            <h1 className="t-display-xl t-display-xl--tight mt-fib-3">
+            <h1 className="t-display-title mt-fib-3">
               {service.title.map((line) => (
                 <span key={line} className="mask-line">
                   <span className="mask-inner">{line}</span>

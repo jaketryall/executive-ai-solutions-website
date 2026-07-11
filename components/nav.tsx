@@ -10,7 +10,7 @@ import { CTA } from "@/components/ui/cta";
 const LINKS = [
   { href: "/work", label: "Work" },
   { href: "/#services", label: "Services" },
-  { href: "/#estimate", label: "Pricing" },
+  { href: "/pricing", label: "Pricing" },
 ];
 
 /* The links capsule (the Lesse mechanism, decoded from their DOM): the
@@ -75,10 +75,10 @@ function LinksCapsule() {
         1,
       )}
     </div>,
-    // Services — the funnel, three stages
+    // Services — the funnel, three stages, each with its own page
     <div key="s" className="nav-panel nav-panel--3">
       {mini(
-        "/#services",
+        "/services/google-ads",
         <>
           <span className="text-trim">The click</span>
           <span className="nav-mini-meta">$500/mo + spend</span>
@@ -86,7 +86,7 @@ function LinksCapsule() {
         0,
       )}
       {mini(
-        "/#services",
+        "/services/websites",
         <>
           <span className="text-trim">The landing</span>
           <span className="nav-mini-meta">From $2.5k</span>
@@ -94,7 +94,7 @@ function LinksCapsule() {
         1,
       )}
       {mini(
-        "/#services",
+        "/services/ai",
         <>
           <span className="text-trim">The follow-up</span>
           <span className="nav-mini-meta">Per project</span>
@@ -102,21 +102,21 @@ function LinksCapsule() {
         2,
       )}
     </div>,
-    // Pricing — the two promises
+    // Pricing — the sheet and the estimator
     <div key="p" className="nav-panel">
       {mini(
-        "/#estimate",
+        "/pricing",
         <>
-          <span className="nav-mini-meta">Instant estimate</span>
-          <span className="text-trim">A live number from real pricing</span>
+          <span className="nav-mini-meta">The whole sheet</span>
+          <span className="text-trim">Our real prices, published</span>
         </>,
         0,
       )}
       {mini(
-        "/#estimate",
+        "/pricing#estimate",
         <>
-          <span className="nav-mini-meta">Fixed quote</span>
-          <span className="text-trim">In your inbox within two days</span>
+          <span className="nav-mini-meta">Instant estimate</span>
+          <span className="text-trim">A live number from real pricing</span>
         </>,
         1,
       )}
@@ -308,7 +308,7 @@ export function Nav() {
 
         <div className="flex items-center gap-fib-1">
           <CTA
-            href="/#estimate"
+            href={pathname === "/" ? "/#estimate" : "/pricing#estimate"}
             label="Get an estimate"
             tone="accent"
             className="nav-cta hidden sm:inline-flex"
@@ -339,7 +339,7 @@ export function Nav() {
       >
         <div className="flex h-full w-full flex-col justify-between px-fib-3 pb-fib-4 pt-fib-6">
           <nav className="flex flex-col gap-fib-2" aria-label="Menu">
-            {[...LINKS, { href: "/#contact", label: "Contact" }].map((l) => (
+            {[...LINKS, { href: "/contact", label: "Contact" }].map((l) => (
               <span key={l.href} className="mask-line">
                 <span className="mask-inner">
                   <Link
