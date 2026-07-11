@@ -281,6 +281,24 @@ export function Hero() {
       // fonts measurable AND the route-transition sheet landed
       Promise.all([document.fonts.ready, whenArrived()]).then(() => {
         if (!root.current) return;
+        /* lock the card to its LIT height before anything plays: force the
+           expanded state invisibly, measure, revert — same frame, no paint
+           between. The loop then rearranges content inside ONE height. */
+        if (list && you) {
+          const expand = you.querySelector(".g-expand") as HTMLElement;
+          const spon = you.querySelector(".g-sponsored") as HTMLElement;
+          if (expand && spon) {
+            expand.style.transition = "none";
+            expand.style.gridTemplateRows = "1fr";
+            spon.style.height = "auto";
+            list.style.minHeight = `${list.offsetHeight}px`;
+            expand.style.gridTemplateRows = "";
+            spon.style.height = "";
+            requestAnimationFrame(() => {
+              expand.style.transition = "";
+            });
+          }
+        }
         requestAnimationFrame(() =>
           requestAnimationFrame(() => {
             tl.play();
