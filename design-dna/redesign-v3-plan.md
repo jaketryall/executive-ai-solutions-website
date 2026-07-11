@@ -92,3 +92,12 @@ Adjacency check: overlap-bleed / split-two-zone / centered / numeral-index / spl
 4. Value reframe + services funnel: watermark spine, artifact-last choreography, R/L/R alternation, loop-once micro-demos, motif-carry seam → loop.
 5. Estimate chapter (five locked values, ads line in, quote out) + FAQ copy/interaction + closer drift-clip fix.
 6. FULL-PAGE PASS: seams + motif carry + adjacency check · greps: centering ≤2, ease parity, em-dash sweep, stuck-hidden sweep · optical pass on capsules + card tops (screenshot loop) · responsive buckets (mobile + ultrawide after every layout change, per standing rule) via cheap subagent; Fable reviews 1–2 key frames only.
+
+═══ ROSTER-GATED (build when real assets exist) ═══
+- TESTIMONIAL BAND ("Hear from the owners"): 2-3 REAL quote cards between
+  estimate and FAQ. Blocked until 2-3 real client quotes exist — a card row
+  of placeholder voices is a fiction wall, worse than no proof (2026-07-11).
+  Until then: ONE voice (DW owner) appears twice — full quote in proof's
+  band 3, one-line excerpt against the ask at the estimate form.
+- Facepile: swap "12+" count + the M/R initial circles for real client marks
+  (owner headshots out-convert logos).

@@ -383,6 +383,17 @@ export function Estimate() {
                 Your estimate rides along automatically. No call, no spam,
                 one reply with your fixed quote.
               </p>
+              {/* PLACEHOLDER — excerpt of the proof-section quote; swap with
+                  the real one (one voice on the page, echoed at the ask) */}
+              <figure data-anim="form" className="mt-fib-3">
+                <blockquote className="text-[1.0625rem] leading-[1.5] text-paper/75">
+                  &ldquo;The phone started ringing the week the ads went
+                  live.&rdquo;
+                </blockquote>
+                <figcaption className="t-meta mt-fib-1 text-paper/45">
+                  Owner, Desert Wings Flight School
+                </figcaption>
+              </figure>
               {status === "error" && (
                 <p className="t-meta text-[#d8a08a]" role="alert">
                   That didn&apos;t send. Try again, or email us directly.
