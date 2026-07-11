@@ -54,7 +54,7 @@ export function PriceBeat() {
 
   return (
     <section ref={root} data-pcta-hide className="relative">
-      <div className="wrap flex flex-col items-center py-fib-7 text-center">
+      <div className="wrap flex min-h-[88svh] flex-col items-center justify-center py-fib-6 text-center">
         <p data-anim="price" className="t-display-lg text-balance">
           Sites from <span className="text-accent">$2.5k</span>. Ads managed
           from <span className="text-accent">$500/mo</span>.

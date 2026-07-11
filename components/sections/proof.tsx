@@ -43,7 +43,6 @@ export function Proof() {
 
       if (reducedMotion()) {
         gsap.set(q("[data-anim]"), { autoAlpha: 1, y: 0, scale: 1 });
-        gsap.set(q("[data-grow-media]"), { clipPath: "none" });
         return;
       }
 
@@ -59,54 +58,20 @@ export function Proof() {
         }
       );
 
-      /* the GROW: the framed landing page opens toward full-bleed as you
-         scroll into it — clip-path carries the visible canvas margin AND the
-         corner radius in one compositor-friendly property */
-      const stage = q("[data-grow-stage]")[0] as HTMLElement;
-      const media = q("[data-grow-media]")[0] as HTMLElement;
-      if (stage && media) {
-        const mm = gsap.matchMedia();
-        mm.add("(min-width: 821px)", () => {
-          // rest inset ≈ the wrap column edges, computed from the viewport
-          const inset = () => {
-            const gutter = Math.max((window.innerWidth - 1280) / 2 + 55, 21);
-            return (gutter / window.innerWidth) * 100;
-          };
-          gsap.set(media, { willChange: "clip-path" });
-          const tw = gsap.fromTo(
-            media,
-            { clipPath: () => `inset(0% ${inset()}% 6% ${inset()}% round 18px)` },
-            {
-              clipPath: "inset(0% 0% 0% 0% round 0px)",
-              ease: "none",
-              scrollTrigger: {
-                trigger: stage,
-                start: "top 78%",
-                end: "top 8%",
-                scrub: 0.5,
-                invalidateOnRefresh: true,
-              },
-            }
-          );
-          return () => tw.kill();
-        });
-        mm.add("(max-width: 820px)", () => {
-          // mobile: no grow — a quiet reveal (the firewall branch)
-          gsap.set(media, { clipPath: "none" });
-          const tw = gsap.fromTo(
-            stage,
-            { autoAlpha: 0, y: 21 },
-            {
-              autoAlpha: 1,
-              y: 0,
-              duration: 0.8,
-              ease: EASE_STRUCTURE,
-              scrollTrigger: { trigger: stage, start: "top 80%", once: true },
-            }
-          );
-          return () => tw.kill();
-        });
-      }
+      // the flagship lands heavy (mass); the result panels snap in after
+      const flag = q("[data-anim='flagship']")[0];
+      gsap.fromTo(
+        flag,
+        { autoAlpha: 0, scale: 0.97, y: 34 },
+        {
+          autoAlpha: 1,
+          scale: 1,
+          y: 0,
+          duration: 1.15,
+          ease: EASE_STRUCTURE,
+          scrollTrigger: { trigger: flag, start: "top 78%", once: true },
+        }
+      );
       gsap.fromTo(
         q("[data-anim='result']"),
         { autoAlpha: 0, y: 21, scale: 0.97 },
@@ -135,7 +100,7 @@ export function Proof() {
             yPercent: 4,
             ease: "none",
             scrollTrigger: {
-              trigger: q("[data-grow-stage]")[0],
+              trigger: flag,
               start: "top bottom",
               end: "bottom top",
               scrub: true,
@@ -159,37 +124,38 @@ export function Proof() {
           </p>
         </header>
 
-      </div>
-
-      {/* band 2 · the landing — the scroll's REWARD: the page the ad clicks
-          to starts as a framed card in the column and GROWS open toward
-          full-bleed as you arrive in it (the page's one grow moment) */}
-      <div className="proof-grow-stage" data-grow-stage>
-        <div className="proof-grow-media" data-grow-media>
+        {/* band 2 · the landing — the page the ad opens, crisp and framed.
+            The mini ad-chip overlaps the frame so a GLANCE reads the
+            relationship: this ad, this page. */}
+        <div data-anim="flagship" className="relative mt-fib-6">
           <ArtifactFrame
             variant="chrome"
             tone="ink"
             url="desertwingsflightschool.com"
             label="The Desert Wings homepage the ad lands on, designed and built by us"
-            bodyClassName="p-0! pt-0! min-h-0 flex-1"
-            className="flex h-full flex-col"
+            bodyClassName="p-0! pt-0!"
           >
-            <div className="h-full overflow-hidden">
+            <div className="overflow-hidden" style={{ aspectRatio: "1.94" }}>
               <Image
                 data-proof-parallax
-                src="/hero/dw-hero.jpg"
+                src="/work/dw-home.jpg"
                 alt="The Desert Wings Flight School homepage the ad lands on"
-                width={1200}
-                height={800}
-                sizes="100vw"
-                className="block h-full w-full scale-[1.09] object-cover object-top"
+                width={2880}
+                height={1482}
+                sizes="(min-width: 821px) 82vw, 92vw"
+                className="block h-full w-full scale-[1.06] object-cover object-top"
               />
             </div>
           </ArtifactFrame>
+          {/* the ad, pinned to its page (compact echo of the hero artifact) */}
+          <div className="proof-ad-chip" aria-hidden>
+            <p className="g-sponsored">Sponsored</p>
+            <p className="g-url">desertwingsflightschool.com</p>
+            <p className="proof-ad-chip-title">
+              Desert Wings Flight School | Learn to Fly at Falcon Field
+            </p>
+          </div>
         </div>
-      </div>
-
-      <div className="wrap">
 
         {/* band 3 · the result + the voice, side by side */}
         <div className="mt-fib-3 grid gap-fib-3 md:grid-cols-2">

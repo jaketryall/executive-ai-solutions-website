@@ -961,17 +961,26 @@ main {
   }
 }
 
-/* ── the proof grow stage: reserves the full-bleed footprint so nothing
-   reflows while the framed landing page opens (clip-path only) ── */
-.proof-grow-stage {
-  position: relative;
-  width: 100%;
-  height: clamp(30rem, 82vh, 56rem);
-  margin-top: 55px;
-}
-.proof-grow-media {
+/* the ad chip pinned to the proof flagship — a compact paper echo of the
+   hero artifact, overlapping the frame corner so the glance reads
+   "this ad, this page" without a word */
+.proof-ad-chip {
   position: absolute;
-  inset: 0;
+  top: 55px;
+  left: -13px;
+  width: min(300px, 72vw);
+  padding: 13px 16px;
+  border-radius: var(--radius-frame);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  box-shadow: 0 24px 60px -24px rgba(19, 20, 19, 0.45);
+}
+.proof-ad-chip-title {
+  margin-top: 3px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-accent);
 }
 
 .ov {
