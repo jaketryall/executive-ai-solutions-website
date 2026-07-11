@@ -90,20 +90,24 @@ export function Proof() {
         }
       );
 
-      // the big media never sits static: contained one-plane parallax
-      const shot = q("[data-proof-parallax]")[0] as HTMLElement;
-      if (shot) {
+      /* the TOUR: the stitched landing page pans inside the frame as OUR
+         page scrolls — the visitor rides the post-click journey. Pan ends
+         where the image runs out: frame shows w/1.9 of a 1.544w image,
+         so the travel is ~66% of the image height. */
+      const tour = q("[data-tour]")[0] as HTMLElement;
+      if (tour) {
         gsap.fromTo(
-          shot,
-          { yPercent: -4 },
+          tour,
+          { yPercent: 0 },
           {
-            yPercent: 4,
+            yPercent: -65.9,
             ease: "none",
             scrollTrigger: {
               trigger: flag,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: true,
+              start: "top 80%",
+              end: "bottom 12%",
+              scrub: 0.6,
+              invalidateOnRefresh: true,
             },
           }
         );
@@ -135,15 +139,15 @@ export function Proof() {
             label="The Desert Wings homepage the ad lands on, designed and built by us"
             bodyClassName="p-0! pt-0!"
           >
-            <div className="overflow-hidden" style={{ aspectRatio: "1.94" }}>
+            <div className="overflow-hidden" style={{ aspectRatio: "1.9" }}>
               <Image
-                data-proof-parallax
-                src="/work/dw-home.jpg"
-                alt="The Desert Wings Flight School homepage the ad lands on"
+                data-tour
+                src="/work/dw-tour.jpg"
+                alt="Scrolling through the Desert Wings homepage the ad lands on"
                 width={2880}
-                height={1482}
+                height={4446}
                 sizes="(min-width: 821px) 82vw, 92vw"
-                className="block h-full w-full scale-[1.06] object-cover object-top"
+                className="block h-auto w-full"
               />
             </div>
           </ArtifactFrame>
