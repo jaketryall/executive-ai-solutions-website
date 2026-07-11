@@ -281,6 +281,18 @@ export function Hero() {
           { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
           0.95
         )
+        .fromTo(
+          q("[data-anim='proofrow']"),
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.4, ease: EASE_UI },
+          1.15
+        )
+        .fromTo(
+          q("[data-av]"),
+          { scale: 0.3, autoAlpha: 0 },
+          { scale: 1, autoAlpha: 1, duration: 0.6, stagger: 0.09 },
+          1.2
+        )
         .call(() => {
           entranceDone = true;
           sync();
@@ -367,6 +379,23 @@ export function Hero() {
 
           <div data-anim="ctas" className="mt-fib-3 flex flex-wrap items-center gap-fib-2">
             <CTA href="#estimate" label="Get an instant estimate" tone="paper" />
+          </div>
+
+          {/* PLACEHOLDER social proof — the count and the two initial circles
+              swap for real client marks as the roster grows; the DW mark is
+              real today */}
+          <div data-anim="proofrow" className="mt-fib-4 flex items-center gap-fib-2">
+            <div className="flex -space-x-[10px]" aria-hidden>
+              <span data-av className="hero-av bg-paper/90">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/work/desert-wings-logo.png" alt="" className="h-[19px] w-[19px] object-contain" />
+              </span>
+              <span data-av className="hero-av bg-accent/60 text-paper">M</span>
+              <span data-av className="hero-av bg-paper/20 text-paper">R</span>
+            </div>
+            <p className="t-meta text-paper/60">
+              Trusted by 12+ local business owners
+            </p>
           </div>
         </div>
 
