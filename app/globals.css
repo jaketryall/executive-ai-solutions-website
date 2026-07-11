@@ -997,6 +997,33 @@ main {
   will-change: transform;
 }
 
+/* the price-beat witnesses — quiet cards floating around the claim.
+   Positioned in %, contained by the section (overflow-x-clip), desktop only. */
+.pb-quote {
+  position: absolute;
+  width: min(300px, 24vw);
+  padding: 21px;
+  border-radius: var(--radius-panel);
+  background: rgba(222, 224, 222, 0.6);
+  text-align: left;
+  will-change: transform;
+}
+.pb-quote--tl {
+  left: 2%;
+  top: 14%;
+  transform: rotate(-1.5deg);
+}
+.pb-quote--tr {
+  right: 2%;
+  top: 24%;
+  transform: rotate(1.25deg);
+}
+.pb-quote--bl {
+  left: 7%;
+  bottom: 10%;
+  transform: rotate(1deg);
+}
+
 .ov {
   position: fixed;
   inset: 0;

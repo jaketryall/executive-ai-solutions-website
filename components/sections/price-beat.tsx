@@ -16,15 +16,15 @@ import { CTA } from "@/components/ui/cta";
    are sector-generic slots (no invented business names). ═══ */
 const QUOTES = [
   {
-    text: "The phone started ringing the week the ads went live, and the new site actually books people instead of just looking good.",
+    text: "The phone started ringing the week the ads went live.",
     name: "Owner, Desert Wings Flight School",
   },
   {
-    text: "I finally know what a lead costs me. Every month there is one number, and it keeps going down.",
+    text: "I finally know what a lead costs me, and it keeps going down.",
     name: "Owner, local trades company",
   },
   {
-    text: "We stopped guessing. The ads bring people in, the site books them, and I can see all of it.",
+    text: "The ads bring people in, the site books them, I see all of it.",
     name: "Owner, family restaurant",
   },
 ];
@@ -68,37 +68,60 @@ export function PriceBeat() {
           "-=0.25"
         );
 
-      gsap.fromTo(
-        q("[data-anim='qhead']"),
-        { autoAlpha: 0, y: 21 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.7,
-          ease: EASE_STRUCTURE,
-          scrollTrigger: { trigger: q("[data-anim='qhead']")[0], start: "top 80%", once: true },
-        }
-      );
+      // the witnesses join after the claim has landed
       gsap.fromTo(
         q("[data-anim='quote']"),
-        { autoAlpha: 0, y: 21 },
+        { autoAlpha: 0, y: 21, scale: 0.97 },
         {
           autoAlpha: 1,
           y: 0,
-          duration: 0.75,
-          stagger: 0.12,
+          scale: 1,
+          duration: 0.8,
+          stagger: 0.16,
           ease: EASE_STRUCTURE,
-          scrollTrigger: { trigger: q("[data-anim='quote']")[0], start: "top 78%", once: true },
+          scrollTrigger: { trigger: root.current, start: "top 45%", once: true },
         }
       );
+      // and breathe at their own rates while the section is on screen
+      (q("[data-drift]") as HTMLElement[]).forEach((el) => {
+        gsap.to(el, {
+          yPercent: parseFloat(el.dataset.drift || "0"),
+          ease: "none",
+          scrollTrigger: {
+            trigger: root.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+      });
     },
     { scope: root }
   );
 
+  const card = (i: number, extra: string) => (
+    <figure
+      key={QUOTES[i].name}
+      data-anim="quote"
+      data-drift={i % 2 === 0 ? "-4" : "3"}
+      className={`pb-quote ${extra}`}
+    >
+      <blockquote>
+        <p className="text-[0.9375rem] leading-[1.5] text-ink/70">
+          &ldquo;{QUOTES[i].text}&rdquo;
+        </p>
+      </blockquote>
+      <figcaption className="t-meta mt-fib-2 text-ink/45">
+        {QUOTES[i].name}
+      </figcaption>
+    </figure>
+  );
+
   return (
-    <section ref={root} data-pcta-hide className="relative">
-      <div className="wrap flex min-h-[88svh] flex-col items-center justify-center py-fib-6 text-center">
-        <p data-anim="price" className="t-display-lg text-balance">
+    <section ref={root} data-pcta-hide className="relative overflow-x-clip">
+      <div className="wrap relative flex min-h-[96svh] flex-col items-center justify-center py-fib-7 text-center">
+        {/* the claim — full contrast, dead center */}
+        <p data-anim="price" className="t-display-lg max-w-[16ch] text-balance">
           Sites from <span className="text-accent">$2.5k</span>. Ads managed
           from <span className="text-accent">$500/mo</span>.
         </p>
@@ -109,31 +132,34 @@ export function PriceBeat() {
         <div data-anim="act" className="mt-fib-4">
           <CTA href="#estimate" label="Get an instant estimate" tone="ink" />
         </div>
+
+        {/* the witnesses — quieter, floating around the claim (desktop);
+            they join AFTER the price lands and drift at their own rates */}
+        <div className="hidden lg:block" aria-hidden="false">
+          {card(0, "pb-quote--tl")}
+          {card(1, "pb-quote--tr")}
+          {card(2, "pb-quote--bl")}
+        </div>
       </div>
 
-      {/* the evidence, right against the price */}
-      <div className="wrap pb-fib-7">
-        <p data-anim="qhead" className="t-title--lg font-display font-bold">
-          Hear it from the owners
-        </p>
-        <div className="mt-fib-4 grid gap-fib-3 md:grid-cols-3">
-          {QUOTES.map((quo) => (
-            <figure
-              key={quo.name}
-              data-anim="quote"
-              className="flex flex-col justify-between rounded-panel bg-panel/70 p-fib-4"
-            >
-              <blockquote>
-                <p className="text-[1.0625rem] leading-[1.55] text-ink/80">
-                  &ldquo;{quo.text}&rdquo;
-                </p>
-              </blockquote>
-              <figcaption className="t-meta mt-fib-4 text-ink/50">
-                {quo.name}
-              </figcaption>
-            </figure>
-          ))}
-        </div>
+      {/* mobile / tablet: the witnesses stack under the claim */}
+      <div className="wrap grid gap-fib-3 pb-fib-6 sm:grid-cols-3 lg:hidden">
+        {QUOTES.map((quo) => (
+          <figure
+            key={quo.name}
+            data-anim="quote"
+            className="rounded-panel bg-panel/60 p-fib-4"
+          >
+            <blockquote>
+              <p className="text-[0.9375rem] leading-[1.5] text-ink/70">
+                &ldquo;{quo.text}&rdquo;
+              </p>
+            </blockquote>
+            <figcaption className="t-meta mt-fib-2 text-ink/45">
+              {quo.name}
+            </figcaption>
+          </figure>
+        ))}
       </div>
     </section>
   );
