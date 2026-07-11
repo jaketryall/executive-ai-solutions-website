@@ -100,11 +100,11 @@ export function Proof() {
           tour,
           { yPercent: 0 },
           {
-            yPercent: -65.9,
+            yPercent: -46.9,
             ease: "none",
             scrollTrigger: {
               trigger: flag,
-              start: "top 80%",
+              start: "top 62%",
               end: "bottom 12%",
               scrub: 0.6,
               invalidateOnRefresh: true,
@@ -118,20 +118,62 @@ export function Proof() {
 
   return (
     <section id="proof" ref={root} className="relative z-10 -mt-fib-4 rounded-t-[24px] bg-canvas">
-      <div className="wrap pb-fib-6 pt-fib-6">
-        {/* band 1 · header — the hero's search surface hangs over the right */}
-        <header data-anim="head" className="max-w-[46ch]">
-          <h2 className="t-display-lg">Where the click lands</h2>
-          <p className="mt-fib-3 text-ink/70">
-            That ad above is real. This is the page it lands on: designed,
-            built, and tracked by us for Desert Wings Flight School.
-          </p>
-        </header>
+      <div className="wrap grid gap-fib-5 pb-fib-6 pt-fib-6 md:grid-cols-[38fr_62fr]">
+        {/* ── the story column: what happened, in reading order ── */}
+        <div className="flex min-w-0 flex-col gap-fib-4">
+          <header data-anim="head">
+            <h2 className="t-display-lg">Where the click lands</h2>
+            <p className="mt-fib-3 text-ink/70">
+              That ad above is real. This is the page it lands on: designed,
+              built, and tracked by us for Desert Wings Flight School.
+            </p>
+          </header>
 
-        {/* band 2 · the landing — the page the ad opens, crisp and framed.
-            The mini ad-chip overlaps the frame so a GLANCE reads the
-            relationship: this ad, this page. */}
-        <div data-anim="flagship" className="relative mt-fib-6">
+          {/* the result — PLACEHOLDER values, see tracking list at top */}
+          <div data-anim="result">
+            <ArtifactFrame
+              variant="card"
+              tone="ink"
+              label="Results from the ads dashboard (placeholder values)"
+              bodyClassName="p-fib-4!"
+            >
+              <p className="t-meta text-paper/50">From their ads dashboard</p>
+              <div className="mt-fib-3 flex flex-col gap-fib-3">
+                {METRICS.map((m) => (
+                  <div key={m.label} className="flex items-baseline gap-fib-2">
+                    <p className="t-num w-[86px] shrink-0 font-display text-[2.1rem] font-extrabold leading-none tracking-[-0.03em] text-paper">
+                      {m.value}
+                    </p>
+                    <p className="text-[0.9375rem] leading-[1.35] text-paper/60">
+                      {m.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </ArtifactFrame>
+          </div>
+
+          {/* PLACEHOLDER quote — swap with the real one before launch */}
+          <figure
+            data-anim="result"
+            className="flex flex-1 flex-col justify-between rounded-panel bg-panel/70 p-fib-4"
+          >
+            <blockquote>
+              <p className="text-[1.0625rem] leading-[1.55] text-ink/80">
+                &ldquo;{QUOTE.text}&rdquo;
+              </p>
+            </blockquote>
+            <figcaption className="mt-fib-3 flex flex-wrap items-baseline justify-between gap-fib-2">
+              <span className="t-meta text-ink/50">{QUOTE.name}</span>
+              <a href="/work" className="u-link t-meta">
+                See all work
+              </a>
+            </figcaption>
+          </figure>
+        </div>
+
+        {/* ── the landing, tall and commanding: the tour rides your scroll ── */}
+        <div data-anim="flagship" className="relative min-w-0">
           <ArtifactFrame
             variant="chrome"
             tone="ink"
@@ -139,14 +181,14 @@ export function Proof() {
             label="The Desert Wings homepage the ad lands on, designed and built by us"
             bodyClassName="p-0! pt-0!"
           >
-            <div className="overflow-hidden" style={{ aspectRatio: "1.9" }}>
+            <div className="overflow-hidden" style={{ aspectRatio: "1.22" }}>
               <Image
                 data-tour
                 src="/work/dw-tour.jpg"
                 alt="Scrolling through the Desert Wings homepage the ad lands on"
                 width={2880}
                 height={4446}
-                sizes="(min-width: 821px) 82vw, 92vw"
+                sizes="(min-width: 821px) 60vw, 92vw"
                 className="block h-auto w-full"
               />
             </div>
@@ -159,50 +201,6 @@ export function Proof() {
               Desert Wings Flight School | Learn to Fly at Falcon Field
             </p>
           </div>
-        </div>
-
-        {/* band 3 · the result + the voice, side by side */}
-        <div className="mt-fib-3 grid gap-fib-3 md:grid-cols-2">
-          <div data-anim="result">
-            <ArtifactFrame
-              variant="card"
-              tone="ink"
-              label="Results from the ads dashboard (placeholder values)"
-              bodyClassName="p-fib-4! h-full"
-            >
-              <p className="t-meta text-paper/50">From their ads dashboard</p>
-              <div className="mt-fib-4 grid gap-fib-3 sm:grid-cols-3">
-                {METRICS.map((m) => (
-                  <div key={m.label} className="min-w-0">
-                    <p className="t-num font-display text-[clamp(2.2rem,3.4vw,3rem)] font-extrabold leading-none tracking-[-0.03em] text-paper">
-                      {m.value}
-                    </p>
-                    <p className="mt-fib-1 text-[0.9375rem] leading-[1.4] text-paper/60">
-                      {m.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </ArtifactFrame>
-          </div>
-
-          {/* PLACEHOLDER quote — swap with the real one before launch */}
-          <figure
-            data-anim="result"
-            className="flex flex-col justify-between rounded-panel bg-panel/70 p-fib-4"
-          >
-            <blockquote>
-              <p className="text-[1.25rem] leading-[1.55] text-ink/85">
-                &ldquo;{QUOTE.text}&rdquo;
-              </p>
-            </blockquote>
-            <figcaption className="mt-fib-4 flex flex-wrap items-baseline justify-between gap-fib-2">
-              <span className="t-meta text-ink/50">{QUOTE.name}</span>
-              <a href="/work" className="u-link t-meta">
-                See all work
-              </a>
-            </figcaption>
-          </figure>
         </div>
       </div>
     </section>
