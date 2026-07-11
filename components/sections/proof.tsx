@@ -107,7 +107,7 @@ export function Proof() {
               // the ride waits until the dashboard card has been read, then
               // runs until the frame leaves
               trigger: dashCard ?? flag,
-              start: "bottom 80%",
+              start: "bottom 96%",
               endTrigger: flag,
               end: "bottom 12%",
               scrub: 0.6,
