@@ -538,7 +538,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
             The rest of the funnel
           </h2>
           <p data-anim="x-card" className="mt-fib-3 max-w-[44ch] text-ink/70">
-            {service.stage} is one stage of the click. Buy the stage you need,
+            {service.stage} is one of three stages. Buy the stage you need,
             or the whole path.
           </p>
           <div className="mt-fib-5 grid gap-fib-3 md:grid-cols-2 md:gap-fib-4">
