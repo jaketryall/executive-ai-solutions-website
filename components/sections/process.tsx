@@ -319,18 +319,18 @@ export function Process() {
           defaults: { ease: EASE_STRUCTURE, overwrite: "auto" },
           scrollTrigger: {
             trigger: q(".pd-steps")[0],
-            start: "top 94%",
-            end: "top 22%",
+            start: "top 82%",
+            end: "top 14%",
             scrub: 0.5,
             invalidateOnRefresh: true,
           },
         });
         steps.forEach((el, i) => {
-          const at = i * 1.9;
+          const at = i * 1.7;
           tl.fromTo(
             el,
             { autoAlpha: 0, y: 26 },
-            { autoAlpha: 1, y: 0, duration: 0.7 },
+            { autoAlpha: 1, y: 0, duration: 0.6 },
             at
           );
           const f = fills[i];
@@ -338,19 +338,19 @@ export function Process() {
             tl.fromTo(
               f,
               { clipPath: "inset(100% 0 0 0)" },
-              { clipPath: "inset(0% 0 0 0)", duration: 0.5 },
-              at + 0.45
+              { clipPath: "inset(0% 0 0 0)", duration: 0.4 },
+              at + 0.3
             );
-          players[i](tl, at + 0.7);
+          players[i](tl, at + 0.5);
         });
         if (cta)
           tl.fromTo(
             cta,
             { autoAlpha: 0, y: 13 },
             { autoAlpha: 1, y: 0, duration: 0.6 },
-            steps.length * 1.9 - 0.4
+            steps.length * 1.7 - 0.5
           );
-        tl.to({}, { duration: 0.9 }); // the settle — the full path holds before release
+        tl.to({}, { duration: 0.35 }); // a short settle, no dead scroll
       });
 
       /* ── narrow screens: steps stack, each reveals + plays on its own ── */
