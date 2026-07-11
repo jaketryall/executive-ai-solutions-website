@@ -200,14 +200,30 @@ export function Hero() {
           // the entrance already staged the buried list — hold the beat
           c.addLabel("flight", 0.45);
         } else {
-          // reset: results sweep out, return buried, arrive again
+          // reset: results sweep out, the query clears and RETYPES like a
+          // user, then the results arrive buried again
+          const retype = { n: 0 };
           c.to(allRows, { autoAlpha: 0, y: 8, duration: 0.35, stagger: 0.04, ease: EASE_UI })
             .call(() => {
               you.classList.remove("is-lit");
               list.appendChild(you); // back to the bottom of the pile
               gsap.set(allRows, { clearProps: "transform" });
               gsap.set(allRows, { autoAlpha: 0, y: 13 });
+              if (typeEl) typeEl.textContent = "";
             })
+            .to(
+              retype,
+              {
+                n: QUERY.length,
+                duration: 0.7,
+                ease: "none", // diegetic typing, constant rate
+                snap: { n: 1 },
+                onUpdate: () => {
+                  if (typeEl) typeEl.textContent = QUERY.slice(0, retype.n);
+                },
+              },
+              "+=0.3"
+            )
             .to(
               allRows,
               { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.1, ease: EASE_STRUCTURE },
@@ -278,6 +294,18 @@ export function Hero() {
          the dock (step-3 scrub takes it the rest of the way). ── */
       gsap.to(q(".hero-left"), {
         yPercent: -6,
+        ease: "none",
+        scrollTrigger: {
+          trigger: root.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+      // the card carries the click across the seam: it lags the scroll and
+      // slides over the proof section's rounded rise before leaving
+      gsap.to(searchCard, {
+        yPercent: 16,
         ease: "none",
         scrollTrigger: {
           trigger: root.current,
