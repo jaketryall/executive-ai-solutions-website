@@ -95,6 +95,7 @@ export function Proof() {
          where the image runs out: frame shows w/1.9 of a 1.544w image,
          so the travel is ~66% of the image height. */
       const tour = q("[data-tour]")[0] as HTMLElement;
+      const dashCard = q("[data-anim='result']")[0] as HTMLElement;
       if (tour) {
         gsap.fromTo(
           tour,
@@ -103,8 +104,11 @@ export function Proof() {
             yPercent: -46.9,
             ease: "none",
             scrollTrigger: {
-              trigger: flag,
-              start: "top 62%",
+              // the ride waits until the dashboard card has been read, then
+              // runs until the frame leaves
+              trigger: dashCard ?? flag,
+              start: "bottom 58%",
+              endTrigger: flag,
               end: "bottom 12%",
               scrub: 0.6,
               invalidateOnRefresh: true,
