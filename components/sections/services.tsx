@@ -66,6 +66,25 @@ export function Services() {
       // 01 · the promotion cycle: listing lights up as the ad, holds, dims
       const ad = q("[data-svc-ad]")[0] as HTMLElement;
       if (ad) {
+        /* lock the artifact to its LIT height (the hero-card fix): force the
+           expanded state invisibly, measure, revert — same frame, no paint
+           between. The cycle then never changes the section's height. */
+        document.fonts.ready.then(() => {
+          const expand = ad.querySelector(".g-expand") as HTMLElement;
+          const spon = ad.querySelector(".g-sponsored") as HTMLElement;
+          if (!expand || !spon || !ad.isConnected) return;
+          expand.style.transition = "none";
+          spon.style.transition = "none";
+          expand.style.gridTemplateRows = "1fr";
+          spon.style.maxHeight = "1.6em";
+          ad.style.minHeight = `${ad.offsetHeight}px`;
+          expand.style.gridTemplateRows = "";
+          spon.style.maxHeight = "";
+          requestAnimationFrame(() => {
+            expand.style.transition = "";
+            spon.style.transition = "";
+          });
+        });
         const c = gsap.timeline({ repeat: -1, paused: true });
         c.call(() => ad.classList.add("is-lit"))
           .to({}, { duration: 3.4 })
@@ -270,17 +289,21 @@ export function Services() {
                     <div className="chat-b chat-b--user" data-cq>
                       <p>Do you offer discovery flights on weekends?</p>
                     </div>
-                    <div className="chat-b chat-b--bot chat-b--typing" data-ctyping aria-hidden>
-                      <span className="ct-dot" />
-                      <span className="ct-dot" />
-                      <span className="ct-dot" />
-                    </div>
-                    <div className="chat-b chat-b--bot" data-ca>
-                      <Monogram className="mt-[3px] h-[15px] w-[15px] shrink-0 opacity-70" />
-                      <p>
-                        Yes. Saturday and Sunday mornings from Falcon Field.
-                        Want me to book you one?
-                      </p>
+                    {/* the dots and the answer share ONE slot — the answer
+                        replaces the typing in place, like a real chat */}
+                    <div className="chat-slot">
+                      <div className="chat-b chat-b--bot chat-b--typing" data-ctyping aria-hidden>
+                        <span className="ct-dot" />
+                        <span className="ct-dot" />
+                        <span className="ct-dot" />
+                      </div>
+                      <div className="chat-b chat-b--bot" data-ca>
+                        <Monogram className="mt-[3px] h-[15px] w-[15px] shrink-0 opacity-70" />
+                        <p>
+                          Yes. Saturday and Sunday mornings from Falcon Field.
+                          Want me to book you one?
+                        </p>
+                      </div>
                     </div>
                     <p className="serp-tag t-meta">
                       Ask-this-site chat, answering from your pages

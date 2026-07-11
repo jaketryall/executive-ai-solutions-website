@@ -1069,6 +1069,16 @@ main {
   gap: 4px;
   padding: 13px 14px;
 }
+/* dots + answer stack in one grid cell: the answer replaces the typing in
+   place, and the thread's height never jumps */
+.chat-slot {
+  display: grid;
+}
+.chat-slot > * {
+  grid-area: 1 / 1;
+  justify-self: start;
+  align-self: start;
+}
 .ct-dot {
   width: 6px;
   height: 6px;
@@ -3724,6 +3734,140 @@ html.wki-lock body {
   clip-path: inset(0 0 0 0);
 }
 
+/* ───────────────── service pages (/services/[slug]) ───────────────── */
+
+/* the index-sweep accent — a solid mark that walks the deliverable list,
+   directing the eye; every row stays fully legible without it (JS reveals
+   it on desktop only, so no-JS / mobile never see a stray square) */
+.svc-mark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  background: var(--color-accent);
+  opacity: 0;
+  will-change: transform;
+}
+
+/* funnel cross-link cards — honest lift (they navigate) */
+.svc-x {
+  display: block;
+  padding: 34px;
+  border-radius: 18px;
+  background: var(--color-panel);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform 0.5s var(--ease-ui),
+    box-shadow 0.5s var(--ease-ui);
+}
+.svc-x:hover,
+.svc-x:focus-visible {
+  transform: translateY(-6px);
+  box-shadow: 0 34px 72px -28px rgba(19, 20, 19, 0.32);
+}
+.svc-x-foot {
+  margin-top: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 13px;
+}
+.svc-x-foot svg {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.3s var(--ease-ui);
+}
+.svc-x:hover .svc-x-foot svg,
+.svc-x:focus-visible .svc-x-foot svg {
+  transform: translateX(3px);
+}
+
+/* ───────────────── pricing (/pricing) ───────────────── */
+
+/* the sheet — our real prices drawn as the document we quote from.
+   Hairlines in here are diegetic (it IS a sheet), never on the canvas. */
+.sheet-group + .sheet-group {
+  margin-top: 34px;
+}
+.sheet-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 13px;
+  margin-bottom: 8px;
+}
+.sheet-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 21px;
+  padding: 13px 0;
+  border-top: 1px solid rgba(19, 20, 19, 0.08);
+}
+.sheet-row .sheet-name {
+  font-weight: 500;
+}
+.sheet-row .sheet-note {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  color: rgba(19, 20, 19, 0.55);
+}
+.sheet-row .sheet-price {
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* tier cards — Growth leads (most projects land there), so it wears ink */
+.tier-card {
+  display: flex;
+  flex-direction: column;
+  padding: 34px;
+  border-radius: 18px;
+  background: var(--color-panel);
+}
+.tier-card--lead {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.tier-range {
+  font-family: var(--font-display);
+  font-weight: 650;
+  font-size: clamp(1.9rem, 2.4vw, 2.35rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.tier-card--lead .chip {
+  background: rgba(239, 240, 238, 0.1);
+  color: rgba(239, 240, 238, 0.8);
+}
+
+/* ───────────────── contact (/contact) ───────────────── */
+
+/* the compose window — the page's one action drawn as the artifact it is:
+   the email that starts the project. Fields reuse the dark-chapter grammar. */
+.compose {
+  width: 100%;
+}
+.compose .af-bar {
+  border-bottom: 1px solid rgba(239, 240, 238, 0.1); /* diegetic chrome line */
+}
+.compose .af-body {
+  padding: 21px;
+}
+@media (min-width: 821px) {
+  .compose .af-body {
+    padding: 34px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -3760,3 +3904,5 @@ html.wki-lock body {
 /* build-marker: hero-orbit-v1 */
 
 /* build-marker: bld-v2-stage */
+
+/* build-marker: svc-pricing-contact-v1 */
