@@ -39,7 +39,7 @@ export function Services() {
          (animate-last = highest hierarchy), entry vector alternating with the
          layout; the watermark spine stays put (structure, not an actor) */
       (q("[data-svc-row]") as HTMLElement[]).forEach((row, i) => {
-        const fromX = i % 2 === 0 ? 34 : -34; // artifact side: R / L / R
+
         const tl = gsap.timeline({
           defaults: { ease: EASE_STRUCTURE },
           scrollTrigger: { trigger: row, start: "top 72%", once: true },
@@ -50,8 +50,8 @@ export function Services() {
           { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.08 }
         ).fromTo(
           row.querySelectorAll("[data-anim='artifact']"),
-          { autoAlpha: 0, x: fromX, scale: 0.96 },
-          { autoAlpha: 1, x: 0, scale: 1, duration: 0.9 },
+          { autoAlpha: 0, y: 21, scale: 0.97 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 0.9 },
           "-=0.35"
         );
 
@@ -114,24 +114,32 @@ export function Services() {
 
   return (
     <section id="services" ref={root} className="relative overflow-x-clip">
-      <div className="wrap py-fib-6">
-        <header className="max-w-[46ch]">
-          <h2 className="t-display-lg">One funnel, three stages</h2>
-          <p className="mt-fib-3 text-ink/70">
-            Ads bring the click. The site converts it. The AI keeps it. Buy
-            the stage you need, or the whole path.
-          </p>
-        </header>
+      {/* the whole funnel is ONE card — a dark panel floating on the canvas
+          (the v2 grammar): the rail pins while the stages scroll past it */}
+      <div className="dark-chapter mx-[8px] rounded-panel py-fib-6 md:mx-[13px]">
+        <div className="wrap grid gap-fib-5 md:grid-cols-[minmax(260px,340px)_1fr] md:gap-fib-6">
+          <div>
+            <div className="md:sticky md:top-[144px]">
+              <h2 className="t-display-lg">One funnel, three stages</h2>
+              <p className="mt-fib-3 max-w-[30ch] text-paper/70">
+                Ads bring the click. The site converts it. The AI keeps it.
+                Buy the stage you need, or the whole path.
+              </p>
+              <div className="mt-fib-4 hidden md:block">
+                <CTA href="#estimate" label="Get an instant estimate" tone="paper" />
+              </div>
+            </div>
+          </div>
 
-        <div className="mt-fib-6 flex flex-col gap-fib-6">
+          <div className="flex flex-col gap-fib-4">
           {/* ── 01 · THE CLICK — artifact right ── */}
-          <article data-svc-row className="relative">
-            <div className="relative z-[1] grid items-center gap-fib-4 rounded-panel bg-panel/60 p-fib-4 md:grid-cols-2 md:gap-fib-5 md:p-fib-5">
+          <article data-svc-row className="rounded-[18px] bg-paper/[0.05] p-fib-4 md:p-fib-5">
+            <div className="flex flex-col gap-fib-4">
               <div>
                 <h3 data-anim="copy" className="t-title--lg font-display font-bold">
                   The click
                 </h3>
-                <p data-anim="copy" className="mt-fib-2 max-w-[44ch] text-ink/75">
+                <p data-anim="copy" className="mt-fib-2 max-w-[44ch] text-paper/70">
                   Google Ads, managed. Campaigns built on what your customers
                   actually search, conversion tracking you can read, and a
                   monthly number that says what a lead cost.
@@ -141,7 +149,7 @@ export function Services() {
                   <span className="chip">No lock-in</span>
                 </div>
               </div>
-              <div data-anim="artifact" className="w-[min(100%,440px)] justify-self-start md:justify-self-end">
+              <div data-anim="artifact" className="w-[min(100%,440px)]">
                 <ArtifactFrame
                   variant="card"
                   tone="paper"
@@ -169,13 +177,13 @@ export function Services() {
           </article>
 
           {/* ── 02 · THE LANDING — artifact left ── */}
-          <article data-svc-row className="relative">
-            <div className="relative z-[1] grid items-center gap-fib-4 rounded-panel bg-panel/60 p-fib-4 md:grid-cols-2 md:gap-fib-5 md:p-fib-5">
-              <div className="md:order-2">
+          <article data-svc-row className="rounded-[18px] bg-paper/[0.05] p-fib-4 md:p-fib-5">
+            <div className="flex flex-col gap-fib-4">
+              <div>
                 <h3 data-anim="copy" className="t-title--lg font-display font-bold">
                   The landing
                 </h3>
-                <p data-anim="copy" className="mt-fib-2 max-w-[44ch] text-ink/75">
+                <p data-anim="copy" className="mt-fib-2 max-w-[44ch] text-paper/70">
                   A website that converts the click. Custom-designed and
                   hand-built from your business, fast enough that nobody
                   leaves while it loads.
@@ -185,10 +193,10 @@ export function Services() {
                   <span className="chip">You own everything</span>
                 </div>
               </div>
-              <div data-anim="artifact" className="md:order-1">
+              <div data-anim="artifact">
                 <ArtifactFrame
                   variant="chrome"
-                  tone="ink"
+                  tone="paper"
                   url="desertwingsflightschool.com/fleet"
                   label="The Desert Wings fleet page we designed and built"
                   bodyClassName="!p-0"
@@ -210,8 +218,8 @@ export function Services() {
           </article>
 
           {/* ── 03 · THE FOLLOW-UP — artifact right ── */}
-          <article data-svc-row className="relative">
-            <div className="relative z-[1] grid items-center gap-fib-4 rounded-panel bg-panel/60 p-fib-4 md:grid-cols-2 md:gap-fib-5 md:p-fib-5">
+          <article data-svc-row className="rounded-[18px] bg-paper/[0.05] p-fib-4 md:p-fib-5">
+            <div className="flex flex-col gap-fib-4">
               <div>
                 <div className="flex flex-wrap items-center gap-fib-2">
                   <h3 data-anim="copy" className="t-title--lg font-display font-bold">
@@ -221,7 +229,7 @@ export function Services() {
                     New for 2026
                   </span>
                 </div>
-                <p data-anim="copy" className="mt-fib-2 max-w-[44ch] text-ink/75">
+                <p data-anim="copy" className="mt-fib-2 max-w-[44ch] text-paper/70">
                   AI that answers and chases. Chat that answers from your own
                   pages, follow-ups that send themselves. No lead goes cold at
                   9pm on a Sunday.
@@ -231,7 +239,7 @@ export function Services() {
                   <span className="chip">Built and managed for you</span>
                 </div>
               </div>
-              <div data-anim="artifact" className="w-[min(100%,440px)] justify-self-start md:justify-self-end">
+              <div data-anim="artifact" className="w-[min(100%,440px)]">
                 <ArtifactFrame
                   variant="card"
                   tone="paper"
@@ -254,10 +262,11 @@ export function Services() {
               </div>
             </div>
           </article>
-        </div>
 
-        <div className="mt-fib-6">
-          <CTA href="#estimate" label="Price your project" tone="ink" />
+            <div className="md:hidden">
+              <CTA href="#estimate" label="Get an instant estimate" tone="paper" />
+            </div>
+          </div>
         </div>
       </div>
     </section>
