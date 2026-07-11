@@ -900,6 +900,13 @@ main {
    and sitelinks unfold (grid-rows, no measuring) */
 .g-row {
   position: relative;
+  /* the flying-card chrome eases on at lift-off and off at touchdown;
+     the landing must never snap */
+  transition:
+    background 0.4s var(--ease-ui),
+    box-shadow 0.4s var(--ease-ui),
+    padding 0.4s var(--ease-ui),
+    margin 0.4s var(--ease-ui);
 }
 /* mid-flight: the row picks up a white card and a neutral shadow — it is
    OVER the others, not sliding between them. Padding/margin cancel so the
@@ -913,13 +920,15 @@ main {
   margin: -10px -12px;
 }
 .g-row .g-sponsored {
-  height: 0;
+  max-height: 0;
   overflow: hidden;
   opacity: 0;
-  transition: opacity 0.4s var(--ease-ui);
+  transition:
+    max-height 0.45s var(--ease-ui),
+    opacity 0.45s var(--ease-ui);
 }
 .g-row.is-lit .g-sponsored {
-  height: auto;
+  max-height: 1.6em;
   opacity: 1;
 }
 .g-row .g-url {

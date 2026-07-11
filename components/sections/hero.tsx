@@ -177,13 +177,21 @@ export function Hero() {
           .to(you, { scale: 1, duration: 0.28, ease: EASE_UI }, "flight+=0.72")
           .call(
             () => {
+              // touchdown: the card chrome eases off (CSS transition), the
+              // DOM order becomes truth
               you.classList.remove("is-flying");
-              list.insertBefore(you, list.firstChild); // DOM order becomes truth
+              list.insertBefore(you, list.firstChild);
               gsap.set(allRows, { clearProps: "transform" });
-              you.classList.add("is-lit"); // Sponsored + steel + unfold
             },
             [],
             "flight+=1.05"
+          )
+          .call(
+            () => {
+              you.classList.add("is-lit"); // Sponsored + steel + unfold
+            },
+            [],
+            "flight+=1.3"
           );
       };
 
