@@ -133,7 +133,7 @@ export function Proof() {
               key={p.slug}
               data-proj
               data-anim="proj"
-              className="dark-chapter mx-[8px] mt-fib-4 grid gap-fib-3 rounded-panel p-fib-2 md:mx-[13px] md:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] md:gap-fib-4 md:p-fib-2"
+              className="dark-chapter mx-[8px] mt-fib-4 grid gap-fib-3 rounded-panel p-fib-2 md:mx-[13px] md:mt-fib-5 md:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] md:gap-fib-4 md:p-fib-2"
             >
               {/* the work — rounded image, left, riding the scroll */}
               <div className="relative min-w-0">
