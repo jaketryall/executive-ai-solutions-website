@@ -145,13 +145,15 @@ export function Proof() {
                 )}
               </div>
 
-              {/* the receipts — one card, one glance */}
-              <div className="min-w-0">
+              {/* the receipts — one card, stretched to the frame's height so
+                  the two halves read as equals, not siblings of different size */}
+              <div className="flex min-w-0">
                 <ArtifactFrame
                   variant="card"
                   tone="ink"
+                  className="flex w-full flex-col"
                   label={`${p.client} results (placeholder values)`}
-                  bodyClassName="p-fib-4! h-full"
+                  bodyClassName="p-fib-4! flex-1"
                 >
                   <div className="flex h-full min-h-0 flex-col">
                     <div className="flex flex-wrap items-center gap-fib-2">
