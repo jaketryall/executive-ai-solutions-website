@@ -60,49 +60,58 @@ function DemoCall() {
   );
 }
 
-// 02 · the mini page — sketch blocks resolve into the brand
+// 02 · the REAL page resolves out of its wireframe — the copy's exact
+// promise ("real pages in your brand, not wireframes"), enacted with the
+// real Desert Wings homepage instead of an invented brand
 function DemoDesign() {
   return (
-    <div className="pd-panel pd-panel--browser" data-built="">
+    <div className="pd-panel pd-panel--browser">
       <span className="browser-chrome">
         <Monogram className="h-[12px] w-[12px] opacity-70" />
-        <span className="text-trim">sunlineandco.com</span>
+        <span className="text-trim">desertwingsflightschool.com</span>
       </span>
-      <div className="flex min-h-0 flex-1 flex-col gap-[10px] p-[16px] pt-[4px]">
-        <div data-blk className="flex items-center justify-between">
-          <span className="st-word px-[2px] text-[11.5px] font-[700]">
-            Sunline &amp; Co
-          </span>
-          <span className="flex items-center gap-[7px]">
-            <span className="st-fill h-[6px] w-[20px]" />
-            <span className="st-fill h-[6px] w-[20px]" />
-            <span className="st-fill h-[6px] w-[20px]" />
-          </span>
-        </div>
+      {/* w-full matters: the panel centers cross-axis and this wrapper has
+          only absolute children, so without it the width collapses to 0 */}
+      <div className="relative min-h-0 w-full flex-1">
+        {/* the wireframe it starts as… */}
         <div
-          data-blk
-          className="st-hero flex min-h-0 flex-1 items-center gap-[13px] p-[13px]"
+          data-wire
+          className="absolute inset-0 flex flex-col gap-[10px] p-[14px]"
+          aria-hidden
         >
-          <div className="flex min-w-0 flex-1 flex-col items-start gap-[8px]">
-            <span className="st-word px-[2px] font-display text-[13px] font-[700] leading-[1.2] tracking-[-0.01em]">
-              Built to bring in work
+          <div data-blk className="flex items-center justify-between">
+            <span className="st-fill h-[8px] w-[54px]" />
+            <span className="flex items-center gap-[7px]">
+              <span className="st-fill h-[6px] w-[20px]" />
+              <span className="st-fill h-[6px] w-[20px]" />
+              <span className="st-fill h-[6px] w-[20px]" />
             </span>
-            <span className="st-fill h-[6px] w-[72%]" />
-            <span className="st-btn mt-[3px]">Get a quote</span>
           </div>
-          <span className="st-himg h-[74%] w-[30%] rounded-[7px]" />
-        </div>
-        <div data-blk className="grid grid-cols-2 gap-[10px]">
-          {[0, 1].map((c) => (
-            <div
-              key={c}
-              className="st-card flex flex-col gap-[6px] rounded-[7px] p-[8px]"
-            >
-              <span className="st-thumb h-[26px]" />
-              <span className="st-fill h-[5px] w-[75%]" />
+          <div
+            data-blk
+            className="st-hero flex min-h-0 flex-1 items-center gap-[13px] p-[13px]"
+          >
+            <div className="flex min-w-0 flex-1 flex-col items-start gap-[8px]">
+              <span className="st-fill h-[10px] w-[86%]" />
+              <span className="st-fill h-[10px] w-[58%]" />
+              <span className="st-fill mt-[5px] h-[17px] w-[64px] rounded-full" />
             </div>
-          ))}
+            <span className="st-himg h-[74%] w-[34%] rounded-[7px]" />
+          </div>
+          <div data-blk className="grid grid-cols-3 gap-[8px]">
+            {[0, 1, 2].map((c) => (
+              <span key={c} className="st-thumb h-[22px] rounded-[5px]" />
+            ))}
+          </div>
         </div>
+        {/* …and the real page it becomes (the rest state) */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          data-real
+          src="/work/dw-home.jpg"
+          alt="The finished Desert Wings homepage design"
+          className="absolute inset-0 h-full w-full object-cover object-top-left"
+        />
       </div>
     </div>
   );
@@ -201,7 +210,6 @@ export function Process() {
           },
         });
         // clean end-state: four finished artifacts in one frame
-        gsap.set(q("[data-anim]"), { autoAlpha: 1 });
         return;
       }
 
@@ -232,8 +240,8 @@ export function Process() {
       /* ── the four demos: each step animates its OWN artifact once, as its
          column lands. Rest states are "finished", so JS rewinds them first. ── */
       const ticket = q(".pd-ticket")[0];
-      const browser = q(".pd-panel--browser")[0] as HTMLElement | undefined;
       const blocks = q(".pd-panel--browser [data-blk]");
+      const realPage = q(".pd-panel--browser [data-real]")[0];
       const scoreBars = q(".pd-report .sc-fill");
       const perfNum = q(".st-perf")[0];
       const seoNum = q(".st-seo")[0];
@@ -244,7 +252,7 @@ export function Process() {
 
       // rewind to "not yet"
       if (ticket) gsap.set(ticket, { autoAlpha: 0 });
-      if (browser) browser.removeAttribute("data-built");
+      if (realPage) gsap.set(realPage, { autoAlpha: 0, scale: 1.035 });
       gsap.set(blocks, { autoAlpha: 0, y: 8 });
       gsap.set(scoreBars, { scaleX: 0 });
       if (perfNum) perfNum.textContent = "0";
@@ -263,11 +271,18 @@ export function Process() {
         );
       };
       const playDesign = (tl: gsap.core.Timeline, at: number) => {
+        // the sketch draws itself… then the real page resolves through it
         tl.to(
           blocks,
-          { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.09 },
+          { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.09 },
           at
-        ).add(() => browser?.setAttribute("data-built", ""), at + 0.85);
+        );
+        if (realPage)
+          tl.to(
+            realPage,
+            { autoAlpha: 1, scale: 1, duration: 0.9, ease: EASE_STRUCTURE },
+            at + 1.0
+          );
       };
       const playBuild = (tl: gsap.core.Timeline, at: number) => {
         tl.to(scoreBars, { scaleX: 1, duration: 0.8, stagger: 0.08 }, at);
@@ -305,84 +320,24 @@ export function Process() {
 
       const steps = q("[data-pstep]");
       const fills = steps.map((el) => el.querySelector(".num-fill"));
-      const cta = q(".pd-cta")[0];
 
-      const mm = gsap.matchMedia();
-
-      /* ── desktop: the GUIDED build, no pin (Jake: no scroll-jack) — the
-         same L→R sequence scrubbed to the section's NATURAL travel through
-         the viewport: steps arrive one at a time as the row rises, each
-         staying as the next lands, and the scroll never gets captured.
-         Scrolling back rewinds the build — guided both ways. ── */
-      mm.add("(min-width: 821px)", () => {
+      /* ── no entrance: the cards are simply THERE (Jake). The life lives
+         INSIDE each card — the numeral inks in and the little demo plays
+         once as its card is read, without the card itself moving. ── */
+      steps.forEach((el, i) => {
         const tl = gsap.timeline({
           defaults: { ease: EASE_STRUCTURE, overwrite: "auto" },
-          scrollTrigger: {
-            trigger: q(".pd-steps")[0],
-            start: "top 82%",
-            end: "top 14%",
-            scrub: 0.5,
-            invalidateOnRefresh: true,
-          },
+          scrollTrigger: { trigger: el, start: "top 78%", once: true },
         });
-        steps.forEach((el, i) => {
-          const at = i * 1.7;
+        const f = fills[i];
+        if (f)
           tl.fromTo(
-            el,
-            { autoAlpha: 0, y: 26 },
-            { autoAlpha: 1, y: 0, duration: 0.6 },
-            at
+            f,
+            { clipPath: "inset(100% 0 0 0)" },
+            { clipPath: "inset(0% 0 0 0)", duration: 0.5 },
+            0
           );
-          const f = fills[i];
-          if (f)
-            tl.fromTo(
-              f,
-              { clipPath: "inset(100% 0 0 0)" },
-              { clipPath: "inset(0% 0 0 0)", duration: 0.4 },
-              at + 0.3
-            );
-          players[i](tl, at + 0.5);
-        });
-        if (cta)
-          tl.fromTo(
-            cta,
-            { autoAlpha: 0, y: 13 },
-            { autoAlpha: 1, y: 0, duration: 0.6 },
-            steps.length * 1.7 - 0.5
-          );
-        tl.to({}, { duration: 0.35 }); // a short settle, no dead scroll
-      });
-
-      /* ── narrow screens: steps stack, each reveals + plays on its own ── */
-      mm.add("(max-width: 820px)", () => {
-        steps.forEach((el, i) => {
-          const tl = gsap.timeline({
-            defaults: { ease: EASE_STRUCTURE, overwrite: "auto" },
-            scrollTrigger: { trigger: el, start: "top 78%", once: true },
-          });
-          tl.fromTo(el, { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.7 }, 0);
-          const f = fills[i];
-          if (f)
-            tl.fromTo(
-              f,
-              { clipPath: "inset(100% 0 0 0)" },
-              { clipPath: "inset(0% 0 0 0)", duration: 0.5 },
-              0.2
-            );
-          players[i](tl, 0.3);
-        });
-        if (cta)
-          gsap.fromTo(
-            cta,
-            { autoAlpha: 0, y: 13 },
-            {
-              autoAlpha: 1,
-              y: 0,
-              duration: 0.6,
-              ease: EASE_STRUCTURE,
-              scrollTrigger: { trigger: cta, start: "top 88%", once: true },
-            }
-          );
+        players[i](tl, 0.15);
       });
     },
     { scope: root }
@@ -404,15 +359,15 @@ export function Process() {
           </p>
         </div>
 
-        {/* the whole path, visible at once — four steps, each with its own
-            little artifact. The row steps down toward the handoff. */}
-        <div className="pd-steps mt-[34px] grid grid-cols-1 gap-y-[55px] md:mt-fib-4 md:grid-cols-2 md:gap-x-[21px] md:gap-y-[68px] lg:grid-cols-4">
+        {/* the whole path, visible at once — four steps IN A LINE, each
+            inside its own card, no entrance: the life plays inside them */}
+        <div className="pd-steps mt-[34px] grid grid-cols-1 gap-[13px] md:mt-fib-4 md:grid-cols-2 md:gap-[21px] lg:grid-cols-4">
           {STEPS.map((s, i) => {
             const Demo = DEMOS[i];
             return (
-              <div key={s.n} data-pstep data-anim>
+              <div key={s.n} data-pstep className="pd-card">
                 <Demo />
-                <div className="mt-[21px]">
+                <div className="px-fib-1 pb-fib-1 pt-fib-3">
                   <span
                     className="num t-numeral-step relative block select-none"
                     aria-hidden
@@ -436,7 +391,7 @@ export function Process() {
           })}
         </div>
 
-        <div className="pd-cta mt-[55px] flex justify-end px-[21px] md:px-[55px]" data-anim>
+        <div className="pd-cta mt-[55px] flex justify-end px-[21px] md:px-[55px]">
           <a href="#estimate" className="u-link text-paper/80">
             Start with the call
           </a>
