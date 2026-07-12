@@ -11,13 +11,13 @@ import {
   useGSAP,
   EASE_STRUCTURE,
   reducedMotion,
+  EASE_UI,
 } from "@/components/anim/ease";
 import { whenArrived } from "@/components/anim/arrival";
 
-// One case study. The hero well carries the same view-transition-name as its
-// index card, so arriving here the card MORPHS into this hero while the page
-// sheets up underneath it — which is why the hero itself gets no entrance
-// tween (the morph is its entrance; a direct load just shows it standing).
+// One case study. Arrivals ride the site-wide sheet transition; the hero
+// well paints at its final crop from the first frame (overscan is a CSS
+// base state) and simply stands as the sheet lands.
 
 export function CaseStudy({
   project,
@@ -66,6 +66,12 @@ export function CaseStudy({
             { autoAlpha: 0, y: 13 },
             { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.05 },
             "-=0.4",
+          )
+          .fromTo(
+            q("[data-anim='cs-onpage']"),
+            { autoAlpha: 0, y: 13 },
+            { autoAlpha: 1, y: 0, duration: 0.5, ease: EASE_UI },
+            "-=0.3",
           );
 
         // ── body copy reads itself in on scroll ──
@@ -86,6 +92,19 @@ export function CaseStudy({
 
         ScrollTrigger.refresh();
       }); // end enter()
+
+      /* ── on-page nav: highlight the stop you're inside ── */
+      (["cs-story", "cs-build", "cs-next"] as const).forEach((id) => {
+        const sec = document.getElementById(id);
+        const link = q(`.cs-onpage a[href="#${id}"]`)[0];
+        if (!sec || !link) return;
+        ScrollTrigger.create({
+          trigger: sec,
+          start: "top 55%",
+          end: "bottom 55%",
+          onToggle: (self) => link.classList.toggle("is-on", self.isActive),
+        });
+      });
 
       /* ── figures: contained parallax inside their wells (desktop only).
          Runs at MOUNT, pre-paint — it's scroll-driven positioning, not an
@@ -187,7 +206,7 @@ export function CaseStudy({
       </div>
 
       {/* ── the story ── */}
-      <section className="mx-auto max-w-[1280px] px-[21px] py-[89px] md:px-[55px] md:py-[144px]">
+      <section id="cs-story" className="mx-auto max-w-[1280px] px-[21px] py-[89px] md:px-[55px] md:py-[144px]">
         <div className="grid gap-[55px] md:grid-cols-[38fr_62fr] md:gap-[89px]">
           <div>
             <p className="t-title max-w-[26ch]" data-anim="cs-reveal">
@@ -209,7 +228,7 @@ export function CaseStudy({
       </section>
 
       {/* ── the build, up close ── */}
-      <section className="mx-auto max-w-[1280px] px-[21px] pb-[89px] md:px-[55px] md:pb-[144px]">
+      <section id="cs-build" className="mx-auto max-w-[1280px] px-[21px] pb-[89px] md:px-[55px] md:pb-[144px]">
         <div className="grid grid-cols-1 gap-[21px] md:grid-cols-2">
           {project.gallery.map((fig) => (
             <figure
@@ -269,7 +288,7 @@ export function CaseStudy({
       </section>
 
       {/* ── next case + the ask ── */}
-      <section className="mx-auto max-w-[1280px] px-[21px] pb-[144px] md:px-[55px] md:pb-[178px]">
+      <section id="cs-next" className="mx-auto max-w-[1280px] px-[21px] pb-[144px] md:px-[55px] md:pb-[178px]">
         <p className="t-meta text-ink/55" data-anim="cs-reveal">
           Next case
         </p>
@@ -295,6 +314,14 @@ export function CaseStudy({
           </Link>
         </div>
       </section>
+
+      {/* ── on-page nav: the case's stops in the site's capsule grammar
+          (fixed bottom-left, desktop only; anchors ride Lenis) ── */}
+      <nav className="cs-onpage nav-capsule" aria-label="On this case" data-anim="cs-onpage">
+        <a href="#cs-story">Story</a>
+        <a href="#cs-build">Build</a>
+        <a href="#cs-next">Next</a>
+      </nav>
     </article>
   );
 }

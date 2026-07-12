@@ -3357,6 +3357,41 @@ a.work-card:hover {
   }
 }
 
+/* the case-study on-page nav: a fixed capsule of the case stops */
+.cs-onpage {
+  position: fixed;
+  left: 13px;
+  bottom: 13px;
+  z-index: 40;
+  display: none;
+  gap: 3px;
+  padding: 5px;
+}
+@media (min-width: 1024px) {
+  .cs-onpage {
+    display: inline-flex;
+  }
+}
+.cs-onpage a {
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(239, 240, 238, 0.6);
+  text-decoration: none;
+  transition:
+    color 0.3s var(--ease-ui),
+    background 0.3s var(--ease-ui);
+}
+.cs-onpage a:hover {
+  color: rgba(239, 240, 238, 0.92);
+}
+.cs-onpage a.is-on {
+  background: rgba(239, 240, 238, 0.12);
+  color: var(--color-paper);
+}
+
 /* ───────────────────── the work ledger (/work) ─────────────────────
    Split stage: a rolling reel of outline names on the left (the focused
    entry fills to paper), one fixed imagery frame on the right where covers
