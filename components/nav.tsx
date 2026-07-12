@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { gsap, EASE_STRUCTURE, EASE_UI, reducedMotion } from "@/components/anim/ease";
 import { Monogram } from "@/components/ui/monogram";
-import { CTA } from "@/components/ui/cta";
+
 
 const LINKS = [
   { href: "/work", label: "Work" },
@@ -165,7 +165,7 @@ function LinksCapsule() {
   );
 }
 
-/* v3 nav — three floating ink-glass capsules (logo · links · CTA). Each
+/* v3 nav — floating ink-glass capsules (logo · links). Each
    capsule is a self-contained object that reads over every ground, so the
    old color-adaptive theme resolver is gone by construction: nothing under
    the nav can ever collide with it or wash it out. Constant at all scroll
@@ -306,13 +306,9 @@ export function Nav() {
 
         <LinksCapsule />
 
+        {/* no nav CTA for now (Jake, 2026-07-11) — the persistent bottom
+            capsule carries the action; the right slot keeps the hamburger */}
         <div className="flex items-center gap-fib-1">
-          <CTA
-            href={pathname === "/" ? "/#estimate" : "/pricing#estimate"}
-            label="Get an estimate"
-            tone="accent"
-            className="nav-cta hidden sm:inline-flex"
-          />
           <button
             ref={hambRef}
             className={`nav-capsule hamb md:hidden ${open ? "is-open" : ""}`}
