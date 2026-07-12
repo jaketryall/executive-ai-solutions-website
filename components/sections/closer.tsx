@@ -103,10 +103,12 @@ export function Closer() {
         );
       }
 
-      // 3 · the exit — after release the wall folds back into a card in the
-      //     BACKGROUND while the footer reveal is the show. y compensates the
-      //     center-origin shrink so the bottom edge stays flush with the
-      //     section end — no dead canvas band sliding over the footer.
+      // 3 · the exit — the wall TRAVELS UP first (2.0→2.18, unscaled: just
+      //     the page carrying it away), and only then folds into a card for
+      //     the last stretch. Shrinking at the unpin itself read as an
+      //     instant pop; the travel-first order lets the release breathe.
+      //     y compensates the center-origin shrink so the bottom edge stays
+      //     flush with the section end.
       tl.fromTo(
         card,
         { scale: 1, borderRadius: 0, y: 0 },
@@ -114,10 +116,10 @@ export function Closer() {
           scale: 0.92,
           borderRadius: 24,
           y: () => card.offsetHeight * 0.04,
-          duration: 0.45,
+          duration: 0.27,
           immediateRender: false,
         },
-        2.0
+        2.18
       );
 
       // the lean — the line skews with scroll velocity, so even the hold

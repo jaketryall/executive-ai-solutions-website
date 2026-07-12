@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import {
   gsap,
+  ScrollTrigger,
   useGSAP,
   EASE_STRUCTURE,
   reducedMotion,
@@ -112,7 +113,14 @@ export function Faq() {
                 className="faq-q"
                 aria-expanded={open === i}
                 aria-controls={`faq-a-${i}`}
-                onClick={() => setOpen(open === i ? null : i)}
+                onClick={() => {
+                  setOpen(open === i ? null : i);
+                  // the accordion changes the page's height ABOVE the pinned
+                  // closer — without a re-measure its triggers go stale and
+                  // the card visibly jumps at pin-engage ("sometimes jumps
+                  // up"). Refresh once the 0.5s grid-rows transition settles.
+                  setTimeout(() => ScrollTrigger.refresh(), 560);
+                }}
               >
                 <span>{f.q}</span>
                 <span className="faq-x" aria-hidden />
