@@ -388,20 +388,26 @@ export function Builder() {
       className="bld relative py-fib-6"
     >
       <div className="wrap">
-        <p data-anim="bld-head" className="t-meta text-ink/60">
-          Build yours
-        </p>
-        <h2 data-anim="bld-head" className="t-display-lg mt-fib-2 max-w-[15ch]">
-          What would yours look like?
-        </h2>
-        <p data-anim="bld-head" className="mt-fib-3 max-w-[52ch] text-ink/70">
-          You just watched one get built. This one is yours: type your name,
-          flip through the tabs, tap a color. Sixty seconds, no signup.
-        </p>
+        {/* header and the name input share ONE row (the input fills what was
+            a dead right half) so the ask and the toy it drives meet in the
+            same viewport instead of stacking across two */}
+        <div className="grid grid-cols-1 gap-fib-4 md:grid-cols-[minmax(0,38fr)_minmax(0,62fr)] md:items-end">
+          <div>
+            <p data-anim="bld-head" className="t-meta text-ink/60">
+              Build yours
+            </p>
+            <h2 data-anim="bld-head" className="t-display-lg mt-fib-2 max-w-[15ch]">
+              What would yours look like?
+            </h2>
+            <p data-anim="bld-head" className="mt-fib-3 max-w-[52ch] text-ink/70">
+              You just watched one get built. This one is yours: type your
+              name, flip through the tabs, tap a color. Sixty seconds, no
+              signup.
+            </p>
+          </div>
 
-        <div className="mt-fib-4 flex flex-col gap-fib-4 md:mt-fib-5">
           {/* the one written ask — your name, at display size */}
-          <div data-anim="bld-head" className="bld-nameline max-md:order-2">
+          <div data-anim="bld-head" className="bld-nameline w-full md:justify-self-end">
             <input
               className="bld-name"
               type="text"
@@ -416,9 +422,11 @@ export function Builder() {
               }}
             />
           </div>
+        </div>
 
+        <div className="mt-fib-4 flex flex-col gap-fib-4">
           {/* the toy — tabs on the frame, the dot-dock on its edge */}
-          <div data-anim="bld-stage" className="bld-stagewrap max-md:order-1">
+          <div data-anim="bld-stage" className="bld-stagewrap">
             <MiniSite
               pack={pack}
               skin={skin}
