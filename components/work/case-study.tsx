@@ -89,13 +89,21 @@ export function CaseStudy({
         const mm = gsap.matchMedia();
         mm.add("(min-width: 821px)", () => {
           const pars = q(".cs-par") as HTMLElement[];
-          gsap.set(pars, { scale: 1.14, transformOrigin: "50% 50%" });
+          const heroPar = q("[data-vt-media] .cs-par")[0];
+          // the hero par mirrors the /work card's inner state (1.08, ±4) so
+          // the morph handoff is crop-identical; figures keep the deep treatment
+          pars.forEach((par) =>
+            gsap.set(par, {
+              scale: par === heroPar ? 1.08 : 1.14,
+              transformOrigin: "50% 50%",
+            })
+          );
           const tweens = pars.map((par) =>
             gsap.fromTo(
               par,
-              { yPercent: -5.5 },
+              { yPercent: par === heroPar ? -4 : -5.5 },
               {
-                yPercent: 5.5,
+                yPercent: par === heroPar ? 4 : 5.5,
                 ease: "none",
                 scrollTrigger: {
                   trigger: par.closest("[data-well]"),
