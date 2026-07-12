@@ -18,8 +18,7 @@ import { beginArrival, releaseArrival } from "@/components/anim/arrival";
 // The transition itself is the STACK: the old page sinks back, shrinks and
 // dims while the new page sheets up over it with a rounded lip — the same
 // spatial grammar as the site's rise-over sections, promoted to routing.
-// Shared elements (the work card wells → case-study heroes) carry a
-// view-transition-name and morph above both sheets.
+// ONE clean transition for every route; no per-element morphs.
 
 const DUR = 800;
 // --ease-structure, as a WAAPI easing string (a CustomEase name means nothing here)
@@ -70,15 +69,6 @@ export function ViewTransitions() {
       e.preventDefault(); // Next's Link handler sees this and stands down
       const href = url.pathname + url.search;
 
-      // the vt-<slug> cover↔hero morphs only make sense between the work
-      // index and a case study; on any other nav a lone full-frame snapshot
-      // would flash over the sheets — suppress the names for this transition
-      const isWork = (p: string) => p === "/work" || p.startsWith("/work/");
-      document.documentElement.toggleAttribute(
-        "data-vt-case",
-        isWork(location.pathname) && isWork(url.pathname),
-      );
-
       // entrances on the incoming page hold until the sheet lands
       beginArrival();
 
@@ -112,7 +102,7 @@ export function ViewTransitions() {
           document.documentElement.animate(
             {
               transform: ["translateY(100%)", "translateY(0)"],
-              borderRadius: ["26px 26px 0 0", "0px 0px 0px 0px"],
+              borderRadius: ["24px 24px 0 0", "0px 0px 0px 0px"],
             },
             {
               duration: DUR,
@@ -128,7 +118,6 @@ export function ViewTransitions() {
       vt.finished
         .catch(() => {})
         .finally(() => {
-          document.documentElement.removeAttribute("data-vt-case");
           releaseArrival();
           ScrollTrigger.refresh();
         });

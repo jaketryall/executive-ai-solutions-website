@@ -4,7 +4,6 @@ import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Project } from "@/lib/work";
-import { vtName } from "@/lib/work";
 import { CTA } from "@/components/ui/cta";
 import {
   gsap,
@@ -89,21 +88,13 @@ export function CaseStudy({
         const mm = gsap.matchMedia();
         mm.add("(min-width: 821px)", () => {
           const pars = q(".cs-par") as HTMLElement[];
-          const heroPar = q("[data-vt-media] .cs-par")[0];
-          // the hero par mirrors the /work card's inner state (1.08, ±4) so
-          // the morph handoff is crop-identical; figures keep the deep treatment
-          pars.forEach((par) =>
-            gsap.set(par, {
-              scale: par === heroPar ? 1.08 : 1.14,
-              transformOrigin: "50% 50%",
-            })
-          );
+          gsap.set(pars, { scale: 1.14, transformOrigin: "50% 50%" });
           const tweens = pars.map((par) =>
             gsap.fromTo(
               par,
-              { yPercent: par === heroPar ? -4 : -5.5 },
+              { yPercent: -5.5 },
               {
-                yPercent: par === heroPar ? 4 : 5.5,
+                yPercent: 5.5,
                 ease: "none",
                 scrollTrigger: {
                   trigger: par.closest("[data-well]"),
@@ -179,8 +170,6 @@ export function CaseStudy({
         <div
           className="cs-hero-well"
           data-well
-          data-vt-media
-          style={{ viewTransitionName: vtName(project.slug) }}
         >
           <div className="cs-par absolute inset-0">
             <Image

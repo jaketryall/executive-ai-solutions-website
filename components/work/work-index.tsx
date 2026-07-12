@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { PROJECTS, vtName } from "@/lib/work";
+import { PROJECTS } from "@/lib/work";
 import { whenArrived } from "@/components/anim/arrival";
 import {
   gsap,
@@ -126,13 +126,7 @@ export function WorkIndex() {
               className="wkt dark-chapter rounded-panel p-fib-2"
               aria-label={`${p.client}: open the case study`}
             >
-              <div
-                className="wkc-media relative aspect-square overflow-hidden rounded-frame md:aspect-4/3"
-                data-vt-media
-                style={{ viewTransitionName: vtName(p.slug) }}
-              >
-                {/* the COVER with the case hero's crop — the morph carries
-                    one picture, small tile up to big frame */}
+              <div className="wkc-media relative aspect-square overflow-hidden rounded-frame md:aspect-4/3">
                 <div data-wkc-par className="wkc-par">
                   <Image
                     src={p.cover.src}

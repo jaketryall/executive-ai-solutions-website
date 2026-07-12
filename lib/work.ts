@@ -243,4 +243,3 @@ export function nextProject(slug: string): Project {
 }
 
 /** the view-transition-name shared by the index card well and the case hero */
-export const vtName = (slug: string) => `vt-${slug}`;

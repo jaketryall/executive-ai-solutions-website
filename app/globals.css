@@ -3355,67 +3355,6 @@ a.work-card:hover {
   ::view-transition-group(site-nav) {
     z-index: 60;
   }
-
-  /* the cover↔hero morph participates only on work↔case navs (JS sets the
-     attribute per transition); anywhere else the lone full-frame snapshot
-     would flash over the moving sheets */
-  html:not([data-vt-case]) [data-vt-media] {
-    view-transition-name: none !important;
-  }
-
-  /* the shared-element morph: index card well ↔ case-study hero */
-  ::view-transition-group(vt-desert-wings),
-  ::view-transition-group(vt-executive-ai-solutions) {
-    z-index: 55;
-    animation-duration: 0.8s;
-    animation-timing-function: var(--ease-structure);
-  }
-  ::view-transition-old(vt-desert-wings),
-  ::view-transition-new(vt-desert-wings),
-  ::view-transition-old(vt-executive-ai-solutions),
-  ::view-transition-new(vt-executive-ai-solutions) {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-    animation-duration: 0.8s;
-    animation-timing-function: var(--ease-structure);
-  }
-  /* NO crossfade inside the morph: when both ends exist, the old snapshot
-     leaves instantly and the new one rides the interpolating box SOLID —
-     both ends show the same image/crop, so it reads as one object moving */
-  ::view-transition-image-pair(vt-desert-wings),
-  ::view-transition-image-pair(vt-executive-ai-solutions) {
-    isolation: isolate;
-  }
-  ::view-transition-old(vt-desert-wings):not(:only-child),
-  ::view-transition-old(vt-executive-ai-solutions):not(:only-child) {
-    display: none;
-  }
-  ::view-transition-new(vt-desert-wings):not(:only-child),
-  ::view-transition-new(vt-executive-ai-solutions):not(:only-child) {
-    animation: none;
-    opacity: 1;
-  }
-  /* a named element with no counterpart on the other page exits/enters fast
-     instead of lingering over the moving sheets */
-  ::view-transition-old(vt-desert-wings):only-child,
-  ::view-transition-old(vt-executive-ai-solutions):only-child {
-    animation: vt-lone-out 0.3s var(--ease-ui) both;
-  }
-  ::view-transition-new(vt-desert-wings):only-child,
-  ::view-transition-new(vt-executive-ai-solutions):only-child {
-    animation: vt-lone-in 0.45s var(--ease-ui) both;
-  }
-}
-@keyframes vt-lone-out {
-  to {
-    opacity: 0;
-  }
-}
-@keyframes vt-lone-in {
-  from {
-    opacity: 0;
-  }
 }
 
 /* ───────────────────── the work ledger (/work) ─────────────────────
@@ -3766,22 +3705,12 @@ html.wki-lock body {
 
 /* ───────────────────── case studies (/work/[slug]) ───────────────────── */
 .cs-hero-well {
-  /* the morph's landing frame — the SAME aspect as the /work card at every
-     breakpoint (square, then 4:3), so the ride is pure translate+scale with
-     zero re-cropping */
+  /* the wide cinematic showpiece (no morph constraint anymore) */
   position: relative;
-  aspect-ratio: 1 / 1;
-  width: 100%;
-  margin-inline: auto;
+  height: clamp(340px, 62svh, 680px);
   border-radius: 18px;
   overflow: clip;
   background: var(--color-ink);
-}
-@media (min-width: 821px) {
-  .cs-hero-well {
-    aspect-ratio: 4 / 3;
-    width: min(100%, calc(74svh * 4 / 3));
-  }
 }
 .cs-img {
   object-fit: cover;
@@ -3859,8 +3788,10 @@ html.wki-lock body {
   object-position: left top;
   transition: transform 0.9s var(--ease-structure);
 }
-/* no hover zoom on the morph source: a zoomed last frame pops at the
-   transition handoff (the deck settle is the hover-feedback now) */
+.wkc:hover .wkc-img,
+.wkt:hover .wkc-img {
+  transform: scale(1.025);
+}
 .wkc-open {
   display: inline-flex;
   align-items: center;
