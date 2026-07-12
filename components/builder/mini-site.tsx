@@ -86,16 +86,16 @@ export function MiniSite({
               the auto-height canvas gives the percentage nothing to resolve
               against. */}
           <span
-            className="ms-img h-[76%] min-h-[89px] w-[32%] rounded-[8px]"
+            className="ms-img h-[76%] min-h-[89px] w-[32%] rounded-chip"
             style={{ backgroundImage: `url(${pack.img})` }}
           />
         </div>
 
         <div data-ms className="grid grid-cols-3 gap-fib-1 md:gap-fib-2">
           {pack.cards.map((card, i) => (
-            <div key={card} className="ms-card flex flex-col gap-[6px] rounded-[8px] p-fib-1 md:gap-[9px] md:p-fib-2">
+            <div key={card} className="ms-card flex flex-col gap-[6px] rounded-chip p-fib-1 md:gap-[9px] md:p-fib-2">
               <span
-                className="ms-img h-[24px] rounded-[6px] md:h-[76px]"
+                className="ms-img h-[24px] rounded-chip md:h-[76px]"
                 style={{
                   backgroundImage: `url(${pack.cardArt[i].src === "img" ? pack.img : pack.demo.aboutImg})`,
                   backgroundSize: pack.cardArt[i].size,
@@ -108,7 +108,7 @@ export function MiniSite({
         </div>
 
         {/* social proof strip — the band that makes it read as a page, not a card */}
-        <div data-ms className="ms-review flex items-center gap-fib-2 rounded-[8px] px-fib-2 py-[8px]">
+        <div data-ms className="ms-review flex items-center gap-fib-2 rounded-chip px-fib-2 py-[8px]">
           <span className="ms-stars" aria-hidden>
             ★★★★★
           </span>

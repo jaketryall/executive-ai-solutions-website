@@ -125,15 +125,20 @@ export function Services() {
             ease: EASE_STRUCTURE,
           }, "<")
           .to(cursor, { scale: 0.78, duration: 0.09, ease: EASE_UI })
-          .set(ring, { x: () => clickPt().x + 4, y: () => clickPt().y + 4 }, "<")
-          .fromTo(
+          // set-then-to, never fromTo: with repeatRefresh, an invalidated
+          // fromTo re-renders its FROM state at every cycle START — the ring
+          // sat visible as a little accent dot seconds before the click
+          .set(
             ring,
-            { autoAlpha: 0.55, scale: 0.25 },
-            // immediateRender must stay off: with repeatRefresh, the default
-            // would flash the ring's FROM state at every cycle start
-            { autoAlpha: 0, scale: 1, duration: 0.6, ease: EASE_UI, immediateRender: false },
+            {
+              x: () => clickPt().x + 4,
+              y: () => clickPt().y + 4,
+              autoAlpha: 0.55,
+              scale: 0.25,
+            },
             "<"
           )
+          .to(ring, { autoAlpha: 0, scale: 1, duration: 0.6, ease: EASE_UI }, "<")
           .to(adTitle, { opacity: 0.55, duration: 0.08, yoyo: true, repeat: 1, ease: "none" }, "<")
           .to(cursor, { scale: 1, duration: 0.16, ease: EASE_UI }, "-=0.4")
           .to(cursor, { autoAlpha: 0, duration: 0.35, ease: EASE_UI }, "+=0.5")
@@ -191,6 +196,12 @@ export function Services() {
         end: "bottom top",
         onToggle: (self) => {
           demosInView = self.isActive;
+          if (!self.isActive) {
+            // leaving resets every demo to its BEGINNING state (unlit ad,
+            // site at its top, empty chat) so a return never lands mid-story
+            loops.forEach((l) => l.pause(0));
+            ad?.classList.remove("is-lit");
+          }
           syncLoops();
         },
       });
@@ -223,7 +234,7 @@ export function Services() {
 
           <div className="flex flex-col gap-fib-4">
           {/* ── 01 · THE CLICK — artifact right ── */}
-          <article data-svc-row className="rounded-[18px] bg-paper/[0.05] p-fib-4 md:p-fib-5">
+          <article data-svc-row className="rounded-frame bg-paper/[0.05] p-fib-4 md:p-fib-5">
             <div className="flex flex-col gap-fib-4">
               <div>
                 <h3 data-anim="copy" className="t-title--lg">
@@ -289,7 +300,7 @@ export function Services() {
           </article>
 
           {/* ── 02 · THE LANDING — artifact left ── */}
-          <article data-svc-row className="rounded-[18px] bg-paper/[0.05] p-fib-4 md:p-fib-5">
+          <article data-svc-row className="rounded-frame bg-paper/[0.05] p-fib-4 md:p-fib-5">
             <div className="flex flex-col gap-fib-4">
               <div>
                 <h3 data-anim="copy" className="t-title--lg">
@@ -313,7 +324,7 @@ export function Services() {
                   label="The Desert Wings site we designed and built, scrolling"
                   bodyClassName="!p-0"
                 >
-                  <div className="overflow-hidden rounded-[10px]" style={{ aspectRatio: "1.65" }}>
+                  <div className="overflow-hidden rounded-btn" style={{ aspectRatio: "1.65" }}>
                     <Image
                       data-svc-tour
                       src="/work/dw-tour.jpg"
@@ -330,7 +341,7 @@ export function Services() {
           </article>
 
           {/* ── 03 · THE FOLLOW-UP — artifact right ── */}
-          <article data-svc-row className="rounded-[18px] bg-paper/[0.05] p-fib-4 md:p-fib-5">
+          <article data-svc-row className="rounded-frame bg-paper/[0.05] p-fib-4 md:p-fib-5">
             <div className="flex flex-col gap-fib-4">
               <div>
                 <div className="flex flex-wrap items-center gap-fib-2">

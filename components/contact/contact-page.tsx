@@ -11,6 +11,7 @@ import {
 import { whenArrived } from "@/components/anim/arrival";
 import { CTA } from "@/components/ui/cta";
 import { Monogram } from "@/components/ui/monogram";
+import { ProcessCards } from "@/components/ui/process-cards";
 
 /* Contact — the page IS the action. The form is drawn as the artifact it
    really is (the email that starts the project: an ink compose window in the
@@ -21,19 +22,16 @@ type FormStatus = "idle" | "sending" | "success" | "error";
 
 const STEPS = [
   {
-    n: "01",
-    name: "We reply within one business day",
-    body: "A real reply from Jake, not an autoresponder. Plain answers to whatever you asked.",
+    name: "The reply",
+    body: "Within one business day, from Jake, not an autoresponder. Plain answers to whatever you asked.",
   },
   {
-    n: "02",
-    name: "A twenty-minute call, if it fits",
-    body: "We work out scope together. No deck, no discovery-phase invoice, no pressure to book anything.",
+    name: "The call, if it fits",
+    body: "Twenty minutes to work out scope together. No deck, no discovery-phase invoice, no pressure to book anything.",
   },
   {
-    n: "03",
-    name: "A fixed quote in two days",
-    body: "One number and a timeline, in writing. The price never moves after you say yes.",
+    name: "The fixed quote",
+    body: "Two days later: one number and a timeline, in writing. The price never moves after you say yes.",
   },
 ];
 
@@ -72,8 +70,8 @@ export function ContactPage() {
           )
           .fromTo(
             q("[data-anim='compose']"),
-            { autoAlpha: 0, y: 21, scale: 0.98 },
-            { autoAlpha: 1, y: 0, scale: 1, duration: 0.9 },
+            { autoAlpha: 0, y: 21 },
+            { autoAlpha: 1, y: 0, duration: 0.9 },
             "-=0.35"
           )
           .fromTo(
@@ -304,20 +302,8 @@ export function ContactPage() {
           <h2 data-anim="step" className="t-display-lg max-w-[14ch]">
             What happens next
           </h2>
-          <div className="mt-fib-5 grid gap-fib-4 md:grid-cols-3 md:gap-fib-5">
-            {STEPS.map((s, i) => (
-              <div
-                key={s.n}
-                data-anim="step"
-                className={i === 1 ? "md:mt-fib-4" : i === 2 ? "md:mt-fib-6" : ""}
-              >
-                <span className="t-numeral-step num" aria-hidden>
-                  <span className="num-outline">{s.n}</span>
-                </span>
-                <h3 className="t-title mt-fib-3 font-display">{s.name}</h3>
-                <p className="mt-fib-2 max-w-[36ch] text-ink/70">{s.body}</p>
-              </div>
-            ))}
+          <div className="mt-fib-4 md:mt-fib-5">
+            <ProcessCards steps={STEPS} anim="step" />
           </div>
           <div data-anim="step" className="mt-fib-6 flex flex-wrap items-center gap-fib-3">
             <CTA href="/pricing#estimate" label="Price it first, if you'd rather" tone="ink" />

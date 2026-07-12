@@ -475,7 +475,7 @@ main {
   width: 100%;
   background: rgba(239, 240, 238, 0.05);
   border: 1.5px solid rgba(239, 240, 238, 0.16);
-  border-radius: 14px;
+  border-radius: var(--radius-btn);
   color: var(--color-paper);
   padding: 21px 21px 13px;
   font-size: 1rem;
@@ -610,7 +610,7 @@ main {
   position: absolute;
   top: 8px;
   height: 36px;
-  border-radius: 10px;
+  border-radius: var(--radius-btn);
   background: rgba(239, 240, 238, 0.12);
   opacity: 0;
   transition:
@@ -652,7 +652,7 @@ main {
   align-items: flex-start;
   gap: 6px;
   padding: 11px 13px;
-  border-radius: 10px;
+  border-radius: var(--radius-btn);
   background: rgba(239, 240, 238, 0.07);
   color: var(--color-paper);
   text-decoration: none;
@@ -671,7 +671,7 @@ main {
   aspect-ratio: 2.2;
   object-fit: cover;
   object-position: top;
-  border-radius: 7px;
+  border-radius: var(--radius-chip);
 }
 .nav-mini-meta {
   font-size: 0.75rem;
@@ -933,7 +933,7 @@ main {
 .g-row.is-flying {
   z-index: 2;
   background: #fff;
-  border-radius: 10px;
+  border-radius: var(--radius-btn);
   box-shadow: 0 14px 34px rgba(19, 20, 19, 0.16);
   padding: 10px 12px;
   margin: -10px -12px;
@@ -1112,7 +1112,7 @@ main {
   gap: 8px;
   max-width: 88%;
   padding: 11px 14px;
-  border-radius: 14px;
+  border-radius: var(--radius-btn);
   font-size: 0.9375rem;
   line-height: 1.45;
 }
@@ -1233,7 +1233,7 @@ main {
    Paper surface: these sit ON the gray services panel, card-on-card */
 .browser-card {
   display: block;
-  border-radius: 14px;
+  border-radius: var(--radius-btn);
   background: var(--color-panel);
   box-shadow: 0 24px 60px -24px rgba(19, 20, 19, 0.35);
   overflow: hidden;
@@ -1273,7 +1273,7 @@ main {
   transform: scale(1.03);
 }
 .phone-card {
-  border-radius: 16px;
+  border-radius: var(--radius-frame);
   overflow: hidden;
   box-shadow: 0 18px 44px -18px rgba(19, 20, 19, 0.45);
   border: 4px solid var(--color-panel);
@@ -1435,7 +1435,7 @@ html:not(.has-js) .tst-slide + .tst-slide {
   overflow: hidden;
   will-change: transform;
 }
-/* sketch geometry — gray placeholders that restyle inside a [data-built] frame */
+/* sketch geometry: gray placeholders that restyle inside a [data-built] frame */
 .st-fill,
 .st-word,
 .st-btn,
@@ -1469,7 +1469,7 @@ html:not(.has-js) .tst-slide + .tst-slide {
 }
 .st-thumb {
   display: block;
-  border-radius: 6px;
+  border-radius: var(--radius-chip);
   background: rgba(19, 20, 19, 0.07);
 }
 .st-himg {
@@ -1481,7 +1481,7 @@ html:not(.has-js) .tst-slide + .tst-slide {
   background: rgba(19, 20, 19, 0.04);
 }
 .st-hero {
-  border-radius: 10px;
+  border-radius: var(--radius-btn);
   background: rgba(19, 20, 19, 0.05);
 }
 
@@ -1611,7 +1611,7 @@ html:not(.has-js) .zone-dark {
   display: grid;
   place-items: center;
   aspect-ratio: 4 / 3;
-  border-radius: 14px;
+  border-radius: var(--radius-btn);
   background: var(--color-paper);
   color: var(--color-ink); /* the section is text-paper; panels are light */
   overflow: hidden;
@@ -1694,7 +1694,7 @@ a.work-card:hover {
   top: 50%;
   left: 50%;
   width: clamp(240px, 72%, 560px);
-  border-radius: 10px;
+  border-radius: var(--radius-btn);
   overflow: hidden;
   z-index: 20;
   box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
@@ -2376,7 +2376,7 @@ a.work-card:hover {
   transition: background-color 0.6s var(--ease-structure), color 0.6s var(--ease-structure);
 }
 .ms-hero {
-  border-radius: 10px;
+  border-radius: var(--radius-btn);
   background: var(--ms-hero-bg);
   color: var(--ms-hero-fg);
 }
@@ -2559,7 +2559,7 @@ a.work-card:hover {
   opacity: 0;
   pointer-events: none;
   padding: 8px 12px;
-  border-radius: 10px;
+  border-radius: var(--radius-btn);
   font-size: 10.5px;
   font-weight: 600;
   background: var(--color-ink);
@@ -2958,7 +2958,7 @@ a.work-card:hover {
   right: -8px;
   bottom: 21px;
   padding: 18px 26px;
-  border-radius: 14px;
+  border-radius: var(--radius-btn);
   background: var(--color-ink);
   color: var(--color-paper);
   box-shadow: 0 21px 55px -18px rgba(0, 0, 0, 0.5);
@@ -3679,7 +3679,7 @@ html.wki-lock body {
   position: relative;
   display: block;
   aspect-ratio: 16 / 10;
-  border-radius: 14px;
+  border-radius: var(--radius-btn);
   overflow: clip;
   background: var(--color-dark-2);
 }
@@ -3751,7 +3751,7 @@ html.wki-lock body {
 .cs-fig-well {
   position: relative;
   height: clamp(240px, 36vw, 460px);
-  border-radius: 14px;
+  border-radius: var(--radius-btn);
   overflow: clip;
   background: var(--color-panel);
 }
@@ -3764,7 +3764,7 @@ html.wki-lock body {
   align-items: flex-start;
   gap: 21px;
   padding: 55px 21px 0;
-  border-radius: 14px;
+  border-radius: var(--radius-btn);
   background: var(--color-panel);
   overflow: clip;
 }

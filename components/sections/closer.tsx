@@ -74,7 +74,7 @@ export function Closer() {
       //     left to snap, and the drift carries the motion through.
       tl.fromTo(
         card,
-        { scale: 0.92, borderRadius: 28 },
+        { scale: 0.92, borderRadius: 24 },
         { scale: 1, borderRadius: 0, duration: 0.88 },
         0
       );
@@ -112,7 +112,7 @@ export function Closer() {
         { scale: 1, borderRadius: 0, y: 0 },
         {
           scale: 0.92,
-          borderRadius: 28,
+          borderRadius: 24,
           y: () => card.offsetHeight * 0.04,
           duration: 0.45,
           immediateRender: false,
@@ -147,7 +147,7 @@ export function Closer() {
         {/* 1px overbleed on every side: the scale transform rounds to
             subpixels on retina, and without it the light footer layer
             beneath feathers through as a hairline under the full-bleed edge */}
-        <div className="closer-card -ml-px -mt-px flex h-[calc(100%+2px)] w-[calc(100%+2px)] flex-col justify-center overflow-hidden will-change-transform motion-reduce:rounded-[24px]">
+        <div className="closer-card -ml-px -mt-px flex h-[calc(100%+2px)] w-[calc(100%+2px)] flex-col justify-center overflow-hidden will-change-transform motion-reduce:rounded-panel">
           {/* the statement — nowrap + wider than the frame so the pinned read
               has a story to tell; reduced motion wraps it centered */}
           <p

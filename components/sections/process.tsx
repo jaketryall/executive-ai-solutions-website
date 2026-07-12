@@ -46,7 +46,7 @@ const STEPS = [
 function DemoCall() {
   return (
     <div className="pd-panel">
-      <div className="pd-ticket w-[min(82%,270px)] rounded-[13px] bg-ink p-[21px] text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)]">
+      <div className="pd-ticket w-[min(82%,270px)] rounded-btn bg-ink p-[21px] text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)]">
         <Monogram className="h-[14px] w-[14px] opacity-80" />
         <p className="mt-[10px] text-[12.5px] text-paper/60">Your fixed quote</p>
         <p className="t-num mt-[3px] font-display text-[28px] font-[800] leading-none">
@@ -96,11 +96,11 @@ function DemoDesign() {
               <span className="st-fill h-[10px] w-[58%]" />
               <span className="st-fill mt-[5px] h-[17px] w-[64px] rounded-full" />
             </div>
-            <span className="st-himg h-[74%] w-[34%] rounded-[7px]" />
+            <span className="st-himg h-[74%] w-[34%] rounded-chip" />
           </div>
           <div data-blk className="grid grid-cols-3 gap-[8px]">
             {[0, 1, 2].map((c) => (
-              <span key={c} className="st-thumb h-[22px] rounded-[5px]" />
+              <span key={c} className="st-thumb h-[22px] rounded-chip" />
             ))}
           </div>
         </div>
@@ -121,7 +121,7 @@ function DemoDesign() {
 function DemoBuild() {
   return (
     <div className="pd-panel">
-      <div className="pd-report w-[min(88%,290px)] rounded-[13px] bg-ink p-[18px] text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)]">
+      <div className="pd-report w-[min(88%,290px)] rounded-btn bg-ink p-[18px] text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)]">
         <p className="t-meta text-[11px] text-paper/55">Build report</p>
         <div className="mt-[13px] flex flex-col gap-[11px]">
           <div className="sc-row">
@@ -155,7 +155,7 @@ function DemoBuild() {
 function DemoGrowth() {
   return (
     <div className="pd-panel">
-      <div className="pd-chart w-[min(78%,240px)] rounded-[13px] bg-ink p-[18px] text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)]">
+      <div className="pd-chart w-[min(78%,240px)] rounded-btn bg-ink p-[18px] text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)]">
         <p className="t-meta text-[11px] text-paper/55">Enquiries</p>
         <p className="mt-[3px] font-display text-[30px] font-[800] leading-none">
           <span className="st-count t-num">34</span>

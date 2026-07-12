@@ -202,7 +202,7 @@ export function Estimate({ standalone = false }: { standalone?: boolean } = {}) 
       id="estimate"
       ref={root}
       data-nav="dark"
-      className={`dark-chapter relative z-10 mx-[8px] rounded-[24px] md:mx-[13px] ${
+      className={`dark-chapter relative z-10 mx-[8px] rounded-panel md:mx-[13px] ${
         standalone ? "mt-[8px]" : "mt-[8px] md:-mt-[89px]"
       }`}
     >
@@ -287,7 +287,7 @@ export function Estimate({ standalone = false }: { standalone?: boolean } = {}) 
           </div>
 
           {/* live output — the main character; rides along as the controls scroll */}
-          <div data-anim="out" className="est-output relative self-start rounded-[18px] p-[34px] md:sticky md:top-[89px]">
+          <div data-anim="out" className="est-output relative self-start rounded-frame p-[34px] md:sticky md:top-[89px]">
             <Monogram
               className={`absolute right-[34px] top-[34px] h-[34px] w-[34px] transition-colors duration-500 ${
                 tierIndex === 2 ? "text-accent-bright" : tierIndex === 1 ? "text-paper/70" : "text-paper/40"
@@ -353,7 +353,7 @@ export function Estimate({ standalone = false }: { standalone?: boolean } = {}) 
 
         <div className="quote-grid mt-[55px] grid items-start gap-[34px] md:grid-cols-[58fr_42fr] md:gap-[55px]">
           {status === "success" ? (
-            <div className="est-output rounded-[18px] p-[34px]" role="status">
+            <div className="est-output rounded-frame p-[34px]" role="status">
               <Monogram className="h-[34px] w-[34px] text-accent-bright" />
               <p className="t-title mt-[21px]">Got it. We&apos;ll reply within one business day</p>
               <p className="mt-[13px] max-w-[44ch] text-paper/70">
@@ -406,7 +406,7 @@ export function Estimate({ standalone = false }: { standalone?: boolean } = {}) 
 
           {/* estimate summary sits beside the form (short zone — sticky here
               just made it shadow the fields) */}
-          <aside data-anim="form" className="est-output rounded-[18px] p-[34px]">
+          <aside data-anim="form" className="est-output rounded-frame p-[34px]">
             <div className="flex items-start justify-between">
               <p className="t-meta text-paper/60">Attached to your message</p>
               <Monogram className="h-[21px] w-[21px] text-paper/40" />

@@ -137,8 +137,8 @@ export function Hero() {
         // track B — the enactment, concurrent
         .fromTo(
           searchCard,
-          { autoAlpha: 0, y: 21, scale: 0.97 },
-          { autoAlpha: 1, y: 0, scale: 1, duration: 0.75 },
+          { autoAlpha: 0, y: 21 },
+          { autoAlpha: 1, y: 0, duration: 0.75 },
           0.2
         );
 
@@ -309,13 +309,18 @@ export function Hero() {
           const spon = you.querySelector(".g-sponsored") as HTMLElement;
           if (expand && spon) {
             expand.style.transition = "none";
+            spon.style.transition = "none";
             expand.style.gridTemplateRows = "1fr";
-            spon.style.height = "auto";
+            // max-height (not height) is what collapses the Sponsored label —
+            // overriding height alone under-measured the lit state and the
+            // card grew by one label-line every time the row lit up
+            spon.style.maxHeight = "none";
             list.style.minHeight = `${list.offsetHeight}px`;
             expand.style.gridTemplateRows = "";
-            spon.style.height = "";
+            spon.style.maxHeight = "";
             requestAnimationFrame(() => {
               expand.style.transition = "";
+              spon.style.transition = "";
             });
           }
         }

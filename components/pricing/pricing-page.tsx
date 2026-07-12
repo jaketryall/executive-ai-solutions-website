@@ -249,7 +249,7 @@ export function PricingPage() {
                 t.max === Infinity
                   ? `${fmt(t.min)}+`
                   : t.min === 0
-                    ? `$2.5k to ${fmt(t.max)}`
+                    ? `${fmt(2500)} to ${fmt(t.max)}`
                     : `${fmt(t.min)} to ${fmt(t.max)}`;
               return (
                 <div

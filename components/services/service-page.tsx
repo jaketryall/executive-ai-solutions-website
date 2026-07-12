@@ -15,7 +15,18 @@ import { whenArrived } from "@/components/anim/arrival";
 import { CTA } from "@/components/ui/cta";
 import { ArtifactFrame } from "@/components/ui/artifact";
 import { Monogram } from "@/components/ui/monogram";
+import { ProcessCards } from "@/components/ui/process-cards";
 import { SERVICE_META, siblingServices, type ServiceDef } from "@/lib/services";
+import { QUOTES, AV_TINTS } from "@/lib/quotes";
+
+function PersonIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden className="h-[14px] w-[14px]">
+      <circle cx="10" cy="6.5" r="3.4" />
+      <path d="M10 11.4c-3.6 0-6.1 1.9-6.6 4.8-.1.5.3.9.8.9h11.6c.5 0 .9-.4.8-.9-.5-2.9-3-4.8-6.6-4.8Z" />
+    </svg>
+  );
+}
 
 /* A service page — one funnel stage, up close. The hero puts the stage's REAL
    artifact to work (the ad, the landing page, the chat: medium is the message),
@@ -65,7 +76,7 @@ function HeroArtifact({ slug }: { slug: string }) {
           bodyClassName="!p-0"
         >
           <div
-            className="overflow-hidden rounded-[10px]"
+            className="overflow-hidden rounded-btn"
             style={{ aspectRatio: "1.55" }}
           >
             <Image
@@ -163,8 +174,8 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           )
           .fromTo(
             q("[data-anim='h-art']"),
-            { autoAlpha: 0, y: 21, scale: 0.97 },
-            { autoAlpha: 1, y: 0, scale: 1, duration: 0.9 },
+            { autoAlpha: 0, y: 21 },
+            { autoAlpha: 1, y: 0, duration: 0.9 },
             "-=0.35"
           );
 
@@ -282,18 +293,18 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         const mark = q(".svc-mark")[0] as HTMLElement;
         if (!list || rows.length < 2 || !mark) return;
 
-        gsap.set(inners, { opacity: 0.55 });
+        gsap.set(inners, { opacity: 0.6 });
         gsap.set(inners[0], { opacity: 1 });
-        gsap.set(mark, { autoAlpha: 1, y: rows[0].offsetTop + 10 });
+        gsap.set(mark, { autoAlpha: 1, y: rows[0].offsetTop + 44 });
 
         let prev = 0;
         const setActive = (i: number) => {
           if (i === prev) return;
           prev = i;
-          gsap.to(inners, { opacity: 0.55, duration: 0.4, ease: EASE_UI, overwrite: "auto" });
+          gsap.to(inners, { opacity: 0.6, duration: 0.4, ease: EASE_UI, overwrite: "auto" });
           gsap.to(inners[i], { opacity: 1, duration: 0.4, ease: EASE_UI, overwrite: "auto" });
           gsap.to(mark, {
-            y: rows[i].offsetTop + 10,
+            y: rows[i].offsetTop + 44,
             duration: 0.55,
             ease: EASE_STRUCTURE,
             overwrite: "auto",
@@ -316,6 +327,33 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         gsap.set(q(".svc-d-in"), { opacity: 1 });
         gsap.set(q(".svc-mark"), { autoAlpha: 0 });
       });
+
+      /* ── process cards: head, then the row deals in left to right ── */
+      gsap.fromTo(
+        q("[data-anim='proc']"),
+        { autoAlpha: 0, y: 21 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.75,
+          ease: EASE_STRUCTURE,
+          stagger: 0.08,
+          scrollTrigger: { trigger: q(".svc-process")[0], start: "top 76%", once: true },
+        }
+      );
+      gsap.fromTo(
+        q("[data-anim='proc-card']"),
+        { autoAlpha: 0, y: 34, scale: 0.97 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.8,
+          ease: EASE_STRUCTURE,
+          stagger: 0.1,
+          scrollTrigger: { trigger: q(".proc-card")[0], start: "top 82%", once: true },
+        }
+      );
 
       /* ── price beat: the peak — lead line, then the number rises ── */
       const priceTl = gsap.timeline({
@@ -340,6 +378,34 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08, ease: EASE_UI },
           "-=0.4"
         );
+
+      // the witnesses join after the claim has landed (home price-beat grammar)
+      gsap.fromTo(
+        q("[data-anim='quote']"),
+        { autoAlpha: 0, y: 21, scale: 0.97 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.8,
+          stagger: 0.16,
+          ease: EASE_STRUCTURE,
+          scrollTrigger: { trigger: q(".svc-price")[0], start: "top 45%", once: true },
+        }
+      );
+      // and breathe at their own rates while the section is on screen
+      (q("[data-drift]") as HTMLElement[]).forEach((el) => {
+        gsap.to(el, {
+          yPercent: parseFloat(el.dataset.drift || "0"),
+          ease: "none",
+          scrollTrigger: {
+            trigger: q(".svc-price")[0],
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+      });
 
       /* faq rows: quiet rise */
       gsap.fromTo(
@@ -442,10 +508,10 @@ export function ServicePage({ service }: { service: ServiceDef }) {
             </div>
           </div>
 
-          <div className="svc-d-list relative pl-fib-4 md:pl-fib-5">
+          <div className="svc-d-list relative md:pl-fib-5">
             {/* the traveling accent — directs the eye; never gates the content */}
             <span className="svc-mark" aria-hidden />
-            <ul className="flex flex-col gap-fib-5 md:gap-fib-6">
+            <ul className="flex flex-col gap-fib-2 md:gap-fib-3">
               {service.deliverables.map((d) => (
                 <li key={d.name} data-anim="d-row" className="svc-d">
                   <div className="svc-d-in">
@@ -459,9 +525,33 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         </div>
       </section>
 
-      {/* ── THE PRICE · the one centered statement peak ── */}
-      <section className="svc-price py-fib-6 text-center md:py-fib-7">
+      {/* ── HOW IT RUNS · the Lesse process row, EAS skin ── */}
+      <section className="svc-process py-fib-5 md:py-fib-6">
         <div className="wrap">
+          <div className="flex flex-col justify-between gap-fib-3 md:flex-row md:items-end">
+            <h2 data-anim="proc" className="t-display-lg max-w-[12ch]">
+              How it runs
+            </h2>
+            <p data-anim="proc" className="max-w-[38ch] text-ink/70 md:text-right">
+              {service.slug === "google-ads" &&
+                "From first call to a report you can hold us to. No setup fees, no lock-in."}
+              {service.slug === "websites" &&
+                "From first call to launch. The quote is fixed on day two and never moves."}
+              {service.slug === "ai" &&
+                "Scoped, built, checked and managed. Nothing goes live until you've seen it work."}
+            </p>
+          </div>
+          <div className="mt-fib-4 md:mt-fib-5">
+            <ProcessCards steps={service.process} anim="proc-card" />
+          </div>
+        </div>
+      </section>
+
+      {/* ── THE PRICE · the one centered statement peak, open on the canvas,
+          with the client voices floating around it (the home price-beat
+          grammar) ── */}
+      <section className="svc-price relative overflow-x-clip" data-pcta-hide>
+        <div className="wrap relative flex min-h-[88svh] flex-col items-center justify-center py-fib-6 text-center md:py-fib-7">
           <p data-anim="p-lead" className="t-meta text-ink/60">
             {service.price.lead}
           </p>
@@ -495,6 +585,56 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           <div data-anim="p-out" className="mt-fib-4 flex justify-center">
             <CTA href="/pricing#estimate" label="Price your project" tone="ink" />
           </div>
+
+          {/* the witnesses — quieter, floating around the claim (desktop);
+              they join AFTER the price lands and drift at their own rates */}
+          <div className="hidden lg:block" aria-hidden="false">
+            {QUOTES.map((quo, i) => (
+              <figure
+                key={quo.name}
+                data-anim="quote"
+                data-drift={i % 2 === 0 ? "-4" : "3"}
+                className={`pb-quote ${
+                  i === 0 ? "pb-quote--tl" : i === 1 ? "pb-quote--tr" : "pb-quote--bl"
+                }`}
+              >
+                <blockquote>
+                  <p className="text-[0.9375rem] leading-[1.5] text-ink/70">
+                    &ldquo;{quo.text}&rdquo;
+                  </p>
+                </blockquote>
+                <figcaption className="mt-fib-2 flex items-center gap-[8px]">
+                  <span className={`pb-av ${AV_TINTS[i]}`}>
+                    <PersonIcon />
+                  </span>
+                  <span className="t-meta text-ink/45">{quo.name}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+
+        {/* mobile / tablet: the witnesses stack under the claim */}
+        <div className="wrap grid gap-fib-3 pb-fib-6 sm:grid-cols-3 lg:hidden">
+          {QUOTES.map((quo, i) => (
+            <figure
+              key={quo.name}
+              data-anim="quote"
+              className="rounded-panel bg-panel/60 p-fib-4"
+            >
+              <blockquote>
+                <p className="text-[0.9375rem] leading-[1.5] text-ink/70">
+                  &ldquo;{quo.text}&rdquo;
+                </p>
+              </blockquote>
+              <figcaption className="mt-fib-2 flex items-center gap-[8px]">
+                <span className={`pb-av ${AV_TINTS[i]}`}>
+                  <PersonIcon />
+                </span>
+                <span className="t-meta text-ink/45">{quo.name}</span>
+              </figcaption>
+            </figure>
+          ))}
         </div>
       </section>
 
