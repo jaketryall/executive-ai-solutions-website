@@ -570,9 +570,11 @@ main {
   align-items: center;
   height: 52px;
   border-radius: var(--radius-capsule);
-  background: rgba(19, 20, 19, 0.9);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
+  /* the Lesse glass (decoded from their DOM: rgba(36,36,36,.5) + blur(36px)):
+     the heavy blur does the legibility work, not the alpha — whatever scrolls
+     beneath smears into tone instead of ghosting through */
+  background: rgba(25, 26, 25, 0.6);
+  backdrop-filter: blur(36px);
   color: var(--color-paper);
   box-shadow: 0 10px 34px rgba(19, 20, 19, 0.16);
 }
@@ -1698,7 +1700,6 @@ a.work-card:hover {
   z-index: 10;
   background: rgba(16, 17, 17, 0.35);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   opacity: 0;
   transition: opacity 0.5s var(--ease-ui);
 }
@@ -2150,7 +2151,6 @@ a.work-card:hover {
   border-radius: 999px;
   background: rgba(16, 17, 17, 0.9);
   backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   color: var(--color-paper);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
   transform: translateY(150%);
@@ -2632,7 +2632,6 @@ a.work-card:hover {
   padding: 18px 76px 18px 21px; /* right clears the fixed close button */
   background: color-mix(in oklab, var(--ms-bg) 94%, transparent);
   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
 }
 .demo-brand {
   font-family: var(--font-display);
