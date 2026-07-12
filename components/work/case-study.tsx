@@ -150,7 +150,7 @@ export function CaseStudy({
             <p className="t-meta text-ink/60">{project.status}</p>
           )}
         </div>
-        <h1 className="t-display-xl mt-[21px] max-w-[14ch]">
+        <h1 className="t-display-title mt-[21px] max-w-[14ch]">
           <span className="mask-line">
             <span className="mask-inner" data-anim="cs-title">
               {project.client}

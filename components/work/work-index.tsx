@@ -69,6 +69,29 @@ export function WorkIndex() {
           }
         );
       });
+      /* the deck settle: while the next chapter rides over this one, the
+         covered card eases back (scale only — opacity stays owned by the
+         entrance tween) */
+      const cards = q(".wkc") as HTMLElement[];
+      cards.forEach((card, i) => {
+        const next = cards[i + 1];
+        if (!next) return;
+        gsap.fromTo(
+          card,
+          { scale: 1, transformOrigin: "center top" },
+          {
+            scale: 0.96,
+            ease: "none",
+            scrollTrigger: {
+              trigger: next,
+              start: "top bottom",
+              end: "top 15%",
+              scrub: true,
+            },
+          }
+        );
+      });
+
       (q("[data-wkc-par]") as HTMLElement[]).forEach((el) => {
         gsap.fromTo(
           el,
@@ -133,25 +156,16 @@ export function WorkIndex() {
                   data-vt-media
                   style={{ viewTransitionName: vtName(p.slug) }}
                 >
-                  <div
-                    data-wkc-par
-                    className="wkc-par"
-                    style={{
-                      transform: `scale(${Math.max(p.backdropCrop?.zoom ?? 1, 1.08)})`,
-                      transformOrigin: p.backdropCrop?.origin,
-                    }}
-                  >
+                  {/* the COVER, not the backdrop: the case-study hero shows
+                      the same image with the same crop, so the morph carries
+                      one picture instead of crossfading two */}
+                  <div data-wkc-par className="wkc-par">
                     <Image
-                      src={(p.backdrop ?? p.cover).src}
-                      alt={(p.backdrop ?? p.cover).alt}
+                      src={p.cover.src}
+                      alt={p.cover.alt}
                       fill
                       sizes="(min-width: 821px) 60vw, 96vw"
                       className="wkc-img"
-                      style={
-                        p.backdropCrop
-                          ? { objectPosition: p.backdropCrop.origin }
-                          : undefined
-                      }
                     />
                   </div>
                 </div>

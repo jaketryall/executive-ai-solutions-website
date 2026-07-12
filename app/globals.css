@@ -3812,6 +3812,10 @@ html.wki-lock body {
 .wkc {
   color: var(--color-paper);
   text-decoration: none;
+  /* the deck — each chapter sticks as it reaches the top, and the next one
+     rides up OVER it (plain CSS sticky — scroll speed never changes) */
+  position: sticky;
+  top: clamp(76px, 10svh, 100px);
 }
 .wkc-media {
   position: relative;
@@ -3826,7 +3830,8 @@ html.wki-lock body {
 }
 .wkc-img {
   object-fit: cover;
-  object-position: center top;
+  /* left top matches .cs-img exactly — the morph's two ends share a crop */
+  object-position: left top;
   transition: transform 0.9s var(--ease-structure);
 }
 .wkc:hover .wkc-img {
