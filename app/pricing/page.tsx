@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PricingPage } from "@/components/pricing/pricing-page";
+import { PricingPage, PricingSheet } from "@/components/pricing/pricing-page";
 import { Estimate } from "@/components/sections/estimate";
 import {
   PROJECT_TYPES,
@@ -57,6 +57,7 @@ export default function Page() {
     <>
       <PricingPage />
       <Estimate standalone />
+      <PricingSheet />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

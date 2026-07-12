@@ -65,30 +65,6 @@ export function PricingPage() {
       let dead = false;
       whenArrived().then(() => !dead && enter());
 
-      /* the sheet: frame settles, then rows deal themselves in */
-      const sheetTl = gsap.timeline({
-        defaults: { ease: EASE_STRUCTURE },
-        scrollTrigger: { trigger: q(".pr-sheet")[0], start: "top 72%", once: true },
-      });
-      sheetTl
-        .fromTo(
-          q("[data-anim='sheet']"),
-          { autoAlpha: 0, y: 34, scale: 0.98 },
-          { autoAlpha: 1, y: 0, scale: 1, duration: 0.9 }
-        )
-        .fromTo(
-          q(".sheet-row"),
-          { autoAlpha: 0, y: 8 },
-          { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.05, ease: EASE_UI },
-          "-=0.45"
-        )
-        .fromTo(
-          q("[data-anim='sheet-rail']"),
-          { autoAlpha: 0, x: 21 },
-          { autoAlpha: 1, x: 0, duration: 0.7, stagger: 0.09 },
-          "<"
-        );
-
       /* tiers: the lead tile lands last */
       gsap.fromTo(
         q("[data-anim='tier-head']"),
@@ -231,6 +207,55 @@ export function PricingPage() {
         </div>
       </section>
 
+      {/* ── WHERE PROJECTS LAND · Growth leads ── */}
+
+    </article>
+  );
+}
+
+
+/* ── THE SHEET, demoted to the appendix: the estimator answers "what would
+   MINE cost"; this answers "are they hiding anything". It renders AFTER the
+   estimator (composed in app/pricing/page.tsx) so the path to the action
+   never pays the 1,100px line-item tax. ── */
+export function PricingSheet() {
+  const root = useRef<HTMLDivElement>(null!);
+
+  useGSAP(
+    () => {
+      const q = gsap.utils.selector(root);
+      if (reducedMotion()) {
+        gsap.set(q("[data-anim]"), { autoAlpha: 1, x: 0, y: 0, scale: 1 });
+        return;
+      }
+      gsap
+        .timeline({
+          defaults: { ease: EASE_STRUCTURE },
+          scrollTrigger: { trigger: root.current, start: "top 72%", once: true },
+        })
+        .fromTo(
+          q("[data-anim='sheet']"),
+          { autoAlpha: 0, y: 34, scale: 0.98 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 0.9 }
+        )
+        .fromTo(
+          q(".sheet-row"),
+          { autoAlpha: 0, y: 8 },
+          { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.05, ease: EASE_UI },
+          "-=0.45"
+        )
+        .fromTo(
+          q("[data-anim='sheet-rail']"),
+          { autoAlpha: 0, x: 21 },
+          { autoAlpha: 1, x: 0, duration: 0.7, stagger: 0.09 },
+          "<"
+        );
+    },
+    { scope: root }
+  );
+
+  return (
+    <div ref={root}>
       {/* ── THE SHEET · split: document left, how-to-read rail right ── */}
       <section className="pr-sheet py-fib-5 md:py-fib-6">
         <div className="wrap grid items-start gap-fib-5 md:grid-cols-[62fr_38fr] md:gap-fib-6">
@@ -313,9 +338,6 @@ export function PricingPage() {
           </div>
         </div>
       </section>
-
-      {/* ── WHERE PROJECTS LAND · Growth leads ── */}
-
-    </article>
+    </div>
   );
 }
