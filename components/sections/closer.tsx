@@ -59,7 +59,7 @@ export function Closer() {
         scrollTrigger: {
           trigger: root.current,
           start: "top bottom",
-          end: "bottom 55%",
+          end: "bottom 30%",
           scrub: 0.5,
           invalidateOnRefresh: true,
         },
@@ -116,7 +116,7 @@ export function Closer() {
           scale: 0.92,
           borderRadius: 24,
           y: () => card.offsetHeight * 0.04,
-          duration: 0.1,
+          duration: 0.35,
           immediateRender: false,
         },
         2.35
