@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, useState, type FormEvent } from "react";
 import {
   gsap,
@@ -305,12 +306,13 @@ export function ContactPage() {
           <div className="mt-fib-4 md:mt-fib-5">
             <ProcessCards steps={STEPS} anim="step" />
           </div>
-          <div data-anim="step" className="mt-fib-6 flex flex-wrap items-center gap-fib-3">
-            <CTA href="/pricing#estimate" label="Price it first, if you'd rather" tone="ink" />
-            <span className="t-meta text-ink/60">
-              The estimator gives you a live number before you ever send a message
-            </span>
-          </div>
+          <p data-anim="step" className="mt-fib-5 text-ink/60">
+            Rather see a number first?{" "}
+            <Link href="/pricing#estimate" className="u-link text-ink/80">
+              Price it in sixty seconds
+            </Link>{" "}
+            — no message required.
+          </p>
         </div>
       </section>
     </article>

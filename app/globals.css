@@ -4064,6 +4064,8 @@ html.wki-lock body {
 .proc-num {
   margin-block: auto;
   line-height: 1;
+  /* solid low-ink watermark — the outline ghost read as anemic */
+  color: rgba(19, 20, 19, 0.12);
 }
 .proc-card p {
   max-width: 36ch;

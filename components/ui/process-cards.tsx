@@ -16,8 +16,8 @@ export function ProcessCards({
       {steps.map((s, i) => (
         <li key={s.name} data-anim={anim} className="proc-card">
           <h3 className="t-title font-display">{s.name}</h3>
-          <span className="t-numeral-step num proc-num" aria-hidden>
-            <span className="num-outline">{String(i + 1).padStart(2, "0")}</span>
+          <span className="t-numeral-step proc-num" aria-hidden>
+            {String(i + 1).padStart(2, "0")}
           </span>
           <p className="text-ink/70">{s.body}</p>
         </li>
