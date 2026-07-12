@@ -113,8 +113,8 @@ export function Footer() {
 
         {/* wordmark + motif bookend */}
         <div className="relative mt-[55px] flex items-end justify-between gap-[34px] md:mt-[89px]">
-          <div className="footer-mark mb-[21px] shrink-0 text-ink/25">
-            <Monogram className="h-[55px] w-[55px] md:h-[89px] md:w-[89px]" label="Executive AI Solutions monogram" />
+          <div className="footer-mark mb-[21px] shrink-0 text-ink">
+            <Monogram className="h-[34px] w-[34px] md:h-[42px] md:w-[42px]" label="Executive AI Solutions monogram" />
           </div>
           <p className="t-meta mb-[21px] shrink-0 text-ink/55">
             © 2026 Executive AI Solutions
