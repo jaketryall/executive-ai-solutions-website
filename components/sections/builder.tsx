@@ -385,7 +385,7 @@ export function Builder() {
       id="builder"
       ref={root}
       data-nav="light"
-      className="bld relative pb-fib-7 pt-fib-6 md:pt-fib-7"
+      className="bld relative py-fib-6"
     >
       <div className="wrap">
         <p data-anim="bld-head" className="t-meta text-ink/60">

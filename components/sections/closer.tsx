@@ -140,7 +140,7 @@ export function Closer() {
   );
 
   return (
-    <section data-pcta-hide ref={root} data-nav="dark" aria-label="Start your project" className="relative">
+    <section data-pcta-hide ref={root} data-nav="dark" aria-label="Start your project" className="relative mt-fib-6">
       {/* the pinned stage — one full viewport; the card's inset/radius live in
           the scale+radius tweens (reduced motion rests the inset card) */}
       <div className="closer-stage h-svh w-full motion-reduce:p-fib-1 md:motion-reduce:p-fib-2">

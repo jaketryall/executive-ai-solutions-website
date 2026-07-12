@@ -217,7 +217,7 @@ export function Services() {
     <section id="services" ref={root} className="relative overflow-x-clip">
       {/* the whole funnel is ONE card — a dark panel floating on the canvas
           (the v2 grammar): the rail pins while the stages scroll past it */}
-      <div className="dark-chapter mx-[8px] rounded-panel py-fib-6 md:mx-[13px]">
+      <div className="dark-chapter mx-[8px] mt-fib-4 rounded-panel py-fib-6 md:mx-[13px]">
         <div className="wrap grid gap-fib-5 md:grid-cols-[minmax(260px,340px)_1fr] md:gap-fib-6">
           <div>
             <div className="md:sticky md:top-[144px]">

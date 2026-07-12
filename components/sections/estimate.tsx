@@ -203,7 +203,7 @@ export function Estimate({ standalone = false }: { standalone?: boolean } = {}) 
       ref={root}
       data-nav="dark"
       className={`dark-chapter relative z-10 mx-[8px] rounded-panel md:mx-[13px] ${
-        standalone ? "mt-[8px]" : "mt-[8px] md:-mt-[89px]"
+        standalone ? "mt-[8px]" : "mt-[8px] md:mt-fib-6"
       }`}
     >
       {/* ── the instant estimate ── */}

@@ -87,9 +87,9 @@ export function Faq() {
       id="faq"
       ref={root}
       data-nav="light"
-      className="relative py-[89px]"
+      className="relative py-fib-6"
     >
-      <div className="wrap grid gap-[34px] md:grid-cols-[minmax(300px,380px)_1fr] md:gap-[89px]">
+      <div className="wrap grid gap-fib-4 md:grid-cols-[minmax(300px,380px)_1fr] md:gap-fib-6">
         <div>
           {/* the rail sticks with the cards; the CTA catches whoever got here
               with a question the cards didn't answer (the form attaches their

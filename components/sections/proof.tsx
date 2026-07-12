@@ -122,7 +122,7 @@ export function Proof() {
 
   return (
     <section id="proof" ref={root} className="relative z-10 -mt-fib-4 rounded-t-[24px] bg-canvas">
-      <div className="wrap grid gap-fib-5 pb-fib-6 pt-fib-6 md:grid-cols-[38fr_62fr]">
+      <div className="wrap grid gap-fib-5 pb-fib-7 pt-fib-6 md:grid-cols-[38fr_62fr]">
         {/* ── the story column: what happened, in reading order ── */}
         <div className="flex min-w-0 flex-col gap-fib-4">
           <header data-anim="head">

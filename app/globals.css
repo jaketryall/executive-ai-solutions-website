@@ -1073,7 +1073,7 @@ main {
    tl above the claim, tr beside the subline, bl below the CTA */
 .pb-quote--tl {
   left: 2%;
-  top: 6%;
+  top: 9%;
   transform: rotate(-1.5deg);
 }
 .pb-quote--tr {
