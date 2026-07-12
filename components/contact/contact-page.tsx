@@ -216,16 +216,10 @@ export function ContactPage() {
           {/* the compose window — the project's first artifact */}
           <div data-anim="compose">
             <figure
-              className="af af--ink af--chrome compose"
+              className="af af--ink af--card compose"
               role="group"
               aria-label="Message form, sent straight to Executive AI Solutions"
             >
-              <div className="af-bar" aria-hidden>
-                <Monogram className="h-[13px] w-[13px] opacity-70" />
-                <span className="af-url">
-                  New message · to Executive AI Solutions
-                </span>
-              </div>
               <div className="af-body">
                 {status === "success" ? (
                   <div role="status" className="py-fib-4">
