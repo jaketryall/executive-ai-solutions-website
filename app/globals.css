@@ -3836,13 +3836,11 @@ html.wki-lock body {
    Each project is one near-viewport inset rounded panel floating on the
    canvas (the dark-chapter grammar at showcase scale): the build fills the
    card, the name + numbers compose over it on a PLACED directional scrim. */
-.wkc {
+/* the work grid tile — itsjay's grid in the site's card grammar */
+.wkt {
+  display: block;
   color: var(--color-paper);
   text-decoration: none;
-  /* the deck — each chapter sticks as it reaches the top, and the next one
-     rides up OVER it (plain CSS sticky — scroll speed never changes) */
-  position: sticky;
-  top: clamp(76px, 10svh, 100px);
 }
 .wkc-media {
   position: relative;
@@ -3880,14 +3878,17 @@ html.wki-lock body {
 }
 
 /* the open slot — shorter, riding the steel gradient, face centered */
-.wkc--open {
+.wkt--open {
   display: flex;
-  min-height: min(55svh, 520px);
+  height: 100%;
+  min-height: 420px;
   padding: 34px;
-  border-radius: var(--radius-panel);
   overflow: clip;
   align-items: center;
   justify-content: center;
+}
+.wkt--open:hover .wki-open-pill {
+  transform: scale(1.06);
 }
 .wk-open-face {
   display: flex;
@@ -3897,9 +3898,7 @@ html.wki-lock body {
   text-align: center;
   color: var(--color-paper);
 }
-.wkc--open:hover .wki-open-pill {
-  transform: scale(1.06);
-}
+
 
 /* ───────────────── service pages (/services/[slug]) ───────────────── */
 

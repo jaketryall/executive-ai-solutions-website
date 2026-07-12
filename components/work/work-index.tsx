@@ -69,29 +69,6 @@ export function WorkIndex() {
           }
         );
       });
-      /* the deck settle: while the next chapter rides over this one, the
-         covered card eases back (scale only — opacity stays owned by the
-         entrance tween) */
-      const cards = q(".wkc") as HTMLElement[];
-      cards.forEach((card, i) => {
-        const next = cards[i + 1];
-        if (!next) return;
-        gsap.fromTo(
-          card,
-          { scale: 1, transformOrigin: "center top" },
-          {
-            scale: 0.96,
-            ease: "none",
-            scrollTrigger: {
-              trigger: next,
-              start: "top bottom",
-              end: "top 15%",
-              scrub: true,
-            },
-          }
-        );
-      });
-
       (q("[data-wkc-par]") as HTMLElement[]).forEach((el) => {
         gsap.fromTo(
           el,
@@ -100,7 +77,7 @@ export function WorkIndex() {
             yPercent: 4,
             ease: "none",
             scrollTrigger: {
-              trigger: el.closest(".wkc"),
+              trigger: el.closest(".wkt"),
               start: "top bottom",
               end: "bottom top",
               scrub: true,
@@ -136,85 +113,60 @@ export function WorkIndex() {
         </header>
       </div>
 
-      {/* ── the chapters: one commanding card per project ── */}
-      <div className="flex flex-col gap-fib-4 pb-fib-6">
+      {/* ── the grid: itsjay's work grid in the site's card grammar —
+          2-up dark tiles, image inset, name + meta on the footer strip ── */}
+      <div className="grid grid-cols-1 gap-[8px] px-[8px] pb-fib-6 md:grid-cols-2 md:gap-[13px] md:px-[13px]">
         {PROJECTS.map((p) => {
-          const [hero, ...rest] = p.results?.metrics ?? [];
+          const [hero] = p.results?.metrics ?? [];
           return (
             <Link
               key={p.slug}
               href={`/work/${p.slug}`}
               data-anim="chapter"
-              className="wkc dark-chapter mx-[8px] grid gap-fib-3 rounded-panel p-fib-2 md:mx-[13px] md:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] md:gap-fib-4"
+              className="wkt dark-chapter rounded-panel p-fib-2"
               aria-label={`${p.client}: open the case study`}
             >
-              {/* the work — inset, rounded, breathing against the scroll
-                  (the homepage project-card object) */}
-              <div className="relative min-w-0">
-                <div
-                  className="wkc-media aspect-square overflow-hidden rounded-frame md:aspect-4/3"
-                  data-vt-media
-                  style={{ viewTransitionName: vtName(p.slug) }}
-                >
-                  {/* the COVER, not the backdrop: the case-study hero shows
-                      the same image with the same crop, so the morph carries
-                      one picture instead of crossfading two */}
-                  <div data-wkc-par className="wkc-par">
-                    <Image
-                      src={p.cover.src}
-                      alt={p.cover.alt}
-                      fill
-                      sizes="(min-width: 821px) 60vw, 96vw"
-                      className="wkc-img"
-                    />
-                  </div>
+              <div
+                className="wkc-media relative aspect-square overflow-hidden rounded-frame md:aspect-4/3"
+                data-vt-media
+                style={{ viewTransitionName: vtName(p.slug) }}
+              >
+                {/* the COVER with the case hero's crop — the morph carries
+                    one picture, small tile up to big frame */}
+                <div data-wkc-par className="wkc-par">
+                  <Image
+                    src={p.cover.src}
+                    alt={p.cover.alt}
+                    fill
+                    sizes="(min-width: 821px) 48vw, 96vw"
+                    className="wkc-img"
+                  />
                 </div>
               </div>
 
-              {/* the receipts — on the card, not on the image */}
-              <div className="flex min-h-0 min-w-0 flex-col p-fib-2 md:py-fib-3 md:pl-0 md:pr-fib-3">
-                <div className="flex flex-wrap items-center gap-fib-2">
-                  <span className="chip">{p.sector}</span>
-                  <span className="t-meta text-paper/45">
-                    {p.kind} · {p.year} · {p.status}
-                  </span>
-                </div>
-                <h2 className="t-display-lg mt-fib-3 text-paper">
-                  {p.listName}
-                </h2>
-
-                {hero ? (
-                  <>
-                    <p className="t-num mt-fib-4 font-display text-[3.2rem] font-extrabold leading-none tracking-[-0.03em] text-paper">
-                      {hero.value}
-                    </p>
-                    <p className="mt-fib-1 text-paper/65">{hero.label}</p>
-                    {rest.length > 0 && (
-                      <p className="t-meta mt-fib-2 text-paper/45">
-                        {rest.map((m) => `${m.value} ${m.label}`).join(" · ")}
-                      </p>
-                    )}
-                  </>
-                ) : (
-                  <p className="mt-fib-4 max-w-[36ch] text-paper/70">
-                    The build you&apos;re inside right now. Every interaction
-                    on it is the demo.
-                  </p>
-                )}
-
-                <span className="wkc-open t-meta mt-auto self-start pt-fib-4" aria-hidden>
-                  Open the case
-                  <svg viewBox="0 0 16 16" fill="none">
-                    <path
-                      d="M2 8h11M9 3.5 13.5 8 9 12.5"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+              {/* the footer strip: name leads, meta answers (itsjay's line,
+                  Lesse's restraint) */}
+              <div className="mt-fib-2 flex items-center justify-between gap-fib-2 px-fib-1">
+                <span className="flex min-w-0 items-center gap-fib-2">
+                  {p.logo && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={p.logo}
+                      alt=""
+                      className="h-[21px] w-[21px] shrink-0 object-contain"
                     />
-                  </svg>
+                  )}
+                  <h2 className="t-title truncate text-paper">{p.listName}</h2>
+                </span>
+                <span className="t-meta shrink-0 text-paper/50">
+                  {p.sector} · {p.year}
                 </span>
               </div>
+              <p className="t-meta mt-fib-1 px-fib-1 pb-fib-1 text-paper/45">
+                {hero
+                  ? `${hero.value} ${hero.label}`
+                  : "The build you're inside right now"}
+              </p>
             </Link>
           );
         })}
@@ -224,7 +176,7 @@ export function WorkIndex() {
           href="/pricing#estimate"
           data-anim="chapter"
           data-no-vt
-          className="wkc wkc--open closer-card mx-[8px] md:mx-[13px]"
+          className="wkt wkt--open closer-card rounded-panel md:col-span-2"
         >
           <span className="wk-open-face">
             <span className="t-display-lg">This spot is open</span>
