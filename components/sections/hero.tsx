@@ -367,7 +367,7 @@ export function Hero() {
           <p data-anim="eyebrow" className="t-meta uppercase text-paper/45">
             Full-funnel ads agency
           </p>
-          <h1 data-anim="statement" className="t-statement mt-fib-2 max-w-[36ch]">
+          <h1 data-anim="statement" className="t-statement t-statement--hero mt-fib-2 max-w-[36ch]">
             <span className="text-paper">
               {ariaPair.out} {ariaPair.who}.
             </span>{" "}

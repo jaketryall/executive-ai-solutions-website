@@ -135,7 +135,9 @@ export function PriceBeat() {
     <section ref={root} data-pcta-hide className="relative overflow-x-clip">
       <div className="wrap relative flex min-h-[96svh] flex-col items-center justify-center py-fib-7 text-center">
         {/* the claim — full contrast, dead center */}
-        <p data-anim="price" className="t-display-lg max-w-[16ch] text-balance">
+        {/* a <p>, not a heading — it shares the h1's statement register so the
+            page's two claim peaks (hero, price) sit above every section h2 */}
+        <p data-anim="price" className="t-statement t-statement--hero max-w-[26ch] text-balance">
           Sites from <span className="text-accent">$2.5k</span>. Ads managed
           from <span className="text-accent">$500/mo</span>.
         </p>

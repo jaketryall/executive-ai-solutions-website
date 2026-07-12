@@ -86,11 +86,60 @@ export function Services() {
             ScrollTrigger.refresh(); // late layout change: re-measure triggers
           });
         });
-        const c = gsap.timeline({ repeat: -1, paused: true });
+        /* the full story: the listing lights up as the ad, the sitelinks
+           arrive one by one, then a cursor glides in and CLICKS it (the
+           stage's namesake) before everything dims for the next cycle.
+           repeatRefresh re-reads the function-based cursor coordinates each
+           loop, so late layout shifts can't strand the click off-target. */
+        const adTitle = ad.querySelector(".g-title") as HTMLElement;
+        const links = ad.querySelectorAll(".g-ext a");
+        const cursor = ad.querySelector(".g-cursor") as HTMLElement;
+        const ring = ad.querySelector(".g-click-ring") as HTMLElement;
+        const clickPt = () => ({
+          x: adTitle.offsetLeft + Math.min(64, adTitle.offsetWidth * 0.3),
+          y: adTitle.offsetTop + 12,
+        });
+        gsap.set(ring, { xPercent: -50, yPercent: -50 });
+        const c = gsap.timeline({ repeat: -1, paused: true, repeatRefresh: true });
         c.call(() => ad.classList.add("is-lit"))
-          .to({}, { duration: 3.4 })
+          // colors turn (CSS), then each sitelink lands on its own beat
+          .fromTo(
+            links,
+            { autoAlpha: 0, y: 5 },
+            { autoAlpha: 1, y: 0, duration: 0.35, ease: EASE_UI, stagger: 0.09 },
+            0.3
+          )
+          .to({}, { duration: 1.0 })
+          // the click: in from below, press, ripple, gone
+          .set(cursor, {
+            x: () => ad.offsetWidth - 55,
+            y: () => ad.offsetHeight + 4,
+            autoAlpha: 0,
+            scale: 1,
+          })
+          .to(cursor, { autoAlpha: 1, duration: 0.25, ease: EASE_UI })
+          .to(cursor, {
+            x: () => clickPt().x,
+            y: () => clickPt().y,
+            duration: 0.9,
+            ease: EASE_STRUCTURE,
+          }, "<")
+          .to(cursor, { scale: 0.78, duration: 0.09, ease: EASE_UI })
+          .set(ring, { x: () => clickPt().x + 4, y: () => clickPt().y + 4 }, "<")
+          .fromTo(
+            ring,
+            { autoAlpha: 0.55, scale: 0.25 },
+            // immediateRender must stay off: with repeatRefresh, the default
+            // would flash the ring's FROM state at every cycle start
+            { autoAlpha: 0, scale: 1, duration: 0.6, ease: EASE_UI, immediateRender: false },
+            "<"
+          )
+          .to(adTitle, { opacity: 0.55, duration: 0.08, yoyo: true, repeat: 1, ease: "none" }, "<")
+          .to(cursor, { scale: 1, duration: 0.16, ease: EASE_UI }, "-=0.4")
+          .to(cursor, { autoAlpha: 0, duration: 0.35, ease: EASE_UI }, "+=0.5")
+          .to({}, { duration: 0.35 })
           .call(() => ad.classList.remove("is-lit"))
-          .to({}, { duration: 1.8 });
+          .to({}, { duration: 1.7 });
         loops.push(c);
       }
 
@@ -113,13 +162,16 @@ export function Services() {
         const typing = chat.querySelector("[data-ctyping]");
         const ca = chat.querySelector("[data-ca]");
         const c = gsap.timeline({ repeat: -1, paused: true });
-        c.set([cq, ca], { autoAlpha: 0, y: 8 })
+        c.set(cq, { autoAlpha: 0, y: 8 })
+          // the answer must replace the dots IN PLACE — any y motion here
+          // reads as the whole exchange shifting when the text arrives
+          .set(ca, { autoAlpha: 0 })
           .set(typing, { autoAlpha: 0 })
           .to({}, { duration: 0.5 })
           .to(cq, { autoAlpha: 1, y: 0, duration: 0.4, ease: EASE_UI })
           .to(typing, { autoAlpha: 1, duration: 0.25, ease: EASE_UI }, "+=0.55")
           .to(typing, { autoAlpha: 0, duration: 0.2, ease: EASE_UI }, "+=1.5")
-          .to(ca, { autoAlpha: 1, y: 0, duration: 0.45, ease: EASE_UI }, "<0.1")
+          .to(ca, { autoAlpha: 1, duration: 0.45, ease: EASE_UI }, "<0.1")
           .to({}, { duration: 3.4 })
           // the exchange closes softly before the next one begins
           .to([cq, ca], { autoAlpha: 0, duration: 0.4, ease: EASE_UI, stagger: 0.06 })
@@ -174,7 +226,7 @@ export function Services() {
           <article data-svc-row className="rounded-[18px] bg-paper/[0.05] p-fib-4 md:p-fib-5">
             <div className="flex flex-col gap-fib-4">
               <div>
-                <h3 data-anim="copy" className="t-title--lg font-display font-bold">
+                <h3 data-anim="copy" className="t-title--lg">
                   The click
                 </h3>
                 <p data-anim="copy" className="mt-fib-2 max-w-[44ch] text-paper/70">
@@ -214,6 +266,22 @@ export function Services() {
                         </div>
                       </div>
                     </div>
+                    {/* the stage's namesake, enacted: once the ad is lit, a
+                        cursor glides in and clicks it */}
+                    <span className="g-click-ring" aria-hidden />
+                    <svg
+                      className="g-cursor"
+                      viewBox="0 0 24 24"
+                      aria-hidden
+                    >
+                      <path
+                        d="M5.5 2.2v18.3l4.3-4.1 2.9 6.4 3-1.4-2.9-6.3 5.9-.6L5.5 2.2z"
+                        fill="#131413"
+                        stroke="#fff"
+                        strokeWidth="1.4"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </div>
                 </ArtifactFrame>
               </div>
@@ -224,7 +292,7 @@ export function Services() {
           <article data-svc-row className="rounded-[18px] bg-paper/[0.05] p-fib-4 md:p-fib-5">
             <div className="flex flex-col gap-fib-4">
               <div>
-                <h3 data-anim="copy" className="t-title--lg font-display font-bold">
+                <h3 data-anim="copy" className="t-title--lg">
                   The landing
                 </h3>
                 <p data-anim="copy" className="mt-fib-2 max-w-[44ch] text-paper/70">
@@ -266,7 +334,7 @@ export function Services() {
             <div className="flex flex-col gap-fib-4">
               <div>
                 <div className="flex flex-wrap items-center gap-fib-2">
-                  <h3 data-anim="copy" className="t-title--lg font-display font-bold">
+                  <h3 data-anim="copy" className="t-title--lg">
                     The follow-up
                   </h3>
                   <span data-anim="copy" className="chip chip--sm bg-accent/10 text-accent">
