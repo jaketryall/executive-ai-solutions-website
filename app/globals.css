@@ -3811,7 +3811,10 @@ html.wki-lock body {
 }
 .cs-mat-well {
   aspect-ratio: 16 / 10;
-  background: var(--color-dark-2);
+  /* the awwwards fill: when the work doesn't cover the well, the space
+     around it is LIGHT: a framed page on paper, not a rectangle floating
+     in the dark */
+  background: var(--color-paper);
 }
 .cs-mat-img {
   object-fit: contain; /* the WHOLE screenshot — the mat absorbs the letterbox */
