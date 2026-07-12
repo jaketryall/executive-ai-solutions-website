@@ -10,6 +10,9 @@ export type WorkImage = {
 };
 
 export type WorkFigure = WorkImage & {
+  /** what you're looking at — always visible on the mat */
+  name: string;
+  /** the longer note — revealed on hover (always shown on touch) */
   caption: string;
   span?: "full" | "half";
 };
@@ -129,6 +132,7 @@ export const PROJECTS: Project[] = [
         width: 1600,
         height: 1000,
         alt: "The Desert Wings training journey section",
+        name: "The training journey",
         caption: "The path from discovery flight to checkride, laid out as one scroll",
         span: "full",
       },
@@ -137,6 +141,7 @@ export const PROJECTS: Project[] = [
         width: 1400,
         height: 648,
         alt: "The Desert Wings fleet gallery",
+        name: "The fleet gallery",
         caption: "The fleet, presented aircraft by aircraft",
         span: "half",
       },
@@ -145,6 +150,7 @@ export const PROJECTS: Project[] = [
         width: 1600,
         height: 1000,
         alt: "The Desert Wings instructor team section",
+        name: "The instructor team",
         caption: "Real instructors, not stock pilots",
         span: "half",
       },
@@ -153,6 +159,7 @@ export const PROJECTS: Project[] = [
         width: 1600,
         height: 1000,
         alt: "The Desert Wings reviews and proof section",
+        name: "Reviews & proof",
         caption: "Proof placed where the decision actually happens",
         span: "full",
       },
@@ -218,6 +225,7 @@ export const PROJECTS: Project[] = [
         width: 1600,
         height: 1000,
         alt: "The instant estimator on the Executive AI Solutions site",
+        name: "The instant estimator",
         caption: "The estimator: a real number, not a lead trap",
         span: "full",
       },
@@ -226,6 +234,7 @@ export const PROJECTS: Project[] = [
         width: 1920,
         height: 1080,
         alt: "A frame from the Executive AI Solutions showreel",
+        name: "The showreel",
         caption: "The showreel that opens the homepage",
         span: "full",
       },

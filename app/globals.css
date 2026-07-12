@@ -3768,10 +3768,10 @@ html.wki-lock body {
 
 /* ───────────────────── case studies (/work/[slug]) ───────────────────── */
 .cs-hero-well {
-  /* the wide cinematic showpiece (no morph constraint anymore) */
+  /* the wide cinematic showpiece, framed by its mat */
   position: relative;
   height: clamp(340px, 62svh, 680px);
-  border-radius: 18px;
+  border-radius: var(--radius-btn);
   overflow: clip;
   background: var(--color-ink);
 }
@@ -3797,9 +3797,10 @@ html.wki-lock body {
   background: var(--color-panel);
 }
 /* the mat (awwwards' highlight framing): the screenshot floats inside a
-   dark card with generous matting; the caption lives on the mat */
+   dark card with generous matting; the name lives on the frame, the longer
+   note slides up over the image on hover */
 .cs-mat {
-  padding: 13px 13px 8px;
+  padding: 13px;
   border-radius: var(--radius-panel);
   background: var(--color-dark-2);
 }
@@ -3808,26 +3809,80 @@ html.wki-lock body {
     padding: 21px 21px 13px;
   }
 }
+.cs-mat-well {
+  aspect-ratio: 16 / 10;
+  background: var(--color-dark-2);
+}
+.cs-mat-img {
+  object-fit: contain; /* the WHOLE screenshot — the mat absorbs the letterbox */
+}
+.cs-mat-cap {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 34px 16px 13px;
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  color: rgba(239, 240, 238, 0.92);
+  background: linear-gradient(0deg, rgba(16, 17, 17, 0.82) 0%, transparent 100%);
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.35s var(--ease-ui),
+    transform 0.35s var(--ease-ui);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .cs-mat:hover .cs-mat-cap {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.cs-mat-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 13px;
+  margin-top: 13px;
+}
+/* touch has no hover: the note sits on the frame instead */
+.cs-mat-cap-touch {
+  display: none;
+  text-align: right;
+}
+@media (hover: none) {
+  .cs-mat-cap-touch {
+    display: inline;
+  }
+  .cs-mat-cap {
+    display: none;
+  }
+}
 .cs-fig-well--wide {
   height: clamp(280px, 44vw, 620px);
 }
-.cs-phones {
+/* the phones — staged inside their mat like every other exhibit */
+.cs-phones-stage {
+  position: absolute;
+  inset: 0;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  gap: 21px;
-  padding: 55px 21px 0;
-  border-radius: var(--radius-btn);
-  background: var(--color-panel);
-  overflow: clip;
+  align-items: center;
+  gap: clamp(21px, 4vw, 55px);
+  padding: 34px;
 }
 .cs-phone {
-  width: clamp(140px, 26vw, 300px);
-  flex-shrink: 1;
-  margin-bottom: -34px;
+  height: 76%;
+  flex-shrink: 0;
+}
+.cs-phone img {
+  height: 100%;
+  width: auto;
+}
+.cs-phone--0 {
+  transform: translateY(-3%);
 }
 .cs-phone--1 {
-  margin-top: 34px;
+  transform: translateY(5%);
 }
 .cs-next {
   text-decoration: none;

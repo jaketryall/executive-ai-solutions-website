@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { Project } from "@/lib/work";
+import type { Project, WorkFigure } from "@/lib/work";
 import { CTA } from "@/components/ui/cta";
 import { Monogram } from "@/components/ui/monogram";
 import {
@@ -19,6 +19,39 @@ import { whenArrived } from "@/components/anim/arrival";
 // One case study. Arrivals ride the site-wide sheet transition; the hero
 // well paints at its final crop from the first frame (overscan is a CSS
 // base state) and simply stands as the sheet lands.
+
+
+/* one exhibited screenshot: a dark mat, the WHOLE image letterboxed inside
+   (uniform wells keep the grid symmetric), the name always on the frame,
+   the longer note sliding up over the image on hover (shown statically on
+   touch, where hover doesn't exist) */
+function Mat({ fig, half = false }: { fig: WorkFigure; half?: boolean }) {
+  return (
+    <figure
+      data-anim="cs-reveal"
+      className={`cs-mat ${!half && fig.span === "full" ? "md:col-span-2" : ""}`}
+    >
+      <div className="cs-mat-well relative overflow-hidden rounded-btn">
+        <Image
+          src={fig.src}
+          alt={fig.alt}
+          fill
+          sizes={!half && fig.span === "full" ? "96vw" : "(min-width: 821px) 48vw, 96vw"}
+          className="cs-mat-img"
+        />
+        <span className="cs-mat-cap" aria-hidden>
+          {fig.caption}
+        </span>
+      </div>
+      <figcaption className="cs-mat-foot">
+        <span className="t-meta text-paper/85">{fig.name}</span>
+        <span className="cs-mat-cap-touch t-meta text-paper/50">
+          {fig.caption}
+        </span>
+      </figcaption>
+    </figure>
+  );
+}
 
 export function CaseStudy({
   project,
@@ -188,7 +221,8 @@ export function CaseStudy({
       </header>
 
       {/* ── hero media: the morph target ── */}
-      <div className="mx-[8px] mt-[55px] md:mx-[13px] md:mt-[89px]">
+      {/* the one big moment after the title: the work, in a card */}
+      <div className="cs-mat mx-[8px] mt-[55px] md:mx-[13px] md:mt-[89px]">
         <div
           className="cs-hero-well"
           data-well
@@ -206,87 +240,80 @@ export function CaseStudy({
         </div>
       </div>
 
-      {/* ── the story ── */}
+      {/* ── the story: ONE big moment in a card, then a short read
+          (the awwwards rhythm: statement card → description → images →
+          more talk → the rest of the work) ── */}
       <section id="cs-story" className="mx-auto max-w-[1280px] px-[21px] py-[89px] md:px-[55px] md:py-[144px]">
-        {/* the text BREAKS (the awwwards rhythm): the lede reads as a full
-            statement, then the paragraphs chunk two-up beneath it */}
         <p className="t-statement max-w-[30ch]" data-anim="cs-reveal">
           {project.lede}
         </p>
-        <div className="mt-[55px] grid gap-[34px] md:mt-[89px] md:grid-cols-2 md:gap-[55px]">
-          {project.paras.map((para) => (
-            <p
-              key={para.slice(0, 24)}
-              data-anim="cs-reveal"
-              className="max-w-[52ch] text-[1.125rem] leading-[1.6] text-ink/80"
-            >
-              {para}
-            </p>
-          ))}
-        </div>
+        <p
+          data-anim="cs-reveal"
+          className="mt-[55px] max-w-[62ch] text-[1.125rem] leading-[1.6] text-ink/80 md:mt-[89px]"
+        >
+          {project.paras[0]}
+        </p>
       </section>
 
-      {/* ── the build, up close ── */}
+      {/* ── first look: a couple of images ── */}
       <section id="cs-build" className="pb-[89px] md:pb-[144px]">
-        <div
-          data-anim="cs-reveal"
-          className="mx-auto mb-[34px] max-w-[1280px] px-[21px] md:mb-[55px] md:px-[55px]"
-        >
-          <p className="t-meta text-ink/55">The highlights</p>
-          <h2 className="t-display-lg mt-fib-2 max-w-[14ch]">
-            The build, up close
-          </h2>
+        <div className="mx-[8px] grid grid-cols-1 gap-[8px] md:mx-[13px] md:grid-cols-2 md:gap-[13px]">
+          {project.gallery.slice(0, 2).map((fig) => (
+            <Mat key={fig.src} fig={fig} half />
+          ))}
         </div>
-        <div className="mx-[8px] grid grid-cols-1 items-start gap-[8px] md:mx-[13px] md:grid-cols-2 md:gap-[13px]">
-          {project.gallery.map((fig) => (
-            <figure
-              key={fig.src}
-              data-anim="cs-reveal"
-              className={`cs-mat ${fig.span === "full" ? "md:col-span-2" : ""}`}
-            >
-              {/* the WHOLE screenshot, its own aspect — the mat frames it,
-                  never crops it (the awwwards treatment) */}
-              <div className="overflow-hidden rounded-btn">
-                <Image
-                  src={fig.src}
-                  alt={fig.alt}
-                  width={fig.width}
-                  height={fig.height}
-                  sizes={
-                    fig.span === "full"
-                      ? "(min-width: 821px) 96vw, 96vw"
-                      : "(min-width: 821px) 48vw, 96vw"
-                  }
-                  className="h-auto w-full"
-                />
-              </div>
-              <figcaption className="t-meta mt-[13px] text-paper/60">
-                {fig.caption}
-              </figcaption>
-            </figure>
+
+        {/* ── talk about it more ── */}
+        <div className="mx-auto mt-[89px] max-w-[1280px] px-[21px] md:mt-[144px] md:px-[55px]">
+          <div className="grid gap-[34px] md:grid-cols-2 md:gap-[55px]">
+            {project.paras.slice(1).map((para) => (
+              <p
+                key={para.slice(0, 24)}
+                data-anim="cs-reveal"
+                className="max-w-[52ch] text-[1.125rem] leading-[1.6] text-ink/80"
+              >
+                {para}
+              </p>
+            ))}
+          </div>
+        </div>
+
+        {/* ── the rest of the build (the phones close it — most visitors
+            arrive on one) ── */}
+        <div className="mx-[8px] mt-[89px] grid grid-cols-1 gap-[8px] md:mx-[13px] md:mt-[144px] md:grid-cols-2 md:gap-[13px]">
+          {project.gallery.slice(2).map((fig) => (
+            <Mat key={fig.src} fig={fig} />
           ))}
 
           {project.phones && (
-            <figure data-anim="cs-reveal" className="md:col-span-2">
-              <div className="cs-phones">
-                {project.phones.map((ph, i) => (
-                  <div
-                    key={ph.src}
-                    className={`phone-card cs-phone cs-phone--${i}`}
-                  >
-                    <Image
-                      src={ph.src}
-                      alt={ph.alt}
-                      width={ph.width}
-                      height={ph.height}
-                      sizes="(min-width: 821px) 300px, 44vw"
-                    />
-                  </div>
-                ))}
+            <figure data-anim="cs-reveal" className="cs-mat md:col-span-2">
+              <div className="cs-mat-well relative overflow-hidden rounded-btn">
+                <div className="cs-phones-stage" aria-hidden={false}>
+                  {project.phones.map((ph, i) => (
+                    <div
+                      key={ph.src}
+                      className={`phone-card cs-phone cs-phone--${i}`}
+                    >
+                      <Image
+                        src={ph.src}
+                        alt={ph.alt}
+                        width={ph.width}
+                        height={ph.height}
+                        sizes="(min-width: 821px) 300px, 44vw"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <span className="cs-mat-cap" aria-hidden>
+                  Most visitors arrive on a phone, so the phone view is
+                  designed first-class
+                </span>
               </div>
-              <figcaption className="t-meta mt-[13px] text-ink/55">
-                Most visitors arrive on a phone, so the phone view is designed
-                first-class
+              <figcaption className="cs-mat-foot">
+                <span className="t-meta text-paper/85">On the phone</span>
+                <span className="cs-mat-cap-touch t-meta text-paper/50">
+                  Designed phone-first
+                </span>
               </figcaption>
             </figure>
           )}
