@@ -1068,19 +1068,22 @@ main {
   text-align: left;
   will-change: transform;
 }
+/* anchors, tuned for the hero-register claim (64px, ~1100px wide): the
+   claim's center band is off-limits, so the witnesses zigzag around it —
+   tl above the claim, tr beside the subline, bl below the CTA */
 .pb-quote--tl {
   left: 2%;
-  top: 14%;
+  top: 6%;
   transform: rotate(-1.5deg);
 }
 .pb-quote--tr {
   right: 2%;
-  top: 24%;
+  top: 58%;
   transform: rotate(1.25deg);
 }
 .pb-quote--bl {
   left: 7%;
-  bottom: 10%;
+  bottom: 8%;
   transform: rotate(1deg);
 }
 
@@ -1629,18 +1632,14 @@ html:not(.has-js) .zone-dark {
   position: absolute;
   inset: -13px -8px;
 }
-/* the staircase — the row steps down toward the handoff, so "four small
-   steps" reads as one short descending path, not a flat card grid */
-@media (min-width: 1024px) {
-  .pd-steps > :nth-child(2) {
-    margin-top: 34px;
-  }
-  .pd-steps > :nth-child(3) {
-    margin-top: 68px;
-  }
-  .pd-steps > :nth-child(4) {
-    margin-top: 102px;
-  }
+/* each step is its own card, four in a LINE (Jake 2026-07-11: no staircase,
+   no entrance) — an elevated dark surface holding the demo + the numeral */
+.pd-card {
+  display: flex;
+  flex-direction: column;
+  padding: 13px;
+  border-radius: 18px;
+  background: rgba(239, 240, 238, 0.06);
 }
 @media (prefers-reduced-motion: reduce) {
   .num .num-fill {
@@ -3829,11 +3828,16 @@ html.wki-lock body {
 .proc-card {
   display: flex;
   flex-direction: column;
-  gap: 34px;
+  gap: 21px;
   padding: 34px;
   border-radius: 18px;
   background: var(--color-panel);
-  min-height: 300px;
+}
+@media (min-width: 821px) {
+  .proc-card {
+    gap: 34px;
+    min-height: 300px;
+  }
 }
 @media (min-width: 1280px) {
   .proc-card {

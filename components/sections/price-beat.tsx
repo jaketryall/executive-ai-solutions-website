@@ -9,6 +9,9 @@ import {
   reducedMotion,
 } from "@/components/anim/ease";
 import { CTA } from "@/components/ui/cta";
+// the ONE set of client voices (placeholders tracked in lib/quotes.ts),
+// shared with the service-page price beats
+import { QUOTES, AV_TINTS } from "@/lib/quotes";
 
 function PersonIcon() {
   return (
@@ -18,27 +21,6 @@ function PersonIcon() {
     </svg>
   );
 }
-
-const AV_TINTS = ["bg-accent/70 text-paper", "bg-ink/70 text-paper", "bg-accent-bright/50 text-ink"];
-
-/* ═══ PLACEHOLDER TRACKING — Jake is collecting three real quotes ═══
-   Swap each QUOTES entry (text + name) as they land. Card 1 shares the DW
-   voice with the proof section until his real band quote arrives; cards 2-3
-   are sector-generic slots (no invented business names). ═══ */
-const QUOTES = [
-  {
-    text: "The phone started ringing the week the ads went live.",
-    name: "Owner, Desert Wings Flight School",
-  },
-  {
-    text: "I finally know what a lead costs me, and it keeps going down.",
-    name: "Owner, local trades company",
-  },
-  {
-    text: "The ads bring people in, the site books them, I see all of it.",
-    name: "Owner, family restaurant",
-  },
-];
 
 /* The price beat — the cognitive-ease rail's second answer. After proof, the
    brain's next reflex is "what would this cost ME?", and leaving it hanging
@@ -138,8 +120,9 @@ export function PriceBeat() {
         {/* a <p>, not a heading — it shares the h1's statement register so the
             page's two claim peaks (hero, price) sit above every section h2 */}
         <p data-anim="price" className="t-statement t-statement--hero max-w-[26ch] text-balance">
-          Sites from <span className="text-accent">$2.5k</span>. Ads managed
-          from <span className="text-accent">$500/mo</span>.
+          Sites from <span className="text-accent">$2.5k</span>.
+          <br className="hidden md:block" /> Ads managed from{" "}
+          <span className="text-accent">$500/mo</span>.
         </p>
         <p data-anim="line" className="mt-fib-3 max-w-[44ch] text-ink/70">
           Your exact number takes 60 seconds. No call, no email, no
