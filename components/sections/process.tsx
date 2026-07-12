@@ -70,10 +70,6 @@ function DemoDesign() {
           card on the paper field — here it's a tiny browser, and the
           wireframe→real resolve happens inside its screen */}
       <div className="pd-shot w-[min(88%,290px)] aspect-[7/5] rounded-btn bg-ink text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)] flex flex-col overflow-hidden">
-        <span className="flex items-center gap-[7px] px-[12px] py-[8px] text-[10.5px] text-paper/60">
-          <Monogram className="h-[11px] w-[11px] opacity-70" />
-          <span className="text-trim">desertwingsflightschool.com</span>
-        </span>
         <div className="relative min-h-0 flex-1">
           {/* the wireframe it starts as… */}
           <div
