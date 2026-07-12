@@ -65,53 +65,56 @@ function DemoCall() {
 // real Desert Wings homepage instead of an invented brand
 function DemoDesign() {
   return (
-    <div className="pd-panel pd-panel--browser">
-      <span className="browser-chrome">
-        <Monogram className="h-[12px] w-[12px] opacity-70" />
-        <span className="text-trim">desertwingsflightschool.com</span>
-      </span>
-      {/* w-full matters: the panel centers cross-axis and this wrapper has
-          only absolute children, so without it the width collapses to 0 */}
-      <div className="relative min-h-0 w-full flex-1">
-        {/* the wireframe it starts as… */}
-        <div
-          data-wire
-          className="absolute inset-0 flex flex-col gap-[10px] p-[14px]"
-          aria-hidden
-        >
-          <div data-blk className="flex items-center justify-between">
-            <span className="st-fill h-[8px] w-[54px]" />
-            <span className="flex items-center gap-[7px]">
-              <span className="st-fill h-[6px] w-[20px]" />
-              <span className="st-fill h-[6px] w-[20px]" />
-              <span className="st-fill h-[6px] w-[20px]" />
-            </span>
-          </div>
+    <div className="pd-panel">
+      {/* the SAME object language as the other three demos: one small ink
+          card on the paper field — here it's a tiny browser, and the
+          wireframe→real resolve happens inside its screen */}
+      <div className="pd-shot w-[min(88%,290px)] overflow-hidden rounded-btn bg-ink text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)]">
+        <span className="flex items-center gap-[7px] px-[12px] py-[8px] text-[10.5px] text-paper/60">
+          <Monogram className="h-[11px] w-[11px] opacity-70" />
+          <span className="text-trim">desertwingsflightschool.com</span>
+        </span>
+        <div className="relative aspect-[16/10]">
+          {/* the wireframe it starts as… */}
           <div
-            data-blk
-            className="st-hero flex min-h-0 flex-1 items-center gap-[13px] p-[13px]"
+            data-wire
+            className="absolute inset-0 flex flex-col gap-[8px] bg-paper p-[11px]"
+            aria-hidden
           >
-            <div className="flex min-w-0 flex-1 flex-col items-start gap-[8px]">
-              <span className="st-fill h-[10px] w-[86%]" />
-              <span className="st-fill h-[10px] w-[58%]" />
-              <span className="st-fill mt-[5px] h-[17px] w-[64px] rounded-full" />
+            <div data-blk className="flex items-center justify-between">
+              <span className="st-fill h-[7px] w-[44px]" />
+              <span className="flex items-center gap-[6px]">
+                <span className="st-fill h-[5px] w-[16px]" />
+                <span className="st-fill h-[5px] w-[16px]" />
+                <span className="st-fill h-[5px] w-[16px]" />
+              </span>
             </div>
-            <span className="st-himg h-[74%] w-[34%] rounded-chip" />
+            <div
+              data-blk
+              className="st-hero flex min-h-0 flex-1 items-center gap-[10px] p-[10px]"
+            >
+              <div className="flex min-w-0 flex-1 flex-col items-start gap-[6px]">
+                <span className="st-fill h-[8px] w-[86%]" />
+                <span className="st-fill h-[8px] w-[58%]" />
+                <span className="st-fill mt-[4px] h-[14px] w-[52px] rounded-full" />
+              </div>
+              <span className="st-himg h-[72%] w-[34%] rounded-chip" />
+            </div>
+            <div data-blk className="grid grid-cols-3 gap-[6px]">
+              {[0, 1, 2].map((c) => (
+                <span key={c} className="st-thumb h-[16px] rounded-chip" />
+              ))}
+            </div>
           </div>
-          <div data-blk className="grid grid-cols-3 gap-[8px]">
-            {[0, 1, 2].map((c) => (
-              <span key={c} className="st-thumb h-[22px] rounded-chip" />
-            ))}
-          </div>
+          {/* …and the real page it becomes (the rest state) */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            data-real
+            src="/work/dw-home.jpg"
+            alt="The finished Desert Wings homepage design"
+            className="absolute inset-0 h-full w-full object-cover object-top-left"
+          />
         </div>
-        {/* …and the real page it becomes (the rest state) */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          data-real
-          src="/work/dw-home.jpg"
-          alt="The finished Desert Wings homepage design"
-          className="absolute inset-0 h-full w-full object-cover object-top-left"
-        />
       </div>
     </div>
   );
@@ -240,8 +243,8 @@ export function Process() {
       /* ── the four demos: each step animates its OWN artifact once, as its
          column lands. Rest states are "finished", so JS rewinds them first. ── */
       const ticket = q(".pd-ticket")[0];
-      const blocks = q(".pd-panel--browser [data-blk]");
-      const realPage = q(".pd-panel--browser [data-real]")[0];
+      const blocks = q("[data-wire] [data-blk]");
+      const realPage = q("[data-real]")[0];
       const scoreBars = q(".pd-report .sc-fill");
       const perfNum = q(".st-perf")[0];
       const seoNum = q(".st-seo")[0];
