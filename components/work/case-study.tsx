@@ -188,7 +188,7 @@ export function CaseStudy({
       </header>
 
       {/* ── hero media: the morph target ── */}
-      <div className="mx-auto mt-[55px] max-w-[1280px] px-[21px] md:mt-[89px] md:px-[55px]">
+      <div className="mx-[8px] mt-[55px] md:mx-[13px] md:mt-[89px]">
         <div
           className="cs-hero-well"
           data-well
@@ -208,58 +208,57 @@ export function CaseStudy({
 
       {/* ── the story ── */}
       <section id="cs-story" className="mx-auto max-w-[1280px] px-[21px] py-[89px] md:px-[55px] md:py-[144px]">
-        <div className="grid gap-[55px] md:grid-cols-[38fr_62fr] md:gap-[89px]">
-          <div>
-            <p className="t-title max-w-[26ch]" data-anim="cs-reveal">
-              {project.lede}
+        {/* the text BREAKS (the awwwards rhythm): the lede reads as a full
+            statement, then the paragraphs chunk two-up beneath it */}
+        <p className="t-statement max-w-[30ch]" data-anim="cs-reveal">
+          {project.lede}
+        </p>
+        <div className="mt-[55px] grid gap-[34px] md:mt-[89px] md:grid-cols-2 md:gap-[55px]">
+          {project.paras.map((para) => (
+            <p
+              key={para.slice(0, 24)}
+              data-anim="cs-reveal"
+              className="max-w-[52ch] text-[1.125rem] leading-[1.6] text-ink/80"
+            >
+              {para}
             </p>
-          </div>
-          <div className="flex flex-col gap-[26px]">
-            {project.paras.map((para) => (
-              <p
-                key={para.slice(0, 24)}
-                data-anim="cs-reveal"
-                className="max-w-[62ch] text-[1.125rem] leading-[1.6] text-ink/80"
-              >
-                {para}
-              </p>
-            ))}
-          </div>
+          ))}
         </div>
       </section>
 
       {/* ── the build, up close ── */}
-      <section id="cs-build" className="mx-auto max-w-[1280px] px-[21px] pb-[89px] md:px-[55px] md:pb-[144px]">
-        <div data-anim="cs-reveal" className="mb-[34px] md:mb-[55px]">
+      <section id="cs-build" className="pb-[89px] md:pb-[144px]">
+        <div
+          data-anim="cs-reveal"
+          className="mx-auto mb-[34px] max-w-[1280px] px-[21px] md:mb-[55px] md:px-[55px]"
+        >
           <p className="t-meta text-ink/55">The highlights</p>
           <h2 className="t-display-lg mt-fib-2 max-w-[14ch]">
             The build, up close
           </h2>
         </div>
-        <div className="grid grid-cols-1 gap-[21px] md:grid-cols-2">
+        <div className="mx-[8px] grid grid-cols-1 items-start gap-[8px] md:mx-[13px] md:grid-cols-2 md:gap-[13px]">
           {project.gallery.map((fig) => (
             <figure
               key={fig.src}
               data-anim="cs-reveal"
               className={`cs-mat ${fig.span === "full" ? "md:col-span-2" : ""}`}
             >
-              <div
-                className={`cs-fig-well ${fig.span === "full" ? "cs-fig-well--wide" : ""}`}
-                data-well
-              >
-                <div className="cs-par absolute inset-0">
-                  <Image
-                    src={fig.src}
-                    alt={fig.alt}
-                    fill
-                    sizes={
-                      fig.span === "full"
-                        ? "(min-width: 1280px) 1170px, 92vw"
-                        : "(min-width: 821px) 48vw, 92vw"
-                    }
-                    className="cs-img"
-                  />
-                </div>
+              {/* the WHOLE screenshot, its own aspect — the mat frames it,
+                  never crops it (the awwwards treatment) */}
+              <div className="overflow-hidden rounded-btn">
+                <Image
+                  src={fig.src}
+                  alt={fig.alt}
+                  width={fig.width}
+                  height={fig.height}
+                  sizes={
+                    fig.span === "full"
+                      ? "(min-width: 821px) 96vw, 96vw"
+                      : "(min-width: 821px) 48vw, 96vw"
+                  }
+                  className="h-auto w-full"
+                />
               </div>
               <figcaption className="t-meta mt-[13px] text-paper/60">
                 {fig.caption}
