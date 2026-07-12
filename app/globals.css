@@ -3716,6 +3716,16 @@ html.wki-lock body {
   object-fit: cover;
   object-position: left top;
 }
+/* the parallax overscan is the RENDER state, not a JS afterthought: applied
+   at first paint so nothing zooms when the arrival gate releases (desktop
+   only; mobile has no parallax and keeps the uncropped image) */
+@media (min-width: 821px) {
+  .cs-par {
+    transform: scale(1.14);
+    transform-origin: 50% 50%;
+    will-change: transform;
+  }
+}
 .cs-fig-well {
   position: relative;
   height: clamp(240px, 36vw, 460px);

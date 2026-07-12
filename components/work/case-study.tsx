@@ -84,36 +84,38 @@ export function CaseStudy({
           );
         });
 
-        // ── figures: contained parallax inside their wells (desktop only) ──
-        const mm = gsap.matchMedia();
-        mm.add("(min-width: 821px)", () => {
-          const pars = q(".cs-par") as HTMLElement[];
-          gsap.set(pars, { scale: 1.14, transformOrigin: "50% 50%" });
-          const tweens = pars.map((par) =>
-            gsap.fromTo(
-              par,
-              { yPercent: -5.5 },
-              {
-                yPercent: 5.5,
-                ease: "none",
-                scrollTrigger: {
-                  trigger: par.closest("[data-well]"),
-                  start: "top bottom",
-                  end: "bottom top",
-                  scrub: 1,
-                  invalidateOnRefresh: true,
-                },
-              },
-            ),
-          );
-          return () => {
-            tweens.forEach((t) => t.kill());
-            gsap.set(pars, { clearProps: "transform" });
-          };
-        });
-
         ScrollTrigger.refresh();
       }); // end enter()
+
+      /* ── figures: contained parallax inside their wells (desktop only).
+         Runs at MOUNT, pre-paint — it's scroll-driven positioning, not an
+         entrance, and setting it after arrival visibly zoomed the hero.
+         The 1.14 overscan itself is a CSS base state (globals). ── */
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 821px)", () => {
+        const pars = q(".cs-par") as HTMLElement[];
+        const tweens = pars.map((par) =>
+          gsap.fromTo(
+            par,
+            { yPercent: -5.5 },
+            {
+              yPercent: 5.5,
+              ease: "none",
+              scrollTrigger: {
+                trigger: par.closest("[data-well]"),
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 1,
+                invalidateOnRefresh: true,
+              },
+            },
+          ),
+        );
+        return () => {
+          tweens.forEach((t) => t.kill());
+          gsap.set(pars, { clearProps: "transform" });
+        };
+      });
 
       let dead = false;
       whenArrived().then(() => !dead && enter());
