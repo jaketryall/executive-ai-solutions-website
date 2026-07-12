@@ -1607,6 +1607,17 @@ html:not(.has-js) .zone-dark {
 .t-numeral-step .num-outline {
   -webkit-text-stroke-width: 1.25px;
 }
+/* each step number carries its own little card: paper tile, ink fill */
+.num-card {
+  display: inline-flex;
+  padding: 10px 14px;
+  border-radius: var(--radius-btn);
+  background: var(--color-paper);
+  box-shadow: 0 8px 21px -13px rgba(19, 20, 19, 0.35);
+}
+.num-card .t-numeral-step {
+  font-size: clamp(2rem, 2.2vw, 2.6rem);
+}
 .pd-panel {
   position: relative;
   display: grid;

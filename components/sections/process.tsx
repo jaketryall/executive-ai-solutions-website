@@ -324,12 +324,11 @@ export function Process() {
               <div key={s.n} data-pstep className="pd-card">
                 <Demo />
                 <div className="px-fib-1 pb-fib-1 pt-fib-3">
-                  <span
-                    className="num t-numeral-step relative block select-none"
-                    aria-hidden
-                  >
-                    <span className="num-outline">{s.n}</span>
-                    <span className="num-fill">{s.n}</span>
+                  <span className="num-card" aria-hidden>
+                    <span className="num t-numeral-step relative block select-none">
+                      <span className="num-outline">{s.n}</span>
+                      <span className="num-fill">{s.n}</span>
+                    </span>
                   </span>
                   <div className="mt-[13px] flex flex-wrap items-center gap-[13px]">
                     <h3 className="t-title t-title--lg">
