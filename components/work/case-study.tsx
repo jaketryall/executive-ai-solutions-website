@@ -263,13 +263,8 @@ export function CaseStudy({
           ))}
         </div>
 
-        {/* ── straight into the rest of the build (the phones close it —
-            most visitors arrive on one) ── */}
+        {/* ── then THE BIG BOX: the phones (most visitors arrive on one) ── */}
         <div className="mx-[8px] mt-[8px] grid grid-cols-1 gap-[8px] md:mx-[13px] md:mt-[13px] md:grid-cols-2 md:gap-[13px]">
-          {project.gallery.slice(2).map((fig) => (
-            <Mat key={fig.src} fig={fig} />
-          ))}
-
           {project.phones && (
             <figure data-anim="cs-reveal" className="cs-mat md:col-span-2">
               <div className="cs-mat-well relative overflow-hidden rounded-btn">
