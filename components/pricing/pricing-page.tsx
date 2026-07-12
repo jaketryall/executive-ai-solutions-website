@@ -12,6 +12,8 @@ import {
 import { whenArrived } from "@/components/anim/arrival";
 import { CTA } from "@/components/ui/cta";
 import { ArtifactFrame } from "@/components/ui/artifact";
+import { PersonIcon } from "@/components/ui/person-icon";
+import { QUOTES, AV_TINTS } from "@/lib/quotes";
 import {
   PROJECT_TYPES,
   PAGE_BANDS,
@@ -141,11 +143,91 @@ export function PricingPage() {
               Pick what you need, get a fixed quote in two days, and the price
               never moves after.
             </p>
+            <div data-anim="h-sub" className="mt-fib-4">
+              <CTA href="#estimate" label="Price your project" tone="ink" />
+            </div>
             <div data-anim="h-sub" className="mt-fib-3 flex flex-wrap gap-fib-1">
               <span className="chip">Fixed quote in 2 days</span>
               <span className="chip">No retainers required</span>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="pr-tiers py-fib-6 md:py-fib-7">
+        <div className="wrap">
+          <h2 data-anim="tier-head" className="t-display-lg max-w-[14ch]">
+            Where projects land
+          </h2>
+          <p data-anim="tier-head" className="mt-fib-3 max-w-[46ch] text-ink/70">
+            Three honest bands, from the estimator&apos;s own tiers. Most
+            projects land in Growth.
+          </p>
+          <div className="mt-fib-5 grid gap-fib-3 md:grid-cols-3 md:gap-fib-4">
+            {TIERS.map((t) => {
+              const lead = t.name === "Growth";
+              const range =
+                t.max === Infinity
+                  ? `${fmt(t.min)}+`
+                  : t.min === 0
+                    ? `${fmt(2500)} to ${fmt(t.max)}`
+                    : `${fmt(t.min)} to ${fmt(t.max)}`;
+              return (
+                <div
+                  key={t.name}
+                  data-anim="tier"
+                  className={`tier-card ${lead ? "tier-card--lead md:-mt-fib-3 md:mb-fib-3" : ""}`}
+                >
+                  <div className="flex items-center justify-between gap-fib-2">
+                    <h3 className="t-title font-display">{t.name}</h3>
+                    {lead && <span className="chip chip--sm">Most projects</span>}
+                  </div>
+                  <p className="tier-range mt-fib-4">{range}</p>
+                  <p className={`mt-fib-3 max-w-[32ch] ${lead ? "text-paper/70" : "text-ink/70"}`}>
+                    {t.name === "Launch" &&
+                      "A focused site that gets a small business found and booked. The fastest way to stop losing clicks."}
+                    {t.name === "Growth" &&
+                      "More pages, booking or quote forms, copy and photos handled. The band where ads plus landing page pays for itself."}
+                    {t.name === "Flagship" &&
+                      "Online stores, big builds, and sites doing serious volume. Scoped together, milestone by milestone."}
+                  </p>
+                  <p className={`t-meta mt-fib-4 ${lead ? "text-paper/55" : "text-ink/55"}`}>
+                    {t.blurb}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+          {/* the witnesses, beside the claim (PLACEHOLDER quotes, lib/quotes) */}
+          <div className="mt-fib-4 grid gap-fib-3 sm:grid-cols-3">
+            {QUOTES.map((quo, i) => (
+              <figure
+                key={quo.name}
+                data-anim="tier"
+                className="rounded-panel bg-panel/60 p-fib-4"
+              >
+                <blockquote>
+                  <p className="text-[0.9375rem] leading-[1.5] text-ink/70">
+                    &ldquo;{quo.text}&rdquo;
+                  </p>
+                </blockquote>
+                <figcaption className="mt-fib-2 flex items-center gap-[8px]">
+                  <span className={`pb-av ${AV_TINTS[i]}`}>
+                    <PersonIcon />
+                  </span>
+                  <span className="t-meta text-ink/45">{quo.name}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+
+          <p data-anim="tier-head" className="mt-fib-4 max-w-[46ch] text-ink/60">
+            A realistic range, not a promise. Every project is quoted
+            individually.{" "}
+            <Link href="/contact" className="u-link text-ink/80">
+              Ask us anything first
+            </Link>
+          </p>
         </div>
       </section>
 
@@ -233,59 +315,7 @@ export function PricingPage() {
       </section>
 
       {/* ── WHERE PROJECTS LAND · Growth leads ── */}
-      <section className="pr-tiers py-fib-6 md:py-fib-7">
-        <div className="wrap">
-          <h2 data-anim="tier-head" className="t-display-lg max-w-[14ch]">
-            Where projects land
-          </h2>
-          <p data-anim="tier-head" className="mt-fib-3 max-w-[46ch] text-ink/70">
-            Three honest bands, from the estimator&apos;s own tiers. Most
-            projects land in Growth.
-          </p>
-          <div className="mt-fib-5 grid gap-fib-3 md:grid-cols-3 md:gap-fib-4">
-            {TIERS.map((t) => {
-              const lead = t.name === "Growth";
-              const range =
-                t.max === Infinity
-                  ? `${fmt(t.min)}+`
-                  : t.min === 0
-                    ? `${fmt(2500)} to ${fmt(t.max)}`
-                    : `${fmt(t.min)} to ${fmt(t.max)}`;
-              return (
-                <div
-                  key={t.name}
-                  data-anim="tier"
-                  className={`tier-card ${lead ? "tier-card--lead md:-mt-fib-3 md:mb-fib-3" : ""}`}
-                >
-                  <div className="flex items-center justify-between gap-fib-2">
-                    <h3 className="t-title font-display">{t.name}</h3>
-                    {lead && <span className="chip chip--sm">Most projects</span>}
-                  </div>
-                  <p className="tier-range mt-fib-4">{range}</p>
-                  <p className={`mt-fib-3 max-w-[32ch] ${lead ? "text-paper/70" : "text-ink/70"}`}>
-                    {t.name === "Launch" &&
-                      "A focused site that gets a small business found and booked. The fastest way to stop losing clicks."}
-                    {t.name === "Growth" &&
-                      "More pages, booking or quote forms, copy and photos handled. The band where ads plus landing page pays for itself."}
-                    {t.name === "Flagship" &&
-                      "Online stores, big builds, and sites doing serious volume. Scoped together, milestone by milestone."}
-                  </p>
-                  <p className={`t-meta mt-fib-4 ${lead ? "text-paper/55" : "text-ink/55"}`}>
-                    {t.blurb}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-          <p data-anim="tier-head" className="mt-fib-4 max-w-[46ch] text-ink/60">
-            A realistic range, not a promise. Every project is quoted
-            individually.{" "}
-            <Link href="/contact" className="u-link text-ink/80">
-              Ask us anything first
-            </Link>
-          </p>
-        </div>
-      </section>
+
     </article>
   );
 }

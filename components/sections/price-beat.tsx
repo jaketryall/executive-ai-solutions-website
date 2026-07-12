@@ -9,18 +9,10 @@ import {
   reducedMotion,
 } from "@/components/anim/ease";
 import { CTA } from "@/components/ui/cta";
+import { PersonIcon } from "@/components/ui/person-icon";
 // the ONE set of client voices (placeholders tracked in lib/quotes.ts),
 // shared with the service-page price beats
 import { QUOTES, AV_TINTS } from "@/lib/quotes";
-
-function PersonIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden className="h-[14px] w-[14px]">
-      <circle cx="10" cy="6.5" r="3.4" />
-      <path d="M10 11.4c-3.6 0-6.1 1.9-6.6 4.8-.1.5.3.9.8.9h11.6c.5 0 .9-.4.8-.9-.5-2.9-3-4.8-6.6-4.8Z" />
-    </svg>
-  );
-}
 
 /* The price beat — the cognitive-ease rail's second answer. After proof, the
    brain's next reflex is "what would this cost ME?", and leaving it hanging
