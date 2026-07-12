@@ -263,24 +263,9 @@ export function CaseStudy({
           ))}
         </div>
 
-        {/* ── talk about it more ── */}
-        <div className="mx-auto mt-[89px] max-w-[1280px] px-[21px] md:mt-[144px] md:px-[55px]">
-          <div className="grid gap-[34px] md:grid-cols-2 md:gap-[55px]">
-            {project.paras.slice(1).map((para) => (
-              <p
-                key={para.slice(0, 24)}
-                data-anim="cs-reveal"
-                className="max-w-[52ch] text-[1.125rem] leading-[1.6] text-ink/80"
-              >
-                {para}
-              </p>
-            ))}
-          </div>
-        </div>
-
-        {/* ── the rest of the build (the phones close it — most visitors
-            arrive on one) ── */}
-        <div className="mx-[8px] mt-[89px] grid grid-cols-1 gap-[8px] md:mx-[13px] md:mt-[144px] md:grid-cols-2 md:gap-[13px]">
+        {/* ── straight into the rest of the build (the phones close it —
+            most visitors arrive on one) ── */}
+        <div className="mx-[8px] mt-[8px] grid grid-cols-1 gap-[8px] md:mx-[13px] md:mt-[13px] md:grid-cols-2 md:gap-[13px]">
           {project.gallery.slice(2).map((fig) => (
             <Mat key={fig.src} fig={fig} />
           ))}
@@ -290,17 +275,15 @@ export function CaseStudy({
               <div className="cs-mat-well relative overflow-hidden rounded-btn">
                 <div className="cs-phones-stage" aria-hidden={false}>
                   {project.phones.map((ph, i) => (
-                    <div
-                      key={ph.src}
-                      className={`phone-card cs-phone cs-phone--${i}`}
-                    >
-                      <Image
-                        src={ph.src}
-                        alt={ph.alt}
-                        width={ph.width}
-                        height={ph.height}
-                        sizes="(min-width: 821px) 300px, 44vw"
-                      />
+                    <div key={ph.src} className={`cs-device cs-phone--${i}`}>
+                      <div className="cs-device-screen">
+                        <Image
+                          src={ph.src}
+                          alt={ph.alt}
+                          fill
+                          sizes="(min-width: 821px) 320px, 44vw"
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -317,6 +300,21 @@ export function CaseStudy({
               </figcaption>
             </figure>
           )}
+        </div>
+
+        {/* ── the closing read ── */}
+        <div className="mx-auto mt-[89px] max-w-[1280px] px-[21px] md:mt-[144px] md:px-[55px]">
+          <div className="grid gap-[34px] md:grid-cols-2 md:gap-[55px]">
+            {project.paras.slice(1).map((para) => (
+              <p
+                key={para.slice(0, 24)}
+                data-anim="cs-reveal"
+                className="max-w-[52ch] text-[1.125rem] leading-[1.6] text-ink/80"
+              >
+                {para}
+              </p>
+            ))}
+          </div>
         </div>
       </section>
 

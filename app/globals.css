@@ -3870,19 +3870,50 @@ html.wki-lock body {
   gap: clamp(21px, 4vw, 55px);
   padding: 34px;
 }
-.cs-phone {
-  height: 76%;
+/* a CSS device mockup — rim, island, screen; no external asset needed */
+.cs-device {
+  position: relative;
+  height: 78%;
+  aspect-ratio: 9 / 19;
   flex-shrink: 0;
+  padding: 10px;
+  border-radius: 44px;
+  background: linear-gradient(150deg, #2c2e2d 0%, #121313 60%);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(239, 240, 238, 0.14),
+    0 34px 55px -26px rgba(0, 0, 0, 0.65);
 }
-.cs-phone img {
+.cs-device::after {
+  /* the island */
+  content: "";
+  position: absolute;
+  top: 21px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 26%;
+  height: 2.9%;
+  border-radius: 999px;
+  background: #050606;
+  z-index: 2;
+}
+.cs-device-screen {
+  position: relative;
   height: 100%;
-  width: auto;
+  width: 100%;
+  border-radius: 34px;
+  overflow: hidden;
+  background: #0b0c0c;
+}
+.cs-device-screen img {
+  object-fit: cover;
+  /* left-anchored: wider captures keep their headline's start */
+  object-position: left top;
 }
 .cs-phone--0 {
-  transform: translateY(-3%);
+  transform: translateY(-3%) rotate(-0.6deg);
 }
 .cs-phone--1 {
-  transform: translateY(5%);
+  transform: translateY(5%) rotate(0.6deg);
 }
 .cs-next {
   text-decoration: none;
