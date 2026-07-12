@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import {
   gsap,
-  ScrollTrigger,
   useGSAP,
   EASE_STRUCTURE,
   EASE_UI,
@@ -190,51 +189,10 @@ export function Process() {
     () => {
       const q = gsap.utils.selector(root);
 
-      /* ── the dark room — the page canvas dips to dark for this chapter
-         (Lando-style full-bg swap). No pin anymore, so the section's own
-         geometry is honest at both seams. ── */
-      const rootStyle = getComputedStyle(document.documentElement);
-      const CANVAS = rootStyle.getPropertyValue("--color-canvas").trim();
-      const DARK = rootStyle.getPropertyValue("--color-dark").trim();
-      const ground = document.querySelector("main");
-
       if (reducedMotion()) {
-        ScrollTrigger.create({
-          trigger: root.current,
-          start: "top 60%",
-          end: "bottom 12%",
-          onToggle: (self) => {
-            if (ground)
-              (ground as HTMLElement).style.backgroundColor = self.isActive ? DARK : "";
-          },
-        });
         // clean end-state: four finished artifacts in one frame
         return;
       }
-
-      /* ONE writer owns the ground color: thresholds flip a boolean state,
-         one 0.8s fade executes it. */
-      let roomOn = false;
-      const setRoom = (on: boolean, instant = false) => {
-        if (roomOn === on) return;
-        roomOn = on;
-        const backgroundColor = on ? DARK : CANVAS;
-        if (instant) gsap.set(ground, { backgroundColor });
-        else
-          gsap.to(ground, {
-            backgroundColor,
-            duration: 0.8,
-            ease: EASE_UI,
-            overwrite: "auto",
-          });
-      };
-      ScrollTrigger.create({
-        trigger: root.current,
-        start: "top 60%",
-        end: "bottom 12%",
-        onToggle: (self) => setRoom(self.isActive),
-        onRefresh: (self) => setRoom(self.isActive, true),
-      });
 
       /* ── the four demos: each step animates its OWN artifact once, as its
          column lands. Rest states are "finished", so JS rewinds them first. ── */
@@ -346,13 +304,12 @@ export function Process() {
     <section
       id="process"
       ref={root}
-      data-nav="dark"
-      className="zone-dark relative z-0 text-paper"
+      className="relative z-0"
     >
       <div className="wrap py-fib-6">
         <div>
           <h2 className="t-display-lg">How a project runs</h2>
-          <p className="mt-[13px] max-w-[44ch] text-paper/70">
+          <p className="mt-[13px] max-w-[44ch] text-ink/70">
             Four steps from first call to a site that earns. Fixed quote up
             front, no surprises after.
           </p>
@@ -381,7 +338,7 @@ export function Process() {
                     </h3>
                     <span className="chip">{s.meta}</span>
                   </div>
-                  <p className="mt-[13px] max-w-[34ch] text-[1.0625rem] leading-[1.55] text-paper/75">
+                  <p className="mt-[13px] max-w-[34ch] text-[1.0625rem] leading-[1.55] text-ink/70">
                     {s.copy}
                   </p>
                 </div>
@@ -391,7 +348,7 @@ export function Process() {
         </div>
 
         <div className="pd-cta mt-[55px] flex justify-end px-[21px] md:px-[55px]">
-          <a href="#estimate" className="u-link text-paper/80">
+          <a href="#estimate" className="u-link text-ink/70">
             Start with the call
           </a>
         </div>

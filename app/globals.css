@@ -1594,8 +1594,8 @@ html:not(.has-js) .zone-dark {
   background: var(--color-dark);
 }
 
-/* ─── the process row: four artifact panels, one per step. Paper panels on
-   the dark ground so each demo glows equally; ink cards land on them. ─── */
+/* ─── the process row: four artifact panels, one per step. Paper panels in
+   panel cards; ink demo cards land on them. ─── */
 .t-numeral-step {
   font-family: var(--font-display);
   font-weight: 800;
@@ -1640,7 +1640,8 @@ html:not(.has-js) .zone-dark {
   flex-direction: column;
   padding: 13px;
   border-radius: 18px;
-  background: rgba(239, 240, 238, 0.06);
+  /* light canvas now (the dark room is gone) — the section-card surface */
+  background: rgba(222, 224, 222, 0.6);
 }
 @media (prefers-reduced-motion: reduce) {
   .num .num-fill {
