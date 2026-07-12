@@ -14,6 +14,14 @@ export type WorkFigure = WorkImage & {
   span?: "full" | "half";
 };
 
+export type ProjectResults = {
+  /** metrics[0] leads the homepage proof row (biggest); keep it the strongest */
+  metrics: { value: string; label: string }[];
+  quote?: { text: string; name: string };
+  /** the real ad, pinned to the frame — only when the ad copy is verbatim-real */
+  ad?: { title: string };
+};
+
 export type Project = {
   slug: string;
   /** short display name for the index list (must survive huge type) */
@@ -43,6 +51,11 @@ export type Project = {
   gallery: WorkFigure[];
   /** paired phone shots rendered as a two-up (optional) */
   phones?: [WorkImage, WorkImage];
+  /** homepage proof row: the receipts. A project with results (and ideally a
+      tall `tour` capture) gets a work-and-results row on the homepage. */
+  results?: ProjectResults;
+  /** tall stitched capture that pans inside the proof frame on scroll */
+  tour?: WorkImage;
 };
 
 export const PROJECTS: Project[] = [
@@ -76,6 +89,26 @@ export const PROJECTS: Project[] = [
       width: 1400,
       height: 648,
       alt: "The Desert Wings fleet section",
+    },
+    tour: {
+      src: "/work/dw-tour.jpg",
+      width: 2880,
+      height: 4446,
+      alt: "Scrolling through the Desert Wings homepage the ad lands on",
+    },
+    /* ═══ PLACEHOLDER results — swap with real Desert Wings data + the real
+       owner quote (with permission) before launch ═══ */
+    results: {
+      metrics: [
+        { value: "3x", label: "more discovery-flight bookings" },
+        { value: "$38", label: "cost per lead" },
+        { value: "90", label: "days to get there" },
+      ],
+      quote: {
+        text: "The phone started ringing the week the ads went live, and the new site actually books people instead of just looking good.",
+        name: "Owner, Desert Wings Flight School",
+      },
+      ad: { title: "Desert Wings Flight School | Learn to Fly at Falcon Field" },
     },
     lede: "A flight school with students to win, not a brochure to park. We designed and built the site, then wired the growth engine behind it so every enquiry traces back to the dollar that bought it.",
     paras: [

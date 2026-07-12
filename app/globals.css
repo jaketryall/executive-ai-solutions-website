@@ -1224,7 +1224,8 @@ main {
   padding: 6px 11px;
   font-size: 0.75rem;
 }
-.dark-chapter .chip {
+.dark-chapter .chip,
+.af--ink .chip {
   background: rgba(239, 240, 238, 0.08);
   color: rgba(239, 240, 238, 0.75);
 }
