@@ -23,6 +23,8 @@ export type ServiceDef = {
     chips: string[];
   };
   deliverables: { name: string; body: string }[];
+  /** the Lesse-grammar process cards: how this stage actually runs */
+  process: { name: string; body: string }[];
   faqs: { q: string; a: string }[];
   metaTitle: string;
   metaDescription: string;
@@ -62,6 +64,24 @@ export const SERVICES: ServiceDef[] = [
       {
         name: "The landing page, tuned with it",
         body: "If we built your site, the ads and the page get tuned from the same data. One team, accountable for the whole click.",
+      },
+    ],
+    process: [
+      {
+        name: "The call",
+        body: "Twenty minutes on your business: what a customer is worth, what people search, where the clicks should land.",
+      },
+      {
+        name: "The build",
+        body: "Campaigns around real searches, negative lists against the wrong ones, and every call and form wired as a conversion.",
+      },
+      {
+        name: "The launch",
+        body: "You approve the budget before anything spends. The ads go live, and the tracking starts telling the truth from day one.",
+      },
+      {
+        name: "The number",
+        body: "Every month: spend, leads, cost per lead, and what we're changing next. Stay because it's working, not because of a contract.",
       },
     ],
     faqs: [
@@ -116,6 +136,24 @@ export const SERVICES: ServiceDef[] = [
         body: "Your domain, your content, your code. Nothing you will outgrow, no platform rent, no lock-in.",
       },
     ],
+    process: [
+      {
+        name: "The call",
+        body: "Twenty minutes on the business and its customers. Two days later, a fixed quote and a timeline in writing.",
+      },
+      {
+        name: "The design",
+        body: "Real pages in your brand, not wireframes. We iterate together until you'd be proud to send the link.",
+      },
+      {
+        name: "The build",
+        body: "Hand-coded, fast, and search-ready. You watch it come together on a live preview link, not in a deck.",
+      },
+      {
+        name: "The launch",
+        body: "Your domain, your code, live. Then ads, SEO or AI follow-up can bolt straight onto a page built to convert.",
+      },
+    ],
     faqs: [
       {
         q: "What does a website cost?",
@@ -166,6 +204,24 @@ export const SERVICES: ServiceDef[] = [
       {
         name: "Built and managed for you",
         body: "We build it, watch it and tune it. You read the results, not the manuals.",
+      },
+    ],
+    process: [
+      {
+        name: "The scope",
+        body: "A short call on where your leads actually go cold. We only quote the pieces worth building for your business.",
+      },
+      {
+        name: "The build",
+        body: "The chat learns your pages, the follow-ups get wired to your forms, and nothing answers a visitor until you've seen it answer.",
+      },
+      {
+        name: "The check",
+        body: "We review what it says against your real prices and policies before it goes live. No hallucinated discounts.",
+      },
+      {
+        name: "The watch",
+        body: "Built and managed for you. We read the transcripts and tune it; you read the results.",
       },
     ],
     faqs: [
