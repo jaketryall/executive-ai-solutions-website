@@ -131,7 +131,7 @@ export function Hero() {
         .fromTo(
           q("[data-anim='statement']"),
           { autoAlpha: 0, y: 34 },
-          { autoAlpha: 1, y: 0, duration: 1.0 },
+          { autoAlpha: 1, y: 0, duration: 1.0, stagger: 0.12 },
           0.22
         )
         // track B — the enactment, concurrent
@@ -367,15 +367,15 @@ export function Hero() {
           <p data-anim="eyebrow" className="t-meta uppercase text-paper/45">
             Full-funnel ads agency
           </p>
-          <h1 data-anim="statement" className="t-statement t-statement--hero mt-fib-2 max-w-[36ch]">
-            <span className="text-paper">
-              {ariaPair.out} {ariaPair.who}.
-            </span>{" "}
-            <span className="text-paper/40">
-              We run the ads, build the landing page, and answer for the
-              whole click.
-            </span>
+          {/* the h1 carries ONLY the outcome — the how-clause reads at body
+              size below it, so the display tier never becomes a wall of text */}
+          <h1 data-anim="statement" className="t-statement t-statement--hero mt-fib-2 max-w-[22ch] text-balance text-paper">
+            {ariaPair.out} {ariaPair.who}.
           </h1>
+          <p data-anim="statement" className="mt-fib-3 max-w-[40ch] text-paper/60">
+            We run the ads, build the landing page, and answer for the whole
+            click.
+          </p>
 
           <div data-anim="ctas" className="mt-fib-3 flex flex-wrap items-center gap-fib-2">
             <CTA href="#estimate" label="Get an instant estimate" tone="paper" />

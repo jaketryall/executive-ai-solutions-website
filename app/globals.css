@@ -154,11 +154,12 @@ main {
   letter-spacing: -0.02em;
 }
 .t-statement--hero {
-  /* the page's ONE h1: the statement register promoted a full rung above
-     the section h2s (~53px vs ~43px at 1440) so the ladder reads h1-first */
-  font-size: clamp(2.2rem, 3.7vw, 3.35rem);
-  line-height: 1.26;
-  letter-spacing: -0.025em;
+  /* the page's ONE h1: a short outcome statement, so it affords true display
+     size (~64px at 1440, 1.5x the section h2s). The how-clause lives at body
+     size below it — never in the h1, or the display tier becomes a wall. */
+  font-size: clamp(2.4rem, 4.45vw, 4rem);
+  line-height: 1.14;
+  letter-spacing: -0.028em;
 }
 .t-display-drift {
   /* the closer's one-line statement — sized so the nowrap line runs ~1.7× the
@@ -3808,6 +3809,43 @@ html.wki-lock body {
   background: var(--color-accent);
   opacity: 0;
   will-change: transform;
+}
+
+/* the deliverable cards — content on a surface (the site's card feel), the
+   traveling mark rides the gutter beside them */
+.svc-d {
+  border-radius: 18px;
+  background: var(--color-panel);
+  padding: 34px;
+}
+@media (min-width: 821px) {
+  .svc-d {
+    padding: 34px 44px;
+  }
+}
+
+/* process cards (Lesse grammar, EAS skin): tall panels, name top, outline
+   numeral as the quiet middle anchor, description pinned to the bottom */
+.proc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  padding: 34px;
+  border-radius: 18px;
+  background: var(--color-panel);
+  min-height: 300px;
+}
+@media (min-width: 1280px) {
+  .proc-card {
+    min-height: 380px;
+  }
+}
+.proc-num {
+  margin-block: auto;
+  line-height: 1;
+}
+.proc-card p {
+  max-width: 36ch;
 }
 
 /* funnel cross-link cards — honest lift (they navigate) */
