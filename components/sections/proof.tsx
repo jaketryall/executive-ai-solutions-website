@@ -38,9 +38,9 @@ export function Proof() {
         {
           autoAlpha: 1,
           y: 0,
-          duration: 0.8,
+          duration: 0.6,
           ease: EASE_STRUCTURE,
-          scrollTrigger: { trigger: root.current, start: "top 72%", once: true },
+          scrollTrigger: { trigger: root.current, start: "top 75%", once: true },
         }
       );
 

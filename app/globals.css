@@ -206,7 +206,8 @@ main {
 .footer-wordmark {
   font-family: var(--font-display);
   font-weight: 650;
-  font-size: clamp(1.9rem, 5.5vw, 5rem);
+  /* two lines, so the name keeps display scale beside the big mark */
+  font-size: clamp(2.4rem, 7.4vw, 6.7rem);
   line-height: 0.92;
   letter-spacing: -0.03em;
 }

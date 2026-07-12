@@ -121,7 +121,7 @@ export function Footer() {
           <div className="flex items-end justify-between gap-[34px]">
             <div className="footer-mark shrink-0 text-ink">
               <Monogram
-                className="h-[76px] w-[76px] md:h-[123px] md:w-[123px]"
+                className="h-[123px] w-[123px] md:h-[212px] md:w-[212px]"
                 label="Executive AI Solutions monogram"
               />
             </div>
@@ -130,7 +130,9 @@ export function Footer() {
               style={{ marginBottom: "-0.1em" }}
               aria-hidden
             >
-              Executive AI Solutions
+              Executive AI
+              <br />
+              Solutions
             </p>
           </div>
         </div>

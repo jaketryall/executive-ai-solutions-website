@@ -39,29 +39,26 @@ export function PriceBeat() {
         return;
       }
 
+      /* the entrance BUDGET: one guided beat (the claim), everything else
+         rides with it — by the time the section centers, it's readable.
+         (Jake: entrances must guide attention, never delay comprehension.) */
       const tl = gsap.timeline({
         defaults: { ease: EASE_STRUCTURE },
-        scrollTrigger: { trigger: root.current, start: "top 70%", once: true },
+        scrollTrigger: { trigger: root.current, start: "top 78%", once: true },
       });
       tl.fromTo(
         q("[data-anim='price']"),
-        { autoAlpha: 0, y: 34 },
-        { autoAlpha: 1, y: 0, duration: 0.9 }
-      )
-        .fromTo(
-          q("[data-anim='line']"),
-          { autoAlpha: 0, y: 13 },
-          { autoAlpha: 1, y: 0, duration: 0.55, ease: EASE_UI },
-          "-=0.35"
-        )
-        .fromTo(
-          q("[data-anim='act']"),
-          { autoAlpha: 0, y: 13 },
-          { autoAlpha: 1, y: 0, duration: 0.55, ease: EASE_UI },
-          "-=0.25"
-        );
+        { autoAlpha: 0, y: 21 },
+        { autoAlpha: 1, y: 0, duration: 0.6 }
+      ).fromTo(
+        [...q("[data-anim='line']"), ...q("[data-anim='act']")],
+        { autoAlpha: 0, y: 13 },
+        { autoAlpha: 1, y: 0, duration: 0.45, ease: EASE_UI, stagger: 0.08 },
+        "-=0.4"
+      );
 
-      // the witnesses join after the claim has landed
+      // the witnesses still join AFTER the claim (that sequencing is the
+      // point), just without making anyone wait for it
       gsap.fromTo(
         q("[data-anim='quote']"),
         { autoAlpha: 0, y: 21, scale: 0.97 },
@@ -69,10 +66,10 @@ export function PriceBeat() {
           autoAlpha: 1,
           y: 0,
           scale: 1,
-          duration: 0.8,
-          stagger: 0.16,
+          duration: 0.7,
+          stagger: 0.12,
           ease: EASE_STRUCTURE,
-          scrollTrigger: { trigger: root.current, start: "top 45%", once: true },
+          scrollTrigger: { trigger: root.current, start: "top 58%", once: true },
         }
       );
       // and breathe at their own rates while the section is on screen

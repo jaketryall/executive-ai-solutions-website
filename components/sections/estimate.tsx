@@ -81,28 +81,30 @@ export function Estimate({ standalone = false }: { standalone?: boolean } = {}) 
         defaults: { ease: EASE_STRUCTURE },
         onComplete: () => setArmed(true),
       });
+      // the guided ORDER carries the meaning (head → controls → output);
+      // the durations don't need to — same story at half the tax
       tl.fromTo(
         q(".est-head .mask-inner"),
         { yPercent: 118, y: 0 },
-        { yPercent: 0, y: 0, duration: 0.95, stagger: 0.08 }
+        { yPercent: 0, y: 0, duration: 0.7, stagger: 0.06 }
       )
         .fromTo(
           q("[data-anim='est-sub']"),
           { autoAlpha: 0, y: 13 },
-          { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
-          "-=0.5"
+          { autoAlpha: 1, y: 0, duration: 0.45, ease: EASE_UI },
+          "-=0.45"
         )
         .fromTo(
           q("[data-anim='ctrl']"),
-          { autoAlpha: 0, x: -21 },
-          { autoAlpha: 1, x: 0, duration: 0.7, stagger: 0.09 },
+          { autoAlpha: 0, x: -13 },
+          { autoAlpha: 1, x: 0, duration: 0.5, stagger: 0.06 },
           "-=0.35"
         )
         .fromTo(
           q("[data-anim='out']"),
-          { autoAlpha: 0, scale: 0.96 },
-          { autoAlpha: 1, scale: 1, duration: 0.9 },
-          "-=0.3"
+          { autoAlpha: 0, scale: 0.97 },
+          { autoAlpha: 1, scale: 1, duration: 0.6 },
+          "-=0.35"
         )
         .add(() => setArmed(true), "-=0.5");
 
