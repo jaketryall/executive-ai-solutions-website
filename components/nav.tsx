@@ -11,7 +11,32 @@ const LINKS = [
   { href: "/work", label: "Work" },
   { href: "/#services", label: "Services" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/contact", label: "Contact" },
 ];
+
+/* the live element (a real one): our local clock, ticking in the Contact
+   panel — "someone is actually there, and it's daytime for them right now" */
+function LocalTime() {
+  const [now, setNow] = useState("");
+  useEffect(() => {
+    const f = new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+      timeZone: "America/Phoenix",
+    });
+    const tick = () => setNow(f.format(new Date()));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <span className="t-num" suppressHydrationWarning>
+      {now || "—"}
+    </span>
+  );
+}
 
 /* The links capsule (the Lesse mechanism, decoded from their DOM): the
    capsule ITSELF expands downward on hover — height animates, overflow
@@ -117,6 +142,27 @@ function LinksCapsule() {
         <>
           <span className="nav-mini-meta">Instant estimate</span>
           <span className="text-trim">A live number from real pricing</span>
+        </>,
+        1,
+      )}
+    </div>,
+    // Contact — the message, and proof someone's actually there
+    <div key="c" className="nav-panel">
+      {mini(
+        "/contact",
+        <>
+          <span className="nav-mini-meta">Send a message</span>
+          <span className="text-trim">Replies within one business day</span>
+        </>,
+        0,
+      )}
+      {mini(
+        "/contact",
+        <>
+          <span className="nav-mini-meta">Our local time · Mesa, AZ</span>
+          <span className="text-trim">
+            <LocalTime />
+          </span>
         </>,
         1,
       )}
@@ -335,7 +381,7 @@ export function Nav() {
       >
         <div className="flex h-full w-full flex-col justify-between px-fib-3 pb-fib-4 pt-fib-6">
           <nav className="flex flex-col gap-fib-2" aria-label="Menu">
-            {[...LINKS, { href: "/contact", label: "Contact" }].map((l) => (
+            {LINKS.map((l) => (
               <span key={l.href} className="mask-line">
                 <span className="mask-inner">
                   <Link

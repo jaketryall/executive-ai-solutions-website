@@ -1405,6 +1405,69 @@ main {
   max-width: 92%;
 }
 
+/* ── the pricing hero's self-computing estimate (the sheet becoming a
+   number): line items land, the total counts itself up ── */
+.est-demo-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 13px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(19, 20, 19, 0.08);
+  font-size: 0.9375rem;
+  color: rgba(19, 20, 19, 0.75);
+}
+.est-demo-row .t-num {
+  color: rgba(19, 20, 19, 0.85);
+}
+.est-demo-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 13px;
+  margin-top: 4px;
+  padding-top: 13px;
+}
+.est-demo-total > span:first-child {
+  font-size: 0.9375rem;
+  font-weight: 550;
+}
+.est-demo-total .t-num {
+  font-family: var(--font-display);
+  font-weight: 650;
+  font-size: 1.7rem;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+/* the exchange receipt — the follow-up demo closing beat */
+.chat-booked {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 8px 13px;
+  border-radius: var(--radius-chip);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  font-size: 0.8125rem;
+  font-weight: 550;
+  letter-spacing: 0.01em;
+  color: rgba(19, 20, 19, 0.8);
+  opacity: 0; /* the loop's last beat reveals it */
+}
+.chat-booked svg {
+  width: 11px;
+  height: 11px;
+  color: var(--color-accent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat-booked {
+    opacity: 1;
+  }
+}
+
 /* ── testimonial rotator ──
    Slides overlay in one grid cell (height = tallest slide, no shift on swap);
    no-JS rests on the first quote. The bar is the light-ground sibling of the
@@ -3397,20 +3460,55 @@ a.work-card:hover {
     display: inline-flex;
   }
 }
+/* the one highlighted action: a paper chip (the only light surface in the
+   ink capsule, so it reads first) with a fly-through arrow on hover */
 .cs-dock-visit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   margin-left: 2px;
   padding: 11px 16px;
   border-radius: 10px;
   font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--color-paper);
-  background: var(--color-accent);
+  color: var(--color-ink);
+  background: var(--color-paper);
   text-decoration: none;
-  transition: filter 0.3s var(--ease-ui);
+  transition: background 0.3s var(--ease-ui), color 0.3s var(--ease-ui);
+}
+.cs-dock-visit .dv-arrow {
+  position: relative;
+  width: 11px;
+  height: 11px;
+  overflow: hidden;
+}
+.cs-dock-visit .dv-arrow svg {
+  position: absolute;
+  inset: 0;
+  width: 11px;
+  height: 11px;
+  transition: transform 0.35s var(--ease-ui);
+}
+/* the twin waits off the bottom-left; hover flies the pair up-right */
+.cs-dock-visit .dv-arrow svg:last-child {
+  transform: translate(-120%, 120%);
 }
 .cs-dock-visit:hover {
-  filter: brightness(1.15);
+  background: #fff;
+}
+.cs-dock-visit:hover .dv-arrow svg:first-child {
+  transform: translate(120%, -120%);
+}
+.cs-dock-visit:hover .dv-arrow svg:last-child {
+  transform: translate(0, 0);
+}
+
+/* the hero well as the door: the visit pill IS the cursor over it */
+@media (hover: hover) and (pointer: fine) {
+  .cs-hero-well--live {
+    cursor: none;
+  }
 }
 .cs-onpage a {
   padding: 9px 14px;

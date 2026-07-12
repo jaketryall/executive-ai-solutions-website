@@ -47,7 +47,7 @@ function HeroArtifact({ slug }: { slug: string }) {
         label="The Desert Wings search ad with sitelink extensions"
         className="w-[min(100%,460px)]"
       >
-        <div className="g-ad mt-0! border-t-0! pt-0! p-fib-1">
+        <div className="g-ad relative mt-0! border-t-0! pt-0! p-fib-1">
           <p className="g-sponsored">Sponsored</p>
           <p className="g-url">desertwingsflightschool.com</p>
           {/* PLACEHOLDER — swap with the real Desert Wings ad, verbatim */}
@@ -62,6 +62,18 @@ function HeroArtifact({ slug }: { slug: string }) {
             <a>Fleet and rates</a>
             <a>Book a tour</a>
           </div>
+          {/* the stage's namesake, on loop: a cursor arrives and takes the
+              click a real searcher takes — straight onto a sitelink */}
+          <span className="g-click-ring" aria-hidden />
+          <svg className="g-cursor" viewBox="0 0 24 24" aria-hidden>
+            <path
+              d="M5.5 2.2v18.3l4.3-4.1 2.9 6.4 3-1.4-2.9-6.3 5.9-.6L5.5 2.2z"
+              fill="#131413"
+              stroke="#fff"
+              strokeWidth="1.4"
+              strokeLinejoin="round"
+            />
+          </svg>
         </div>
       </ArtifactFrame>
     );
@@ -72,23 +84,25 @@ function HeroArtifact({ slug }: { slug: string }) {
         <ArtifactFrame
           variant="chrome"
           tone="paper"
-          url="desertwingsflightschool.com/fleet"
-          label="The Desert Wings fleet page we designed and built"
+          url="desertwingsflightschool.com"
+          label="The Desert Wings homepage we designed and built"
           bodyClassName="!p-0"
         >
           <div
             className="overflow-hidden rounded-btn"
             style={{ aspectRatio: "1.55" }}
           >
+            {/* the landing, riding: the page the click arrives on scrolls
+                itself (the homepage services-02 loop, in the stage's frame) */}
             <Image
-              data-svc-parallax
-              src="/work/desert-wings-fleet.png"
-              alt="The custom fleet page built for Desert Wings Flight School"
-              width={1200}
-              height={800}
+              data-svc-tour
+              src="/work/dw-tour.jpg"
+              alt="Scrolling through the Desert Wings homepage we designed and built"
+              width={2880}
+              height={4446}
               sizes="(min-width: 821px) 42vw, 92vw"
               priority
-              className="block h-[112%] w-full object-cover object-top"
+              className="block h-auto w-full"
             />
           </div>
         </ArtifactFrame>
@@ -125,6 +139,19 @@ function HeroArtifact({ slug }: { slug: string }) {
             book you one?
           </p>
         </div>
+        {/* the follow-up actually closing — the loop's last beat */}
+        <p className="chat-booked" data-chat-booked aria-hidden>
+          <svg viewBox="0 0 12 12" fill="none" aria-hidden>
+            <path
+              d="M2 6.4 4.8 9 10 3.4"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          Discovery flight booked · Sat 9:00 AM
+        </p>
         <p className="serp-tag t-meta">
           Ask-this-site chat, answering from your pages
         </p>
@@ -150,6 +177,8 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         gsap.set(q(".g-ext a"), { autoAlpha: 1 });
         const chatQ = q(".chat-q")[0] as HTMLElement | undefined;
         if (chatQ) chatQ.textContent = CHAT_Q;
+        // the demo rests as a still: exchange complete, booking confirmed
+        gsap.set(q("[data-chat-booked]"), { autoAlpha: 1 });
         return;
       }
 
@@ -198,50 +227,141 @@ export function ServicePage({ service }: { service: ServiceDef }) {
             "-=0.3"
           );
         }
-        if (service.slug === "ai" && chatQEl) {
-          // the chat types its one question, then the answer arrives
-          const state = { n: 0 };
-          tl.to(
-            state,
-            {
-              n: CHAT_Q.length,
-              duration: 0.9,
-              ease: "none", // diegetic typing, constant rate
-              snap: { n: 1 },
-              onUpdate: () => {
-                chatQEl.textContent = CHAT_Q.slice(0, state.n);
-              },
-            },
-            "+=0.15"
-          ).fromTo(
-            q(".chat-a"),
-            { autoAlpha: 0, y: 10 },
-            { autoAlpha: 1, y: 0, duration: 0.55 },
-            ">-0.05"
-          );
-        }
       });
-      let dead = false;
-      whenArrived().then(() => !dead && enter());
 
-      /* hero artifact drift — contained one-plane parallax against the scroll */
-      const par = q("[data-svc-parallax]")[0];
-      if (par) {
-        gsap.fromTo(
-          par,
-          { yPercent: -6 },
-          {
-            yPercent: 6,
-            ease: "none",
-            scrollTrigger: {
-              trigger: q(".svc-hero")[0],
-              start: "top top",
-              end: "bottom top",
-              scrub: true,
+      /* ── the artifact's ambient demo: each stage enacts its namesake on a
+         governed loop (in view + tab visible only). The entrance settles the
+         card; the loop is what keeps it ALIVE. ── */
+      const loops: gsap.core.Timeline[] = [];
+
+      if (service.slug === "google-ads") {
+        // the CLICK, taken: a cursor arrives and presses a sitelink
+        const ad = q(".g-ad")[0] as HTMLElement;
+        const cursor = q(".g-cursor")[0] as HTMLElement;
+        const ring = q(".g-click-ring")[0] as HTMLElement;
+        const link = q(".g-ext a")[0] as HTMLElement;
+        if (ad && cursor && ring && link) {
+          const pt = () => ({
+            x: link.offsetLeft + link.offsetWidth * 0.5,
+            y: link.offsetTop + link.offsetHeight * 0.55,
+          });
+          gsap.set(ring, { xPercent: -50, yPercent: -50 });
+          const c = gsap.timeline({ repeat: -1, paused: true, repeatRefresh: true });
+          c.to({}, { duration: 2.4 })
+            .set(cursor, {
+              x: () => ad.offsetWidth - 34,
+              y: () => ad.offsetHeight - 8,
+              autoAlpha: 0,
+              scale: 1,
+            })
+            .to(cursor, { autoAlpha: 1, duration: 0.25, ease: EASE_UI })
+            .to(
+              cursor,
+              { x: () => pt().x, y: () => pt().y, duration: 0.9, ease: EASE_STRUCTURE },
+              "<"
+            )
+            .to(cursor, { scale: 0.78, duration: 0.09, ease: EASE_UI })
+            // set-then-to, never fromTo: repeatRefresh re-renders an
+            // invalidated fromTo's FROM state at every cycle start
+            .set(ring, { x: () => pt().x + 3, y: () => pt().y + 3, autoAlpha: 0.55, scale: 0.25 }, "<")
+            .to(ring, { autoAlpha: 0, scale: 1, duration: 0.6, ease: EASE_UI }, "<")
+            .to(link, { opacity: 0.5, duration: 0.09, yoyo: true, repeat: 1, ease: "none" }, "<")
+            .to(cursor, { scale: 1, duration: 0.16, ease: EASE_UI }, "-=0.4")
+            .to(cursor, { autoAlpha: 0, duration: 0.35, ease: EASE_UI }, "+=0.5")
+            .to({}, { duration: 3.6 });
+          loops.push(c);
+        }
+      }
+
+      if (service.slug === "websites") {
+        // the LANDING, riding: the page the click arrives on scrolls itself
+        const tourEl = q("[data-svc-tour]")[0] as HTMLElement | undefined;
+        if (tourEl) {
+          const well = tourEl.parentElement as HTMLElement;
+          const travel = () =>
+            -Math.max(0, 1 - well.offsetHeight / tourEl.offsetHeight) * 100;
+          const c = gsap.timeline({ repeat: -1, paused: true, repeatRefresh: true });
+          c.to({}, { duration: 1.4 })
+            .to(tourEl, { yPercent: travel, duration: 14, ease: "none" })
+            .to({}, { duration: 0.9 })
+            .to(tourEl, { yPercent: 0, duration: 2.4, ease: EASE_STRUCTURE })
+            .to({}, { duration: 1.1 });
+          loops.push(c);
+        }
+      }
+
+      if (service.slug === "ai" && chatQEl) {
+        // the FOLLOW-UP, closing: question types, answer lands, booking
+        // confirms — then the exchange resets and works the next lead
+        const chatQ = chatQEl;
+        const chatA = q(".chat-a")[0] as HTMLElement;
+        const booked = q("[data-chat-booked]")[0] as HTMLElement;
+        // pre-arrival state NOW — the paused loop's own set() only renders
+        // on play, and the answer must never paint before its question
+        gsap.set([chatA, booked], { autoAlpha: 0 });
+        const state = { n: 0 };
+        const c = gsap.timeline({ repeat: -1, paused: true });
+        c.set([chatA, booked], { autoAlpha: 0 })
+          .set(chatQ, { autoAlpha: 1 })
+          .call(() => {
+            state.n = 0;
+            chatQ.textContent = "";
+          })
+          .to({}, { duration: 0.6 })
+          .to(state, {
+            n: CHAT_Q.length,
+            duration: 1.1,
+            ease: "none", // diegetic typing, constant rate
+            snap: { n: 1 },
+            onUpdate: () => {
+              chatQ.textContent = CHAT_Q.slice(0, state.n);
             },
-          }
-        );
-      } else {
+          })
+          .to(chatA, { autoAlpha: 1, duration: 0.5, ease: EASE_UI }, "+=0.4")
+          .to(booked, { autoAlpha: 1, duration: 0.4, ease: EASE_UI }, "+=0.9")
+          .to({}, { duration: 3.8 })
+          .to([chatQ, chatA, booked], {
+            autoAlpha: 0,
+            duration: 0.4,
+            stagger: 0.05,
+            ease: EASE_UI,
+          })
+          .to({}, { duration: 0.5 });
+        loops.push(c);
+      }
+
+      // governance: loops run only after arrival, in view, tab visible
+      let arrived = false;
+      let heroInView = false;
+      const syncLoops = () => {
+        const on = arrived && heroInView && !document.hidden;
+        loops.forEach((l) => (on ? l.play() : l.pause()));
+      };
+      if (loops.length) {
+        ScrollTrigger.create({
+          trigger: q(".svc-hero")[0],
+          start: "top bottom",
+          end: "bottom top",
+          onToggle: (self) => {
+            heroInView = self.isActive;
+            syncLoops();
+          },
+        });
+        document.addEventListener("visibilitychange", syncLoops);
+      }
+
+      let dead = false;
+      whenArrived().then(() => {
+        if (dead) return;
+        enter();
+        arrived = true;
+        syncLoops();
+      });
+
+      /* hero artifact drift — contained one-plane parallax against the
+         scroll. The self-scrolling tour already owns its plane's motion, so
+         the websites frame stays put (two movements on one axis double up). */
+      if (!q("[data-svc-tour]")[0]) {
         gsap.fromTo(
           q("[data-anim='h-art']"),
           { y: 0 },
@@ -453,6 +573,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
 
       return () => {
         dead = true;
+        document.removeEventListener("visibilitychange", syncLoops);
       };
     },
     { scope: root }

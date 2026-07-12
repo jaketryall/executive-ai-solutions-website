@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import {
   gsap,
+  ScrollTrigger,
   useGSAP,
   EASE_STRUCTURE,
   EASE_UI,
@@ -30,6 +31,16 @@ import {
 
 const fmt = (n: number) => `$${n.toLocaleString()}`;
 
+/* the hero demo's line items — REAL entries from the sheet, so the demo can
+   never drift from what the estimator would actually charge */
+const DEMO_ROWS = [
+  { label: PROJECT_TYPES[0].label, add: PROJECT_TYPES[0].base },
+  { label: PAGE_BANDS[1].label, add: PAGE_BANDS[1].add },
+  { label: "Booking or quote forms", add: FEATURES.find((f) => f.id === "booking")!.add },
+  { label: "Copywriting", add: FEATURES.find((f) => f.id === "copywriting")!.add },
+];
+const DEMO_TOTAL = DEMO_ROWS.reduce((s, r) => s + r.add, 0);
+
 export function PricingPage() {
   const root = useRef<HTMLElement>(null!);
 
@@ -42,10 +53,14 @@ export function PricingPage() {
         if (nav) gsap.set(nav, { autoAlpha: 1 });
         gsap.set(q("[data-anim]"), { autoAlpha: 1, x: 0, y: 0, scale: 1 });
         gsap.set(q(".mask-inner"), { yPercent: 0, y: 0 });
+        // the demo rests as a still: every line in, the total complete
+        gsap.set(q("[data-est-row]"), { autoAlpha: 1, y: 0 });
+        const t = q("[data-est-total]")[0];
+        if (t) t.textContent = fmt(DEMO_TOTAL);
         return;
       }
 
-      /* hero: statement, then the promise line */
+      /* hero: statement, then the promise line, then the artifact */
       const enter = contextSafe!(() => {
         const tl = gsap.timeline({ defaults: { ease: EASE_STRUCTURE } });
         // pre-hidden site-wide; no-op on a soft nav, a beat on a hard load
@@ -60,10 +75,80 @@ export function PricingPage() {
             { autoAlpha: 0, y: 13 },
             { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08, ease: EASE_UI },
             "-=0.5"
+          )
+          .fromTo(
+            q("[data-anim='h-art']"),
+            { autoAlpha: 0, y: 21 },
+            { autoAlpha: 1, y: 0, duration: 0.9 },
+            "-=0.35"
           );
       });
+
+      /* ── the artifact's ambient demo: line items land one by one and the
+         total counts itself up — the sheet becoming a number, on loop
+         (governed: runs only after arrival, in view, tab visible) ── */
+      const rows = q("[data-est-row]") as HTMLElement[];
+      const totalEl = q("[data-est-total]")[0] as HTMLElement | undefined;
+      let demoLoop: gsap.core.Timeline | undefined;
+      if (rows.length && totalEl) {
+        gsap.set(rows, { autoAlpha: 0, y: 8 });
+        const val = { v: 0 };
+        const render = () => {
+          totalEl.textContent = fmt(Math.round(val.v));
+        };
+        const c = gsap.timeline({ repeat: -1, paused: true });
+        c.set(rows, { autoAlpha: 0, y: 8 })
+          .call(() => {
+            val.v = 0;
+            render();
+          })
+          .to({}, { duration: 0.8 });
+        let running = 0;
+        DEMO_ROWS.forEach((r, i) => {
+          running += r.add;
+          const target = running;
+          c.to(rows[i], { autoAlpha: 1, y: 0, duration: 0.4, ease: EASE_UI })
+            .to(
+              val,
+              { v: target, duration: 0.55, ease: EASE_UI, snap: { v: 25 }, onUpdate: render },
+              "<0.1"
+            )
+            .to({}, { duration: 0.4 });
+        });
+        c.to({}, { duration: 3.8 })
+          .to(rows, { autoAlpha: 0, duration: 0.4, stagger: 0.04, ease: EASE_UI })
+          .to(val, { v: 0, duration: 0.45, ease: EASE_UI, onUpdate: render }, "<")
+          .to({}, { duration: 0.6 });
+        demoLoop = c;
+      }
+
+      let arrived = false;
+      let heroInView = false;
+      const syncLoop = () => {
+        if (!demoLoop) return;
+        if (arrived && heroInView && !document.hidden) demoLoop.play();
+        else demoLoop.pause();
+      };
+      if (demoLoop) {
+        ScrollTrigger.create({
+          trigger: q(".pr-hero")[0],
+          start: "top bottom",
+          end: "bottom top",
+          onToggle: (self) => {
+            heroInView = self.isActive;
+            syncLoop();
+          },
+        });
+        document.addEventListener("visibilitychange", syncLoop);
+      }
+
       let dead = false;
-      whenArrived().then(() => !dead && enter());
+      whenArrived().then(() => {
+        if (dead) return;
+        enter();
+        arrived = true;
+        syncLoop();
+      });
 
       /* tiers: the lead tile lands last */
       gsap.fromTo(
@@ -94,6 +179,7 @@ export function PricingPage() {
 
       return () => {
         dead = true;
+        document.removeEventListener("visibilitychange", syncLoop);
       };
     },
     { scope: root }
@@ -101,31 +187,66 @@ export function PricingPage() {
 
   return (
     <article ref={root}>
-      {/* ── HERO · the promise ── */}
+      {/* ── HERO · the promise, with the estimator computing beside it
+          (medium is the message: the page about prices SHOWS one adding
+          itself up from the real sheet) ── */}
       <section className="pr-hero relative">
-        <div className="wrap pb-fib-5 pt-[144px] md:pt-[176px]">
-          <h1 className="t-display-title max-w-[14ch]">
-            <span className="mask-line">
-              <span className="mask-inner">Prices, on</span>
-            </span>
-            <span className="mask-line">
-              <span className="mask-inner">the page</span>
-            </span>
-          </h1>
-          <div className="mt-fib-3">
-            <p data-anim="h-sub" className="max-w-[48ch] text-ink/70">
-              Most agencies make you book a call to hear a number. Here is the
-              sheet we quote from, the same one the estimator computes with.
-              Pick what you need, get a fixed quote in two days, and the price
-              never moves after.
-            </p>
-            <div data-anim="h-sub" className="mt-fib-4">
-              <CTA href="#estimate" label="Price your project" tone="ink" />
+        <div className="wrap grid items-center gap-fib-5 pb-fib-5 pt-[144px] md:grid-cols-[55fr_45fr] md:gap-fib-6 md:pt-[176px]">
+          <div>
+            <h1 className="t-display-title max-w-[14ch]">
+              <span className="mask-line">
+                <span className="mask-inner">Prices, on</span>
+              </span>
+              <span className="mask-line">
+                <span className="mask-inner">the page</span>
+              </span>
+            </h1>
+            <div className="mt-fib-3">
+              <p data-anim="h-sub" className="max-w-[48ch] text-ink/70">
+                Most agencies make you book a call to hear a number. Here is the
+                sheet we quote from, the same one the estimator computes with.
+                Pick what you need, get a fixed quote in two days, and the price
+                never moves after.
+              </p>
+              <div data-anim="h-sub" className="mt-fib-4">
+                <CTA href="#estimate" label="Price your project" tone="ink" />
+              </div>
+              <div data-anim="h-sub" className="mt-fib-3 flex flex-wrap gap-fib-1">
+                <span className="chip">Fixed quote in 2 days</span>
+                <span className="chip">No retainers required</span>
+              </div>
             </div>
-            <div data-anim="h-sub" className="mt-fib-3 flex flex-wrap gap-fib-1">
-              <span className="chip">Fixed quote in 2 days</span>
-              <span className="chip">No retainers required</span>
-            </div>
+          </div>
+
+          <div data-anim="h-art" className="w-full justify-self-center md:justify-self-end">
+            <ArtifactFrame
+              variant="card"
+              tone="paper"
+              label="The estimator pricing a typical Growth build"
+              className="w-[min(100%,420px)]"
+            >
+              <div className="est-demo p-fib-1" aria-hidden>
+                <p className="t-meta text-ink/55">
+                  A typical Growth build, priced live
+                </p>
+                <div className="mt-fib-2">
+                  {DEMO_ROWS.map((r, i) => (
+                    <div key={r.label} className="est-demo-row" data-est-row>
+                      <span>{r.label}</span>
+                      <span className="t-num">
+                        {i === 0 ? fmt(r.add) : `+ ${fmt(r.add)}`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="est-demo-total">
+                  <span>Your estimate</span>
+                  <span className="t-num" data-est-total>
+                    $0
+                  </span>
+                </div>
+              </div>
+            </ArtifactFrame>
           </div>
         </div>
       </section>

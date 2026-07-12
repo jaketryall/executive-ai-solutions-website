@@ -173,6 +173,47 @@ export function CaseStudy({
         );
       }
 
+      /* ── the visit pill: rides the pointer over the hero well (the well is
+         a real link to the live site; the pill is its label). Pointer-fine
+         only — on touch the well is simply a tappable link. ── */
+      const visitWell = q("[data-cs-visit]")[0] as HTMLElement | undefined;
+      const visitCur = q("[data-cs-visit-cursor]")[0] as HTMLElement | undefined;
+      if (visitWell && visitCur && !reducedMotion()) {
+        const pill = visitCur.querySelector(".rc-pill") as HTMLElement;
+        const mmv = gsap.matchMedia();
+        mmv.add("(hover: hover) and (pointer: fine)", () => {
+          const mat = visitCur.parentElement as HTMLElement;
+          gsap.set(pill, { scale: 0.6, transformOrigin: "50% 50%" });
+          const xTo = gsap.quickTo(visitCur, "x", { duration: 0.35, ease: "power3" });
+          const yTo = gsap.quickTo(visitCur, "y", { duration: 0.35, ease: "power3" });
+          let primed = false;
+          const move = (e: MouseEvent) => {
+            const r = mat.getBoundingClientRect();
+            if (!primed) {
+              // first contact: appear AT the pointer, not glide from 0,0
+              gsap.set(visitCur, { x: e.clientX - r.left, y: e.clientY - r.top });
+              primed = true;
+            }
+            xTo(e.clientX - r.left);
+            yTo(e.clientY - r.top);
+          };
+          const show = () =>
+            gsap.to(pill, { autoAlpha: 1, scale: 1, duration: 0.35, ease: EASE_UI });
+          const hide = () => {
+            gsap.to(pill, { autoAlpha: 0, scale: 0.6, duration: 0.3, ease: EASE_UI });
+            primed = false;
+          };
+          visitWell.addEventListener("mousemove", move);
+          visitWell.addEventListener("mouseenter", show);
+          visitWell.addEventListener("mouseleave", hide);
+          return () => {
+            visitWell.removeEventListener("mousemove", move);
+            visitWell.removeEventListener("mouseenter", show);
+            visitWell.removeEventListener("mouseleave", hide);
+          };
+        });
+      }
+
       /* ── figures: contained parallax inside their wells (desktop only).
          Runs at MOUNT, pre-paint — it's scroll-driven positioning, not an
          entrance, and setting it after arrival visibly zoomed the hero.
@@ -253,14 +294,12 @@ export function CaseStudy({
         </div>
       </header>
 
-      {/* ── hero media: the morph target ── */}
-      {/* the one big moment after the title: the work, in a card */}
-      <div className="cs-mat mx-[8px] mt-[55px] md:mx-[13px] md:mt-[89px]">
-        <div
-          className="cs-hero-well"
-          data-well
-        >
-          {project.tour ? (
+      {/* ── hero media: the one big moment after the title — the work, in a
+          card. With a live URL the whole well IS the door: a pill rides the
+          pointer saying so, and the click opens the real site. ── */}
+      <div className="cs-mat relative mx-[8px] mt-[55px] md:mx-[13px] md:mt-[89px]">
+        {(() => {
+          const media = project.tour ? (
             /* the page itself, riding: the self-scrolling tour loop */
             <Image
               data-cs-tour
@@ -283,8 +322,43 @@ export function CaseStudy({
                 priority
               />
             </div>
-          )}
-        </div>
+          );
+          return project.url ? (
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cs-hero-well cs-hero-well--live block"
+              data-well
+              data-cs-visit
+              aria-label={`Visit the live site, ${project.urlLabel}`}
+            >
+              {media}
+            </a>
+          ) : (
+            <div className="cs-hero-well" data-well>
+              {media}
+            </div>
+          );
+        })()}
+        {project.url && (
+          <span className="reel-cursor" data-cs-visit-cursor aria-hidden>
+            <span className="rc-center">
+              <span className="rc-pill">
+                Visit the live site
+                <svg viewBox="0 0 12 12" fill="none">
+                  <path
+                    d="M2.5 9.5 9.5 2.5M4 2.5h5.5V8"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+            </span>
+          </span>
+        )}
       </div>
 
       {/* ── the story: ONE big moment in a card, then a short read
@@ -407,6 +481,26 @@ export function CaseStudy({
             data-no-vt
           >
             Visit site
+            <span className="dv-arrow" aria-hidden>
+              <svg viewBox="0 0 12 12" fill="none">
+                <path
+                  d="M2.5 9.5 9.5 2.5M4 2.5h5.5V8"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <svg viewBox="0 0 12 12" fill="none">
+                <path
+                  d="M2.5 9.5 9.5 2.5M4 2.5h5.5V8"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
           </a>
         )}
       </nav>
