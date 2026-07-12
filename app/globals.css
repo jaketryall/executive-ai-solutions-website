@@ -3768,9 +3768,10 @@ html.wki-lock body {
 
 /* ───────────────────── case studies (/work/[slug]) ───────────────────── */
 .cs-hero-well {
-  /* the wide cinematic showpiece, framed by its mat */
+  /* the wide showpiece, framed by its mat — tall enough that the
+     self-scrolling tour reads as a page — not a slit */
   position: relative;
-  height: clamp(340px, 62svh, 680px);
+  height: clamp(420px, 78svh, 900px);
   border-radius: var(--radius-btn);
   overflow: clip;
   background: var(--color-ink);

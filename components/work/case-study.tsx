@@ -63,7 +63,7 @@ export function CaseStudy({
   const root = useRef<HTMLElement>(null!);
 
   useGSAP(
-    (_, contextSafe) => {
+    (context, contextSafe) => {
       const q = gsap.utils.selector(root);
 
       // the nav lives OUTSIDE this scope; on a direct load it's still parked
@@ -139,6 +139,39 @@ export function CaseStudy({
           onToggle: (self) => link.classList.toggle("is-on", self.isActive),
         });
       });
+
+      /* ── the hero tour: the captured page glides down, holds, eases back
+         (the services-02 loop) — runs only in view + tab visible ── */
+      const tourEl = q("[data-cs-tour]")[0] as HTMLElement | undefined;
+      if (tourEl && !reducedMotion()) {
+        const well = tourEl.closest(".cs-hero-well") as HTMLElement;
+        const travel = () =>
+          -Math.max(0, 1 - well.offsetHeight / tourEl.offsetHeight) * 100;
+        const loop = gsap.timeline({ repeat: -1, paused: true, repeatRefresh: true });
+        loop
+          .to({}, { duration: 1.4 })
+          .to(tourEl, { yPercent: travel, duration: 18, ease: "none" })
+          .to({}, { duration: 0.9 })
+          .to(tourEl, { yPercent: 0, duration: 2.6, ease: EASE_STRUCTURE })
+          .to({}, { duration: 1.1 });
+        let tourInView = false;
+        const syncTour = () => {
+          tourInView && !document.hidden ? loop.play() : loop.pause();
+        };
+        ScrollTrigger.create({
+          trigger: well,
+          start: "top bottom",
+          end: "bottom top",
+          onToggle: (self) => {
+            tourInView = self.isActive;
+            syncTour();
+          },
+        });
+        document.addEventListener("visibilitychange", syncTour);
+        context.add(() => () =>
+          document.removeEventListener("visibilitychange", syncTour)
+        );
+      }
 
       /* ── figures: contained parallax inside their wells (desktop only).
          Runs at MOUNT, pre-paint — it's scroll-driven positioning, not an
@@ -227,16 +260,30 @@ export function CaseStudy({
           className="cs-hero-well"
           data-well
         >
-          <div className="cs-par absolute inset-0">
+          {project.tour ? (
+            /* the page itself, riding: the self-scrolling tour loop */
             <Image
-              src={project.cover.src}
-              alt={project.cover.alt}
-              fill
-              sizes="(min-width: 1280px) 1170px, 92vw"
-              className="cs-img"
+              data-cs-tour
+              src={project.tour.src}
+              alt={project.tour.alt}
+              width={project.tour.width}
+              height={project.tour.height}
+              sizes="96vw"
+              className="block h-auto w-full"
               priority
             />
-          </div>
+          ) : (
+            <div className="cs-par absolute inset-0">
+              <Image
+                src={project.cover.src}
+                alt={project.cover.alt}
+                fill
+                sizes="(min-width: 1280px) 1170px, 92vw"
+                className="cs-img"
+                priority
+              />
+            </div>
+          )}
         </div>
       </div>
 
