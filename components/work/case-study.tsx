@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Project } from "@/lib/work";
 import { CTA } from "@/components/ui/cta";
+import { Monogram } from "@/components/ui/monogram";
 import {
   gsap,
   ScrollTrigger,
@@ -146,7 +147,7 @@ export function CaseStudy({
   );
 
   return (
-    <article ref={root} data-nav="light" className="relative">
+    <article ref={root} data-pcta-hide data-nav="light" className="relative">
       {/* ── head ── */}
       <header className="mx-auto max-w-[1280px] px-[21px] pt-[144px] md:px-[55px] md:pt-[178px]">
         <div
@@ -229,12 +230,18 @@ export function CaseStudy({
 
       {/* ── the build, up close ── */}
       <section id="cs-build" className="mx-auto max-w-[1280px] px-[21px] pb-[89px] md:px-[55px] md:pb-[144px]">
+        <div data-anim="cs-reveal" className="mb-[34px] md:mb-[55px]">
+          <p className="t-meta text-ink/55">The highlights</p>
+          <h2 className="t-display-lg mt-fib-2 max-w-[14ch]">
+            The build, up close
+          </h2>
+        </div>
         <div className="grid grid-cols-1 gap-[21px] md:grid-cols-2">
           {project.gallery.map((fig) => (
             <figure
               key={fig.src}
               data-anim="cs-reveal"
-              className={fig.span === "full" ? "md:col-span-2" : ""}
+              className={`cs-mat ${fig.span === "full" ? "md:col-span-2" : ""}`}
             >
               <div
                 className={`cs-fig-well ${fig.span === "full" ? "cs-fig-well--wide" : ""}`}
@@ -254,7 +261,7 @@ export function CaseStudy({
                   />
                 </div>
               </div>
-              <figcaption className="t-meta mt-[13px] text-ink/55">
+              <figcaption className="t-meta mt-[13px] text-paper/60">
                 {fig.caption}
               </figcaption>
             </figure>
@@ -315,12 +322,27 @@ export function CaseStudy({
         </div>
       </section>
 
-      {/* ── on-page nav: the case's stops in the site's capsule grammar
-          (fixed bottom-left, desktop only; anchors ride Lenis) ── */}
+      {/* ── the dock (the awwwards case-page pattern, our grammar): the
+          mark, the case's stops, and the one highlighted action — fixed
+          bottom-center; anchors ride Lenis ── */}
       <nav className="cs-onpage nav-capsule" aria-label="On this case" data-anim="cs-onpage">
+        <span className="cs-dock-mark" aria-hidden>
+          <Monogram className="h-[15px] w-[15px]" />
+        </span>
         <a href="#cs-story">Story</a>
         <a href="#cs-build">Build</a>
         <a href="#cs-next">Next</a>
+        {project.url && (
+          <a
+            href={project.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cs-dock-visit"
+            data-no-vt
+          >
+            Visit site
+          </a>
+        )}
       </nav>
     </article>
   );
