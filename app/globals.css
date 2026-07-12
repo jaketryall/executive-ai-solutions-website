@@ -3467,8 +3467,10 @@ a.work-card:hover {
   }
 }
 /* the one highlighted action: a paper chip (the only light surface in the
-   ink capsule, so it reads first) with a fly-through arrow on hover */
-.cs-dock-visit {
+   ink capsule, so it reads first) with a fly-through arrow on hover.
+   Selector carries the `a` — the shared .cs-onpage a color rule otherwise
+   out-specifies this and paints paper text on the paper chip. */
+.cs-onpage a.cs-dock-visit {
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -3500,8 +3502,9 @@ a.work-card:hover {
 .cs-dock-visit .dv-arrow svg:last-child {
   transform: translate(-120%, 120%);
 }
-.cs-dock-visit:hover {
+.cs-onpage a.cs-dock-visit:hover {
   background: #fff;
+  color: var(--color-ink);
 }
 .cs-dock-visit:hover .dv-arrow svg:first-child {
   transform: translate(120%, -120%);
