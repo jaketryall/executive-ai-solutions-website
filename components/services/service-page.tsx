@@ -650,9 +650,13 @@ export function ServicePage({ service }: { service: ServiceDef }) {
       {/* ── QUESTIONS · the three that decide this stage ── */}
       <section className="svc-faq py-fib-6">
         <div className="wrap grid gap-fib-4 md:grid-cols-[minmax(260px,340px)_1fr] md:gap-fib-6">
-          <h2 data-anim="faq" className="t-display-lg max-w-[10ch]">
-            Asked every week
-          </h2>
+          <div>
+            <div className="md:sticky md:top-[144px]">
+              <h2 data-anim="faq" className="t-display-lg max-w-[10ch]">
+                Asked every week
+              </h2>
+            </div>
+          </div>
           <div className="flex flex-col gap-fib-2">
             {service.faqs.map((f, i) => (
               <div
@@ -681,22 +685,24 @@ export function ServicePage({ service }: { service: ServiceDef }) {
       </section>
 
       {/* ── THE REST OF THE FUNNEL · motif carries out ── */}
-      <section className="svc-funnel py-fib-6 md:py-fib-7">
+      <section className="svc-funnel py-fib-6">
         <div className="wrap">
-          <h2 data-anim="x-card" className="t-display-lg max-w-[14ch]">
-            The rest of the funnel
-          </h2>
-          <p data-anim="x-card" className="mt-fib-3 max-w-[44ch] text-ink/70">
-            {service.stage} is one of three stages. Buy the stage you need,
-            or the whole path.
-          </p>
-          <div className="mt-fib-5 grid gap-fib-3 md:grid-cols-2 md:gap-fib-4">
-            {siblings.map((s, i) => (
+          <div className="flex flex-col justify-between gap-fib-3 md:flex-row md:items-end">
+            <h2 data-anim="x-card" className="t-display-lg max-w-[14ch]">
+              The rest of the funnel
+            </h2>
+            <p data-anim="x-card" className="max-w-[38ch] text-ink/70 md:text-right">
+              {service.stage} is one of three stages. Buy the stage you need,
+              or the whole path.
+            </p>
+          </div>
+          <div className="mt-fib-4 grid gap-fib-3 md:grid-cols-2 md:gap-fib-4">
+            {siblings.map((s) => (
               <Link
                 key={s.slug}
                 href={`/services/${s.slug}`}
                 data-anim="x-card"
-                className={`svc-x ${i === 1 ? "md:mt-fib-5" : ""}`}
+                className="svc-x"
               >
                 <span className="chip chip--sm">
                   Stage {s.stageIndex} · {s.stage}
