@@ -3805,132 +3805,68 @@ html.wki-lock body {
   clip-path: inset(0 0 0 0);
 }
 
-/* ── the work index split (titles left · work + results right) ── */
-
-/* rail titles — the outline→fill grammar as a scroll-synced index: hover
-   fills (they're doors), and the title whose block is on screen stays ink */
-.wk-title {
-  display: block;
-  color: inherit;
+/* ── the work index: full-bleed chapters that stay CARDS ──
+   Each project is one near-viewport inset rounded panel floating on the
+   canvas (the dark-chapter grammar at showcase scale): the build fills the
+   card, the name + numbers compose over it on a PLACED directional scrim. */
+.wkc {
+  color: var(--color-paper);
   text-decoration: none;
 }
-.wk-title .wx-name {
-  margin-top: 0;
-  white-space: normal; /* the rail column is narrower than a case-next line */
-  font-size: clamp(2.4rem, 4.4vw, 4.4rem);
-}
-.wk-title .wx-outline {
-  transition: -webkit-text-stroke-color 0.5s var(--ease-ui);
-}
-.wk-title:hover .wx-name,
-.wk-title:focus-visible .wx-name {
-  transform: translateX(8px);
-}
-.wk-title:hover .wx-fill,
-.wk-title:focus-visible .wx-fill,
-.wk-title.is-on .wx-fill {
-  clip-path: inset(0 0 0 0);
-}
-/* the open slot's title never fully joins the roster — quieter stroke,
-   and its fill takes the click color instead of ink */
-.wk-title--ghost .wx-outline {
-  -webkit-text-stroke-color: rgba(19, 20, 19, 0.18);
-}
-.wk-title--ghost .wx-fill {
-  color: var(--color-accent);
-}
-
-/* the media well — cover at rest; the demo panel opens from a center slit
-   on hover (the itsjay grammar, unscoped from the ink card) */
-.wk-well-link {
-  display: block;
-  color: inherit;
-  text-decoration: none;
-}
-.wk-well {
+.wkc-media {
   position: relative;
-  aspect-ratio: 16 / 10;
-  border-radius: 14px;
-  overflow: clip;
-  background: var(--color-dark-2);
-  box-shadow: 0 24px 60px -24px rgba(19, 20, 19, 0.35);
+  isolation: isolate;
 }
-.wk-base {
-  object-fit: cover;
-  object-position: left top;
-  transition: transform 0.9s var(--ease-structure);
-}
-.wk-well-link:hover .wk-base {
-  transform: scale(1.03);
-}
-.wk-veil {
+/* overscan via a slight scale, so the contained parallax never shows edges */
+.wkc-par {
   position: absolute;
   inset: 0;
-  z-index: 10;
-  background: rgba(16, 17, 17, 0.35);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  opacity: 0;
-  transition: opacity 0.5s var(--ease-ui);
+  transform: scale(1.08);
+  will-change: transform;
 }
-.wk-demo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: clamp(240px, 72%, 560px);
-  border-radius: 10px;
-  overflow: hidden;
-  z-index: 20;
-  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
+.wkc-img {
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.9s var(--ease-structure);
 }
-.wk-demo img {
-  display: block;
-  width: 100%;
-  height: auto;
+.wkc:hover .wkc-img {
+  transform: scale(1.025);
 }
-@media (hover: hover) and (pointer: fine) {
-  .wk-demo {
-    clip-path: polygon(30% 50%, 70% 50%, 70% 50%, 30% 50%);
-    transform: translate(-50%, -42%);
-    transition:
-      clip-path 0.7s var(--ease-structure),
-      transform 0.7s var(--ease-structure);
-  }
-  .wk-well-link:hover .wk-veil,
-  .wk-well-link:focus-visible .wk-veil {
-    opacity: 1;
-  }
-  .wk-well-link:hover .wk-demo,
-  .wk-well-link:focus-visible .wk-demo {
-    clip-path: polygon(0 100%, 100% 100%, 100% 0, 0 0);
-    transform: translate(-50%, -50%);
-  }
+.wkc-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  color: rgba(239, 240, 238, 0.85);
 }
-@media (hover: none), (pointer: coarse) {
-  /* touch: the demo rests open over a permanently veiled base */
-  .wk-veil {
-    opacity: 1;
-  }
-  .wk-demo {
-    transform: translate(-50%, -50%);
-  }
+.wkc-open svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.3s var(--ease-ui);
+}
+.wkc:hover .wkc-open svg {
+  transform: translateX(3px);
 }
 
-/* the open slot rides the steel gradient (closer-card) with a centered face */
-.wk-well--open {
-  display: grid;
-  place-items: center;
+/* the open slot — shorter, riding the steel gradient, face centered */
+.wkc--open {
+  display: flex;
+  min-height: min(55svh, 520px);
+  padding: 34px;
+  border-radius: var(--radius-panel);
+  overflow: clip;
+  align-items: center;
+  justify-content: center;
 }
 .wk-open-face {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 21px;
-  padding: 34px;
   text-align: center;
   color: var(--color-paper);
 }
-.wk-well-link:hover .wki-open-pill {
+.wkc--open:hover .wki-open-pill {
   transform: scale(1.06);
 }
 
@@ -4153,4 +4089,4 @@ html.wki-lock body {
 
 /* build-marker: svc-pricing-contact-v1 */
 
-/* build-marker: work-split-index-v1 */
+/* build-marker: work-chapters-v2 */
