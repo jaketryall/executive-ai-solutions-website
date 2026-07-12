@@ -116,10 +116,10 @@ export function Closer() {
           scale: 0.92,
           borderRadius: 24,
           y: () => card.offsetHeight * 0.04,
-          duration: 0.15,
+          duration: 0.1,
           immediateRender: false,
         },
-        2.3
+        2.35
       );
 
       // the lean — the line skews with scroll velocity, so even the hold
