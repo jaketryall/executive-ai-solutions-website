@@ -136,11 +136,11 @@ main {
   text-wrap: balance;
 }
 .t-display-title {
-  /* interior-page H1 (service / contact split heroes): one notch under
-     display-xl so a statement holds its mask-lines inside a split column */
+  /* interior-page H1: the SAME 64px register as the homepage h1 (one
+     site-wide h1 rule; interior heroes must never outrank the front door) */
   font-family: var(--font-display);
   font-weight: 650;
-  font-size: clamp(3rem, 5.8vw, 5.8rem);
+  font-size: clamp(2.4rem, 4.45vw, 4rem);
   line-height: 0.94;
   letter-spacing: -0.03em;
 }
@@ -180,7 +180,7 @@ main {
 }
 .t-title {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 650;
   font-size: 1.55rem;
   line-height: 1.15;
   letter-spacing: -0.02em;
@@ -3470,8 +3470,7 @@ html.wki-lock body {
   color: rgba(239, 240, 238, 0.72);
   font-size: 0.8125rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
   text-decoration: none;
   transition:
     background 0.3s var(--ease-ui),

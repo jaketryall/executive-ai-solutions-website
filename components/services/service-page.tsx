@@ -561,7 +561,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           <p data-anim="p-lead" className="t-meta text-ink/60">
             {service.price.lead}
           </p>
-          <p className="t-display-xl mt-fib-3">
+          <p className="t-statement t-statement--hero mt-fib-3">
             <span className="mask-line">
               <span className="mask-inner">
                 {service.price.big === service.price.accent ? (

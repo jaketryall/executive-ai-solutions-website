@@ -126,7 +126,7 @@ export function PricingPage() {
       {/* ── HERO · the promise ── */}
       <section className="pr-hero relative">
         <div className="wrap pb-fib-5 pt-[144px] md:pt-[176px]">
-          <h1 className="t-display-xl t-display-xl--tight max-w-[12ch]">
+          <h1 className="t-display-title max-w-[14ch]">
             <span className="mask-line">
               <span className="mask-inner">Prices, on</span>
             </span>
@@ -134,14 +134,14 @@ export function PricingPage() {
               <span className="mask-inner">the page</span>
             </span>
           </h1>
-          <div className="mt-fib-4 grid gap-fib-3 md:grid-cols-[55fr_45fr] md:items-end">
+          <div className="mt-fib-3">
             <p data-anim="h-sub" className="max-w-[48ch] text-ink/70">
               Most agencies make you book a call to hear a number. Here is the
               sheet we quote from, the same one the estimator computes with.
               Pick what you need, get a fixed quote in two days, and the price
               never moves after.
             </p>
-            <div data-anim="h-sub" className="flex flex-wrap gap-fib-1 md:justify-end">
+            <div data-anim="h-sub" className="mt-fib-3 flex flex-wrap gap-fib-1">
               <span className="chip">Fixed quote in 2 days</span>
               <span className="chip">No retainers required</span>
             </div>
