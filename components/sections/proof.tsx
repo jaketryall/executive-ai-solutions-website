@@ -91,25 +91,24 @@ export function Proof() {
       );
 
       /* the TOUR: the stitched landing page pans inside the frame as OUR
-         page scrolls — the visitor rides the post-click journey. Pan ends
-         where the image runs out: frame shows w/1.9 of a 1.544w image,
-         so the travel is ~66% of the image height. */
+         page scrolls — the visitor rides the post-click journey. Travel is
+         MEASURED (window vs image height), so any frame aspect at any
+         viewport ends the pan exactly where the page runs out. */
       const tour = q("[data-tour]")[0] as HTMLElement;
-      const dashCard = q("[data-anim='result']")[0] as HTMLElement;
       if (tour) {
+        const win = tour.parentElement as HTMLElement;
         gsap.fromTo(
           tour,
           { yPercent: 0 },
           {
-            yPercent: -46.9,
+            yPercent: () => -(1 - win.offsetHeight / tour.offsetHeight) * 100,
             ease: "none",
             scrollTrigger: {
-              // the ride waits until the dashboard card has been read, then
-              // runs until the frame leaves
-              trigger: dashCard ?? flag,
-              start: "bottom 96%",
-              endTrigger: flag,
-              end: "bottom 12%",
+              // starts only once the frame has fully presented — the visitor
+              // sees the page's own hero intact before the ride begins
+              trigger: flag,
+              start: "top 38%",
+              end: "bottom 25%",
               scrub: 0.6,
               invalidateOnRefresh: true,
             },
@@ -122,33 +121,66 @@ export function Proof() {
 
   return (
     <section id="proof" ref={root} className="relative z-10 -mt-fib-4 rounded-t-[24px] bg-canvas">
-      <div className="wrap grid gap-fib-5 pb-fib-7 pt-fib-6 md:grid-cols-[38fr_62fr]">
-        {/* ── the story column: what happened, in reading order ── */}
-        <div className="flex min-w-0 flex-col gap-fib-4">
-          <header data-anim="head">
-            <h2 className="t-display-lg">Where the click lands</h2>
-            <p className="mt-fib-3 text-ink/70">
-              That ad above is real. This is the page it lands on: designed,
-              built, and tracked by us for Desert Wings Flight School.
-            </p>
-          </header>
+      <div className="wrap pb-fib-7 pt-fib-6">
+        {/* ── beat 1: the claim (the hero's card falls past the empty right) ── */}
+        <header data-anim="head" className="max-w-[52ch]">
+          <h2 className="t-display-lg">Where the click lands</h2>
+          <p className="mt-fib-3 text-ink/70">
+            That ad above is real. This is the page it lands on: designed,
+            built, and tracked by us for Desert Wings Flight School.
+          </p>
+        </header>
 
-          {/* the result — PLACEHOLDER values, see tracking list at top */}
-          <div data-anim="result">
+        {/* ── beat 2: THE WORK — full width, commanding; this is the object
+            that has to justify the price beat waiting one scroll below ── */}
+        <div data-anim="flagship" className="relative mt-fib-4">
+          <ArtifactFrame
+            variant="chrome"
+            tone="ink"
+            url="desertwingsflightschool.com"
+            label="The Desert Wings homepage the ad lands on, designed and built by us"
+            bodyClassName="p-0! pt-0!"
+          >
+            <div className="aspect-square overflow-hidden md:aspect-video">
+              <Image
+                data-tour
+                src="/work/dw-tour.jpg"
+                alt="Scrolling through the Desert Wings homepage the ad lands on"
+                width={2880}
+                height={4446}
+                sizes="(min-width: 821px) 1280px, 92vw"
+                className="block h-auto w-full"
+              />
+            </div>
+          </ArtifactFrame>
+          {/* the ad, pinned to its page (compact echo of the hero artifact) */}
+          <div className="proof-ad-chip" aria-hidden>
+            <p className="g-sponsored">Sponsored</p>
+            <p className="g-url">desertwingsflightschool.com</p>
+            <p className="proof-ad-chip-title">
+              Desert Wings Flight School | Learn to Fly at Falcon Field
+            </p>
+          </div>
+        </div>
+
+        {/* ── beat 3: the receipts — the number and the voice, side by side ── */}
+        <div className="mt-fib-4 grid gap-fib-3 md:grid-cols-2">
+          {/* PLACEHOLDER values — see tracking list at top */}
+          <div data-anim="result" className="min-w-0">
             <ArtifactFrame
               variant="card"
               tone="ink"
               label="Results from the ads dashboard (placeholder values)"
-              bodyClassName="p-fib-4!"
+              bodyClassName="p-fib-4! h-full"
             >
               <p className="t-meta text-paper/50">From their ads dashboard</p>
-              <div className="mt-fib-3 flex flex-col gap-fib-3">
+              <div className="mt-fib-4 grid grid-cols-3 gap-fib-3">
                 {METRICS.map((m) => (
-                  <div key={m.label} className="flex items-baseline gap-fib-2">
-                    <p className="t-num w-[86px] shrink-0 font-display text-[2.1rem] font-extrabold leading-none tracking-[-0.03em] text-paper">
+                  <div key={m.label} className="min-w-0">
+                    <p className="t-num font-display text-[2.1rem] font-extrabold leading-none tracking-[-0.03em] text-paper">
                       {m.value}
                     </p>
-                    <p className="text-[0.9375rem] leading-[1.35] text-paper/60">
+                    <p className="mt-fib-1 text-[0.875rem] leading-[1.35] text-paper/60">
                       {m.label}
                     </p>
                   </div>
@@ -160,7 +192,7 @@ export function Proof() {
           {/* PLACEHOLDER quote — swap with the real one before launch */}
           <figure
             data-anim="result"
-            className="flex flex-1 flex-col justify-between rounded-panel bg-panel/70 p-fib-4"
+            className="flex min-w-0 flex-col justify-between rounded-panel bg-panel/70 p-fib-4"
           >
             <blockquote>
               <p className="text-[1.0625rem] leading-[1.55] text-ink/80">
@@ -174,37 +206,6 @@ export function Proof() {
               </a>
             </figcaption>
           </figure>
-        </div>
-
-        {/* ── the landing, tall and commanding: the tour rides your scroll ── */}
-        <div data-anim="flagship" className="relative min-w-0">
-          <ArtifactFrame
-            variant="chrome"
-            tone="ink"
-            url="desertwingsflightschool.com"
-            label="The Desert Wings homepage the ad lands on, designed and built by us"
-            bodyClassName="p-0! pt-0!"
-          >
-            <div className="overflow-hidden" style={{ aspectRatio: "1.22" }}>
-              <Image
-                data-tour
-                src="/work/dw-tour.jpg"
-                alt="Scrolling through the Desert Wings homepage the ad lands on"
-                width={2880}
-                height={4446}
-                sizes="(min-width: 821px) 60vw, 92vw"
-                className="block h-auto w-full"
-              />
-            </div>
-          </ArtifactFrame>
-          {/* the ad, pinned to its page (compact echo of the hero artifact) */}
-          <div className="proof-ad-chip" aria-hidden>
-            <p className="g-sponsored">Sponsored</p>
-            <p className="g-url">desertwingsflightschool.com</p>
-            <p className="proof-ad-chip-title">
-              Desert Wings Flight School | Learn to Fly at Falcon Field
-            </p>
-          </div>
         </div>
       </div>
     </section>
