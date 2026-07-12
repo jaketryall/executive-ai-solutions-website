@@ -3468,7 +3468,7 @@ a.work-card:hover {
 }
 /* the one highlighted action: a paper chip (the only light surface in the
    ink capsule, so it reads first) with a fly-through arrow on hover.
-   Selector carries the `a` — the shared .cs-onpage a color rule otherwise
+   Selector carries the `a` — the shared .cs-onpage a color rule would otherwise
    out-specifies this and paints paper text on the paper chip. */
 .cs-onpage a.cs-dock-visit {
   display: inline-flex;
