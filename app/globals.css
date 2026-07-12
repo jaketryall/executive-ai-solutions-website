@@ -3347,8 +3347,12 @@ a.work-card:hover {
     will-change: transform, opacity;
   }
 
-  /* the nav stays put, crossfading in place while the sheets move */
-  .site-nav {
+  /* the nav stays put, crossfading in place while the sheets move.
+     NAMED ONLY IN FLIGHT (html.vt-live, set around startViewTransition):
+     a persistent view-transition-name makes the nav a backdrop-root
+     boundary, which silently kills the capsules' backdrop-filter glass —
+     the blur can only sample the nav's own transparent strip. */
+  html.vt-live .site-nav {
     view-transition-name: site-nav;
   }
   ::view-transition-group(site-nav) {

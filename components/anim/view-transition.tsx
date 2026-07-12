@@ -72,6 +72,11 @@ export function ViewTransitions() {
       // entrances on the incoming page hold until the sheet lands
       beginArrival();
 
+      // the nav's view-transition-name applies only while in flight — kept
+      // on permanently it becomes a backdrop-root boundary and the capsules'
+      // glass blur silently stops sampling the page (globals.css, VT block)
+      document.documentElement.classList.add("vt-live");
+
       const vt = doc.startViewTransition(() => {
         router.push(href);
         return new Promise<void>((resolve) => {
@@ -118,6 +123,7 @@ export function ViewTransitions() {
       vt.finished
         .catch(() => {})
         .finally(() => {
+          document.documentElement.classList.remove("vt-live");
           releaseArrival();
           ScrollTrigger.refresh();
         });
