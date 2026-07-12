@@ -490,38 +490,41 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         </div>
       </section>
 
-      {/* ── WHAT YOU GET · sticky rail + index-sweep rows ── */}
-      <section className="svc-deliver py-fib-6 md:py-fib-7">
-        <div className="wrap grid gap-fib-5 md:grid-cols-[minmax(260px,340px)_1fr] md:gap-fib-6">
-          <div>
-            <div className="md:sticky md:top-[144px]">
-              <h2 data-anim="rail" className="t-display-lg">
-                What you actually get
-              </h2>
-              <p data-anim="rail" className="mt-fib-3 max-w-[28ch] text-ink/70">
-                {service.slug === "google-ads" &&
-                  "Not impressions. Leads, a cost per lead, and a report you can read in one minute."}
-                {service.slug === "websites" &&
-                  "Not a template with your logo on it. A page built from your business, that you own outright."}
-                {service.slug === "ai" &&
-                  "Not a chatbot widget. A follow-up system that works your leads while you work."}
-              </p>
+      {/* ── WHAT YOU GET · the page's DARK chapter (the homepage funnel-panel
+          grammar: the offer lives on the brand's important-objects ground) ── */}
+      <section className="svc-deliver py-fib-4 md:py-fib-5">
+        <div className="dark-chapter mx-[8px] rounded-panel py-fib-6 md:mx-[13px]">
+          <div className="wrap grid gap-fib-5 md:grid-cols-[minmax(260px,340px)_1fr] md:gap-fib-6">
+            <div>
+              <div className="md:sticky md:top-[144px]">
+                <h2 data-anim="rail" className="t-display-lg">
+                  What you actually get
+                </h2>
+                <p data-anim="rail" className="mt-fib-3 max-w-[28ch] text-paper/70">
+                  {service.slug === "google-ads" &&
+                    "Not impressions. Leads, a cost per lead, and a report you can read in one minute."}
+                  {service.slug === "websites" &&
+                    "Not a template with your logo on it. A page built from your business, that you own outright."}
+                  {service.slug === "ai" &&
+                    "Not a chatbot widget. A follow-up system that works your leads while you work."}
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div className="svc-d-list relative md:pl-fib-5">
-            {/* the traveling accent — directs the eye; never gates the content */}
-            <span className="svc-mark" aria-hidden />
-            <ul className="flex flex-col gap-fib-2 md:gap-fib-3">
-              {service.deliverables.map((d) => (
-                <li key={d.name} data-anim="d-row" className="svc-d">
-                  <div className="svc-d-in">
-                    <h3 className="t-title--lg font-display">{d.name}</h3>
-                    <p className="mt-fib-2 max-w-[52ch] text-ink/70">{d.body}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <div className="svc-d-list relative md:pl-fib-5">
+              {/* the traveling accent — directs the eye; never gates the content */}
+              <span className="svc-mark" aria-hidden />
+              <ul className="flex flex-col gap-fib-2 md:gap-fib-3">
+                {service.deliverables.map((d) => (
+                  <li key={d.name} data-anim="d-row" className="svc-d">
+                    <div className="svc-d-in">
+                      <h3 className="t-title--lg font-display">{d.name}</h3>
+                      <p className="mt-fib-2 max-w-[52ch] text-paper/70">{d.body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </section>
