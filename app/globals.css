@@ -3380,6 +3380,22 @@ a.work-card:hover {
     animation-duration: 0.8s;
     animation-timing-function: var(--ease-structure);
   }
+  /* NO crossfade inside the morph: when both ends exist, the old snapshot
+     leaves instantly and the new one rides the interpolating box SOLID —
+     both ends show the same image/crop, so it reads as one object moving */
+  ::view-transition-image-pair(vt-desert-wings),
+  ::view-transition-image-pair(vt-executive-ai-solutions) {
+    isolation: isolate;
+  }
+  ::view-transition-old(vt-desert-wings):not(:only-child),
+  ::view-transition-old(vt-executive-ai-solutions):not(:only-child) {
+    display: none;
+  }
+  ::view-transition-new(vt-desert-wings):not(:only-child),
+  ::view-transition-new(vt-executive-ai-solutions):not(:only-child) {
+    animation: none;
+    opacity: 1;
+  }
   /* a named element with no counterpart on the other page exits/enters fast
      instead of lingering over the moving sheets */
   ::view-transition-old(vt-desert-wings):only-child,
