@@ -93,9 +93,9 @@ export function Proof() {
 
   return (
     <section id="proof" ref={root} className="relative z-10 -mt-fib-4 rounded-t-panel bg-canvas">
-      <div className="wrap pb-fib-7 pt-fib-6">
+      <div className="pb-fib-7 pt-fib-6">
         {/* ── the claim (the hero's card falls past the empty right) ── */}
-        <header data-anim="head" className="max-w-[52ch]">
+        <header data-anim="head" className="wrap max-w-[52ch]">
           <h2 className="t-display-lg">Where the click lands</h2>
           <p className="mt-fib-3 text-ink/70">
             That ad above is real. These are the pages our clicks land on:
@@ -103,7 +103,8 @@ export function Proof() {
           </p>
         </header>
 
-        {/* ── one row per project: the work + its receipts, one glance ── */}
+        {/* ── one row per project: near-full-bleed cards (the services-panel
+            width) with the work inset inside the card's own padding ── */}
         {rows.map((p) => {
           const img = p.tour ?? p.cover;
           const [hero, ...rest] = p.results!.metrics;
@@ -112,7 +113,7 @@ export function Proof() {
               key={p.slug}
               data-proj
               data-anim="proj"
-              className="mt-fib-4 grid gap-fib-2 rounded-panel bg-panel/60 p-fib-2 md:grid-cols-[minmax(0,62fr)_minmax(0,38fr)] md:p-fib-2"
+              className="mx-[8px] mt-fib-4 grid gap-fib-2 rounded-panel bg-panel/60 p-fib-2 md:mx-[13px] md:grid-cols-[minmax(0,62fr)_minmax(0,38fr)] md:p-fib-3"
             >
               {/* the work — big, riding the scroll */}
               <div data-flagship className="relative min-w-0">

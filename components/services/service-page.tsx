@@ -13,6 +13,7 @@ import {
 } from "@/components/anim/ease";
 import { whenArrived } from "@/components/anim/arrival";
 import { CTA } from "@/components/ui/cta";
+import { Builder } from "@/components/sections/builder";
 import { ArtifactFrame } from "@/components/ui/artifact";
 import { Monogram } from "@/components/ui/monogram";
 import { ProcessCards } from "@/components/ui/process-cards";
@@ -546,6 +547,11 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           </div>
         </div>
       </section>
+
+      {/* ── BUILD YOURS · the toy lives HERE, not on the homepage: on this
+          page the visitor has self-selected into website intent, so "what
+          would yours look like" closes instead of mispositioning ── */}
+      {service.slug === "websites" && <Builder />}
 
       {/* ── THE PRICE · the one centered statement peak, open on the canvas,
           with the client voices floating around it (the home price-beat

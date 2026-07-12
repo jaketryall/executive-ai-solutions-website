@@ -400,9 +400,8 @@ export function Builder() {
               What would yours look like?
             </h2>
             <p data-anim="bld-head" className="mt-fib-3 max-w-[52ch] text-ink/70">
-              You just watched one get built. This one is yours: type your
-              name, flip through the tabs, tap a color. Sixty seconds, no
-              signup.
+              This one is yours: type your name, flip through the tabs, tap a
+              color. Sixty seconds, no signup.
             </p>
           </div>
 
