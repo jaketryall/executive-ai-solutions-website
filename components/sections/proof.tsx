@@ -44,21 +44,20 @@ export function Proof() {
         }
       );
 
-      /* per-row: the frame lands heavy, its receipts snap in after */
+      /* per-row: the whole card lands as ONE object (work + receipts share
+         a surface now, so they share an entrance) */
       (q("[data-proj]") as HTMLElement[]).forEach((row) => {
-        const tl = gsap.timeline({
-          defaults: { ease: EASE_STRUCTURE },
-          scrollTrigger: { trigger: row, start: "top 75%", once: true },
-        });
-        tl.fromTo(
-          row.querySelector("[data-anim='flagship']"),
-          { autoAlpha: 0, scale: 0.97, y: 34 },
-          { autoAlpha: 1, scale: 1, y: 0, duration: 1.15 }
-        ).fromTo(
-          row.querySelector("[data-anim='result']"),
-          { autoAlpha: 0, y: 21, scale: 0.97 },
-          { autoAlpha: 1, y: 0, scale: 1, duration: 0.8 },
-          "-=0.7"
+        gsap.fromTo(
+          row,
+          { autoAlpha: 0, scale: 0.98, y: 34 },
+          {
+            autoAlpha: 1,
+            scale: 1,
+            y: 0,
+            duration: 1.15,
+            ease: EASE_STRUCTURE,
+            scrollTrigger: { trigger: row, start: "top 75%", once: true },
+          }
         );
 
         /* the TOUR: the captured page pans inside its frame as OUR page
@@ -112,10 +111,11 @@ export function Proof() {
             <article
               key={p.slug}
               data-proj
-              className="mt-fib-4 grid gap-fib-3 md:grid-cols-[minmax(0,62fr)_minmax(0,38fr)]"
+              data-anim="proj"
+              className="mt-fib-4 grid gap-fib-2 rounded-panel bg-panel/60 p-fib-2 md:grid-cols-[minmax(0,62fr)_minmax(0,38fr)] md:p-fib-2"
             >
               {/* the work — big, riding the scroll */}
-              <div data-anim="flagship" className="relative min-w-0">
+              <div data-flagship className="relative min-w-0">
                 <ArtifactFrame
                   variant="chrome"
                   tone="ink"
@@ -146,7 +146,7 @@ export function Proof() {
               </div>
 
               {/* the receipts — one card, one glance */}
-              <div data-anim="result" className="min-w-0">
+              <div className="min-w-0">
                 <ArtifactFrame
                   variant="card"
                   tone="ink"
