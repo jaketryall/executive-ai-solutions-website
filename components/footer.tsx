@@ -6,7 +6,6 @@ import {
   gsap,
   ScrollTrigger,
   useGSAP,
-  EASE_LOOP,
   reducedMotion,
 } from "@/components/anim/ease";
 import { CTA } from "@/components/ui/cta";
@@ -25,7 +24,19 @@ export function Footer() {
     () => {
       const q = gsap.utils.selector(root);
       const main = document.querySelector<HTMLElement>("main");
-      const wordmark = q(".footer-wordmark")[0];
+      const lines = q("[data-fit]") as HTMLElement[];
+
+      // the lockup lines are FITTED, not clamped: measure each at a probe
+      // size and scale so the type spans the row exactly, every viewport
+      const fit = () => {
+        for (const el of lines) {
+          if (!el.offsetParent) continue; // the other breakpoint's markup
+          el.style.fontSize = "100px";
+          const avail = el.parentElement!.clientWidth;
+          const w = el.scrollWidth;
+          if (avail && w) el.style.fontSize = `${((100 * avail) / w) * 0.995}px`;
+        }
+      };
 
       // main carries a CSS-default reveal gap (see globals) so the footer is
       // reachable even without JS; measurement refines it, and refresh is
@@ -33,6 +44,7 @@ export function Footer() {
       let raf = 0;
       const setH = () => {
         if (!root.current) return; // resize can race an unmount
+        fit(); // the lockup sets the footer's height — fit before measuring
         if (main) main.style.marginBottom = `${root.current.offsetHeight}px`;
         cancelAnimationFrame(raf);
         raf = requestAnimationFrame(() => ScrollTrigger.refresh());
@@ -42,8 +54,8 @@ export function Footer() {
       window.addEventListener("resize", setH);
 
       let st: ScrollTrigger | undefined;
-      if (!reducedMotion() && main && wordmark) {
-        gsap.set(wordmark, { yPercent: 55 });
+      if (!reducedMotion() && main && lines.length) {
+        gsap.set(lines, { yPercent: 108 });
         st = ScrollTrigger.create({
           trigger: main,
           start: "bottom bottom",
@@ -51,18 +63,20 @@ export function Footer() {
             `bottom ${Math.max(120, window.innerHeight - (root.current?.offsetHeight ?? 0))}px`,
           scrub: true,
           invalidateOnRefresh: true,
-          onUpdate: (self) => gsap.set(wordmark, { yPercent: 55 * (1 - self.progress) }),
+          onUpdate: (self) => {
+            // each line climbs out of its crop, the later line a beat behind
+            lines.forEach((el, i) => {
+              const p = gsap.utils.clamp(
+                0,
+                1,
+                (self.progress - i * 0.12) / (1 - i * 0.12)
+              );
+              gsap.set(el, { yPercent: 108 * (1 - p) });
+            });
+          },
         });
-        // the motif's terminal registration carries the one ambient breathe
-        gsap.to(q(".footer-mark"), {
-          y: -6,
-          duration: 9,
-          ease: EASE_LOOP,
-          yoyo: true,
-          repeat: -1,
-        });
-      } else if (wordmark) {
-        gsap.set(wordmark, { yPercent: 0 });
+      } else if (lines.length) {
+        gsap.set(lines, { yPercent: 0 });
       }
 
       return () => {
@@ -115,25 +129,28 @@ export function Footer() {
           © 2026
         </p>
 
-        {/* the sign-off: the mark, big, bottom-left — the full name runs the
-            rest of the line at wordmark scale */}
-        <div className="mt-[21px] overflow-hidden">
-          <div className="flex items-end justify-between gap-[34px]">
-            <div className="footer-mark shrink-0 text-ink">
-              <Monogram
-                className="h-[123px] w-[123px] md:h-[212px] md:w-[212px]"
-                label="Executive AI Solutions monogram"
-              />
-            </div>
-            <p
-              className="footer-wordmark select-none text-right uppercase text-ink"
-              style={{ marginBottom: "-0.1em" }}
-              aria-hidden
-            >
-              Executive AI
-              <br />
-              Solutions
+        {/* the sign-off: mark + full name as ONE fitted line spanning the
+            whole bottom, rising out of its crop as the footer is revealed
+            (mobile keeps the scale by breaking into two fitted lines) */}
+        <div className="mt-[21px] select-none text-ink" aria-hidden>
+          <div className="hidden overflow-hidden md:block">
+            <p data-fit className="footer-line">
+              <Monogram className="footer-line-mark" />
+              <span>Executive AI Solutions</span>
             </p>
+          </div>
+          <div className="md:hidden">
+            <div className="overflow-hidden">
+              <p data-fit className="footer-line">
+                <Monogram className="footer-line-mark" />
+                <span>Executive AI</span>
+              </p>
+            </div>
+            <div className="overflow-hidden">
+              <p data-fit className="footer-line">
+                <span>Solutions</span>
+              </p>
+            </div>
           </div>
         </div>
       </div>

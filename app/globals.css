@@ -201,15 +201,24 @@ main {
   font-variant-numeric: tabular-nums;
 }
 
-/* the footer sign-off wordmark — the FULL name on one line at desktop,
-   sized to run the row beside the big mark (wraps right-aligned on mobile) */
-.footer-wordmark {
+/* the footer sign-off — mark + name as fitted lines spanning the full row.
+   The clamp is only the no-JS fallback; footer.tsx measures and sets the
+   exact font-size so the line runs edge to edge at every viewport. */
+.footer-line {
   font-family: var(--font-display);
   font-weight: 650;
-  /* two lines, so the name keeps display scale beside the big mark */
-  font-size: clamp(2.4rem, 7.4vw, 6.7rem);
-  line-height: 0.92;
+  font-size: clamp(2.4rem, 7vw, 8rem);
+  line-height: 1;
   letter-spacing: -0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+/* the mark rides inside the line, so the fit scales it with the type */
+.footer-line .footer-line-mark {
+  height: 0.72em;
+  width: 0.72em;
+  margin-right: 0.16em;
+  vertical-align: 0;
 }
 
 /* optical centering for pill / nav / chip labels (progressive enhancement) */
