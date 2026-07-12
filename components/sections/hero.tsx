@@ -367,15 +367,17 @@ export function Hero() {
           <p data-anim="eyebrow" className="t-meta uppercase text-paper/45">
             Full-funnel ads agency
           </p>
-          {/* the h1 carries ONLY the outcome — the how-clause reads at body
-              size below it, so the display tier never becomes a wall of text */}
-          <h1 data-anim="statement" className="t-statement t-statement--hero mt-fib-2 max-w-[22ch] text-balance text-paper">
-            {ariaPair.out} {ariaPair.who}.
+          {/* the two-tone statement (the signature): bright outcome, dim
+              continuation IN the same sentence. The dim clause stays five
+              words — that's what lets the whole thing hold display size
+              without reading as a wall (the eyebrow + the ad demo carry the
+              specifics) */}
+          <h1 data-anim="statement" className="t-statement t-statement--hero mt-fib-2 max-w-[24ch] text-balance">
+            <span className="text-paper">
+              {ariaPair.out} {ariaPair.who}.
+            </span>{" "}
+            <span className="text-paper/40">We run the whole click.</span>
           </h1>
-          <p data-anim="statement" className="mt-fib-3 max-w-[40ch] text-paper/60">
-            We run the ads, build the landing page, and answer for the whole
-            click.
-          </p>
 
           <div data-anim="ctas" className="mt-fib-3 flex flex-wrap items-center gap-fib-2">
             <CTA href="#estimate" label="Get an instant estimate" tone="paper" />
