@@ -201,6 +201,16 @@ main {
   font-variant-numeric: tabular-nums;
 }
 
+/* the footer sign-off wordmark — the FULL name on one line at desktop,
+   sized to run the row beside the big mark (wraps right-aligned on mobile) */
+.footer-wordmark {
+  font-family: var(--font-display);
+  font-weight: 650;
+  font-size: clamp(1.9rem, 5.5vw, 5rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+}
+
 /* optical centering for pill / nav / chip labels (progressive enhancement) */
 .text-trim {
   text-box: trim-both cap alphabetic;

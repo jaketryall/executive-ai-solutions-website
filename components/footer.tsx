@@ -111,24 +111,29 @@ export function Footer() {
           </nav>
         </div>
 
-        {/* wordmark + motif bookend */}
-        <div className="relative mt-[55px] flex items-end justify-between gap-[34px] md:mt-[89px]">
-          <div className="footer-mark mb-[21px] shrink-0 text-ink">
-            <Monogram className="h-[34px] w-[34px] md:h-[42px] md:w-[42px]" label="Executive AI Solutions monogram" />
-          </div>
-          <p className="t-meta mb-[21px] shrink-0 text-ink/55">
-            © 2026 Executive AI Solutions
-          </p>
-        </div>
-      </div>
-      <div className="overflow-hidden">
-        <p
-          className="footer-wordmark t-display-mega select-none whitespace-nowrap text-center uppercase text-ink"
-          style={{ marginBottom: "-0.16em" }}
-          aria-hidden
-        >
-          Executive
+        <p className="t-meta mt-[55px] text-right text-ink/55 md:mt-[89px]">
+          © 2026
         </p>
+
+        {/* the sign-off: the mark, big, bottom-left — the full name runs the
+            rest of the line at wordmark scale */}
+        <div className="mt-[21px] overflow-hidden">
+          <div className="flex items-end justify-between gap-[34px]">
+            <div className="footer-mark shrink-0 text-ink">
+              <Monogram
+                className="h-[76px] w-[76px] md:h-[123px] md:w-[123px]"
+                label="Executive AI Solutions monogram"
+              />
+            </div>
+            <p
+              className="footer-wordmark select-none text-right uppercase text-ink"
+              style={{ marginBottom: "-0.1em" }}
+              aria-hidden
+            >
+              Executive AI Solutions
+            </p>
+          </div>
+        </div>
       </div>
     </footer>
   );
