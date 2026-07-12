@@ -5,11 +5,11 @@ import Link from "next/link";
 import { useRef } from "react";
 import {
   gsap,
+  ScrollTrigger,
   useGSAP,
   EASE_STRUCTURE,
   reducedMotion,
 } from "@/components/anim/ease";
-import { ArtifactFrame } from "@/components/ui/artifact";
 import { PROJECTS } from "@/lib/work";
 
 /* The proof — the click, landed. ONE ROW PER PROJECT, rendered straight from
@@ -24,7 +24,7 @@ export function Proof() {
   const rows = PROJECTS.filter((p) => p.results);
 
   useGSAP(
-    () => {
+    (context) => {
       const q = gsap.utils.selector(root);
 
       if (reducedMotion()) {
@@ -44,6 +44,19 @@ export function Proof() {
         }
       );
 
+      /* loop governance: each row's tour runs only in view + tab visible */
+      const loops: gsap.core.Timeline[] = [];
+      const inView = new Map<gsap.core.Timeline, boolean>();
+      const sync = () => {
+        loops.forEach((l) =>
+          inView.get(l) && !document.hidden ? l.play() : l.pause()
+        );
+      };
+      document.addEventListener("visibilitychange", sync);
+      context.add(() => () =>
+        document.removeEventListener("visibilitychange", sync)
+      );
+
       /* per-row: the whole card lands as ONE object (work + receipts share
          a surface now, so they share an entrance) */
       (q("[data-proj]") as HTMLElement[]).forEach((row) => {
@@ -60,31 +73,34 @@ export function Proof() {
           }
         );
 
-        /* the TOUR: the captured page pans inside its frame as OUR page
-           scrolls. Travel is MEASURED (window vs image height) so any
-           aspect at any viewport ends exactly where the page runs out;
-           short images simply don't pan. */
+        /* the TOUR, self-scrolling (the services-02 loop): glide down the
+           page, hold, ease back, repeat — running only while the card is on
+           screen and the tab is visible. Travel is MEASURED (window vs image
+           height) and re-read every cycle via repeatRefresh, so any aspect
+           at any viewport ends exactly where the page runs out; short images
+           simply don't move. */
         const tour = row.querySelector("[data-tour]") as HTMLElement | null;
         if (tour) {
           const win = tour.parentElement as HTMLElement;
-          gsap.fromTo(
-            tour,
-            { yPercent: 0 },
-            {
-              yPercent: () =>
-                -Math.max(0, 1 - win.offsetHeight / tour.offsetHeight) * 100,
-              ease: "none",
-              scrollTrigger: {
-                // starts once the frame has presented — the page's own hero
-                // shows intact before the ride begins
-                trigger: row,
-                start: "top 38%",
-                end: "bottom 25%",
-                scrub: 0.6,
-                invalidateOnRefresh: true,
-              },
-            }
-          );
+          const travel = () =>
+            -Math.max(0, 1 - win.offsetHeight / tour.offsetHeight) * 100;
+          const loop = gsap.timeline({ repeat: -1, paused: true, repeatRefresh: true });
+          loop
+            .to({}, { duration: 1.4 }) // present the page's own hero first
+            .to(tour, { yPercent: travel, duration: 15, ease: "none" })
+            .to({}, { duration: 0.9 })
+            .to(tour, { yPercent: 0, duration: 2.4, ease: EASE_STRUCTURE })
+            .to({}, { duration: 1.1 });
+          loops.push(loop);
+          ScrollTrigger.create({
+            trigger: row,
+            start: "top bottom",
+            end: "bottom top",
+            onToggle: (self) => {
+              inView.set(loop, self.isActive);
+              sync();
+            },
+          });
         }
       });
     },
@@ -94,17 +110,21 @@ export function Proof() {
   return (
     <section id="proof" ref={root} className="relative z-10 -mt-fib-4 rounded-t-panel bg-canvas">
       <div className="pb-fib-7 pt-fib-6">
-        {/* ── the claim (the hero's card falls past the empty right) ── */}
-        <header data-anim="head" className="wrap max-w-[52ch]">
+        {/* ── the claim: title left, support right — the header row spans the
+            card's full width so the big card below doesn't orphan it ── */}
+        <header
+          data-anim="head"
+          className="wrap flex flex-col justify-between gap-fib-3 md:flex-row md:items-end"
+        >
           <h2 className="t-display-lg">Where the click lands</h2>
-          <p className="mt-fib-3 text-ink/70">
+          <p className="max-w-[38ch] text-ink/70 md:text-right">
             That ad above is real. These are the pages our clicks land on:
             designed, built, and tracked by us.
           </p>
         </header>
 
-        {/* ── one row per project: near-full-bleed cards (the services-panel
-            width) with the work inset inside the card's own padding ── */}
+        {/* ── one row per project: Lesse's card — dark, image left with
+            rounded corners, the receipts straight on the card ── */}
         {rows.map((p) => {
           const img = p.tour ?? p.cover;
           const [hero, ...rest] = p.results!.metrics;
@@ -113,29 +133,21 @@ export function Proof() {
               key={p.slug}
               data-proj
               data-anim="proj"
-              className="mx-[8px] mt-fib-4 grid gap-fib-2 rounded-panel bg-panel/60 p-fib-2 md:mx-[13px] md:grid-cols-[minmax(0,62fr)_minmax(0,38fr)] md:p-fib-3"
+              className="dark-chapter mx-[8px] mt-fib-4 grid gap-fib-3 rounded-panel p-fib-2 md:mx-[13px] md:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] md:gap-fib-4 md:p-fib-2"
             >
-              {/* the work — big, riding the scroll */}
-              <div data-flagship className="relative min-w-0">
-                <ArtifactFrame
-                  variant="chrome"
-                  tone="ink"
-                  url={p.urlLabel}
-                  label={`The ${p.client} page the ad lands on, designed and built by us`}
-                  bodyClassName="p-0! pt-0!"
-                >
-                  <div className="aspect-square overflow-hidden md:aspect-4/3">
-                    <Image
-                      data-tour
-                      src={img.src}
-                      alt={img.alt}
-                      width={img.width}
-                      height={img.height}
-                      sizes="(min-width: 821px) 62vw, 92vw"
-                      className="block h-auto w-full"
-                    />
-                  </div>
-                </ArtifactFrame>
+              {/* the work — rounded image, left, riding the scroll */}
+              <div className="relative min-w-0">
+                <div className="aspect-square overflow-hidden rounded-frame md:aspect-4/3">
+                  <Image
+                    data-tour
+                    src={img.src}
+                    alt={img.alt}
+                    width={img.width}
+                    height={img.height}
+                    sizes="(min-width: 821px) 55vw, 92vw"
+                    className="block h-auto w-full"
+                  />
+                </div>
                 {/* the ad, pinned to its page — only when the copy is real */}
                 {p.results!.ad && (
                   <div className="proof-ad-chip" aria-hidden>
@@ -146,55 +158,42 @@ export function Proof() {
                 )}
               </div>
 
-              {/* the receipts — one card, stretched to the frame's height so
-                  the two halves read as equals, not siblings of different size */}
-              <div className="flex min-w-0">
-                <ArtifactFrame
-                  variant="card"
-                  tone="ink"
-                  className="flex w-full flex-col"
-                  label={`${p.client} results (placeholder values)`}
-                  bodyClassName="p-fib-4! flex-1"
-                >
-                  <div className="flex h-full min-h-0 flex-col">
-                    <div className="flex flex-wrap items-center gap-fib-2">
-                      <span className="chip">{p.sector}</span>
-                      <span className="t-meta text-paper/45">{p.year}</span>
-                    </div>
-                    <h3 className="t-title--lg mt-fib-3 text-paper">
-                      {p.client}
-                    </h3>
+              {/* the receipts — text straight on the dark card */}
+              <div className="flex min-h-0 min-w-0 flex-col p-fib-2 md:py-fib-3 md:pl-0 md:pr-fib-3">
+                <div className="flex flex-wrap items-center gap-fib-2">
+                  <span className="chip">{p.sector}</span>
+                  <span className="t-meta text-paper/45">{p.year}</span>
+                </div>
+                <h3 className="t-display-lg mt-fib-3 text-paper">{p.client}</h3>
 
-                    {/* the hero number, then the smalls */}
-                    <p className="t-num mt-fib-4 font-display text-[3.2rem] font-extrabold leading-none tracking-[-0.03em] text-paper">
-                      {hero.value}
+                {/* the hero number, then the smalls */}
+                <p className="t-num mt-fib-4 font-display text-[3.2rem] font-extrabold leading-none tracking-[-0.03em] text-paper">
+                  {hero.value}
+                </p>
+                <p className="mt-fib-1 text-paper/65">{hero.label}</p>
+                {rest.length > 0 && (
+                  <p className="t-meta mt-fib-2 text-paper/45">
+                    {rest.map((m) => `${m.value} ${m.label}`).join(" · ")}
+                  </p>
+                )}
+
+                {p.results!.quote && (
+                  <blockquote className="mt-auto pt-fib-4">
+                    <p className="text-[0.9375rem] leading-[1.5] text-paper/70">
+                      &ldquo;{p.results!.quote.text}&rdquo;
                     </p>
-                    <p className="mt-fib-1 text-paper/65">{hero.label}</p>
-                    {rest.length > 0 && (
-                      <p className="t-meta mt-fib-2 text-paper/45">
-                        {rest.map((m) => `${m.value} ${m.label}`).join(" · ")}
-                      </p>
-                    )}
+                    <p className="t-meta mt-fib-2 text-paper/45">
+                      {p.results!.quote.name}
+                    </p>
+                  </blockquote>
+                )}
 
-                    {p.results!.quote && (
-                      <blockquote className="mt-auto pt-fib-4">
-                        <p className="text-[0.9375rem] leading-[1.5] text-paper/70">
-                          &ldquo;{p.results!.quote.text}&rdquo;
-                        </p>
-                        <p className="t-meta mt-fib-2 text-paper/45">
-                          {p.results!.quote.name}
-                        </p>
-                      </blockquote>
-                    )}
-
-                    <Link
-                      href={`/work/${p.slug}`}
-                      className="u-link t-meta mt-fib-3 self-start text-paper/80"
-                    >
-                      See the full build
-                    </Link>
-                  </div>
-                </ArtifactFrame>
+                <Link
+                  href={`/work/${p.slug}`}
+                  className="u-link t-meta mt-fib-3 self-start text-paper/80"
+                >
+                  See the full build
+                </Link>
               </div>
             </article>
           );
