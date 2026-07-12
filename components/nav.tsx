@@ -156,16 +156,16 @@ function LinksCapsule() {
         </>,
         0,
       )}
-      {mini(
-        "/contact",
-        <>
-          <span className="nav-mini-meta">Our local time · Mesa, AZ</span>
-          <span className="text-trim">
-            <LocalTime />
-          </span>
-        </>,
-        1,
-      )}
+      {/* the clock is a fact, not a destination — a plain surface, no link */}
+      <div
+        className="nav-mini nav-mini--static"
+        style={{ animationDelay: "60ms" }}
+      >
+        <span className="nav-mini-meta">Our local time · Mesa, AZ</span>
+        <span className="text-trim">
+          <LocalTime />
+        </span>
+      </div>
     </div>,
   ];
 

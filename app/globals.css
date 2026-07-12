@@ -687,6 +687,12 @@ main {
 .nav-mini:focus-visible {
   background: rgba(239, 240, 238, 0.15);
 }
+/* a fact, not a destination (the clock): same card surface, no affordance */
+.nav-mini--static,
+.nav-mini--static:hover {
+  background: rgba(239, 240, 238, 0.07);
+  cursor: default;
+}
 .nav-mini-thumb {
   display: block;
   width: 100%;
