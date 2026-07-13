@@ -208,7 +208,9 @@ main {
   font-family: var(--font-display);
   font-weight: 650;
   font-size: clamp(2.4rem, 7vw, 8rem);
-  line-height: 1;
+  /* tight stack: uppercase carries no descenders, so the lines can sit
+     nearly cap-to-cap without colliding */
+  line-height: 0.92;
   letter-spacing: -0.03em;
   text-transform: uppercase;
   white-space: nowrap;

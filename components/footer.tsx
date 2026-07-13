@@ -27,13 +27,17 @@ export function Footer() {
       const lines = q("[data-fit]") as HTMLElement[];
 
       // the lockup lines are FITTED, not clamped: measure each at a probe
-      // size and scale so the type spans the row exactly, every viewport
+      // size and scale so the type spans the row exactly, every viewport.
+      // The probe shrink-wraps (inline-block) — a block line never measures
+      // NARROWER than its row, so short lines would refuse to grow.
       const fit = () => {
         for (const el of lines) {
-          if (!el.offsetParent) continue; // the other breakpoint's markup
+          if (!el.offsetParent) continue; // display:none can't be measured
           el.style.fontSize = "100px";
+          el.style.display = "inline-block";
           const avail = el.parentElement!.clientWidth;
-          const w = el.scrollWidth;
+          const w = el.getBoundingClientRect().width;
+          el.style.display = "";
           if (avail && w) el.style.fontSize = `${((100 * avail) / w) * 0.995}px`;
         }
       };
@@ -129,28 +133,21 @@ export function Footer() {
           © 2026
         </p>
 
-        {/* the sign-off: mark + full name as ONE fitted line spanning the
-            whole bottom, rising out of its crop as the footer is revealed
-            (mobile keeps the scale by breaking into two fitted lines) */}
+        {/* the sign-off: the name at Lesse scale — TWO fitted lines, each
+            spanning the full row (the stack is what buys the height a
+            22-character name can't reach on one line), the mark riding in
+            line one, both climbing out of their crops as the footer reveals */}
         <div className="mt-[21px] select-none text-ink" aria-hidden>
-          <div className="hidden overflow-hidden md:block">
+          <div className="overflow-hidden">
             <p data-fit className="footer-line">
               <Monogram className="footer-line-mark" />
-              <span>Executive AI Solutions</span>
+              <span>Executive AI</span>
             </p>
           </div>
-          <div className="md:hidden">
-            <div className="overflow-hidden">
-              <p data-fit className="footer-line">
-                <Monogram className="footer-line-mark" />
-                <span>Executive AI</span>
-              </p>
-            </div>
-            <div className="overflow-hidden">
-              <p data-fit className="footer-line">
-                <span>Solutions</span>
-              </p>
-            </div>
+          <div className="overflow-hidden">
+            <p data-fit className="footer-line">
+              <span>Solutions</span>
+            </p>
           </div>
         </div>
       </div>
