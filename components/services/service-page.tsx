@@ -17,6 +17,7 @@ import { Builder } from "@/components/sections/builder";
 import { ArtifactFrame } from "@/components/ui/artifact";
 import { Monogram } from "@/components/ui/monogram";
 import { ProcessCards } from "@/components/ui/process-cards";
+import { HighlightsGallery, type Highlight } from "@/components/ui/highlights-gallery";
 import { SERVICE_META, siblingServices, type ServiceDef } from "@/lib/services";
 import { QUOTES, AV_TINTS } from "@/lib/quotes";
 
@@ -146,6 +147,78 @@ function HeroArtifact({ slug }: { slug: string }) {
     </ArtifactFrame>
   );
 }
+
+/* ── the ads page's highlights (the macbook-neo gallery, our content):
+   each card is one thing the service actually produces. Numbers are
+   PLACEHOLDER — same swap list as lib/work.ts results. ── */
+const ADS_HIGHLIGHTS: Highlight[] = [
+  {
+    key: "ad",
+    caption: "Your ad, live on Google.",
+    media: (
+      <div className="hlg-float">
+        <p className="g-sponsored">Sponsored</p>
+        <p className="g-url">desertwingsflightschool.com</p>
+        <p className="g-title">
+          Desert Wings Flight School | Learn to Fly at Falcon Field
+        </p>
+        <p className="g-desc">
+          Discovery flights and PPL through CFI training in Mesa, AZ.
+        </p>
+      </div>
+    ),
+  },
+  {
+    key: "landing",
+    caption: "Every click lands on a page built to convert.",
+    fill: true,
+    media: (
+      <Image
+        src="/work/dw-tour.jpg"
+        alt="The Desert Wings landing page we designed and built"
+        width={2880}
+        height={4446}
+        sizes="88vw"
+      />
+    ),
+  },
+  {
+    key: "tracking",
+    caption: "Tracked to the dollar, in your own account.",
+    media: (
+      <div className="text-center">
+        <p className="t-num font-display text-[clamp(3.4rem,7vw,6rem)] font-[650] leading-none">
+          $38
+        </p>
+        <p className="t-meta mt-[13px] text-paper/60">
+          cost per lead · last 30 days
+        </p>
+      </div>
+    ),
+  },
+  {
+    key: "report",
+    caption: "A report you can read in one minute.",
+    media: (
+      <div className="hlg-float">
+        {[
+          ["Leads", "26"],
+          ["Cost per lead", "$38"],
+          ["Search impression share", "74%"],
+        ].map(([k, v]) => (
+          <div
+            key={k}
+            className="flex items-baseline justify-between gap-[13px] border-b border-ink/10 py-[9px] text-[0.9375rem] last:border-b-0"
+          >
+            <span className="text-ink/70">{k}</span>
+            <span className="t-num font-[600]">{v}</span>
+          </div>
+        ))}
+        <p className="t-meta mt-[13px] text-ink/50">Sent every Monday</p>
+      </div>
+    ),
+  },
+];
 
 export function ServicePage({ service }: { service: ServiceDef }) {
   const root = useRef<HTMLElement>(null!);
@@ -601,6 +674,15 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           </div>
         </div>
       </section>
+
+      {/* ── THE HIGHLIGHTS · the swiping gallery (ads page only) ── */}
+      {service.slug === "google-ads" && (
+        <HighlightsGallery
+          label="Google Ads highlights"
+          heading="The highlights."
+          items={ADS_HIGHLIGHTS}
+        />
+      )}
 
       {/* ── WHAT YOU GET · the page's DARK chapter (the homepage funnel-panel
           grammar: the offer lives on the brand's important-objects ground) ── */}
