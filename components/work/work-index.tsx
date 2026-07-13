@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PROJECTS } from "@/lib/work";
 import { whenArrived } from "@/components/anim/arrival";
+import { revealUp } from "@/components/anim/reveal";
 import {
   gsap,
   useGSAP,
@@ -59,19 +60,9 @@ export function WorkIndex() {
 
       /* chapters: a quiet rise, then the media breathes against the scroll
          (contained parallax — the "expensive" tell, nothing louder) */
-      (q("[data-anim='chapter']") as HTMLElement[]).forEach((el) => {
-        gsap.fromTo(
-          el,
-          { autoAlpha: 0, y: 21 },
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.75,
-            ease: EASE_STRUCTURE,
-            scrollTrigger: { trigger: el, start: "top 84%", once: true },
-          }
-        );
-      });
+      (q("[data-anim='chapter']") as HTMLElement[]).forEach((el) =>
+        revealUp(el, el)
+      );
       (q("[data-wkc-par]") as HTMLElement[]).forEach((el) => {
         gsap.fromTo(
           el,

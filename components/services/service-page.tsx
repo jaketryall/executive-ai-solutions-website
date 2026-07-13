@@ -12,6 +12,7 @@ import {
   reducedMotion,
 } from "@/components/anim/ease";
 import { whenArrived } from "@/components/anim/arrival";
+import { revealUp } from "@/components/anim/reveal";
 import { CTA } from "@/components/ui/cta";
 import { Builder } from "@/components/sections/builder";
 import { ArtifactFrame } from "@/components/ui/artifact";
@@ -435,30 +436,9 @@ export function ServicePage({ service }: { service: ServiceDef }) {
       /* ── deliverables: rows enter with a directional stagger; on desktop the
          accent mark then WALKS the list as you read (index-sweep: everything
          stays visible, the sweep only directs the eye) ── */
-      gsap.fromTo(
-        q("[data-anim='rail']"),
-        { autoAlpha: 0, x: -21 },
-        {
-          autoAlpha: 1,
-          x: 0,
-          duration: 0.7,
-          ease: EASE_STRUCTURE,
-          stagger: 0.08,
-          scrollTrigger: { trigger: q(".svc-deliver")[0], start: "top 74%", once: true },
-        }
-      );
-      gsap.fromTo(
-        q("[data-anim='d-row']"),
-        { autoAlpha: 0, y: 21 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.75,
-          ease: EASE_STRUCTURE,
-          stagger: 0.09,
-          scrollTrigger: { trigger: q(".svc-d-list")[0], start: "top 74%", once: true },
-        }
-      );
+      // THE fade-up (apple-grammar.md §5) — one recipe, fires on entry
+      revealUp(q("[data-anim='rail']"), q(".svc-deliver")[0]);
+      revealUp(q("[data-anim='d-row']"), q(".svc-d-list")[0]);
 
       const mm = gsap.matchMedia();
       mm.add("(min-width: 821px)", () => {
@@ -504,31 +484,8 @@ export function ServicePage({ service }: { service: ServiceDef }) {
       });
 
       /* ── process cards: head, then the row deals in left to right ── */
-      gsap.fromTo(
-        q("[data-anim='proc']"),
-        { autoAlpha: 0, y: 21 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.75,
-          ease: EASE_STRUCTURE,
-          stagger: 0.08,
-          scrollTrigger: { trigger: q(".svc-process")[0], start: "top 76%", once: true },
-        }
-      );
-      gsap.fromTo(
-        q("[data-anim='proc-card']"),
-        { autoAlpha: 0, y: 34, scale: 0.97 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          ease: EASE_STRUCTURE,
-          stagger: 0.1,
-          scrollTrigger: { trigger: q(".proc-card")[0], start: "top 82%", once: true },
-        }
-      );
+      revealUp(q("[data-anim='proc']"), q(".svc-process")[0]);
+      revealUp(q("[data-anim='proc-card']"), q(".proc-card")[0]);
 
       /* ── price beat: the peak — lead line, then the number rises ── */
       const priceTl = gsap.timeline({
@@ -582,48 +539,11 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         });
       });
 
-      /* faq rows: quiet rise */
-      gsap.fromTo(
-        q("[data-anim='faq']"),
-        { autoAlpha: 0, y: 21 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.8,
-          ease: EASE_STRUCTURE,
-          stagger: 0.07,
-          scrollTrigger: { trigger: q(".svc-faq")[0], start: "top 78%", once: true },
-        }
-      );
+      revealUp(q("[data-anim='faq']"), q(".svc-faq")[0], { stagger: 0.07 });
 
-      /* funnel cross-links: scale-settle */
-      gsap.fromTo(
-        q("[data-anim='x-card']"),
-        { autoAlpha: 0, y: 21, scale: 0.96 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          ease: EASE_STRUCTURE,
-          stagger: 0.12,
-          scrollTrigger: { trigger: q(".svc-funnel")[0], start: "top 76%", once: true },
-        }
-      );
+      revealUp(q("[data-anim='x-card']"), q(".svc-funnel")[0]);
 
-      /* the ask panel */
-      gsap.fromTo(
-        q("[data-anim='ask']"),
-        { autoAlpha: 0, y: 21 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.8,
-          ease: EASE_STRUCTURE,
-          stagger: 0.09,
-          scrollTrigger: { trigger: q(".svc-ask")[0], start: "top 74%", once: true },
-        }
-      );
+      revealUp(q("[data-anim='ask']"), q(".svc-ask")[0]);
 
       return () => {
         dead = true;

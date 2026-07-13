@@ -10,6 +10,7 @@ import {
   reducedMotion,
 } from "@/components/anim/ease";
 import { whenArrived } from "@/components/anim/arrival";
+import { revealUp } from "@/components/anim/reveal";
 import { CTA } from "@/components/ui/cta";
 import { Monogram } from "@/components/ui/monogram";
 import { ProcessCards } from "@/components/ui/process-cards";
@@ -89,18 +90,7 @@ export function ContactPage() {
       whenArrived().then(() => !dead && enter());
 
       /* the three steps: one at a time */
-      gsap.fromTo(
-        q("[data-anim='step']"),
-        { autoAlpha: 0, y: 21 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.75,
-          ease: EASE_STRUCTURE,
-          stagger: 0.12,
-          scrollTrigger: { trigger: q(".ct-steps")[0], start: "top 78%", once: true },
-        }
-      );
+      revealUp(q("[data-anim='step']"), q(".ct-steps")[0]);
 
       return () => {
         dead = true;

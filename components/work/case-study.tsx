@@ -15,6 +15,7 @@ import {
   EASE_UI,
 } from "@/components/anim/ease";
 import { whenArrived } from "@/components/anim/arrival";
+import { revealUp } from "@/components/anim/reveal";
 
 // One case study. Arrivals ride the site-wide sheet transition; the hero
 // well paints at its final crop from the first frame (overscan is a CSS
@@ -108,21 +109,9 @@ export function CaseStudy({
             "-=0.3",
           );
 
-        // ── body copy reads itself in on scroll ──
+        // ── body copy reads itself in on scroll — THE fade-up, per element ──
         const reveals = q("[data-anim='cs-reveal']") as HTMLElement[];
-        reveals.forEach((el) => {
-          gsap.fromTo(
-            el,
-            { autoAlpha: 0, y: 26 },
-            {
-              autoAlpha: 1,
-              y: 0,
-              duration: 0.8,
-              ease: EASE_STRUCTURE,
-              scrollTrigger: { trigger: el, start: "top 85%" },
-            },
-          );
-        });
+        reveals.forEach((el) => revealUp(el, el));
 
         ScrollTrigger.refresh();
       }); // end enter()

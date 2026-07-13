@@ -11,6 +11,7 @@ import {
   reducedMotion,
 } from "@/components/anim/ease";
 import { whenArrived } from "@/components/anim/arrival";
+import { revealUp } from "@/components/anim/reveal";
 import { CTA } from "@/components/ui/cta";
 import { ArtifactFrame } from "@/components/ui/artifact";
 import { PersonIcon } from "@/components/ui/person-icon";
@@ -153,32 +154,9 @@ export function PricingPage() {
         syncLoop();
       });
 
-      /* tiers: the lead tile lands last */
-      gsap.fromTo(
-        q("[data-anim='tier-head']"),
-        { autoAlpha: 0, y: 21 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.75,
-          ease: EASE_STRUCTURE,
-          stagger: 0.08,
-          scrollTrigger: { trigger: q(".pr-tiers")[0], start: "top 76%", once: true },
-        }
-      );
-      gsap.fromTo(
-        q("[data-anim='tier']"),
-        { autoAlpha: 0, y: 21, scale: 0.97 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          ease: EASE_STRUCTURE,
-          stagger: 0.12,
-          scrollTrigger: { trigger: q(".pr-tiers .tier-card")[0], start: "top 80%", once: true },
-        }
-      );
+      /* THE fade-up (apple-grammar.md §5) — one recipe, fires on entry */
+      revealUp(q("[data-anim='tier-head']"), q(".pr-tiers")[0]);
+      revealUp(q("[data-anim='tier']"), q(".pr-tiers .tier-card")[0]);
 
       return () => {
         dead = true;
