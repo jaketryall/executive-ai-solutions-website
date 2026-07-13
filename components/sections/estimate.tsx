@@ -247,6 +247,13 @@ export function Estimate({ standalone = false }: { standalone?: boolean } = {}) 
                     onClick={() => setEst((s) => ({ ...s, pageBand: b.id }))}
                   >
                     {b.label}
+                    {/* price on the chip — "prices, on the page" applies here
+                        too; blind-click-to-discover was the audit's one gripe */}
+                    {b.add > 0 && (
+                      <span className="ml-[8px] opacity-60">
+                        + ${b.add.toLocaleString()}
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -264,6 +271,9 @@ export function Estimate({ standalone = false }: { standalone?: boolean } = {}) 
                     onClick={() => toggle("features", f.id)}
                   >
                     {f.label}
+                    <span className="ml-[8px] opacity-60">
+                      + ${f.add.toLocaleString()}
+                    </span>
                   </button>
                 ))}
               </div>

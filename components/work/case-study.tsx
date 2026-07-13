@@ -128,7 +128,7 @@ export function CaseStudy({
       }); // end enter()
 
       /* ── on-page nav: highlight the stop you're inside ── */
-      (["cs-story", "cs-build", "cs-next"] as const).forEach((id) => {
+      ["cs-story", "cs-build", "cs-results", "cs-next"].forEach((id) => {
         const sec = document.getElementById(id);
         const link = q(`.cs-onpage a[href="#${id}"]`)[0];
         if (!sec || !link) return;
@@ -435,6 +435,50 @@ export function CaseStudy({
         </div>
       </section>
 
+      {/* ── the numbers: the index card's claim, substantiated where the
+          decision happens (a teased stat that never reappears reads as
+          invented — the persona audit's #1 trust break) ── */}
+      {project.results && (
+        <section id="cs-results" className="pb-[89px] md:pb-[144px]">
+          <div className="dark-chapter mx-[8px] rounded-panel py-fib-6 md:mx-[13px]">
+            <div className="mx-auto max-w-[1280px] px-[21px] md:px-[55px]">
+              <div
+                data-anim="cs-reveal"
+                className="flex flex-col justify-between gap-[13px] md:flex-row md:items-end"
+              >
+                <h2 className="t-display-lg max-w-[12ch]">The numbers</h2>
+                <p className="max-w-[38ch] text-paper/70 md:text-right">
+                  Tracked in the client&apos;s own Ads and analytics accounts —
+                  not our slides.
+                </p>
+              </div>
+              <div className="mt-fib-5 grid gap-fib-4 sm:grid-cols-3">
+                {project.results.metrics.map((m) => (
+                  <div key={m.label} data-anim="cs-reveal">
+                    <p className="t-display-lg t-num">{m.value}</p>
+                    <p className="mt-fib-1 max-w-[24ch] text-paper/70">
+                      {m.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              {project.results.quote && (
+                <figure data-anim="cs-reveal" className="mt-fib-5 border-t border-paper/15 pt-fib-4">
+                  <blockquote>
+                    <p className="t-title--lg max-w-[38ch] font-display">
+                      &ldquo;{project.results.quote.text}&rdquo;
+                    </p>
+                  </blockquote>
+                  <figcaption className="t-meta mt-fib-2 text-paper/55">
+                    {project.results.quote.name}
+                  </figcaption>
+                </figure>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── next case + the ask ── */}
       <section id="cs-next" className="mx-auto max-w-[1280px] px-[21px] pb-[144px] md:px-[55px] md:pb-[178px]">
         <p className="t-meta text-ink/55" data-anim="cs-reveal">
@@ -472,6 +516,7 @@ export function CaseStudy({
         </span>
         <a href="#cs-story">Story</a>
         <a href="#cs-build">Build</a>
+        {project.results && <a href="#cs-results">Results</a>}
         <a href="#cs-next">Next</a>
         {project.url && (
           <a

@@ -176,10 +176,13 @@ export function WorkIndex() {
           className="wkt wkt--open closer-card rounded-panel md:col-span-2"
         >
           <span className="wk-open-face">
-            <span className="t-display-lg">This spot is open</span>
-            <span className="max-w-[36ch] text-paper/85">
-              Price your project in about sixty seconds and see your business
-              on this page.
+            {/* pitched as the treatment every build gets — never as an
+                empty seat asking to be filled (the persona audit read the
+                old "this spot is open" as a thin portfolio begging) */}
+            <span className="t-display-lg">The next case study</span>
+            <span className="max-w-[38ch] text-paper/85">
+              Every build gets this treatment — designed, measured, documented,
+              and linked live. Price yours in about sixty seconds.
             </span>
             <span className="wki-open-pill">
               Get an estimate
