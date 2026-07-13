@@ -131,20 +131,22 @@ export function Footer() {
           </nav>
         </div>
 
-        <p className="t-meta mt-[55px] text-right text-ink/55 md:mt-[89px]">
-          © 2026
-        </p>
+        {/* the mark keeps the © row company — out of the statement, where it
+            was eating line one's budget */}
+        <div className="mt-[55px] flex items-end justify-between md:mt-[89px]">
+          <Monogram
+            className="h-[34px] w-[34px] text-ink/80"
+            label="Executive AI Solutions monogram"
+          />
+          <p className="t-meta text-ink/55">© 2026</p>
+        </div>
 
         {/* the sign-off: the name at Lesse scale — TWO fitted lines, each
             spanning the full row (the stack is what buys the height a
-            22-character name can't reach on one line), the mark riding in
-            line one, both climbing out of their crops as the footer reveals */}
-        {/* no per-line crops: the stack rides low and rises whole — the
-            footer's own edge (= the viewport bottom during the reveal) is
-            the only mask */}
+            22-character name can't reach on one line), both rising whole as
+            the footer reveals (no crops — the viewport edge is the mask) */}
         <div className="mt-[21px] select-none text-ink" aria-hidden>
           <p data-fit className="footer-line">
-            <Monogram className="footer-line-mark" />
             <span>Executive AI</span>
           </p>
           <p data-fit className="footer-line">

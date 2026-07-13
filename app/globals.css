@@ -233,13 +233,6 @@ main {
   text-transform: uppercase;
   white-space: nowrap;
 }
-/* the mark rides inside the line, so the fit scales it with the type */
-.footer-line .footer-line-mark {
-  height: 0.72em;
-  width: 0.72em;
-  margin-right: 0.16em;
-  vertical-align: 0;
-}
 
 /* optical centering for pill / nav / chip labels (progressive enhancement) */
 .text-trim {
