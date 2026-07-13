@@ -65,10 +65,13 @@ export function PricingPage() {
         const tl = gsap.timeline({ defaults: { ease: EASE_STRUCTURE } });
         // pre-hidden site-wide; no-op on a soft nav, a beat on a hard load
         if (nav) tl.to(nav, { autoAlpha: 1, duration: 0.6, ease: EASE_UI }, 0.1);
+        // the title rises WITH the nav beat, not after it (the fade is a
+        // no-op on soft navs — sequencing behind it just delayed the page)
         tl.fromTo(
             q(".pr-hero .mask-inner"),
             { yPercent: 118, y: 0 },
-            { yPercent: 0, y: 0, duration: 0.95, stagger: 0.09 }
+            { yPercent: 0, y: 0, duration: 0.95, stagger: 0.09 },
+          "<"
           )
           .fromTo(
             q("[data-anim='h-sub']"),

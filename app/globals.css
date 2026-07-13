@@ -3415,8 +3415,12 @@ a.work-card:hover {
   /* the overlay never blocks the user: mid-flight scrolls and clicks pass
      through to the live incoming page (in-flight link clicks are swallowed
      in JS so a second capture can't skip the riding transition) */
+  /* the stage stays DARK: the old page dims into shadow as it sinks — without
+     this the backdrop is the raw paper background and every transition
+     over dark surfaces flashes bright */
   ::view-transition {
     pointer-events: none;
+    background: #131413;
   }
   ::view-transition-old(root),
   ::view-transition-new(root) {

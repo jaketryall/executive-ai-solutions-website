@@ -191,10 +191,13 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         // the nav is pre-hidden site-wide; a soft nav arrives with it visible
         // (to() from 1 is a no-op), a hard load fades it in with the statement
         if (nav) tl.to(nav, { autoAlpha: 1, duration: 0.6, ease: EASE_UI }, 0.1);
+        // the title rises WITH the nav beat, not after it (the fade is a
+        // no-op on soft navs — sequencing behind it just delayed the page)
         tl.fromTo(
           q(".svc-hero .mask-inner"),
           { yPercent: 118, y: 0 },
-          { yPercent: 0, y: 0, duration: 0.95, stagger: 0.09 }
+          { yPercent: 0, y: 0, duration: 0.95, stagger: 0.09 },
+          "<"
         )
           .fromTo(
             q("[data-anim='h-sub']"),

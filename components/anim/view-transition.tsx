@@ -156,8 +156,16 @@ export function ViewTransitions() {
 
       vt.ready
         .then(() => {
-          if (landed) choreograph(backward);
-          else vt.skipTransition(); // unfreeze now; the late commit just pops
+          if (landed) {
+            choreograph(backward);
+            // entrances OVERLAP the settle: release while the sheet is
+            // easing into place so the title is already rising as it lands —
+            // waiting for `finished` left the page sitting visibly static
+            // before its own choreography began
+            setTimeout(releaseArrival, DUR * 0.55);
+          } else {
+            vt.skipTransition(); // unfreeze now; the late commit just pops
+          }
         })
         .catch(() => {}); // aborted transitions (rapid double-click) are fine
 
