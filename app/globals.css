@@ -3404,12 +3404,18 @@ a.work-card:hover {
   navigation: auto;
 }
 
-/* ───────────── route transitions — the stack (view-transition.tsx) ─────────────
+/* ───────────── route transitions, the stack (view-transition.tsx) ─────────────
    The old page sinks back and dims; the new page sheets up over it with a
    rounded lip. Root sheets are driven from JS (WAAPI on the pseudo-elements);
    here we zero the UA defaults, set the paint order, and let the nav + the
    work-card↔case-hero morphs ride ABOVE both sheets. */
 @media (prefers-reduced-motion: no-preference) {
+  /* the overlay never blocks the user: mid-flight scrolls and clicks pass
+     through to the live incoming page (in-flight link clicks are swallowed
+     in JS so a second capture can't skip the riding transition) */
+  ::view-transition {
+    pointer-events: none;
+  }
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation: none !important;
@@ -3419,6 +3425,14 @@ a.work-card:hover {
   }
   ::view-transition-new(root) {
     z-index: 50;
+  }
+  /* backward (html.vt-back): the stack POPS — the departing sheet rides off
+     ABOVE while the buried page returns beneath it */
+  html.vt-back::view-transition-old(root) {
+    z-index: 50;
+  }
+  html.vt-back::view-transition-new(root) {
+    z-index: 1;
   }
   ::view-transition-image-pair(root) {
     isolation: isolate;
