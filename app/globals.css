@@ -1614,12 +1614,8 @@ html:not(.has-js) .tst-slide + .tst-slide {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 11px;
-}
-@media (min-width: 821px) {
-  .sc-row {
-    font-size: 12px;
-  }
+  /* 12px floor everywhere — 11px flagged by the mobile legibility audit */
+  font-size: 12px;
 }
 .sc-label {
   width: 68px;
@@ -3540,7 +3536,7 @@ a.work-card:hover {
   }
 }
 .cs-onpage a {
-  padding: 9px 14px;
+  padding: 10px 14px; /* 40px tall — comfortable thumb row */
   border-radius: 10px;
   font-size: 0.8125rem;
   font-weight: 500;

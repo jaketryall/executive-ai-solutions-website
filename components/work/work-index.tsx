@@ -119,7 +119,7 @@ export function WorkIndex() {
       {/* ── the grid: itsjay's work grid in the site's card grammar —
           2-up dark tiles, image inset, name + meta on the footer strip ── */}
       <div className="grid grid-cols-1 gap-[8px] px-[8px] pb-fib-6 md:grid-cols-2 md:gap-[13px] md:px-[13px]">
-        {PROJECTS.map((p) => {
+        {PROJECTS.map((p, i) => {
           const [hero] = p.results?.metrics ?? [];
           return (
             <Link
@@ -137,6 +137,7 @@ export function WorkIndex() {
                     fill
                     sizes="(min-width: 821px) 48vw, 96vw"
                     className="wkc-img"
+                    priority={i === 0} // the first tile is the page's LCP
                   />
                 </div>
               </div>
