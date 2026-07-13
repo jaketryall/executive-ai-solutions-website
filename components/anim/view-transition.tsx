@@ -178,13 +178,18 @@ export function ViewTransitions() {
     document.addEventListener("click", onClick, true);
 
     /* back/forward: the same stack, popped. Where the Navigation API
-       exists, hold the traversal open while the reverse transition rides;
-       elsewhere this listener never binds and back stays a plain soft nav. */
+       exists, the traverse is WRAPPED, not intercepted: the capture starts
+       HERE, synchronously in the navigate event — before the entry commits
+       and before Next's popstate handling can paint the destination. (An
+       intercept handler runs after the commit, and on fast cached backs the
+       "old" snapshot was already the new page — the transition then slid a
+       page over itself.) Elsewhere this listener never binds and back stays
+       a plain soft nav. */
     const nav = (window as Window & { navigation?: NavigationLike }).navigation;
     const onNavigate = (ev: Event) => {
       const e = ev as NavigateEvent;
       if (e.navigationType !== "traverse") return;
-      if (!e.canIntercept || e.hashChange || e.downloadRequest !== null) return;
+      if (e.hashChange || e.downloadRequest !== null) return;
       if (!doc.startViewTransition || reducedMotion()) return;
       if (inFlight.current) return; // let the browser jump; never stack captures
       const to = new URL(e.destination.url);
@@ -194,14 +199,9 @@ export function ViewTransitions() {
         nav?.currentEntry != null &&
         e.destination.index >= 0 &&
         e.destination.index < nav.currentEntry.index;
-      e.intercept({
-        // Next's router owns the traversal (popstate → commit); the handler
-        // only holds the navigation open while the transition rides
-        handler: () =>
-          run(() => {}, backward === true, to.pathname).finished.catch(
-            () => {}
-          ),
-      });
+      // Next's router owns the traversal (popstate → commit); the pending/
+      // failsafe pair inside run() releases the capture once it lands
+      run(() => {}, backward === true, to.pathname);
     };
     nav?.addEventListener("navigate", onNavigate);
 
