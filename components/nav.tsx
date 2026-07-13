@@ -216,11 +216,75 @@ function LinksCapsule() {
    old color-adaptive theme resolver is gone by construction: nothing under
    the nav can ever collide with it or wash it out. Constant at all scroll
    positions (the Lesse grammar). */
+/* the mobile identity bar's marquee line — real facts on loop */
+const MARQUEE = [
+  "Sites from $2.5k",
+  "Ads managed from $500/mo",
+  "Mesa, AZ",
+  "Fixed quote in 2 days",
+  "Replies within a day",
+].join("  ·  ");
+
 export function Nav() {
   const root = useRef<HTMLElement>(null!);
   const overlayRef = useRef<HTMLDivElement>(null!);
+  const barRef = useRef<HTMLDivElement>(null!);
   const [open, setOpen] = useState(false);
+  const [total, setTotal] = useState<number | null>(null);
   const pathname = usePathname();
+  // case pages: the dock owns the bottom edge — the bar stands down entirely
+  const onCasePage = /^\/work\/.+/.test(pathname);
+
+  /* the identity bar yields wherever the bottom edge is spoken for: the
+     estimator chapter (est-bar carries the total there) and the footer
+     (the sign-off lockup is the closing statement, not ours to cover) */
+  useEffect(() => {
+    const el = barRef.current;
+    if (!el) return;
+    let overFooter = false;
+    const inZone = new Set<Element>();
+    const apply = () =>
+      el.classList.toggle("is-away", overFooter || inZone.size > 0);
+
+    const main = document.querySelector("main");
+    const onScroll = () => {
+      overFooter = main
+        ? main.getBoundingClientRect().bottom < window.innerHeight * 0.9
+        : false;
+      apply();
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    const est = document.querySelector("#estimate");
+    let io: IntersectionObserver | undefined;
+    if (est) {
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) inZone.add(e.target);
+            else inZone.delete(e.target);
+          }
+          apply();
+        },
+        { rootMargin: "0px 0px -15% 0px" },
+      );
+      io.observe(est);
+    }
+
+    // once the visitor touches the estimator, the bar carries their number
+    const onEstimate = (e: Event) => {
+      const d = (e as CustomEvent<{ total?: number }>).detail;
+      if (typeof d?.total === "number") setTotal(d.total);
+    };
+    window.addEventListener("eas:estimate", onEstimate);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("eas:estimate", onEstimate);
+      io?.disconnect();
+    };
+  }, [pathname, onCasePage]);
 
   // a route change swaps the page under the overlay — close it
   useEffect(() => {
@@ -368,6 +432,36 @@ export function Nav() {
           </button>
         </div>
       </div>
+
+      {/* the mobile identity bar (the itsjay lesson: mobile chrome that is
+          OF the phone — an OS-native pill, not a desktop nav squeezed down):
+          the mark, the name over a fact marquee, and the one action */}
+      {!onCasePage && (
+        <div ref={barRef} className="mnav md:hidden">
+          <Link
+            href="/"
+            className="mnav-tile"
+            aria-label="Executive AI Solutions, home"
+          >
+            <Monogram className="h-[21px] w-[21px]" />
+          </Link>
+          <span className="mnav-mid">
+            <span className="mnav-name text-trim">Executive AI Solutions</span>
+            <span className="mnav-marquee" aria-hidden>
+              <span className="mnav-track">
+                <span>{MARQUEE}</span>
+                <span>{MARQUEE}</span>
+              </span>
+            </span>
+          </span>
+          <Link
+            href={pathname === "/" ? "/#estimate" : "/pricing#estimate"}
+            className="mnav-cta t-num"
+          >
+            {total !== null ? `$${total.toLocaleString()}` : "Estimate"}
+          </Link>
+        </div>
+      )}
 
       {/* Full-screen overlay menu (mobile) */}
       <div
