@@ -437,7 +437,7 @@ export function Nav() {
           OF the phone — an OS-native pill, not a desktop nav squeezed down):
           the mark, the name over a fact marquee, and the one action */}
       {!onCasePage && (
-        <div ref={barRef} className="mnav md:hidden">
+        <div ref={barRef} className="mnav">
           <Link
             href="/"
             className="mnav-tile"

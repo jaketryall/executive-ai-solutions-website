@@ -813,6 +813,14 @@ main {
   opacity: 0;
   pointer-events: none;
 }
+/* mobile-only, owned HERE: this rule's display:flex out-cascades the
+   Tailwind md:hidden utility, so the hide must live beside it (and at the
+   site's 820px boundary, not Tailwind's 768) */
+@media (min-width: 821px) {
+  .mnav {
+    display: none;
+  }
+}
 .mnav-tile {
   display: flex;
   align-items: center;
