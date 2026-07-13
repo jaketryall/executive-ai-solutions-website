@@ -201,6 +201,24 @@ main {
   font-variant-numeric: tabular-nums;
 }
 
+/* ── the mobile register (the itsjay lesson): a phone viewport is NARROW,
+   not small — the ladder scales up on it, ratios intact (h1 > h2 >
+   statement), desktop untouched. Rem floors keep short viewports sane. ── */
+@media (max-width: 820px) {
+  .t-statement {
+    font-size: clamp(1.8rem, 7.4vw, 2.4rem);
+  }
+  .t-display-lg {
+    font-size: clamp(2.05rem, 8.4vw, 2.6rem);
+  }
+  /* the h1 rung last, so the --hero modifier wins over .t-statement */
+  .t-display-title,
+  .t-statement--hero {
+    font-size: clamp(2.8rem, 12vw, 3.4rem);
+    line-height: 1.06;
+  }
+}
+
 /* the footer sign-off — mark + name as fitted lines spanning the full row.
    The clamp is only the no-JS fallback; footer.tsx measures and sets the
    exact font-size so the line runs edge to edge at every viewport. */
@@ -2023,7 +2041,9 @@ a.work-card:hover {
    line; a clean two-line statement beats a big four-line stumble */
 @media (max-width: 820px) {
   .hero-h1 {
-    font-size: clamp(1.9rem, 9vw, 2.5rem);
+    /* the long two-sentence statement caps lower than interior h1s —
+       Jay-scale works on short words; a wall of 47px lines does not */
+    font-size: clamp(2.05rem, 10vw, 2.75rem);
   }
 }
 
