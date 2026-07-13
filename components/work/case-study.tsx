@@ -310,6 +310,7 @@ export function CaseStudy({
               sizes="96vw"
               className="block h-auto w-full"
               priority
+              fetchPriority="high"
             />
           ) : (
             <div className="cs-par absolute inset-0">
