@@ -489,8 +489,8 @@ export function CaseStudy({
           className="mt-[55px] flex flex-wrap items-center gap-[21px]"
           data-anim="cs-reveal"
         >
-          <CTA href="/#estimate" label="Price a build like this" tone="ink" />
-          <Link href="/work" className="u-link t-meta text-ink/70">
+          <CTA href="/#estimate" label="Price a build like this" tone="accent" />
+          <Link href="/work" className="u-link u-link--chev t-meta text-ink/70">
             Back to all work
           </Link>
         </div>

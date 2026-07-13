@@ -190,7 +190,7 @@ export function PricingPage() {
                 never moves after.
               </p>
               <div data-anim="h-sub" className="mt-fib-4">
-                <CTA href="#estimate" label="Price your project" tone="ink" />
+                <CTA href="#estimate" label="Price your project" tone="accent" />
               </div>
               <div data-anim="h-sub" className="mt-fib-3 flex flex-wrap gap-fib-1">
                 <span className="chip">Fixed quote in 2 days</span>
@@ -435,7 +435,7 @@ export function PricingSheet() {
               approve every budget.
             </p>
             <div data-anim="sheet-rail" className="mt-fib-4">
-              <CTA href="#estimate" label="Price your project" tone="ink" />
+              <CTA href="#estimate" label="Price your project" tone="accent" />
             </div>
           </div>
         </div>

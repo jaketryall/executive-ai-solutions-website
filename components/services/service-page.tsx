@@ -578,7 +578,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
             className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-3"
           >
             <CTA href="/pricing#estimate" label="Get an instant estimate" tone="accent" />
-            <Link href="/pricing" className="u-link t-meta text-ink/70">
+            <Link href="/pricing" className="u-link u-link--chev t-meta text-ink/70">
               See the whole pricing sheet
             </Link>
           </div>
@@ -706,7 +706,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
             ))}
           </div>
           <div data-anim="p-out" className="mt-fib-4 flex justify-center">
-            <CTA href="/pricing#estimate" label="Price your project" tone="ink" />
+            <CTA href="/pricing#estimate" label="Price your project" tone="accent" />
           </div>
 
           {/* the witnesses — quieter, floating around the claim (desktop);
@@ -862,7 +862,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
             </div>
             <div data-anim="ask" className="flex flex-wrap items-center gap-fib-3">
               <CTA href="/pricing#estimate" label="Get an instant estimate" tone="accent" />
-              <Link href="/contact" className="u-link t-meta text-paper/70">
+              <Link href="/contact" className="u-link u-link--chev t-meta text-paper/70">
                 Or just tell us about your business
               </Link>
             </div>

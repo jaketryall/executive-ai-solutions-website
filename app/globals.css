@@ -234,6 +234,14 @@ main {
   white-space: nowrap;
 }
 
+/* the quiet re-ask: a text link with Apple's chevron (one loud pill per
+   page; every other ask is one of these) */
+.u-link--chev::after {
+  content: "\203A";
+  padding-left: 0.35em;
+  font-weight: 600;
+}
+
 /* optical centering for pill / nav / chip labels (progressive enhancement) */
 .text-trim {
   text-box: trim-both cap alphabetic;
@@ -279,8 +287,10 @@ main {
   overflow: hidden;
   cursor: pointer;
   border: none;
+  /* bimodal law (apple-micro-interactions.md §0) — color feedback is
+     near-instant; only MOVEMENT gets duration */
   transition:
-    color 0.3s var(--ease-ui),
+    color 0.1s linear,
     transform 0.18s var(--ease-ui);
 }
 .cta-btn::before {
@@ -480,9 +490,9 @@ main {
   cursor: pointer;
   min-height: 44px;
   transition:
-    background 0.35s var(--ease-ui),
-    border-color 0.35s var(--ease-ui),
-    color 0.35s var(--ease-ui),
+    background 0.1s linear,
+    border-color 0.1s linear,
+    color 0.1s linear,
     transform 0.2s var(--ease-ui);
 }
 .chip-toggle:hover {
@@ -514,8 +524,8 @@ main {
   font-size: 1rem;
   font-family: inherit;
   transition:
-    border-color 0.35s var(--ease-ui),
-    background 0.35s var(--ease-ui);
+    border-color 0.1s linear,
+    background 0.1s linear;
 }
 .field input:hover,
 .field textarea:hover {
@@ -639,7 +649,7 @@ main {
   padding: 10px 16px;
   color: inherit;
   text-decoration: none;
-  transition: color 0.2s var(--ease-ui);
+  transition: color 0.1s linear;
 }
 .pill-bg {
   position: absolute;
@@ -693,7 +703,7 @@ main {
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
-  transition: background 0.25s var(--ease-ui);
+  transition: background 0.1s linear;
   animation: nav-mini-in 0.35s var(--ease-ui) backwards;
 }
 .nav-mini:hover,
@@ -995,7 +1005,7 @@ main {
   cursor: pointer;
   transition:
     width 0.25s var(--ease-ui),
-    background-color 0.25s var(--ease-ui);
+    background-color 0.1s linear;
 }
 .hlg-dot.is-on {
   width: 48px;
@@ -1749,7 +1759,7 @@ html:not(.has-js) .tst-slide + .tst-slide {
 .tst-idx {
   font-variant-numeric: tabular-nums;
   color: rgba(19, 20, 19, 0.45);
-  transition: color 0.3s var(--ease-ui);
+  transition: color 0.1s linear;
   padding: 8px;
   margin: -8px;
 }
@@ -2209,7 +2219,8 @@ a.work-card:hover {
 .faq-card .faq-a {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.5s var(--ease-structure);
+  /* Apple's accordion timing, measured: 400ms ease-in-out */
+  transition: grid-template-rows 0.4s ease-in-out;
 }
 .faq-card .faq-a > div {
   overflow: hidden;
@@ -3743,7 +3754,9 @@ a.work-card:hover {
   color: var(--color-ink);
   background: var(--color-paper);
   text-decoration: none;
-  transition: background 0.3s var(--ease-ui), color 0.3s var(--ease-ui);
+  transition:
+    background 0.1s linear,
+    color 0.1s linear;
 }
 .cs-dock-visit .dv-arrow {
   position: relative;
@@ -3788,8 +3801,8 @@ a.work-card:hover {
   color: rgba(239, 240, 238, 0.6);
   text-decoration: none;
   transition:
-    color 0.3s var(--ease-ui),
-    background 0.3s var(--ease-ui);
+    color 0.1s linear,
+    background 0.1s linear;
 }
 .cs-onpage a:hover {
   color: rgba(239, 240, 238, 0.92);

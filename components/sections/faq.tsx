@@ -119,7 +119,7 @@ export function Faq() {
                   // closer — without a re-measure its triggers go stale and
                   // the card visibly jumps at pin-engage ("sometimes jumps
                   // up"). Refresh once the 0.5s grid-rows transition settles.
-                  setTimeout(() => ScrollTrigger.refresh(), 560);
+                  setTimeout(() => ScrollTrigger.refresh(), 460);
                 }}
               >
                 <span>{f.q}</span>
