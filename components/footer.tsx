@@ -59,7 +59,10 @@ export function Footer() {
 
       let st: ScrollTrigger | undefined;
       if (!reducedMotion() && main && lines.length) {
-        gsap.set(lines, { yPercent: 108 });
+        // the lockup RISES into place — no crop, no emergence: the whole
+        // stack sits low and settles up as the page lifts away (the
+        // reveal-footer's own parallax depth), the later line a beat behind
+        gsap.set(lines, { yPercent: 34 });
         st = ScrollTrigger.create({
           trigger: main,
           start: "bottom bottom",
@@ -68,14 +71,13 @@ export function Footer() {
           scrub: true,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
-            // each line climbs out of its crop, the later line a beat behind
             lines.forEach((el, i) => {
               const p = gsap.utils.clamp(
                 0,
                 1,
                 (self.progress - i * 0.12) / (1 - i * 0.12)
               );
-              gsap.set(el, { yPercent: 108 * (1 - p) });
+              gsap.set(el, { yPercent: 34 * (1 - p) });
             });
           },
         });
@@ -137,18 +139,17 @@ export function Footer() {
             spanning the full row (the stack is what buys the height a
             22-character name can't reach on one line), the mark riding in
             line one, both climbing out of their crops as the footer reveals */}
+        {/* no per-line crops: the stack rides low and rises whole — the
+            footer's own edge (= the viewport bottom during the reveal) is
+            the only mask */}
         <div className="mt-[21px] select-none text-ink" aria-hidden>
-          <div className="overflow-hidden">
-            <p data-fit className="footer-line">
-              <Monogram className="footer-line-mark" />
-              <span>Executive AI</span>
-            </p>
-          </div>
-          <div className="overflow-hidden">
-            <p data-fit className="footer-line">
-              <span>Solutions</span>
-            </p>
-          </div>
+          <p data-fit className="footer-line">
+            <Monogram className="footer-line-mark" />
+            <span>Executive AI</span>
+          </p>
+          <p data-fit className="footer-line">
+            <span>Solutions</span>
+          </p>
         </div>
       </div>
     </footer>
