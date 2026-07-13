@@ -74,10 +74,14 @@ export function ViewTransitions() {
   useEffect(() => {
     const doc = document as VTDocument;
 
-    /* the two root layers of the stack, as WAAPI keyframes */
+    /* the two root layers of the stack, as WAAPI keyframes.
+       The buried page darkens via BRIGHTNESS, never opacity: opacity lets
+       the stage bleed through the snapshot (bright wash on dark pages, dark
+       wash on light ones — the "random flashes"); brightness darkens the
+       page's own pixels, so it sinks into shadow on every surface color. */
     const BURIED = {
       transform: ["translateY(0) scale(1)", "translateY(-89px) scale(0.95)"],
-      opacity: [1, 0.45],
+      filter: ["brightness(1)", "brightness(0.55)"],
     };
     const SHEET = {
       transform: ["translateY(100%)", "translateY(0)"],

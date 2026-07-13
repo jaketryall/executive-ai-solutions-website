@@ -3401,10 +3401,10 @@ a.work-card:hover {
   border-color: #131413;
 }
 
-/* view transitions for future internal pages */
-@view-transition {
-  navigation: auto;
-}
+/* NO cross-document auto transitions: view-transition.tsx owns every
+   transition. The old `@view-transition { navigation: auto }` opt-in made
+   hard loads run a browser-automatic VT that collided with the
+   animation:none overrides below — frozen/flash frames on full loads. */
 
 /* ───────────── route transitions, the stack (view-transition.tsx) ─────────────
    The old page sinks back and dims; the new page sheets up over it with a
