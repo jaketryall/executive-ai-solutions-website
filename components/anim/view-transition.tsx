@@ -31,6 +31,7 @@ type VTDocument = Document & {
   startViewTransition?: (cb: () => Promise<void>) => {
     ready: Promise<void>;
     finished: Promise<void>;
+    skipTransition: () => void;
   };
 };
 
@@ -120,21 +121,44 @@ export function ViewTransitions() {
       html.classList.add("vt-live");
       if (backward) html.classList.add("vt-back");
 
+      // did the destination actually commit before we released the capture?
+      // A slow route (stale router cache, dev recompile) must not hold the
+      // screen frozen on the old snapshot — and animating without a commit
+      // would slide the page over its own twin.
+      let landed = false;
       const vt = doc.startViewTransition!(() => {
         update();
         return new Promise<void>((resolve) => {
           if (dest && committed.current === dest) {
-            resolve(); // the traversal beat us to the commit
+            landed = true; // the traversal beat us to the commit
+            resolve();
             return;
           }
-          pending.current = resolve;
-          // never trap the page frozen if the route errors out
-          setTimeout(resolve, 2500);
+          const release = () => {
+            landed = true;
+            resolve();
+          };
+          pending.current = release;
+          // traversals get a short leash (they should be instant; when they
+          // aren't, responsiveness beats choreography); clicks keep the
+          // longer route-error failsafe
+          setTimeout(
+            () => {
+              if (pending.current === release) {
+                pending.current = null;
+                resolve();
+              }
+            },
+            dest ? 1200 : 2500
+          );
         });
       });
 
       vt.ready
-        .then(() => choreograph(backward))
+        .then(() => {
+          if (landed) choreograph(backward);
+          else vt.skipTransition(); // unfreeze now; the late commit just pops
+        })
         .catch(() => {}); // aborted transitions (rapid double-click) are fine
 
       // settled or aborted, the page has arrived — release held entrances,
