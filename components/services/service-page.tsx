@@ -79,47 +79,34 @@ function HeroArtifact({ slug }: { slug: string }) {
     );
   }
   if (slug === "websites") {
+    /* center-stage: the frame IS the whole show — no pocket overlays
+       competing with it (one thing at a time) */
     return (
-      <div className="relative md:pb-fib-5 md:pl-fib-4">
-        <ArtifactFrame
-          variant="chrome"
-          tone="paper"
-          url="desertwingsflightschool.com"
-          label="The Desert Wings homepage we designed and built"
-          bodyClassName="!p-0"
-        >
-          <div
-            className="overflow-hidden rounded-btn"
-            style={{ aspectRatio: "1.55" }}
-          >
-            {/* the landing, riding: the page the click arrives on scrolls
-                itself (the homepage services-02 loop, in the stage's frame) */}
-            <Image
-              data-svc-tour
-              src="/work/dw-tour.jpg"
-              alt="Scrolling through the Desert Wings homepage we designed and built"
-              width={2880}
-              height={4446}
-              sizes="(min-width: 821px) 42vw, 92vw"
-              priority
-              className="block h-auto w-full"
-            />
-          </div>
-        </ArtifactFrame>
-        {/* the same build, in a pocket — proof it holds up at phone size */}
+      <ArtifactFrame
+        variant="chrome"
+        tone="paper"
+        url="desertwingsflightschool.com"
+        label="The Desert Wings homepage we designed and built"
+        bodyClassName="!p-0"
+      >
         <div
-          data-anim="h-art2"
-          className="phone-card absolute -bottom-fib-3 left-0 hidden w-[min(190px,30%)] md:block"
+          className="overflow-hidden rounded-btn"
+          style={{ aspectRatio: "1.55" }}
         >
+          {/* the landing, riding: the page the click arrives on scrolls
+              itself (the homepage services-02 loop, in the stage's frame) */}
           <Image
-            src="/work/desert-wings-mobile.png"
-            alt="The same Desert Wings build on a phone"
-            width={400}
-            height={840}
-            sizes="190px"
+            data-svc-tour
+            src="/work/dw-tour.jpg"
+            alt="Scrolling through the Desert Wings homepage we designed and built"
+            width={2880}
+            height={4446}
+            sizes="(min-width: 821px) 980px, 92vw"
+            priority
+            className="block h-auto w-full"
           />
         </div>
-      </div>
+      </ArtifactFrame>
     );
   }
   // ai — the chat, answering as itself
@@ -219,15 +206,6 @@ export function ServicePage({ service }: { service: ServiceDef }) {
             { autoAlpha: 0, y: 8 },
             { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.1, ease: EASE_UI },
             "+=0.15"
-          );
-        }
-        if (service.slug === "websites") {
-          // the phone pocket slides in under the frame
-          tl.fromTo(
-            q("[data-anim='h-art2']"),
-            { autoAlpha: 0, y: 34 },
-            { autoAlpha: 1, y: 0, duration: 0.7 },
-            "-=0.3"
           );
         }
       });
@@ -584,31 +562,41 @@ export function ServicePage({ service }: { service: ServiceDef }) {
 
   return (
     <article ref={root}>
-      {/* ── HERO · split, artifact right, statement leads ── */}
+      {/* ── HERO · the Apple center-stage: one thing at a time, stacked —
+          statement, one gray sentence, the action, then THE artifact,
+          enormous and centered beneath the words (never beside them) ── */}
       <section className="svc-hero relative overflow-x-clip">
-        <div className="wrap grid items-center gap-fib-5 pb-fib-6 pt-[144px] md:min-h-[82svh] md:grid-cols-[55fr_45fr] md:gap-fib-6 md:pt-[176px]">
-          <div>
-            <span data-anim="h-sub" className="chip">
-              Stage {service.stageIndex} · {service.stage}
-            </span>
-            <h1 className="t-display-title mt-fib-3">
-              {service.title.map((line) => (
-                <span key={line} className="mask-line">
-                  <span className="mask-inner">{line}</span>
-                </span>
-              ))}
-            </h1>
-            <p data-anim="h-sub" className="mt-fib-3 max-w-[46ch] text-ink/70">
-              {service.support}
-            </p>
-            <div data-anim="h-sub" className="mt-fib-4 flex flex-wrap items-center gap-fib-3">
-              <CTA href="/pricing#estimate" label="Get an instant estimate" tone="accent" />
-              <Link href="/pricing" className="u-link t-meta text-ink/70">
-                See the whole pricing sheet
-              </Link>
-            </div>
+        <div className="wrap flex flex-col items-center pb-fib-6 pt-[144px] text-center md:pt-[176px]">
+          <p data-anim="h-sub" className="t-meta text-ink/55">
+            {service.stage}
+          </p>
+          <h1 className="t-display-title mt-fib-2">
+            {service.title.map((line) => (
+              <span key={line} className="mask-line">
+                <span className="mask-inner">{line}</span>
+              </span>
+            ))}
+          </h1>
+          <p data-anim="h-sub" className="mx-auto mt-fib-3 max-w-[46ch] text-ink/70">
+            {service.support}
+          </p>
+          <div
+            data-anim="h-sub"
+            className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-3"
+          >
+            <CTA href="/pricing#estimate" label="Get an instant estimate" tone="accent" />
+            <Link href="/pricing" className="u-link t-meta text-ink/70">
+              See the whole pricing sheet
+            </Link>
           </div>
-          <div data-anim="h-art" className="justify-self-center md:justify-self-end">
+          <div
+            data-anim="h-art"
+            className={`mt-fib-5 w-full md:mt-fib-6 ${
+              service.slug === "websites"
+                ? "max-w-[980px]"
+                : "flex justify-center"
+            }`}
+          >
             <HeroArtifact slug={service.slug} />
           </div>
         </div>
