@@ -108,7 +108,14 @@ export function Proof() {
   );
 
   return (
-    <section id="proof" ref={root} className="relative z-10 -mt-fib-4 rounded-t-panel bg-canvas">
+    <section
+      id="proof"
+      ref={root}
+      // CHAPTER ONE continues (apple-grammar.md §1): the proof rides the
+      // same ink the hero landed on — flat dark-2, invisible seam; the ONE
+      // flip to light happens at the price beat below
+      className="relative bg-[var(--color-dark-2)] text-paper"
+    >
       <div className="pb-fib-7 pt-fib-6">
         {/* ── the claim: title left, support right — the header row spans the
             card's full width so the big card below doesn't orphan it ── */}
@@ -117,7 +124,7 @@ export function Proof() {
           className="wrap flex flex-col justify-between gap-fib-3 md:flex-row md:items-end"
         >
           <h2 className="t-display-lg">Where the click lands</h2>
-          <p className="max-w-[38ch] text-ink/70 md:text-right">
+          <p className="max-w-[38ch] text-paper/70 md:text-right">
             That ad above is real. These are the pages our clicks land on:
             designed, built, and tracked by us.
           </p>
@@ -133,7 +140,7 @@ export function Proof() {
               key={p.slug}
               data-proj
               data-anim="proj"
-              className="dark-chapter mx-[8px] mt-fib-4 grid gap-fib-3 rounded-panel p-fib-2 md:mx-[13px] md:mt-fib-5 md:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] md:gap-fib-4 md:p-fib-2"
+              className="dark-chapter proof-card mx-[8px] mt-fib-4 grid gap-fib-3 rounded-panel p-fib-2 md:mx-[13px] md:mt-fib-5 md:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] md:gap-fib-4 md:p-fib-2"
             >
               {/* the work — rounded image, left, riding the scroll */}
               <div className="relative min-w-0">

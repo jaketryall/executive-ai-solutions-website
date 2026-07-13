@@ -1477,6 +1477,11 @@ main {
   background: linear-gradient(180deg, var(--color-dark) 0%, var(--color-dark-2) 100%);
   color: var(--color-paper);
 }
+/* a panel ON the dark chapter band: subtle paper lift instead of the
+   band gradient (declared after .dark-chapter so it wins the surface) */
+.proof-card {
+  background: rgba(239, 240, 238, 0.055);
+}
 
 /* the closer — the page's ONE full-color surface. The accent is the click
    color everywhere else, so the final ask is the one card allowed to wear it

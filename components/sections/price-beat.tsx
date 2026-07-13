@@ -103,7 +103,13 @@ export function PriceBeat() {
   );
 
   return (
-    <section ref={root} data-pcta-hide className="relative overflow-x-clip">
+    <section
+      ref={root}
+      data-pcta-hide
+      // THE FLIP: chapter two (paper) rises over the ink run as a rounded
+      // sheet — the page's one ground change, on our own grammar
+      className="relative z-10 -mt-fib-4 overflow-x-clip rounded-t-panel bg-canvas"
+    >
       <div className="wrap relative flex min-h-[96svh] flex-col items-center justify-center py-fib-7 text-center">
         {/* the claim — full contrast, dead center */}
         {/* a <p>, not a heading — it shares the h1's statement register so the
