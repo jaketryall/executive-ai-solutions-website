@@ -198,6 +198,34 @@ const ADS_HIGHLIGHTS: Highlight[] = [
     ),
   },
   {
+    key: "reviews",
+    caption: "The proof the click reads before calling.",
+    fill: true,
+    media: (
+      <Image
+        src="/work/live/dw-reviews.jpg"
+        alt="The reviews section on the Desert Wings site"
+        width={2880}
+        height={1800}
+        sizes="88vw"
+      />
+    ),
+  },
+  {
+    key: "booking",
+    caption: "The form that catches it.",
+    fill: true,
+    media: (
+      <Image
+        src="/work/live/dw-booking.jpg"
+        alt="The booking form on the Desert Wings site"
+        width={2880}
+        height={1800}
+        sizes="88vw"
+      />
+    ),
+  },
+  {
     key: "report",
     caption: "A report you can read in one minute.",
     media: (
