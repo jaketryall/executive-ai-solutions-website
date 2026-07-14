@@ -34,7 +34,7 @@ export function PersistentCta() {
       // an IntersectionObserver always sees it — the honest signal is main's
       // bottom edge rising into the viewport
       overFooter = main
-        ? main.getBoundingClientRect().bottom < window.innerHeight * 0.85
+        ? main.getBoundingClientRect().bottom < window.innerHeight * 1.05
         : false;
       apply();
     };

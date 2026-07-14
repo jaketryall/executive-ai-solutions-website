@@ -1032,6 +1032,12 @@ main {
   }
 }
 
+/* the page is a PLANE riding over the fixed footer — its lower edge casts
+   a real shadow onto what it reveals (the depth cue the plain wipe was missing) */
+main {
+  box-shadow: 0 34px 89px -21px rgba(19, 20, 19, 0.35);
+}
+
 /* ── artifact frames (v3 through-line motif) — the funnel's real surfaces
    (ad, SERP, browser, chat, estimator) drawn in the site's tonal language.
    Two variants only: full chrome (34px bar) and compact card. Hairlines are

@@ -58,31 +58,43 @@ export function Footer() {
       window.addEventListener("resize", setH);
 
       let st: ScrollTrigger | undefined;
+      const blocks = q("[data-foot-rise]") as HTMLElement[];
+      const veil = q(".footer-veil")[0] as HTMLElement | undefined;
       if (!reducedMotion() && main && lines.length) {
-        // the lockup RISES into place — no crop, no emergence: the whole
-        // stack sits low and settles up as the page lifts away (the
-        // reveal-footer's own parallax depth), the later line a beat behind
+        // the whole footer wakes as the page lifts away: it starts a shade
+        // in SHADOW (the veil — it really is UNDER the page), the upper
+        // blocks rise in first, the lockup settles last, and the scrub runs
+        // to the literal final scrollable pixel (no dead tail)
         gsap.set(lines, { yPercent: 34 });
+        gsap.set(blocks, { autoAlpha: 0, y: 21 });
         st = ScrollTrigger.create({
           trigger: main,
           start: "bottom bottom",
           end: () =>
-            `bottom ${Math.max(120, window.innerHeight - (root.current?.offsetHeight ?? 0))}px`,
+            `bottom ${window.innerHeight - (root.current?.offsetHeight ?? 0)}px`,
           scrub: true,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
+            const p = self.progress;
+            if (veil) gsap.set(veil, { opacity: 0.14 * (1 - p) });
+            blocks.forEach((el, i) => {
+              const bp = gsap.utils.clamp(0, 1, (p - i * 0.07) / 0.38);
+              gsap.set(el, { autoAlpha: bp, y: 21 * (1 - bp) });
+            });
             lines.forEach((el, i) => {
-              const p = gsap.utils.clamp(
+              const lp = gsap.utils.clamp(
                 0,
                 1,
-                (self.progress - i * 0.12) / (1 - i * 0.12)
+                (p - i * 0.12) / (1 - i * 0.12)
               );
-              gsap.set(el, { yPercent: 34 * (1 - p) });
+              gsap.set(el, { yPercent: 34 * (1 - lp) });
             });
           },
         });
-      } else if (lines.length) {
+      } else {
         gsap.set(lines, { yPercent: 0 });
+        gsap.set(blocks, { autoAlpha: 1, y: 0 });
+        if (veil) gsap.set(veil, { opacity: 0 });
       }
 
       return () => {
@@ -99,7 +111,7 @@ export function Footer() {
       <div className="wrap pt-[89px] md:pt-[144px]">
         <div className="flex flex-col justify-between gap-[55px] md:flex-row md:items-start">
           {/* contact block — the diagonal counterweight */}
-          <div className="max-w-[440px]">
+          <div data-foot-rise className="max-w-[440px]">
             <p className="t-meta text-ink/60">Start yours</p>
             <p className="t-title mt-[13px]">
               One call, a fixed quote, and a website that finally earns its keep
@@ -112,7 +124,7 @@ export function Footer() {
             </div>
           </div>
 
-          <nav className="flex flex-col items-start gap-[13px] md:items-end" aria-label="Footer">
+          <nav data-foot-rise className="flex flex-col items-start gap-[13px] md:items-end" aria-label="Footer">
             <RollLink href="/work" className="t-meta text-ink/70">
               Work
             </RollLink>
@@ -133,7 +145,7 @@ export function Footer() {
 
         {/* the mark keeps the © row company — out of the statement, where it
             was eating line one's budget */}
-        <div className="mt-[55px] flex items-end justify-between md:mt-[89px]">
+        <div data-foot-rise className="mt-[55px] flex items-end justify-between md:mt-[89px]">
           <Monogram
             className="h-[34px] w-[34px] text-ink/80"
             label="Executive AI Solutions monogram"
@@ -154,6 +166,8 @@ export function Footer() {
           </p>
         </div>
       </div>
+      {/* the shadow the page casts while it's still overhead — scrubbed to 0 */}
+      <div className="footer-veil pointer-events-none absolute inset-0 bg-ink opacity-[0.14]" aria-hidden />
     </footer>
   );
 }
