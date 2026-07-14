@@ -80,41 +80,8 @@ export function WorkIndex() {
         );
       });
 
-      /* the IGNITION — derived, never triggered (design-dna/derived-motion.md).
-         Each tile's ink is a pure per-frame function of ONE input: its
-         distance from the viewport center. Nearest tile burns at full ink
-         (media at true brightness, live line resolved in place); the others
-         settle into shadow on a cubed falloff. Direction-aware for free —
-         the live line drifts in from wherever the tile came from. */
-      const tiles = q(".wkt:not(.wkt--open)") as HTMLElement[];
-      let rafId = 0;
-      const frame = () => {
-        const vc = window.innerHeight / 2;
-        for (const el of tiles) {
-          const r = el.getBoundingClientRect();
-          const dist = r.top + r.height / 2 - vc;
-          const range = (window.innerHeight + r.height) / 2;
-          const g = Math.max(0, 1 - Math.min(Math.abs(dist) / range, 1));
-          el.style.setProperty("--wkg", g.toFixed(4));
-          el.style.setProperty("--wkg3", (g * g * g).toFixed(4));
-          el.style.setProperty(
-            "--wkdy",
-            (Math.max(-300, Math.min(300, dist)) * 0.06).toFixed(2)
-          );
-        }
-        rafId = requestAnimationFrame(frame);
-      };
-      // the loop lives only while the grid is on screen
-      const io = new IntersectionObserver(([e]) => {
-        cancelAnimationFrame(rafId);
-        if (e.isIntersecting) rafId = requestAnimationFrame(frame);
-      });
-      io.observe(root.current);
-
       return () => {
         dead = true;
-        io.disconnect();
-        cancelAnimationFrame(rafId);
       };
     },
     { scope: root }
@@ -184,10 +151,11 @@ export function WorkIndex() {
                   {p.sector} · {p.year}
                 </span>
               </div>
-              {/* the ignition line: metric ink + the live status, both pure
-                  functions of the tile's distance from viewport center
-                  (design-dna/derived-motion.md — "every build is real and
-                  live", felt rather than read) */}
+              {/* metric + live status. Static and fully legible on purpose:
+                  the ignition experiment (derived-motion.md) taught that with
+                  two tiles there's no attention to choreograph, and proof
+                  imagery must never sit in shadow — so the liveness is simply
+                  STATED, in ink that never dims */}
               <p className="t-meta mt-fib-1 flex flex-wrap items-center justify-between gap-x-fib-2 gap-y-1 px-fib-1 pb-fib-1">
                 <span className="wk-metric">
                   {hero

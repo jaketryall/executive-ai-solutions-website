@@ -60,6 +60,24 @@ are tuned better than anything we'll write.
     "The sentence is ___. The input is ___. The one thing that
      responds is ___. The curve bends like ___."
 
+## Gate 0 — VARIANCE (learned the hard way, 2026-07-14)
+
+Before any of the five steps: **the input must actually vary across what
+the visitor sees.** A center-distance mapping over a 2-item grid ignites
+and dims both items together — technically perfect, expressively mute,
+and the user's verdict was "i dont understand the purpose of it." The
+choreography needs a crowd: derived attention effects earn their keep on
+MANY items (a long ledger, a list, a rail), never on a pair. If every
+element gets the same value of f(input) at the same time, you haven't
+designed an effect, you've designed a global dimmer.
+
+Second lesson from the same retirement: **never dim the proof.** On a
+portfolio, work imagery IS the argument — no attention scheme is worth
+resting it at 72% brightness. When the item count is too small for
+choreography, the honest move is to simply STATE the sentence in static,
+fully-legible ink (the "Live · domain" line survived the effect that
+carried it in).
+
 ## House constraints that still apply
 
 - Bimodal timing law for anything that IS triggered (feedback ≤100ms,
@@ -77,10 +95,12 @@ are tuned better than anything we'll write.
 - **Highlights gallery** (shipped): sentence "this responds to you";
   input card-distance-from-center; output captions only;
   curve `opacity = (1−|d|/range)³`, `x = d × 0.1266`.
-- **Work-index ignition** (this repo): sentence "every build is real and
-  live"; input tile-distance-from-viewport-center; output the tile's ink —
-  media brightness + the live-domain line rising as the tile centers;
-  curve cubed glow, brightness 0.78→1. Direction-aware for free.
+- **Work-index ignition** (built 2026-07-14, RETIRED same day): sentence
+  "every build is real and live"; input tile-distance-from-viewport-center;
+  output the tile's ink. The physics ran flawlessly — and failed Gate 0:
+  two tiles share one row, so there was nothing to differentiate, and the
+  dim shadowed the proof imagery. Kept: the static live-domain line.
+  The pattern waits for a section with a crowd.
 - **Contact ambience** (unbuilt): sentence "someone is actually there";
   input real local time in Mesa; output the section's light temperature.
   Nothing triggers; the input is the world, so it reads as true.
