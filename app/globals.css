@@ -629,8 +629,23 @@ main {
   align-items: stretch;
   height: auto;
   min-height: 52px;
-  width: min(45vw, 520px);
+  width: min(50vw, 580px);
   padding: 0;
+}
+/* the mark inside the bar: a quiet first citizen, not a pill candidate */
+.nav-brand-in {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 10px 10px 15px;
+  color: inherit;
+  opacity: 0.92;
+  transition: opacity 0.1s linear;
+}
+.nav-brand-in:hover,
+.nav-brand-in:focus-visible {
+  opacity: 1;
 }
 .nav-links-row {
   position: relative;

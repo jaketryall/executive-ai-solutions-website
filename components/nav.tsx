@@ -181,6 +181,17 @@ function LinksCapsule() {
       }}
     >
       <div className="nav-links-row">
+        {/* the mark rides IN the bar — first item, home link (the Apple
+            arrangement); entering it stands the panel down */}
+        <Link
+          href="/"
+          className="nav-brand-in"
+          aria-label="Executive AI Solutions, home"
+          onMouseEnter={close}
+          onFocus={close}
+        >
+          <Monogram className="h-[24px] w-[24px]" />
+        </Link>
         <span
           className="pill-bg"
           style={
@@ -400,18 +411,13 @@ export function Nav() {
   return (
     <header ref={root} className="site-nav" data-anim="nav">
       <div className="flex items-center justify-between px-fib-2 pt-fib-2 md:px-fib-3 md:pt-fib-3">
+        {/* mobile only — on desktop the mark lives inside the links capsule */}
         <Link
           href="/"
-          className="nav-capsule nav-capsule--brand inline-flex"
+          className="nav-capsule nav-capsule--brand inline-flex md:hidden"
           aria-label="Executive AI Solutions, home"
         >
           <Monogram className="h-[26px] w-[26px]" />
-          <span
-            className="text-trim hidden font-semibold tracking-[-0.01em] lg:inline"
-            style={{ fontSize: "0.9375rem" }}
-          >
-            Executive AI Solutions
-          </span>
         </Link>
 
         <LinksCapsule />
