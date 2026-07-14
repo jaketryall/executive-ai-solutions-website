@@ -1,10 +1,16 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CTA } from "@/components/ui/cta";
 import { revealUp } from "@/components/anim/reveal";
-import { gsap, useGSAP, EASE_UI, reducedMotion } from "@/components/anim/ease";
+import {
+  gsap,
+  ScrollTrigger,
+  useGSAP,
+  EASE_UI,
+  reducedMotion,
+} from "@/components/anim/ease";
 
 /* The give (selling-architecture.md law 5, Jake 2026-07-14: "something they
    can do that helps convert them"). A visitor pastes their address and we
@@ -82,6 +88,15 @@ export function SiteCheck() {
       setState("idle");
     }
   };
+
+  // the results card grows AND shrinks the page (render, clear, re-render) —
+  // every ScrollTrigger below (closer entrance, footer reveal scrub) measured
+  // the old layout and must remeasure or the page's ending plays at stale
+  // positions
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => ScrollTrigger.refresh());
+    return () => cancelAnimationFrame(raf);
+  }, [result]);
 
   const fixes = result?.findings.filter((f) => f.status === "fix") ?? [];
   const goods = result?.findings.filter((f) => f.status === "good") ?? [];
