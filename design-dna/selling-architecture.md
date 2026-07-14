@@ -83,7 +83,8 @@ from their rendered DOM, section by section.
 1. One CTA string sitewide — "Price my project" (built).
 2. "Who we're not for" filter block on /pricing (built).
 3. Proof-adjacency audit: a proof beat right AFTER each ask.
-4. The qualifying give: free ad-account/homepage teardown (Jake's
-   fulfillment time — his call).
+4. The qualifying give: the instant site check on the homepage (built —
+   automated, truthful findings only; the "human read" escalation link
+   is the manual-teardown path and spends Jake's time).
 5. Show-then-tell order pass on service pages (demo leads every section;
    rational block last).
