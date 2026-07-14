@@ -4387,6 +4387,35 @@ html.wki-lock body {
   /* left top matches .cs-img exactly — the morph's two ends share a crop */
   object-position: left top;
   transition: transform 0.9s var(--ease-structure);
+  /* the ignition (derived-motion.md): ink follows the tile's distance from
+     viewport center. Vars default to the RESOLVED state — no-JS, reduced
+     motion, and SSR all rest at full brightness, never in shadow. */
+  filter: brightness(calc(0.72 + 0.28 * var(--wkg, 1)));
+}
+.wk-metric {
+  color: var(--color-paper);
+  opacity: calc(0.42 + 0.53 * var(--wkg, 1));
+}
+.wk-live {
+  min-width: 0;
+  color: var(--color-paper);
+  opacity: calc(0.85 * var(--wkg3, 1));
+  transform: translateY(calc(var(--wkdy, 0) * 1px));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wk-live {
+    opacity: 0.85;
+    transform: none;
+  }
+  .wk-metric {
+    opacity: 0.95;
+  }
+  .wkc-img {
+    filter: none;
+  }
 }
 .wkc:hover .wkc-img,
 .wkt:hover .wkc-img {
