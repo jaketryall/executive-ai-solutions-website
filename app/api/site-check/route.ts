@@ -349,24 +349,36 @@ export async function POST(req: NextRequest) {
           }
     );
 
-    /* local business schema */
-    findings.push(
-      /"@type"\s*:\s*"[^"]*(LocalBusiness|Organization|ProfessionalService|Store|Restaurant|Dentist|Attorney|Physician|AutoRepair|HomeAndConstructionBusiness)[^"]*"/i.test(
-        doc
+    /* business structured data. Judged by the FACTS it carries (address,
+       hours, phone, geo…), never by a type-name allowlist — a FlightSchool
+       is as much a business as a Dentist, and a wrong "invisible to
+       machines" verdict on a well-marked-up site is exactly the false
+       positive that kills the give's credibility (caught live, 2026-07-14) */
+    const ldBlocks =
+      doc.match(
+        /<script[^>]+application\/ld\+json[^>]*>([\s\S]*?)<\/script>/gi
+      ) ?? [];
+    const ldFacts = ldBlocks.some((b) =>
+      /"(address|openingHours(Specification)?|telephone|geo|areaServed|priceRange)"/i.test(
+        b
       )
+    );
+    findings.push(
+      ldFacts
         ? {
             id: "schema",
             status: "good",
             title: "Machine-readable business info",
             detail:
-              "Structured data is present — Google and AI assistants can read who you are without guessing.",
+              "Structured data carries your business facts — Google's panels and AI assistants can read who and where you are without guessing.",
           }
         : {
             id: "schema",
             status: "fix",
             title: "Invisible to machines",
-            detail:
-              "No business structured data. Google's panels and AI search answers have to guess your hours, area, and services — or skip you.",
+            detail: ldBlocks.length
+              ? "There's structured data, but none of it carries business facts — no address, hours, or phone a machine can read. Google's panels and AI answers still have to guess."
+              : "No structured data we could find. Google's panels and AI search answers have to guess your hours, area, and services — or skip you.",
           }
     );
 
