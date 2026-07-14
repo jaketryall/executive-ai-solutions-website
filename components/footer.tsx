@@ -60,7 +60,12 @@ export function Footer() {
       let st: ScrollTrigger | undefined;
       const blocks = q("[data-foot-rise]") as HTMLElement[];
       const veil = q(".footer-veil")[0] as HTMLElement | undefined;
-      if (!reducedMotion() && main && lines.length) {
+      /* the homepage ends on the DARK closer — its contrast already earns
+         the reveal, and it was tuned to taste (Jake). The shadow/veil/wake
+         physics exist for pages whose last section is light-on-light. */
+      const plain = pathname === "/";
+      if (main) main.style.boxShadow = plain ? "" : "0 34px 89px -21px rgba(19, 20, 19, 0.35)";
+      if (!reducedMotion() && main && lines.length && !plain) {
         // the whole footer wakes as the page lifts away: it starts a shade
         // in SHADOW (the veil — it really is UNDER the page), the upper
         // blocks rise in first, the lockup settles last, and the scrub runs
@@ -91,6 +96,29 @@ export function Footer() {
             });
           },
         });
+      } else if (!reducedMotion() && main && lines.length && plain) {
+        // the ORIGINAL homepage reveal, untouched: lockup rise only
+        gsap.set(blocks, { autoAlpha: 1, y: 0 });
+        if (veil) gsap.set(veil, { opacity: 0 });
+        gsap.set(lines, { yPercent: 34 });
+        st = ScrollTrigger.create({
+          trigger: main,
+          start: "bottom bottom",
+          end: () =>
+            `bottom ${Math.max(120, window.innerHeight - (root.current?.offsetHeight ?? 0))}px`,
+          scrub: true,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            lines.forEach((el, i) => {
+              const lp = gsap.utils.clamp(
+                0,
+                1,
+                (self.progress - i * 0.12) / (1 - i * 0.12)
+              );
+              gsap.set(el, { yPercent: 34 * (1 - lp) });
+            });
+          },
+        });
       } else {
         gsap.set(lines, { yPercent: 0 });
         gsap.set(blocks, { autoAlpha: 1, y: 0 });
@@ -100,7 +128,10 @@ export function Footer() {
       return () => {
         window.removeEventListener("resize", setH);
         st?.kill();
-        if (main) main.style.marginBottom = "";
+        if (main) {
+          main.style.marginBottom = "";
+          main.style.boxShadow = "";
+        }
       };
     },
     { scope: root }
