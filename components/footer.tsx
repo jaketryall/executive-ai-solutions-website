@@ -148,7 +148,7 @@ export function Footer() {
               One call, a fixed quote, and a website that finally earns its keep
             </p>
             <div className="mt-[34px] flex flex-wrap items-center gap-[21px]">
-              <CTA href={estimateHref} label="Get an estimate" tone="ink" />
+              <CTA href={estimateHref} label="Price my project" tone="ink" />
               <a href="mailto:hello@executiveaisolutions.com" className="u-link t-meta text-ink/70">
                 hello@executiveaisolutions.com
               </a>

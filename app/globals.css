@@ -4388,6 +4388,17 @@ html.wki-lock body {
   object-position: left top;
   transition: transform 0.9s var(--ease-structure);
 }
+/* pricing's filter rows (who we're not for) — quiet, a hairline apart,
+   dividers on every row but the first (the Apple accordion rule) */
+.fit-row {
+  padding: 21px 0;
+  border-top: 1px solid rgba(19, 20, 19, 0.13);
+}
+div.fit-row:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
 /* the tile's proof line: metric + liveness, stated in ink that never dims
    (the ignition experiment retired 2026-07-14 — derived-motion.md, variance lesson) */
 .wk-metric {

@@ -227,7 +227,7 @@ export function Services() {
                 Buy the stage you need, or the whole path.
               </p>
               <div className="mt-fib-4 hidden md:block">
-                <CTA href="#estimate" label="Get an instant estimate" tone="paper" />
+                <CTA href="#estimate" label="Price my project" tone="paper" />
               </div>
             </div>
           </div>
@@ -398,7 +398,7 @@ export function Services() {
           </article>
 
             <div className="md:hidden">
-              <CTA href="#estimate" label="Get an instant estimate" tone="paper" />
+              <CTA href="#estimate" label="Price my project" tone="paper" />
             </div>
           </div>
         </div>

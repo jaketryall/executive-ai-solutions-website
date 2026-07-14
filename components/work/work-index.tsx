@@ -189,7 +189,7 @@ export function WorkIndex() {
               and linked live. Price yours in about sixty seconds.
             </span>
             <span className="wki-open-pill">
-              Get an estimate
+              Price my project
               <svg viewBox="0 0 16 16" fill="none" aria-hidden>
                 <path
                   d="M2 8h11M9 3.5 13.5 8 9 12.5"

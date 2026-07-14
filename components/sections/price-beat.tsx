@@ -124,7 +124,7 @@ export function PriceBeat() {
           obligation.
         </p>
         <div data-anim="act" className="mt-fib-4">
-          <CTA href="#estimate" label="Get an instant estimate" tone="ink" />
+          <CTA href="#estimate" label="Price my project" tone="ink" />
         </div>
 
         {/* the witnesses — quieter, floating around the claim (desktop);

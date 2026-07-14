@@ -190,7 +190,7 @@ export function PricingPage() {
                 never moves after.
               </p>
               <div data-anim="h-sub" className="mt-fib-4">
-                <CTA href="#estimate" label="Price your project" tone="accent" />
+                <CTA href="#estimate" label="Price my project" tone="accent" />
               </div>
               <div data-anim="h-sub" className="mt-fib-3 flex flex-wrap gap-fib-1">
                 <span className="chip">Fixed quote in 2 days</span>
@@ -352,6 +352,8 @@ export function PricingSheet() {
           { autoAlpha: 1, x: 0, duration: 0.7, stagger: 0.09 },
           "<"
         );
+      // the filter band reveals on its own trigger, not the sheet's
+      revealUp(q("[data-anim='fit']"), q("[data-anim='fit']")[0]);
     },
     { scope: root }
   );
@@ -435,11 +437,58 @@ export function PricingSheet() {
               approve every budget.
             </p>
             <div data-anim="sheet-rail" className="mt-fib-4">
-              <CTA href="#estimate" label="Price your project" tone="accent" />
+              <CTA href="#estimate" label="Price my project" tone="accent" />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── THE FILTER · who we're not for (selling-architecture.md law 2:
+          naming who it's NOT for is what makes every price above
+          believable — quantified, softened, each "no" pointing somewhere
+          honest). Placed last: it's the closer for whoever scrolled past
+          every ask still deciding. ── */}
+      <section className="pb-fib-6 md:pb-fib-7">
+        <div className="wrap">
+          <div className="max-w-[720px]">
+            <h2 data-anim="fit" className="t-display-lg max-w-[14ch]">
+              Who we&rsquo;re not for
+            </h2>
+            <div className="mt-fib-4">
+              {NOT_FOR.map((f) => (
+                <div key={f.head} data-anim="fit" className="fit-row">
+                  <h3 className="t-title font-display">{f.head}</h3>
+                  <p className="mt-fib-1 max-w-[52ch] text-ink/70">{f.body}</p>
+                </div>
+              ))}
+            </div>
+            <p data-anim="fit" className="fit-row text-ink/70">
+              Everyone else — the estimator above already has your number.{" "}
+              <Link href="#estimate" className="u-link u-link--chev">
+                Price my project
+              </Link>
+            </p>
           </div>
         </div>
       </section>
     </div>
   );
 }
+
+/* the filter rows — every "no" is quantified and ends somewhere honest
+   (a builder, a later date, the ads). The reverse-sell is what buys the
+   published prices their credibility. */
+const NOT_FOR = [
+  {
+    head: "You need a $300 site by Friday.",
+    body: "Then a template builder will treat you fine, honestly. Our builds start at $2,500 because every page is designed and written from scratch — and when the business outgrows the template, we'll still be here.",
+  },
+  {
+    head: "You want ads with nothing behind the clicks.",
+    body: "Management is $500 a month, and clicks cost money on top of it. If there isn't at least that much again in real ad spend, the math doesn't work yet — start with the site and grow into it.",
+  },
+  {
+    head: "You want #1 on Google by next week.",
+    body: "Nobody sells that honestly. We build pages that earn their rank over months and show you the numbers the whole way. If you need customers this week, that's exactly what the ads are for.",
+  },
+];

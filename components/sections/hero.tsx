@@ -385,7 +385,7 @@ export function Hero() {
           </h1>
 
           <div data-anim="ctas" className="mt-fib-3 flex flex-wrap items-center gap-fib-2">
-            <CTA href="#estimate" label="Get an instant estimate" tone="paper" />
+            <CTA href="#estimate" label="Price my project" tone="paper" />
           </div>
 
           {/* PLACEHOLDER social proof — the count and the two initial circles

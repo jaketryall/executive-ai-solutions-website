@@ -296,9 +296,9 @@ export function ContactPage() {
           <p data-anim="step" className="mt-fib-5 text-ink/60">
             Rather see a number first?{" "}
             <Link href="/pricing#estimate" className="u-link text-ink/80">
-              Price it in sixty seconds
+              Price my project
             </Link>{" "}
-            — no message required.
+            — sixty seconds, no message required.
           </p>
         </div>
       </section>
