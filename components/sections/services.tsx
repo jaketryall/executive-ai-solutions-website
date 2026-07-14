@@ -221,10 +221,13 @@ export function Services() {
         <div className="wrap grid gap-fib-5 md:grid-cols-[minmax(260px,340px)_1fr] md:gap-fib-6">
           <div>
             <div className="md:sticky md:top-[144px]">
-              <h2 className="t-display-lg">One funnel, three stages</h2>
+              {/* headline sells THEIR change; the funnel mechanics moved
+                  down into the paragraph (selling-architecture.md law 6) */}
+              <h2 className="t-display-lg">From stranger to booked customer</h2>
               <p className="mt-fib-3 max-w-[30ch] text-paper/70">
-                Ads bring the click. The site converts it. The AI keeps it.
-                Buy the stage you need, or the whole path.
+                One funnel, three stages: ads bring the click, the site
+                converts it, the AI keeps it. Buy the stage you need, or the
+                whole path.
               </p>
               <div className="mt-fib-4 hidden md:block">
                 <CTA href="#estimate" label="Price my project" tone="paper" />
