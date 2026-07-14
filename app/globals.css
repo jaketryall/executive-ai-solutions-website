@@ -895,6 +895,19 @@ main {
   }
 }
 
+/* ── the risk-reversal bento tile (Apple surface law: flat white on the
+   canvas, no shadow, no border, no hover — the words do the selling) ── */
+.why-tile {
+  background: #fff;
+  border-radius: var(--radius-panel);
+  padding: 34px;
+}
+@media (max-width: 820px) {
+  .why-tile {
+    padding: 21px;
+  }
+}
+
 /* ── the highlights gallery (the macbook-neo pattern, apple-grammar.md §6):
    native scroll-snap track, ~87.5vw cards with side peeks, captions driven
    per-frame by distance-from-center (JS in highlights-gallery.tsx) ── */

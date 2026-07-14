@@ -221,6 +221,66 @@ const ADS_HIGHLIGHTS: Highlight[] = [
   },
 ];
 
+/* ── the risk-reversal band (Apple's "why the best place to buy" beat,
+   apple-grammar.md sales sequence): the four objections a buyer is still
+   holding after the price, each killed in one tile ── */
+const WHY_US: Record<string, { head: string; body: string }[]> = {
+  "google-ads": [
+    {
+      head: "Your account. Your data.",
+      body: "Ads run in your own Google account — every dollar visible, and it all stays yours if you ever leave.",
+    },
+    {
+      head: "No contracts.",
+      body: "Month to month. We keep the work because it works, not because you signed for a year.",
+    },
+    {
+      head: "A fixed fee, in writing.",
+      body: "From $500 a month, agreed before we start. Ad spend is separate and you approve every budget.",
+    },
+    {
+      head: "A human answers.",
+      body: "Mesa, Arizona. Replies within one business day, from the person actually running your ads.",
+    },
+  ],
+  websites: [
+    {
+      head: "A fixed quote, in writing.",
+      body: "Two days after our call. The number never moves after — no hourly surprises, no scope-creep invoices.",
+    },
+    {
+      head: "You own everything.",
+      body: "The design, the code, the domain, the content. Nothing is held hostage on a proprietary builder.",
+    },
+    {
+      head: "No retainers required.",
+      body: "The build is the build. Ongoing help exists if you want it, and it's optional every month.",
+    },
+    {
+      head: "A human answers.",
+      body: "Mesa, Arizona. Replies within one business day, from the person who built your site.",
+    },
+  ],
+  ai: [
+    {
+      head: "Scoped before it's built.",
+      body: "A fixed, per-project quote. Nothing goes live until you've watched it work on your real enquiries.",
+    },
+    {
+      head: "Your systems, your data.",
+      body: "Everything runs in accounts you own. Turn it off any day and keep every record it created.",
+    },
+    {
+      head: "No contracts.",
+      body: "Month to month where it's ongoing, one fixed quote where it isn't.",
+    },
+    {
+      head: "A human answers.",
+      body: "Mesa, Arizona. Replies within one business day, from the person who wired it up.",
+    },
+  ],
+};
+
 export function ServicePage({ service }: { service: ServiceDef }) {
   const root = useRef<HTMLElement>(null!);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -539,6 +599,8 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         });
       });
 
+      revealUp(q("[data-anim='why']"), q(".svc-why")[0]);
+      revealUp(q("[data-anim='why-tile']"), q(".why-tile")[0]);
       revealUp(q("[data-anim='faq']"), q(".svc-faq")[0], { stagger: 0.07 });
 
       revealUp(q("[data-anim='x-card']"), q(".svc-funnel")[0]);
@@ -758,6 +820,25 @@ export function ServicePage({ service }: { service: ServiceDef }) {
               </figcaption>
             </figure>
           ))}
+        </div>
+      </section>
+
+      {/* ── WHY BUY IT FROM US · the risk-reversal band: the price just
+          landed, so every remaining objection dies here, one per tile
+          (flat white bento on the canvas — surfaces don't perform) ── */}
+      <section className="svc-why py-fib-5 md:py-fib-6">
+        <div className="wrap">
+          <h2 data-anim="why" className="t-display-lg mx-auto max-w-[16ch] text-center">
+            Why buy it from us
+          </h2>
+          <div className="mt-fib-5 grid gap-fib-2 md:grid-cols-2 md:gap-fib-3">
+            {(WHY_US[service.slug] ?? WHY_US.websites).map((t) => (
+              <div key={t.head} data-anim="why-tile" className="why-tile">
+                <h3 className="t-title font-display">{t.head}</h3>
+                <p className="mt-fib-2 max-w-[44ch] text-ink/70">{t.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
