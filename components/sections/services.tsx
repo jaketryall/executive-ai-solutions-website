@@ -60,11 +60,22 @@ export function Services() {
 
       });
 
-      /* ── the three stage demos, LOOPING (visibility-governed): each
-         artifact runs its stage the way it actually behaves ── */
-      const loops: gsap.core.Timeline[] = [];
+      /* ── the three stage demos: PLAY-ONCE stories (iphone-17-pro.md law:
+         Apple media plays once on entry and rests on its end frame — it
+         never loops like a screensaver). Each story runs as ITS row
+         arrives, settles on the WIN frame (the lit ad after the click,
+         the toured page home again, the completed exchange) and HOLDS —
+         apple-ad-motion.md law 5. Leaving the viewport resets it, so
+         every return gets one clean performance. The rest states match
+         the reduced-motion stills exactly. ── */
+      const stories: {
+        tl: gsap.core.Timeline;
+        el: HTMLElement;
+        reset?: () => void;
+      }[] = [];
 
-      // 01 · the promotion cycle: listing lights up as the ad, holds, dims
+      // 01 · the promotion: the listing lights up as the ad, takes the
+      // click, and rests lit
       const ad = q("[data-svc-ad]")[0] as HTMLElement;
       if (ad) {
         /* lock the artifact to its LIT height (the hero-card fix): force the
@@ -87,11 +98,11 @@ export function Services() {
             ScrollTrigger.refresh(); // late layout change: re-measure triggers
           });
         });
-        /* the full story: the listing lights up as the ad, the sitelinks
+        /* the story, once: the listing lights up as the ad, the sitelinks
            arrive one by one, then a cursor glides in and CLICKS it (the
-           stage's namesake) before everything dims for the next cycle.
-           repeatRefresh re-reads the function-based cursor coordinates each
-           loop, so late layout shifts can't strand the click off-target. */
+           stage's namesake) — and it rests LIT. The win frame holds; the
+           dim-out died with the loop. Function-based coordinates are
+           re-read via invalidate() on every reset. */
         const adTitle = ad.querySelector(".g-title") as HTMLElement;
         const links = ad.querySelectorAll(".g-ext a");
         const cursor = ad.querySelector(".g-cursor") as HTMLElement;
@@ -101,7 +112,7 @@ export function Services() {
           y: adTitle.offsetTop + 12,
         });
         gsap.set(ring, { xPercent: -50, yPercent: -50 });
-        const c = gsap.timeline({ repeat: -1, paused: true, repeatRefresh: true });
+        const c = gsap.timeline({ paused: true });
         c.call(() => ad.classList.add("is-lit"))
           // the last link of the CSS chain (badge → title → desc → unfold,
           // apple-ad-motion.md law 2): each sitelink lands squeezed —
@@ -131,8 +142,8 @@ export function Services() {
             ease: EASE_LOOP,
           }, "<")
           .to(cursor, { scale: 0.78, duration: 0.09, ease: EASE_UI })
-          // set-then-to, never fromTo: with repeatRefresh, an invalidated
-          // fromTo re-renders its FROM state at every cycle START — the ring
+          // set-then-to, never fromTo: after an invalidate() reset, a
+          // fromTo re-renders its FROM state at story START — the ring
           // sat visible as a little accent dot seconds before the click
           .set(
             ring,
@@ -147,33 +158,47 @@ export function Services() {
           .to(ring, { autoAlpha: 0, scale: 1, duration: 0.6, ease: EASE_UI }, "<")
           .to(adTitle, { opacity: 0.55, duration: 0.08, yoyo: true, repeat: 1, ease: "none" }, "<")
           .to(cursor, { scale: 1, duration: 0.16, ease: EASE_UI }, "-=0.4")
-          .to(cursor, { autoAlpha: 0, duration: 0.35, ease: EASE_UI }, "+=0.5")
-          .to({}, { duration: 0.35 })
-          .call(() => ad.classList.remove("is-lit"))
-          .to({}, { duration: 1.7 });
-        loops.push(c);
+          .to(cursor, { autoAlpha: 0, duration: 0.35, ease: EASE_UI }, "+=0.5");
+        // …and rest: lit, clicked, composed
+        stories.push({
+          tl: c,
+          el: ad,
+          reset: () => ad.classList.remove("is-lit"),
+        });
       }
 
-      // 02 · the site tour, self-scrolling: glide down, settle, ease back up
+      // 02 · the site tour as real scrolling: nobody reads a page at
+      // constant speed — three FLICKS, each decelerating to a stop
+      // (scroll physics = civilian ease-out), a beat at the bottom,
+      // then home to rest on the page's own hero
       const tourImg = q("[data-svc-tour]")[0] as HTMLElement;
       if (tourImg) {
         // visible window = w/1.65 of a 1.544w-tall image → ~61% travel
-        const c = gsap.timeline({ repeat: -1, paused: true });
-        c.to(tourImg, { yPercent: -60.7, duration: 15, ease: "none" })
-          .to({}, { duration: 0.9 })
-          // a page scrolling home is diegetic too — civilian ease-in-out
-          .to(tourImg, { yPercent: 0, duration: 2.4, ease: EASE_LOOP })
-          .to({}, { duration: 1.1 });
-        loops.push(c);
+        const c = gsap.timeline({ paused: true });
+        c.to({}, { duration: 0.9 })
+          .to(tourImg, { yPercent: -25.5, duration: 1.35, ease: "power2.out" })
+          .to({}, { duration: 1.0 })
+          .to(tourImg, { yPercent: -44.9, duration: 1.25, ease: "power2.out" })
+          .to({}, { duration: 1.0 })
+          .to(tourImg, { yPercent: -60.7, duration: 1.35, ease: "power2.out" })
+          .to({}, { duration: 1.4 })
+          .to(tourImg, { yPercent: 0, duration: 1.9, ease: EASE_LOOP });
+        stories.push({ tl: c, el: tourImg });
       }
 
-      // 03 · the exchange as it actually feels: sent → typing → answered
+      // 03 · the exchange as it actually feels: sent → typing → answered,
+      // resting on the completed conversation (the win frame)
       const chat = q("[data-svc-chat]")[0] as HTMLElement;
       if (chat) {
         const cq = chat.querySelector("[data-cq]") as HTMLElement;
         const typing = chat.querySelector("[data-ctyping]");
         const ca = chat.querySelector("[data-ca]") as HTMLElement;
-        const c = gsap.timeline({ repeat: -1, paused: true });
+        const booked = chat.querySelector("[data-cbooked]") as HTMLElement;
+        // pre-hide NOW — a paused timeline's own set() only renders on
+        // play, and with the story armed at 62% the card is on screen
+        // BEFORE it starts: nothing may paint ahead of its beat
+        gsap.set([cq, ca, typing, booked], { autoAlpha: 0 });
+        const c = gsap.timeline({ paused: true });
         /* the iMessage grammar (apple-ad-motion.md law 1): bubbles grow
            from their TAIL — the corner the message came from — never
            center-scale, never a bare fade */
@@ -183,6 +208,7 @@ export function Services() {
           .set(ca, { autoAlpha: 0, scale: 0.92, transformOrigin: "0% 100%" })
           .set(ca.children, { autoAlpha: 0 })
           .set(typing, { autoAlpha: 0 })
+          .set(booked, { autoAlpha: 0, y: 6, scale: 0.9, transformOrigin: "0% 0%" })
           .to({}, { duration: 0.5 })
           .to(cq, { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: EASE_UI })
           .to(typing, { autoAlpha: 1, duration: 0.25, ease: EASE_UI }, "+=0.55")
@@ -191,37 +217,61 @@ export function Services() {
           // text after settle (law 4): the monogram + answer trail the
           // bubble's surface by a tenth — the words land on locked geometry
           .to(ca.children, { autoAlpha: 1, duration: 0.3, ease: EASE_UI }, "<0.12")
-          .to({}, { duration: 3.4 })
-          // the exchange closes softly before the next one begins
-          .to([cq, ca], { autoAlpha: 0, duration: 0.4, ease: EASE_UI, stagger: 0.06 })
-          .to({}, { duration: 0.4 });
-        loops.push(c);
+          // the closing beat, after the answer has been read: the visitor
+          // took the offer — anchored pop from the thread's edge
+          .to(
+            booked,
+            { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: EASE_UI },
+            "+=1.1"
+          );
+        // …and rest: booked — the headline, enacted
+        stories.push({ tl: c, el: chat });
       }
 
-      // the demos run only while the card is on screen and the tab is visible
-      let demosInView = false;
-      const syncLoops = () => {
-        const on = demosInView && !document.hidden;
-        loops.forEach((l) => (on ? l.play() : l.pause()));
-      };
-      ScrollTrigger.create({
-        trigger: root.current,
-        start: "top bottom",
-        end: "bottom top",
-        onToggle: (self) => {
-          demosInView = self.isActive;
-          if (!self.isActive) {
-            // leaving resets every demo to its BEGINNING state (unlit ad,
-            // site at its top, empty chat) so a return never lands mid-story
-            loops.forEach((l) => l.pause(0));
-            ad?.classList.remove("is-lit");
-          }
-          syncLoops();
-        },
+      /* governance: two triggers per story. The STARTER fires the single
+         performance once the row has properly arrived (a beat below the
+         entrance trigger, so copy and artifact are settled first). The
+         JANITOR resets when the row is fully off screen — so every
+         return replays from the top — and pauses/resumes around tab
+         visibility for stories caught mid-flight. */
+      const inView = new Map<gsap.core.Timeline, boolean>();
+      stories.forEach(({ tl, el, reset }) => {
+        const row = (el.closest("[data-svc-row]") ?? el) as HTMLElement;
+        ScrollTrigger.create({
+          trigger: row,
+          start: "top 62%",
+          onEnter: () => {
+            if (!document.hidden) tl.play();
+          },
+          onEnterBack: () => {
+            if (!document.hidden && tl.progress() < 1) tl.play();
+          },
+        });
+        ScrollTrigger.create({
+          trigger: row,
+          start: "top bottom",
+          end: "bottom top",
+          onToggle: (self) => {
+            inView.set(tl, self.isActive);
+            if (!self.isActive) {
+              tl.pause(0).invalidate();
+              reset?.();
+            } else if (tl.progress() > 0 && tl.progress() < 1 && !document.hidden) {
+              tl.play();
+            }
+          },
+        });
       });
-      document.addEventListener("visibilitychange", syncLoops);
+      const syncVis = () => {
+        stories.forEach(({ tl }) => {
+          if (document.hidden) tl.pause();
+          else if (inView.get(tl) && tl.progress() > 0 && tl.progress() < 1)
+            tl.play();
+        });
+      };
+      document.addEventListener("visibilitychange", syncVis);
       context.add(() => () =>
-        document.removeEventListener("visibilitychange", syncLoops)
+        document.removeEventListener("visibilitychange", syncVis)
       );
     },
     { scope: root }
@@ -408,6 +458,20 @@ export function Services() {
                         </p>
                       </div>
                     </div>
+                    {/* the section's headline, paid off: the story ends
+                        BOOKED, not merely answered */}
+                    <p className="chat-booked" data-cbooked aria-hidden>
+                      <svg viewBox="0 0 12 12" fill="none" aria-hidden>
+                        <path
+                          d="M2 6.4 4.8 9 10 3.4"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      Discovery flight booked · Sat 9:00 AM
+                    </p>
                     <p className="serp-tag t-meta">
                       Ask-this-site chat, answering from your pages
                     </p>
