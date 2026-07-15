@@ -81,3 +81,18 @@ which we already live by.
   monogram + answer text trail the bubble by 0.12s (text after settle).
 - Tour demo untouched — a page scrolling is diegetic footage; law 5
   (hold at top, hold at bottom) was already in place.
+
+## Applied round 2 (2026-07-15, "the inside needs improvement")
+The deepest fix was structural: the LOOP itself was the un-Apple part.
+- **Play once, rest on the win frame** (law 5 at full strength + the
+  iphone-17-pro play-once law): each demo now performs once as its row
+  arrives and holds — ad rests lit-and-clicked, tour rests home, chat
+  rests BOOKED. Fully off screen resets; a return replays. Rest states
+  = the reduced-motion stills (one source of truth for "composed").
+- **Scroll physics for depicted scrolling**: constant-speed crawls read
+  as screen recordings. Real scrolling is impulsive — flick, decelerate,
+  stop, flick (power2.out per flick, ~1s pauses at stops).
+- **End on the story's WIN, not its reset**: the chat gained the
+  booking-confirmed chip — the section headline ("…to booked customer"),
+  enacted. A demo's final frame should be its best sales frame, because
+  play-once means visitors LIVE with that frame.
