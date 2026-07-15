@@ -842,19 +842,95 @@ main {
 .schat-pill:hover {
   background: #000;
 }
+/* the panel IS the pill, grown (the nav-capsule move, Jake 2026-07-15):
+   it sits over the pill's spot and unfolds from a pill-shaped sliver in
+   its bottom-right corner — a clip-path capsule→card morph on the
+   structure curve. Contents trail the surface (follow-through chain);
+   delays live only under .is-open so the close collapses as one unit,
+   faster, per the house law. */
 .schat-panel {
   position: fixed;
   right: 21px;
-  bottom: calc(76px + env(safe-area-inset-bottom));
-  z-index: 46;
+  bottom: calc(21px + env(safe-area-inset-bottom));
+  z-index: 47;
   display: flex;
   flex-direction: column;
   width: min(380px, calc(100vw - 42px));
-  max-height: min(560px, calc(100dvh - 144px));
+  max-height: min(560px, calc(100dvh - 96px));
   overflow: hidden;
   background: #fff;
   border-radius: var(--radius-panel);
   box-shadow: 0 24px 80px rgba(19, 20, 19, 0.3);
+  clip-path: inset(calc(100% - 45px) 0 0 calc(100% - 92px) round 999px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    clip-path 0.3s var(--ease-ui),
+    opacity 0.14s var(--ease-ui) 0.12s,
+    visibility 0s 0.3s;
+}
+.schat-panel.is-open {
+  clip-path: inset(0 0 0 0 round var(--radius-panel));
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    clip-path 0.5s var(--ease-structure),
+    opacity 0.14s var(--ease-ui),
+    visibility 0s;
+}
+.schat-head,
+.schat-scroll,
+.schat-form {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.25s var(--ease-ui),
+    transform 0.3s var(--ease-ui);
+}
+.schat-panel.is-open .schat-head {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.14s;
+}
+.schat-panel.is-open .schat-scroll {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.22s;
+}
+.schat-panel.is-open .schat-form {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.3s;
+}
+/* the pill hands off to the capsule growing out of its spot */
+.schat-pill.is-in.is-open {
+  opacity: 0;
+  transform: scale(0.92);
+  pointer-events: none;
+  transition:
+    transform 0.25s var(--ease-ui),
+    opacity 0.15s var(--ease-ui);
+}
+.schat-x {
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 999px;
+  color: rgba(19, 20, 19, 0.55);
+  cursor: pointer;
+}
+.schat-x:hover {
+  color: var(--color-ink);
+  background: rgba(19, 20, 19, 0.06);
+}
+.schat-x svg {
+  width: 12px;
+  height: 12px;
 }
 .schat-head {
   display: flex;
@@ -872,7 +948,7 @@ main {
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-/* bubbles reuse .chat-b; user bubbles hug the right edge here */
+/* bubbles reuse .chat-b — user bubbles hug the right edge here */
 .schat-scroll .chat-b--user {
   margin-left: auto;
 }
@@ -941,14 +1017,28 @@ main {
     right: 13px;
     left: 13px;
     width: auto;
-    bottom: calc(140px + env(safe-area-inset-bottom));
-    max-height: calc(100dvh - 220px);
+    bottom: calc(84px + env(safe-area-inset-bottom));
+    max-height: calc(100dvh - 160px);
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .schat-pill {
     transition: opacity 0.2s linear;
     transform: none;
+  }
+  .schat-panel {
+    clip-path: none;
+    transition: opacity 0.2s linear, visibility 0s 0.2s;
+  }
+  .schat-panel.is-open {
+    transition: opacity 0.2s linear, visibility 0s;
+  }
+  .schat-head,
+  .schat-scroll,
+  .schat-form {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 

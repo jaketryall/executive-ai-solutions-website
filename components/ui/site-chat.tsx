@@ -63,12 +63,17 @@ export function SiteChat() {
 
   useEffect(() => {
     if (!open) return;
-    inputRef.current?.focus();
+    // the input takes focus once the capsule has finished growing —
+    // focusing mid-morph would yank the browser past the animation
+    const t = setTimeout(() => inputRef.current?.focus(), 420);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("keydown", onKey);
+    };
   }, [open]);
 
   const send = async (text: string) => {
@@ -110,26 +115,46 @@ export function SiteChat() {
         type="button"
         className={`schat-pill ${ready ? "is-in" : ""} ${open ? "is-open" : ""}`}
         aria-expanded={open}
-        aria-label={open ? "Close the chat" : "Ask this site a question"}
-        onClick={() => setOpen((o) => !o)}
+        aria-label="Ask this site a question"
+        onClick={() => setOpen(true)}
       >
         <Monogram className="h-[15px] w-[15px]" />
-        <span>{open ? "Close" : "Ask"}</span>
+        <span>Ask</span>
       </button>
 
-      {open && (
-        <div className="schat-panel" role="dialog" aria-label="Ask this site">
-          <header className="schat-head">
-            <Monogram className="h-[14px] w-[14px] opacity-70" />
-            <div className="min-w-0">
-              <p className="text-[0.9375rem] font-semibold leading-none">
-                Ask this site
-              </p>
-              <p className="t-meta mt-[4px] text-ink/50">
-                The chat we sell, answering live
-              </p>
-            </div>
-          </header>
+      {/* always mounted — the capsule→card morph plays both directions */}
+      <div
+        className={`schat-panel ${open ? "is-open" : ""}`}
+        role="dialog"
+        aria-label="Ask this site"
+        aria-hidden={!open}
+      >
+        <header className="schat-head">
+          <Monogram className="h-[14px] w-[14px] opacity-70" />
+          <div className="min-w-0">
+            <p className="text-[0.9375rem] font-semibold leading-none">
+              Ask this site
+            </p>
+            <p className="t-meta mt-[4px] text-ink/50">
+              The chat we sell, answering live
+            </p>
+          </div>
+          <button
+            type="button"
+            className="schat-x"
+            aria-label="Close the chat"
+            onClick={() => setOpen(false)}
+          >
+            <svg viewBox="0 0 12 12" fill="none" aria-hidden>
+              <path
+                d="M1.5 1.5l9 9m0-9l-9 9"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+        </header>
 
           <div className="schat-scroll" ref={scrollRef} aria-live="polite">
             <div className="chat-b chat-b--bot">
@@ -202,8 +227,7 @@ export function SiteChat() {
               </svg>
             </button>
           </form>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
