@@ -8,16 +8,31 @@ lessons EAS takes from it.
 
 ## THE LESSONS FOR EAS (read this first)
 
-1. **The motion budget is far smaller than ours.** On the whole 38.6-
-   viewport page, exactly ONE thing animates on scroll-entrance: the
-   chapter title pair (orange eyebrow, then the 80px headline 155ms
-   later — opacity 0 + y30, ~900ms EASE-IN-OUT, triggered when the block
-   crosses ~86% of the viewport). Body copy, stats, cards, media
-   containers: ALL arrive static, opacity 1, no transform. The feel Jake
-   loves is mostly STILLNESS punctuated by one dignified announcement per
-   chapter. Our revealUp currently animates far more per section — the
-   post-launch experiment is to try the Apple budget: titles announce,
-   content simply IS.
+1. **ONE ENTRANCE BEAT PER SECTION — and media counts as the beat.**
+   (Corrected 2026-07-15 after Jake disputed the first "only titles
+   animate" reading — an exhaustive transitionstart/WAAPI census proved
+   him right, twice.) The page's entrance vocabulary, in full:
+   - Chapter title pairs: a JS tween (invisible to CSS-transition
+     instruments — computed duration 0s; inline styles driven by
+     script): eyebrow then headline +155ms, opacity + y30, ~900ms,
+     trigger ≈86% viewport. ~9 instances.
+   - A second tween layer on ~1/3 of sections: the product-viewer
+     canvas slides in (x120→0, 0.7s), diagram start/endframe
+     crossfades (0.2–0.4s), compare-section spec fade-ins, and a
+     23-link staggered footer-index reveal. ≈50 elements total
+     page-wide.
+   - The BIGGEST perceptual layer (Jake's own diagnosis): 17 play-once
+     videos that START as they enter. Media beginning to move IS the
+     entrance — no tween needed, and it reads as more alive than any
+     fade-up because the motion is content, not choreography.
+   - Body copy and most spec/stat blocks: genuinely static, always.
+   THE LAW: every section announces itself with exactly ONE motion
+   event on entry — a title tween, OR its media starting, OR one
+   crossfade — then goes completely still. Never everything-fades-up,
+   never nothing. EAS application: sections that carry a live demo
+   don't also need revealUp on their children (the demo starting is
+   the entrance); text-only sections get the title tween. One beat,
+   then stillness.
 2. **Price lives in the hero.** "From $1099 or $45.79/mo." sits beside
    the Buy button 0.7 viewports in. Nothing is withheld. (EAS candidate:
    the from-price under the hero ask.)
