@@ -409,10 +409,11 @@ export function Hero() {
         {/* ── right zone: the enactment, centered with the statement — the
             hero's one living thing. The dark→light seam below is earned by
             the proof section rising over this chapter with a rounded top. ── */}
-        <div
-          data-dock-card
-          className="relative z-20 md:mt-fib-4 md:self-start"
-        >
+        {/* no self-start/margin override: the grid's items-center does the
+            work, so the card's extra height overhangs the text column
+            EQUALLY top and bottom (it used to ride 22px high — Jake's eye,
+            2026-07-15) */}
+        <div data-dock-card className="relative z-20">
           <ArtifactFrame
             variant="card"
             tone="paper"
