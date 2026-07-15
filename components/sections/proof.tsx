@@ -173,15 +173,28 @@ export function Proof() {
                 </div>
                 <h3 className="t-display-lg mt-fib-3 text-paper">{p.client}</h3>
 
-                {/* the hero number, then the smalls */}
+                {/* the hero number, then the receipts cluster — the smalls
+                    were one whispered meta line and the column's middle sat
+                    empty (Jake, 2026-07-15); now each supporting number gets
+                    the iPhone spec-cluster treatment: value + label pairs
+                    under a hairline */}
                 <p className="t-num mt-fib-4 font-display text-[3.2rem] font-extrabold leading-none tracking-[-0.03em] text-paper">
                   {hero.value}
                 </p>
                 <p className="mt-fib-1 text-paper/65">{hero.label}</p>
                 {rest.length > 0 && (
-                  <p className="t-meta mt-fib-2 text-paper/45">
-                    {rest.map((m) => `${m.value} ${m.label}`).join(" · ")}
-                  </p>
+                  <div className="mt-fib-4 grid max-w-[360px] grid-cols-2 gap-fib-3 border-t border-paper/10 pt-fib-3">
+                    {rest.map((m) => (
+                      <div key={m.label}>
+                        <p className="t-num font-display text-[1.55rem] font-bold leading-none tracking-[-0.02em] text-paper">
+                          {m.value}
+                        </p>
+                        <p className="t-meta mt-fib-1 text-paper/50">
+                          {m.label}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 )}
 
                 {p.results!.quote && (
