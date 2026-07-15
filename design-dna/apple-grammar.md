@@ -71,6 +71,21 @@ in EAS's own brand (paper/ink/steel), never as a skin-swap to Apple's colors.
   layer moves. One thing in motion per interaction.
 - Dot-nav: 8px dots, current elongates to a 48px pill (width transition
   0.25s). Autoplay (if any) gates to the section being in view.
+- **THE AXIS LAW (why horizontal exists at all — Jake's question,
+  2026-07-15):** the axis encodes information structure. DOWN is the
+  argument — the sequence every visitor completes, in the order the page
+  chose (claim → proof → price → ask). ACROSS is evidence — SIBLINGS of
+  the same kind at the same level, where no card is a prerequisite for the
+  next. Horizontal buys: opt-in depth (the scanner loses one viewport, the
+  interested swipe through six — page length stays disciplined), one focal
+  preserved across multiplicity (snap centers ONE card, neighbors peek as
+  the "more" affordance), and gesture separation on touch (vertical =
+  navigate, horizontal = explore; zero conflict). The discipline: NOTHING
+  everyone must see goes in a track — carousels are seen by fewer people
+  by definition. The spine holds the argument; the track holds the
+  gallery. The test before building one: is this content a SEQUENCE or a
+  SET? Sequences go down. Sets of 3+ peers may go across. Sets of two go
+  side by side with no physics (Gate 0, derived-motion.md).
 
 ## 7 · Chrome
 - Global nav: 44px, rgba(255,255,255,0.8) + saturate(1.8) blur(20px), inert
