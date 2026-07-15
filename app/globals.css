@@ -1368,9 +1368,12 @@ main {
   width: 34px;
   height: 34px;
   border-radius: 999px; /* honest circles: it's a face-pile, not a button */
-  /* the typical pile: solid discs, thin paper ring (the dark ring read as
-     a black halo on the ink hero — Jake, 2026-07-15) */
-  border: 2px solid var(--color-paper);
+  /* the typical pile: the ring IMPERSONATES the background (that's why
+     white-page facepiles look borderless) — 2px of the hero's own tone,
+     perceived only as the clean notch where discs overlap. The first
+     attempt failed by being darker than the local gradient (black halo);
+     the second by wearing a light-page ring on a dark page. */
+  border: 2px solid var(--color-dark-2);
   font-size: 0.75rem;
   font-weight: 600;
   will-change: transform;
