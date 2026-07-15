@@ -101,6 +101,38 @@ in EAS's own brand (paper/ink/steel), never as a skin-swap to Apple's colors.
   → EAS: our diegetic artifacts (ad card, chrome frame, chat) are already
   the right move; compose them Apple-flat.
 
+## 9 · The column system (measured live 2026-07-15; Jake's favorite page
+##     is iphone-17-pro — treat its values as the north star)
+
+PRODUCT PAGES (macbook-neo + iphone-17-pro, identical system):
+- Core container `.viewport-content`: **max-width 1260px, fixed** — the
+  dominant cap (24–34 uses/page). 90px side margins at 1440 viewport; at
+  1920 the margins grow, the 1260 does NOT (capped, never fluid).
+- Copy column (the lede): 756–840px at 21px/29px type ≈ 72–80 ch/line —
+  and set PER BREAKPOINT, non-monotonic (756 @1440 → 622 @1920: narrower
+  on bigger screens, protecting the reading measure).
+- Feature-list copy: ~367px at 17px/25px ≈ 43 ch.
+- Headline blocks: 945–1260px, display type 48–96px.
+- Media: ~980–1296px (rides the 1260 grid), with rationed full-bleed
+  exceptions. Snap-gallery cards: wide 696px / standard 372px, 20px gap,
+  flush to the 90px margin.
+- Secondary caps: 1024px (inner grids), 1440px (full-bleed), 980px only
+  in legacy nav/footer chrome. (No 1080 anywhere — folklore.)
+
+HOMEPAGE (the storefront — a DIFFERENT grammar on purpose):
+- Promo tiles: fluid, no cap — 702×580 (≈1.21:1) in a 2-up grid, 12px
+  gutters and 12px edge margins at 1440; at 1920 it re-lays-out (3
+  full-width featured rows + 942px pairs). Tile headline 40px/600.
+- <main> max-width 2560px; nothing else is capped.
+
+THE MEANING: the product page is a fixed READING instrument (the 1260
+cap + per-breakpoint copy measure exist to protect comprehension); the
+homepage is a fluid BILLBOARD system (density of offers per viewport).
+Same tokens, opposite width philosophy, because the visitor's task is
+opposite. EAS's .wrap (max-width 1280px) already matches the product-page
+philosophy — correct, since the whole EAS site is a pitch, not a
+storefront.
+
 ## Rollout map (in order, each pass judged before the next)
 1. /services/google-ads: hero (done) + highlights gallery (§6) + fade-up
    unification + section-seam rhythm. ← THE priority page.
