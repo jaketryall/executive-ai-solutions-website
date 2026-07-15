@@ -6,7 +6,6 @@ import {
   gsap,
   ScrollTrigger,
   useGSAP,
-  EASE_STRUCTURE,
   EASE_UI,
   EASE_LOOP,
   reducedMotion,
@@ -39,25 +38,27 @@ export function Services() {
       }
 
       /* per-row choreography: copy first, artifact scales-and-settles LAST
-         (animate-last = highest hierarchy), entry vector alternating with the
-         layout; the watermark spine stays put (structure, not an actor) */
-      (q("[data-svc-row]") as HTMLElement[]).forEach((row, i) => {
-
+         (animate-last = highest hierarchy). THE APPLE ENVELOPE (Jake,
+         2026-07-15 "i need that apple motion feel"): their measured moves
+         are BIG and SLOW — card reveals travel 148px over a full second;
+         6px/0.35s reads as flicker, not motion. So: long durations, real
+         travel, and a steep glide (power3.out) instead of the theatrical
+         EASE_STRUCTURE wind-up — this section speaks Apple. */
+      (q("[data-svc-row]") as HTMLElement[]).forEach((row) => {
         const tl = gsap.timeline({
-          defaults: { ease: EASE_STRUCTURE },
+          defaults: { ease: "power3.out" },
           scrollTrigger: { trigger: row, start: "top 72%", once: true },
         });
         tl.fromTo(
           row.querySelectorAll("[data-anim='copy']"),
-          { autoAlpha: 0, y: 21 },
-          { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.08 }
+          { autoAlpha: 0, y: 30 },
+          { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.1 }
         ).fromTo(
           row.querySelectorAll("[data-anim='artifact']"),
-          { autoAlpha: 0, y: 21, scale: 0.97 },
-          { autoAlpha: 1, y: 0, scale: 1, duration: 0.9 },
-          "-=0.35"
+          { autoAlpha: 0, y: 40, scale: 0.96 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 1.1 },
+          "-=0.55"
         );
-
       });
 
       /* ── the three stage demos: PLAY-ONCE stories (iphone-17-pro.md law:
@@ -115,12 +116,12 @@ export function Services() {
         const c = gsap.timeline({ paused: true });
         c.call(() => ad.classList.add("is-lit"))
           // the last link of the CSS chain (badge → title → desc → unfold,
-          // apple-ad-motion.md law 2): each sitelink lands squeezed —
-          // late start, quick resolve — once the drawer is opening
+          // apple-ad-motion.md law 2): each sitelink glides in with real
+          // travel and a long brake — the Apple envelope
           .fromTo(
             links,
-            { autoAlpha: 0, y: 6 },
-            { autoAlpha: 1, y: 0, duration: 0.3, ease: EASE_UI, stagger: 0.1 },
+            { autoAlpha: 0, y: 16 },
+            { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.12 },
             0.5
           )
           .to({}, { duration: 1.0 })
@@ -176,13 +177,13 @@ export function Services() {
         // visible window = w/1.65 of a 1.544w-tall image → ~61% travel
         const c = gsap.timeline({ paused: true });
         c.to({}, { duration: 0.9 })
-          .to(tourImg, { yPercent: -25.5, duration: 1.35, ease: "power2.out" })
+          .to(tourImg, { yPercent: -25.5, duration: 1.5, ease: "power3.out" })
           .to({}, { duration: 1.0 })
-          .to(tourImg, { yPercent: -44.9, duration: 1.25, ease: "power2.out" })
+          .to(tourImg, { yPercent: -44.9, duration: 1.4, ease: "power3.out" })
           .to({}, { duration: 1.0 })
-          .to(tourImg, { yPercent: -60.7, duration: 1.35, ease: "power2.out" })
+          .to(tourImg, { yPercent: -60.7, duration: 1.5, ease: "power3.out" })
           .to({}, { duration: 1.4 })
-          .to(tourImg, { yPercent: 0, duration: 1.9, ease: EASE_LOOP });
+          .to(tourImg, { yPercent: 0, duration: 2.2, ease: EASE_LOOP });
         stories.push({ tl: c, el: tourImg });
       }
 
@@ -202,26 +203,27 @@ export function Services() {
         /* the iMessage grammar (apple-ad-motion.md law 1): bubbles grow
            from their TAIL — the corner the message came from — never
            center-scale, never a bare fade */
-        c.set(cq, { autoAlpha: 0, y: 10, scale: 0.85, transformOrigin: "100% 100%" })
+        c.set(cq, { autoAlpha: 0, y: 26, scale: 0.9, transformOrigin: "100% 100%" })
           // the answer must replace the dots IN PLACE — any y motion here
           // reads as the whole exchange shifting when the text arrives
-          .set(ca, { autoAlpha: 0, scale: 0.92, transformOrigin: "0% 100%" })
+          .set(ca, { autoAlpha: 0, scale: 0.94, transformOrigin: "0% 100%" })
           .set(ca.children, { autoAlpha: 0 })
           .set(typing, { autoAlpha: 0 })
-          .set(booked, { autoAlpha: 0, y: 6, scale: 0.9, transformOrigin: "0% 0%" })
+          .set(booked, { autoAlpha: 0, y: 18, scale: 0.94, transformOrigin: "0% 0%" })
           .to({}, { duration: 0.5 })
-          .to(cq, { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: EASE_UI })
-          .to(typing, { autoAlpha: 1, duration: 0.25, ease: EASE_UI }, "+=0.55")
+          // the Apple envelope: real travel (26px), long glide, hard brake
+          .to(cq, { autoAlpha: 1, y: 0, scale: 1, duration: 0.85, ease: "power3.out" })
+          .to(typing, { autoAlpha: 1, duration: 0.35, ease: EASE_UI }, "+=0.55")
           .to(typing, { autoAlpha: 0, duration: 0.2, ease: EASE_UI }, "+=1.5")
-          .to(ca, { autoAlpha: 1, scale: 1, duration: 0.4, ease: EASE_UI }, "<0.1")
+          .to(ca, { autoAlpha: 1, scale: 1, duration: 0.7, ease: "power3.out" }, "<0.1")
           // text after settle (law 4): the monogram + answer trail the
-          // bubble's surface by a tenth — the words land on locked geometry
-          .to(ca.children, { autoAlpha: 1, duration: 0.3, ease: EASE_UI }, "<0.12")
+          // bubble's surface — the words land on locked geometry
+          .to(ca.children, { autoAlpha: 1, duration: 0.5, ease: EASE_UI }, "<0.15")
           // the closing beat, after the answer has been read: the visitor
           // took the offer — anchored pop from the thread's edge
           .to(
             booked,
-            { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: EASE_UI },
+            { autoAlpha: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out" },
             "+=1.1"
           );
         // …and rest: booked — the headline, enacted
