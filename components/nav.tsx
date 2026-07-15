@@ -86,7 +86,11 @@ function LinksCapsule() {
         "/work",
         <>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/hero/dw-hero.jpg" alt="" className="nav-mini-thumb" />
+          <img
+            src="/hero/dw-hero.jpg"
+            alt="The Desert Wings homepage"
+            className="nav-mini-thumb"
+          />
           <span className="text-trim">Desert Wings Flight School</span>
         </>,
         0,

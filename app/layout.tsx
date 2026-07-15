@@ -26,6 +26,9 @@ export const metadata: Metadata = {
   title: "Executive AI Solutions | Google Ads and websites that bring local business more customers",
   description:
     "We run the ads and build the page they land on. Google Ads management from $500/mo, hand-built websites from $2.5k, AI follow-up. One team, accountable for the whole click.",
+  // root default: pages without their own alternates inherit this (only the
+  // homepage — every interior page declares its own canonical)
+  alternates: { canonical: "/" },
   openGraph: {
     title: "Executive AI Solutions | Google Ads and websites that bring local business more customers",
     description:
@@ -33,6 +36,19 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: "Executive AI Solutions",
     type: "website",
+    // sitewide default share card; pages with a better image override it
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Executive AI Solutions — Google Ads, websites, and AI follow-up. Mesa, AZ.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/og.jpg"],
   },
   robots: { index: true, follow: true },
 };

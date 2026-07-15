@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/contact`,
     siteName: "Executive AI Solutions",
     type: "website",
+    images: [{ url: "/og.jpg", width: 1200, height: 630 }],
   },
 };
 

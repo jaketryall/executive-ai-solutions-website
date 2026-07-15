@@ -229,7 +229,9 @@ export function CaseStudy({
         );
         return () => {
           tweens.forEach((t) => t.kill());
-          gsap.set(pars, { clearProps: "transform" });
+          // tour-carrying projects render no .cs-par — an empty set() here
+          // logs GSAP's target-not-found warning under Strict Mode cleanup
+          if (pars.length) gsap.set(pars, { clearProps: "transform" });
         };
       });
 
@@ -489,7 +491,7 @@ export function CaseStudy({
           className="mt-[55px] flex flex-wrap items-center gap-[21px]"
           data-anim="cs-reveal"
         >
-          <CTA href="/#estimate" label="Price my project" tone="accent" />
+          <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
           <Link href="/work" className="u-link u-link--chev t-meta text-ink/70">
             Back to all work
           </Link>

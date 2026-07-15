@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     url: "https://executiveaisolutions.com/work",
     siteName: "Executive AI Solutions",
     type: "website",
+    images: [{ url: "/og.jpg", width: 1200, height: 630 }],
   },
 };
 
