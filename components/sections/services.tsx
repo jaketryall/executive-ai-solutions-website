@@ -99,12 +99,14 @@ export function Services() {
             ScrollTrigger.refresh(); // late layout change: re-measure triggers
           });
         });
-        /* the story, once: the listing lights up as the ad, the sitelinks
-           arrive one by one, then a cursor glides in and CLICKS it (the
-           stage's namesake) — and it rests LIT. The win frame holds; the
-           dim-out died with the loop. Function-based coordinates are
-           re-read via invalidate() on every reset. */
+        /* the story, once, in three acts with real mass: the result PAINTS
+           (url → title → desc gliding in on the Apple envelope, like a
+           SERP rendering), BECOMES the ad (the CSS chain + sitelinks),
+           then TAKES the click — and rests LIT. Function-based
+           coordinates re-read via invalidate() on every reset. */
+        const adUrl = ad.querySelector(".g-url") as HTMLElement;
         const adTitle = ad.querySelector(".g-title") as HTMLElement;
+        const adDesc = ad.querySelector(".g-desc") as HTMLElement;
         const links = ad.querySelectorAll(".g-ext a");
         const cursor = ad.querySelector(".g-cursor") as HTMLElement;
         const ring = ad.querySelector(".g-click-ring") as HTMLElement;
@@ -113,18 +115,22 @@ export function Services() {
           y: adTitle.offsetTop + 12,
         });
         gsap.set(ring, { xPercent: -50, yPercent: -50 });
+        // pre-hide the listing: the story's first act is the SERP painting
+        gsap.set([adUrl, adTitle, adDesc], { autoAlpha: 0, y: 18 });
         const c = gsap.timeline({ paused: true });
-        c.call(() => ad.classList.add("is-lit"))
-          // the last link of the CSS chain (badge → title → desc → unfold,
-          // apple-ad-motion.md law 2): each sitelink glides in with real
-          // travel and a long brake — the Apple envelope
+        c.to(adUrl, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.15)
+          .to(adTitle, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "<0.12")
+          .to(adDesc, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "<0.12")
+          // act two: the listing becomes the ad (CSS follow-through chain)
+          .call(() => ad.classList.add("is-lit"), [], "+=0.5")
+          // …and each sitelink glides in with real travel and a long brake
           .fromTo(
             links,
             { autoAlpha: 0, y: 16 },
             { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.12 },
-            0.5
+            "+=0.55"
           )
-          .to({}, { duration: 1.0 })
+          .to({}, { duration: 0.8 })
           // the click: in from below, press, ripple, gone
           .set(cursor, {
             x: () => ad.offsetWidth - 55,
@@ -158,13 +164,22 @@ export function Services() {
           )
           .to(ring, { autoAlpha: 0, scale: 1, duration: 0.6, ease: EASE_UI }, "<")
           .to(adTitle, { opacity: 0.55, duration: 0.08, yoyo: true, repeat: 1, ease: "none" }, "<")
+          // the surface acknowledges the press: a quick dip, a long settle
+          .to(ad, { scale: 0.985, duration: 0.09, ease: EASE_UI }, "<")
+          .to(ad, { scale: 1, duration: 0.6, ease: "power3.out" }, ">")
           .to(cursor, { scale: 1, duration: 0.16, ease: EASE_UI }, "-=0.4")
           .to(cursor, { autoAlpha: 0, duration: 0.35, ease: EASE_UI }, "+=0.5");
-        // …and rest: lit, clicked, composed
+        // …and rest: lit, clicked, composed. Reset re-hides the listing
+        // (invalidated to()s re-record starts from CURRENT values on the
+        // next play — without this, a replay would have nothing to paint)
         stories.push({
           tl: c,
           el: ad,
-          reset: () => ad.classList.remove("is-lit"),
+          reset: () => {
+            ad.classList.remove("is-lit");
+            gsap.set(ad, { scale: 1 });
+            gsap.set([adUrl, adTitle, adDesc], { autoAlpha: 0, y: 18 });
+          },
         });
       }
 
