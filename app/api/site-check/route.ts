@@ -122,6 +122,28 @@ async function fetchPublic(url: string) {
   throw new Error("redirect");
 }
 
+/* does robots.txt block everything? Group-aware enough for the unambiguous
+   disaster case only — a bare "Disallow: /" applying to * or Googlebot.
+   Anything subtler errs toward silence (a wrong "you're blocked" would be
+   the worst false positive this tool could produce). */
+function robotsBlocksAll(txt: string) {
+  const lines = txt.split(/\r?\n/).map((l) => l.replace(/#.*$/, "").trim());
+  let applies = false;
+  let blocked = false;
+  for (const line of lines) {
+    const ua = /^user-agent:\s*(.+)$/i.exec(line);
+    if (ua) {
+      const a = ua[1].trim().toLowerCase();
+      applies = a === "*" || a.includes("googlebot");
+      continue;
+    }
+    if (!applies) continue;
+    if (/^disallow:\s*\/\s*$/i.test(line)) blocked = true;
+    if (/^allow:\s*\/\s*$/i.test(line)) blocked = false;
+  }
+  return blocked;
+}
+
 /* ── tiny HTML readers (regex is enough for these signals) ── */
 const strip = (s: string) =>
   s
@@ -427,6 +449,82 @@ export async function POST(req: NextRequest) {
             detail: ldBlocks.length
               ? "There's structured data, but none of it carries business facts — no address, hours, or phone a machine can read. Google's panels and AI answers still have to guess."
               : "No structured data we could find. Google's panels and AI search answers have to guess your hours, area, and services — or skip you.",
+          }
+    );
+
+    /* ── search visibility plumbing (Jake, 2026-07-15: the position ladder,
+       no-API tier). We can't truthfully print a Google RANK without a SERP
+       API, but we CAN verify the plumbing that decides whether ranking is
+       even possible: is Google allowed in, and does it get a map. Both
+       judged only from what the site itself serves. ── */
+    let robotsTxt = "";
+    try {
+      const r = await fetchPublic(new URL("/robots.txt", finalUrl).href);
+      if (r.res.ok) robotsTxt = r.html.slice(0, 60_000);
+    } catch {
+      /* no robots.txt is fine — absence blocks nothing */
+    }
+
+    /* indexability: noindex meta, X-Robots-Tag header, or a robots.txt
+       full block — three ways a site asks Google to skip it */
+    const metaRobots =
+      grab(
+        head,
+        /<meta[^>]+name=["'](?:robots|googlebot)["'][^>]*content=["']([^"']*)["']/i
+      ) ??
+      grab(
+        head,
+        /<meta[^>]+content=["']([^"']*)["'][^>]*name=["'](?:robots|googlebot)["']/i
+      ) ??
+      "";
+    const xRobots = res.headers.get("x-robots-tag") ?? "";
+    const noindexed = /noindex/i.test(metaRobots) || /noindex/i.test(xRobots);
+    const robotsBlocked = robotsTxt ? robotsBlocksAll(robotsTxt) : false;
+    findings.push(
+      noindexed || robotsBlocked
+        ? {
+            id: "index",
+            status: "fix",
+            title: "You're asking Google to skip you",
+            detail: noindexed
+              ? "This page carries a noindex instruction — it literally asks search engines not to list it. If that isn't deliberate, removing it is the highest-value fix on this list."
+              : "Your robots.txt tells search engines to stay out of the whole site — the strongest form of invisible there is.",
+          }
+        : {
+            id: "index",
+            status: "good",
+            title: "Google is allowed in",
+            detail:
+              "No noindex, no robots block — nothing is telling search engines to skip this page.",
+          }
+    );
+
+    /* sitemap: named in robots.txt, or living at the standard address */
+    let sitemap = /^\s*sitemap:\s*\S+/im.test(robotsTxt);
+    if (!sitemap) {
+      try {
+        const s = await fetchPublic(new URL("/sitemap.xml", finalUrl).href);
+        sitemap =
+          s.res.ok && /<(?:\?xml|urlset|sitemapindex)/i.test(s.html.slice(0, 2000));
+      } catch {
+        /* unreachable = not found */
+      }
+    }
+    findings.push(
+      sitemap
+        ? {
+            id: "sitemap",
+            status: "good",
+            title: "Google gets a map",
+            detail:
+              "A sitemap is posted — search engines get handed every page instead of wandering your links hoping to find them.",
+          }
+        : {
+            id: "sitemap",
+            status: "fix",
+            title: "No sitemap posted",
+            detail:
+              "Nothing at /sitemap.xml and none named in robots.txt. Google discovers pages by wandering links; a sitemap hands it the map, and new pages get found in days instead of whenever.",
           }
     );
 
