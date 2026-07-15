@@ -124,6 +124,9 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model: "claude-haiku-4-5-20251001",
         max_tokens: 300,
+        // factual QA over a fixed knowledge base — low temperature keeps
+        // the phrasing of prices and terms boringly exact
+        temperature: 0.3,
         system: SYSTEM,
         // keep the tail of long conversations; the system carries the facts
         messages: messages.slice(-12),
