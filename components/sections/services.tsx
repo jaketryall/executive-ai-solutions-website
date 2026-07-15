@@ -267,7 +267,7 @@ export function Services() {
                   <span className="chip">No lock-in</span>
                 </div>
               </div>
-              <div data-anim="artifact" className="w-[min(100%,440px)]">
+              <div data-anim="artifact" className="w-[min(100%,480px)]">
                 <ArtifactFrame
                   variant="card"
                   tone="paper"
@@ -333,7 +333,10 @@ export function Services() {
                   <span className="chip">You own everything</span>
                 </div>
               </div>
-              <div data-anim="artifact">
+              {/* one artifact measure across all three rows (Jake,
+                  2026-07-15): same stage, each object at its own scale —
+                  the BIG site moment belongs to Proof, one section down */}
+              <div data-anim="artifact" className="w-[min(100%,480px)]">
                 <ArtifactFrame
                   variant="chrome"
                   tone="paper"
@@ -379,7 +382,7 @@ export function Services() {
                   <span className="chip">Built and managed for you</span>
                 </div>
               </div>
-              <div data-anim="artifact" className="w-[min(100%,440px)]">
+              <div data-anim="artifact" className="w-[min(100%,480px)]">
                 <ArtifactFrame
                   variant="card"
                   tone="paper"
