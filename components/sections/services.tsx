@@ -8,6 +8,7 @@ import {
   useGSAP,
   EASE_STRUCTURE,
   EASE_UI,
+  EASE_LOOP,
   reducedMotion,
 } from "@/components/anim/ease";
 import { CTA } from "@/components/ui/cta";
@@ -118,11 +119,14 @@ export function Services() {
             scale: 1,
           })
           .to(cursor, { autoAlpha: 1, duration: 0.25, ease: EASE_UI })
+          // diegetic motion wears civilian curves (apple-micro-interactions
+          // §10): a depicted cursor travels like a real one — ease-in-out,
+          // no theatrical wind-up
           .to(cursor, {
             x: () => clickPt().x,
             y: () => clickPt().y,
             duration: 0.9,
-            ease: EASE_STRUCTURE,
+            ease: EASE_LOOP,
           }, "<")
           .to(cursor, { scale: 0.78, duration: 0.09, ease: EASE_UI })
           // set-then-to, never fromTo: with repeatRefresh, an invalidated
@@ -155,7 +159,8 @@ export function Services() {
         const c = gsap.timeline({ repeat: -1, paused: true });
         c.to(tourImg, { yPercent: -60.7, duration: 15, ease: "none" })
           .to({}, { duration: 0.9 })
-          .to(tourImg, { yPercent: 0, duration: 2.4, ease: EASE_STRUCTURE })
+          // a page scrolling home is diegetic too — civilian ease-in-out
+          .to(tourImg, { yPercent: 0, duration: 2.4, ease: EASE_LOOP })
           .to({}, { duration: 1.1 });
         loops.push(c);
       }

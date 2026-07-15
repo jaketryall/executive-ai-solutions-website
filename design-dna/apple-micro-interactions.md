@@ -125,6 +125,19 @@ micro states should drop to ≤100ms/instant, structural stays ~.32-.45s.)
 - Gaps to re-verify later: the hero load sequences and the full mobile
   touch pass (hamburger, tap feedback) — blocked by tooling contention.
 
+## 10 · The curve-character lesson (2026-07-15, Jake's services question)
+Apple's curves are BORING on purpose: plain ease/ease-out/ease-in-out and
+one gentle bezier (.4,0,.6,1) — no custom drama, no springs, no overshoot,
+always monotonic. Their signature comes from the bimodal durations and the
+restraint about what moves, never from curve exotica. The EAS law derived
+from this: **brand moves wear the signature curve; diegetic moves wear
+civilian curves.** Page-level choreography (entrances, reveals, section
+moves) keeps EASE_STRUCTURE (0.62,0.05,0.10,1 — the theatrical wind-up is
+the EAS voice). Anything DEPICTING a real interface inside a demo — a
+cursor traveling, a page scrolling home, a tab switching — uses plain
+ease-in-out (EASE_LOOP = 0.42,0,0.58,1, literally Apple's accordion
+curve), because staged reality with a theater curve reads subtly fake.
+
 ## EAS ADOPTION NOTES (the synthesis that matters)
 1. Split our timing tokens: micro-feedback ≤100ms linear (or instant);
    structural .32–.45s on the two house eases. Kill .3s hovers.
