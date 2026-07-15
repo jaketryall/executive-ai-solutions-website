@@ -997,6 +997,26 @@ main {
   outline-offset: 4px;
   border-radius: 999px;
 }
+/* dark skin: the core riding the site-check report card */
+.lm-dark .lm-out {
+  background: rgba(239, 240, 238, 0.05);
+}
+.lm-dark .lm-range::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    to right,
+    var(--color-accent) var(--p, 0%),
+    rgba(239, 240, 238, 0.16) 0
+  );
+}
+.lm-dark .lm-range::-webkit-slider-thumb {
+  background: var(--color-paper);
+}
+.lm-dark .lm-range::-moz-range-track {
+  background: rgba(239, 240, 238, 0.16);
+}
+.lm-dark .lm-range::-moz-range-thumb {
+  background: var(--color-paper);
+}
 @media (max-width: 820px) {
   .lm-card,
   .lm-out {

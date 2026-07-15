@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CTA } from "@/components/ui/cta";
+import { LeadMathCore } from "@/components/services/lead-math";
 import { revealUp } from "@/components/anim/reveal";
 import {
   gsap,
@@ -78,7 +79,9 @@ export function SiteCheck() {
       requestAnimationFrame(() => {
         if (reducedMotion() || !listRef.current) return;
         gsap.fromTo(
-          listRef.current.querySelectorAll(".scheck-row, .scheck-verdict, .scheck-next"),
+          listRef.current.querySelectorAll(
+            ".scheck-row, .scheck-verdict, .scheck-math, .scheck-next"
+          ),
           { autoAlpha: 0, y: 13 },
           { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.09, ease: EASE_UI }
         );
@@ -178,6 +181,23 @@ export function SiteCheck() {
                   </span>
                 </div>
               ))}
+            </div>
+            {/* the report's last chapter: the findings said WHERE clicks
+                leak, the math says what they're WORTH — one give, one flow
+                (Jake, 2026-07-15: the calculator lives with the site thing) */}
+            <div className="scheck-math mt-fib-4 border-t border-paper/10 pt-fib-4">
+              <p className="t-title font-display">
+                {fixes.length > 0
+                  ? "And what are those clicks worth?"
+                  : "Solid site — so what would clicks on it earn?"}
+              </p>
+              <p className="mt-fib-2 max-w-[52ch] text-[0.9375rem] leading-[1.5] text-paper/65">
+                Three numbers you already know. The arithmetic every ad budget
+                lives or dies on.
+              </p>
+              <div className="mt-fib-3">
+                <LeadMathCore dark showCta={false} />
+              </div>
             </div>
             <div className="scheck-next mt-fib-4 flex flex-wrap items-center gap-fib-3">
               <CTA href="#estimate" label="Price my project" tone="paper" />
