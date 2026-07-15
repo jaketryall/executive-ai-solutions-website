@@ -15,6 +15,7 @@ import { whenArrived } from "@/components/anim/arrival";
 import { revealUp } from "@/components/anim/reveal";
 import { CTA } from "@/components/ui/cta";
 import { Builder } from "@/components/sections/builder";
+import { LeadMath } from "@/components/services/lead-math";
 import { ArtifactFrame } from "@/components/ui/artifact";
 import { Monogram } from "@/components/ui/monogram";
 import { ProcessCards } from "@/components/ui/process-cards";
@@ -759,6 +760,11 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           page the visitor has self-selected into website intent, so "what
           would yours look like" closes instead of mispositioning ── */}
       {service.slug === "websites" && <Builder />}
+
+      {/* ── RUN YOUR OWN NUMBERS · the ads page's give: the visitor's own
+          arithmetic makes the case, right before the price beat so $500/mo
+          lands pre-anchored against what a customer is worth ── */}
+      {service.slug === "google-ads" && <LeadMath />}
 
       {/* ── THE PRICE · the one centered statement peak, open on the canvas,
           with the client voices floating around it (the home price-beat

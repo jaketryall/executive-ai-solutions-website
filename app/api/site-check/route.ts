@@ -369,6 +369,34 @@ export async function POST(req: NextRequest) {
           }
     );
 
+    /* measurement: can this site see what its visitors do? Judged only by
+       what's in the fetched HTML — a Google tag (gtag/GTM/Ads/analytics) or
+       a Meta pixel. A tag doesn't prove conversions are CONFIGURED, so the
+       pass copy claims only "the plumbing exists" — never more than we can
+       verify. This is the check that speaks for the ads service: paid
+       clicks without measurement is spending blind. */
+    const measured =
+      /googletagmanager\.com\/(?:gtag\/js|gtm\.js)|\bgtag\s*\(|\bGTM-[A-Z0-9]{4,}|google-analytics\.com|googleadservices\.com|\bAW-\d{6,}/i.test(
+        doc
+      ) || /connect\.facebook\.net|\bfbq\s*\(/i.test(doc);
+    findings.push(
+      measured
+        ? {
+            id: "tracking",
+            status: "good",
+            title: "Measurement is installed",
+            detail:
+              "There's a tracking tag on the page — the plumbing to see which visit became a lead exists. If you run ads, the results can be counted.",
+          }
+        : {
+            id: "tracking",
+            status: "fix",
+            title: "Nothing is measuring",
+            detail:
+              "No Google tag, no Tag Manager, no pixel. You can't see what visitors do — and if you ever run ads, every dollar spends blind. Measurement is the first thing we install.",
+          }
+    );
+
     /* business structured data. Judged by the FACTS it carries (address,
        hours, phone, geo…), never by a type-name allowlist — a FlightSchool
        is as much a business as a Dentist, and a wrong "invisible to
