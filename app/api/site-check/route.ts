@@ -178,6 +178,26 @@ export async function POST(req: NextRequest) {
         { status: 422 }
       );
 
+    /* a single-sample timer will occasionally accuse a fast site (cold DNS,
+       a redirect hop, one unlucky edge) — caught live against a CDN-cached
+       static page, 2026-07-14. If the first read looks slow, take a second
+       opinion and report the better: warm performance is what nearly every
+       real visitor gets. */
+    let bestTtfb = ttfb;
+    if (ttfb > 800) {
+      try {
+        const t0 = Date.now();
+        const again = await fetch(finalUrl, {
+          signal: AbortSignal.timeout(6000),
+          headers: { "user-agent": "EAS-SiteCheck/1.0" },
+        });
+        bestTtfb = Math.min(ttfb, Date.now() - t0);
+        again.body?.cancel();
+      } catch {
+        /* keep the first measurement */
+      }
+    }
+
     const findings: Finding[] = [];
     const doc = html.slice(0, 400_000);
     const head = doc.slice(0, 60_000);
@@ -202,18 +222,18 @@ export async function POST(req: NextRequest) {
 
     /* speed */
     findings.push(
-      ttfb <= 800
+      bestTtfb <= 800
         ? {
             id: "speed",
             status: "good",
             title: "Server answers fast",
-            detail: `First byte in ${ttfb}ms. The server isn't the bottleneck.`,
+            detail: `First byte in ${bestTtfb}ms. The server isn't the bottleneck.`,
           }
         : {
             id: "speed",
             status: "fix",
             title: "Slow to answer",
-            detail: `${(ttfb / 1000).toFixed(1)}s before the server sent anything. Visitors from an ad decide in about three; this spends ${Math.round((ttfb / 3000) * 100)}% of that budget on silence.`,
+            detail: `${(bestTtfb / 1000).toFixed(1)}s before the server sent anything — measured twice to be fair. Visitors from an ad decide in about three; this spends ${Math.round((bestTtfb / 3000) * 100)}% of that budget on silence.`,
           }
     );
 
