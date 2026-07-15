@@ -70,6 +70,15 @@ from their rendered DOM, section by section.
 
 ## Where EAS deliberately diverges
 
+- **No price in the hero (Jake, 2026-07-15, overruling the iphone-17-pro
+  lesson).** Apple's hero price works because it's PRE-ANCHORED — the
+  market already knows what an iPhone costs, so disclosure hides nothing
+  and filters nobody. An unknown agency's price has no anchor: shown
+  before proof it reads as a gamble; shown after proof it reads as cheap.
+  The law generalizes: price placement follows price ANCHORING. Unanchored
+  price sits adjacent to proof (our price-beat directly after the proof
+  section), never adjacent to the promise.
+
 - **We publish prices; they hide them.** Transparency IS the EAS filter and
   differentiator (the estimator, the sheet). Keep. Law 3 still applies —
   justification adjacent to every number.
