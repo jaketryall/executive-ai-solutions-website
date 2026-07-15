@@ -103,12 +103,14 @@ export function Services() {
         gsap.set(ring, { xPercent: -50, yPercent: -50 });
         const c = gsap.timeline({ repeat: -1, paused: true, repeatRefresh: true });
         c.call(() => ad.classList.add("is-lit"))
-          // colors turn (CSS), then each sitelink lands on its own beat
+          // the last link of the CSS chain (badge → title → desc → unfold,
+          // apple-ad-motion.md law 2): each sitelink lands squeezed —
+          // late start, quick resolve — once the drawer is opening
           .fromTo(
             links,
-            { autoAlpha: 0, y: 5 },
-            { autoAlpha: 1, y: 0, duration: 0.35, ease: EASE_UI, stagger: 0.09 },
-            0.3
+            { autoAlpha: 0, y: 6 },
+            { autoAlpha: 1, y: 0, duration: 0.3, ease: EASE_UI, stagger: 0.1 },
+            0.5
           )
           .to({}, { duration: 1.0 })
           // the click: in from below, press, ripple, gone
@@ -168,20 +170,27 @@ export function Services() {
       // 03 · the exchange as it actually feels: sent → typing → answered
       const chat = q("[data-svc-chat]")[0] as HTMLElement;
       if (chat) {
-        const cq = chat.querySelector("[data-cq]");
+        const cq = chat.querySelector("[data-cq]") as HTMLElement;
         const typing = chat.querySelector("[data-ctyping]");
-        const ca = chat.querySelector("[data-ca]");
+        const ca = chat.querySelector("[data-ca]") as HTMLElement;
         const c = gsap.timeline({ repeat: -1, paused: true });
-        c.set(cq, { autoAlpha: 0, y: 8 })
+        /* the iMessage grammar (apple-ad-motion.md law 1): bubbles grow
+           from their TAIL — the corner the message came from — never
+           center-scale, never a bare fade */
+        c.set(cq, { autoAlpha: 0, y: 10, scale: 0.85, transformOrigin: "100% 100%" })
           // the answer must replace the dots IN PLACE — any y motion here
           // reads as the whole exchange shifting when the text arrives
-          .set(ca, { autoAlpha: 0 })
+          .set(ca, { autoAlpha: 0, scale: 0.92, transformOrigin: "0% 100%" })
+          .set(ca.children, { autoAlpha: 0 })
           .set(typing, { autoAlpha: 0 })
           .to({}, { duration: 0.5 })
-          .to(cq, { autoAlpha: 1, y: 0, duration: 0.4, ease: EASE_UI })
+          .to(cq, { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: EASE_UI })
           .to(typing, { autoAlpha: 1, duration: 0.25, ease: EASE_UI }, "+=0.55")
           .to(typing, { autoAlpha: 0, duration: 0.2, ease: EASE_UI }, "+=1.5")
-          .to(ca, { autoAlpha: 1, duration: 0.45, ease: EASE_UI }, "<0.1")
+          .to(ca, { autoAlpha: 1, scale: 1, duration: 0.4, ease: EASE_UI }, "<0.1")
+          // text after settle (law 4): the monogram + answer trail the
+          // bubble's surface by a tenth — the words land on locked geometry
+          .to(ca.children, { autoAlpha: 1, duration: 0.3, ease: EASE_UI }, "<0.12")
           .to({}, { duration: 3.4 })
           // the exchange closes softly before the next one begins
           .to([cq, ca], { autoAlpha: 0, duration: 0.4, ease: EASE_UI, stagger: 0.06 })

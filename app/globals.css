@@ -1274,8 +1274,13 @@ main {
   color: rgba(19, 20, 19, 0.55);
   transition: color 0.45s var(--ease-ui);
 }
+/* the light-up is a follow-through CHAIN (apple-ad-motion.md law 2):
+   badge stamps → title turns → desc turns → sitelinks unfold, each ~0.1s
+   behind its driver. Delays live ONLY under .is-lit, so the dim-out runs
+   undelayed — it closes as a unit, faster than it opened. */
 .g-row.is-lit .g-title {
   color: var(--color-accent);
+  transition-delay: 0.1s;
 }
 .g-row .g-desc {
   color: rgba(19, 20, 19, 0.42);
@@ -1283,6 +1288,7 @@ main {
 }
 .g-row.is-lit .g-desc {
   color: rgba(19, 20, 19, 0.7);
+  transition-delay: 0.18s;
 }
 .g-expand {
   display: grid;
@@ -1291,9 +1297,7 @@ main {
 }
 .g-row.is-lit .g-expand {
   grid-template-rows: 1fr;
-  /* the sitelinks unfold a beat AFTER the colors turn — the light-up reads
-     as a sequence, not a switch-flip */
-  transition-delay: 0.22s;
+  transition-delay: 0.3s;
 }
 .g-expand-in {
   overflow: hidden;
@@ -1454,7 +1458,7 @@ main {
   gap: 4px;
   padding: 13px 14px;
 }
-/* dots + answer stack in one grid cell: the answer replaces the typing in
+/* dots + answer stack in ONE grid cell: the answer replaces the typing in
    place, and the thread's height never jumps */
 .chat-slot {
   display: grid;
