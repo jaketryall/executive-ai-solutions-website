@@ -948,9 +948,13 @@ main {
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-/* bubbles reuse .chat-b — user bubbles hug the right edge here */
+/* bubbles reuse .chat-b — user bubbles hug the right edge here, and
+   model answers keep their paragraph breaks */
 .schat-scroll .chat-b--user {
   margin-left: auto;
+}
+.schat-scroll .chat-b p {
+  white-space: pre-line;
 }
 .schat-chips {
   display: flex;
