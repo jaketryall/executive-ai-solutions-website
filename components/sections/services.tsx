@@ -413,6 +413,17 @@ export function Services() {
                     </p>
                   </div>
                 </ArtifactFrame>
+                {/* the demo, made falsifiable: the same chat runs live on
+                    this site — one tap and the visitor is talking to it */}
+                <button
+                  type="button"
+                  className="u-link t-meta mt-fib-2 cursor-pointer text-accent"
+                  onClick={() =>
+                    window.dispatchEvent(new CustomEvent("eas:chat-open"))
+                  }
+                >
+                  This one&rsquo;s real — ask it something
+                </button>
               </div>
             </div>
           </article>

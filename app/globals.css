@@ -809,6 +809,149 @@ main {
   }
 }
 
+/* ── the ask-this-site chat, LIVE (the stage-03 product on its own site):
+   a quiet ink pill bottom-right, a paper panel in the house skin ── */
+.schat-pill {
+  position: fixed;
+  right: 21px;
+  bottom: calc(21px + env(safe-area-inset-bottom));
+  z-index: 46;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  box-shadow: 0 14px 44px rgba(19, 20, 19, 0.28);
+  opacity: 0;
+  transform: translateY(13px);
+  pointer-events: none;
+  transition:
+    transform 0.45s var(--ease-structure),
+    opacity 0.3s var(--ease-ui);
+}
+.schat-pill.is-in {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+/* state feedback is instant (bimodal timing law) */
+.schat-pill:hover {
+  background: #000;
+}
+.schat-panel {
+  position: fixed;
+  right: 21px;
+  bottom: calc(76px + env(safe-area-inset-bottom));
+  z-index: 46;
+  display: flex;
+  flex-direction: column;
+  width: min(380px, calc(100vw - 42px));
+  max-height: min(560px, calc(100dvh - 144px));
+  overflow: hidden;
+  background: #fff;
+  border-radius: var(--radius-panel);
+  box-shadow: 0 24px 80px rgba(19, 20, 19, 0.3);
+}
+.schat-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(19, 20, 19, 0.08);
+}
+.schat-scroll {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+/* bubbles reuse .chat-b; user bubbles hug the right edge here */
+.schat-scroll .chat-b--user {
+  margin-left: auto;
+}
+.schat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.schat-chip {
+  padding: 8px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(19, 20, 19, 0.16);
+  font-size: 0.875rem;
+  color: rgba(19, 20, 19, 0.75);
+  cursor: pointer;
+}
+.schat-chip:hover {
+  border-color: rgba(19, 20, 19, 0.4);
+}
+.schat-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid rgba(19, 20, 19, 0.08);
+}
+.schat-input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(19, 20, 19, 0.14);
+  background: rgba(19, 20, 19, 0.03);
+  font-size: 0.9375rem;
+  color: var(--color-ink);
+}
+.schat-input:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+.schat-send {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  cursor: pointer;
+}
+.schat-send:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.schat-send svg {
+  width: 15px;
+  height: 15px;
+}
+@media (max-width: 820px) {
+  /* stack above the identity bar — it keeps the bottom edge */
+  .schat-pill {
+    right: 13px;
+    bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+  .schat-panel {
+    right: 13px;
+    left: 13px;
+    width: auto;
+    bottom: calc(140px + env(safe-area-inset-bottom));
+    max-height: calc(100dvh - 220px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .schat-pill {
+    transition: opacity 0.2s linear;
+    transform: none;
+  }
+}
+
 /* ── the mobile identity bar (nav.tsx): mark · name over a fact marquee ·
    the one action — an OS-native pill riding the bottom edge. Yields
    (is-away) over the estimator and the footer; absent on case pages. ── */

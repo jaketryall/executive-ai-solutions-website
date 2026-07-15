@@ -3,6 +3,7 @@ import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/nav";
 import { PersistentCta } from "@/components/ui/persistent-cta";
+import { SiteChat } from "@/components/ui/site-chat";
 import { Footer } from "@/components/footer";
 import { SmoothScroll } from "@/components/anim/smooth-scroll";
 import { ViewTransitions } from "@/components/anim/view-transition";
@@ -90,6 +91,7 @@ export default function RootLayout({
       <body className="antialiased">
         <Nav />
         <PersistentCta />
+        <SiteChat />
         <main className="bg-canvas relative z-10">{children}</main>
         <Footer />
         <SmoothScroll />
