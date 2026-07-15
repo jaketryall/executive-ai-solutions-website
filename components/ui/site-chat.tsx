@@ -30,6 +30,38 @@ export function SiteChat() {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // transcript forwarding (what makes "a human reads every conversation"
+  // true): mirror state into refs so the leave-page beacon reads fresh
+  const msgsRef = useRef<Msg[]>([]);
+  const sentRef = useRef(0);
+
+  const flush = () => {
+    const m = msgsRef.current;
+    if (
+      m.length < 2 ||
+      m.length <= sentRef.current ||
+      !m.some((x) => x.role === "assistant")
+    )
+      return;
+    sentRef.current = m.length;
+    try {
+      sessionStorage.setItem(`${STORE}-sent`, String(m.length));
+      navigator.sendBeacon(
+        "/api/chat/transcript",
+        new Blob(
+          [
+            JSON.stringify({
+              messages: m.slice(-20),
+              page: window.location.pathname,
+            }),
+          ],
+          { type: "application/json" }
+        )
+      );
+    } catch {
+      /* a lost transcript never breaks the chat */
+    }
+  };
 
   // arrive quietly, after the page has had its entrance beat
   useEffect(() => {
@@ -37,6 +69,7 @@ export function SiteChat() {
     try {
       const saved = sessionStorage.getItem(STORE);
       if (saved) setMsgs(JSON.parse(saved) as Msg[]);
+      sentRef.current = Number(sessionStorage.getItem(`${STORE}-sent`)) || 0;
     } catch {
       /* fresh start */
     }
@@ -44,14 +77,24 @@ export function SiteChat() {
       setOpen(true);
       setReady(true);
     };
+    const onLeave = () => flush();
+    const onHide = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
     window.addEventListener("eas:chat-open", onOpen);
+    window.addEventListener("pagehide", onLeave);
+    document.addEventListener("visibilitychange", onHide);
     return () => {
       clearTimeout(t);
       window.removeEventListener("eas:chat-open", onOpen);
+      window.removeEventListener("pagehide", onLeave);
+      document.removeEventListener("visibilitychange", onHide);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
+    msgsRef.current = msgs;
     try {
       sessionStorage.setItem(STORE, JSON.stringify(msgs.slice(-16)));
     } catch {
@@ -67,7 +110,10 @@ export function SiteChat() {
     // focusing mid-morph would yank the browser past the animation
     const t = setTimeout(() => inputRef.current?.focus(), 420);
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        flush();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => {
@@ -143,7 +189,10 @@ export function SiteChat() {
             type="button"
             className="schat-x"
             aria-label="Close the chat"
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+              flush();
+            }}
           >
             <svg viewBox="0 0 12 12" fill="none" aria-hidden>
               <path
