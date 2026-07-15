@@ -393,12 +393,14 @@ export function Hero() {
               real today */}
           <div data-anim="proofrow" className="mt-fib-4 flex items-center gap-fib-2">
             <div className="flex -space-x-[10px]" aria-hidden>
-              <span data-av className="hero-av bg-paper/90">
+              {/* solid, opaque discs — the translucent fills let the hero
+                  bleed through and read as ghosts */}
+              <span data-av className="hero-av bg-paper">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/work/desert-wings-logo.png" alt="" className="h-[19px] w-[19px] object-contain" />
               </span>
-              <span data-av className="hero-av bg-accent/60 text-paper">M</span>
-              <span data-av className="hero-av bg-paper/20 text-paper">R</span>
+              <span data-av className="hero-av bg-accent text-paper">M</span>
+              <span data-av className="hero-av bg-[#6d716e] text-paper">R</span>
             </div>
             <p className="t-meta text-paper/60">
               Trusted by 12+ local business owners

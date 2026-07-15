@@ -1368,7 +1368,9 @@ main {
   width: 34px;
   height: 34px;
   border-radius: 999px; /* honest circles: it's a face-pile, not a button */
-  border: 3px solid var(--color-dark);
+  /* the typical pile: solid discs, thin paper ring (the dark ring read as
+     a black halo on the ink hero — Jake, 2026-07-15) */
+  border: 2px solid var(--color-paper);
   font-size: 0.75rem;
   font-weight: 600;
   will-change: transform;
