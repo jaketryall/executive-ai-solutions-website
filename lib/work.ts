@@ -54,6 +54,9 @@ export type Project = {
   gallery: WorkFigure[];
   /** paired phone shots rendered as a two-up (optional) */
   phones?: [WorkImage, WorkImage];
+  /** full-length phone-width capture — the case page's single-device
+      exhibit scrolls it inside the screen (optional) */
+  phoneTour?: WorkImage;
   /** homepage proof row: the receipts. A project with results (and ideally a
       tall `tour` capture) gets a work-and-results row on the homepage. */
   results?: ProjectResults;
@@ -164,6 +167,12 @@ export const PROJECTS: Project[] = [
         span: "full",
       },
     ],
+    phoneTour: {
+      src: "/work/dw-phone-tour.jpg",
+      width: 780,
+      height: 10128,
+      alt: "The full Desert Wings site scrolling by at phone width",
+    },
     phones: [
       {
         src: "/work/desert-wings-mobile.png",

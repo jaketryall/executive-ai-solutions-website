@@ -1556,7 +1556,7 @@ section[id] {
   gap: 8px 21px;
   margin-top: 13px;
 }
-/* spans (demo props, not links — hrefless anchors invited dead taps) */
+/* spans — demo props, not links (hrefless anchors invited dead taps) */
 .g-ext span {
   font-size: 0.875rem;
   font-weight: 500;
@@ -4722,60 +4722,56 @@ html.wki-lock body {
     text-align: left;
   }
 }
-/* the phones — staged inside their mat like every other exhibit */
-.cs-phones-stage {
+/* ── the phone exhibit: ONE device, done properly (the MARK ASHTON
+   stage — a solid color field, a single premium bezel, the real page
+   riding the screen). The two tilted CSS toys read as props, not proof
+   (Jake, 2026-07-16). ── */
+.cs-mat-well--phone {
+  aspect-ratio: 16 / 10;
+  background: var(--color-accent);
+}
+@media (max-width: 820px) {
+  .cs-mat-well--phone {
+    /* portrait stage on portrait screens — the device stays big */
+    aspect-ratio: 4 / 5;
+  }
+}
+.cs-phone-stage {
   position: absolute;
   inset: 0;
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: clamp(21px, 4vw, 55px);
-  padding: 34px;
+  justify-content: center;
 }
-/* a CSS device mockup — rim, island, screen; no external asset needed */
-.cs-device {
+.cs-device2 {
   position: relative;
-  height: 78%;
-  aspect-ratio: 9 / 19;
-  flex-shrink: 0;
-  padding: 10px;
-  border-radius: 44px;
-  background: linear-gradient(150deg, #2c2e2d 0%, #121313 60%);
+  height: 88%;
+  aspect-ratio: 9 / 19.2;
+  padding: clamp(7px, 0.8vw, 11px);
+  border-radius: clamp(38px, 4.2vw, 58px);
+  background: linear-gradient(160deg, #3a3d3c 0%, #171818 55%, #232525 100%);
   box-shadow:
-    inset 0 0 0 1.5px rgba(239, 240, 238, 0.14),
-    0 34px 55px -26px rgba(0, 0, 0, 0.65);
+    inset 0 0 0 1.5px rgba(239, 240, 238, 0.22),
+    0 55px 89px -34px rgba(0, 0, 0, 0.5),
+    0 13px 34px rgba(0, 0, 0, 0.25);
 }
-.cs-device::after {
-  /* the island */
-  content: "";
+.cs-device2-screen {
+  position: relative;
+  height: 100%;
+  border-radius: clamp(31px, 3.4vw, 47px);
+  overflow: clip;
+  background: #0b0c0c;
+}
+.cs-device2-island {
   position: absolute;
-  top: 21px;
+  top: clamp(16px, 3.2%, 24px);
   left: 50%;
   transform: translateX(-50%);
-  width: 26%;
-  height: 2.9%;
+  width: 24%;
+  height: clamp(8px, 1.6%, 12px);
   border-radius: 999px;
   background: #050606;
   z-index: 2;
-}
-.cs-device-screen {
-  position: relative;
-  height: 100%;
-  width: 100%;
-  border-radius: 34px;
-  overflow: hidden;
-  background: #0b0c0c;
-}
-.cs-device-screen img {
-  object-fit: cover;
-  /* left-anchored: wider captures keep their headline's start */
-  object-position: left top;
-}
-.cs-phone--0 {
-  transform: translateY(-3%) rotate(-0.6deg);
-}
-.cs-phone--1 {
-  transform: translateY(5%) rotate(0.6deg);
 }
 .cs-next {
   text-decoration: none;

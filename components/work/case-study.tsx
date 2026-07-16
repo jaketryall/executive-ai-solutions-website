@@ -144,37 +144,47 @@ export function CaseStudy({
         });
       });
 
-      /* ── the hero tour: the captured page glides down, holds, eases back
-         (the services-02 loop) — runs only in view + tab visible ── */
-      const tourEl = q("[data-cs-tour]")[0] as HTMLElement | undefined;
-      if (tourEl && !reducedMotion()) {
-        const well = tourEl.closest(".cs-hero-well") as HTMLElement;
-        const travel = () =>
-          -Math.max(0, 1 - well.offsetHeight / tourEl.offsetHeight) * 100;
-        const loop = gsap.timeline({ repeat: -1, paused: true, repeatRefresh: true });
-        loop
-          .to({}, { duration: 1.4 })
-          .to(tourEl, { yPercent: travel, duration: 18, ease: "none" })
-          .to({}, { duration: 0.9 })
-          .to(tourEl, { yPercent: 0, duration: 2.6, ease: EASE_STRUCTURE })
-          .to({}, { duration: 1.1 });
-        let tourInView = false;
+      /* ── the tours: any captured page glides down its well, holds, eases
+         back (the services-02 loop) — the hero AND the phone exhibit's
+         screen both ride it. Travel is measured well-vs-image, so a short
+         capture simply rests. Runs only in view + tab visible. ── */
+      if (!reducedMotion()) {
+        const tourLoops: gsap.core.Timeline[] = [];
+        const tourVis = new Map<gsap.core.Timeline, boolean>();
         const syncTour = () => {
-          tourInView && !document.hidden ? loop.play() : loop.pause();
+          tourLoops.forEach((l) =>
+            tourVis.get(l) && !document.hidden ? l.play() : l.pause()
+          );
         };
-        ScrollTrigger.create({
-          trigger: well,
-          start: "top bottom",
-          end: "bottom top",
-          onToggle: (self) => {
-            tourInView = self.isActive;
-            syncTour();
-          },
+        (q("[data-cs-tour]") as HTMLElement[]).forEach((tourEl) => {
+          const well = tourEl.closest("[data-well]") as HTMLElement | null;
+          if (!well) return;
+          const travel = () =>
+            -Math.max(0, 1 - well.offsetHeight / tourEl.offsetHeight) * 100;
+          const loop = gsap.timeline({ repeat: -1, paused: true, repeatRefresh: true });
+          loop
+            .to({}, { duration: 1.4 })
+            .to(tourEl, { yPercent: travel, duration: 18, ease: "none" })
+            .to({}, { duration: 0.9 })
+            .to(tourEl, { yPercent: 0, duration: 2.6, ease: EASE_STRUCTURE })
+            .to({}, { duration: 1.1 });
+          tourLoops.push(loop);
+          ScrollTrigger.create({
+            trigger: well,
+            start: "top bottom",
+            end: "bottom top",
+            onToggle: (self) => {
+              tourVis.set(loop, self.isActive);
+              syncTour();
+            },
+          });
         });
-        document.addEventListener("visibilitychange", syncTour);
-        context.add(() => () =>
-          document.removeEventListener("visibilitychange", syncTour)
-        );
+        if (tourLoops.length) {
+          document.addEventListener("visibilitychange", syncTour);
+          context.add(() => () =>
+            document.removeEventListener("visibilitychange", syncTour)
+          );
+        }
       }
 
       /* ── the visit pill: rides the pointer over the hero well (the well is
@@ -391,24 +401,28 @@ export function CaseStudy({
           ))}
         </div>
 
-        {/* ── then THE BIG BOX: the phones (most visitors arrive on one) ── */}
+        {/* ── then THE BIG BOX: ONE phone, done properly (most visitors
+            arrive on one) — a solid-color stage, a single premium device,
+            the real site riding the screen on the tour loop ── */}
         <div className="mx-[8px] mt-[8px] grid grid-cols-1 gap-[8px] md:mx-[13px] md:mt-[13px] md:grid-cols-2 md:gap-[13px]">
-          {project.phones && (
+          {project.phoneTour && (
             <figure data-anim="cs-reveal" className="cs-mat md:col-span-2">
-              <div className="cs-mat-well relative overflow-hidden rounded-btn">
-                <div className="cs-phones-stage" aria-hidden={false}>
-                  {project.phones.map((ph, i) => (
-                    <div key={ph.src} className={`cs-device cs-phone--${i}`}>
-                      <div className="cs-device-screen">
-                        <Image
-                          src={ph.src}
-                          alt={ph.alt}
-                          fill
-                          sizes="(min-width: 821px) 320px, 44vw"
-                        />
-                      </div>
+              <div className="cs-mat-well cs-mat-well--phone relative overflow-hidden rounded-btn">
+                <div className="cs-phone-stage">
+                  <div className="cs-device2">
+                    <span className="cs-device2-island" aria-hidden />
+                    <div className="cs-device2-screen" data-well>
+                      <Image
+                        data-cs-tour
+                        src={project.phoneTour.src}
+                        alt={project.phoneTour.alt}
+                        width={project.phoneTour.width}
+                        height={project.phoneTour.height}
+                        sizes="(min-width: 821px) 340px, 64vw"
+                        className="block h-auto w-full"
+                      />
                     </div>
-                  ))}
+                  </div>
                 </div>
                 <span className="cs-mat-cap" aria-hidden>
                   Most visitors arrive on a phone, so the phone view is
