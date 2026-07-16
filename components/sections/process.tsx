@@ -45,7 +45,7 @@ const STEPS = [
 function DemoCall() {
   return (
     <div className="pd-panel">
-      <div className="pd-ticket w-[min(88%,290px)] aspect-[7/5] rounded-btn bg-ink text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)] flex flex-col justify-center p-[18px]">
+      <div className="pd-ticket w-[min(88%,360px)] aspect-[7/5] rounded-btn bg-ink text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)] flex flex-col justify-center p-[18px]">
         <Monogram className="h-[14px] w-[14px] opacity-80" />
         <p className="mt-[10px] text-[12.5px] text-paper/60">Your fixed quote</p>
         <p className="t-num mt-[3px] font-display text-[28px] font-[800] leading-none">
@@ -68,7 +68,7 @@ function DemoDesign() {
       {/* the SAME object language as the other three demos: one small ink
           card on the paper field — here it's a tiny browser, and the
           wireframe→real resolve happens inside its screen */}
-      <div className="pd-shot w-[min(88%,290px)] aspect-[7/5] rounded-btn bg-ink text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)] flex flex-col overflow-hidden">
+      <div className="pd-shot w-[min(88%,360px)] aspect-[7/5] rounded-btn bg-ink text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)] flex flex-col overflow-hidden">
         <div className="relative min-h-0 flex-1">
           {/* the wireframe it starts as… */}
           <div
@@ -119,7 +119,7 @@ function DemoDesign() {
 function DemoBuild() {
   return (
     <div className="pd-panel">
-      <div className="pd-report w-[min(88%,290px)] aspect-[7/5] rounded-btn bg-ink text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)] flex flex-col justify-center p-[18px]">
+      <div className="pd-report w-[min(88%,360px)] aspect-[7/5] rounded-btn bg-ink text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)] flex flex-col justify-center p-[18px]">
         <p className="t-meta text-[11px] text-paper/55">Build report</p>
         <div className="mt-[13px] flex flex-col gap-[11px]">
           <div className="sc-row">
@@ -153,7 +153,7 @@ function DemoBuild() {
 function DemoGrowth() {
   return (
     <div className="pd-panel">
-      <div className="pd-chart w-[min(88%,290px)] aspect-[7/5] rounded-btn bg-ink text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)] flex flex-col justify-center p-[18px]">
+      <div className="pd-chart w-[min(88%,360px)] aspect-[7/5] rounded-btn bg-ink text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)] flex flex-col justify-center p-[18px]">
         <p className="t-meta text-[11px] text-paper/55">Enquiries</p>
         <p className="mt-[3px] font-display text-[30px] font-[800] leading-none">
           <span className="st-count t-num">34</span>
@@ -306,8 +306,8 @@ export function Process() {
       ref={root}
       className="relative z-0"
     >
-      <div className="wrap py-fib-6">
-        <div>
+      <div className="py-fib-6 md:py-fib-7">
+        <div className="wrap">
           <h2 className="t-display-lg">How a project runs</h2>
           <p className="mt-[13px] max-w-[44ch] text-ink/70">
             Four steps from first call to a site that earns. Fixed quote up
@@ -316,8 +316,12 @@ export function Process() {
         </div>
 
         {/* the whole path, visible at once — four steps IN A LINE, each
-            inside its own card, no entrance: the life plays inside them */}
-        <div className="pd-steps mt-[34px] grid grid-cols-1 gap-[13px] md:mt-fib-4 md:grid-cols-2 md:gap-[21px] lg:grid-cols-4">
+            inside its own card, no entrance: the life plays inside them.
+            The row breaks OUT of the wrap (the services-panel move): four
+            postage stamps at 277px read small next to the 466px service
+            artifacts; edge-to-edge the cards grow with the screen while
+            the path still lands in one glance */}
+        <div className="pd-steps mx-[8px] mt-[34px] grid grid-cols-1 gap-[13px] md:mx-[13px] md:mt-fib-4 md:grid-cols-2 md:gap-[21px] lg:grid-cols-4">
           {STEPS.map((s, i) => {
             const Demo = DEMOS[i];
             return (
@@ -347,10 +351,12 @@ export function Process() {
           })}
         </div>
 
-        <div className="pd-cta mt-[55px] flex justify-end px-[21px] md:px-[55px]">
-          <a href="#estimate" className="u-link text-ink/70">
-            Start with the call
-          </a>
+        <div className="wrap">
+          <div className="pd-cta mt-[55px] flex justify-end px-[21px] md:px-[55px]">
+            <a href="#estimate" className="u-link text-ink/70">
+              Start with the call
+            </a>
+          </div>
         </div>
       </div>
     </section>
