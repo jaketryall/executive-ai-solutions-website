@@ -2580,14 +2580,17 @@ a.work-card:hover {
   color: inherit;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 1.125rem;
+  /* Apple's measured FAQ scale (apple-micro-interactions §6): Q = 24px
+     Display 600 — ours ran 18px, a full size class small (Jake) */
+  font-size: 1.1875rem;
   letter-spacing: -0.01em;
   text-align: left;
   cursor: pointer;
 }
 @media (min-width: 821px) {
   .faq-card .faq-q {
-    padding: 26px 34px;
+    padding: 29px 34px;
+    font-size: 1.5rem;
   }
 }
 .faq-card .faq-x {
