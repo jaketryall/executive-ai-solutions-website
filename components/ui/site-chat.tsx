@@ -205,7 +205,14 @@ export function SiteChat() {
           </button>
         </header>
 
-          <div className="schat-scroll" ref={scrollRef} aria-live="polite">
+          {/* data-lenis-prevent: the page's smooth-scroll engine swallows
+              wheel events over nested scrollers unless they opt out */}
+          <div
+            className="schat-scroll"
+            ref={scrollRef}
+            aria-live="polite"
+            data-lenis-prevent
+          >
             <div className="chat-b chat-b--bot">
               <p>{GREETING}</p>
             </div>

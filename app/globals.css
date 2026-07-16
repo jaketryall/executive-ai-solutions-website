@@ -941,6 +941,9 @@ main {
 }
 .schat-scroll {
   flex: 1;
+  /* a flex child's min-height defaults to its content — without this it
+     can never shrink, so long threads clipped instead of scrolling */
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
