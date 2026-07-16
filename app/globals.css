@@ -591,6 +591,12 @@ main {
    over EVERY ground (light canvas, dark chapters, steel) — no color-adaptive
    machinery, no scroll states, nothing to collide with content. Constant. */
 
+/* anchor landings clear the floating capsules — without this the landed
+   section's heading parks under the logo pill */
+section[id] {
+  scroll-margin-top: 89px;
+}
+
 .site-nav {
   position: fixed;
   inset: 0 0 auto 0;
@@ -1023,10 +1029,11 @@ main {
   height: 15px;
 }
 @media (max-width: 820px) {
-  /* stack above the identity bar — it keeps the bottom edge */
+  /* no floating pill on phones — stacked with the identity bar it cost
+     130px of bottom chrome (mobile audit 2026-07-16); the Ask tile in the
+     bar is the mobile entry, and the panel still opens above it */
   .schat-pill {
-    right: 13px;
-    bottom: calc(84px + env(safe-area-inset-bottom));
+    display: none;
   }
   .schat-panel {
     right: 13px;
@@ -1137,6 +1144,16 @@ main {
   to {
     transform: translateX(-50%);
   }
+}
+/* the Ask tile — quiet, same footprint as the mark; Estimate keeps loud */
+.mnav-ask {
+  border: 0;
+  cursor: pointer;
+  color: rgba(239, 240, 238, 0.85);
+}
+.mnav-ask svg {
+  width: 19px;
+  height: 19px;
 }
 .mnav-cta {
   flex-shrink: 0;
@@ -4679,6 +4696,25 @@ html.wki-lock body {
 }
 .cs-fig-well--wide {
   height: clamp(280px, 44vw, 620px);
+}
+@media (max-width: 820px) {
+  /* a phone renders the tour capture ~537px tall inside the 88svh well —
+     leaving a dead ink band below it. Wrap the image instead; the tour
+     loop's travel math already no-ops when nothing is clipped. */
+  .cs-hero-well:has([data-cs-tour]) {
+    height: auto;
+    max-height: 88svh;
+  }
+  /* the mat's name/note pair: 348px can't seat two readable columns —
+     stack them, both reading from the left edge */
+  .cs-mat-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+  .cs-mat-cap-touch {
+    text-align: left;
+  }
 }
 /* the phones — staged inside their mat like every other exhibit */
 .cs-phones-stage {

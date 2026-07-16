@@ -71,6 +71,21 @@ export function CaseStudy({
       // at opacity 0 (the homepage hero normally reveals it)
       const navEl = document.querySelector(".site-nav");
 
+      /* the dock bows out as the article ends: at max scroll it otherwise
+         parks on the footer wordmark with no scroll left to clear it */
+      const dock = q(".cs-onpage")[0] as HTMLElement | undefined;
+      if (dock) {
+        const dur = reducedMotion() ? 0 : 0.35;
+        ScrollTrigger.create({
+          trigger: root.current,
+          start: "bottom bottom",
+          onEnter: () =>
+            gsap.to(dock, { autoAlpha: 0, y: 13, duration: dur, ease: EASE_UI }),
+          onLeaveBack: () =>
+            gsap.to(dock, { autoAlpha: 1, y: 0, duration: dur, ease: EASE_UI }),
+        });
+      }
+
       if (reducedMotion()) {
         gsap.set([navEl, ...q("[data-anim]")], { autoAlpha: 1 });
         return;

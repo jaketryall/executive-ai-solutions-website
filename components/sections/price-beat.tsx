@@ -110,7 +110,9 @@ export function PriceBeat() {
       // sheet — the page's one ground change, on our own grammar
       className="relative z-10 -mt-fib-4 overflow-x-clip rounded-t-panel bg-canvas"
     >
-      <div className="wrap relative flex min-h-[96svh] flex-col items-center justify-center py-fib-7 text-center">
+      {/* the full-viewport beat is a desktop luxury: at 390px the claim is
+          ~300px tall and 96svh leaves half a dead screen before the quotes */}
+      <div className="wrap relative flex min-h-[68svh] flex-col items-center justify-center py-fib-6 text-center md:min-h-[96svh] md:py-fib-7">
         {/* the claim — full contrast, dead center */}
         {/* a <p>, not a heading — it shares the h1's statement register so the
             page's two claim peaks (hero, price) sit above every section h2 */}

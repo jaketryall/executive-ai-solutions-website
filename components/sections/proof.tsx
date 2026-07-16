@@ -79,7 +79,11 @@ export function Proof() {
            height) and re-read every cycle via repeatRefresh, so any aspect
            at any viewport ends exactly where the page runs out; short images
            simply don't move. */
-        const tour = row.querySelector("[data-tour]") as HTMLElement | null;
+        // two captures ship (desktop page / phone view); animate the one
+        // the breakpoint is actually displaying
+        const tour = (Array.from(
+          row.querySelectorAll("[data-tour]")
+        ) as HTMLElement[]).find((t) => t.offsetHeight > 0) ?? null;
         if (tour) {
           const win = tour.parentElement as HTMLElement;
           const travel = () =>
@@ -134,6 +138,10 @@ export function Proof() {
             rounded corners, the receipts straight on the card ── */}
         {rows.map((p) => {
           const img = p.tour ?? p.cover;
+          /* a desktop-page capture squeezed to 348px is texture, not proof —
+             phones get the phone capture (legible at full card width, and
+             tall enough that the tour loop still travels) */
+          const mob = p.phones?.[0];
           const [hero, ...rest] = p.results!.metrics;
           return (
             <article
@@ -152,8 +160,19 @@ export function Proof() {
                     width={img.width}
                     height={img.height}
                     sizes="(min-width: 821px) 55vw, 92vw"
-                    className="block h-auto w-full"
+                    className={`block h-auto w-full ${mob ? "hidden md:block" : ""}`}
                   />
+                  {mob && (
+                    <Image
+                      data-tour
+                      src={mob.src}
+                      alt={mob.alt}
+                      width={mob.width}
+                      height={mob.height}
+                      sizes="92vw"
+                      className="block h-auto w-full md:hidden"
+                    />
+                  )}
                 </div>
                 {/* the ad, pinned to its page — only when the copy is real */}
                 {p.results!.ad && (

@@ -465,6 +465,26 @@ export function Nav() {
               </span>
             </span>
           </span>
+          {/* Ask lives IN the bar on mobile — a second floating pill above
+              it cost 130px of stacked bottom chrome (mobile audit 2026-07-16).
+              One quiet tile; Estimate keeps the loud slot. */}
+          <button
+            type="button"
+            className="mnav-tile mnav-ask"
+            aria-label="Ask this site a question"
+            onClick={() =>
+              window.dispatchEvent(new CustomEvent("eas:chat-open"))
+            }
+          >
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden>
+              <path
+                d="M4 4.5h12A1.5 1.5 0 0 1 17.5 6v6a1.5 1.5 0 0 1-1.5 1.5H9l-3.5 3v-3H4A1.5 1.5 0 0 1 2.5 12V6A1.5 1.5 0 0 1 4 4.5Z"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
           <Link
             href={pathname === "/" ? "/#estimate" : "/pricing#estimate"}
             className="mnav-cta t-num"

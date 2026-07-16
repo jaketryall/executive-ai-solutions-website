@@ -129,7 +129,7 @@ export function ValueReframe() {
 
       {/* the trust row — what the machine runs on. Calm, constant, unfenced. */}
       <div
-        className="lm mt-fib-6 pb-fib-6 md:mt-fib-7 md:pb-fib-7"
+        className="lm mt-fib-5 pb-fib-5 md:mt-fib-7 md:pb-fib-7"
         role="list"
         aria-label={`Built on ${STACK.join(", ")}`}
       >

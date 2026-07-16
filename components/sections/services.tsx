@@ -318,7 +318,7 @@ export function Services() {
 
           <div className="flex flex-col gap-fib-4">
           {/* ── 01 · THE CLICK — artifact right ── */}
-          <article data-svc-row className="rounded-frame bg-paper/[0.05] p-fib-4 md:p-fib-5">
+          <article data-svc-row className="rounded-frame bg-paper/[0.05] p-fib-3 md:p-fib-5">
             <div className="flex flex-col gap-fib-4">
               <div>
                 <h3 data-anim="copy" className="t-title--lg">
@@ -354,10 +354,12 @@ export function Services() {
                     </p>
                     <div className="g-expand">
                       <div className="g-expand-in">
+                        {/* spans, not bare <a>s — hrefless anchors still
+                            paint a tap cursor and invite dead taps on touch */}
                         <div className="g-ext" aria-hidden>
-                          <a>Discovery flights</a>
-                          <a>Fleet and rates</a>
-                          <a>Book a tour</a>
+                          <span>Discovery flights</span>
+                          <span>Fleet and rates</span>
+                          <span>Book a tour</span>
                         </div>
                       </div>
                     </div>
@@ -384,7 +386,7 @@ export function Services() {
           </article>
 
           {/* ── 02 · THE LANDING — artifact left ── */}
-          <article data-svc-row className="rounded-frame bg-paper/[0.05] p-fib-4 md:p-fib-5">
+          <article data-svc-row className="rounded-frame bg-paper/[0.05] p-fib-3 md:p-fib-5">
             <div className="flex flex-col gap-fib-4">
               <div>
                 <h3 data-anim="copy" className="t-title--lg">
@@ -428,7 +430,7 @@ export function Services() {
           </article>
 
           {/* ── 03 · THE FOLLOW-UP — artifact right ── */}
-          <article data-svc-row className="rounded-frame bg-paper/[0.05] p-fib-4 md:p-fib-5">
+          <article data-svc-row className="rounded-frame bg-paper/[0.05] p-fib-3 md:p-fib-5">
             <div className="flex flex-col gap-fib-4">
               <div>
                 <div className="flex flex-wrap items-center gap-fib-2">
@@ -496,9 +498,11 @@ export function Services() {
                 </ArtifactFrame>
                 {/* the demo, made falsifiable: the same chat runs live on
                     this site — one tap and the visitor is talking to it */}
+                {/* py pads the hit area to ~44px (touch minimum) without
+                    changing the link's visual weight */}
                 <button
                   type="button"
-                  className="u-link t-meta mt-fib-2 cursor-pointer text-accent"
+                  className="u-link t-meta mt-fib-1 cursor-pointer py-fib-2 text-accent"
                   onClick={() =>
                     window.dispatchEvent(new CustomEvent("eas:chat-open"))
                   }
