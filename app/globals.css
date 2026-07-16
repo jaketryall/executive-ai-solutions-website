@@ -1783,7 +1783,9 @@ section[id] {
   width: min(300px, 24vw);
   padding: 21px;
   border-radius: var(--radius-panel);
-  background: rgba(222, 224, 222, 0.6);
+  /* rides the panel token — a hardcoded copy of the OLD panel tone
+     survived the 2026-07-16 retune and drifted off-palette */
+  background: var(--color-panel);
   text-align: left;
   will-change: transform;
 }
