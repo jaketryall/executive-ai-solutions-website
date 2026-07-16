@@ -108,15 +108,15 @@ export function SiteCheck() {
     <section
       id="site-check"
       ref={root}
-      // chapter one continues: same ink as the proof above
-      // pb-fib-7, not 8: the census measured 404px of dead air between this
-      // form and the price statement — the register flip needs air, not a void
-      className="relative bg-[var(--color-dark-2)] pb-fib-7 text-paper"
+      // PRIME SLOT (the acquisition order, Jake 2026-07-16): directly under
+      // the hero — the first thing a cold click can DO. Same ink the hero's
+      // gradient lands on; pt clears the ad card's exit overhang.
+      className="relative bg-[var(--color-dark-2)] pb-fib-7 pt-fib-7 text-paper"
     >
       <div className="wrap">
         <div className="mx-auto max-w-[640px] text-center">
           <h2 data-anim="sc" className="t-display-lg">
-            Try us on your own site
+            Get a free site audit, right now
           </h2>
           <p data-anim="sc" className="mx-auto mt-fib-3 max-w-[42ch] text-paper/70">
             Paste your address and we&rsquo;ll read your homepage the way we
@@ -151,6 +151,27 @@ export function SiteCheck() {
             </p>
           )}
         </div>
+
+        {/* instant response: the report card appears AS skeleton the frame
+            the button is pressed — the wait reads as "reading your site",
+            never as a dead form (Jake's instant-results worry) */}
+        {state === "busy" && (
+          <div
+            className="dark-chapter proof-card mx-auto mt-fib-5 max-w-[820px] rounded-panel p-fib-3 md:p-fib-4"
+            aria-hidden
+          >
+            <div className="scheck-skel scheck-skel--title" />
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="mt-fib-3 flex gap-fib-2">
+                <div className="scheck-skel scheck-skel--mark" />
+                <div className="min-w-0 flex-1">
+                  <div className="scheck-skel scheck-skel--line" style={{ width: `${62 - i * 8}%` }} />
+                  <div className="scheck-skel scheck-skel--sub mt-fib-1" style={{ width: `${88 - i * 6}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {result && (
           <div

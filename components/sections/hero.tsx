@@ -363,12 +363,12 @@ export function Hero() {
 
   return (
     <section id="top" ref={root} className="hero dark-chapter relative">
-      {/* grid ratio matches the proof section exactly (62/38) so the ad card
-          column and the proof anchor zone share the same edges — the straddle
-          lands flush, not "almost" */}
-      <div className="hero-in wrap relative z-10 grid min-h-[92svh] items-center gap-fib-5 pb-fib-6 pt-[120px] md:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] md:pt-fib-6">
-        {/* ── left zone: the statement (outcome leads, industry follows) ── */}
-        <div className="hero-left">
+      {/* the acquisition spine (Jake, 2026-07-16): CENTERED — claim, action,
+          proof strip, then the enactment stacked beneath (the same center-
+          stage grammar as the service-page heroes) */}
+      <div className="hero-in wrap relative z-10 flex min-h-[92svh] flex-col items-center justify-center gap-fib-5 pb-fib-6 pt-[120px] text-center md:pt-fib-6">
+        {/* ── the statement (outcome leads, industry follows) ── */}
+        <div className="hero-left flex flex-col items-center">
           <p data-anim="eyebrow" className="t-meta uppercase text-paper/45">
             Full-funnel ads agency
           </p>
@@ -377,21 +377,21 @@ export function Hero() {
               words — that's what lets the whole thing hold display size
               without reading as a wall (the eyebrow + the ad demo carry the
               specifics) */}
-          <h1 data-anim="statement" className="t-statement t-statement--hero mt-fib-2 max-w-[24ch] text-balance">
+          <h1 data-anim="statement" className="t-statement t-statement--hero mx-auto mt-fib-2 max-w-[24ch] text-balance">
             <span className="text-paper">
               {ariaPair.out} {ariaPair.who}.
             </span>{" "}
             <span className="text-paper/40">We run the whole click.</span>
           </h1>
 
-          <div data-anim="ctas" className="mt-fib-3 flex flex-wrap items-center gap-fib-2">
+          <div data-anim="ctas" className="mt-fib-3 flex flex-wrap items-center justify-center gap-fib-2">
             <CTA href="#estimate" label="Price my project" tone="paper" />
           </div>
 
           {/* PLACEHOLDER social proof — the count and the two initial circles
               swap for real client marks as the roster grows; the DW mark is
               real today */}
-          <div data-anim="proofrow" className="mt-fib-4 flex items-center gap-fib-2">
+          <div data-anim="proofrow" className="mt-fib-4 flex items-center justify-center gap-fib-2">
             <div className="flex -space-x-[10px]" aria-hidden>
               {/* solid, opaque discs — the translucent fills let the hero
                   bleed through and read as ghosts */}
@@ -408,14 +408,9 @@ export function Hero() {
           </div>
         </div>
 
-        {/* ── right zone: the enactment, centered with the statement — the
-            hero's one living thing. The dark→light seam below is earned by
-            the proof section rising over this chapter with a rounded top. ── */}
-        {/* no self-start/margin override: the grid's items-center does the
-            work, so the card's extra height overhangs the text column
-            EQUALLY top and bottom (it used to ride 22px high — Jake's eye,
-            2026-07-15) */}
-        <div data-dock-card className="relative z-20">
+        {/* ── the enactment, stacked beneath the words — the hero's one
+            living thing, overhanging the seam into the audit below ── */}
+        <div data-dock-card className="relative z-20 w-[min(100%,560px)]">
           <ArtifactFrame
             variant="card"
             tone="paper"

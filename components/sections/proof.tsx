@@ -129,8 +129,8 @@ export function Proof() {
         >
           <h2 className="t-display-lg">Where the click lands</h2>
           <p className="max-w-[38ch] text-paper/70 md:text-right">
-            That ad above is real. These are the pages our clicks land on:
-            designed, built, and tracked by us.
+            The ad you watched climb the search is real. These are the pages
+            our clicks land on: designed, built, and tracked by us.
           </p>
         </header>
 
