@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { gsap, EASE_STRUCTURE, EASE_UI, reducedMotion } from "@/components/anim/ease";
 import { Monogram } from "@/components/ui/monogram";
+import { CTA } from "@/components/ui/cta";
 
 
 const LINKS = [
@@ -499,14 +500,27 @@ export function Nav() {
               </span>
             ))}
           </nav>
-          <div className="ov-foot flex items-center justify-between">
-            <Monogram className="h-fib-4 w-fib-4 opacity-60" />
-            <a
-              href="mailto:hello@executiveaisolutions.com"
-              className="u-link t-meta"
-            >
-              hello@executiveaisolutions.com
-            </a>
+          {/* the menu ends in the one action (it had none), then the two
+              human facts: a real inbox and a ticking Mesa clock */}
+          <div className="ov-foot flex flex-col gap-fib-4">
+            <span onClick={() => setOpen(false)}>
+              <CTA
+                href="/pricing#estimate"
+                label="Price my project"
+                tone="paper"
+              />
+            </span>
+            <div className="flex flex-wrap items-center justify-between gap-fib-2">
+              <a
+                href="mailto:hello@executiveaisolutions.com"
+                className="u-link t-meta"
+              >
+                hello@executiveaisolutions.com
+              </a>
+              <span className="t-meta text-paper/50">
+                Mesa, AZ · <LocalTime />
+              </span>
+            </div>
           </div>
         </div>
       </div>
