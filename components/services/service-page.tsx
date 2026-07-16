@@ -47,16 +47,20 @@ const CHAT_Q = "Do you offer discovery flights on weekends?";
 function PhoneShell({
   label,
   screenClass = "",
+  island = true,
   children,
 }: {
   label: string;
   screenClass?: string;
+  /* drop the island on UI screens — a cutout over live text reads as a
+     defect; keep it only over photographic screens (SearchKings' move) */
+  island?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <div className="svc-phone" role="group" aria-label={label}>
       <div className="dvc">
-        <span className="dvc-island" aria-hidden />
+        {island && <span className="dvc-island" aria-hidden />}
         <div className={`dvc-screen ${screenClass}`}>{children}</div>
       </div>
     </div>
@@ -70,52 +74,132 @@ function HeroArtifact({ slug }: { slug: string }) {
       <PhoneShell
         label="A phone showing a Google search with the Desert Wings ad on top"
         screenClass="dvc-screen--ui"
+        island={false}
       >
-        <div className="g-search" aria-hidden>
-          <svg viewBox="0 0 16 16" fill="none" className="g-glass">
-            <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.6" />
-            <path d="m10.5 10.5 3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
-          <span className="g-q-static">flight school near me</span>
-        </div>
-        <div className="g-ad relative">
-          <p className="g-sponsored">Sponsored</p>
-          <p className="g-url">desertwingsflightschool.com</p>
-          {/* PLACEHOLDER — swap with the real Desert Wings ad, verbatim */}
-          <p className="g-title">
-            Desert Wings Flight School | Learn to Fly at Falcon Field
-          </p>
-          <p className="g-desc">
-            Discovery flights and PPL through CFI training in Mesa, AZ.
-          </p>
-          {/* spans, not bare <a>s — hrefless anchors invite dead taps */}
-          <div className="g-ext" aria-hidden>
-            <span>Discovery flights</span>
-            <span>Fleet and rates</span>
-            <span>Book a tour</span>
+        {/* the .g-m skin replicates the 2026 mobile SERP as measured off
+            Google's live DOM — anatomy AND values are Google's own */}
+        <div className="g-m" aria-hidden>
+          <div className="g-m-bar">
+            <svg viewBox="0 0 20 20" fill="none">
+              <circle cx="8.6" cy="8.6" r="5.4" stroke="currentColor" strokeWidth="2" />
+              <path d="m13 13 4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+            <span className="g-m-q">flight school near me</span>
+            <svg viewBox="0 0 20 20" fill="none">
+              <rect x="7" y="2.5" width="6" height="10" rx="3" stroke="currentColor" strokeWidth="1.8" />
+              <path d="M4.5 10a5.5 5.5 0 0 0 11 0M10 15.5V18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+            <svg viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="4" stroke="currentColor" strokeWidth="1.8" />
+              <path d="M3 6V4.5A1.5 1.5 0 0 1 4.5 3H6M14 3h1.5A1.5 1.5 0 0 1 17 4.5V6M17 14v1.5a1.5 1.5 0 0 1-1.5 1.5H14M6 17H4.5A1.5 1.5 0 0 1 3 15.5V14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
           </div>
-          {/* the stage's namesake, on loop: a thumb-tap takes the click */}
-          <span className="g-click-ring" aria-hidden />
-        </div>
-        <div className="g-org-row" aria-hidden>
-          <p className="g-org-url">somedirectory.com &rsaquo; arizona</p>
-          <p className="g-org-title">Best flight schools near Phoenix, ranked</p>
-        </div>
-        {/* the results continue past the screen edge — skeleton rows keep
-            the SERP reading as a live page, not a poster */}
-        <div className="g-skel" aria-hidden>
-          <span className="g-skel-thumb" />
-          <span className="g-skel-lines">
-            <span className="g-skel-line block w-[82%]" />
-            <span className="g-skel-line block w-[58%]" />
-          </span>
-        </div>
-        <div className="g-skel" aria-hidden>
-          <span className="g-skel-thumb" />
-          <span className="g-skel-lines">
-            <span className="g-skel-line block w-[74%]" />
-            <span className="g-skel-line block w-[63%]" />
-          </span>
+          <nav className="g-m-tabs">
+            <span>AI Mode</span>
+            <span className="is-on">All</span>
+            <span>Images</span>
+            <span>Maps</span>
+            <span>News</span>
+          </nav>
+          <div className="g-m-loc">
+            <svg viewBox="0 0 14 14" fill="none">
+              <path d="M7 1.5A4.2 4.2 0 0 0 2.8 5.7C2.8 8.85 7 12.8 7 12.8s4.2-3.95 4.2-7.1A4.2 4.2 0 0 0 7 1.5Z" stroke="currentColor" strokeWidth="1.4" />
+              <circle cx="7" cy="5.7" r="1.4" fill="currentColor" />
+            </svg>
+            <b>Mesa, AZ</b>
+            <span>&middot;</span>
+            <span className="is-link">Choose area</span>
+          </div>
+          <div className="g-m-ad">
+            <p className="g-m-sponsored">Sponsored</p>
+            <div className="g-m-src">
+              {/* the client's real favicon — realism is the pitch */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/work/dw-favicon.png" alt="" className="g-m-fav" width={64} height={64} />
+              <span className="g-m-site">
+                <span className="g-m-name">Desert Wings Flight School</span>
+                <span className="g-m-url">https://www.desertwingsflightschool.com</span>
+              </span>
+              <svg viewBox="0 0 16 16" fill="currentColor" className="g-m-kebab">
+                <circle cx="8" cy="3.2" r="1.4" />
+                <circle cx="8" cy="8" r="1.4" />
+                <circle cx="8" cy="12.8" r="1.4" />
+              </svg>
+            </div>
+            {/* PLACEHOLDER — swap with the real Desert Wings ad, verbatim */}
+            <p className="g-m-title">
+              Desert Wings Flight School | Learn to Fly at Falcon Field
+            </p>
+            <p className="g-m-desc">
+              Discovery flights and PPL through CFI training in Mesa, AZ.
+              Train at Falcon Field with FAA-certified instructors.
+            </p>
+            {/* sitelink assets — stacked rows, the 2026 mobile format.
+                Spans, not bare <a>s: hrefless anchors invite dead taps */}
+            <div className="g-m-links">
+              <span className="g-m-link">
+                <span>
+                  <span className="g-m-link-t block">Discovery flights</span>
+                  <span className="g-m-link-d block">
+                    See the valley from the left seat
+                  </span>
+                </span>
+                <svg viewBox="0 0 16 16" fill="none" className="g-m-chev">
+                  <path d="m6 3.5 4.5 4.5L6 12.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+              <span className="g-m-link">
+                <span>
+                  <span className="g-m-link-t block">Fleet and rates</span>
+                  <span className="g-m-link-d block">
+                    Transparent hourly rates, modern 172s
+                  </span>
+                </span>
+                <svg viewBox="0 0 16 16" fill="none" className="g-m-chev">
+                  <path d="m6 3.5 4.5 4.5L6 12.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </div>
+            {/* the stage's namesake, on loop: a thumb-tap takes the click */}
+            <span className="g-click-ring" />
+          </div>
+          <div className="g-m-sep" />
+          <div className="g-m-org">
+            <div className="g-m-src">
+              <span className="g-m-fav" />
+              <span className="g-m-site">
+                <span className="g-m-name">FlightSchoolList</span>
+                <span className="g-m-url">flightschoollist.com &rsaquo; arizona &rsaquo; mesa</span>
+              </span>
+            </div>
+            <p className="g-m-title">Best flight schools near Phoenix, ranked</p>
+          </div>
+          <div className="g-m-org">
+            <div className="g-m-src">
+              <span className="g-m-fav" />
+              <span className="g-m-site">
+                <span className="g-m-name">Reddit</span>
+                <span className="g-m-url">reddit.com &rsaquo; r/flying</span>
+              </span>
+            </div>
+            <p className="g-m-title">Anyone trained at Falcon Field? Worth it?</p>
+          </div>
+          {/* the results continue past the screen edge — skeleton rows keep
+              the SERP reading as a live page, not a poster */}
+          <div className="g-skel">
+            <span className="g-skel-thumb" />
+            <span className="g-skel-lines">
+              <span className="g-skel-line block w-[82%]" />
+              <span className="g-skel-line block w-[58%]" />
+            </span>
+          </div>
+          <div className="g-skel">
+            <span className="g-skel-thumb" />
+            <span className="g-skel-lines">
+              <span className="g-skel-line block w-[74%]" />
+              <span className="g-skel-line block w-[63%]" />
+            </span>
+          </div>
         </div>
       </PhoneShell>
     );
@@ -142,6 +226,7 @@ function HeroArtifact({ slug }: { slug: string }) {
     <PhoneShell
       label="Ask-this-site chat answering a visitor"
       screenClass="dvc-screen--ui"
+      island={false}
     >
       <div className="chat-card mt-0! flex-none! border-0! bg-transparent! p-fib-2!">
         <p className="chat-q">{CHAT_Q}</p>
@@ -347,7 +432,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         if (nav) gsap.set(nav, { autoAlpha: 1 });
         gsap.set(q("[data-anim]"), { autoAlpha: 1, x: 0, y: 0, scale: 1 });
         gsap.set(q(".mask-inner"), { yPercent: 0, y: 0 });
-        gsap.set(q(".g-ext span"), { autoAlpha: 1 });
+        gsap.set(q(".g-m-link"), { autoAlpha: 1 });
         const chatQ = q(".chat-q")[0] as HTMLElement | undefined;
         if (chatQ) chatQ.textContent = CHAT_Q;
         // the demo rests as a still: exchange complete, booking confirmed
@@ -390,7 +475,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         if (service.slug === "google-ads") {
           // the ad's sitelink extensions tick in
           tl.fromTo(
-            q(".g-ext span"),
+            q(".g-m-link"),
             { autoAlpha: 0, y: 8 },
             { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.1, ease: EASE_UI },
             "+=0.15"
@@ -407,7 +492,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         // the CLICK, taken: on a phone the click is a TAP — a thumb ripple
         // on the sitelink, no desktop cursor in sight
         const ring = q(".g-click-ring")[0] as HTMLElement;
-        const link = q(".g-ext span")[0] as HTMLElement;
+        const link = q(".g-m-link")[0] as HTMLElement;
         if (ring && link) {
           const pt = () => ({
             x: link.offsetLeft + link.offsetWidth * 0.5,

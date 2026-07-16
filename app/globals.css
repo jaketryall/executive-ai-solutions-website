@@ -4795,36 +4795,218 @@ html.wki-lock body {
   background: #fff;
   color: var(--color-ink);
 }
-/* compact diegetic type inside a ~290px screen */
-.svc-phone .g-search {
-  height: 40px;
-  margin: 13px 13px 0;
+/* ── the mobile Google skin (.g-m): pixel-true replica of the 2026
+   mobile SERP, every value measured off Google's live DOM in light
+   theme (2026-07-16, spec in design-dna/hybrid-rebuild-plan.md §2).
+   Sizes are cqw so the surface stays exactly proportional to a real
+   390px viewport at any phone width (1px real = 0.2564cqw). Google's
+   served fonts (Google Sans / Roboto) fall back to the system
+   grotesques — everything else is Google's own values. ── */
+.g-m {
+  container-type: inline-size;
+  min-height: 100%;
+  background: #fff;
+  color: #1f1f1f;
+  font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+  text-align: left;
 }
-.g-q-static {
+/* the search pill: white, floating on shadow (mobile has no border) */
+.g-m-bar {
+  display: flex;
+  align-items: center;
+  gap: 3.1cqw;
+  height: 11.3cqw; /* 44px */
+  margin: 5.6cqw 4.1cqw 0; /* 16px insets; islandless screens breathe at top */
+  padding: 0 4.6cqw;
+  border-radius: 6.4cqw; /* 25px */
+  background: #fff;
+  box-shadow: 0 1px 6px rgba(60, 64, 67, 0.28);
+  font-size: 4.1cqw; /* 16px */
+  color: rgba(0, 0, 0, 0.87);
+}
+.g-m-bar svg {
+  width: 5.1cqw;
+  height: 5.1cqw;
+  flex-shrink: 0;
+  color: #545454; /* glass, mic, lens: all flat gray on the live page */
+}
+.g-m-q {
+  flex: 1;
   min-width: 0;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: 0.8125rem;
-  color: rgba(19, 20, 19, 0.72);
 }
-.svc-phone .g-title {
-  font-size: 0.9375rem;
-  line-height: 1.35;
+/* the filter tabs — AI Mode leads in 2026; All carries the ink underline */
+.g-m-tabs {
+  display: flex;
+  gap: 6.2cqw; /* 24px */
+  margin-top: 3.6cqw;
+  padding: 0 4.1cqw;
+  border-bottom: 1px solid #ebedef;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 3.6cqw; /* 14px, weight 500 */
+  font-weight: 500;
+  color: #636363;
+  white-space: nowrap;
+  overflow: hidden;
 }
-.svc-phone .g-desc {
-  font-size: 0.75rem;
+.g-m-tabs span {
+  padding-bottom: 2.1cqw;
 }
-.svc-phone .g-ad {
-  margin: 13px;
+.g-m-tabs .is-on {
+  color: #1f1f1f;
+  box-shadow: inset 0 -0.77cqw #1f1f1f; /* the 3px active underline */
 }
-.svc-phone .g-org-row {
-  margin: 0 13px;
-  padding-top: 13px;
-  border-top: 1px solid rgba(19, 20, 19, 0.08);
+.g-m-loc {
+  display: flex;
+  align-items: center;
+  gap: 1.5cqw;
+  margin: 2.8cqw 4.1cqw 0;
+  font-size: 3.1cqw; /* 12px */
+  color: #3c4043;
 }
-.svc-phone .g-org-title {
-  color: rgba(19, 20, 19, 0.82); /* real Google organics are near-black */
+.g-m-loc svg {
+  width: 3.6cqw;
+  height: 3.6cqw;
+  color: #545454;
+}
+.g-m-loc b {
+  font-weight: 500;
+  color: #1f1f1f;
+}
+.g-m-loc .is-link {
+  color: #1558d6;
+}
+/* the ad block — standalone ads carry their own bold Sponsored line */
+.g-m-ad {
+  position: relative;
+  margin: 4.6cqw 4.1cqw 0;
+}
+.g-m-sponsored {
+  font-size: 3.1cqw; /* 12px/700 */
+  font-weight: 700;
+  color: #1f1f1f;
+}
+/* the source row: 28px circular favicon, name over full URL, kebab right */
+.g-m-src {
+  display: flex;
+  align-items: center;
+  gap: 3.1cqw; /* 12px */
+  margin-top: 2.6cqw;
+}
+.g-m-fav {
+  width: 7.2cqw; /* 28px */
+  height: 7.2cqw;
+  flex-shrink: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #ebedef;
+  background: #fff;
+  object-fit: cover;
+}
+span.g-m-fav {
+  background: #f1f3f4; /* the ghost favicon on prop results */
+}
+.g-m-site {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+.g-m-name {
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 3.6cqw; /* 14px */
+  line-height: 5.1cqw;
+  color: #1f1f1f;
+}
+.g-m-url {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 3.1cqw; /* 12px */
+  line-height: 4.1cqw;
+  color: #3c4043;
+}
+.g-m-kebab {
+  align-self: flex-start;
+  flex-shrink: 0;
+  width: 4.6cqw;
+  height: 4.6cqw;
+  color: #3c4043;
+}
+/* the headline: Google Sans Flex 22/28 at the MOBILE blue (#1558d6 —
+   the classic #1a0dab is desktop-only) */
+.g-m-title {
+  margin-top: 3.1cqw; /* 12px */
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 5.6cqw; /* 22px */
+  font-weight: 400;
+  line-height: 7.2cqw; /* 28px */
+  color: #1558d6;
+}
+.g-m-desc {
+  margin-top: 2.1cqw; /* 8px */
+  font-size: 3.6cqw; /* 14px */
+  line-height: 5.1cqw; /* 20px */
+  color: #6c6c6c;
+}
+/* sitelink assets: stacked rows behind hairlines — dark titles, the
+   blue chevron at the card edge (2026 killed the inline blue links) */
+.g-m-links {
+  margin-top: 3.3cqw;
+}
+.g-m-link {
+  display: flex;
+  align-items: center;
+  gap: 3.1cqw;
+  padding: 3.6cqw 0;
+  border-top: 1px solid #ebedef;
+}
+.g-m-link-t {
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 4.6cqw; /* 18px */
+  line-height: 6.7cqw;
+  color: #1f1f1f;
+}
+.g-m-link-d {
+  font-size: 3.6cqw;
+  line-height: 5.1cqw;
+  color: #6c6c6c;
+}
+.g-m-chev {
+  flex-shrink: 0;
+  width: 4.6cqw;
+  height: 4.6cqw;
+  margin-left: auto;
+  color: #1558d6;
+}
+/* result-to-result: the compressed read of mobile's 8px card gap
+   between hairline-ringed white cards */
+.g-m-sep {
+  height: 2.05cqw;
+  margin-top: 4.6cqw;
+  background: #ebedef;
+}
+.g-m-org {
+  margin: 4.6cqw 4.1cqw 0;
+}
+.g-m-org .g-m-title {
+  margin-top: 2.1cqw;
+}
+/* skeleton continuation rows, rescaled to the replica's ruler */
+.g-m .g-skel {
+  margin: 5.4cqw 4.1cqw 0;
+  gap: 2.6cqw;
+}
+.g-m .g-skel-thumb {
+  width: 11.3cqw;
+  height: 11.3cqw;
+  border-radius: 2.6cqw;
+}
+.g-m .g-skel-line {
+  height: 2.6cqw;
+  border-radius: 1.3cqw;
+  margin-top: 2.1cqw;
 }
 /* the page continues below the screen's edge (the ChatGPT-mock trick:
    skeleton content signals a live page, not a finished poster) */
