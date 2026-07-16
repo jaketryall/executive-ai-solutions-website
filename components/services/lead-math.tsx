@@ -161,7 +161,7 @@ export function LeadMathCore({
         </p>
 
         <div className={`mt-fib-3 border-t pt-fib-3 ${c.line}`}>
-          <p className="t-num font-display text-[3.2rem] font-extrabold leading-none tracking-[-0.03em]">
+          <p className="t-num font-display text-[3rem] font-extrabold leading-none tracking-[-0.03em]">
             {beCustomers}
           </p>
           <p className={`mt-fib-1 max-w-[26ch] ${c.body}`}>

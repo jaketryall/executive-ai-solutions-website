@@ -109,7 +109,9 @@ export function SiteCheck() {
       id="site-check"
       ref={root}
       // chapter one continues: same ink as the proof above
-      className="relative bg-[var(--color-dark-2)] pb-fib-8 text-paper"
+      // pb-fib-7, not 8: the census measured 404px of dead air between this
+      // form and the price statement — the register flip needs air, not a void
+      className="relative bg-[var(--color-dark-2)] pb-fib-7 text-paper"
     >
       <div className="wrap">
         <div className="mx-auto max-w-[640px] text-center">

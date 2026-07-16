@@ -126,7 +126,7 @@ main {
   line-height: 1.08;
 }
 .t-display-lg {
-  /* the section h2 register (Lesse's ~43px at 1440) — one rung UNDER the
+  /* the section h2 register (Lesse ~43px at 1440) — one rung UNDER the
      hero h1 so the page reads as a conventional ladder: h1 > h2 > h3 */
   font-family: var(--font-display);
   font-weight: 650;
@@ -146,10 +146,12 @@ main {
 }
 .t-statement {
   /* the reading statement (Lesse register: ~43px at 1440, generous leading).
-     A paragraph the fill paces you through; set for reading, not display. */
+     A paragraph the fill paces you through; set for reading, not display.
+     Same slope as t-display-lg — the 2026-07-15 census caught it 0.72px
+     shy of the H2 tier at 1440; one ladder, no near-misses. */
   font-family: var(--font-display);
   font-weight: 650;
-  font-size: clamp(1.7rem, 2.95vw, 2.7rem);
+  font-size: clamp(1.9rem, 3vw, 2.7rem);
   line-height: 1.42;
   letter-spacing: -0.02em;
 }
@@ -181,7 +183,9 @@ main {
 .t-title {
   font-family: var(--font-display);
   font-weight: 650;
-  font-size: 1.55rem;
+  /* 24px — shares the rung with the FAQ question (Apple's measured Q
+     size); was 1.55rem/24.8, the census's odd man out */
+  font-size: 1.5rem;
   line-height: 1.15;
   letter-spacing: -0.02em;
 }
@@ -2343,7 +2347,10 @@ html:not(.has-js) .zone-dark {
 .t-numeral-step {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(3rem, 3.4vw, 4rem);
+  /* THE STAT TIER: 48px, shared with the proof hero metric — the census
+     found 7 large-numeral scales; the ladder allows 4 (drift, statement,
+     stat, sub-stat) */
+  font-size: 3rem;
   line-height: 0.8;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;

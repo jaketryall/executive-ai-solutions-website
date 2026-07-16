@@ -155,7 +155,7 @@ function DemoGrowth() {
     <div className="pd-panel">
       <div className="pd-chart w-[min(88%,360px)] aspect-[7/5] rounded-btn bg-ink text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)] flex flex-col justify-center p-[18px]">
         <p className="t-meta text-[11px] text-paper/55">Enquiries</p>
-        <p className="mt-[3px] font-display text-[30px] font-[800] leading-none">
+        <p className="mt-[3px] font-display text-[28px] font-[800] leading-none">
           <span className="st-count t-num">34</span>
         </p>
         <svg className="mt-[10px] w-full" viewBox="0 0 130 40" fill="none" aria-hidden>
@@ -306,10 +306,10 @@ export function Process() {
       ref={root}
       className="relative z-0"
     >
-      <div className="py-fib-6 md:py-fib-7">
+      <div className="py-fib-6 md:pb-fib-6 md:pt-fib-7">
         <div className="wrap">
           <h2 className="t-display-lg">How a project runs</h2>
-          <p className="mt-[13px] max-w-[44ch] text-ink/70">
+          <p className="mt-[21px] max-w-[44ch] text-ink/70">
             Four steps from first call to a site that earns. Fixed quote up
             front, no surprises after.
           </p>
@@ -342,7 +342,7 @@ export function Process() {
                     </h3>
                     <span className="chip">{s.meta}</span>
                   </div>
-                  <p className="mt-[13px] max-w-[34ch] text-[1.0625rem] leading-[1.55] text-ink/70">
+                  <p className="mt-[13px] max-w-[34ch] text-[1.0625rem] leading-[1.5] text-ink/70">
                     {s.copy}
                   </p>
                 </div>
