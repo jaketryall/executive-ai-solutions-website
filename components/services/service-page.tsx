@@ -60,10 +60,11 @@ function HeroArtifact({ slug }: { slug: string }) {
           <p className="g-desc">
             Discovery flights and PPL through CFI training in Mesa, AZ.
           </p>
+          {/* spans, not bare <a>s — hrefless anchors invite dead taps */}
           <div className="g-ext" aria-hidden>
-            <a>Discovery flights</a>
-            <a>Fleet and rates</a>
-            <a>Book a tour</a>
+            <span>Discovery flights</span>
+            <span>Fleet and rates</span>
+            <span>Book a tour</span>
           </div>
           {/* the stage's namesake, on loop: a cursor arrives and takes the
               click a real searcher takes — straight onto a sitelink */}
@@ -324,7 +325,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         if (nav) gsap.set(nav, { autoAlpha: 1 });
         gsap.set(q("[data-anim]"), { autoAlpha: 1, x: 0, y: 0, scale: 1 });
         gsap.set(q(".mask-inner"), { yPercent: 0, y: 0 });
-        gsap.set(q(".g-ext a"), { autoAlpha: 1 });
+        gsap.set(q(".g-ext span"), { autoAlpha: 1 });
         const chatQ = q(".chat-q")[0] as HTMLElement | undefined;
         if (chatQ) chatQ.textContent = CHAT_Q;
         // the demo rests as a still: exchange complete, booking confirmed
@@ -367,7 +368,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         if (service.slug === "google-ads") {
           // the ad's sitelink extensions tick in
           tl.fromTo(
-            q(".g-ext a"),
+            q(".g-ext span"),
             { autoAlpha: 0, y: 8 },
             { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.1, ease: EASE_UI },
             "+=0.15"
@@ -385,7 +386,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         const ad = q(".g-ad")[0] as HTMLElement;
         const cursor = q(".g-cursor")[0] as HTMLElement;
         const ring = q(".g-click-ring")[0] as HTMLElement;
-        const link = q(".g-ext a")[0] as HTMLElement;
+        const link = q(".g-ext span")[0] as HTMLElement;
         if (ad && cursor && ring && link) {
           const pt = () => ({
             x: link.offsetLeft + link.offsetWidth * 0.5,

@@ -449,10 +449,12 @@ export function Hero() {
                 <div className="g-expand">
                   <div className="g-expand-in">
                     <p className="g-desc">{AD.desc}</p>
+                    {/* spans, not bare <a>s — hrefless anchors invite dead
+                        taps on touch (same fix as the services demo) */}
                     <div className="g-ext">
-                      <a>Discovery flights</a>
-                      <a>Fleet and rates</a>
-                      <a>Book a tour</a>
+                      <span>Discovery flights</span>
+                      <span>Fleet and rates</span>
+                      <span>Book a tour</span>
                     </div>
                   </div>
                 </div>

@@ -1556,7 +1556,8 @@ section[id] {
   gap: 8px 21px;
   margin-top: 13px;
 }
-.g-ext a {
+/* spans (demo props, not links — hrefless anchors invited dead taps) */
+.g-ext span {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-accent);

@@ -107,7 +107,7 @@ export function Services() {
         const adUrl = ad.querySelector(".g-url") as HTMLElement;
         const adTitle = ad.querySelector(".g-title") as HTMLElement;
         const adDesc = ad.querySelector(".g-desc") as HTMLElement;
-        const links = ad.querySelectorAll(".g-ext a");
+        const links = ad.querySelectorAll(".g-ext span");
         const cursor = ad.querySelector(".g-cursor") as HTMLElement;
         const ring = ad.querySelector(".g-click-ring") as HTMLElement;
         const clickPt = () => ({
