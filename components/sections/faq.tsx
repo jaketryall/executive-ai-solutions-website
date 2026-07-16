@@ -69,13 +69,13 @@ export function Faq() {
 
       gsap.fromTo(
         q("[data-anim='faq']"),
-        { autoAlpha: 0, y: 21 },
+        { autoAlpha: 0, y: 30 },
         {
           autoAlpha: 1,
           y: 0,
-          duration: 0.8,
+          duration: 0.9,
           ease: EASE_STRUCTURE,
-          stagger: 0.07,
+          stagger: 0.08,
           scrollTrigger: { trigger: root.current, start: "top 78%" },
         }
       );

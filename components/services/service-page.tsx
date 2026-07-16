@@ -351,15 +351,17 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         )
           .fromTo(
             q("[data-anim='h-sub']"),
-            { autoAlpha: 0, y: 13 },
-            { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08, ease: EASE_UI },
+            { autoAlpha: 0, y: 21 },
+            { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.08, ease: EASE_UI },
             "-=0.5"
           )
+          // the artifact arrives with the services-section envelope: real
+          // travel, a whisper of scale, the long brake
           .fromTo(
             q("[data-anim='h-art']"),
-            { autoAlpha: 0, y: 21 },
-            { autoAlpha: 1, y: 0, duration: 0.9 },
-            "-=0.35"
+            { autoAlpha: 0, y: 40, scale: 0.96 },
+            { autoAlpha: 1, y: 0, scale: 1, duration: 1.1 },
+            "-=0.45"
           );
 
         if (service.slug === "google-ads") {

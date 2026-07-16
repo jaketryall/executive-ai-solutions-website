@@ -34,11 +34,11 @@ export function Proof() {
 
       gsap.fromTo(
         q("[data-anim='head']"),
-        { autoAlpha: 0, y: 21 },
+        { autoAlpha: 0, y: 30 },
         {
           autoAlpha: 1,
           y: 0,
-          duration: 0.6,
+          duration: 0.9,
           ease: EASE_STRUCTURE,
           scrollTrigger: { trigger: root.current, start: "top 75%", once: true },
         }

@@ -126,6 +126,17 @@ micro states should drop to ≤100ms/instant, structural stays ~.32-.45s.)
   touch pass (hamburger, tap feedback) — blocked by tooling contention.
 
 ## 10 · The curve-character lesson (2026-07-15, Jake's services question)
+★ SUPERSEDED IN PART, same day: after feeling the Apple envelope in the
+services section ("i need that apple motion feel"), Jake rolled it
+SITE-WIDE ("option 1 then lets roll it"). EASE_STRUCTURE is REDEFINED —
+the theatrical wind-up (0.62,0.05,0.10,1) is retired; the token now
+carries the Apple envelope (0.215,0.61,0.355,1 = power3.out's cubic:
+launch confident, brake long), in both ease.ts and --ease-structure.
+The envelope also demands SIZE: travel 30-40px and 0.9-1.1s durations —
+6px/0.35s reads as flicker, not motion (Apple's measured reveals travel
+up to 148px/1s). The paragraph below is kept for the still-valid half:
+diegetic moves wear civilian curves (EASE_LOOP/EASE_UI), and curves stay
+monotonic — no springs, no overshoot, ever.
 Apple's curves are BORING on purpose: plain ease/ease-out/ease-in-out and
 one gentle bezier (.4,0,.6,1) — no custom drama, no springs, no overshoot,
 always monotonic. Their signature comes from the bimodal durations and the

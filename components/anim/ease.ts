@@ -14,7 +14,13 @@ export const EASE_STRUCTURE = "eas-structure";
 export const EASE_UI = "eas-ui";
 export const EASE_LOOP = "eas-loop";
 
-CustomEase.create(EASE_STRUCTURE, "M0,0 C0.62,0.05 0.10,1 1,1");
+/* 2026-07-15: THE APPLE ENVELOPE, site-wide (Jake: "option 1 then lets
+   roll it"). The original theatrical wind-up (0.62,0.05,0.10,1 — start
+   slow, lunge late) was the v3 brand voice; it's retired. Structure now
+   launches at full confidence and brakes long (power3.out's cubic) —
+   the velocity shape we measured on Apple's own reveals. EASE_UI and
+   EASE_LOOP are unchanged; §10's diegetic rule still holds. */
+CustomEase.create(EASE_STRUCTURE, "M0,0 C0.215,0.61 0.355,1 1,1");
 CustomEase.create(EASE_UI, "M0,0 C0.26,1 0.42,1 1,1");
 CustomEase.create(EASE_LOOP, "M0,0 C0.42,0 0.58,1 1,1");
 
