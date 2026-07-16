@@ -362,14 +362,14 @@ export function Hero() {
   );
 
   return (
-    <section id="top" ref={root} className="hero dark-chapter relative">
+    <section id="top" ref={root} className="hero relative">
       {/* the acquisition spine (Jake, 2026-07-16): CENTERED — claim, action,
           proof strip, then the enactment stacked beneath (the same center-
           stage grammar as the service-page heroes) */}
       <div className="hero-in wrap relative z-10 flex min-h-[92svh] flex-col items-center justify-center gap-fib-5 pb-fib-6 pt-[120px] text-center md:pt-fib-6">
         {/* ── the statement (outcome leads, industry follows) ── */}
         <div className="hero-left flex flex-col items-center">
-          <p data-anim="eyebrow" className="t-meta uppercase text-paper/45">
+          <p data-anim="eyebrow" className="t-meta uppercase text-ink/70">
             Full-funnel ads agency
           </p>
           {/* the two-tone statement (the signature): bright outcome, dim
@@ -378,14 +378,16 @@ export function Hero() {
               without reading as a wall (the eyebrow + the ad demo carry the
               specifics) */}
           <h1 data-anim="statement" className="t-statement t-statement--hero mx-auto mt-fib-2 max-w-[24ch] text-balance">
-            <span className="text-paper">
+            <span className="text-ink">
               {ariaPair.out} {ariaPair.who}.
             </span>{" "}
-            <span className="text-paper/40">We run the whole click.</span>
+            {/* the two-tone goes SearchKings: the second clause wears the
+                click color instead of a dim — accent IS the click */}
+            <span className="text-accent">We run the whole click.</span>
           </h1>
 
           <div data-anim="ctas" className="mt-fib-3 flex flex-wrap items-center justify-center gap-fib-2">
-            <CTA href="#estimate" label="Price my project" tone="paper" />
+            <CTA href="#estimate" label="Price my project" tone="accent" />
           </div>
 
           {/* PLACEHOLDER social proof — the count and the two initial circles
@@ -402,7 +404,7 @@ export function Hero() {
               <span data-av className="hero-av bg-accent text-paper">M</span>
               <span data-av className="hero-av bg-[#6d716e] text-paper">R</span>
             </div>
-            <p className="t-meta text-paper/60">
+            <p className="t-meta text-ink/60">
               Trusted by 12+ local business owners
             </p>
           </div>

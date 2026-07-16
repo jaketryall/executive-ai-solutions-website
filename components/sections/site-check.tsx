@@ -109,16 +109,17 @@ export function SiteCheck() {
       id="site-check"
       ref={root}
       // PRIME SLOT (the acquisition order, Jake 2026-07-16): directly under
-      // the hero — the first thing a cold click can DO. Same ink the hero's
-      // gradient lands on; pt clears the ad card's exit overhang.
-      className="relative bg-[var(--color-dark-2)] pb-fib-7 pt-fib-7 text-paper"
+      // the hero — the first thing a cold click can DO. Light-gray band on
+      // the cream page; the report card is the dark accent object. pt
+      // clears the hero ad card's exit overhang.
+      className="relative bg-panel pb-fib-7 pt-fib-7 text-ink"
     >
       <div className="wrap">
         <div className="mx-auto max-w-[640px] text-center">
           <h2 data-anim="sc" className="t-display-lg">
             Get a free site audit, right now
           </h2>
-          <p data-anim="sc" className="mx-auto mt-fib-3 max-w-[42ch] text-paper/70">
+          <p data-anim="sc" className="mx-auto mt-fib-3 max-w-[42ch] text-ink/70">
             Paste your address and we&rsquo;ll read your homepage the way we
             read a client&rsquo;s — what&rsquo;s working, what&rsquo;s leaking
             leads. Thirty seconds. Free, no email.
@@ -146,7 +147,7 @@ export function SiteCheck() {
             </button>
           </form>
           {error && (
-            <p className="mt-fib-2 text-[0.9375rem] text-paper/70" role="alert">
+            <p className="mt-fib-2 text-[0.9375rem] text-ink/70" role="alert">
               {error}
             </p>
           )}

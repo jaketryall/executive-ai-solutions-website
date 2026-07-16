@@ -4,9 +4,9 @@
   /* ─── Color (cool carried into every neutral; accent = "click" + the
      payoff words that point at it) near-black ink · gray secondary ·
      steel blue-gray accent ─── */
-  --color-canvas: #ebecea;
+  --color-canvas: #f8f6f3; /* warm near-white — 'white, or cream' resolved as both (2026-07-16) */
   --color-ink: #131413;
-  --color-panel: #dee0de;
+  --color-panel: #eeece7; /* the Apple band gray (#f5f5f7's one-whisper-down move) at our temperature */
   --color-dark: #101111;
   --color-dark-2: #191b1a;
   --color-paper: #eff0ee;
@@ -160,10 +160,15 @@ main {
 .t-statement--hero {
   /* the page's ONE h1: a short outcome statement, so it affords true display
      size (~64px at 1440, 1.5x the section h2s). The how-clause lives at body
-     size below it — never in the h1, or the display tier becomes a wall. */
+     size below it — never in the h1, or the display tier becomes a wall.
+     STAGED 2026-07-16 (the acquisition weight question): claim peaks crank
+     to 800 — Hormozi punch is weight+brevity, not a font swap. Body and
+     section registers hold 650 so the claims read LOUD against calm walls.
+     Revert: delete the font-weight line. */
+  font-weight: 800;
   font-size: clamp(2.4rem, 4.45vw, 4rem);
   line-height: 1.14;
-  letter-spacing: -0.028em;
+  letter-spacing: -0.024em;
 }
 .t-display-drift {
   /* the closer's one-line statement — sized so the nowrap line runs ~1.7× the
@@ -1453,7 +1458,9 @@ section[id] {
   box-shadow: 0 30px 70px -30px rgba(19, 20, 19, 0.45);
 }
 .af--paper {
-  background: var(--color-paper);
+  /* true white: on the near-white canvas the old paper tone read dingy —
+     Apple's cards are #fff on #f5f5f7 for exactly this reason */
+  background: #fff;
   color: var(--color-ink);
   box-shadow: 0 24px 60px -28px rgba(19, 20, 19, 0.28);
 }
@@ -1761,8 +1768,9 @@ section[id] {
      white-page facepiles look borderless) — 2px of the hero's own tone,
      perceived only as the clean notch where discs overlap. The first
      attempt failed by being darker than the local gradient (black halo);
-     the second by wearing a light-page ring on a dark page. */
-  border: 2px solid var(--color-dark-2);
+     the second by wearing a light-page ring on a dark page. The hero
+     went light 2026-07-16 — the ring wears the canvas. */
+  border: 2px solid var(--color-canvas);
   font-size: 0.75rem;
   font-weight: 600;
   will-change: transform;
@@ -1912,10 +1920,13 @@ section[id] {
   background: linear-gradient(180deg, var(--color-dark) 0%, var(--color-dark-2) 100%);
   color: var(--color-paper);
 }
-/* a panel ON the dark chapter band: subtle paper lift instead of the
-   band gradient (declared after .dark-chapter so it wins the surface) */
+/* the dark accent card (light-first turn, 2026-07-16): its sections went
+   cream, so the translucent paper-lift became a ghost — the card is now a
+   SOLID dark object floating on the light page (declared after
+   .dark-chapter so it wins the surface) */
 .proof-card {
-  background: rgba(239, 240, 238, 0.055);
+  background: linear-gradient(180deg, var(--color-dark) 0%, var(--color-dark-2) 100%);
+  box-shadow: 0 21px 55px -21px rgba(19, 20, 19, 0.35);
 }
 
 /* the closer — the page's ONE full-color surface. The accent is the click
@@ -4837,32 +4848,31 @@ html.wki-lock body {
   height: 56px;
   padding: 0 21px;
   border-radius: var(--radius-btn);
-  border: 1px solid rgba(239, 240, 238, 0.18);
-  background: rgba(239, 240, 238, 0.07);
-  color: var(--color-paper);
+  border: 1px solid rgba(19, 20, 19, 0.14);
+  background: #fff;
+  color: var(--color-ink);
   font-size: 1rem;
   transition: border-color 0.1s linear, background 0.1s linear;
 }
 .scheck-input::placeholder {
-  color: rgba(239, 240, 238, 0.4);
+  color: rgba(19, 20, 19, 0.4);
 }
 .scheck-input:focus-visible {
   outline: none;
-  border-color: rgba(239, 240, 238, 0.55);
-  background: rgba(239, 240, 238, 0.1);
+  border-color: rgba(19, 20, 19, 0.5);
 }
 .scheck-go {
   flex-shrink: 0;
   height: 56px;
   padding: 0 26px;
   border-radius: var(--radius-btn);
-  background: var(--color-paper);
-  color: var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-paper);
   font-weight: 600;
   transition: background 0.1s linear;
 }
 .scheck-go:hover:not(:disabled) {
-  background: #fff;
+  background: #000;
 }
 .scheck-go:disabled {
   opacity: 0.55;

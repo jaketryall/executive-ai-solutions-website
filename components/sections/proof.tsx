@@ -115,10 +115,9 @@ export function Proof() {
     <section
       id="proof"
       ref={root}
-      // CHAPTER ONE continues (apple-grammar.md §1): the proof rides the
-      // same ink the hero landed on — flat dark-2, invisible seam; the ONE
-      // flip to light happens at the price beat below
-      className="relative bg-[var(--color-dark-2)] text-paper"
+      // LIGHT-FIRST (2026-07-16): the proof rides the cream canvas; the
+      // receipts are DARK CARDS — ink as the accent object, not the ground
+      className="relative text-ink"
     >
       <div className="pb-fib-7 pt-fib-6">
         {/* ── the claim: title left, support right — the header row spans the
@@ -128,7 +127,7 @@ export function Proof() {
           className="wrap flex flex-col justify-between gap-fib-3 md:flex-row md:items-end"
         >
           <h2 className="t-display-lg">Where the click lands</h2>
-          <p className="max-w-[38ch] text-paper/70 md:text-right">
+          <p className="max-w-[38ch] text-ink/70 md:text-right">
             The ad you watched climb the search is real. These are the pages
             our clicks land on: designed, built, and tracked by us.
           </p>
