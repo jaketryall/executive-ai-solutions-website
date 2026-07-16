@@ -41,16 +41,44 @@ function PersonIcon() {
 const CHAT_Q = "Do you offer discovery flights on weekends?";
 
 /* ── the per-stage hero artifact ── */
+/* the shared device shell — the service's REAL surface in a real phone
+   (the SearchKings realism lesson, Jake 2026-07-16: what sells is seeing
+   the thing as the customer's customer sees it, unmistakably itself) */
+function PhoneShell({
+  label,
+  screenClass = "",
+  children,
+}: {
+  label: string;
+  screenClass?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="svc-phone" role="group" aria-label={label}>
+      <div className="dvc">
+        <span className="dvc-island" aria-hidden />
+        <div className={`dvc-screen ${screenClass}`}>{children}</div>
+      </div>
+    </div>
+  );
+}
+
 function HeroArtifact({ slug }: { slug: string }) {
   if (slug === "google-ads") {
+    // a mobile Google search, the ad on top — tapped, not cursor-clicked
     return (
-      <ArtifactFrame
-        variant="card"
-        tone="paper"
-        label="The Desert Wings search ad with sitelink extensions"
-        className="w-[min(100%,460px)]"
+      <PhoneShell
+        label="A phone showing a Google search with the Desert Wings ad on top"
+        screenClass="dvc-screen--ui"
       >
-        <div className="g-ad relative mt-0! border-t-0! pt-0! p-fib-1">
+        <div className="g-search" aria-hidden>
+          <svg viewBox="0 0 16 16" fill="none" className="g-glass">
+            <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.6" />
+            <path d="m10.5 10.5 3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+          <span className="g-q-static">flight school near me</span>
+        </div>
+        <div className="g-ad relative">
           <p className="g-sponsored">Sponsored</p>
           <p className="g-url">desertwingsflightschool.com</p>
           {/* PLACEHOLDER — swap with the real Desert Wings ad, verbatim */}
@@ -66,62 +94,56 @@ function HeroArtifact({ slug }: { slug: string }) {
             <span>Fleet and rates</span>
             <span>Book a tour</span>
           </div>
-          {/* the stage's namesake, on loop: a cursor arrives and takes the
-              click a real searcher takes — straight onto a sitelink */}
+          {/* the stage's namesake, on loop: a thumb-tap takes the click */}
           <span className="g-click-ring" aria-hidden />
-          <svg className="g-cursor" viewBox="0 0 24 24" aria-hidden>
-            <path
-              d="M5.5 2.2v18.3l4.3-4.1 2.9 6.4 3-1.4-2.9-6.3 5.9-.6L5.5 2.2z"
-              fill="#131413"
-              stroke="#fff"
-              strokeWidth="1.4"
-              strokeLinejoin="round"
-            />
-          </svg>
         </div>
-      </ArtifactFrame>
+        <div className="g-org-row" aria-hidden>
+          <p className="g-org-url">somedirectory.com &rsaquo; arizona</p>
+          <p className="g-org-title">Best flight schools near Phoenix, ranked</p>
+        </div>
+        {/* the results continue past the screen edge — skeleton rows keep
+            the SERP reading as a live page, not a poster */}
+        <div className="g-skel" aria-hidden>
+          <span className="g-skel-thumb" />
+          <span className="g-skel-lines">
+            <span className="g-skel-line block w-[82%]" />
+            <span className="g-skel-line block w-[58%]" />
+          </span>
+        </div>
+        <div className="g-skel" aria-hidden>
+          <span className="g-skel-thumb" />
+          <span className="g-skel-lines">
+            <span className="g-skel-line block w-[74%]" />
+            <span className="g-skel-line block w-[63%]" />
+          </span>
+        </div>
+      </PhoneShell>
     );
   }
   if (slug === "websites") {
-    /* center-stage: the frame IS the whole show — no pocket overlays
-       competing with it (one thing at a time) */
+    // the site we built, on the phone it's actually seen on, riding
     return (
-      <ArtifactFrame
-        variant="chrome"
-        tone="paper"
-        url="desertwingsflightschool.com"
-        label="The Desert Wings homepage we designed and built"
-        bodyClassName="!p-0"
-      >
-        <div
-          className="overflow-hidden rounded-btn"
-          style={{ aspectRatio: "1.55" }}
-        >
-          {/* the landing, riding: the page the click arrives on scrolls
-              itself (the homepage services-02 loop, in the stage's frame) */}
-          <Image
-            data-svc-tour
-            src="/work/dw-tour.jpg"
-            alt="Scrolling through the Desert Wings homepage we designed and built"
-            width={2880}
-            height={4446}
-            sizes="(min-width: 821px) 980px, 92vw"
-            priority
-            className="block h-auto w-full"
-          />
-        </div>
-      </ArtifactFrame>
+      <PhoneShell label="The Desert Wings site we designed and built, scrolling on a phone">
+        <Image
+          data-svc-tour
+          src="/work/dw-phone-tour.jpg"
+          alt="Scrolling through the Desert Wings site we designed and built"
+          width={780}
+          height={10128}
+          sizes="(min-width: 821px) 310px, 78vw"
+          priority
+          className="block h-auto w-full"
+        />
+      </PhoneShell>
     );
   }
   // ai — the chat, answering as itself
   return (
-    <ArtifactFrame
-      variant="card"
-      tone="paper"
+    <PhoneShell
       label="Ask-this-site chat answering a visitor"
-      className="w-[min(100%,460px)]"
+      screenClass="dvc-screen--ui"
     >
-      <div className="chat-card mt-0! flex-none! border-0! bg-transparent! p-fib-1!">
+      <div className="chat-card mt-0! flex-none! border-0! bg-transparent! p-fib-2!">
         <p className="chat-q">{CHAT_Q}</p>
         <div className="chat-a">
           <Monogram className="mt-[3px] h-[16px] w-[16px] shrink-0 opacity-70" />
@@ -147,7 +169,7 @@ function HeroArtifact({ slug }: { slug: string }) {
           Ask-this-site chat, answering from your pages
         </p>
       </div>
-    </ArtifactFrame>
+    </PhoneShell>
   );
 }
 
@@ -382,40 +404,24 @@ export function ServicePage({ service }: { service: ServiceDef }) {
       const loops: gsap.core.Timeline[] = [];
 
       if (service.slug === "google-ads") {
-        // the CLICK, taken: a cursor arrives and presses a sitelink
-        const ad = q(".g-ad")[0] as HTMLElement;
-        const cursor = q(".g-cursor")[0] as HTMLElement;
+        // the CLICK, taken: on a phone the click is a TAP — a thumb ripple
+        // on the sitelink, no desktop cursor in sight
         const ring = q(".g-click-ring")[0] as HTMLElement;
         const link = q(".g-ext span")[0] as HTMLElement;
-        if (ad && cursor && ring && link) {
+        if (ring && link) {
           const pt = () => ({
             x: link.offsetLeft + link.offsetWidth * 0.5,
             y: link.offsetTop + link.offsetHeight * 0.55,
           });
           gsap.set(ring, { xPercent: -50, yPercent: -50 });
           const c = gsap.timeline({ repeat: -1, paused: true, repeatRefresh: true });
-          c.to({}, { duration: 2.4 })
-            .set(cursor, {
-              x: () => ad.offsetWidth - 34,
-              y: () => ad.offsetHeight - 8,
-              autoAlpha: 0,
-              scale: 1,
-            })
-            .to(cursor, { autoAlpha: 1, duration: 0.25, ease: EASE_UI })
-            .to(
-              cursor,
-              { x: () => pt().x, y: () => pt().y, duration: 0.9, ease: EASE_STRUCTURE },
-              "<"
-            )
-            .to(cursor, { scale: 0.78, duration: 0.09, ease: EASE_UI })
-            // set-then-to, never fromTo: repeatRefresh re-renders an
-            // invalidated fromTo's FROM state at every cycle start
-            .set(ring, { x: () => pt().x + 3, y: () => pt().y + 3, autoAlpha: 0.55, scale: 0.25 }, "<")
-            .to(ring, { autoAlpha: 0, scale: 1, duration: 0.6, ease: EASE_UI }, "<")
+          // set-then-to, never fromTo: repeatRefresh re-renders an
+          // invalidated fromTo's FROM state at every cycle start
+          c.to({}, { duration: 2.8 })
+            .set(ring, { x: () => pt().x, y: () => pt().y, autoAlpha: 0.55, scale: 0.25 })
+            .to(ring, { autoAlpha: 0, scale: 1, duration: 0.6, ease: EASE_UI })
             .to(link, { opacity: 0.5, duration: 0.09, yoyo: true, repeat: 1, ease: "none" }, "<")
-            .to(cursor, { scale: 1, duration: 0.16, ease: EASE_UI }, "-=0.4")
-            .to(cursor, { autoAlpha: 0, duration: 0.35, ease: EASE_UI }, "+=0.5")
-            .to({}, { duration: 3.6 });
+            .to({}, { duration: 4.4 });
           loops.push(c);
         }
       }
@@ -683,16 +689,17 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           </div>
           <div
             data-anim="h-art"
-            className={`mt-fib-5 w-full md:mt-fib-6 ${
-              service.slug === "websites"
-                ? "max-w-[980px]"
-                : "flex justify-center"
-            }`}
+            className="mt-fib-5 w-full md:mt-fib-6"
           >
             <HeroArtifact slug={service.slug} />
           </div>
         </div>
       </section>
+
+      {/* ── THE FREE TOOL, slot 2 (Jake, 2026-07-16: "our free tool might
+          be better" than SearchKings' award band — a working calculator
+          de-risks harder than a trophy) ── */}
+      {service.slug === "google-ads" && <LeadMath />}
 
       {/* ── THE HIGHLIGHTS · the swiping gallery (ads page only) ── */}
       {service.slug === "google-ads" && (
@@ -768,11 +775,6 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           page the visitor has self-selected into website intent, so "what
           would yours look like" closes instead of mispositioning ── */}
       {service.slug === "websites" && <Builder />}
-
-      {/* ── RUN YOUR OWN NUMBERS · the ads page's give: the visitor's own
-          arithmetic makes the case, right before the price beat so $500/mo
-          lands pre-anchored against what a customer is worth ── */}
-      {service.slug === "google-ads" && <LeadMath />}
 
       {/* ── THE PRICE · the one centered statement peak, open on the canvas,
           with the client voices floating around it (the home price-beat

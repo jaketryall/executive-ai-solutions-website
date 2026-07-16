@@ -409,9 +409,9 @@ export function CaseStudy({
             <figure data-anim="cs-reveal" className="cs-mat md:col-span-2">
               <div className="cs-mat-well cs-mat-well--phone relative overflow-hidden rounded-btn">
                 <div className="cs-phone-stage">
-                  <div className="cs-device2">
-                    <span className="cs-device2-island" aria-hidden />
-                    <div className="cs-device2-screen" data-well>
+                  <div className="dvc">
+                    <span className="dvc-island" aria-hidden />
+                    <div className="dvc-screen" data-well>
                       <Image
                         data-cs-tour
                         src={project.phoneTour.src}

@@ -4759,9 +4759,10 @@ html.wki-lock body {
   align-items: center;
   justify-content: center;
 }
-.cs-device2 {
+/* .dvc is SHARED (case exhibit + service heroes): base carries the bezel;
+   each context sizes it (the exhibit by stage height, heroes by width) */
+.dvc {
   position: relative;
-  height: 88%;
   aspect-ratio: 9 / 19.2;
   padding: clamp(7px, 0.8vw, 11px);
   border-radius: clamp(38px, 4.2vw, 58px);
@@ -4771,14 +4772,95 @@ html.wki-lock body {
     0 55px 89px -34px rgba(0, 0, 0, 0.5),
     0 13px 34px rgba(0, 0, 0, 0.25);
 }
-.cs-device2-screen {
+.cs-phone-stage .dvc {
+  height: 88%;
+}
+/* the service hero phone: the service's REAL surface, in a real device
+   (the SearchKings realism lesson, Jake 2026-07-16). Width-sized. */
+.svc-phone {
+  display: flex;
+  justify-content: center;
+}
+.svc-phone .dvc {
+  /* DELIBERATELY bleeds past the mobile fold — the SearchKings ChatGPT
+     framing: a phone 'too big to fit' reads as a real object shot too
+     close, not a diagram. The identity bar crossing it is normal fixed
+     chrome; do not shrink the phone to dodge it. */
+  width: min(78vw, 310px);
+}
+/* screens that hold UI (not a photo) get a light ground — doubled
+   selector: the base .dvc-screen is declared later in the file and its
+   dark ground out-cascades a single class at equal specificity */
+.dvc-screen.dvc-screen--ui {
+  background: #fff;
+  color: var(--color-ink);
+}
+/* compact diegetic type inside a ~290px screen */
+.svc-phone .g-search {
+  height: 40px;
+  margin: 13px 13px 0;
+}
+.g-q-static {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.8125rem;
+  color: rgba(19, 20, 19, 0.72);
+}
+.svc-phone .g-title {
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+.svc-phone .g-desc {
+  font-size: 0.75rem;
+}
+.svc-phone .g-ad {
+  margin: 13px;
+}
+.svc-phone .g-org-row {
+  margin: 0 13px;
+  padding-top: 13px;
+  border-top: 1px solid rgba(19, 20, 19, 0.08);
+}
+.svc-phone .g-org-title {
+  color: rgba(19, 20, 19, 0.82); /* real Google organics are near-black */
+}
+/* the page continues below the screen's edge (the ChatGPT-mock trick:
+   skeleton content signals a live page, not a finished poster) */
+.g-skel {
+  display: flex;
+  gap: 10px;
+  margin: 21px 13px 0;
+}
+.g-skel-thumb {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(19, 20, 19, 0.07);
+}
+.g-skel-lines {
+  flex: 1;
+  min-width: 0;
+}
+.g-skel-line {
+  height: 10px;
+  border-radius: 5px;
+  background: rgba(19, 20, 19, 0.07);
+  margin-top: 8px;
+}
+.svc-phone .chat-thread {
+  padding: 21px 13px;
+}
+.dvc-screen {
   position: relative;
   height: 100%;
   border-radius: clamp(31px, 3.4vw, 47px);
   overflow: clip;
   background: #0b0c0c;
 }
-.cs-device2-island {
+.dvc-island {
   position: absolute;
   top: clamp(16px, 3.2%, 24px);
   left: 50%;
