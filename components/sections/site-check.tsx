@@ -109,10 +109,11 @@ export function SiteCheck() {
       id="site-check"
       ref={root}
       // PRIME SLOT (the acquisition order, Jake 2026-07-16): directly under
-      // the hero — the first thing a cold click can DO. Light-gray band on
-      // the cream page; the report card is the dark accent object. pt
+      // the hero — the first thing a cold click can DO. CONTINUOUS canvas
+      // (Jake killed the gray strip): hero→audit is one beat — ask, then
+      // give — and the dark report card is the section's one object. pt
       // clears the hero ad card's exit overhang.
-      className="relative bg-panel pb-fib-7 pt-fib-7 text-ink"
+      className="relative pb-fib-7 pt-fib-7 text-ink"
     >
       <div className="wrap">
         <div className="mx-auto max-w-[640px] text-center">
