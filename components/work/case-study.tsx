@@ -475,17 +475,29 @@ export function CaseStudy({
         <p className="t-meta text-ink/55" data-anim="cs-reveal">
           Next case
         </p>
+        {/* solid ink, ladder tier — the hollow outline read as EMPTY here
+            (Jake, 2026-07-15); the ledger's outline→fill grammar stays on
+            /work where "unvisited" is the point */}
         <Link
           href={`/work/${next.slug}`}
-          className="cs-next mt-[13px] inline-block"
+          className="cs-next group mt-[13px] inline-flex items-center gap-[21px]"
           data-anim="cs-reveal"
         >
-          <span className="wx-name">
-            <span className="wx-outline">{next.listName}</span>
-            <span className="wx-fill" aria-hidden>
-              {next.listName}
-            </span>
-          </span>
+          <span className="t-display-lg">{next.listName}</span>
+          <svg
+            className="cs-next-arrow"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden
+          >
+            <path
+              d="M3 12h17M13.5 4.5 21 12l-7.5 7.5"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </Link>
         <div
           className="mt-[55px] flex flex-wrap items-center gap-[21px]"

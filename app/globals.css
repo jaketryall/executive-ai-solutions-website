@@ -4730,17 +4730,21 @@ html.wki-lock body {
   text-decoration: none;
   color: inherit;
 }
-/* the index's outline→fill grammar, re-wired for this lone link */
-.cs-next .wx-outline {
-  -webkit-text-stroke-color: rgba(19, 20, 19, 0.45);
+/* solid name + a traveling arrow: the outline read as empty text here.
+   Arrow nudge = micro feedback (bimodal law: ≤120ms, linear) */
+.cs-next-arrow {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  color: rgba(19, 20, 19, 0.5);
+  transition:
+    transform 0.12s linear,
+    color 0.12s linear;
 }
-.cs-next:hover .wx-name,
-.cs-next:focus-visible .wx-name {
+.cs-next:hover .cs-next-arrow,
+.cs-next:focus-visible .cs-next-arrow {
   transform: translateX(8px);
-}
-.cs-next:hover .wx-fill,
-.cs-next:focus-visible .wx-fill {
-  clip-path: inset(0 0 0 0);
+  color: var(--color-ink);
 }
 
 /* ── the work index: full-bleed chapters that stay CARDS ──
