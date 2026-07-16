@@ -652,7 +652,9 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           statement, one gray sentence, the action, then THE artifact,
           enormous and centered beneath the words (never beside them) ── */}
       <section className="svc-hero relative overflow-x-clip">
-        <div className="wrap flex flex-col items-center pb-fib-6 pt-[144px] text-center md:pt-[176px]">
+        {/* mobile trims the top air so the artifact's bottom clears the
+            identity bar on the FIRST viewport — the demo is the sell */}
+        <div className="wrap flex flex-col items-center pb-fib-6 pt-fib-6 text-center md:pt-[176px]">
           <p data-anim="h-sub" className="t-meta text-ink/55">
             {service.stage}
           </p>
@@ -671,7 +673,10 @@ export function ServicePage({ service }: { service: ServiceDef }) {
             className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-3"
           >
             <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
-            <Link href="/pricing" className="u-link u-link--chev t-meta text-ink/70">
+            <Link
+              href="/pricing"
+              className="u-link u-link--chev t-meta py-fib-2 text-ink/70"
+            >
               See the whole pricing sheet
             </Link>
           </div>
@@ -979,7 +984,10 @@ export function ServicePage({ service }: { service: ServiceDef }) {
             </div>
             <div data-anim="ask" className="flex flex-wrap items-center gap-fib-3">
               <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
-              <Link href="/contact" className="u-link u-link--chev t-meta text-paper/70">
+              <Link
+                href="/contact"
+                className="u-link u-link--chev t-meta py-fib-2 text-paper/70"
+              >
                 Or just tell us about your business
               </Link>
             </div>

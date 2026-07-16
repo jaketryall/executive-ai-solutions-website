@@ -1123,6 +1123,10 @@ section[id] {
   font-weight: 650;
   font-size: 0.875rem;
   letter-spacing: -0.01em;
+  /* one line, always — a wrapped name grows the whole bar (audit #1) */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .mnav-marquee {
   overflow: hidden;
@@ -1134,7 +1138,7 @@ section[id] {
   white-space: nowrap;
   font-size: 0.75rem;
   letter-spacing: 0.04em;
-  color: rgba(239, 240, 238, 0.55);
+  color: rgba(239, 240, 238, 0.68);
   animation: mnav-scroll 30s linear infinite;
 }
 .mnav-track > span {
@@ -1287,18 +1291,19 @@ section[id] {
   .lm-out {
     padding: 21px;
   }
-  /* thumbs are the tap target — give them real finger room on touch */
+  /* thumbs are the tap target — give them real finger room on touch
+     (the input's full height is the hit area; the thumb is the visual) */
   .lm-range {
-    height: 34px;
+    height: 44px;
   }
   .lm-range::-webkit-slider-thumb {
-    width: 24px;
-    height: 24px;
-    margin-top: -10px;
+    width: 28px;
+    height: 28px;
+    margin-top: -12px;
   }
   .lm-range::-moz-range-thumb {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
   }
 }
 

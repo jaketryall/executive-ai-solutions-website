@@ -48,7 +48,7 @@ function Field({
     <label className="lm-field">
       <span className="lm-field-row">
         <span className={soft}>{label}</span>
-        <span className="t-num font-display text-[1.2rem] font-semibold">
+        <span className="t-num font-display text-[1.5rem] font-semibold">
           {display}
         </span>
       </span>
@@ -146,13 +146,13 @@ export function LeadMathCore({
       <div className="lm-out">
         <div className="flex items-baseline justify-between gap-fib-2">
           <span className={c.soft}>A lead is worth</span>
-          <span className="t-num font-display text-[1.2rem] font-semibold">
+          <span className="t-num font-display text-[1.5rem] font-semibold">
             {fmt(leadWorth)}
           </span>
         </div>
         <div className="mt-fib-2 flex items-baseline justify-between gap-fib-2">
           <span className={c.soft}>All-in monthly cost</span>
-          <span className="t-num font-display text-[1.2rem] font-semibold">
+          <span className="t-num font-display text-[1.5rem] font-semibold">
             {fmt(total)}
           </span>
         </div>

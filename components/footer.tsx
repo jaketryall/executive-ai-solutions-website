@@ -149,7 +149,10 @@ export function Footer() {
             </p>
             <div className="mt-[34px] flex flex-wrap items-center gap-[21px]">
               <CTA href={estimateHref} label="Price my project" tone="ink" />
-              <a href="mailto:hello@executiveaisolutions.com" className="u-link t-meta text-ink/70">
+              <a
+                href="mailto:hello@executiveaisolutions.com"
+                className="u-link t-meta py-fib-2 text-ink/70"
+              >
                 hello@executiveaisolutions.com
               </a>
             </div>

@@ -457,7 +457,10 @@ export function Nav() {
             <Monogram className="h-[21px] w-[21px]" />
           </Link>
           <span className="mnav-mid">
-            <span className="mnav-name text-trim">Executive AI Solutions</span>
+            {/* short form: with the Ask tile aboard, the full name needs
+                ~176px the 390px bar no longer has — the mark and marquee
+                carry the rest */}
+            <span className="mnav-name text-trim">Executive AI</span>
             <span className="mnav-marquee" aria-hidden>
               <span className="mnav-track">
                 <span>{MARQUEE}</span>
