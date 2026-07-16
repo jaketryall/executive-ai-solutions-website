@@ -44,20 +44,25 @@ export function Services() {
          6px/0.35s reads as flicker, not motion. So: long durations, real
          travel, and a steep glide (power3.out) instead of the theatrical
          EASE_STRUCTURE wind-up — this section speaks Apple. */
-      (q("[data-svc-row]") as HTMLElement[]).forEach((row) => {
+      const gridRow = () => window.matchMedia("(min-width: 1280px)").matches;
+      (q("[data-svc-row]") as HTMLElement[]).forEach((row, i) => {
         const tl = gsap.timeline({
+          // desktop shows the three cards as ONE row — they land as a
+          // left→right cascade, not three identical simultaneous drops
+          delay: gridRow() ? i * 0.14 : 0,
           defaults: { ease: "power3.out" },
           scrollTrigger: { trigger: row, start: "top 72%", once: true },
         });
+        // the card reads top-down: the demo lands first, the words trail it
         tl.fromTo(
-          row.querySelectorAll("[data-anim='copy']"),
-          { autoAlpha: 0, y: 30 },
-          { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.1 }
-        ).fromTo(
           row.querySelectorAll("[data-anim='artifact']"),
           { autoAlpha: 0, y: 40, scale: 0.96 },
-          { autoAlpha: 1, y: 0, scale: 1, duration: 1.1 },
-          "-=0.55"
+          { autoAlpha: 1, y: 0, scale: 1, duration: 1.1 }
+        ).fromTo(
+          row.querySelectorAll("[data-anim='copy']"),
+          { autoAlpha: 0, y: 30 },
+          { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.1 },
+          "-=0.7"
         );
       });
 
@@ -252,13 +257,28 @@ export function Services() {
          return replays from the top — and pauses/resumes around tab
          visibility for stories caught mid-flight. */
       const inView = new Map<gsap.core.Timeline, boolean>();
-      stories.forEach(({ tl, el, reset }) => {
+      stories.forEach(({ tl, el, reset }, idx) => {
         const row = (el.closest("[data-svc-row]") ?? el) as HTMLElement;
+        /* in the desktop grid all three starters fire together — the
+           stories cascade left→right (one performance at a time for the
+           eye); stacked breakpoints play immediately as before */
+        let starter: gsap.core.Tween | null = null;
+        const clearStarter = () => {
+          starter?.kill();
+          starter = null;
+        };
+        context.add(() => clearStarter);
+        const begin = () => {
+          clearStarter();
+          starter = gsap.delayedCall(gridRow() ? idx * 2.1 : 0, () => {
+            if (!document.hidden) tl.play();
+          });
+        };
         ScrollTrigger.create({
           trigger: row,
           start: "top 62%",
           onEnter: () => {
-            if (!document.hidden) tl.play();
+            if (!document.hidden) begin();
           },
           onEnterBack: () => {
             if (!document.hidden && tl.progress() < 1) tl.play();
@@ -271,6 +291,7 @@ export function Services() {
           onToggle: (self) => {
             inView.set(tl, self.isActive);
             if (!self.isActive) {
+              clearStarter();
               tl.pause(0).invalidate();
               reset?.();
             } else if (tl.progress() > 0 && tl.progress() < 1 && !document.hidden) {
@@ -296,45 +317,27 @@ export function Services() {
 
   return (
     <section id="services" ref={root} className="relative overflow-x-clip">
-      {/* the whole funnel is ONE card — a dark panel floating on the canvas
-          (the v2 grammar): the rail pins while the stages scroll past it */}
-      <div className="dark-chapter mx-[8px] mt-fib-4 rounded-panel py-fib-6 md:mx-[13px]">
-        <div className="wrap grid gap-fib-5 md:grid-cols-[minmax(260px,340px)_1fr] md:gap-fib-6">
-          <div>
-            <div className="md:sticky md:top-[144px]">
-              {/* headline sells THEIR change; the funnel mechanics moved
-                  down into the paragraph (selling-architecture.md law 6) */}
-              <h2 className="t-display-lg">From stranger to booked customer</h2>
-              <p className="mt-fib-3 max-w-[30ch] text-paper/70">
-                One funnel, three stages: ads bring the click, the site
-                converts it, the AI keeps it. Buy the stage you need, or the
-                whole path.
-              </p>
-              <div className="mt-fib-4 hidden md:block">
-                <CTA href="#estimate" label="Price my project" tone="paper" />
-              </div>
-            </div>
-          </div>
+      {/* the funnel as a CARD GRID (the SearchKings shape, Jake 2026-07-16:
+          "i really like their services cards") — each service is one card:
+          the demo on top doing the selling, the name, one honest line, the
+          price chips, and a VERB CTA into its service page. Still one dark
+          panel, still play-once stories; they cascade left→right on desktop
+          so the eye gets one performance at a time. */}
+      <div className="dark-chapter mx-[8px] mt-fib-4 rounded-panel py-fib-6 md:mx-[13px] md:py-fib-7">
+        <div className="wrap">
+          <header className="mx-auto max-w-[640px] text-center">
+            <h2 className="t-display-lg">From stranger to booked customer</h2>
+            <p className="mx-auto mt-fib-3 max-w-[44ch] text-paper/70">
+              One funnel, three stages: ads bring the click, the site
+              converts it, the AI keeps it. Buy the stage you need, or the
+              whole path.
+            </p>
+          </header>
 
-          <div className="flex flex-col gap-fib-4">
-          {/* ── 01 · THE CLICK — artifact right ── */}
-          <article data-svc-row className="rounded-frame bg-paper/[0.05] p-fib-3 md:p-fib-5">
-            <div className="flex flex-col gap-fib-4">
-              <div>
-                <h3 data-anim="copy" className="t-title--lg">
-                  The click
-                </h3>
-                <p data-anim="copy" className="mt-fib-2 max-w-[44ch] text-paper/70">
-                  Google Ads, managed. Campaigns built on what your customers
-                  actually search, conversion tracking you can read, and a
-                  monthly number that says what a lead cost.
-                </p>
-                <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
-                  <span className="chip">$500/mo + ad spend</span>
-                  <span className="chip">No lock-in</span>
-                </div>
-              </div>
-              <div data-anim="artifact" className="w-[min(100%,480px)]">
+          <div className="mt-fib-5 grid gap-fib-2 xl:grid-cols-3">
+          {/* ── 01 · THE CLICK ── */}
+          <article data-svc-row className="flex flex-col rounded-frame bg-paper/[0.05] p-fib-3">
+              <div data-anim="artifact" className="w-full max-w-[480px]">
                 <ArtifactFrame
                   variant="card"
                   tone="paper"
@@ -382,30 +385,26 @@ export function Services() {
                   </div>
                 </ArtifactFrame>
               </div>
-            </div>
+              <h3 data-anim="copy" className="t-title--lg mt-fib-4">
+                Google Ads, managed
+              </h3>
+              <p data-anim="copy" className="mt-fib-2 text-paper/70">
+                Campaigns built on what your customers actually search,
+                conversion tracking you can read, and a monthly number that
+                says what a lead cost.
+              </p>
+              <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
+                <span className="chip">$500/mo + ad spend</span>
+                <span className="chip">No lock-in</span>
+              </div>
+              <div data-anim="copy" className="mt-auto pt-fib-4">
+                <CTA href="/services/google-ads" label="Get found" tone="paper" />
+              </div>
           </article>
 
-          {/* ── 02 · THE LANDING — artifact left ── */}
-          <article data-svc-row className="rounded-frame bg-paper/[0.05] p-fib-3 md:p-fib-5">
-            <div className="flex flex-col gap-fib-4">
-              <div>
-                <h3 data-anim="copy" className="t-title--lg">
-                  The landing
-                </h3>
-                <p data-anim="copy" className="mt-fib-2 max-w-[44ch] text-paper/70">
-                  A website that converts the click. Custom-designed and
-                  hand-built from your business, fast enough that nobody
-                  leaves while it loads.
-                </p>
-                <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
-                  <span className="chip">From $2.5k, fixed quote</span>
-                  <span className="chip">You own everything</span>
-                </div>
-              </div>
-              {/* one artifact measure across all three rows (Jake,
-                  2026-07-15): same stage, each object at its own scale —
-                  the BIG site moment belongs to Proof, one section down */}
-              <div data-anim="artifact" className="w-[min(100%,480px)]">
+          {/* ── 02 · THE LANDING ── */}
+          <article data-svc-row className="flex flex-col rounded-frame bg-paper/[0.05] p-fib-3">
+              <div data-anim="artifact" className="w-full max-w-[480px]">
                 <ArtifactFrame
                   variant="chrome"
                   tone="paper"
@@ -426,32 +425,25 @@ export function Services() {
                   </div>
                 </ArtifactFrame>
               </div>
-            </div>
+              <h3 data-anim="copy" className="t-title--lg mt-fib-4">
+                Websites that convert
+              </h3>
+              <p data-anim="copy" className="mt-fib-2 text-paper/70">
+                Custom-designed and hand-built from your business, fast
+                enough that nobody leaves while it loads.
+              </p>
+              <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
+                <span className="chip">From $2.5k, fixed quote</span>
+                <span className="chip">You own everything</span>
+              </div>
+              <div data-anim="copy" className="mt-auto pt-fib-4">
+                <CTA href="/services/websites" label="Convert the click" tone="paper" />
+              </div>
           </article>
 
-          {/* ── 03 · THE FOLLOW-UP — artifact right ── */}
-          <article data-svc-row className="rounded-frame bg-paper/[0.05] p-fib-3 md:p-fib-5">
-            <div className="flex flex-col gap-fib-4">
-              <div>
-                <div className="flex flex-wrap items-center gap-fib-2">
-                  <h3 data-anim="copy" className="t-title--lg">
-                    The follow-up
-                  </h3>
-                  <span data-anim="copy" className="chip chip--sm bg-accent/10 text-accent">
-                    New for 2026
-                  </span>
-                </div>
-                <p data-anim="copy" className="mt-fib-2 max-w-[44ch] text-paper/70">
-                  AI that answers and chases. Chat that answers from your own
-                  pages, follow-ups that send themselves. No lead goes cold at
-                  9pm on a Sunday.
-                </p>
-                <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
-                  <span className="chip">Quoted per project</span>
-                  <span className="chip">Built and managed for you</span>
-                </div>
-              </div>
-              <div data-anim="artifact" className="w-[min(100%,480px)]">
+          {/* ── 03 · THE FOLLOW-UP ── */}
+          <article data-svc-row className="flex flex-col rounded-frame bg-paper/[0.05] p-fib-3">
+              <div data-anim="artifact" className="w-full max-w-[480px]">
                 <ArtifactFrame
                   variant="card"
                   tone="paper"
@@ -497,9 +489,8 @@ export function Services() {
                   </div>
                 </ArtifactFrame>
                 {/* the demo, made falsifiable: the same chat runs live on
-                    this site — one tap and the visitor is talking to it */}
-                {/* py pads the hit area to ~44px (touch minimum) without
-                    changing the link's visual weight */}
+                    this site — one tap and the visitor is talking to it.
+                    py pads the hit area to ~44px (touch minimum). */}
                 <button
                   type="button"
                   className="u-link t-meta mt-fib-1 cursor-pointer py-fib-2 text-accent"
@@ -510,12 +501,32 @@ export function Services() {
                   This one&rsquo;s real — ask it something
                 </button>
               </div>
-            </div>
+              <div className="flex flex-wrap items-center gap-fib-2 mt-fib-4">
+                <h3 data-anim="copy" className="t-title--lg">
+                  AI follow-up
+                </h3>
+                <span data-anim="copy" className="chip chip--sm bg-accent/10 text-accent">
+                  New for 2026
+                </span>
+              </div>
+              <p data-anim="copy" className="mt-fib-2 text-paper/70">
+                Chat that answers from your own pages, follow-ups that send
+                themselves. No lead goes cold at 9pm on a Sunday.
+              </p>
+              <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
+                <span className="chip">Quoted per project</span>
+                <span className="chip">Managed for you</span>
+              </div>
+              <div data-anim="copy" className="mt-auto pt-fib-4">
+                <CTA href="/services/ai" label="Never miss a lead" tone="paper" />
+              </div>
           </article>
+          </div>
 
-            <div className="md:hidden">
-              <CTA href="#estimate" label="Price my project" tone="paper" />
-            </div>
+          {/* the one shared ask, centered under the grid — the card CTAs
+              route into depth; this one routes to the number */}
+          <div className="mt-fib-5 flex justify-center">
+            <CTA href="#estimate" label="Price my project" tone="paper" />
           </div>
         </div>
       </div>
