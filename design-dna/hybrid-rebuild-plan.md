@@ -79,6 +79,22 @@ grid, phone heroes, audit prime work) IS the hybrid's foundation.
 
 ## 2 · THE REALISM KIT (build first — everything else consumes it)
 
+> **STATUS 2026-07-16: the SERP half SHIPPED** (42eaa7a + f6538cd).
+> `.g-m` = the pixel-true 2026 mobile SERP, values measured off Google's
+> LIVE DOM (mobile headline blue #1558d6, Roboto/Google Sans stacks,
+> 28px circle ad favicons, stacked sitelinks w/ edge chevrons, AI Mode
+> tab, real DW favicon). Sizes in cqw = proportional at any phone width.
+> Bezel verdict (Jake): CSS `.dvc` stays, mockup hunt killed — the
+> screen sells it, not the rim; islands DROPPED on UI screens (kept on
+> photo screens). **THE SEARCH-CYCLE PATTERN** (Jake's "what could even
+> be cycled" answer): a phone hero earns its space by PERFORMING the
+> craft on its one visible surface — ads = money search → next search
+> (retype in place) → junk search with the ad ABSENT (negative keywords
+> made visible; local chip leaves too) → tap takes the click, quiet
+> caption under the phone naming each beat. Same player later: websites
+> (click lands → page persuades → form catches), ai (asks at 9pm →
+> answers → books).
+
 The rebuild's phase zero is a small system of reference-grade surfaces:
 
 - **`GoogleSerp` component, pixel-true.** One canonical mobile SERP:
@@ -138,9 +154,12 @@ section, the estimator embed. Target: ~8 sections, ≤ 11 phone screens
 2. **De-risk chip band** — small, quiet: the service's honest facts.
 3. **The free tool** — ads: lead-math (shipped in slot 2); websites:
    the Builder toy moves up; ai: "ask it something" live-chat moment.
-4. **The 3-card narrative** — the extracted formula, per service:
-   - ads: *they search → your ad answers → the click lands* (GoogleSerp
-     surfaces on steel panels)
+4. **The 3-card narrative** — the extracted formula, per service.
+   NOTE (2026-07-16): on ADS the hero's search cycle now performs this
+   exact story — one story, one section, so the ads 3-card slot carries
+   something else (deliverables / proof) or is cut:
+   - ads: ~~they search → your ad answers → the click lands~~ superseded
+     by the hero search cycle
    - websites: *the click arrives → the page persuades → the form
      catches* (real capture crops)
    - ai: *they ask at 9pm → it answers from your pages → it books*
