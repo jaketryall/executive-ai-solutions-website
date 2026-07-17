@@ -110,6 +110,65 @@ export function Hero() {
         );
       });
 
+      /* ── the rolling industry mirror — the hero's one living element.
+         Organic visitors see the outcome line cycle through industries;
+         ?i= traffic stays locked to its own. Governed: in-view + visible
+         tab only, and the h1 height is locked to the longest pair so the
+         CTA row never jumps. ── */
+      if (locked === null) {
+        const out = q("[data-roll-out]")[0] as HTMLElement;
+        const who = q("[data-roll-who]")[0] as HTMLElement;
+        const h1 = q("[data-anim='statement']")[0] as HTMLElement;
+        if (out && who && h1) {
+          // pair 0 is the longest — lock its height before cycling
+          h1.style.minHeight = `${h1.offsetHeight}px`;
+          let idx = 0;
+          const roll = gsap.timeline({ repeat: -1, paused: true });
+          roll
+            .to({}, { duration: 3.8 })
+            .to([out, who], {
+              yPercent: -55,
+              autoAlpha: 0,
+              duration: 0.4,
+              ease: EASE_UI,
+              stagger: 0.06,
+            })
+            .call(() => {
+              idx = (idx + 1) % ROLL_PAIRS.length;
+              out.textContent = ROLL_PAIRS[idx].out;
+              who.textContent = `${ROLL_PAIRS[idx].who}.`;
+            })
+            .fromTo(
+              [out, who],
+              { yPercent: 55, autoAlpha: 0 },
+              {
+                yPercent: 0,
+                autoAlpha: 1,
+                duration: 0.5,
+                ease: EASE_UI,
+                stagger: 0.06,
+              }
+            );
+          const sync = () => {
+            const st = ScrollTrigger.getById("hero-roll");
+            const on = (st?.isActive ?? true) && !document.hidden;
+            (on ? roll.play() : roll.pause());
+          };
+          ScrollTrigger.create({
+            id: "hero-roll",
+            trigger: root.current,
+            start: "top bottom",
+            end: "bottom top",
+            onToggle: sync,
+          });
+          document.addEventListener("visibilitychange", sync);
+          context.add(() => () =>
+            document.removeEventListener("visibilitychange", sync)
+          );
+          sync();
+        }
+      }
+
       /* ── exit parallax (not a pin): the statement lifts slightly faster
          than the scroll as the hero leaves ── */
       gsap.to(q(".hero-left"), {
@@ -142,13 +201,26 @@ export function Hero() {
               words — that's what lets the whole thing hold display size
               without reading as a wall (the eyebrow + the ad demo carry the
               specifics) */}
-          <h1 data-anim="statement" className="t-statement t-statement--hero mx-auto mt-fib-2 max-w-[24ch] text-balance">
-            <span className="text-ink">
-              {ariaPair.out} {ariaPair.who}.
-            </span>{" "}
-            {/* the two-tone goes SearchKings: the second clause wears the
-                click color instead of a dim — accent IS the click */}
-            <span className="text-accent">We run the whole click.</span>
+          <h1
+            data-anim="statement"
+            className="t-statement t-statement--hero mx-auto mt-fib-2 max-w-[24ch] text-balance"
+            aria-label={`${ariaPair.out} ${ariaPair.who}. We run the whole click.`}
+          >
+            {/* the visual text swaps on the roll; the aria-label above is
+                the stable sentence screen readers get */}
+            <span aria-hidden>
+              <span className="text-ink">
+                <span data-roll-out className="inline-block">
+                  {ariaPair.out}
+                </span>{" "}
+                <span data-roll-who className="inline-block">
+                  {ariaPair.who}.
+                </span>
+              </span>{" "}
+              {/* the two-tone goes SearchKings: the second clause wears the
+                  click color instead of a dim — accent IS the click */}
+              <span className="text-accent">We run the whole click.</span>
+            </span>
           </h1>
 
           <div data-anim="ctas" className="mt-fib-3 flex flex-wrap items-center justify-center gap-fib-3">
