@@ -80,9 +80,10 @@ export function Faq() {
       id="faq"
       ref={root}
       data-nav="light"
-      // white per the back-act alternation (Jake, 2026-07-17): gray proof →
-      // white price → gray steps → WHITE faq → steel closer; every seam a cut
-      className="relative bg-white py-fib-6"
+      // light gray (Jake, 2026-07-17): the page's second gray chapter —
+      // objections get their own quiet room before the steel close.
+      // Map: W W W | G proof | W price · steps | G faq | steel.
+      className="relative bg-canvas py-fib-6"
     >
       <div className="wrap grid gap-fib-4 md:grid-cols-[minmax(300px,380px)_1fr] md:gap-fib-6">
         <div>
