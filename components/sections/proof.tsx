@@ -118,11 +118,11 @@ export function Proof() {
       data-nav="dark"
       // THE dark chapter (Jake, 2026-07-16: "0 background changes on
       // homescreen") — the homepage's one mid-page ground switch, spent
-      // where the content glows (the receipts). Stacked-sheet grammar:
-      // this ink sheet rides up over the audit's canvas with rounded
-      // shoulders, and PriceBeat's canvas sheet (z-10, same move) rises
-      // back out of it below.
-      className="dark-chapter proof-band relative z-5 -mt-fib-4 overflow-x-clip rounded-t-panel"
+      // where the content glows (the receipts). HARD CUT edges (Jake,
+      // 2026-07-17, the Apple observation): rounding is reserved for the
+      // objects ON the stage (the cards), never the stage itself — a cut
+      // reads as a scene change, a rounded edge reads as furniture.
+      className="dark-chapter proof-band relative"
     >
       <div className="pb-fib-7 pt-fib-6">
         {/* ── the claim: title left, support right — the header row spans the

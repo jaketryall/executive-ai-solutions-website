@@ -106,9 +106,11 @@ export function PriceBeat() {
     <section
       ref={root}
       data-pcta-hide
-      // THE FLIP: chapter two (paper) rises over the ink run as a rounded
-      // sheet — the page's one ground change, on our own grammar
-      className="relative z-10 -mt-fib-4 overflow-x-clip rounded-t-panel bg-canvas"
+      // THE FLIP: canvas returns after the dark proof chapter. HARD CUT
+      // (Jake, 2026-07-17, the Apple observation) — the stage never wears
+      // radii; only the objects on it do. overflow-x-clip stays: it
+      // contains the absolutely-positioned witness quotes.
+      className="relative overflow-x-clip bg-canvas"
     >
       {/* the full-viewport beat is a desktop luxury: at 390px the claim is
           ~300px tall and 96svh leaves half a dead screen before the quotes */}
