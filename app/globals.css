@@ -660,20 +660,28 @@ section[id] {
   flex-direction: column;
   align-items: stretch;
   height: auto;
-  min-height: 52px;
-  width: min(50vw, 580px);
+  min-height: 60px;
+  width: min(58vw, 700px);
   padding: 0;
 }
-/* the mark inside the bar: a quiet first citizen, not a pill candidate */
+/* the mark inside the bar: mark + name, the identity end of the row.
+   (Sized up with the 60px row — Jake, 2026-07-16.) */
 .nav-brand-in {
   position: relative;
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  padding: 10px 10px 10px 15px;
+  gap: 10px;
+  padding: 10px 14px 10px 16px;
   color: inherit;
   opacity: 0.92;
   transition: opacity 0.1s linear;
+}
+.nav-brand-name {
+  font-size: 0.875rem;
+  font-weight: 560;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 .nav-brand-in:hover,
 .nav-brand-in:focus-visible {
@@ -683,8 +691,8 @@ section[id] {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  height: 52px;
+  justify-content: space-between;
+  height: 60px;
   flex-shrink: 0;
   padding: 0 8px;
 }
@@ -701,7 +709,7 @@ section[id] {
 .pill-bg {
   position: absolute;
   top: 8px;
-  height: 36px;
+  height: 44px; /* rides the 60px row: 8 + 44 + 8 */
   border-radius: var(--radius-btn);
   background: rgba(239, 240, 238, 0.12);
   opacity: 0;

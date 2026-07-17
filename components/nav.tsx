@@ -173,7 +173,12 @@ function LinksCapsule() {
             setPill({ left: el.offsetLeft, width: el.offsetWidth });
           }}
         >
-          <Monogram className="h-[24px] w-[24px]" />
+          <Monogram className="h-[26px] w-[26px]" />
+          {/* the name rides with the mark on desktop (Jake, 2026-07-16) —
+              the capsule went 580 → 700 to give it the room */}
+          <span className="nav-brand-name text-trim">
+            Executive AI Solutions
+          </span>
         </Link>
         <span
           className="pill-bg"
