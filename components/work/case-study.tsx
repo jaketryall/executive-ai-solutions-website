@@ -272,7 +272,7 @@ export function CaseStudy({
   return (
     <article ref={root} data-pcta-hide data-nav="light" className="relative">
       {/* ── head ── */}
-      <header className="mx-auto max-w-[1280px] px-[21px] pt-[144px] md:px-[55px] md:pt-[178px]">
+      <header className="mx-auto max-w-[1400px] px-[21px] pt-[144px] md:px-[55px] md:pt-[178px]">
         <div
           data-anim="cs-meta"
           className="flex flex-wrap items-baseline justify-between gap-[13px]"
@@ -334,7 +334,7 @@ export function CaseStudy({
                 src={project.cover.src}
                 alt={project.cover.alt}
                 fill
-                sizes="(min-width: 1280px) 1170px, 92vw"
+                sizes="(min-width: 1400px) 1290px, 92vw"
                 className="cs-img"
                 priority
               />
@@ -381,7 +381,7 @@ export function CaseStudy({
       {/* ── the story: ONE big moment in a card, then a short read
           (the awwwards rhythm: statement card → description → images →
           more talk → the rest of the work) ── */}
-      <section id="cs-story" className="mx-auto max-w-[1280px] px-[21px] py-[89px] md:px-[55px] md:py-[144px]">
+      <section id="cs-story" className="mx-auto max-w-[1400px] px-[21px] py-[89px] md:px-[55px] md:py-[144px]">
         <p className="t-statement max-w-[30ch]" data-anim="cs-reveal">
           {project.lede}
         </p>
@@ -440,7 +440,7 @@ export function CaseStudy({
         </div>
 
         {/* ── the closing read ── */}
-        <div className="mx-auto mt-[89px] max-w-[1280px] px-[21px] md:mt-[144px] md:px-[55px]">
+        <div className="mx-auto mt-[89px] max-w-[1400px] px-[21px] md:mt-[144px] md:px-[55px]">
           <div className="grid gap-[34px] md:grid-cols-2 md:gap-[55px]">
             {project.paras.slice(1).map((para) => (
               <p
@@ -461,7 +461,7 @@ export function CaseStudy({
       {project.results && (
         <section id="cs-results" className="pb-[89px] md:pb-[144px]">
           <div className="dark-chapter mx-[8px] rounded-panel py-fib-6 md:mx-[13px]">
-            <div className="mx-auto max-w-[1280px] px-[21px] md:px-[55px]">
+            <div className="mx-auto max-w-[1400px] px-[21px] md:px-[55px]">
               <div
                 data-anim="cs-reveal"
                 className="flex flex-col justify-between gap-[13px] md:flex-row md:items-end"
@@ -500,7 +500,7 @@ export function CaseStudy({
       )}
 
       {/* ── next case + the ask ── */}
-      <section id="cs-next" className="mx-auto max-w-[1280px] px-[21px] pb-[144px] md:px-[55px] md:pb-[178px]">
+      <section id="cs-next" className="mx-auto max-w-[1400px] px-[21px] pb-[144px] md:px-[55px] md:pb-[178px]">
         <p className="t-meta text-ink/55" data-anim="cs-reveal">
           Next case
         </p>

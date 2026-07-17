@@ -43,12 +43,13 @@
 }
 
 /* ── THE page column (one width system, every section) — content sits on
-   this single container: 1280 max, 21px gutters mobile / 55px desktop.
-   Never hand-roll mx-auto, max-w, or px per section again. ── */
+   this single container: 1400 max (was 1280 — widened 2026-07-16, Jake:
+   "allow our content to go a little bit wider"), 21px gutters mobile /
+   55px desktop. Never hand-roll mx-auto, max-w, or px per section again. ── */
 .wrap {
   margin-inline: auto;
   width: 100%;
-  max-width: 1280px;
+  max-width: 1400px;
   padding-inline: var(--spacing-fib-3);
 }
 @media (min-width: 768px) {
