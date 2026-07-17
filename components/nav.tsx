@@ -174,10 +174,11 @@ function LinksCapsule() {
           }}
         >
           <Monogram className="h-[26px] w-[26px]" />
-          {/* the name rides with the mark on desktop (Jake, 2026-07-16) —
-              the capsule went 580 → 700 to give it the room */}
-          <span className="nav-brand-name text-trim">
-            Executive AI Solutions
+          {/* the lockup: two stacked lines matched to the mark's height
+              (Jake, 2026-07-16); the Link's aria-label carries the name */}
+          <span className="nav-brand-name" aria-hidden>
+            <span>Executive AI</span>
+            <span>Solutions</span>
           </span>
         </Link>
         <span
@@ -200,6 +201,23 @@ function LinksCapsule() {
             <span className="text-trim">{l.label}</span>
           </Link>
         ))}
+        {/* the action rides the right end (Jake, 2026-07-16) — the counter-
+            weight to the lockup. Its own fill; the pill highlight stands
+            down here, and hovering it closes any open panel. */}
+        <Link
+          href="/pricing#estimate"
+          className="nav-cta"
+          onMouseEnter={() => {
+            setOpen(null);
+            setPill(null);
+          }}
+          onFocus={() => {
+            setOpen(null);
+            setPill(null);
+          }}
+        >
+          Price my project
+        </Link>
       </div>
       <div className="nav-expand">
         <div className="nav-expand-in" inert={open === null ? true : undefined}>

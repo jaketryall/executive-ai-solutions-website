@@ -661,7 +661,7 @@ section[id] {
   align-items: stretch;
   height: auto;
   min-height: 60px;
-  width: min(58vw, 700px);
+  width: min(62vw, 760px); /* room for lockup + links + the CTA */
   padding: 0;
 }
 /* the mark inside the bar: mark + name, the identity end of the row.
@@ -677,11 +677,29 @@ section[id] {
   opacity: 0.92;
   transition: opacity 0.1s linear;
 }
+/* the lockup (Jake, 2026-07-16): two stacked lines whose combined height
+   equals the mark — 2 × 13px lines = the 26px monogram. Reads as drawn
+   identity, and keeps the brand compact enough for the capsule. Below
+   1000px the name stands down entirely (never shrink, never re-wrap) —
+   at narrow desktop the 58vw capsule can't hold name + links. */
 .nav-brand-name {
-  font-size: 0.875rem;
-  font-weight: 560;
-  letter-spacing: 0.01em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 26px;
+  font-size: 0.75rem;
+  line-height: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   white-space: nowrap;
+}
+/* the stand-down ladder (measured, not guessed): with the CTA aboard the
+   row needs ~680px — below 1100 the name yields, below 950 the CTA yields
+   too (the persistent bottom capsule still carries the action there) */
+@media (max-width: 1099px) {
+  .nav-brand-name {
+    display: none;
+  }
 }
 .nav-brand-in:hover,
 .nav-brand-in:focus-visible {
@@ -705,6 +723,40 @@ section[id] {
   color: inherit;
   text-decoration: none;
   transition: color 0.1s linear;
+  /* sized to the 60px row (t-meta's 13px read small there — Jake);
+     tracking eases as size grows */
+  font-size: 0.9375rem;
+  letter-spacing: 0.02em;
+}
+/* the action at the row's right end — same fill grammar as the mobile
+   bar's estimate tile; sized to the pill inset (8px) like everything else */
+.nav-cta {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-btn);
+  background: var(--color-accent);
+  color: var(--color-paper);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background 0.15s var(--ease-ui);
+}
+.nav-cta:hover,
+.nav-cta:focus-visible {
+  background: #5a7d90; /* accent, one step lit */
+}
+/* below 950 the CTA yields (AFTER the base rule so display:none wins) —
+   the persistent bottom capsule carries the action there */
+@media (max-width: 949px) {
+  .nav-cta {
+    display: none;
+  }
 }
 .pill-bg {
   position: absolute;
@@ -824,15 +876,6 @@ section[id] {
   }
 }
 
-/* the nav CTA is its own capsule: capsule radius + height, button language */
-.nav-cta {
-  height: 52px;
-  padding-top: 0;
-  padding-bottom: 0;
-  border-radius: var(--radius-capsule);
-  font-size: 0.875rem;
-  box-shadow: 0 10px 34px rgba(19, 20, 19, 0.16);
-}
 /* persistent CTA capsule — the action is always one reach away. Hidden while
    the estimate chapter or the footer is on screen (the action itself is there). */
 .pcta {
