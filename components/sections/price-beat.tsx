@@ -36,7 +36,7 @@ export function PriceBeat() {
          (Jake: entrances must guide attention, never delay comprehension.) */
       const tl = gsap.timeline({
         defaults: { ease: EASE_STRUCTURE },
-        scrollTrigger: { trigger: root.current, start: "top 78%", once: true },
+        scrollTrigger: { trigger: root.current, start: "top 78%", toggleActions: "play none none none" },
       });
       tl.fromTo(
         q("[data-anim='price']"),
@@ -61,7 +61,7 @@ export function PriceBeat() {
           duration: 0.7,
           stagger: 0.12,
           ease: EASE_STRUCTURE,
-          scrollTrigger: { trigger: root.current, start: "top 58%", once: true },
+          scrollTrigger: { trigger: root.current, start: "top 58%", toggleActions: "play none none none" },
         }
       );
       // and breathe at their own rates while the section is on screen

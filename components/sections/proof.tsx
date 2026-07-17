@@ -40,7 +40,7 @@ export function Proof() {
           y: 0,
           duration: 0.9,
           ease: EASE_STRUCTURE,
-          scrollTrigger: { trigger: root.current, start: "top 75%", once: true },
+          scrollTrigger: { trigger: root.current, start: "top 75%", toggleActions: "play none none none" },
         }
       );
 
@@ -69,7 +69,7 @@ export function Proof() {
             y: 0,
             duration: 1.15,
             ease: EASE_STRUCTURE,
-            scrollTrigger: { trigger: row, start: "top 75%", once: true },
+            scrollTrigger: { trigger: row, start: "top 75%", toggleActions: "play none none none" },
           }
         );
 

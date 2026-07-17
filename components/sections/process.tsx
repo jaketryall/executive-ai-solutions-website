@@ -284,7 +284,7 @@ export function Process() {
       steps.forEach((el, i) => {
         const tl = gsap.timeline({
           defaults: { ease: EASE_STRUCTURE, overwrite: "auto" },
-          scrollTrigger: { trigger: el, start: "top 78%", once: true },
+          scrollTrigger: { trigger: el, start: "top 78%", toggleActions: "play none none none" },
         });
         const f = fills[i];
         if (f)

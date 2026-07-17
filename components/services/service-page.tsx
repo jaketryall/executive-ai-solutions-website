@@ -824,7 +824,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
       /* ── price beat: the peak — lead line, then the number rises ── */
       const priceTl = gsap.timeline({
         defaults: { ease: EASE_STRUCTURE },
-        scrollTrigger: { trigger: q(".svc-price")[0], start: "top 72%", once: true },
+        scrollTrigger: { trigger: q(".svc-price")[0], start: "top 72%", toggleActions: "play none none none" },
       });
       priceTl
         .fromTo(
@@ -856,7 +856,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           duration: 0.8,
           stagger: 0.16,
           ease: EASE_STRUCTURE,
-          scrollTrigger: { trigger: q(".svc-price")[0], start: "top 45%", once: true },
+          scrollTrigger: { trigger: q(".svc-price")[0], start: "top 45%", toggleActions: "play none none none" },
         }
       );
       // and breathe at their own rates while the section is on screen

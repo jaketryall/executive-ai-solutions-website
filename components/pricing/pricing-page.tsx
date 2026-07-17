@@ -333,7 +333,7 @@ export function PricingSheet() {
       gsap
         .timeline({
           defaults: { ease: EASE_STRUCTURE },
-          scrollTrigger: { trigger: root.current, start: "top 72%", once: true },
+          scrollTrigger: { trigger: root.current, start: "top 72%", toggleActions: "play none none none" },
         })
         .fromTo(
           q("[data-anim='sheet']"),

@@ -47,7 +47,7 @@ export function ValueReframe() {
           y: 0,
           duration: 0.7,
           ease: EASE_STRUCTURE,
-          scrollTrigger: { trigger: root.current, start: "top 75%", once: true },
+          scrollTrigger: { trigger: root.current, start: "top 75%", toggleActions: "play none none none" },
         }
       );
 

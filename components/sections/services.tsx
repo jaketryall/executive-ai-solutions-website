@@ -38,7 +38,7 @@ export function Services() {
         const tl = gsap.timeline({
           delay: gridRow() ? (i % 3) * 0.14 : 0,
           defaults: { ease: "power3.out" },
-          scrollTrigger: { trigger: row, start: "top 72%", once: true },
+          scrollTrigger: { trigger: row, start: "top 72%", toggleActions: "play none none none" },
         });
         tl.fromTo(
           row.querySelectorAll("[data-anim='artifact']"),
