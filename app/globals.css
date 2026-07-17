@@ -2085,15 +2085,6 @@ img.g-fav {
   background: linear-gradient(180deg, var(--color-dark) 0%, var(--color-dark-2) 100%);
   box-shadow: 0 21px 55px -21px rgba(19, 20, 19, 0.35);
 }
-/* inside the proof band (the homepage's dark chapter, 2026-07-16) the card
-   can't wear the ground's own gradient — one step of lift + a hairline
-   separates it. Site-check's report card stays a floating dark object on
-   canvas and keeps the base recipe. */
-.proof-band .proof-card {
-  background: linear-gradient(180deg, #1d1f1e 0%, #232624 100%);
-  border: 1px solid rgba(239, 240, 238, 0.07);
-  box-shadow: 0 21px 55px -21px rgba(0, 0, 0, 0.55);
-}
 
 /* the closer — the page's ONE full-color surface. The accent is the click
    color everywhere else, so the final ask is the one card allowed to wear it

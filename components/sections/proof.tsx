@@ -115,14 +115,14 @@ export function Proof() {
     <section
       id="proof"
       ref={root}
-      data-nav="dark"
-      // THE dark chapter (Jake, 2026-07-16: "0 background changes on
-      // homescreen") — the homepage's one mid-page ground switch, spent
-      // where the content glows (the receipts). HARD CUT edges (Jake,
-      // 2026-07-17, the Apple observation): rounding is reserved for the
-      // objects ON the stage (the cards), never the stage itself — a cut
-      // reads as a scene change, a rounded edge reads as furniture.
-      className="dark-chapter proof-band relative"
+      data-nav="light"
+      // TWO-GROUND SYSTEM (Jake, 2026-07-17: "apple only rotates 2 colors
+      // really") — the ink STAGE retires after one day; stages don't wear
+      // radii AND stages don't wear drama. Proof opens the gray back act
+      // (canvas #f5f5f7, running through price/steps/faq to the steel
+      // closer); the darkness lives in the OBJECTS — the receipt cards
+      // glow against the quiet gray, the original Lesse form.
+      className="relative bg-canvas text-ink"
     >
       <div className="pb-fib-7 pt-fib-6">
         {/* ── the claim: title left, support right — the header row spans the
@@ -132,7 +132,7 @@ export function Proof() {
           className="wrap flex flex-col justify-between gap-fib-3 md:flex-row md:items-end"
         >
           <h2 className="t-display-lg">Where the click lands</h2>
-          <p className="max-w-[38ch] text-paper/70 md:text-right">
+          <p className="max-w-[38ch] text-ink/70 md:text-right">
             The ad you watched climb the search is real. These are the pages
             our clicks land on: designed, built, and tracked by us.
           </p>
