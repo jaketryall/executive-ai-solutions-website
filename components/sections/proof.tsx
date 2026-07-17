@@ -115,9 +115,14 @@ export function Proof() {
     <section
       id="proof"
       ref={root}
-      // LIGHT-FIRST (2026-07-16): the proof rides the cream canvas; the
-      // receipts are DARK CARDS — ink as the accent object, not the ground
-      className="relative text-ink"
+      data-nav="dark"
+      // THE dark chapter (Jake, 2026-07-16: "0 background changes on
+      // homescreen") — the homepage's one mid-page ground switch, spent
+      // where the content glows (the receipts). Stacked-sheet grammar:
+      // this ink sheet rides up over the audit's canvas with rounded
+      // shoulders, and PriceBeat's canvas sheet (z-10, same move) rises
+      // back out of it below.
+      className="dark-chapter proof-band relative z-5 -mt-fib-4 overflow-x-clip rounded-t-panel"
     >
       <div className="pb-fib-7 pt-fib-6">
         {/* ── the claim: title left, support right — the header row spans the
@@ -127,7 +132,7 @@ export function Proof() {
           className="wrap flex flex-col justify-between gap-fib-3 md:flex-row md:items-end"
         >
           <h2 className="t-display-lg">Where the click lands</h2>
-          <p className="max-w-[38ch] text-ink/70 md:text-right">
+          <p className="max-w-[38ch] text-paper/70 md:text-right">
             The ad you watched climb the search is real. These are the pages
             our clicks land on: designed, built, and tracked by us.
           </p>
