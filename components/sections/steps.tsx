@@ -55,11 +55,16 @@ export function Steps() {
 
   return (
     // full-viewport band (Jake, 2026-07-17): the section owns its screen —
-    // one idea per viewport, same register as the price beat's 96svh above
+    // one idea per viewport, same register as the price beat's 96svh above.
+    // WHITE: the zebra alternation lasted an hour — bands ≈ 1 viewport +
+    // a flip every band meant a seam was always on screen. The back act
+    // is now one white run (price → steps → faq) with proof as the page's
+    // single gray chapter; sections separate the way services does — long
+    // runs, strong heads, each section's own object family.
     <section
       ref={root}
       data-nav="light"
-      className="relative flex flex-col justify-center py-fib-6 md:min-h-[96svh]"
+      className="relative flex flex-col justify-center bg-white py-fib-6 md:min-h-[96svh]"
     >
       <div className="wrap">
         <h2 data-anim="steps-title" className="t-display-lg text-center">
