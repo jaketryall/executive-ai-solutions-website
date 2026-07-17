@@ -1866,6 +1866,20 @@ img.g-fav {
   color: var(--color-accent);
 }
 
+/* the hero's trust crown — five REAL stars (all reviews are 5.0; the
+   count joins when it's worth printing, Jake 2026-07-17). Review-gold
+   reads as "rating" at a glance; the one non-palette color allowed here. */
+.hero-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #d99a2b;
+}
+.hero-stars svg {
+  width: 15px;
+  height: 15px;
+}
+
 /* hero trust row — the surfaces we put clients on, as plain-type
    monochrome wordmarks (nominative use only: our font, one ink, never
    their colors or logo art). Replaces the facepile until real client

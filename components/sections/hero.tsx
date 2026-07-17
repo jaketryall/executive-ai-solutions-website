@@ -69,12 +69,19 @@ export function Hero() {
         { autoAlpha: 1, y: 0, duration: 0.8, clearProps: "transform" },
         0.05
       )
-        // track A — the eyebrow sets the category, the statement rises
+        // track A — trust crowns first (the SK order), the eyebrow sets
+        // the category, the statement rises
+        .fromTo(
+          q("[data-anim='stars']"),
+          { autoAlpha: 0, y: 10 },
+          { autoAlpha: 1, y: 0, duration: 0.55, ease: EASE_UI },
+          0.05
+        )
         .fromTo(
           q("[data-anim='eyebrow']"),
           { autoAlpha: 0, y: 13 },
           { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
-          0.1
+          0.16
         )
         .fromTo(
           q("[data-anim='statement']"),
@@ -214,7 +221,26 @@ export function Hero() {
             checkable fact instead: place in the eyebrow, real surfaces
             in the marks row, real terms in the chips. ── */}
         <div className="hero-left flex flex-col items-center">
-          <p data-anim="eyebrow" className="t-meta uppercase text-ink/70">
+          {/* the trust crown (Jake's SK decode: stars first) — REAL reviews,
+              all five-star; the count is deliberately unstated until it's
+              a number worth printing. No volume implied. */}
+          <div
+            data-anim="stars"
+            className="flex items-center gap-fib-1"
+            aria-label="Rated 5.0 by our clients"
+          >
+            <span className="hero-stars" aria-hidden>
+              {[0, 1, 2, 3, 4].map((s) => (
+                <svg key={s} viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.8L10 1.5z" />
+                </svg>
+              ))}
+            </span>
+            <span className="t-meta text-ink/70" aria-hidden>
+              5.0 from our clients
+            </span>
+          </div>
+          <p data-anim="eyebrow" className="t-meta mt-fib-2 uppercase text-ink/70">
             Full-funnel ads agency &middot; Mesa, AZ
           </p>
           {/* the two-tone statement (the signature): bright outcome, dim

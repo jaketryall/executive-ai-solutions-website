@@ -10,14 +10,16 @@ import { Closer } from "@/components/sections/closer";
 export default function Home() {
   return (
     <>
-      {/* THE ROUTER ORDER (hybrid-rebuild-plan §3): the home page's job is
-          to move each visitor to the page that answers THEM — services
-          self-select right under the hero, the audit catches everyone the
-          router didn't route, proof reads as receipts, the price beat
-          routes to /pricing. Depth lives on the interior pages. */}
+      {/* THE ROUTER ORDER (hybrid-rebuild-plan §3, amended 2026-07-17):
+          hook → GIVE → route → prove → price. The audit moved directly
+          under the hero (Jake: "it can help build trust and shows them
+          what they need") — the give IS the trust artifact for a
+          badge-less agency, it personalizes the proof to THEIR site, and
+          the hero's "run the free audit" link now lands one scroll later.
+          Services shelve the fixes right below the diagnosis. */}
       <Hero />
-      <Services />
       <SiteCheck />
+      <Services />
       <Proof />
       <PriceBeat />
       <Steps />
