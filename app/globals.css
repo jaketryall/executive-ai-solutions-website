@@ -1872,13 +1872,13 @@ img.g-fav {
 }
 
 /* the hero's trust crown — five REAL stars (all reviews are 5.0; the
-   count joins when it's worth printing, Jake 2026-07-17). Review-gold
-   reads as "rating" at a glance; the one non-palette color allowed here. */
+   count joins when it's worth printing, Jake 2026-07-17). Stars wear
+   the ACCENT (his call, same day) — the palette stays closed. */
 .hero-stars {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  color: #d99a2b;
+  color: var(--color-accent);
 }
 .hero-stars svg {
   width: 15px;
@@ -1904,7 +1904,9 @@ img.g-fav {
 .hero-marquee-track {
   display: flex;
   width: max-content;
-  animation: hero-marquee 30s linear infinite;
+  /* 60s with the 4-set track = the same ~25px/s amble the 2-set/30s
+     version had — the sets doubled, so the clock does too */
+  animation: hero-marquee 60s linear infinite;
 }
 .hero-marquee-set {
   display: flex;

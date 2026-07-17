@@ -128,8 +128,14 @@ export function Hero() {
         const who = q("[data-roll-who]")[0] as HTMLElement;
         const h1 = q("[data-anim='statement']")[0] as HTMLElement;
         if (out && who && h1) {
-          // pair 0 is the longest — lock its height before cycling
-          h1.style.minHeight = `${h1.offsetHeight}px`;
+          // pair 0 is the longest — lock its height so the CTA never
+          // jumps between pairs. Lock AFTER fonts land: measuring the
+          // fallback font baked a ~3-line min-height into a 2-line h1
+          // and left a phantom gap under the claim (Jake: "spacing in
+          // hero looks goofy", 2026-07-17)
+          document.fonts.ready.then(() => {
+            if (root.current) h1.style.minHeight = `${h1.offsetHeight}px`;
+          });
           let idx = 0;
           const roll = gsap.timeline({ repeat: -1, paused: true });
           roll
@@ -280,11 +286,13 @@ export function Hero() {
 
           {/* the marquee (Jake's logo-marquee instinct, in motion): the
               real surfaces we put clients on, drifting at ambient speed —
-              the hero's one perpetual layer. Two identical sets = a
-              seamless -50% loop; edges feathered by mask. */}
-          <div data-anim="marquee" className="hero-marquee mt-fib-6" aria-hidden>
+              the hero's one perpetual layer. FOUR sets: a -50% loop is
+              only seamless when each HALF of the track outspans the
+              visible window (1290px) — two 752px sets ran dry on the
+              right ("gets smaller", Jake). Edges feathered by mask. */}
+          <div data-anim="marquee" className="hero-marquee mt-fib-5" aria-hidden>
             <div className="hero-marquee-track">
-              {[0, 1].map((set) => (
+              {[0, 1, 2, 3].map((set) => (
                 <span key={set} className="hero-marquee-set">
                   {[
                     "Google",
