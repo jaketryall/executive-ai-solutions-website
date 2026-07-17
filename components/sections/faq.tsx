@@ -80,7 +80,9 @@ export function Faq() {
       id="faq"
       ref={root}
       data-nav="light"
-      className="relative py-fib-6"
+      // white per the back-act alternation (Jake, 2026-07-17): gray proof →
+      // white price → gray steps → WHITE faq → steel closer; every seam a cut
+      className="relative bg-white py-fib-6"
     >
       <div className="wrap grid gap-fib-4 md:grid-cols-[minmax(300px,380px)_1fr] md:gap-fib-6">
         <div>

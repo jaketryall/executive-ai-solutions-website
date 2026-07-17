@@ -106,11 +106,12 @@ export function PriceBeat() {
     <section
       ref={root}
       data-pcta-hide
-      // THE FLIP: canvas returns after the dark proof chapter. HARD CUT
-      // (Jake, 2026-07-17, the Apple observation) — the stage never wears
-      // radii; only the objects on it do. overflow-x-clip stays: it
-      // contains the absolutely-positioned witness quotes.
-      className="relative overflow-x-clip bg-canvas"
+      // WHITE per the back-act alternation (Jake, 2026-07-17: price/steps/
+      // faq read unseparated on one gray run — contrast makes boundaries,
+      // not distance). The page's second statement peak shares the hero's
+      // white register; gray proof above and gray steps below cut against
+      // it. overflow-x-clip stays: it contains the witness quotes.
+      className="relative overflow-x-clip bg-white"
     >
       {/* the full-viewport beat is a desktop luxury: at 390px the claim is
           ~300px tall and 96svh leaves half a dead screen before the quotes */}
