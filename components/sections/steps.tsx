@@ -54,7 +54,13 @@ export function Steps() {
   );
 
   return (
-    <section ref={root} data-nav="light" className="relative py-fib-6">
+    // full-viewport band (Jake, 2026-07-17): the section owns its screen —
+    // one idea per viewport, same register as the price beat's 96svh above
+    <section
+      ref={root}
+      data-nav="light"
+      className="relative flex flex-col justify-center py-fib-6 md:min-h-[96svh]"
+    >
       <div className="wrap">
         <h2 data-anim="steps-title" className="t-display-lg text-center">
           Getting started is easy
