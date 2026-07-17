@@ -772,6 +772,14 @@ section[id] {
   aspect-ratio: 1;
   flex-shrink: 0;
 }
+/* a logo mark in a favicon-style chip — legible where a screenshot isn't */
+.nav-mini-thumb--mark {
+  border-radius: 50%;
+  background: #fff;
+  padding: 5px;
+  object-fit: contain;
+  box-shadow: 0 0 0 1px rgba(239, 240, 238, 0.14);
+}
 /* a quiet fact line above a panel's cards — no box, no affordance */
 .nav-fact {
   padding: 3px 13px 0;
