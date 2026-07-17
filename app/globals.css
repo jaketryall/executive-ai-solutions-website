@@ -725,6 +725,9 @@ section[id] {
 .nav-panel--3 {
   grid-template-columns: repeat(3, 1fr);
 }
+.nav-panel--1 {
+  grid-template-columns: 1fr;
+}
 .nav-mini {
   display: flex;
   flex-direction: column;
@@ -758,15 +761,41 @@ section[id] {
   object-position: top;
   border-radius: var(--radius-chip);
 }
+/* the horizontal mini: a small square thumb beside the words, not a banner */
+.nav-mini--row {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+.nav-mini--row .nav-mini-thumb {
+  width: 40px;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+}
+/* a quiet fact line above a panel's cards — no box, no affordance */
+.nav-fact {
+  padding: 3px 13px 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: rgba(239, 240, 238, 0.6);
+  animation: nav-mini-in 0.35s var(--ease-ui) backwards;
+}
+.nav-fact .t-num {
+  color: rgba(239, 240, 238, 0.88);
+}
+.nav-fact--end {
+  text-align: right;
+}
 .nav-mini-meta {
   font-size: 0.75rem;
   letter-spacing: 0.04em;
   color: rgba(239, 240, 238, 0.6);
 }
 @keyframes nav-mini-in {
+  /* Lesse-measured: items settle DOWN into place (-6px, ease-out) */
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(-6px);
   }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -54,8 +54,10 @@ function LinksCapsule() {
     (i: number) =>
     (e: React.MouseEvent<HTMLElement> | React.FocusEvent<HTMLElement>) => {
       const el = e.currentTarget;
-      setOpen(i);
-      setShown(i);
+      // links without a panel (pricing) keep the pill highlight but the
+      // capsule stays at rest — nothing to preview, nothing opens
+      setOpen(panels[i] ? i : null);
+      if (panels[i]) setShown(i);
       setPill({ left: el.offsetLeft, width: el.offsetWidth });
     };
   const close = () => {
@@ -73,7 +75,7 @@ function LinksCapsule() {
       key={i}
       href={href}
       className={`nav-mini ${extra}`}
-      style={{ animationDelay: `${i * 60}ms` }}
+      style={{ animationDelay: `${i * 100}ms` }}
       onClick={close}
     >
       {body}
@@ -81,7 +83,7 @@ function LinksCapsule() {
   );
 
   const panels = [
-    // Work — the proof, small
+    // Work — the proof, small: a thumb beside the words, not a banner
     <div key="w" className="nav-panel">
       {mini(
         "/work",
@@ -92,9 +94,13 @@ function LinksCapsule() {
             alt="The Desert Wings homepage"
             className="nav-mini-thumb"
           />
-          <span className="text-trim">Desert Wings Flight School</span>
+          <span className="flex min-w-0 flex-col gap-[2px]">
+            <span className="nav-mini-meta">Case study</span>
+            <span className="text-trim">Desert Wings Flight School</span>
+          </span>
         </>,
         0,
+        "nav-mini--row",
       )}
       {mini(
         "/work",
@@ -132,44 +138,14 @@ function LinksCapsule() {
         2,
       )}
     </div>,
-    // Pricing — the sheet and the estimator
-    <div key="p" className="nav-panel">
-      {mini(
-        "/pricing",
-        <>
-          <span className="nav-mini-meta">The whole sheet</span>
-          <span className="text-trim">Our real prices, published</span>
-        </>,
-        0,
-      )}
-      {mini(
-        "/pricing#estimate",
-        <>
-          <span className="nav-mini-meta">Instant estimate</span>
-          <span className="text-trim">A live number from real pricing</span>
-        </>,
-        1,
-      )}
-    </div>,
-    // Contact — the message, and proof someone's actually there
-    <div key="c" className="nav-panel">
-      {mini(
-        "/contact",
-        <>
-          <span className="nav-mini-meta">Send a message</span>
-          <span className="text-trim">Replies within one business day</span>
-        </>,
-        0,
-      )}
-      {/* the clock is a fact, not a destination — a plain surface, no link */}
-      <div
-        className="nav-mini nav-mini--static"
-        style={{ animationDelay: "60ms" }}
-      >
-        <span className="nav-mini-meta">Our local time · Mesa, AZ</span>
-        <span className="text-trim">
-          <LocalTime />
-        </span>
+    // Pricing — a plain destination; the page needs no preview
+    null,
+    // Contact — the hover reveals one quiet fact: someone's actually
+    // there. Right-aligned: it lands directly under the Contact link
+    // (the last one), where the eyes already are
+    <div key="c" className="nav-panel nav-panel--1">
+      <div className="nav-fact nav-fact--end" style={{ animationDelay: "0ms" }}>
+        Mesa, AZ · <LocalTime /> our time
       </div>
     </div>,
   ];
