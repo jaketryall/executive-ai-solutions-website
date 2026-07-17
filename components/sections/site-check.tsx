@@ -144,12 +144,12 @@ export function SiteCheck() {
       <div className="rounded-panel bg-panel pb-fib-7 pt-fib-5">
       <div className="wrap">
         <div className="mx-auto max-w-[640px] text-center">
-          {/* the fold bait (Hormozi's FREE, Jake 2026-07-17): this headline
-              crests the fold under the tight hero; the accent "free" is
-              what the eye catches first */}
-          <h2 data-anim="sc" className="t-display-lg">
-            Get a <span className="text-accent">free</span> site audit, right
-            now
+          {/* the fold bait (Hormozi's FREE ADVANCED TRAINING, Jake
+              2026-07-17): ONE line — accent word first, banner-plain —
+              cresting the fold under the tight hero; the paragraph does
+              the explaining */}
+          <h2 data-anim="sc" className="t-display-lg whitespace-nowrap">
+            <span className="text-accent">Free</span> site audit
           </h2>
           <p data-anim="sc" className="t-lede mx-auto mt-fib-3 max-w-[42ch] text-ink/70">
             Paste your address and we&rsquo;ll read your homepage the way we
