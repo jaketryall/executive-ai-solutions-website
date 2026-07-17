@@ -1885,8 +1885,49 @@ img.g-fav {
   height: 15px;
 }
 
-/* (hero-marks retired 2026-07-17 — the stars carry the hero's trust and
-   the six service cards tell the where-you-show-up story; no fossils.) */
+/* the hero marquee (Jake, 2026-07-17, third life of the marquee idea):
+   the surfaces we put clients on, drifting at ambient speed — the
+   hero's one perpetual layer. Two identical sets in the track;
+   translateX(-50%) loops seamlessly. Plain-type monochrome wordmarks
+   only (nominative use, never their colors/logo art). */
+.hero-marquee {
+  width: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 13%,
+    #000 87%,
+    transparent
+  );
+}
+.hero-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: hero-marquee 30s linear infinite;
+}
+.hero-marquee-set {
+  display: flex;
+  flex-shrink: 0;
+}
+.hm-item {
+  padding-right: 55px;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: rgba(19, 20, 19, 0.35);
+}
+@keyframes hero-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-marquee-track {
+    animation: none;
+  }
+}
 
 /* the price-beat witnesses — quiet cards floating around the claim.
    Positioned in %, contained by the section (overflow-x-clip), desktop only. */

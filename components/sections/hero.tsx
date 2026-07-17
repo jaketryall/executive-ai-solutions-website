@@ -92,26 +92,19 @@ export function Hero() {
 
 
       tl
-        // the how resolves the claim into a method
-        .fromTo(
-          q("[data-anim='how']"),
-          { autoAlpha: 0, y: 16 },
-          { autoAlpha: 1, y: 0, duration: 0.7, ease: EASE_UI },
-          0.7
-        )
         // the resolve — the sequence lands on the one action
         .fromTo(
           q("[data-anim='ctas']"),
           { autoAlpha: 0, y: 18 },
           { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
-          1.0
+          0.8
         )
-        // the quiet registers settle last
+        // the ambient layer wakes last, already drifting
         .fromTo(
-          q("[data-anim='chips']"),
+          q("[data-anim='marquee']"),
           { autoAlpha: 0 },
-          { autoAlpha: 1, duration: 0.4, ease: EASE_UI },
-          1.2
+          { autoAlpha: 1, duration: 0.6, ease: EASE_UI },
+          1.05
         );
 
       // fonts measurable AND the route-transition sheet landed
@@ -223,7 +216,10 @@ export function Hero() {
             earned marks we don't hold, so every trust beat here is a
             checkable fact instead: place in the eyebrow, real surfaces
             in the marks row, real terms in the chips. ── */}
-        <div className="hero-left flex flex-col items-center">
+        {/* w-full: without it this column sizes to the marquee track's
+            max-content width and drags the whole page into horizontal
+            overflow — the clamp is what lets .hero-marquee clip */}
+        <div className="hero-left flex w-full flex-col items-center">
           {/* the trust crown (Jake's SK decode: stars first) — REAL reviews,
               all five-star; the count is deliberately unstated until it's
               a number worth printing. No volume implied. */}
@@ -273,34 +269,37 @@ export function Hero() {
             </span>
           </h1>
 
-          {/* the HOW — the beat the old hero skipped: one sentence naming
-              the machine, so the claim above reads as a method, not a slogan */}
-          <p
-            data-anim="how"
-            className="t-lede mx-auto mt-fib-3 max-w-[46ch] text-ink/65"
-          >
-            The ad, the landing page, the AI follow-up &mdash; one team owns
-            every step between the search and the booked job.
-          </p>
-
-          {/* the one action (the Hormozi shape, Jake 2026-07-17): a tight
-              hero, ONE loud CTA — and the audit's "free" headline PEEKS
-              above the fold below, so curiosity earns the scroll for us.
-              The input lives down there, not here. */}
+          {/* the one action (the Hormozi shape, Jake 2026-07-17): powerful
+              heading, ONE loud CTA, nothing else to read — the audit's
+              "free" headline peeks below and earns the scroll. Lede and
+              chips cut same day ("i dont think we need the sub heading…
+              get rid of the little pills"). */}
           <div data-anim="ctas" className="mt-fib-4">
             <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
           </div>
 
-          {/* the incentives (their 'no startup fees / no contracts / flat
-              monthly fee', our true terms) — promoted from whisper meta
-              to chips so the de-risk actually registers */}
-          <div
-            data-anim="chips"
-            className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-1"
-          >
-            <span className="chip">No lock-in</span>
-            <span className="chip">Fixed quote in 2 days</span>
-            <span className="chip">You own everything</span>
+          {/* the marquee (Jake's logo-marquee instinct, in motion): the
+              real surfaces we put clients on, drifting at ambient speed —
+              the hero's one perpetual layer. Two identical sets = a
+              seamless -50% loop; edges feathered by mask. */}
+          <div data-anim="marquee" className="hero-marquee mt-fib-6" aria-hidden>
+            <div className="hero-marquee-track">
+              {[0, 1].map((set) => (
+                <span key={set} className="hero-marquee-set">
+                  {[
+                    "Google",
+                    "Google Maps",
+                    "Google Guaranteed",
+                    "ChatGPT",
+                    "AI Overviews",
+                  ].map((m) => (
+                    <span key={m} className="hm-item">
+                      {m}
+                    </span>
+                  ))}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
 
