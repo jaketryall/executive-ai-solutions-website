@@ -133,7 +133,10 @@ export function SiteCheck() {
       // (Jake killed the gray strip): hero→audit is one beat — ask, then
       // give — and the dark report card is the section's one object. pt
       // clears the hero ad card's exit overhang.
-      className="relative pb-fib-7 pt-fib-6 text-ink"
+      // the warm-gray band under the white hero (Jake, 2026-07-17): the
+      // ground switch at the fold is what sells the peek. HARD CUT per the
+      // stage-never-wears-radii law; add rounded-t if Jake decides to.
+      className="relative bg-panel pb-fib-7 pt-fib-5 text-ink"
     >
       <div className="wrap">
         <div className="mx-auto max-w-[640px] text-center">

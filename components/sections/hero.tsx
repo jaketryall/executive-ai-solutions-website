@@ -207,14 +207,17 @@ export function Hero() {
   );
 
   return (
-    <section id="top" ref={root} className="hero relative">
+    // WHITE ground (Jake, 2026-07-17): the hero sits on pure white so the
+    // audit section's warm-gray band below reads as a visible chapter line
+    // right at the fold — the ground change announces "there's more"
+    <section id="top" ref={root} className="hero relative bg-white">
       {/* the SearchKings hero: CENTERED — claim, one action, the quiet
           audit path, the de-risk line. No mockup; the services cards
           directly below carry the demos. */}
       {/* TIGHT well (Hormozi shape, Jake 2026-07-17): the hero deliberately
           does NOT fill the viewport — the audit's "free" headline crests
           the fold below it, and curiosity earns the scroll for free */}
-      <div className="hero-in wrap relative z-10 flex min-h-[64svh] flex-col items-center justify-center pb-fib-5 pt-[120px] text-center md:pt-fib-6">
+      <div className="hero-in wrap relative z-10 flex min-h-[60svh] flex-col items-center justify-center pb-fib-4 pt-[120px] text-center md:pt-fib-6">
         {/* ── the SearchKings stack, our true content (Jake, 2026-07-16):
             trust → outcome → how → incentives. Their stars/badges are
             earned marks we don't hold, so every trust beat here is a
