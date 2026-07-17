@@ -9,6 +9,7 @@ import {
   EASE_UI,
   reducedMotion,
 } from "@/components/anim/ease";
+import { CTA } from "@/components/ui/cta";
 import { whenArrived } from "@/components/anim/arrival";
 
 /* The hero — the SearchKings shape (Jake, 2026-07-16): NO mockup here.
@@ -40,7 +41,6 @@ const useIsomorphicLayoutEffect =
 export function Hero() {
   const root = useRef<HTMLElement>(null!);
   const [locked, setLocked] = useState<number | null>(null);
-  const [audit, setAudit] = useState("");
 
   useIsomorphicLayoutEffect(() => {
     const i = new URLSearchParams(window.location.search).get("i");
@@ -211,10 +211,10 @@ export function Hero() {
       {/* the SearchKings hero: CENTERED — claim, one action, the quiet
           audit path, the de-risk line. No mockup; the services cards
           directly below carry the demos. */}
-      {/* 80svh (was 72): the four-beat stack is taller — centering it in
-          the bigger well clears the nav above and drains the dead canvas
-          that pooled under the marks row */}
-      <div className="hero-in wrap relative z-10 flex min-h-[80svh] flex-col items-center justify-center pb-fib-6 pt-[120px] text-center md:pt-fib-6">
+      {/* TIGHT well (Hormozi shape, Jake 2026-07-17): the hero deliberately
+          does NOT fill the viewport — the audit's "free" headline crests
+          the fold below it, and curiosity earns the scroll for free */}
+      <div className="hero-in wrap relative z-10 flex min-h-[64svh] flex-col items-center justify-center pb-fib-5 pt-[120px] text-center md:pt-fib-6">
         {/* ── the SearchKings stack, our true content (Jake, 2026-07-16):
             trust → outcome → how → incentives. Their stars/badges are
             earned marks we don't hold, so every trust beat here is a
@@ -280,44 +280,13 @@ export function Hero() {
             every step between the search and the booked job.
           </p>
 
-          {/* THE ENDGAME GIVE (Jake, 2026-07-17): the audit input lives IN
-              the hero — the page's first action is something we do for
-              THEM. Submitting hands the domain to the SiteCheck section
-              below (event) and glides down to the report. The money path
-              keeps a quiet line; nav + persistent capsule carry it loud. */}
-          <form
-            data-anim="ctas"
-            className="scheck-form mt-fib-4 w-full"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const v = audit.trim();
-              if (!v) return;
-              window.dispatchEvent(
-                new CustomEvent("eas:site-check", { detail: v })
-              );
-              document
-                .getElementById("site-check")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
-          >
-            <input
-              type="text"
-              inputMode="url"
-              autoComplete="url"
-              spellCheck={false}
-              placeholder="yourbusiness.com"
-              aria-label="Your website address"
-              className="scheck-input"
-              value={audit}
-              onChange={(e) => setAudit(e.target.value)}
-            />
-            <button type="submit" className="scheck-go" disabled={!audit.trim()}>
-              Check my site free
-            </button>
-          </form>
-          <p data-anim="ctas" className="t-meta mt-fib-2 text-ink/55">
-            Free &middot; Thirty seconds &middot; No email needed
-          </p>
+          {/* the one action (the Hormozi shape, Jake 2026-07-17): a tight
+              hero, ONE loud CTA — and the audit's "free" headline PEEKS
+              above the fold below, so curiosity earns the scroll for us.
+              The input lives down there, not here. */}
+          <div data-anim="ctas" className="mt-fib-4">
+            <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
+          </div>
 
           {/* the incentives (their 'no startup fees / no contracts / flat
               monthly fee', our true terms) — promoted from whisper meta
@@ -330,15 +299,6 @@ export function Hero() {
             <span className="chip">Fixed quote in 2 days</span>
             <span className="chip">You own everything</span>
           </div>
-
-          {/* the money path, quiet — the give owns the hero's loud slot */}
-          <a
-            data-anim="chips"
-            href="/pricing#estimate"
-            className="u-link mt-fib-3 text-ink/70"
-          >
-            Know what you need? Price my project
-          </a>
         </div>
 
       </div>

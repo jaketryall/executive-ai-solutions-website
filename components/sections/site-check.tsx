@@ -133,12 +133,16 @@ export function SiteCheck() {
       // (Jake killed the gray strip): hero→audit is one beat — ask, then
       // give — and the dark report card is the section's one object. pt
       // clears the hero ad card's exit overhang.
-      className="relative pb-fib-7 pt-fib-7 text-ink"
+      className="relative pb-fib-7 pt-fib-6 text-ink"
     >
       <div className="wrap">
         <div className="mx-auto max-w-[640px] text-center">
+          {/* the fold bait (Hormozi's FREE, Jake 2026-07-17): this headline
+              crests the fold under the tight hero; the accent "free" is
+              what the eye catches first */}
           <h2 data-anim="sc" className="t-display-lg">
-            Get a free site audit, right now
+            Get a <span className="text-accent">free</span> site audit, right
+            now
           </h2>
           <p data-anim="sc" className="t-lede mx-auto mt-fib-3 max-w-[42ch] text-ink/70">
             Paste your address and we&rsquo;ll read your homepage the way we
