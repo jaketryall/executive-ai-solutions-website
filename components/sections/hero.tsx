@@ -234,7 +234,18 @@ export function Hero() {
             )
             .to(
               allRows,
-              { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.1, ease: EASE_STRUCTURE },
+              {
+                autoAlpha: 1,
+                y: 0,
+                duration: 0.55,
+                stagger: 0.1,
+                ease: EASE_STRUCTURE,
+                // same rule as the entrance: leave no inline opacity behind,
+                // or the CSS focus-pull dim never applies again (cycle 2 bug)
+                onComplete: () => {
+                  gsap.set(q(".g-org-row"), { clearProps: "opacity,visibility" });
+                },
+              },
               "+=0.2"
             )
             .addLabel("flight", "+=0.45");
@@ -263,11 +274,21 @@ export function Hero() {
         },
         0.45
       )
-        // the results arrive — and the client is buried at the bottom
+        // the results arrive — and the client is buried at the bottom.
+        // clearProps on completion: the reveal's inline opacity would
+        // otherwise out-rank the CSS focus-pull that dims organics at lit
         .fromTo(
           q(".g-list > *"),
           { autoAlpha: 0, y: 13 },
-          { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.1 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.55,
+            stagger: 0.1,
+            onComplete: () => {
+              gsap.set(q(".g-org-row"), { clearProps: "opacity,visibility" });
+            },
+          },
           1.15
         )
         // a beat lives inside the first cycle; launch it
@@ -286,12 +307,6 @@ export function Hero() {
           { autoAlpha: 0 },
           { autoAlpha: 1, duration: 0.4, ease: EASE_UI },
           1.15
-        )
-        .fromTo(
-          q("[data-av]"),
-          { scale: 0.3, autoAlpha: 0 },
-          { scale: 1, autoAlpha: 1, duration: 0.6, stagger: 0.09 },
-          1.2
         )
         .call(() => {
           entranceDone = true;
@@ -386,28 +401,21 @@ export function Hero() {
             <span className="text-accent">We run the whole click.</span>
           </h1>
 
-          <div data-anim="ctas" className="mt-fib-3 flex flex-wrap items-center justify-center gap-fib-2">
+          <div data-anim="ctas" className="mt-fib-3 flex flex-wrap items-center justify-center gap-fib-3">
             <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
+            {/* the quiet path for the undecided — the give, one scroll away */}
+            <a href="#site-check" className="u-link text-ink/70">
+              Not sure yet? Run the free audit
+            </a>
           </div>
 
-          {/* PLACEHOLDER social proof — the count and the two initial circles
-              swap for real client marks as the roster grows; the DW mark is
-              real today */}
-          <div data-anim="proofrow" className="mt-fib-4 flex items-center justify-center gap-fib-2">
-            <div className="flex -space-x-[10px]" aria-hidden>
-              {/* solid, opaque discs — the translucent fills let the hero
-                  bleed through and read as ghosts */}
-              <span data-av className="hero-av bg-paper">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/work/desert-wings-logo.png" alt="" className="h-[19px] w-[19px] object-contain" />
-              </span>
-              <span data-av className="hero-av bg-accent text-paper">M</span>
-              <span data-av className="hero-av bg-[#6d716e] text-paper">R</span>
-            </div>
-            <p className="t-meta text-ink/60">
-              Trusted by 12+ local business owners
-            </p>
-          </div>
+          {/* the de-risk row (SearchKings' move, our facts): answers the
+              objection's shape before it forms. Holds this slot until real
+              client marks earn back the facepile. */}
+          <p data-anim="proofrow" className="t-meta mt-fib-4 text-ink/60">
+            No lock-in &middot; Fixed quote in 2 days &middot; You own
+            everything
+          </p>
         </div>
 
         {/* ── the enactment, stacked beneath the words — the hero's one
@@ -430,18 +438,42 @@ export function Hero() {
             {/* the results list — the client starts BURIED under the
                 directories, then climbs to the top and lights up as the ad.
                 The pitch, enacted. */}
+            {/* desktop-Google true (measured off the live DOM): every row
+                carries the favicon-circle source block; ad and organic share
+                the same link blue — what marks the ad is the Sponsored line,
+                the unfold, and the climb itself */}
             <div className="g-list" data-glist aria-hidden>
               <div className="g-org-row">
-                <p className="g-org-url">somedirectory.com &rsaquo; arizona</p>
+                <div className="g-src">
+                  <span className="g-fav" />
+                  <span className="g-src-t">
+                    <span className="g-site">Somedirectory</span>
+                    <span className="g-org-url">somedirectory.com &rsaquo; arizona</span>
+                  </span>
+                </div>
                 <p className="g-org-title">Best flight schools near Phoenix, ranked</p>
               </div>
               <div className="g-org-row">
-                <p className="g-org-url">aviationforum.com &rsaquo; threads</p>
+                <div className="g-src">
+                  <span className="g-fav" />
+                  <span className="g-src-t">
+                    <span className="g-site">Aviation Forum</span>
+                    <span className="g-org-url">aviationforum.com &rsaquo; threads</span>
+                  </span>
+                </div>
                 <p className="g-org-title">Learning to fly: costs, schools and licenses</p>
               </div>
               <div className="g-row" data-you>
                 <p className="g-sponsored">Sponsored</p>
-                <p className="g-url">{AD.url}</p>
+                <div className="g-src">
+                  {/* the client's real favicon — the realism carries the pitch */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/work/dw-favicon.png" alt="" className="g-fav" width={64} height={64} />
+                  <span className="g-src-t">
+                    <span className="g-site">Desert Wings Flight School</span>
+                    <span className="g-org-url">{AD.url}</span>
+                  </span>
+                </div>
                 <p className="g-title">{AD.title}</p>
                 <div className="g-expand">
                   <div className="g-expand-in">

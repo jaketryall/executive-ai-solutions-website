@@ -1511,30 +1511,35 @@ section[id] {
   white-space: nowrap;
 }
 
-/* ── the search enactment (hero artifact). Hairlines in here are diegetic —
-   they replicate the real Google surface, in our tonal language. ── */
+/* ── the search enactment (hero artifact) — DESKTOP-GOOGLE TRUE, values
+   measured off the live DOM 2026-07-16 (a 560px white card reads as a
+   desktop results column). Google's served fonts fall back to the
+   system grotesques; colors and structure are Google's own. ── */
 .ad-artifact {
   width: 100%; /* the grid column is the cap — edges align with the proof zone */
 }
 .ad-artifact .af-body {
   padding: 21px;
+  font-family: Arial, Roboto, "Helvetica Neue", sans-serif;
+  color: #1f1f1f;
 }
 .g-search {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   height: 48px;
   padding: 0 18px;
-  border: 1px solid rgba(19, 20, 19, 0.16);
-  border-radius: 999px; /* the one honest pill: Google's own control */
-  font-size: 0.9375rem;
-  color: var(--color-ink);
+  border: 1px solid #dadce0; /* Google's own pill border */
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(31, 31, 31, 0.08);
+  font-size: 1rem;
+  color: rgba(0, 0, 0, 0.87);
 }
 .g-glass {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
-  opacity: 0.55;
+  color: #5f6368;
 }
 .g-caret {
   width: 1.5px;
@@ -1555,30 +1560,59 @@ section[id] {
 .g-ad {
   margin-top: 21px;
   padding-top: 18px;
-  border-top: 1px solid rgba(19, 20, 19, 0.1);
+  border-top: 1px solid #ebedef;
 }
 .g-sponsored {
-  font-size: 0.75rem;
+  font-size: 0.8125rem; /* desktop Sponsored: 14/700 near-black, own line */
   font-weight: 700;
-  letter-spacing: 0.01em;
+  color: #202124;
+}
+/* the source block every desktop result carries: favicon circle, site
+   name over the breadcrumb */
+.g-src {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.g-fav {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #f1f3f4;
+  box-shadow: 0 0 0 1px #ebedef;
+  object-fit: cover;
+}
+img.g-fav {
+  background: #fff;
+}
+.g-src-t {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+.g-site {
+  font-size: 0.875rem; /* 14/20 */
+  line-height: 1.45;
+  color: #1f1f1f;
 }
 .g-url {
-  margin-top: 6px;
-  font-size: 0.8125rem;
-  color: rgba(19, 20, 19, 0.62);
+  font-size: 0.75rem; /* 12px, the desktop breadcrumb gray */
+  color: #4d5156;
 }
 .g-title {
-  margin-top: 4px;
-  font-size: 1.125rem;
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--color-accent);
+  margin-top: 7px;
+  font-size: 1.125rem; /* the 20/26 headline, at card scale */
+  font-weight: 400; /* Google headlines are NOT bold — weight is a tell */
+  line-height: 1.35;
+  color: #1a0dab; /* the classic desktop link blue */
 }
 .g-desc {
-  margin-top: 4px;
+  margin-top: 6px;
   font-size: 0.875rem;
-  line-height: 1.5;
-  color: rgba(19, 20, 19, 0.7);
+  line-height: 1.45;
+  color: #6c6c6c;
 }
 /* sitelink extensions (the 01 micro-demo ticks these in) */
 .g-ext {
@@ -1590,8 +1624,8 @@ section[id] {
 /* spans — demo props, not links (hrefless anchors invited dead taps) */
 .g-ext span {
   font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-accent);
+  font-weight: 400;
+  color: #1a0dab;
 }
 
 
@@ -1623,33 +1657,41 @@ section[id] {
   color: rgba(19, 20, 19, 0.24);
 }
 
-/* the results list — ghosted organics + the client's row. The client
-   starts buried, climbs to the top (transforms, then DOM order becomes
-   truth), and lights up as the ad. Dim vs lit is the whole story. */
+/* the results list — TRUE organics + the client's row. The client
+   starts buried as one more honest result, climbs to the top
+   (transforms, then DOM order becomes truth), and becomes the ad:
+   Sponsored stamps, the page unfolds, and the room dims around it. */
 .g-list {
   margin-top: 21px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(19, 20, 19, 0.08);
+  padding-top: 4px;
+  border-top: 1px solid #ebedef;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
 }
 .g-org-title {
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: rgba(19, 20, 19, 0.38);
+  margin-top: 7px;
+  font-size: 1.125rem;
+  font-weight: 400; /* real results are never bold */
+  line-height: 1.35;
+  color: #1a0dab; /* organics and ads share the blue — that's the truth */
 }
 .g-org-url {
   font-size: 0.75rem;
-  color: rgba(19, 20, 19, 0.26);
+  color: #4d5156;
 }
-.g-org-row .g-org-title {
-  margin-top: 2px;
+/* the focus pull: when the client's row lights as the ad, the organic
+   rows recede — a camera move, not a fake palette */
+.g-org-row {
+  transition: opacity 0.45s var(--ease-ui);
 }
-/* the client's row — pre-climb it reads as one more organic (title a
-   shade brighter: findable, not lit); post-climb .is-lit turns it into
-   the ad: Sponsored appears, the title takes the click color, the desc
-   and sitelinks unfold (grid-rows, no measuring) */
+.g-list:has(.g-row.is-lit) .g-org-row {
+  opacity: 0.5;
+  transition-delay: 0.12s;
+}
+/* the client's row — pre-climb it IS one more organic (same blue, same
+   anatomy); post-climb .is-lit turns it into the ad: Sponsored appears
+   and the desc/sitelinks unfold (grid-rows, no measuring) */
 .g-row {
   position: relative;
   /* the flying-card chrome eases on at lift-off and off at touchdown;
@@ -1683,29 +1725,9 @@ section[id] {
   max-height: 1.6em;
   opacity: 1;
 }
-.g-row .g-url {
-  margin-top: 0;
-}
-.g-row .g-title {
-  color: rgba(19, 20, 19, 0.55);
-  transition: color 0.45s var(--ease-ui);
-}
-/* the light-up is a follow-through CHAIN (apple-ad-motion.md law 2):
-   badge stamps → title turns → desc turns → sitelinks unfold, each ~0.1s
-   behind its driver. Delays live ONLY under .is-lit, so the dim-out runs
-   undelayed — it closes as a unit, faster than it opened. */
-.g-row.is-lit .g-title {
-  color: var(--color-accent);
-  transition-delay: 0.1s;
-}
-.g-row .g-desc {
-  color: rgba(19, 20, 19, 0.42);
-  transition: color 0.45s var(--ease-ui);
-}
-.g-row.is-lit .g-desc {
-  color: rgba(19, 20, 19, 0.7);
-  transition-delay: 0.18s;
-}
+/* the light-up chain (apple-ad-motion.md law 2): badge stamps → the
+   page unfolds → the room dims, each beat ~0.1s behind its driver.
+   Delays live ONLY under .is-lit, so the dim-out closes as a unit. */
 .g-expand {
   display: grid;
   grid-template-rows: 0fr;
@@ -1748,7 +1770,7 @@ section[id] {
 }
 @media (prefers-reduced-motion: reduce) {
   .g-row .g-sponsored,
-  .g-row .g-title,
+  .g-org-row,
   .g-expand {
     transition: none;
   }
