@@ -4,9 +4,14 @@
   /* ─── Color (cool carried into every neutral; accent = "click" + the
      payoff words that point at it) near-black ink · gray secondary ·
      steel blue-gray accent ─── */
-  --color-canvas: #f8f6f3; /* warm near-white — 'white, or cream' resolved as both (2026-07-16) */
+  /* TEMPERATURE PIVOT (Jake, 2026-07-17: "more of the apple and light
+     gray instead of the more orange") — the warm cream family retires;
+     lights go Apple-cool. canvas = Apple's #f5f5f7 exactly (band-gray
+     chapters); panel = one whisper deeper so trays/wells keep presence
+     on pure white. */
+  --color-canvas: #f5f5f7;
   --color-ink: #131413;
-  --color-panel: #eeece7; /* the Apple band gray (#f5f5f7's one-whisper-down move) at our temperature */
+  --color-panel: #ededf0;
   --color-dark: #101111;
   --color-dark-2: #191b1a;
   --color-paper: #eff0ee;
