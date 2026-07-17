@@ -5,9 +5,14 @@
 export function ProcessCards({
   steps,
   anim,
+  numeralLead,
 }: {
-  steps: { name: string; body: string; demo?: React.ReactNode }[];
+  steps: { name: string; body: string }[];
   anim: string;
+  /* the Apple pure-type variant (home steps, 2026-07-17): the numeral
+     LEADS the card — quiet solid stat-tier digits up top, then title,
+     then the sentence. No icons, no imagery; restraint is the design. */
+  numeralLead?: boolean;
 }) {
   const cols =
     steps.length === 3 ? "md:grid-cols-3" : "md:grid-cols-2 xl:grid-cols-4";
@@ -15,19 +20,12 @@ export function ProcessCards({
     <ol className={`grid list-none gap-fib-2 md:gap-fib-3 ${cols}`}>
       {steps.map((s, i) => (
         <li key={s.name} data-anim={anim} className="proc-card">
-          {/* chip-led variant (home steps): the icon chip anchors the
-              card, the step number becomes a quiet meta line, and the
-              big ghost numeral stands down — two decorative anchors on
-              one card read as clutter (Jake, 2026-07-17) */}
-          {s.demo ? (
+          {numeralLead ? (
             <>
-              <div className="proc-demo">{s.demo}</div>
-              <div>
-                <p className="t-meta uppercase text-ink/45">
-                  Step {String(i + 1).padStart(2, "0")}
-                </p>
-                <h3 className="t-title mt-fib-1 font-display">{s.name}</h3>
-              </div>
+              <span className="t-numeral-step text-ink/20" aria-hidden>
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <h3 className="t-title font-display">{s.name}</h3>
               <p className="text-ink/70">{s.body}</p>
             </>
           ) : (
