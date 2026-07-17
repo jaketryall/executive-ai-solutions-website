@@ -9,7 +9,6 @@ import {
   EASE_UI,
   reducedMotion,
 } from "@/components/anim/ease";
-import { CTA } from "@/components/ui/cta";
 import { whenArrived } from "@/components/anim/arrival";
 
 /* The hero — the SearchKings shape (Jake, 2026-07-16): NO mockup here.
@@ -41,6 +40,7 @@ const useIsomorphicLayoutEffect =
 export function Hero() {
   const root = useRef<HTMLElement>(null!);
   const [locked, setLocked] = useState<number | null>(null);
+  const [audit, setAudit] = useState("");
 
   useIsomorphicLayoutEffect(() => {
     const i = new URLSearchParams(window.location.search).get("i");
@@ -106,18 +106,12 @@ export function Hero() {
           { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
           1.0
         )
-        // the quiet registers settle last: terms, then the surfaces
+        // the quiet registers settle last
         .fromTo(
           q("[data-anim='chips']"),
           { autoAlpha: 0 },
           { autoAlpha: 1, duration: 0.4, ease: EASE_UI },
           1.2
-        )
-        .fromTo(
-          q("[data-anim='marks']"),
-          { autoAlpha: 0 },
-          { autoAlpha: 1, duration: 0.5, ease: EASE_UI },
-          1.35
         );
 
       // fonts measurable AND the route-transition sheet landed
@@ -168,6 +162,12 @@ export function Hero() {
                 duration: 0.5,
                 ease: EASE_UI,
                 stagger: 0.06,
+                /* THE ROLL BUG (found 2026-07-17): default immediateRender
+                   parked the spans at this from-state AT CREATION, the
+                   fade-out then captured that as its start, and every
+                   repeat-rewind restored it — so the 3.8s hold played
+                   INVISIBLE and the pair only flashed ~0.6s per cycle. */
+                immediateRender: false,
               }
             );
           const sync = () => {
@@ -280,13 +280,44 @@ export function Hero() {
             every step between the search and the booked job.
           </p>
 
-          <div data-anim="ctas" className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-3">
-            <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
-            {/* the quiet path for the undecided — the give, one scroll away */}
-            <a href="#site-check" className="u-link text-ink/70">
-              Not sure yet? Run the free audit
-            </a>
-          </div>
+          {/* THE ENDGAME GIVE (Jake, 2026-07-17): the audit input lives IN
+              the hero — the page's first action is something we do for
+              THEM. Submitting hands the domain to the SiteCheck section
+              below (event) and glides down to the report. The money path
+              keeps a quiet line; nav + persistent capsule carry it loud. */}
+          <form
+            data-anim="ctas"
+            className="scheck-form mt-fib-4 w-full"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const v = audit.trim();
+              if (!v) return;
+              window.dispatchEvent(
+                new CustomEvent("eas:site-check", { detail: v })
+              );
+              document
+                .getElementById("site-check")
+                ?.scrollIntoView({ behavior: "smooth" });
+            }}
+          >
+            <input
+              type="text"
+              inputMode="url"
+              autoComplete="url"
+              spellCheck={false}
+              placeholder="yourbusiness.com"
+              aria-label="Your website address"
+              className="scheck-input"
+              value={audit}
+              onChange={(e) => setAudit(e.target.value)}
+            />
+            <button type="submit" className="scheck-go" disabled={!audit.trim()}>
+              Check my site free
+            </button>
+          </form>
+          <p data-anim="ctas" className="t-meta mt-fib-2 text-ink/55">
+            Free &middot; Thirty seconds &middot; No email needed
+          </p>
 
           {/* the incentives (their 'no startup fees / no contracts / flat
               monthly fee', our true terms) — promoted from whisper meta
@@ -300,23 +331,14 @@ export function Hero() {
             <span className="chip">You own everything</span>
           </div>
 
-          {/* the trust row (Jake's marquee instinct, the honest version):
-              not client logos we don't have yet — the real surfaces we put
-              clients on. Plain-type monochrome wordmarks (nominative use;
-              never their colors/logo art). DW joins the day 3–4 client
-              marks exist to marquee. */}
-          <div data-anim="marks" className="hero-marks mt-fib-5">
-            <p className="t-meta uppercase text-ink/45">
-              Where our clients show up
-            </p>
-            <ul aria-label="Platforms we place clients on">
-              <li>Google</li>
-              <li>Google Maps</li>
-              <li>Google Guaranteed</li>
-              <li>ChatGPT</li>
-              <li>AI Overviews</li>
-            </ul>
-          </div>
+          {/* the money path, quiet — the give owns the hero's loud slot */}
+          <a
+            data-anim="chips"
+            href="/pricing#estimate"
+            className="u-link mt-fib-3 text-ink/70"
+          >
+            Know what you need? Price my project
+          </a>
         </div>
 
       </div>

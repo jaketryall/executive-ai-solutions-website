@@ -1880,27 +1880,8 @@ img.g-fav {
   height: 15px;
 }
 
-/* hero trust row — the surfaces we put clients on, as plain-type
-   monochrome wordmarks (nominative use only: our font, one ink, never
-   their colors or logo art). Replaces the facepile until real client
-   marks exist to pile. */
-.hero-marks ul {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 13px 34px;
-  margin-top: 13px;
-  padding: 0;
-  list-style: none;
-}
-.hero-marks li {
-  font-size: 1.0625rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: rgba(19, 20, 19, 0.38);
-  white-space: nowrap;
-}
+/* (hero-marks retired 2026-07-17 — the stars carry the hero's trust and
+   the six service cards tell the where-you-show-up story; no fossils.) */
 
 /* the price-beat witnesses — quiet cards floating around the claim.
    Positioned in %, contained by the section (overflow-x-clip), desktop only. */

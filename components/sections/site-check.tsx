@@ -54,9 +54,8 @@ export function SiteCheck() {
     { scope: root }
   );
 
-  const run = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (state === "busy" || !url.trim()) return;
+  const check = async (address: string) => {
+    if (state === "busy" || !address.trim()) return;
     setState("busy");
     setError(null);
     setResult(null);
@@ -64,7 +63,7 @@ export function SiteCheck() {
       const res = await fetch("/api/site-check", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url: address }),
       });
       const data = (await res.json()) as Result & { error?: string };
       if (!res.ok || data.error) {
@@ -91,6 +90,27 @@ export function SiteCheck() {
       setState("idle");
     }
   };
+
+  const run = (e: React.FormEvent) => {
+    e.preventDefault();
+    check(url);
+  };
+
+  /* the hero's input drives this section (the endgame give, 2026-07-17):
+     it hands the domain down via event; the report renders HERE, so the
+     visitor lands on the skeleton already reading their site */
+  const checkRef = useRef(check);
+  checkRef.current = check;
+  useEffect(() => {
+    const onHero = (e: Event) => {
+      const address = (e as CustomEvent<string>).detail;
+      if (!address) return;
+      setUrl(address);
+      checkRef.current(address);
+    };
+    window.addEventListener("eas:site-check", onHero);
+    return () => window.removeEventListener("eas:site-check", onHero);
+  }, []);
 
   // the results card grows AND shrinks the page (render, clear, re-render) —
   // every ScrollTrigger below (closer entrance, footer reveal scrub) measured
