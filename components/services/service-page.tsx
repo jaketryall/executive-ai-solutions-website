@@ -71,11 +71,12 @@ function HeroArtifact({ slug }: { slug: string }) {
   if (slug === "google-ads") {
     // a mobile Google search, the ad on top — tapped, not cursor-clicked
     return (
-      <PhoneShell
-        label="A phone showing a Google search with the Desert Wings ad on top"
-        screenClass="dvc-screen--ui"
-        island={false}
-      >
+      <>
+        <PhoneShell
+          label="A phone showing a Google search with the Desert Wings ad on top"
+          screenClass="dvc-screen--ui"
+          island={false}
+        >
         {/* the .g-m skin replicates the 2026 mobile SERP as measured off
             Google's live DOM — anatomy AND values are Google's own */}
         <div className="g-m" aria-hidden>
@@ -84,7 +85,10 @@ function HeroArtifact({ slug }: { slug: string }) {
               <circle cx="8.6" cy="8.6" r="5.4" stroke="currentColor" strokeWidth="2" />
               <path d="m13 13 4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
-            <span className="g-m-q">flight school near me</span>
+            <span className="g-m-q">
+              <span data-g-q>flight school near me</span>
+              <span className="g-m-caret" aria-hidden />
+            </span>
             <svg viewBox="0 0 20 20" fill="none">
               <rect x="7" y="2.5" width="6" height="10" rx="3" stroke="currentColor" strokeWidth="1.8" />
               <path d="M4.5 10a5.5 5.5 0 0 0 11 0M10 15.5V18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -110,8 +114,13 @@ function HeroArtifact({ slug }: { slug: string }) {
             <span>&middot;</span>
             <span className="is-link">Choose area</span>
           </div>
-          <div className="g-m-ad">
-            <p className="g-m-sponsored">Sponsored</p>
+          {/* the results area carries two states the loop swaps between:
+              the money SERP (your ad on top) and the junk SERP (no ad —
+              negative keywords, the invisible craft, made visible) */}
+          <div data-g-results>
+            <div data-serp-money>
+              <div className="g-m-ad">
+                <p className="g-m-sponsored">Sponsored</p>
             <div className="g-m-src">
               {/* the client's real favicon — realism is the pitch */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -200,8 +209,58 @@ function HeroArtifact({ slug }: { slug: string }) {
               <span className="g-skel-line block w-[63%]" />
             </span>
           </div>
+            </div>
+            <div data-serp-junk className="hidden">
+              <div className="g-m-org">
+                <div className="g-m-src">
+                  <span className="g-m-fav" />
+                  <span className="g-m-site">
+                    <span className="g-m-name">FlightSimFree</span>
+                    <span className="g-m-url">flightsimfree.io &rsaquo; play</span>
+                  </span>
+                </div>
+                <p className="g-m-title">
+                  Fly a free flight simulator online — no download
+                </p>
+              </div>
+              <div className="g-m-org">
+                <div className="g-m-src">
+                  <span className="g-m-fav" />
+                  <span className="g-m-site">
+                    <span className="g-m-name">Reddit</span>
+                    <span className="g-m-url">reddit.com &rsaquo; r/flightsim</span>
+                  </span>
+                </div>
+                <p className="g-m-title">
+                  Best free flight simulator games in 2026?
+                </p>
+              </div>
+              <div className="g-skel">
+                <span className="g-skel-thumb" />
+                <span className="g-skel-lines">
+                  <span className="g-skel-line block w-[78%]" />
+                  <span className="g-skel-line block w-[55%]" />
+                </span>
+              </div>
+              <div className="g-skel">
+                <span className="g-skel-thumb" />
+                <span className="g-skel-lines">
+                  <span className="g-skel-line block w-[70%]" />
+                  <span className="g-skel-line block w-[61%]" />
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
-      </PhoneShell>
+        </PhoneShell>
+        {/* the loop's narration — one quiet line naming the current beat */}
+        <p
+          data-g-cap
+          className="t-meta mx-auto mt-fib-2 max-w-[36ch] text-center text-ink/55"
+        >
+          Found for the searches that matter.
+        </p>
+      </>
     );
   }
   if (slug === "websites") {
@@ -489,24 +548,116 @@ export function ServicePage({ service }: { service: ServiceDef }) {
       const loops: gsap.core.Timeline[] = [];
 
       if (service.slug === "google-ads") {
-        // the CLICK, taken: on a phone the click is a TAP — a thumb ripple
-        // on the sitelink, no desktop cursor in sight
+        /* the SEARCH CYCLE: the one surface ads management is visible on
+           is the SERP itself, so the loop performs the craft there —
+           found for the money searches, absent from the junk one
+           (negative keywords made visible), then the tap takes the click */
         const ring = q(".g-click-ring")[0] as HTMLElement;
         const link = q(".g-m-link")[0] as HTMLElement;
-        if (ring && link) {
+        const qEl = q("[data-g-q]")[0] as HTMLElement;
+        const caret = q(".g-m-caret")[0] as HTMLElement;
+        const cap = q("[data-g-cap]")[0] as HTMLElement;
+        const results = q("[data-g-results]")[0] as HTMLElement;
+        const money = q("[data-serp-money]")[0] as HTMLElement;
+        const junk = q("[data-serp-junk]")[0] as HTMLElement;
+        if (ring && link && qEl && caret && cap && results && money && junk) {
+          const Q1 = "flight school near me";
+          const Q2 = "discovery flight mesa";
+          const Q3 = "free flight simulator games";
+          const CAP1 = "Found for the searches that matter.";
           const pt = () => ({
             x: link.offsetLeft + link.offsetWidth * 0.5,
             y: link.offsetTop + link.offsetHeight * 0.55,
           });
           gsap.set(ring, { xPercent: -50, yPercent: -50 });
           const c = gsap.timeline({ repeat: -1, paused: true, repeatRefresh: true });
-          // set-then-to, never fromTo: repeatRefresh re-renders an
-          // invalidated fromTo's FROM state at every cycle start
-          c.to({}, { duration: 2.8 })
+          // the query retypes in place — the deleting/typing runs on proxy
+          // objects, so repeatRefresh restarts them clean each cycle
+          const retype = (from: string, to: string) => {
+            const del = { p: 0 };
+            const typ = { p: 0 };
+            c.to(caret, { autoAlpha: 1, duration: 0.12 })
+              .fromTo(
+                del,
+                { p: 0 },
+                {
+                  p: 1,
+                  duration: 0.4,
+                  ease: "none",
+                  onUpdate: () => {
+                    qEl.textContent = from.slice(0, Math.round(from.length * (1 - del.p)));
+                  },
+                }
+              )
+              .fromTo(
+                typ,
+                { p: 0 },
+                {
+                  p: 1,
+                  duration: Math.min(1, to.length * 0.04),
+                  ease: "none",
+                  onUpdate: () => {
+                    qEl.textContent = to.slice(0, Math.round(to.length * typ.p));
+                  },
+                },
+                "+=0.15"
+              )
+              .to(caret, { autoAlpha: 0, duration: 0.2 }, "+=0.25");
+          };
+          // the caption swaps beneath the phone — narration, never chrome
+          const say = (text: string) => {
+            c.to(cap, { autoAlpha: 0, y: -4, duration: 0.25, ease: EASE_UI })
+              .call(() => {
+                cap.textContent = text;
+              })
+              .fromTo(
+                cap,
+                { autoAlpha: 0, y: 6 },
+                { autoAlpha: 1, y: 0, duration: 0.4, ease: EASE_UI }
+              );
+          };
+          // the SERP "reloads" — the state swap happens while invisible.
+          // The local chip only belongs to local searches; a junk query
+          // wouldn't carry one on the real page
+          const loc = q(".g-m-loc")[0] as HTMLElement | undefined;
+          const refresh = (toJunk: boolean) => {
+            c.to(results, { autoAlpha: 0, duration: 0.22, ease: EASE_UI });
+            if (loc) c.to(loc, { autoAlpha: toJunk ? 0 : 1, duration: 0.22, ease: EASE_UI }, "<");
+            c.set(money, { display: toJunk ? "none" : "block" })
+              .set(junk, { display: toJunk ? "block" : "none" })
+              .to(results, { autoAlpha: 1, duration: 0.28, ease: EASE_UI });
+          };
+          // a same-ad reload: a quick dip, the way a page blinks on refetch
+          const dip = () => {
+            c.to(results, { autoAlpha: 0.35, duration: 0.18, ease: "none", yoyo: true, repeat: 1 });
+          };
+
+          // beat 1 — the money search (the SSR rest state) holds
+          c.to({}, { duration: 2.4 });
+          // beat 2 — the NEXT money search; same ad, still on top
+          retype(Q1, Q2);
+          dip();
+          say("And the next one, and the next.");
+          c.to({}, { duration: 2.0 });
+          // beat 3 — the junk search; the ad is ABSENT on purpose
+          retype(Q2, Q3);
+          refresh(true);
+          say("Never for the ones that waste your budget.");
+          c.to({}, { duration: 2.6 });
+          // beat 4 — back to money, and the tap takes the click
+          retype(Q3, Q1);
+          refresh(false);
+          say("Then the click becomes a customer.");
+          c.to({}, { duration: 0.6 })
+            // set-then-to, never fromTo: repeatRefresh re-renders an
+            // invalidated fromTo's FROM state at every cycle start
             .set(ring, { x: () => pt().x, y: () => pt().y, autoAlpha: 0.55, scale: 0.25 })
             .to(ring, { autoAlpha: 0, scale: 1, duration: 0.6, ease: EASE_UI })
             .to(link, { opacity: 0.5, duration: 0.09, yoyo: true, repeat: 1, ease: "none" }, "<")
-            .to({}, { duration: 4.4 });
+            .to({}, { duration: 1.8 });
+          // restore the opening caption so the repeat is seamless
+          say(CAP1);
+          c.to({}, { duration: 0.9 });
           loops.push(c);
         }
       }

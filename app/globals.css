@@ -4837,6 +4837,16 @@ html.wki-lock body {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+/* the retype caret — shown by the loop only while the query is changing */
+.g-m-caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 1em;
+  margin-left: 1px;
+  vertical-align: -0.12em;
+  background: rgba(0, 0, 0, 0.87);
+  opacity: 0;
+}
 /* the filter tabs — AI Mode leads in 2026; All carries the ink underline */
 .g-m-tabs {
   display: flex;
