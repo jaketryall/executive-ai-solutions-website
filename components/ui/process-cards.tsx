@@ -25,7 +25,10 @@ export function ProcessCards({
               <span className="t-numeral-step text-ink/20" aria-hidden>
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <h3 className="t-title font-display">{s.name}</h3>
+              {/* mt-auto pins the text to the card's floor — numeral
+                  anchors the ceiling, the card's height does the talking
+                  (all-top clustering read as smushed) */}
+              <h3 className="t-title mt-auto font-display">{s.name}</h3>
               <p className="text-ink/70">{s.body}</p>
             </>
           ) : (

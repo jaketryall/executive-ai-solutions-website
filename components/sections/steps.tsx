@@ -71,7 +71,7 @@ export function Steps() {
         <h2 data-anim="steps-title" className="t-display-lg text-center">
           Getting started is easy
         </h2>
-        <div className="mt-fib-4">
+        <div className="mt-fib-5">
           <ProcessCards steps={STEPS} anim="steps-card" numeralLead />
         </div>
       </div>
