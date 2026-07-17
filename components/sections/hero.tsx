@@ -85,18 +85,32 @@ export function Hero() {
 
 
       tl
+        // the how resolves the claim into a method
+        .fromTo(
+          q("[data-anim='how']"),
+          { autoAlpha: 0, y: 16 },
+          { autoAlpha: 1, y: 0, duration: 0.7, ease: EASE_UI },
+          0.7
+        )
         // the resolve — the sequence lands on the one action
         .fromTo(
           q("[data-anim='ctas']"),
           { autoAlpha: 0, y: 18 },
           { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
-          0.95
+          1.0
         )
+        // the quiet registers settle last: terms, then the surfaces
         .fromTo(
-          q("[data-anim='proofrow']"),
+          q("[data-anim='chips']"),
           { autoAlpha: 0 },
           { autoAlpha: 1, duration: 0.4, ease: EASE_UI },
-          1.15
+          1.2
+        )
+        .fromTo(
+          q("[data-anim='marks']"),
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.5, ease: EASE_UI },
+          1.35
         );
 
       // fonts measurable AND the route-transition sheet landed
@@ -190,11 +204,18 @@ export function Hero() {
       {/* the SearchKings hero: CENTERED — claim, one action, the quiet
           audit path, the de-risk line. No mockup; the services cards
           directly below carry the demos. */}
-      <div className="hero-in wrap relative z-10 flex min-h-[72svh] flex-col items-center justify-center pb-fib-6 pt-[120px] text-center md:pt-fib-6">
-        {/* ── the statement (outcome leads, industry follows) ── */}
+      {/* 80svh (was 72): the four-beat stack is taller — centering it in
+          the bigger well clears the nav above and drains the dead canvas
+          that pooled under the marks row */}
+      <div className="hero-in wrap relative z-10 flex min-h-[80svh] flex-col items-center justify-center pb-fib-6 pt-[120px] text-center md:pt-fib-6">
+        {/* ── the SearchKings stack, our true content (Jake, 2026-07-16):
+            trust → outcome → how → incentives. Their stars/badges are
+            earned marks we don't hold, so every trust beat here is a
+            checkable fact instead: place in the eyebrow, real surfaces
+            in the marks row, real terms in the chips. ── */}
         <div className="hero-left flex flex-col items-center">
           <p data-anim="eyebrow" className="t-meta uppercase text-ink/70">
-            Full-funnel ads agency
+            Full-funnel ads agency &middot; Mesa, AZ
           </p>
           {/* the two-tone statement (the signature): bright outcome, dim
               continuation IN the same sentence. The dim clause stays five
@@ -223,7 +244,17 @@ export function Hero() {
             </span>
           </h1>
 
-          <div data-anim="ctas" className="mt-fib-3 flex flex-wrap items-center justify-center gap-fib-3">
+          {/* the HOW — the beat the old hero skipped: one sentence naming
+              the machine, so the claim above reads as a method, not a slogan */}
+          <p
+            data-anim="how"
+            className="t-lede mx-auto mt-fib-3 max-w-[46ch] text-ink/65"
+          >
+            The ad, the landing page, the AI follow-up &mdash; one team owns
+            every step between the search and the booked job.
+          </p>
+
+          <div data-anim="ctas" className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-3">
             <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
             {/* the quiet path for the undecided — the give, one scroll away */}
             <a href="#site-check" className="u-link text-ink/70">
@@ -231,13 +262,35 @@ export function Hero() {
             </a>
           </div>
 
-          {/* the de-risk row (SearchKings' move, our facts): answers the
-              objection's shape before it forms. Holds this slot until real
-              client marks earn back the facepile. */}
-          <p data-anim="proofrow" className="t-meta mt-fib-4 text-ink/60">
-            No lock-in &middot; Fixed quote in 2 days &middot; You own
-            everything
-          </p>
+          {/* the incentives (their 'no startup fees / no contracts / flat
+              monthly fee', our true terms) — promoted from whisper meta
+              to chips so the de-risk actually registers */}
+          <div
+            data-anim="chips"
+            className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-1"
+          >
+            <span className="chip">No lock-in</span>
+            <span className="chip">Fixed quote in 2 days</span>
+            <span className="chip">You own everything</span>
+          </div>
+
+          {/* the trust row (Jake's marquee instinct, the honest version):
+              not client logos we don't have yet — the real surfaces we put
+              clients on. Plain-type monochrome wordmarks (nominative use;
+              never their colors/logo art). DW joins the day 3–4 client
+              marks exist to marquee. */}
+          <div data-anim="marks" className="hero-marks mt-fib-5">
+            <p className="t-meta uppercase text-ink/45">
+              Where our clients show up
+            </p>
+            <ul aria-label="Platforms we place clients on">
+              <li>Google</li>
+              <li>Google Maps</li>
+              <li>Google Guaranteed</li>
+              <li>ChatGPT</li>
+              <li>AI Overviews</li>
+            </ul>
+          </div>
         </div>
 
       </div>
