@@ -84,6 +84,8 @@ function LinksCapsule() {
 
   const panels = [
     // Work — the proof, small: a thumb beside the words, not a banner
+    // two static halves on purpose: the swell is a focus mechanism for
+    // picking among peers (services); a pair just seesaws
     <div key="w" className="nav-panel">
       {mini(
         "/work",
@@ -103,7 +105,7 @@ function LinksCapsule() {
       )}
     </div>,
     // Services — the funnel, three stages, each with its own page
-    <div key="s" className="nav-panel nav-panel--3">
+    <div key="s" className="nav-panel nav-panel--swell">
       {mini(
         "/services/google-ads",
         <>

@@ -724,18 +724,19 @@ section[id] {
 }
 /* the Lesse swell (measured from their code): no transform anywhere —
    the hovered card claims room because its siblings CEDE it (flex-grow
-   1 -> 0.55, transitioned). Their columns grow tall; our row grows wide. */
-.nav-panel--3 {
+   1 -> 0.55, transitioned). Their columns grow tall; our rows grow wide.
+   Shared by every multi-card panel (work's pair, services' trio). */
+.nav-panel--swell {
   display: flex;
 }
-.nav-panel--3 .nav-mini {
+.nav-panel--swell .nav-mini {
   flex: 1 1 0;
   min-width: 0;
   transition:
     background 0.1s linear,
     flex-grow 0.3s ease;
 }
-.nav-panel--3:has(.nav-mini:hover) .nav-mini:not(:hover) {
+.nav-panel--swell:has(.nav-mini:hover) .nav-mini:not(:hover) {
   flex-grow: 0.55;
 }
 .nav-panel--1 {
