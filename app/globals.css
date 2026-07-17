@@ -5117,6 +5117,136 @@ span.g-m-fav {
   padding: 6px 10px;
   font-size: 0.75rem;
 }
+
+/* ── the LSA win frame: Google's Local Services unit (Guaranteed badge +
+   provider rows). Proportioned like .g-m (cqw against the .g-m container);
+   TRUE-UP against a live LSA capture during the Phase-2 ads-page build. ── */
+.g-lsa {
+  margin: 4.6cqw 4.1cqw 0;
+}
+.g-lsa-head {
+  display: flex;
+  align-items: center;
+  gap: 1.8cqw;
+  font-size: 2.8cqw;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #1e8e3e;
+}
+.g-lsa-head svg {
+  width: 3.9cqw;
+  height: 3.9cqw;
+  flex-shrink: 0;
+}
+.g-lsa-row {
+  display: flex;
+  align-items: center;
+  gap: 3.1cqw;
+  padding: 3.6cqw 0;
+  border-bottom: 1px solid #ebedef;
+}
+.g-lsa-av {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 9.2cqw;
+  height: 9.2cqw;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #e8f0fe;
+  color: #1a73e8;
+  font-size: 4.1cqw;
+  font-weight: 500;
+}
+.g-lsa-t {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.8cqw;
+}
+.g-lsa-name {
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 3.9cqw;
+  color: #1f1f1f;
+}
+.g-lsa-meta {
+  font-size: 3.1cqw;
+  color: #6c6c6c;
+}
+.g-lsa-meta b {
+  font-weight: 500;
+  color: #1f1f1f;
+}
+.g-lsa-star {
+  color: #fbbc04;
+}
+.g-lsa-call {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 9.2cqw;
+  height: 9.2cqw;
+  flex-shrink: 0;
+  margin-left: auto;
+  border-radius: 50%;
+  background: #1a73e8;
+  color: #fff;
+}
+.g-lsa-call svg {
+  width: 4.1cqw;
+  height: 4.1cqw;
+}
+
+/* ── the ChatGPT win frame: the assistant recommending the client — the
+   AEO outcome, shown on the surface it happens on. ── */
+.ai-m {
+  container-type: inline-size;
+  min-height: 100%;
+  background: #fff;
+  color: #0d0d0d;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  text-align: left;
+}
+.ai-m-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3.6cqw 4.1cqw;
+}
+.ai-m-top svg {
+  width: 5.1cqw;
+  height: 5.1cqw;
+  color: #0d0d0d;
+}
+.ai-m-title {
+  display: flex;
+  align-items: center;
+  gap: 1.3cqw;
+  font-size: 4.1cqw;
+  font-weight: 600;
+}
+.ai-m-title span {
+  color: #8e8e8e;
+  font-weight: 400;
+}
+.ai-m-q {
+  width: fit-content;
+  max-width: 78%;
+  margin: 3.6cqw 4.1cqw 0 auto;
+  padding: 2.8cqw 4.1cqw;
+  border-radius: 5.1cqw;
+  background: #f1f1f1;
+  font-size: 3.9cqw;
+  line-height: 1.4;
+}
+.ai-m-a {
+  margin: 4.6cqw 4.1cqw 0;
+  font-size: 3.9cqw;
+  line-height: 1.55;
+}
+.ai-m-a b {
+  font-weight: 600;
+}
 /* the page continues below the screen's edge (the ChatGPT-mock trick:
    skeleton content signals a live page, not a finished poster) */
 .g-skel {

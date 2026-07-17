@@ -36,7 +36,7 @@ export function Services() {
       const gridRow = () => window.matchMedia("(min-width: 1280px)").matches;
       (q("[data-svc-row]") as HTMLElement[]).forEach((row, i) => {
         const tl = gsap.timeline({
-          delay: gridRow() ? i * 0.14 : 0,
+          delay: gridRow() ? (i % 3) * 0.14 : 0,
           defaults: { ease: "power3.out" },
           scrollTrigger: { trigger: row, start: "top 72%", once: true },
         });
@@ -67,7 +67,7 @@ export function Services() {
         <header className="mx-auto max-w-[680px] text-center">
           <h2 className="t-display-lg">From stranger to booked customer</h2>
           <p className="mx-auto mt-fib-3 max-w-[44ch] text-ink/70">
-            One funnel, three stages: ads bring the click, the site converts
+            Six ways in, one funnel: ads bring the click, the site converts
             it, the AI keeps it. Buy the stage you need, or the whole path.
           </p>
         </header>
@@ -231,6 +231,165 @@ export function Services() {
             </div>
             <div data-anim="copy" className="mt-auto pt-fib-4">
               <CTA href="/services/ai" label="Never miss a lead" tone="ink" />
+            </div>
+          </article>
+
+          {/* ── row two: the extension doors — same three columns, deeper
+              in. Doors, not pages: each routes into its family's page. ── */}
+
+          {/* ── 04 · LOCAL SERVICES ADS ── */}
+          <article data-svc-row className="svc-card p-fib-3 text-ink">
+            <div data-anim="artifact" className="svc-card-demo">
+              {/* the win frame: the Google Guaranteed unit, calls incoming */}
+              <div className="dvc" aria-hidden>
+                <div className="dvc-screen dvc-screen--ui">
+                  <div className="g-m">
+                    <div className="g-m-bar">
+                      <svg viewBox="0 0 20 20" fill="none">
+                        <circle cx="8.6" cy="8.6" r="5.4" stroke="currentColor" strokeWidth="2" />
+                        <path d="m13 13 4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                      </svg>
+                      <span className="g-m-q">emergency plumber mesa</span>
+                    </div>
+                    <div className="g-lsa">
+                      <p className="g-lsa-head">
+                        <svg viewBox="0 0 16 16" fill="currentColor">
+                          <path d="M8 .8 2.7 3v4c0 3.4 2.2 6.5 5.3 7.4 3.1-.9 5.3-4 5.3-7.4V3L8 .8Zm-1 9.9L4.6 8.3l1-1 1.4 1.4 3.4-3.4 1 1-4.4 4.4Z" />
+                        </svg>
+                        GOOGLE GUARANTEED
+                      </p>
+                      <div className="g-lsa-row">
+                        <span className="g-lsa-av">M</span>
+                        <span className="g-lsa-t">
+                          <span className="g-lsa-name">Mesa Rapid Plumbing</span>
+                          <span className="g-lsa-meta">
+                            <span className="g-lsa-star">&#9733;</span> <b>4.9</b> (132) &middot; Open 24/7
+                          </span>
+                        </span>
+                        <span className="g-lsa-call">
+                          <svg viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M3.6 1.8 5.8 1c.4-.1.8 0 1 .4l1.1 2.3c.2.4.1.8-.2 1l-1.2 1a10 10 0 0 0 3.8 3.8l1-1.2c.2-.3.6-.4 1-.2l2.3 1.1c.4.2.5.6.4 1l-.8 2.2c-.2.4-.6.7-1 .7C7.2 13 3 8.8 2.9 2.8c0-.4.3-.8.7-1Z" />
+                          </svg>
+                        </span>
+                      </div>
+                      <div className="g-lsa-row">
+                        <span className="g-lsa-av">C</span>
+                        <span className="g-lsa-t">
+                          <span className="g-lsa-name">Canyon Plumbing Co.</span>
+                          <span className="g-lsa-meta">
+                            <span className="g-lsa-star">&#9733;</span> <b>4.8</b> (98) &middot; Mesa, AZ
+                          </span>
+                        </span>
+                        <span className="g-lsa-call">
+                          <svg viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M3.6 1.8 5.8 1c.4-.1.8 0 1 .4l1.1 2.3c.2.4.1.8-.2 1l-1.2 1a10 10 0 0 0 3.8 3.8l1-1.2c.2-.3.6-.4 1-.2l2.3 1.1c.4.2.5.6.4 1l-.8 2.2c-.2.4-.6.7-1 .7C7.2 13 3 8.8 2.9 2.8c0-.4.3-.8.7-1Z" />
+                          </svg>
+                        </span>
+                      </div>
+                      {/* the list continues past the crop — never a dead end */}
+                      <div className="g-skel">
+                        <span className="g-skel-thumb" />
+                        <span className="g-skel-lines">
+                          <span className="g-skel-line block w-[76%]" />
+                          <span className="g-skel-line block w-[54%]" />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 data-anim="copy" className="t-title--lg mt-fib-4">
+              Local Services Ads
+            </h3>
+            <p data-anim="copy" className="mt-fib-2 text-ink/70">
+              Google Guaranteed leads &mdash; pay per call, not per click.
+            </p>
+            <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
+              <span className="chip">Pay per lead</span>
+              <span className="chip">For the trades</span>
+            </div>
+            <div data-anim="copy" className="mt-auto pt-fib-4">
+              <CTA href="/services/google-ads#lsa" label="Get guaranteed" tone="ink" />
+            </div>
+          </article>
+
+          {/* ── 05 · LANDING PAGES ── */}
+          <article data-svc-row className="svc-card p-fib-3 text-ink">
+            <div data-anim="artifact" className="svc-card-demo">
+              {/* the win frame: a deeper band of the same real build — the
+                  page the ad's click lands on. Photo screen keeps its island */}
+              <div className="dvc" aria-hidden>
+                <span className="dvc-island" />
+                <div className="dvc-screen">
+                  <Image
+                    src="/work/dw-phone-tour.jpg"
+                    alt="A landing section of the Desert Wings build, on a phone"
+                    width={780}
+                    height={10128}
+                    sizes="(min-width: 1280px) 310px, 86vw"
+                    className="block h-auto w-full"
+                    style={{ transform: "translateY(-30%)" }}
+                  />
+                </div>
+              </div>
+            </div>
+            <h3 data-anim="copy" className="t-title--lg mt-fib-4">
+              Landing pages
+            </h3>
+            <p data-anim="copy" className="mt-fib-2 text-ink/70">
+              One fast page, purpose-built to catch your ad&rsquo;s click.
+            </p>
+            <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
+              <span className="chip">Days, not weeks</span>
+              <span className="chip">Fixed quote</span>
+            </div>
+            <div data-anim="copy" className="mt-auto pt-fib-4">
+              <CTA href="/services/websites#landing" label="Catch the click" tone="ink" />
+            </div>
+          </article>
+
+          {/* ── 06 · THE ANSWER ON CHATGPT ── */}
+          <article data-svc-row className="svc-card p-fib-3 text-ink">
+            <div data-anim="artifact" className="svc-card-demo">
+              {/* the win frame: the assistant recommending the client — the
+                  AEO outcome on the surface it happens on */}
+              <div className="dvc" aria-hidden>
+                <div className="dvc-screen dvc-screen--ui">
+                  <div className="ai-m">
+                    <div className="ai-m-top">
+                      <svg viewBox="0 0 20 20" fill="none">
+                        <path d="M3 5.5h14M3 10h14M3 14.5h9" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                      </svg>
+                      <p className="ai-m-title">
+                        ChatGPT <span>5 &rsaquo;</span>
+                      </p>
+                      <svg viewBox="0 0 20 20" fill="none">
+                        <path d="M12.8 3.7 16.3 7.2 7.5 16H4v-3.5l8.8-8.8Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    <p className="ai-m-q">Best flight school near Mesa?</p>
+                    <p className="ai-m-a">
+                      <b>Desert Wings Flight School</b>{" "}at Falcon Field
+                      comes up most &mdash; strong reviews, discovery
+                      flights, and PPL through CFI on one path&hellip;
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 data-anim="copy" className="t-title--lg mt-fib-4">
+              Be the answer on ChatGPT
+            </h3>
+            <p data-anim="copy" className="mt-fib-2 text-ink/70">
+              When customers ask AI who to call, it should say you.
+            </p>
+            <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
+              <span className="chip">Search + AI engines</span>
+              <span className="chip">Quoted per project</span>
+            </div>
+            <div data-anim="copy" className="mt-auto pt-fib-4">
+              <CTA href="/services/ai#aeo" label="Get recommended" tone="ink" />
             </div>
           </article>
         </div>
