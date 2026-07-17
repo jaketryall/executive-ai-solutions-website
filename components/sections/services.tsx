@@ -61,7 +61,11 @@ export function Services() {
       id="services"
       ref={root}
       data-nav="light"
-      className="relative overflow-x-clip py-fib-6 md:py-fib-7"
+      // WHITE stage (Jake, 2026-07-17): the audit tray floats on white, so
+      // the stage must run white on both sides of it — hero, tray section,
+      // and services share one continuous ground; card shadows + gray demo
+      // wells carry the separation
+      className="relative overflow-x-clip bg-white py-fib-6 md:py-fib-7"
     >
       <div className="wrap">
         <header className="mx-auto max-w-[680px] text-center">
