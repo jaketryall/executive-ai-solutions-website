@@ -42,7 +42,7 @@ const STEPS = [
    no-JS / reduced-motion read the completed story. ── */
 
 // 01 · the quote ticket, landing in your inbox
-function DemoCall() {
+export function DemoCall() {
   return (
     <div className="pd-panel">
       <div className="pd-ticket w-[min(88%,360px)] aspect-[7/5] rounded-btn bg-ink text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)] flex flex-col justify-center p-[18px]">
@@ -62,7 +62,7 @@ function DemoCall() {
 // 02 · the REAL page resolves out of its wireframe — the copy's exact
 // promise ("real pages in your brand, not wireframes"), enacted with the
 // real Desert Wings homepage instead of an invented brand
-function DemoDesign() {
+export function DemoDesign() {
   return (
     <div className="pd-panel">
       {/* the SAME object language as the other three demos: one small ink
@@ -150,7 +150,7 @@ function DemoBuild() {
 }
 
 // 04 · the enquiries chart — the line draws, the number climbs
-function DemoGrowth() {
+export function DemoGrowth() {
   return (
     <div className="pd-panel">
       <div className="pd-chart w-[min(88%,360px)] aspect-[7/5] rounded-btn bg-ink text-paper shadow-[0_16px_44px_-16px_rgba(19,20,19,0.45)] flex flex-col justify-center p-[18px]">

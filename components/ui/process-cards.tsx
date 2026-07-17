@@ -6,7 +6,7 @@ export function ProcessCards({
   steps,
   anim,
 }: {
-  steps: { name: string; body: string }[];
+  steps: { name: string; body: string; demo?: React.ReactNode }[];
   anim: string;
 }) {
   const cols =
@@ -15,6 +15,9 @@ export function ProcessCards({
     <ol className={`grid list-none gap-fib-2 md:gap-fib-3 ${cols}`}>
       {steps.map((s, i) => (
         <li key={s.name} data-anim={anim} className="proc-card">
+          {/* optional artifact tile (home steps): the step's real
+              deliverable up top — the services card grammar */}
+          {s.demo && <div className="proc-demo">{s.demo}</div>}
           <h3 className="t-title font-display">{s.name}</h3>
           <span className="t-numeral-step proc-num" aria-hidden>
             {String(i + 1).padStart(2, "0")}

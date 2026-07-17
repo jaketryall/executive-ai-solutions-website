@@ -2570,6 +2570,13 @@ html:not(.has-js) .zone-dark {
   overflow: hidden;
   box-shadow: 0 21px 55px -21px rgba(0, 0, 0, 0.6);
 }
+/* the artifact tiles inside home's white steps cards (2026-07-17): the
+   well goes flat services-gray — the inner ink tile carries its own
+   shadow; a heavy dark-section shadow on a white card reads as a hole */
+.proc-demo .pd-panel {
+  background: var(--color-panel);
+  box-shadow: none;
+}
 .pd-panel--browser {
   display: flex;
   flex-direction: column;

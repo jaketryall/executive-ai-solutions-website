@@ -8,22 +8,29 @@ import {
   reducedMotion,
 } from "@/components/anim/ease";
 import { ProcessCards } from "@/components/ui/process-cards";
+import { DemoCall, DemoDesign, DemoGrowth } from "@/components/sections/process";
 
 /* The home page keeps only the SHAPE of the process — three beats, one
    viewport (the SearchKings "getting started is easy" compressed). The
-   full walk lives on the service pages. */
+   full walk lives on the service pages. Each card carries its step's
+   REAL artifact tile (Jake, 2026-07-17) — the quote ticket, the DW
+   build resolve, the enquiries chart — borrowed from the service-page
+   process, never invented imagery. */
 const STEPS = [
   {
     name: "The call",
     body: "Twenty minutes on your goals. A fixed quote in writing, two days later.",
+    demo: <DemoCall />,
   },
   {
     name: "The build",
     body: "Ads, landing page, follow-up — designed and wired as one funnel.",
+    demo: <DemoDesign />,
   },
   {
     name: "Live in weeks",
     body: "Leads start landing, tracked to the dollar. You own everything.",
+    demo: <DemoGrowth />,
   },
 ];
 
