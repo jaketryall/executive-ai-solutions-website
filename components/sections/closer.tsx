@@ -161,7 +161,7 @@ export function Closer() {
           </p>
 
           <div data-anim="closer-cta" className="mt-fib-5 self-center md:mt-fib-6">
-            <CTA href="#estimate" label="Price my project" tone="ink" />
+            <CTA href="/pricing#estimate" label="Price my project" tone="ink" />
           </div>
         </div>
       </div>

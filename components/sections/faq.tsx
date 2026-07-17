@@ -20,7 +20,7 @@ const FAQS = [
   },
   {
     q: "What does a website cost?",
-    a: "Projects start at $2.5k and every project is quoted individually. The estimator above computes a live number from our real pricing: pick what you need and watch it move. After a twenty-minute call you get a fixed quote within two days.",
+    a: "Projects start at $2.5k and every project is quoted individually. The estimator on our pricing page computes a live number from our real pricing: pick what you need and watch it move. After a twenty-minute call you get a fixed quote within two days.",
   },
   {
     q: "Do I need a monthly retainer?",
@@ -29,14 +29,6 @@ const FAQS = [
   {
     q: "Who owns the site when it's done?",
     a: "You do. Your domain, your content, your code. Everything is hand-built. No page builders, no platform lock-in, nothing you'll outgrow.",
-  },
-  {
-    q: "Can you redesign my existing site?",
-    a: "Yes. Redesigns follow the same process as new builds, and the estimator has a toggle for it. We keep what's working, rebuild what isn't, and make sure search engines don't lose track of you in the move.",
-  },
-  {
-    q: "What is the AI automation, exactly?",
-    a: "Three things, built and managed for you: chat that answers visitors from your own pages, follow-ups that send themselves so no enquiry goes cold, and pages that adapt to each visitor. It's quoted per project. The call is where we work out what's worth building for your business.",
   },
   {
     q: "How long does a build take?",

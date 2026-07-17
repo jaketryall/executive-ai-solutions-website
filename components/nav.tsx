@@ -156,13 +156,22 @@ function LinksCapsule() {
     >
       <div className="nav-links-row">
         {/* the mark rides IN the bar — first item, home link (the Apple
-            arrangement); entering it stands the panel down */}
+            arrangement); entering it stands the panel down but takes the
+            pill highlight like any other stop in the row */}
         <Link
           href="/"
           className="nav-brand-in"
           aria-label="Executive AI Solutions, home"
-          onMouseEnter={close}
-          onFocus={close}
+          onMouseEnter={(e) => {
+            const el = e.currentTarget;
+            setOpen(null);
+            setPill({ left: el.offsetLeft, width: el.offsetWidth });
+          }}
+          onFocus={(e) => {
+            const el = e.currentTarget;
+            setOpen(null);
+            setPill({ left: el.offsetLeft, width: el.offsetWidth });
+          }}
         >
           <Monogram className="h-[24px] w-[24px]" />
         </Link>
@@ -458,7 +467,7 @@ export function Nav() {
             </svg>
           </button>
           <Link
-            href={pathname === "/" ? "/#estimate" : "/pricing#estimate"}
+            href="/pricing#estimate"
             className="mnav-cta t-num"
           >
             {total !== null ? `$${total.toLocaleString()}` : "Estimate"}

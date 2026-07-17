@@ -526,7 +526,7 @@ export function Services() {
           {/* the one shared ask, centered under the grid — the card CTAs
               route into depth; this one routes to the number */}
           <div className="mt-fib-5 flex justify-center">
-            <CTA href="#estimate" label="Price my project" tone="paper" />
+            <CTA href="/pricing#estimate" label="Price my project" tone="paper" />
           </div>
         </div>
       </div>

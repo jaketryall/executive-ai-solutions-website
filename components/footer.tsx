@@ -18,7 +18,7 @@ import { RollLink } from "@/components/ui/roll-link";
 export function Footer() {
   const root = useRef<HTMLElement>(null!);
   const pathname = usePathname();
-  const estimateHref = pathname === "/" ? "/#estimate" : "/pricing#estimate";
+  const estimateHref = "/pricing#estimate";
 
   useGSAP(
     () => {
