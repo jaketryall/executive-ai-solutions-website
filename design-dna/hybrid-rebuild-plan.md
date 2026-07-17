@@ -132,7 +132,7 @@ The rebuild's phase zero is a small system of reference-grade surfaces:
 
 | # | Section | Job | Spec |
 |---|---------|-----|------|
-| 1 | Hero | Hook | Centered. Two-tone claim ≤ ~8 words (800): outcome in ink, "We run the whole click." in steel. One sentence sub. ONE loud CTA + quiet audit link. De-risk chip row (quiet meta, replaces the facepile until real clients fill it). The live search demo stays as the visual, slimmed — it IS the differentiator vs their static heroes. |
+| 1 | Hero | Hook | Centered. Two-tone claim ≤ ~8 words (800): outcome in ink, "We run the whole click." in steel. ONE loud CTA + quiet audit link. De-risk row (quiet meta, replaces the facepile until real clients fill it). **NO mockup (Jake, 2026-07-16, overrides the earlier spec): "searchkings dont have a mockup in the hero because they have one in each service" — demos live on the service cards + service-page phones. The search enactment is archived at commit 6ac2517.** |
 | 2 | Services router | Route | The shipped card grid (demo · name · one line · chips · verb CTA). This is the page's core job. |
 | 3 | Free audit | Give | Shipped: canvas ground, skeleton report, dark report card. Catches everyone the router didn't route. |
 | 4 | Proof | Prove | The dark receipts card (shipped). One named quote joins it when real. |
