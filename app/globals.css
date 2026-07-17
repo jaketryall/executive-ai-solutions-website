@@ -128,11 +128,15 @@ main {
   line-height: 1.08;
 }
 .t-display-lg {
-  /* the section h2 register (Lesse ~43px at 1440) — one rung UNDER the
-     hero h1 so the page reads as a conventional ladder: h1 > h2 > h3 */
+  /* the section h2 register — EVOLVED 2026-07-16 (Jake: "our headings
+     are small compared to theirs"): the old 43.2 was calibrated to
+     Lesse's editorial voice; the SearchKings×Apple grammar runs section
+     statements at ~56, still one rung under the 64 h1. The old 43.2
+     survives as t-statement's READING register — now a distinct rung,
+     not a near-miss. */
   font-family: var(--font-display);
   font-weight: 650;
-  font-size: clamp(1.9rem, 3vw, 2.7rem);
+  font-size: clamp(2rem, 3.9vw, 3.5rem);
   line-height: 1.04;
   letter-spacing: -0.02em;
   text-wrap: balance;
@@ -195,6 +199,14 @@ main {
   font-size: 1.5rem;
   line-height: 1.15;
   letter-spacing: -0.02em;
+}
+/* the lede: section sub-lines at the 24 rung in the BODY voice — the
+   reference runs 24px subs under its H2s and it's a real ingredient of
+   the confident read (big supporting type = not hedging). Scales down
+   to ~19.5px at phone width. */
+.t-lede {
+  font-size: clamp(1.1875rem, 1.02rem + 0.85vw, 1.5rem);
+  line-height: 1.45;
 }
 .t-title--lg {
   /* the h3 rung: clearly under the h2s (~28px vs ~43px) and never heavier

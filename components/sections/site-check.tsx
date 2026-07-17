@@ -120,7 +120,7 @@ export function SiteCheck() {
           <h2 data-anim="sc" className="t-display-lg">
             Get a free site audit, right now
           </h2>
-          <p data-anim="sc" className="mx-auto mt-fib-3 max-w-[42ch] text-ink/70">
+          <p data-anim="sc" className="t-lede mx-auto mt-fib-3 max-w-[42ch] text-ink/70">
             Paste your address and we&rsquo;ll read your homepage the way we
             read a client&rsquo;s — what&rsquo;s working, what&rsquo;s leaking
             leads. Thirty seconds. Free, no email.

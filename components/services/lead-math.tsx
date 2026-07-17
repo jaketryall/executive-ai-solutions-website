@@ -214,7 +214,7 @@ export function LeadMath() {
           <h2 data-anim="lm" className="t-display-lg">
             Run your own numbers
           </h2>
-          <p data-anim="lm" className="mx-auto mt-fib-3 max-w-[44ch] text-ink/70">
+          <p data-anim="lm" className="t-lede mx-auto mt-fib-3 max-w-[44ch] text-ink/70">
             Three numbers you already know. The arithmetic every ad budget
             lives or dies on — see it before you spend a dollar.
           </p>

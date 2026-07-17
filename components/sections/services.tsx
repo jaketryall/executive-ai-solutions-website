@@ -66,7 +66,7 @@ export function Services() {
       <div className="wrap">
         <header className="mx-auto max-w-[680px] text-center">
           <h2 className="t-display-lg">From stranger to booked customer</h2>
-          <p className="mx-auto mt-fib-3 max-w-[44ch] text-ink/70">
+          <p className="t-lede mx-auto mt-fib-3 max-w-[44ch] text-ink/70">
             Six ways in, one funnel: ads bring the click, the site converts
             it, the AI keeps it. Buy the stage you need, or the whole path.
           </p>

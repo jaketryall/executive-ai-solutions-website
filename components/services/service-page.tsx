@@ -908,7 +908,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
               </span>
             ))}
           </h1>
-          <p data-anim="h-sub" className="mx-auto mt-fib-3 max-w-[46ch] text-ink/70">
+          <p data-anim="h-sub" className="t-lede mx-auto mt-fib-3 max-w-[46ch] text-ink/70">
             {service.support}
           </p>
           <div
@@ -1037,7 +1037,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
               </span>
             </span>
           </p>
-          <p data-anim="p-out" className="mx-auto mt-fib-3 max-w-[44ch] text-ink/70">
+          <p data-anim="p-out" className="t-lede mx-auto mt-fib-3 max-w-[44ch] text-ink/70">
             {service.price.note}
           </p>
           <div data-anim="p-out" className="mt-fib-4 flex flex-wrap justify-center gap-fib-1">
@@ -1216,7 +1216,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
               <h2 data-anim="ask" className="t-display-lg max-w-[13ch]">
                 Price it in sixty seconds
               </h2>
-              <p data-anim="ask" className="mt-fib-3 max-w-[42ch] text-paper/70">
+              <p data-anim="ask" className="t-lede mt-fib-3 max-w-[42ch] text-paper/70">
                 The estimator computes from the same sheet we quote from. Pick
                 what your business needs and watch the number move.
               </p>

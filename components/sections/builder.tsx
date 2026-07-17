@@ -399,7 +399,7 @@ export function Builder() {
             <h2 data-anim="bld-head" className="t-display-lg mt-fib-2 max-w-[15ch]">
               What would yours look like?
             </h2>
-            <p data-anim="bld-head" className="mt-fib-3 max-w-[52ch] text-ink/70">
+            <p data-anim="bld-head" className="t-lede mt-fib-3 max-w-[52ch] text-ink/70">
               This one is yours: type your name, flip through the tabs, tap a
               color. Sixty seconds, no signup.
             </p>

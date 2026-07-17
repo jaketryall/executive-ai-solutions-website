@@ -237,7 +237,7 @@ export function PricingPage() {
           <h2 data-anim="tier-head" className="t-display-lg max-w-[14ch]">
             Where projects land
           </h2>
-          <p data-anim="tier-head" className="mt-fib-3 max-w-[46ch] text-ink/70">
+          <p data-anim="tier-head" className="t-lede mt-fib-3 max-w-[46ch] text-ink/70">
             Three honest bands, from the estimator&apos;s own tiers. Most
             projects land in Growth.
           </p>

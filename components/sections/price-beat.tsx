@@ -121,7 +121,7 @@ export function PriceBeat() {
           <br className="hidden md:block" /> Ads managed from{" "}
           <span className="text-accent">$500/mo</span>.
         </p>
-        <p data-anim="line" className="mt-fib-3 max-w-[44ch] text-ink/70">
+        <p data-anim="line" className="t-lede mt-fib-3 max-w-[44ch] text-ink/70">
           Your exact number takes 60 seconds. No call, no email, no
           obligation.
         </p>
