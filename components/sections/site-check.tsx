@@ -134,10 +134,14 @@ export function SiteCheck() {
       // give — and the dark report card is the section's one object. pt
       // clears the hero ad card's exit overhang.
       // the warm-gray band under the white hero (Jake, 2026-07-17): the
-      // ground switch at the fold is what sells the peek. HARD CUT per the
-      // stage-never-wears-radii law; add rounded-t if Jake decides to.
-      className="relative bg-panel pb-fib-7 pt-fib-5 text-ink"
+      // ground switch at the fold is what sells the peek. TRYING (his call,
+      // same day): the band becomes an Apple-style TRAY — rounded, almost
+      // full width, floating on the hero's white stage (the section keeps
+      // bg-white so the tray's surround matches the hero, not the cream).
+      // Revert = drop the tray div, put bg-panel back on the section.
+      className="relative bg-white px-fib-1 pb-fib-4 text-ink md:px-fib-2"
     >
+      <div className="rounded-panel bg-panel pb-fib-7 pt-fib-5">
       <div className="wrap">
         <div className="mx-auto max-w-[640px] text-center">
           {/* the fold bait (Hormozi's FREE, Jake 2026-07-17): this headline
@@ -259,6 +263,7 @@ export function SiteCheck() {
             </div>
           </div>
         )}
+      </div>
       </div>
     </section>
   );
