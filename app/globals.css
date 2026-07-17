@@ -722,8 +722,21 @@ section[id] {
   gap: 8px;
   padding: 0 8px 8px;
 }
+/* the Lesse swell (measured from their code): no transform anywhere —
+   the hovered card claims room because its siblings CEDE it (flex-grow
+   1 -> 0.55, transitioned). Their columns grow tall; our row grows wide. */
 .nav-panel--3 {
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+}
+.nav-panel--3 .nav-mini {
+  flex: 1 1 0;
+  min-width: 0;
+  transition:
+    background 0.1s linear,
+    flex-grow 0.3s ease;
+}
+.nav-panel--3:has(.nav-mini:hover) .nav-mini:not(:hover) {
+  flex-grow: 0.55;
 }
 .nav-panel--1 {
   grid-template-columns: 1fr;
@@ -752,33 +765,6 @@ section[id] {
 .nav-mini--static:hover {
   background: rgba(239, 240, 238, 0.07);
   cursor: default;
-}
-.nav-mini-thumb {
-  display: block;
-  width: 100%;
-  aspect-ratio: 2.2;
-  object-fit: cover;
-  object-position: top;
-  border-radius: var(--radius-chip);
-}
-/* the horizontal mini: a small square thumb beside the words, not a banner */
-.nav-mini--row {
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-}
-.nav-mini--row .nav-mini-thumb {
-  width: 40px;
-  aspect-ratio: 1;
-  flex-shrink: 0;
-}
-/* a logo mark in a favicon-style chip — legible where a screenshot isn't */
-.nav-mini-thumb--mark {
-  border-radius: 50%;
-  background: #fff;
-  padding: 5px;
-  object-fit: contain;
-  box-shadow: 0 0 0 1px rgba(239, 240, 238, 0.14);
 }
 /* a quiet fact line above a panel's cards — no box, no affordance */
 .nav-fact {

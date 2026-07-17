@@ -88,21 +88,10 @@ function LinksCapsule() {
       {mini(
         "/work",
         <>
-          {/* a mark, not a page — a 40px screenshot is a smudge, a logo
-              reads (the favicon lesson from the SERP kit) */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/work/dw-favicon.png"
-            alt=""
-            className="nav-mini-thumb nav-mini-thumb--mark"
-          />
-          <span className="flex min-w-0 flex-col gap-[2px]">
-            <span className="nav-mini-meta">Case study</span>
-            <span className="text-trim">Desert Wings Flight School</span>
-          </span>
+          <span className="nav-mini-meta">Case study</span>
+          <span className="text-trim">Desert Wings Flight School</span>
         </>,
         0,
-        "nav-mini--row",
       )}
       {mini(
         "/work",
