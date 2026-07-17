@@ -2570,12 +2570,37 @@ html:not(.has-js) .zone-dark {
   overflow: hidden;
   box-shadow: 0 21px 55px -21px rgba(0, 0, 0, 0.6);
 }
-/* the artifact tiles inside home's white steps cards (2026-07-17): the
-   well goes flat services-gray — the inner ink tile carries its own
-   shadow; a heavy dark-section shadow on a white card reads as a hole */
-.proc-demo .pd-panel {
-  background: var(--color-panel);
-  box-shadow: none;
+/* the steps icons (2026-07-17, chosen over artifact tiles): accent
+   line icons in tinted chips, drawing themselves on entrance via a
+   CSS dash transition (JS arms .steps-armed and fires .steps-drawn;
+   the GSAP dashoffset tween snapped instead of sweeping). No-JS never
+   arms, so icons render complete; reduced-motion skips arming too. */
+.step-chip {
+  display: inline-grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-frame);
+  background: rgba(76, 107, 124, 0.1);
+}
+.step-icon {
+  width: 30px;
+  height: 30px;
+  color: var(--color-accent);
+}
+.steps-armed .step-icon :is(path, polyline, rect, line) {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.steps-armed.steps-drawn .step-icon :is(path, polyline, rect, line) {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s var(--ease-structure) 0.3s;
+}
+.steps-armed.steps-drawn .proc-card:nth-child(2) .step-icon :is(path, polyline, rect, line) {
+  transition-delay: 0.45s;
+}
+.steps-armed.steps-drawn .proc-card:nth-child(3) .step-icon :is(path, polyline, rect, line) {
+  transition-delay: 0.6s;
 }
 .pd-panel--browser {
   display: flex;
