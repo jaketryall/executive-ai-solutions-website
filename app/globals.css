@@ -5064,6 +5064,59 @@ span.g-m-fav {
   border-radius: 1.3cqw;
   margin-top: 2.1cqw;
 }
+
+/* ── the services cards (parity pass vs the reference, 2026-07-16):
+   physical white tiles on the light canvas, soft real shadows, and one
+   shared selling object — a big phone CROPPED by the card's demo well
+   (top ~45% visible, so screen type stays legible), resting on its win
+   frame. The well is a whisper-gray shelf: it separates the phone's
+   white screen from the white tile. ── */
+.svc-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-frame);
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgba(19, 20, 19, 0.05),
+    0 13px 34px -13px rgba(19, 20, 19, 0.16);
+}
+.svc-card-demo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  height: 290px; /* one flat height: fits the chat exchange at 390w, crops phones 1-2 at the same ratio everywhere */
+  overflow: clip;
+  border-radius: calc(var(--radius-frame) - 8px);
+  background: var(--color-panel);
+}
+.svc-card-demo .dvc {
+  width: min(86%, 310px); /* wide enough that SERP type clears ~14px */
+  flex-shrink: 0;
+  margin-top: 21px;
+}
+/* the win frame IS the rest state here — no reveal loop on the router
+   cards, so the booked toast simply shows */
+.svc-card-demo .chat-booked {
+  opacity: 1;
+}
+.svc-card-demo .chat-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 13px 0;
+}
+/* phone-proportional type: the whole exchange must fit the SMALLEST
+   well (230px on mobile) — the booked toast is the payoff and may never
+   fall past the crop */
+.svc-card-demo .chat-b p {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+.svc-card-demo .chat-booked {
+  margin-top: 4px;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+}
 /* the page continues below the screen's edge (the ChatGPT-mock trick:
    skeleton content signals a live page, not a finished poster) */
 .g-skel {
