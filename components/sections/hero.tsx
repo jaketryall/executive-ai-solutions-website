@@ -123,7 +123,7 @@ function GmSerp({ d }: { d: SerpDemo }) {
               <path d="m13 13 4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
             <span className="g-m-q">
-              <span>{d.q}</span>
+              <span data-hq>{d.q}</span>
               <span className="g-m-caret" aria-hidden />
             </span>
             <svg viewBox="0 0 20 20" fill="none">
@@ -151,6 +151,9 @@ function GmSerp({ d }: { d: SerpDemo }) {
             <span>&middot;</span>
             <span className="is-link">Choose area</span>
           </div>
+          {/* everything below the chrome is "the results" — the roll's
+              enactment types the query first, then fades this in */}
+          <div data-hres>
           <div className="g-m-ad">
             <p className="g-m-sponsored">Sponsored</p>
             <div className="g-m-src">
@@ -204,6 +207,7 @@ function GmSerp({ d }: { d: SerpDemo }) {
               <span className="g-skel-line block w-[64%]" />
             </span>
           </div>
+          </div>
         </div>
   );
 }
@@ -212,7 +216,7 @@ function HeroChatPhone() {
   return (
     <div className="dvc" role="img" aria-label="A phone showing our AI answering a customer and booking them in">
       <div className="dvc-screen dvc-screen--ui">
-        <div className="px-[7%] pt-[16%]" aria-hidden>
+        <div className="px-[7%] pt-[7%]" aria-hidden>
           <div className="chat-thread">
             <div className="chat-b chat-b--user">
               <p>Are you open this weekend?</p>
@@ -389,20 +393,51 @@ export function Hero() {
               idx = (idx + 1) % ROLL_PAIRS.length;
               out.textContent = ROLL_PAIRS[idx].out;
               who.textContent = `${ROLL_PAIRS[idx].who}.`;
-              // the phone re-searches in step with the headline (Jake's
-              // "the words would change in the hero AND in the animation")
+              // the phone re-searches in step with the headline — and it
+              // ENACTS it (Jake, 2026-07-17: "show them search, like
+              // actually type in"): the next screen arrives with an empty
+              // bar, the query types at a diegetic constant rate, then
+              // the results land. Demonstrating motion on the roll's beat.
               const demos = q("[data-phone-demo]") as HTMLElement[];
-              if (demos[prev] && demos[idx]) {
+              const nextL = demos[idx];
+              if (demos[prev] && nextL) {
+                const hq = nextL.querySelector("[data-hq]") as HTMLElement;
+                const hres = nextL.querySelector("[data-hres]") as HTMLElement;
+                const full = SERP_DEMOS[IND_KEYS[idx]].q;
                 gsap.to(demos[prev], {
                   autoAlpha: 0,
-                  duration: 0.35,
+                  duration: 0.3,
                   ease: EASE_UI,
                 });
-                gsap.fromTo(
-                  demos[idx],
-                  { autoAlpha: 0 },
-                  { autoAlpha: 1, duration: 0.5, delay: 0.12, ease: EASE_UI }
-                );
+                if (hq && hres) {
+                  hq.textContent = "";
+                  gsap.set(hres, { autoAlpha: 0 });
+                  gsap.set(nextL, { autoAlpha: 1, delay: 0.25 });
+                  const st = { n: 0 };
+                  gsap.to(st, {
+                    n: full.length,
+                    duration: 0.75,
+                    delay: 0.35,
+                    ease: "none", // diegetic typing, constant rate
+                    snap: { n: 1 },
+                    onUpdate: () => {
+                      hq.textContent = full.slice(0, st.n);
+                    },
+                    onComplete: () => {
+                      gsap.to(hres, {
+                        autoAlpha: 1,
+                        duration: 0.45,
+                        ease: EASE_UI,
+                      });
+                    },
+                  });
+                } else {
+                  gsap.fromTo(
+                    nextL,
+                    { autoAlpha: 0 },
+                    { autoAlpha: 1, duration: 0.5, delay: 0.12, ease: EASE_UI }
+                  );
+                }
               }
             })
             .fromTo(
