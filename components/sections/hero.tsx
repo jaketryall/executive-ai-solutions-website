@@ -114,10 +114,8 @@ const SERP_DEMOS: Record<(typeof IND_KEYS)[number], SerpDemo> = {
   },
 };
 
-function HeroSerpPhone({ d }: { d: SerpDemo }) {
+function GmSerp({ d }: { d: SerpDemo }) {
   return (
-    <div className="dvc" role="img" aria-label={`A phone showing a Google search for “${d.q}” with the ${d.name} ad on top`}>
-      <div className="dvc-screen dvc-screen--ui">
         <div className="g-m" aria-hidden>
           <div className="g-m-bar">
             <svg viewBox="0 0 20 20" fill="none">
@@ -207,8 +205,6 @@ function HeroSerpPhone({ d }: { d: SerpDemo }) {
             </span>
           </div>
         </div>
-      </div>
-    </div>
   );
 }
 
@@ -273,8 +269,11 @@ export function Hero() {
     if (s === "ai" || s === "websites") setSvc(s);
   }, []);
 
-  // labeled traffic gets the split adaptive hero; organic stays centered
-  const adaptive = locked !== null || svc !== null;
+  // THE hero for everyone (Jake, 2026-07-17: "the adaptive hero on home
+  // page too") — organic gets the split with the phone SYNCED to the
+  // roll (headline swaps industry → the phone re-searches); labeled
+  // traffic gets it locked to their industry / campaign surface.
+  const adaptive = true;
 
   const ariaPair = ROLL_PAIRS[locked ?? 0];
 
@@ -386,9 +385,25 @@ export function Hero() {
               stagger: 0.06,
             })
             .call(() => {
+              const prev = idx;
               idx = (idx + 1) % ROLL_PAIRS.length;
               out.textContent = ROLL_PAIRS[idx].out;
               who.textContent = `${ROLL_PAIRS[idx].who}.`;
+              // the phone re-searches in step with the headline (Jake's
+              // "the words would change in the hero AND in the animation")
+              const demos = q("[data-phone-demo]") as HTMLElement[];
+              if (demos[prev] && demos[idx]) {
+                gsap.to(demos[prev], {
+                  autoAlpha: 0,
+                  duration: 0.35,
+                  ease: EASE_UI,
+                });
+                gsap.fromTo(
+                  demos[idx],
+                  { autoAlpha: 0 },
+                  { autoAlpha: 1, duration: 0.5, delay: 0.12, ease: EASE_UI }
+                );
+              }
             })
             .fromTo(
               [out, who],
@@ -579,19 +594,39 @@ export function Hero() {
         </div>
 
         {/* the adaptive phone — THEIR search, won (or the svc campaign's
-            surface). Static win frame; the performing cycle lives on the
-            service pages. */}
-        {adaptive && (
-          <div data-anim="phone" className="hero-phone mx-auto mt-fib-5 lg:mt-0">
-            {svc === "ai" ? (
-              <HeroChatPhone />
-            ) : svc === "websites" ? (
-              <HeroTourPhone />
-            ) : (
-              <HeroSerpPhone d={SERP_DEMOS[IND_KEYS[locked ?? 0]]} />
-            )}
-          </div>
-        )}
+            surface). All four SERPs ride stacked in one screen; organic
+            crossfades them on the roll's beat, labeled traffic pins its
+            own. Each frame is a static win frame; the performing cycle
+            lives on the service pages. */}
+        <div data-anim="phone" className="hero-phone mx-auto mt-fib-5 lg:mt-0">
+          {svc === "ai" ? (
+            <HeroChatPhone />
+          ) : svc === "websites" ? (
+            <HeroTourPhone />
+          ) : (
+            <div
+              className="dvc"
+              role="img"
+              aria-label="A phone showing a Google search with our client's ad on top"
+            >
+              <div className="dvc-screen dvc-screen--ui">
+                <div className="relative h-full w-full">
+                  {IND_KEYS.map((k, idx) => (
+                    <div
+                      key={k}
+                      data-phone-demo={idx}
+                      className={`absolute inset-0 ${
+                        idx !== (locked ?? 0) ? "opacity-0" : ""
+                      }`}
+                    >
+                      <GmSerp d={SERP_DEMOS[k]} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
