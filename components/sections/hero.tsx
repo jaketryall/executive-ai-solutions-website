@@ -172,8 +172,6 @@ function GmResults({ d }: { d: SerpDemo }) {
   return (
     <>
           <div className="g-m-ad relative">
-            {/* the tap that takes the click — pulsed by the enactment */}
-            <span className="g-click-ring" />
             <p className="g-m-sponsored">Sponsored</p>
             <div className="g-m-src">
               {d.fav ? (
@@ -426,9 +424,6 @@ export function Hero() {
                 const newQ = SERP_DEMOS[IND_KEYS[idx]].q;
                 // hard reset: whatever state the killed run left behind
                 bar.textContent = oldQ;
-                const ringAll = q(".g-click-ring") as HTMLElement[];
-                gsap.killTweensOf(ringAll);
-                gsap.set(ringAll, { autoAlpha: 0 });
                 gsap.set(skel, { autoAlpha: 0 });
                 layers.forEach((l, n) =>
                   gsap.set(l, { autoAlpha: n === prev ? 1 : 0 })
@@ -507,44 +502,10 @@ export function Hero() {
                     { autoAlpha: 0 },
                     { autoAlpha: 1, duration: 0.28, ease: EASE_UI }
                   )
-                  // ── the POINT, exaggerated (Jake: "so they really get
-                  // it"): a beat to read, then the thumb-tap blooms on the
-                  // ad and everything that isn't the win dims ──
+                  // ── the POINT: a beat to read, then everything that
+                  // isn't the win quietly dims (the tap-ring bloom was
+                  // cut 2026-07-17 — Jake: "i dont like that circle") ──
                   .to({}, { duration: 0.5 })
-                  .call(() => {
-                    const ad = layers[idx].querySelector(
-                      ".g-m-ad"
-                    ) as HTMLElement;
-                    const ring = ad?.querySelector(
-                      ".g-click-ring"
-                    ) as HTMLElement;
-                    const title = ad?.querySelector(
-                      ".g-m-title"
-                    ) as HTMLElement;
-                    if (!ring || !title) return;
-                    gsap.set(ring, {
-                      xPercent: -50,
-                      yPercent: -50,
-                      x: title.offsetLeft + title.offsetWidth * 0.35,
-                      y: title.offsetTop + title.offsetHeight * 0.55,
-                      scale: 0.5,
-                      autoAlpha: 0,
-                    });
-                    gsap
-                      .timeline()
-                      .to(ring, {
-                        autoAlpha: 0.95,
-                        scale: 0.85,
-                        duration: 0.16,
-                        ease: EASE_UI,
-                      })
-                      .to(ring, {
-                        scale: 1.6,
-                        autoAlpha: 0,
-                        duration: 0.55,
-                        ease: "power2.out",
-                      });
-                  })
                   .to(
                     layers[idx].querySelectorAll(".g-m-org, .g-m-sep"),
                     { opacity: 0.35, duration: 0.45, ease: EASE_UI },
