@@ -68,11 +68,16 @@ export function Steps() {
       className="relative flex flex-col justify-center bg-white py-fib-6 md:min-h-[96svh]"
     >
       <div className="wrap">
-        <h2 data-anim="steps-title" className="t-display-lg text-center">
-          Getting started is easy
-        </h2>
-        <div className="mt-fib-5">
-          <ProcessCards steps={STEPS} anim="steps-card" numeralLead />
+        {/* TRYING (Jake, 2026-07-17): the whole band rides one light-gray
+            card — a gray field on the white run, white step cards popping
+            inside it (white objects on gray, per the object rule) */}
+        <div className="rounded-panel bg-panel px-fib-3 py-fib-5 md:px-fib-5 md:py-fib-6">
+          <h2 data-anim="steps-title" className="t-display-lg text-center">
+            Getting started is easy
+          </h2>
+          <div className="mt-fib-5">
+            <ProcessCards steps={STEPS} anim="steps-card" numeralLead />
+          </div>
         </div>
       </div>
     </section>
