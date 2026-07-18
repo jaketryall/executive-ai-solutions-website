@@ -2016,6 +2016,13 @@ img.g-fav {
   width: 26px;
   height: 26px;
 }
+/* MONOCHROME (Jake, 2026-07-17: "take the color out to match the
+   site") — the official shapes stay, the brand colors don't: every
+   fill tints to quiet ink except white cutouts (the ChatGPT knot,
+   the shield's check) and explicit none-fills (stroked check paths). */
+.hm-logo svg [fill]:not([fill="#fff"]):not([fill="none"]) {
+  fill: rgba(19, 20, 19, 0.45);
+}
 /* non-square official vectors keep their aspect inside the box */
 .hm-logo svg[viewBox="0 0 92.3 132.3"] {
   width: 19px; /* the tall Maps pin reads right narrower */
