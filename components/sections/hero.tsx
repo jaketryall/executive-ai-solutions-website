@@ -10,6 +10,7 @@ import {
   reducedMotion,
 } from "@/components/anim/ease";
 import { CTA } from "@/components/ui/cta";
+import { Monogram } from "@/components/ui/monogram";
 import { whenArrived } from "@/components/anim/arrival";
 
 /* The hero — the SearchKings shape (Jake, 2026-07-16): NO mockup here.
@@ -33,6 +34,227 @@ const ROLL_LOCK: Record<string, number> = {
   trades: 3,
   other: 0,
 };
+const IND_KEYS = ["other", "flight", "restaurant", "trades"] as const;
+
+/* ══ THE ADAPTIVE PHONE (Jake, 2026-07-17: "if a plumber looked it up the
+   words would change in the hero and in the animation") — Phase A: labeled
+   ad traffic (?i= / ?svc=) gets a SPLIT hero with a phone showing THEIR
+   search won; organic keeps the centered power trio untouched. The win
+   frame is STATIC (win-frames law: complete at every instant); the
+   performing cycle lives on the service pages.
+   Preview: /?i=trades · /?i=flight · /?i=restaurant · /?i=other ·
+   /?svc=ai · /?svc=websites ══ */
+type SerpDemo = {
+  q: string;
+  fav?: string;
+  name: string;
+  url: string;
+  title: string;
+  desc: string;
+  links: [string, string][];
+  org: [string, string, string];
+};
+/* flight = the REAL client. The others are demo-fiction businesses from
+   the same universe the services cards already use (Mesa Rapid Plumbing
+   is the LSA card's). "other" is the meta move: EAS winning its own
+   search — the one honest way to show a generic business on top. */
+const SERP_DEMOS: Record<(typeof IND_KEYS)[number], SerpDemo> = {
+  flight: {
+    q: "flight school near me",
+    fav: "/work/dw-favicon.png",
+    name: "Desert Wings Flight School",
+    url: "https://www.desertwingsflightschool.com",
+    title: "Desert Wings Flight School | Learn to Fly at Falcon Field",
+    desc: "Discovery flights and PPL through CFI training in Mesa, AZ. Train at Falcon Field with FAA-certified instructors.",
+    links: [
+      ["Discovery flights", "See the valley from the left seat"],
+      ["Fleet and rates", "Transparent hourly rates, modern 172s"],
+    ],
+    org: [
+      "FlightSchoolList",
+      "flightschoollist.com › arizona › mesa",
+      "Best flight schools near Phoenix, ranked",
+    ],
+  },
+  trades: {
+    q: "emergency plumber mesa",
+    name: "Mesa Rapid Plumbing",
+    url: "https://www.mesarapidplumbing.com",
+    title: "Mesa Rapid Plumbing | 24/7 Emergency Call-Outs",
+    desc: "Burst pipes, water heaters, slab leaks. Licensed, insured, and on the way in under an hour across the East Valley.",
+    links: [
+      ["Emergency service", "On the way in under an hour"],
+      ["Upfront pricing", "The quote before the wrench"],
+    ],
+    org: ["Yelp", "yelp.com › mesa › plumbers", "THE BEST 10 Plumbers in Mesa, AZ"],
+  },
+  restaurant: {
+    q: "patio dinner mesa az",
+    name: "Canyon Table",
+    url: "https://www.canyontable.com",
+    title: "Canyon Table | Wood-Fired Patio Dining in Mesa",
+    desc: "Seasonal plates and desert sunsets on the valley's warmest patio. Book tonight's table in two taps.",
+    links: [
+      ["Book a table", "Tonight from 5:00 PM"],
+      ["The menu", "Wood-fired, seasonal, local"],
+    ],
+    org: ["OpenTable", "opentable.com › mesa-restaurants", "The 10 best patios in Mesa"],
+  },
+  other: {
+    q: "google ads agency mesa",
+    name: "Executive AI Solutions",
+    url: "https://www.executiveaisolutions.com",
+    title: "Executive AI Solutions | We Run the Whole Click",
+    desc: "Ads, landing pages, and AI follow-up for local business — one team, tracked to the dollar. Fixed quotes in two days.",
+    links: [
+      ["Free site audit", "Thirty seconds, no email"],
+      ["Transparent pricing", "Sites from $2.5k, ads from $500/mo"],
+    ],
+    org: ["Clutch", "clutch.co › agencies › mesa", "Top Google Ads agencies in Mesa"],
+  },
+};
+
+function HeroSerpPhone({ d }: { d: SerpDemo }) {
+  return (
+    <div className="dvc" role="img" aria-label={`A phone showing a Google search for “${d.q}” with the ${d.name} ad on top`}>
+      <div className="dvc-screen dvc-screen--ui">
+        <div className="g-m" aria-hidden>
+          <div className="g-m-bar">
+            <svg viewBox="0 0 20 20" fill="none">
+              <circle cx="8.6" cy="8.6" r="5.4" stroke="currentColor" strokeWidth="2" />
+              <path d="m13 13 4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+            <span className="g-m-q">
+              <span>{d.q}</span>
+              <span className="g-m-caret" aria-hidden />
+            </span>
+            <svg viewBox="0 0 20 20" fill="none">
+              <rect x="7" y="2.5" width="6" height="10" rx="3" stroke="currentColor" strokeWidth="1.8" />
+              <path d="M4.5 10a5.5 5.5 0 0 0 11 0M10 15.5V18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+            <svg viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="4" stroke="currentColor" strokeWidth="1.8" />
+              <path d="M3 6V4.5A1.5 1.5 0 0 1 4.5 3H6M14 3h1.5A1.5 1.5 0 0 1 17 4.5V6M17 14v1.5a1.5 1.5 0 0 1-1.5 1.5H14M6 17H4.5A1.5 1.5 0 0 1 3 15.5V14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          </div>
+          <nav className="g-m-tabs">
+            <span>AI Mode</span>
+            <span className="is-on">All</span>
+            <span>Images</span>
+            <span>Maps</span>
+            <span>News</span>
+          </nav>
+          <div className="g-m-loc">
+            <svg viewBox="0 0 14 14" fill="none">
+              <path d="M7 1.5A4.2 4.2 0 0 0 2.8 5.7C2.8 8.85 7 12.8 7 12.8s4.2-3.95 4.2-7.1A4.2 4.2 0 0 0 7 1.5Z" stroke="currentColor" strokeWidth="1.4" />
+              <circle cx="7" cy="5.7" r="1.4" fill="currentColor" />
+            </svg>
+            <b>Mesa, AZ</b>
+            <span>&middot;</span>
+            <span className="is-link">Choose area</span>
+          </div>
+          <div className="g-m-ad">
+            <p className="g-m-sponsored">Sponsored</p>
+            <div className="g-m-src">
+              {d.fav ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={d.fav} alt="" className="g-m-fav" width={64} height={64} />
+              ) : (
+                <span className="g-m-fav" />
+              )}
+              <span className="g-m-site">
+                <span className="g-m-name">{d.name}</span>
+                <span className="g-m-url">{d.url}</span>
+              </span>
+              <svg viewBox="0 0 16 16" fill="currentColor" className="g-m-kebab">
+                <circle cx="8" cy="3.2" r="1.4" />
+                <circle cx="8" cy="8" r="1.4" />
+                <circle cx="8" cy="12.8" r="1.4" />
+              </svg>
+            </div>
+            <p className="g-m-title">{d.title}</p>
+            <p className="g-m-desc">{d.desc}</p>
+            <div className="g-m-links">
+              {d.links.map(([t, sub]) => (
+                <span key={t} className="g-m-link">
+                  <span>
+                    <span className="g-m-link-t block">{t}</span>
+                    <span className="g-m-link-d block">{sub}</span>
+                  </span>
+                  <svg viewBox="0 0 16 16" fill="none" className="g-m-chev">
+                    <path d="m6 3.5 4.5 4.5L6 12.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="g-m-sep" />
+          <div className="g-m-org">
+            <div className="g-m-src">
+              <span className="g-m-fav" />
+              <span className="g-m-site">
+                <span className="g-m-name">{d.org[0]}</span>
+                <span className="g-m-url">{d.org[1]}</span>
+              </span>
+            </div>
+            <p className="g-m-title">{d.org[2]}</p>
+          </div>
+          <div className="g-skel">
+            <span className="g-skel-thumb" />
+            <span className="g-skel-lines">
+              <span className="g-skel-line block w-[82%]" />
+              <span className="g-skel-line block w-[64%]" />
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HeroChatPhone() {
+  return (
+    <div className="dvc" role="img" aria-label="A phone showing our AI answering a customer and booking them in">
+      <div className="dvc-screen dvc-screen--ui">
+        <div className="px-[7%] pt-[16%]" aria-hidden>
+          <div className="chat-thread">
+            <div className="chat-b chat-b--user">
+              <p>Are you open this weekend?</p>
+            </div>
+            <div className="chat-b chat-b--bot">
+              <Monogram className="mt-[3px] h-[15px] w-[15px] shrink-0 opacity-70" />
+              <p>
+                Yes &mdash; Saturday morning is open. Want me to book you in?
+              </p>
+            </div>
+            <p className="chat-booked">
+              <svg viewBox="0 0 12 12" fill="none" aria-hidden>
+                <path d="M2 6.4 4.8 9 10 3.4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Booked &middot; Sat 9:00 AM
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HeroTourPhone() {
+  return (
+    <div className="dvc" role="img" aria-label="A phone showing the Desert Wings site we built">
+      <span className="dvc-island" aria-hidden />
+      <div className="dvc-screen">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/work/dw-phone-tour.jpg"
+          alt=""
+          className="h-full w-full object-cover object-top"
+        />
+      </div>
+    </div>
+  );
+}
 
 // layout effect so the ?i= lock commits BEFORE first paint
 const useIsomorphicLayoutEffect =
@@ -41,11 +263,18 @@ const useIsomorphicLayoutEffect =
 export function Hero() {
   const root = useRef<HTMLElement>(null!);
   const [locked, setLocked] = useState<number | null>(null);
+  const [svc, setSvc] = useState<"ai" | "websites" | null>(null);
 
   useIsomorphicLayoutEffect(() => {
-    const i = new URLSearchParams(window.location.search).get("i");
+    const params = new URLSearchParams(window.location.search);
+    const i = params.get("i");
     if (i && ROLL_LOCK[i] !== undefined) setLocked(ROLL_LOCK[i]);
+    const s = params.get("svc");
+    if (s === "ai" || s === "websites") setSvc(s);
   }, []);
+
+  // labeled traffic gets the split adaptive hero; organic stays centered
+  const adaptive = locked !== null || svc !== null;
 
   const ariaPair = ROLL_PAIRS[locked ?? 0];
 
@@ -106,6 +335,15 @@ export function Hero() {
           { autoAlpha: 1, duration: 0.6, ease: EASE_UI },
           1.05
         );
+      // the adaptive phone rises with the claim (only exists for labeled traffic)
+      if (q("[data-anim='phone']").length) {
+        tl.fromTo(
+          q("[data-anim='phone']"),
+          { autoAlpha: 0, y: 26 },
+          { autoAlpha: 1, y: 0, duration: 0.9 },
+          0.5
+        );
+      }
 
       // fonts measurable AND the route-transition sheet landed
       Promise.all([document.fonts.ready, whenArrived()]).then(() => {
@@ -219,7 +457,13 @@ export function Hero() {
       {/* md:pt 144 (was 89): the stars row sat ~15px under the nav capsule
           (Jake: "content is really close to nav bar") — the capsule bottoms
           at ~81, so 144 gives the crown real air */}
-      <div className="hero-in wrap relative z-10 flex min-h-[60svh] flex-col items-center justify-center pb-fib-4 pt-[120px] text-center md:pt-fib-7">
+      <div
+        className={`hero-in wrap relative z-10 flex min-h-[60svh] flex-col items-center justify-center pb-fib-4 pt-[120px] text-center md:pt-fib-7 ${
+          adaptive
+            ? "lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-fib-6 lg:text-left"
+            : ""
+        }`}
+      >
         {/* ── the SearchKings stack, our true content (Jake, 2026-07-16):
             trust → outcome → how → incentives. Their stars/badges are
             earned marks we don't hold, so every trust beat here is a
@@ -228,7 +472,11 @@ export function Hero() {
         {/* w-full: without it this column sizes to the marquee track's
             max-content width and drags the whole page into horizontal
             overflow — the clamp is what lets .hero-marquee clip */}
-        <div className="hero-left flex w-full flex-col items-center">
+        <div
+          className={`hero-left flex w-full flex-col items-center ${
+            adaptive ? "lg:items-start" : ""
+          }`}
+        >
           {/* the trust crown (Jake's SK decode: stars first) — REAL reviews,
               all five-star; the count is deliberately unstated until it's
               a number worth printing. No volume implied. */}
@@ -267,7 +515,9 @@ export function Hero() {
               specifics) */}
           <h1
             data-anim="statement"
-            className="t-statement t-statement--hero mx-auto mt-fib-2"
+            className={`t-statement t-statement--hero mx-auto mt-fib-2 ${
+              adaptive ? "lg:mx-0 lg:text-[3rem]!" : ""
+            }`}
             aria-label={`${ariaPair.out} ${ariaPair.who}. We run the whole click.`}
           >
             {/* ALWAYS TWO LINES (Jake, 2026-07-17): the rolling sentence
@@ -328,6 +578,20 @@ export function Hero() {
           </div>
         </div>
 
+        {/* the adaptive phone — THEIR search, won (or the svc campaign's
+            surface). Static win frame; the performing cycle lives on the
+            service pages. */}
+        {adaptive && (
+          <div data-anim="phone" className="hero-phone mx-auto mt-fib-5 lg:mt-0">
+            {svc === "ai" ? (
+              <HeroChatPhone />
+            ) : svc === "websites" ? (
+              <HeroTourPhone />
+            ) : (
+              <HeroSerpPhone d={SERP_DEMOS[IND_KEYS[locked ?? 0]]} />
+            )}
+          </div>
+        )}
       </div>
     </section>
   );

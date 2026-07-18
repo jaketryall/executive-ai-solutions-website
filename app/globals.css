@@ -1871,6 +1871,21 @@ img.g-fav {
   color: var(--color-accent);
 }
 
+/* the adaptive hero phone (labeled ad traffic) — a self-sized dvc on
+   the split grid's right column; the chat variant needs its booked
+   toast visible without the service-page GSAP hook */
+.hero-phone {
+  width: min(300px, 82vw);
+  flex-shrink: 0;
+}
+.hero-phone .dvc {
+  width: 100%;
+}
+.hero-phone .chat-booked {
+  opacity: 1;
+  margin-top: 8px;
+}
+
 /* the odometer wheels (B12) — each digit is a 1em window over a
    0-9+0 strip; the tween translates the strip. Used by the proof
    receipts; requires tabular numerals (t-num) so wheels share width. */
