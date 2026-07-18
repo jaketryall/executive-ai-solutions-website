@@ -206,7 +206,7 @@ export function Proof() {
              phones get the phone capture (legible at full card width, and
              tall enough that the tour loop still travels) */
           const mob = p.phones?.[0];
-          const [hero, ...rest] = p.results!.metrics;
+          const metrics = p.results!.metrics.slice(0, 2);
           return (
             <article
               key={p.slug}
@@ -248,43 +248,39 @@ export function Proof() {
                 )}
               </div>
 
-              {/* the receipts — text straight on the dark card */}
+              {/* the receipts — the viral-sma editorial interior (2026-07-17):
+                  narrative story leads, client name demotes to meta, exactly
+                  TWO time-qualified stats. Fewer numbers, harder landing. */}
               <div className="flex min-h-0 min-w-0 flex-col p-fib-2 md:py-fib-3 md:pl-0 md:pr-fib-3">
                 <div className="flex flex-wrap items-center gap-fib-2">
                   <span className="chip">{p.sector}</span>
                   <span className="t-meta text-paper/45">{p.year}</span>
                 </div>
-                <h3 className="t-display-lg mt-fib-3 text-paper">{p.client}</h3>
+                <h3 className="mt-fib-3 font-display text-[2rem] font-bold leading-[1.15] tracking-[-0.02em] text-paper">
+                  {p.results!.story}
+                </h3>
+                <p className="t-meta mt-fib-2 text-paper/45">{p.client}</p>
 
-                {/* the hero number, then the receipts cluster — the smalls
-                    were one whispered meta line and the column's middle sat
-                    empty (Jake, 2026-07-15); now each supporting number gets
-                    the iPhone spec-cluster treatment: value + label pairs
-                    under a hairline */}
-                <p
-                  data-count
-                  className="t-num mt-fib-4 font-display text-[3rem] font-extrabold leading-none tracking-[-0.03em] text-paper"
-                >
-                  {hero.value}
+                <div className="mt-fib-4 grid max-w-[400px] grid-cols-2 gap-fib-3 border-t border-paper/10 pt-fib-3">
+                  {metrics.map((m) => (
+                    <div key={m.label}>
+                      <p
+                        data-count
+                        className="t-num font-display text-[2.5rem] font-extrabold leading-none tracking-[-0.03em] text-paper"
+                      >
+                        {m.value}
+                      </p>
+                      <p className="mt-fib-1 text-[0.9375rem] leading-snug text-paper/65">
+                        {m.label}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                {/* the qualifier — numbers without a timeframe are marketing;
+                    numbers with one are a report */}
+                <p className="t-meta mt-fib-2 text-paper/45">
+                  {p.results!.window}
                 </p>
-                <p className="mt-fib-1 text-paper/65">{hero.label}</p>
-                {rest.length > 0 && (
-                  <div className="mt-fib-4 grid max-w-[360px] grid-cols-2 gap-fib-3 border-t border-paper/10 pt-fib-3">
-                    {rest.map((m) => (
-                      <div key={m.label}>
-                        <p
-                          data-count
-                          className="t-num font-display text-[1.5rem] font-bold leading-none tracking-[-0.02em] text-paper"
-                        >
-                          {m.value}
-                        </p>
-                        <p className="t-meta mt-fib-1 text-paper/50">
-                          {m.label}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )}
 
                 {p.results!.quote && (
                   <blockquote className="mt-auto pt-fib-4">

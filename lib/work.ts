@@ -18,7 +18,15 @@ export type WorkFigure = WorkImage & {
 };
 
 export type ProjectResults = {
-  /** metrics[0] leads the homepage proof row (biggest); keep it the strongest */
+  /** the NARRATIVE title (viral-sma decode, 2026-07-17): a verb-led story
+      ("Filling discovery flights…"), never the client name — the name
+      demotes to a meta line under it */
+  story: string;
+  /** the time qualifier under the stats ("In the first 90 days") — the
+      quietly most persuasive line: numbers without a timeframe are
+      marketing, numbers with one are a report */
+  window: string;
+  /** exactly TWO stats (fewer numbers, harder landing); both count up */
   metrics: { value: string; label: string }[];
   quote?: { text: string; name: string };
   /** the real ad, pinned to the frame — only when the ad copy is verbatim-real */
@@ -105,10 +113,11 @@ export const PROJECTS: Project[] = [
     /* ═══ PLACEHOLDER results — swap with real Desert Wings data + the real
        owner quote (with permission) before launch ═══ */
     results: {
+      story: "Filling discovery flights for a Mesa flight school",
+      window: "In the first 90 days",
       metrics: [
         { value: "3x", label: "more discovery-flight bookings" },
         { value: "$38", label: "cost per lead" },
-        { value: "90", label: "days to get there" },
       ],
       quote: {
         text: "The phone started ringing the week the ads went live, and the new site actually books people instead of just looking good.",
