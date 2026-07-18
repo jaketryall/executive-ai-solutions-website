@@ -662,7 +662,7 @@ export function Hero() {
       <div
         className={`hero-in wrap relative z-10 flex min-h-[60svh] flex-col items-center justify-center pb-fib-4 pt-[100px] text-center md:pt-[108px] ${
           adaptive
-            ? "lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-fib-6 lg:text-left"
+            ? "lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-fib-6 lg:text-left"
             : ""
         }`}
       >
