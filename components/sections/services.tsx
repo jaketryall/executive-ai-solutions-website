@@ -76,7 +76,7 @@ export function Services() {
           </p>
         </header>
 
-        <div className="mt-fib-5 grid gap-fib-3 xl:grid-cols-3">
+        <div className="svc-grid mt-fib-5 grid gap-fib-3 xl:grid-cols-3">
           {/* ── 01 · THE CLICK ── */}
           <article data-svc-row className="svc-card p-fib-3 text-ink">
             <div data-anim="artifact" className="svc-card-demo">
