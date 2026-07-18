@@ -662,7 +662,7 @@ export function Hero() {
       <div
         className={`hero-in wrap relative z-10 flex min-h-[60svh] flex-col items-center justify-center pb-fib-4 pt-[100px] text-center md:pt-[108px] ${
           adaptive
-            ? "lg:grid lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-fib-5 lg:text-left"
+            ? "lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-fib-6 lg:text-left"
             : ""
         }`}
       >
@@ -778,12 +778,7 @@ export function Hero() {
             crossfades them on the roll's beat, labeled traffic pins its
             own. Each frame is a static win frame; the performing cycle
             lives on the service pages. */}
-        {/* the STAGE (Jake, 2026-07-17: attention went to the text) — a
-            white screen on the white ground couldn't pull a glance; the
-            phone sits in the house gray well (service-card grammar) so
-            the screen pops against panel instead of melting into page */}
         <div data-anim="phone" className="hero-phone mx-auto mt-fib-5 lg:mt-0">
-          <div className="hero-phone-stage">
           {svc === "ai" ? (
             <HeroChatPhone />
           ) : svc === "websites" ? (
@@ -824,7 +819,6 @@ export function Hero() {
               </div>
             </div>
           )}
-          </div>
         </div>
 
       </div>
