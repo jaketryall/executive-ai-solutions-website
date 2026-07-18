@@ -43,93 +43,6 @@ const IND_KEYS = ["other", "flight", "restaurant", "trades"] as const;
    invented people to fake volume. */
 const FACES = ["DW", "MR", "JT", "KL", "AS"];
 
-/* the marquee marks (Jake, 2026-07-17: "some color there may look
-   good") — real platform icons beside quiet wordmarks, the classic
-   logo-strip grammar: color lives in the marks, type stays gray.
-   Inline SVGs, nominative use (we genuinely run these platforms). */
-const MARKS: [string, React.ReactNode][] = [
-  [
-    "Google",
-    <svg key="g" viewBox="0 0 24 24">
-      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-      <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18A10.96 10.96 0 0 0 1 12c0 1.77.43 3.45 1.18 4.94l3.66-2.84z" />
-      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-    </svg>,
-  ],
-  [
-    "Google Ads",
-    // the official mark (Wikimedia vector, wordmark cropped)
-    <svg key="ga" viewBox="0 0 250.8 245">
-      <path fill="#3C8BD9" d="M85.9,28.6c2.4-6.3,5.7-12.1,10.6-16.8c19.6-19.1,52-14.3,65.3,9.7c10,18.2,20.6,36,30.9,54 c17.2,29.9,34.6,59.8,51.6,89.8c14.3,25.1-1.2,56.8-29.6,61.1c-17.4,2.6-33.7-5.4-42.7-21c-15.1-26.3-30.3-52.6-45.4-78.8 c-0.3-0.6-0.7-1.1-1.1-1.6c-1.6-1.3-2.3-3.2-3.3-4.9c-6.7-11.8-13.6-23.5-20.3-35.2c-4.3-7.6-8.8-15.1-13.1-22.7 c-3.9-6.8-5.7-14.2-5.5-22C83.6,36.2,84.1,32.2,85.9,28.6" />
-      <path fill="#FABC04" d="M85.9,28.6c-0.9,3.6-1.7,7.2-1.9,11c-0.3,8.4,1.8,16.2,6,23.5C101,82,112,101,122.9,120c1,1.7,1.8,3.4,2.8,5 c-6,10.4-12,20.7-18.1,31.1c-8.4,14.5-16.8,29.1-25.3,43.6c-0.4,0-0.5-0.2-0.6-0.5c-0.1-0.8,0.2-1.5,0.4-2.3 c4.1-15,0.7-28.3-9.6-39.7c-6.3-6.9-14.3-10.8-23.5-12.1c-12-1.7-22.6,1.4-32.1,8.9c-1.7,1.3-2.8,3.2-4.8,4.2 c-0.4,0-0.6-0.2-0.7-0.5c4.8-8.3,9.5-16.6,14.3-24.9C45.5,98.4,65.3,64,85.2,29.7C85.4,29.3,85.7,29,85.9,28.6" />
-      <path fill="#34A852" d="M11.8,158c1.9-1.7,3.7-3.5,5.7-5.1c24.3-19.2,60.8-5.3,66.1,25.1c1.3,7.3,0.6,14.3-1.6,21.3 c-0.1,0.6-0.2,1.1-0.4,1.7c-0.9,1.6-1.7,3.3-2.7,4.9c-8.9,14.7-22,22-39.2,20.9C20,225.4,4.5,210.6,1.8,191 c-1.3-9.5,0.6-18.4,5.5-26.6c1-1.8,2.2-3.4,3.3-5.2C11.1,158.8,10.9,158,11.8,158" />
-    </svg>,
-  ],
-  [
-    "Google Maps",
-    // the official 2020 pin (Wikimedia vector)
-    <svg key="gm" viewBox="0 0 92.3 132.3">
-      <path fill="#1a73e8" d="M60.2 2.2C55.8.8 51 0 46.1 0 32 0 19.3 6.4 10.8 16.5l21.8 18.3L60.2 2.2z" />
-      <path fill="#ea4335" d="M10.8 16.5C4.1 24.5 0 34.9 0 46.1c0 8.7 1.7 15.7 4.6 22l28-33.3-21.8-18.3z" />
-      <path fill="#4285f4" d="M46.2 28.5c9.8 0 17.7 7.9 17.7 17.7 0 4.3-1.6 8.3-4.2 11.4 0 0 13.9-16.6 27.5-32.7-5.6-10.8-15.3-19-27-22.7L32.6 34.8c3.3-3.8 8.1-6.3 13.6-6.3" />
-      <path fill="#fbbc04" d="M46.2 63.8c-9.8 0-17.7-7.9-17.7-17.7 0-4.3 1.5-8.3 4.1-11.3l-28 33.3c4.8 10.6 12.8 19.2 21 29.9l34.1-40.5c-3.3 3.9-8.1 6.3-13.5 6.3" />
-      <path fill="#34a853" d="M59.1 109.2c15.4-24.1 33.3-35 33.3-63 0-7.7-1.9-14.9-5.2-21.3L25.6 98c2.6 3.4 5.3 7.3 7.9 11.3 9.4 14.5 6.8 23.1 12.8 23.1s3.4-8.7 12.8-23.2" />
-    </svg>,
-  ],
-  [
-    "Google Guaranteed",
-    <svg key="gg" viewBox="0 0 24 24">
-      <path
-        fill="#34A853"
-        d="M12 1.8 4 5v6.1c0 5 3.4 9.66 8 10.9 4.6-1.24 8-5.9 8-10.9V5l-8-3.2Z"
-      />
-      <path
-        d="m8.3 12.1 2.5 2.5 4.9-4.9"
-        stroke="#fff"
-        strokeWidth="2.1"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>,
-  ],
-  [
-    "ChatGPT",
-    // the official app icon (Wikimedia vector): white knot on the green
-    // tile; the knot petal is defined once and rotated 5x
-    <svg key="cg" viewBox="0 0 2406 2406">
-      <path
-        d="M1 578.4C1 259.5 259.5 1 578.4 1h1249.1c319 0 577.5 258.5 577.5 577.4V2406H578.4C259.5 2406 1 2147.5 1 1828.6V578.4z"
-        fill="#74aa9c"
-      />
-      <path
-        id="cgpt-petal"
-        d="M1107.3 299.1c-197.999 0-373.9 127.3-435.2 315.3L650 743.5v427.9c0 21.4 11 40.4 29.4 51.4l344.5 198.515V833.3h.1v-27.9L1372.7 604c33.715-19.52 70.44-32.857 108.47-39.828L1447.6 450.3C1361 353.5 1237.1 298.5 1107.3 299.1zm0 117.5-.6.6c79.699 0 156.3 27.5 217.6 78.4-2.5 1.2-7.4 4.3-11 6.1L952.8 709.3c-18.4 10.4-29.4 30-29.4 51.4V1248l-155.1-89.4V755.8c-.1-187.099 151.601-338.9 339-339.2z"
-        fill="#fff"
-      />
-      {[60, 120, 180, 240, 300].map((r) => (
-        <use key={r} href="#cgpt-petal" transform={`rotate(${r} 1203 1203)`} />
-      ))}
-    </svg>,
-  ],
-  [
-    "AI Overviews",
-    <svg key="ao" viewBox="0 0 24 24">
-      <defs>
-        <linearGradient id="aio" x1="4" y1="20" x2="20" y2="4" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#4285F4" />
-          <stop offset="0.5" stopColor="#9B72CB" />
-          <stop offset="1" stopColor="#EA4335" />
-        </linearGradient>
-      </defs>
-      <path
-        fill="url(#aio)"
-        d="M12 2c.55 5.05 4.13 8.63 9.18 9.18l.82.82-.82.82C16.13 13.37 12.55 16.95 12 22c-.55-5.05-4.13-8.63-9.18-9.18L2 12l.82-.82C7.87 10.63 11.45 7.05 12 2Z"
-      />
-    </svg>,
-  ],
-];
 
 /* ══ THE ADAPTIVE PHONE (Jake, 2026-07-17: "if a plumber looked it up the
    words would change in the hero and in the animation") — Phase A: labeled
@@ -436,13 +349,7 @@ export function Hero() {
           { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
           0.9
         )
-        // the ambient layer wakes last, already drifting
-        .fromTo(
-          q("[data-anim='marquee']"),
-          { autoAlpha: 0 },
-          { autoAlpha: 1, duration: 0.6, ease: EASE_UI },
-          1.05
-        );
+        ;
       // the adaptive phone rises with the claim (only exists for labeled traffic)
       if (q("[data-anim='phone']").length) {
         tl.fromTo(
@@ -803,9 +710,7 @@ export function Hero() {
             earned marks we don't hold, so every trust beat here is a
             checkable fact instead: place in the eyebrow, real surfaces
             in the marks row, real terms in the chips. ── */}
-        {/* w-full: without it this column sizes to the marquee track's
-            max-content width and drags the whole page into horizontal
-            overflow — the clamp is what lets .hero-marquee clip */}
+        {/* w-full keeps the column honest inside the grid */}
         <div
           className={`hero-left flex w-full flex-col items-center ${
             adaptive ? "lg:items-start" : ""
@@ -957,25 +862,6 @@ export function Hero() {
 
       </div>
 
-      {/* THE STRIP — its own thin band (Jake: "struggling with spacing…
-          it's tricky" — floating after the grid meant the gap was measured
-          from the taller column and could never look right; a band with
-          symmetric padding removes the judgment call, the viral/SK form).
-          Full-bleed, feathered edges. */}
-      <div data-anim="marquee" className="hero-marquee py-fib-4" aria-hidden>
-        <div className="hero-marquee-track">
-          {[0, 1, 2, 3].map((set) => (
-            <span key={set} className="hero-marquee-set">
-              {MARKS.map(([label, icon]) => (
-                <span key={label} className="hm-item">
-                  <span className="hm-logo">{icon}</span>
-                  {label}
-                </span>
-              ))}
-            </span>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }

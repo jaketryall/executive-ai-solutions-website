@@ -1967,79 +1967,9 @@ img.g-fav {
   height: 15px;
 }
 
-/* the hero marquee (Jake, 2026-07-17, third life of the marquee idea):
-   the surfaces we put clients on, drifting at ambient speed — the
-   hero's one perpetual layer. Two identical sets in the track;
-   translateX(-50%) loops seamlessly. Plain-type monochrome wordmarks
-   only (nominative use, never their colors/logo art). */
-.hero-marquee {
-  width: 100%;
-  overflow: hidden;
-  /* its own band: symmetric py in the JSX; nothing floats */
-  mask-image: linear-gradient(
-    90deg,
-    transparent,
-    #000 13%,
-    #000 87%,
-    transparent
-  );
-}
-.hero-marquee-track {
-  display: flex;
-  width: max-content;
-  /* 60s with the 4-set track = the same ~25px/s amble the 2-set/30s
-     version had — the sets doubled, so the clock does too */
-  animation: hero-marquee 60s linear infinite;
-}
-.hero-marquee-set {
-  display: flex;
-  flex-shrink: 0;
-}
-.hm-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding-right: 58px;
-  font-size: 1.0625rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  white-space: nowrap;
-  /* logos carry the color; the wordmark stays quiet (one step up from
-     the old 0.35 so it holds its own beside the marks) */
-  color: rgba(19, 20, 19, 0.5);
-}
-.hm-logo {
-  display: inline-flex;
-  flex-shrink: 0;
-}
-.hm-logo svg {
-  width: 26px;
-  height: 26px;
-}
-/* MONOCHROME (Jake, 2026-07-17: "take the color out to match the
-   site") — the official shapes stay, the brand colors don't: every
-   fill tints to quiet ink except white cutouts (the ChatGPT knot,
-   the shield's check) and explicit none-fills (stroked check paths). */
-.hm-logo svg [fill]:not([fill="#fff"]):not([fill="none"]) {
-  fill: rgba(19, 20, 19, 0.45);
-}
-/* non-square official vectors keep their aspect inside the box */
-.hm-logo svg[viewBox="0 0 92.3 132.3"] {
-  width: 19px; /* the tall Maps pin reads right narrower */
-}
-.hm-logo svg[viewBox="0 0 250.8 245"] {
-  width: 25px;
-}
-@keyframes hero-marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-marquee-track {
-    animation: none;
-  }
-}
+/* (the surfaces marquee retired 2026-07-17 — the phone performs the
+   platforms story now; the band pattern returns as a CLIENT logo strip
+   when 5-6 real client marks exist. Recipe in git history.) */
 
 /* the price-beat witnesses — quiet cards floating around the claim.
    Positioned in %, contained by the section (overflow-x-clip), desktop only. */
