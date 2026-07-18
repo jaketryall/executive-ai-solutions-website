@@ -255,23 +255,28 @@ export function Hero() {
               specifics) */}
           <h1
             data-anim="statement"
-            className="t-statement t-statement--hero mx-auto mt-fib-2 max-w-[24ch] text-balance"
+            className="t-statement t-statement--hero mx-auto mt-fib-2"
             aria-label={`${ariaPair.out} ${ariaPair.who}. We run the whole click.`}
           >
-            {/* the visual text swaps on the roll; the aria-label above is
-                the stable sentence screen readers get */}
+            {/* ALWAYS TWO LINES (Jake, 2026-07-17): the rolling sentence
+                owns line one (nowrap from lg — the longest pair clears the
+                column there), the accent clause owns line two. Below lg it
+                wraps naturally. The visual text swaps on the roll; the
+                aria-label is the stable sentence screen readers get. */}
             <span aria-hidden>
-              <span className="text-ink">
+              <span className="block text-ink lg:whitespace-nowrap">
                 <span data-roll-out className="inline-block">
                   {ariaPair.out}
                 </span>{" "}
                 <span data-roll-who className="inline-block">
                   {ariaPair.who}.
                 </span>
-              </span>{" "}
+              </span>
               {/* the two-tone goes SearchKings: the second clause wears the
                   click color instead of a dim — accent IS the click */}
-              <span className="text-accent">We run the whole click.</span>
+              <span className="block text-accent">
+                We run the whole click.
+              </span>
             </span>
           </h1>
 
