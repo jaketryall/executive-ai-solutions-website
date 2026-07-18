@@ -139,7 +139,7 @@ export function SiteCheck() {
       // full width, floating on the hero's white stage (the section keeps
       // bg-white so the tray's surround matches the hero, not the cream).
       // Revert = drop the tray div, put bg-panel back on the section.
-      className="relative bg-white px-fib-1 pb-fib-4 text-ink md:px-fib-2"
+      className="relative bg-white px-fib-1 pb-fib-4 pt-fib-4 text-ink md:px-fib-2 md:pt-fib-5"
     >
       <div className="rounded-panel bg-panel pb-fib-7 pt-fib-5">
       <div className="wrap">
