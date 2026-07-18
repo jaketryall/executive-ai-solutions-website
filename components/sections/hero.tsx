@@ -395,6 +395,7 @@ export function Hero() {
             if (root.current) h1.style.minHeight = `${h1.offsetHeight}px`;
           });
           let idx = 0;
+          let currentSeq: gsap.core.Timeline | null = null;
           const roll = gsap.timeline({ repeat: -1, paused: true });
           roll
             // 5.5s hold: ~3.6s of enactment + ~2s resting on the WON
@@ -412,6 +413,10 @@ export function Hero() {
               idx = (idx + 1) % ROLL_PAIRS.length;
               out.textContent = ROLL_PAIRS[idx].out;
               who.textContent = `${ROLL_PAIRS[idx].who}.`;
+              // ONE CONDUCTOR (Jake: "so glitchy") — the previous
+              // enactment dies and the stage hard-resets before a new one
+              // starts; overlapping timelines were fighting over the bar
+              currentSeq?.kill();
               // THE ENACTMENT v2 (Jake: "it doesn't feel real") — one
               // persistent page, a real re-search: the old query
               // BACKSPACES out of the one bar, the new one types with
@@ -424,7 +429,17 @@ export function Hero() {
               if (bar && skel && layers[prev] && layers[idx]) {
                 const oldQ = SERP_DEMOS[IND_KEYS[prev]].q;
                 const newQ = SERP_DEMOS[IND_KEYS[idx]].q;
+                // hard reset: whatever state the killed run left behind
+                bar.textContent = oldQ;
+                const ringAll = q(".g-click-ring") as HTMLElement[];
+                gsap.killTweensOf(ringAll);
+                gsap.set(ringAll, { autoAlpha: 0 });
+                gsap.set(skel, { autoAlpha: 0 });
+                layers.forEach((l, n) =>
+                  gsap.set(l, { autoAlpha: n === prev ? 1 : 0 })
+                );
                 const seq = gsap.timeline();
+                currentSeq = seq;
                 // ── ISOLATE THE TYPING (Jake: "the search bar should be
                 // isolated"): while the bar is being used, everything
                 // beneath it recedes and the bar itself lifts a touch —
@@ -432,6 +447,9 @@ export function Hero() {
                 const barEl = q(".g-m-bar")[0] as HTMLElement;
                 const chromeRest = q(".g-m-tabs, .g-m-loc") as HTMLElement[];
                 const stackEl = q(".hres-stack")[0] as HTMLElement;
+                gsap.killTweensOf([barEl, ...chromeRest, stackEl]);
+                gsap.set(barEl, { scale: 1 });
+                gsap.set([...chromeRest, stackEl], { opacity: 1 });
                 seq
                   .to(
                     [ ...chromeRest, stackEl ],
@@ -559,7 +577,13 @@ export function Hero() {
           const sync = () => {
             const st = ScrollTrigger.getById("hero-roll");
             const on = (st?.isActive ?? true) && !document.hidden;
-            (on ? roll.play() : roll.pause());
+            if (on) {
+              roll.play();
+              currentSeq?.play();
+            } else {
+              roll.pause();
+              currentSeq?.pause();
+            }
           };
           ScrollTrigger.create({
             id: "hero-roll",
@@ -589,8 +613,11 @@ export function Hero() {
           gsap.set(
             el,
             n < 3
-              ? { x: n * PITCH, zIndex: 10 - n, autoAlpha: 1, scale: 1 }
-              : { x: -14, zIndex: 11, autoAlpha: 0, scale: 0.4 }
+              ? // left: 0 kills the no-JS nth-child fallback lefts — they
+                // STACKED with the transform x and made the pitch breathe
+                // wide/close/wide as roles rotated (Jake-caught)
+                { left: 0, x: n * PITCH, zIndex: 10 - n, autoAlpha: 1, scale: 1 }
+              : { left: 0, x: -14, zIndex: 11, autoAlpha: 0, scale: 0.4 }
           )
         );
         let active = false;
