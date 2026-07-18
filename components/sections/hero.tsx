@@ -411,6 +411,24 @@ export function Hero() {
                 const oldQ = SERP_DEMOS[IND_KEYS[prev]].q;
                 const newQ = SERP_DEMOS[IND_KEYS[idx]].q;
                 const seq = gsap.timeline();
+                // ── ISOLATE THE TYPING (Jake: "the search bar should be
+                // isolated"): while the bar is being used, everything
+                // beneath it recedes and the bar itself lifts a touch —
+                // the screen pays attention to what the user is doing ──
+                const barEl = q(".g-m-bar")[0] as HTMLElement;
+                const chromeRest = q(".g-m-tabs, .g-m-loc") as HTMLElement[];
+                const stackEl = q(".hres-stack")[0] as HTMLElement;
+                seq
+                  .to(
+                    [ ...chromeRest, stackEl ],
+                    { opacity: 0.22, duration: 0.35, ease: EASE_UI },
+                    0
+                  )
+                  .to(
+                    barEl,
+                    { scale: 1.05, duration: 0.35, ease: EASE_UI },
+                    0
+                  );
                 // backspace run — quick, slightly uneven
                 for (let n = oldQ.length - 1; n >= 0; n--) {
                   const at = n;
@@ -436,8 +454,15 @@ export function Hero() {
                   );
                 }
                 seq
-                  // enter — the page answers: results drop, loading blinks
+                  // enter — the bar releases, the page answers: results
+                  // drop, loading blinks
                   .to({}, { duration: 0.14 })
+                  .to(barEl, { scale: 1, duration: 0.3, ease: EASE_UI })
+                  .to(
+                    [ ...chromeRest, stackEl ],
+                    { opacity: 1, duration: 0.3, ease: EASE_UI },
+                    "<"
+                  )
                   .to(layers[prev], { autoAlpha: 0, duration: 0.1, ease: "none" })
                   .set(skel, { autoAlpha: 1 }, "<")
                   .to({}, { duration: 0.42 })
@@ -661,31 +686,6 @@ export function Hero() {
             <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
           </div>
 
-          {/* the marquee (Jake's logo-marquee instinct, in motion): the
-              real surfaces we put clients on, drifting at ambient speed —
-              the hero's one perpetual layer. FOUR sets: a -50% loop is
-              only seamless when each HALF of the track outspans the
-              visible window (1290px) — two 752px sets ran dry on the
-              right ("gets smaller", Jake). Edges feathered by mask. */}
-          <div data-anim="marquee" className="hero-marquee mt-fib-5" aria-hidden>
-            <div className="hero-marquee-track">
-              {[0, 1, 2, 3].map((set) => (
-                <span key={set} className="hero-marquee-set">
-                  {[
-                    "Google",
-                    "Google Maps",
-                    "Google Guaranteed",
-                    "ChatGPT",
-                    "AI Overviews",
-                  ].map((m) => (
-                    <span key={m} className="hm-item">
-                      {m}
-                    </span>
-                  ))}
-                </span>
-              ))}
-            </div>
-          </div>
         </div>
 
         {/* the adaptive phone — THEIR search, won (or the svc campaign's
@@ -734,6 +734,34 @@ export function Hero() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* the marquee (Jake's logo-marquee instinct, in motion): the real
+            surfaces we put clients on, drifting under BOTH columns — the
+            hero's ground line. FOUR sets: a -50% loop is only seamless
+            when each HALF of the track outspans the window. */}
+        <div
+          data-anim="marquee"
+          className="hero-marquee mt-fib-6 w-full lg:col-span-2"
+          aria-hidden
+        >
+          <div className="hero-marquee-track">
+            {[0, 1, 2, 3].map((set) => (
+              <span key={set} className="hero-marquee-set">
+                {[
+                  "Google",
+                  "Google Maps",
+                  "Google Guaranteed",
+                  "ChatGPT",
+                  "AI Overviews",
+                ].map((m) => (
+                  <span key={m} className="hm-item">
+                    {m}
+                  </span>
+                ))}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </section>
