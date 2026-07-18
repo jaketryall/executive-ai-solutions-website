@@ -57,6 +57,29 @@ export function Proof() {
         document.removeEventListener("visibilitychange", sync)
       );
 
+      /* the receipts count up as they arrive (viral-sma steal, 2026-07-17):
+         RESPONDING motion — it rewards the visitor's attention on the
+         numbers that close the sale, never demands it. Prefix/suffix
+         (3x, $38) survive the sweep; reduced-motion never reaches here. */
+      (q("[data-count]") as HTMLElement[]).forEach((el) => {
+        const m = (el.textContent ?? "").match(/^([^\d]*)([\d,]+)(.*)$/);
+        if (!m) return;
+        const [, pre, num, suf] = m;
+        const target = parseInt(num.replace(/,/g, ""), 10);
+        if (!Number.isFinite(target)) return;
+        const proxy = { v: 0 };
+        gsap.to(proxy, {
+          v: target,
+          duration: 1.3,
+          ease: EASE_STRUCTURE,
+          scrollTrigger: { trigger: el, start: "top 85%" },
+          onUpdate: () => {
+            el.textContent =
+              pre + Math.round(proxy.v).toLocaleString("en-US") + suf;
+          },
+        });
+      });
+
       /* per-row: the whole card lands as ONE object (work + receipts share
          a surface now, so they share an entrance) */
       (q("[data-proj]") as HTMLElement[]).forEach((row) => {
@@ -201,7 +224,10 @@ export function Proof() {
                     empty (Jake, 2026-07-15); now each supporting number gets
                     the iPhone spec-cluster treatment: value + label pairs
                     under a hairline */}
-                <p className="t-num mt-fib-4 font-display text-[3rem] font-extrabold leading-none tracking-[-0.03em] text-paper">
+                <p
+                  data-count
+                  className="t-num mt-fib-4 font-display text-[3rem] font-extrabold leading-none tracking-[-0.03em] text-paper"
+                >
                   {hero.value}
                 </p>
                 <p className="mt-fib-1 text-paper/65">{hero.label}</p>
@@ -209,7 +235,10 @@ export function Proof() {
                   <div className="mt-fib-4 grid max-w-[360px] grid-cols-2 gap-fib-3 border-t border-paper/10 pt-fib-3">
                     {rest.map((m) => (
                       <div key={m.label}>
-                        <p className="t-num font-display text-[1.5rem] font-bold leading-none tracking-[-0.02em] text-paper">
+                        <p
+                          data-count
+                          className="t-num font-display text-[1.5rem] font-bold leading-none tracking-[-0.02em] text-paper"
+                        >
                           {m.value}
                         </p>
                         <p className="t-meta mt-fib-1 text-paper/50">
