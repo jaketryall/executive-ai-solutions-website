@@ -1,7 +1,6 @@
 import { Hero } from "@/components/sections/hero";
 import { Services } from "@/components/sections/services";
 import { SiteCheck } from "@/components/sections/site-check";
-import { ValueReframe } from "@/components/sections/value-reframe";
 import { Proof } from "@/components/sections/proof";
 import { PriceBeat } from "@/components/sections/price-beat";
 import { Steps } from "@/components/sections/steps";
@@ -21,9 +20,6 @@ export default function Home() {
       <Hero />
       <SiteCheck />
       <Services />
-      {/* the mini-about (revived 2026-07-17): after the shelf, before the
-          receipts — where "who ARE these people" naturally occurs */}
-      <ValueReframe />
       <Proof />
       <PriceBeat />
       <Steps />
