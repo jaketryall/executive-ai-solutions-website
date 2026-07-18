@@ -1891,7 +1891,11 @@ img.g-fav {
    the split grid's right column; the chat variant needs its booked
    toast visible without the service-page GSAP hook */
 .hero-phone {
-  width: min(318px, 84vw); /* a notch more presence (exaggeration pass) */
+  /* height-aware (Jake, 2026-07-17: "phone takes up more of the
+     viewport than we can see"): the 9:19.2 bezel is ~2.13x its width,
+     so 36svh of width caps the phone at ~77svh tall — it always fits
+     the screen it's on. 900-tall screens still get the full 318. */
+  width: min(318px, 84vw, 36svh);
   flex-shrink: 0;
 }
 .hero-phone .dvc {
