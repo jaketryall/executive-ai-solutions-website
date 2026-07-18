@@ -26,6 +26,9 @@ export type ProjectResults = {
       quietly most persuasive line: numbers without a timeframe are
       marketing, numbers with one are a report */
   window: string;
+  /** what we DID — 2 lines max, sits between the story and the stats
+      (the viral order: title, the work in the middle, results below) */
+  did: string;
   /** exactly TWO stats (fewer numbers, harder landing); both count up */
   metrics: { value: string; label: string }[];
   quote?: { text: string; name: string };
@@ -114,6 +117,7 @@ export const PROJECTS: Project[] = [
        owner quote (with permission) before launch ═══ */
     results: {
       story: "Filling discovery flights for a Mesa flight school",
+      did: "We designed and built the site from scratch, launched Google Ads with full conversion tracking, and wired the follow-up \u2014 one funnel, tracked to the dollar.",
       window: "In the first 90 days",
       metrics: [
         { value: "3x", label: "more discovery-flight bookings" },

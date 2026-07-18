@@ -261,6 +261,12 @@ export function Proof() {
                 </h3>
                 <p className="t-meta mt-fib-2 text-paper/45">{p.client}</p>
 
+                {/* the middle: WHAT WE DID (the viral order — title, the
+                    work, then results below it) */}
+                <p className="mt-fib-3 max-w-[46ch] text-[0.9375rem] leading-normal text-paper/70">
+                  {p.results!.did}
+                </p>
+
                 {/* the stats are the section's POINT, so they get the card's
                     loudest register (display-tier 56px — bigger than the
                     story title) and isolation air: in viral's version your
@@ -275,7 +281,10 @@ export function Proof() {
                       >
                         {m.value}
                       </p>
-                      <p className="mt-fib-2 text-[0.9375rem] leading-snug text-paper/65">
+                      {/* bold label (Jake's viral catch): numeral + label
+                          read as one emphatic unit, not a number with a
+                          whispered caption */}
+                      <p className="mt-fib-2 text-[0.9375rem] font-semibold leading-snug text-paper/80">
                         {m.label}
                       </p>
                     </div>
@@ -287,20 +296,12 @@ export function Proof() {
                   {p.results!.window}
                 </p>
 
-                {p.results!.quote && (
-                  <blockquote className="mt-auto pt-fib-4">
-                    <p className="text-[0.9375rem] leading-[1.5] text-paper/70">
-                      &ldquo;{p.results!.quote.text}&rdquo;
-                    </p>
-                    <p className="t-meta mt-fib-2 text-paper/45">
-                      {p.results!.quote.name}
-                    </p>
-                  </blockquote>
-                )}
-
+                {/* no quote on the card (the viral order ends at results;
+                    the owner's words live on the witness card one section
+                    down — this also killed the duplicate-quote problem) */}
                 <Link
                   href={`/work/${p.slug}`}
-                  className="u-link t-meta mt-fib-3 self-start text-paper/80"
+                  className="u-link t-meta mt-auto self-start pt-fib-4 text-paper/80"
                 >
                   See the full build
                 </Link>
