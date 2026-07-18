@@ -261,16 +261,21 @@ export function Proof() {
                 </h3>
                 <p className="t-meta mt-fib-2 text-paper/45">{p.client}</p>
 
-                <div className="mt-fib-4 grid max-w-[400px] grid-cols-2 gap-fib-3 border-t border-paper/10 pt-fib-3">
+                {/* the stats are the section's POINT, so they get the card's
+                    loudest register (display-tier 56px — bigger than the
+                    story title) and isolation air: in viral's version your
+                    eye goes straight to the numbers because nothing near
+                    them competes (Jake, 2026-07-17) */}
+                <div className="mt-fib-5 grid max-w-[440px] grid-cols-2 gap-fib-4 border-t border-paper/10 pt-fib-4">
                   {metrics.map((m) => (
                     <div key={m.label}>
                       <p
                         data-count
-                        className="t-num font-display text-[2.5rem] font-extrabold leading-none tracking-[-0.03em] text-paper"
+                        className="t-num font-display text-[3.5rem] font-extrabold leading-none tracking-[-0.03em] text-paper"
                       >
                         {m.value}
                       </p>
-                      <p className="mt-fib-1 text-[0.9375rem] leading-snug text-paper/65">
+                      <p className="mt-fib-2 text-[0.9375rem] leading-snug text-paper/65">
                         {m.label}
                       </p>
                     </div>
