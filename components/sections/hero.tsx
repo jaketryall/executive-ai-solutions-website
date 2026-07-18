@@ -163,7 +163,9 @@ function GmChrome({ q: initialQ }: { q: string }) {
 function GmResults({ d }: { d: SerpDemo }) {
   return (
     <>
-          <div className="g-m-ad">
+          <div className="g-m-ad relative">
+            {/* the tap that takes the click — pulsed by the enactment */}
+            <span className="g-click-ring" />
             <p className="g-m-sponsored">Sponsored</p>
             <div className="g-m-src">
               {d.fav ? (
@@ -381,7 +383,9 @@ export function Hero() {
           let idx = 0;
           const roll = gsap.timeline({ repeat: -1, paused: true });
           roll
-            .to({}, { duration: 3.8 })
+            // 5.5s hold: ~3.6s of enactment + ~2s resting on the WON
+            // state before the next industry
+            .to({}, { duration: 5.5 })
             .to([out, who], {
               yPercent: -55,
               autoAlpha: 0,
@@ -419,7 +423,7 @@ export function Hero() {
                   );
                 }
                 // the breath before typing the new thing
-                seq.to({}, { duration: 0.2 });
+                seq.to({}, { duration: 0.3 });
                 // human typing: jittered inter-key intervals, 30–85ms
                 for (let n = 1; n <= newQ.length; n++) {
                   const at = n;
@@ -428,7 +432,7 @@ export function Hero() {
                       bar.textContent = newQ.slice(0, at);
                     },
                     [],
-                    `+=${(0.03 + Math.random() * 0.055).toFixed(3)}`
+                    `+=${(0.055 + Math.random() * 0.06).toFixed(3)}`
                   );
                 }
                 seq
@@ -436,12 +440,63 @@ export function Hero() {
                   .to({}, { duration: 0.14 })
                   .to(layers[prev], { autoAlpha: 0, duration: 0.1, ease: "none" })
                   .set(skel, { autoAlpha: 1 }, "<")
-                  .to({}, { duration: 0.34 })
+                  .to({}, { duration: 0.42 })
                   .set(skel, { autoAlpha: 0 })
+                  .call(() => {
+                    // a layer keeps inline dims from ITS last turn — clear
+                    // before it faces the audience again
+                    gsap.set(
+                      layers[idx].querySelectorAll(".g-m-org, .g-m-sep"),
+                      { clearProps: "opacity" }
+                    );
+                  })
                   .fromTo(
                     layers[idx],
                     { autoAlpha: 0 },
                     { autoAlpha: 1, duration: 0.28, ease: EASE_UI }
+                  )
+                  // ── the POINT, exaggerated (Jake: "so they really get
+                  // it"): a beat to read, then the thumb-tap blooms on the
+                  // ad and everything that isn't the win dims ──
+                  .to({}, { duration: 0.5 })
+                  .call(() => {
+                    const ad = layers[idx].querySelector(
+                      ".g-m-ad"
+                    ) as HTMLElement;
+                    const ring = ad?.querySelector(
+                      ".g-click-ring"
+                    ) as HTMLElement;
+                    const title = ad?.querySelector(
+                      ".g-m-title"
+                    ) as HTMLElement;
+                    if (!ring || !title) return;
+                    gsap.set(ring, {
+                      xPercent: -50,
+                      yPercent: -50,
+                      x: title.offsetLeft + title.offsetWidth * 0.35,
+                      y: title.offsetTop + title.offsetHeight * 0.55,
+                      scale: 0.5,
+                      autoAlpha: 0,
+                    });
+                    gsap
+                      .timeline()
+                      .to(ring, {
+                        autoAlpha: 0.95,
+                        scale: 0.85,
+                        duration: 0.16,
+                        ease: EASE_UI,
+                      })
+                      .to(ring, {
+                        scale: 1.6,
+                        autoAlpha: 0,
+                        duration: 0.55,
+                        ease: "power2.out",
+                      });
+                  })
+                  .to(
+                    layers[idx].querySelectorAll(".g-m-org, .g-m-sep"),
+                    { opacity: 0.35, duration: 0.45, ease: EASE_UI },
+                    "+=0.1"
                   );
               }
             })

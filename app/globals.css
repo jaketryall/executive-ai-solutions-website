@@ -1886,7 +1886,7 @@ img.g-fav {
    the split grid's right column; the chat variant needs its booked
    toast visible without the service-page GSAP hook */
 .hero-phone {
-  width: min(300px, 82vw);
+  width: min(318px, 84vw); /* a notch more presence (exaggeration pass) */
   flex-shrink: 0;
 }
 .hero-phone .dvc {
