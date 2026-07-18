@@ -1871,6 +1871,26 @@ img.g-fav {
   color: var(--color-accent);
 }
 
+/* the odometer wheels (B12) — each digit is a 1em window over a
+   0-9+0 strip; the tween translates the strip. Used by the proof
+   receipts; requires tabular numerals (t-num) so wheels share width. */
+.od {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+  vertical-align: baseline;
+}
+.ods {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+.ods span {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+
 /* the pile — overlapping client marks riding beside the stars. The
    ring wears the hero's WHITE ground (the borderless-facepile trick);
    initials placeholders until the three real photos land. */

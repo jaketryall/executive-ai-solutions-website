@@ -57,26 +57,63 @@ export function Proof() {
         document.removeEventListener("visibilitychange", sync)
       );
 
-      /* the receipts count up as they arrive (viral-sma steal, 2026-07-17):
-         RESPONDING motion — it rewards the visitor's attention on the
-         numbers that close the sale, never demands it. Prefix/suffix
-         (3x, $38) survive the sweep; reduced-motion never reaches here. */
+      /* the receipts roll in on MECHANICAL ODOMETERS (B12, Jake's preferred
+         stat reveal): one value drives every wheel; the ones wheel spins
+         continuously, higher wheels only roll during the carry window
+         near a wrap (C0=0.9 so arbitrary finals never rest part-rolled),
+         power3.out (a natural-1.0 ease — expo clamps and snaps), and an
+         exact integer render on complete. Targets here are < 1000 (no
+         comma wheels needed). SSR text stays for no-JS/reduced-motion;
+         the wheel DOM only replaces it on this armed path. */
+      const C0 = 0.9;
+      const C1 = 0.99;
       (q("[data-count]") as HTMLElement[]).forEach((el) => {
-        const m = (el.textContent ?? "").match(/^([^\d]*)([\d,]+)(.*)$/);
+        const m = (el.textContent ?? "").match(/^([^\d]*)(\d+)(.*)$/);
         if (!m) return;
         const [, pre, num, suf] = m;
-        const target = parseInt(num.replace(/,/g, ""), 10);
-        if (!Number.isFinite(target)) return;
+        const target = parseInt(num, 10);
+        if (!Number.isFinite(target) || target >= 1000) return;
+        const places = num.length;
+        el.textContent = "";
+        if (pre) el.append(pre);
+        const wheels: HTMLElement[] = [];
+        for (let i = 0; i < places; i++) {
+          const od = document.createElement("span");
+          od.className = "od";
+          const strip = document.createElement("span");
+          strip.className = "ods";
+          // 0–9 plus a duplicate 0: the 9→0 wrap rolls forward, never back
+          strip.innerHTML = "01234567890"
+            .split("")
+            .map((d) => `<span>${d}</span>`)
+            .join("");
+          od.append(strip);
+          el.append(od);
+          wheels.push(strip);
+        }
+        if (suf) el.append(suf);
+        const render = (v: number, snap = false) =>
+          wheels.forEach((s, i) => {
+            const k = places - 1 - i;
+            const place = 10 ** k;
+            const base = Math.floor(v / place) % 10;
+            const fl = (v % place) / place;
+            const frac = snap
+              ? 0
+              : k === 0
+                ? v % 1
+                : Math.min(1, Math.max(0, (fl - C0) / (C1 - C0)));
+            s.style.transform = `translateY(${-(base + frac)}em)`;
+          });
+        render(0);
         const proxy = { v: 0 };
         gsap.to(proxy, {
           v: target,
-          duration: 1.3,
-          ease: EASE_STRUCTURE,
+          duration: 1.6,
+          ease: "power3.out",
           scrollTrigger: { trigger: el, start: "top 85%" },
-          onUpdate: () => {
-            el.textContent =
-              pre + Math.round(proxy.v).toLocaleString("en-US") + suf;
-          },
+          onUpdate: () => render(proxy.v),
+          onComplete: () => render(target, true),
         });
       });
 
