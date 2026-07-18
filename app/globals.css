@@ -1995,12 +1995,25 @@ img.g-fav {
   flex-shrink: 0;
 }
 .hm-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   padding-right: 55px;
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.01em;
   white-space: nowrap;
-  color: rgba(19, 20, 19, 0.35);
+  /* logos carry the color; the wordmark stays quiet (one step up from
+     the old 0.35 so it holds its own beside the marks) */
+  color: rgba(19, 20, 19, 0.5);
+}
+.hm-logo {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+.hm-logo svg {
+  width: 19px;
+  height: 19px;
 }
 @keyframes hero-marquee {
   to {
