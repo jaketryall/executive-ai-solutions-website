@@ -10,21 +10,13 @@ import {
   reducedMotion,
 } from "@/components/anim/ease";
 
-/* The value reframe (the Lesse "approach" composition, our copy): a small
-   label holds the left margin, the statement reads itself in word by word on
-   the open canvas, and a calm logo marquee runs beneath — the page's ONE
-   perpetual ambient loop (constant velocity, no scroll reactivity: it is a
-   trust row, not an energy strip). */
-
-const STACK = [
-  "Google Ads",
-  "Google Analytics",
-  "Tag Manager",
-  "Next.js",
-  "Vercel",
-  "OpenAI",
-  "Resend",
-];
+/* The value reframe — REVIVED 2026-07-17 (Jake: "did we ever add the
+   manifesto") as the mini-about between Services and Proof: the Lesse
+   "approach" composition, a small label holding the left margin while
+   the statement reads itself in word by word. The old tool-marquee
+   beneath it stays dead (marquees were buried earlier today). The
+   closing line carries identity + locality — the page's only
+   who-are-these-people beat. */
 
 export function ValueReframe() {
   const root = useRef<HTMLElement>(null!);
@@ -32,7 +24,6 @@ export function ValueReframe() {
   useGSAP(
     (context, contextSafe) => {
       const q = gsap.utils.selector(root);
-      const track = q(".lm-track")[0] as HTMLElement;
 
       if (reducedMotion()) {
         gsap.set(q("[data-anim]"), { autoAlpha: 1, y: 0 });
@@ -78,72 +69,33 @@ export function ValueReframe() {
       });
       document.fonts.ready.then(buildFill);
 
-      // the marquee — constant velocity, pauses off-screen and on hidden tabs
-      if (track) {
-        const loop = gsap.to(track, {
-          xPercent: -50,
-          duration: 64,
-          repeat: -1,
-          ease: "none",
-          paused: true,
-        });
-        let inView = false;
-        const sync = () => {
-          if (inView && !document.hidden) loop.play();
-          else loop.pause();
-        };
-        ScrollTrigger.create({
-          trigger: root.current,
-          start: "top bottom",
-          end: "bottom top",
-          onToggle: (self) => {
-            inView = self.isActive;
-            sync();
-          },
-        });
-        document.addEventListener("visibilitychange", sync);
-        context.add(() => () => document.removeEventListener("visibilitychange", sync));
-      }
     },
     { scope: root }
   );
 
   return (
-    <section ref={root} className="relative">
-      <div className="wrap pt-fib-6 md:pt-fib-7">
-        <div className="grid gap-fib-4 md:grid-cols-[minmax(180px,240px)_1fr] md:gap-fib-5">
-          <p data-anim="label" className="t-meta pt-[0.6em] uppercase text-ink/45">
-            Our approach
-          </p>
-          <p className="t-statement max-w-[34ch]">
-            <span>
-              Ads without a page that converts is paying rent on strangers.
-            </span>{" "}
-            <span className="vr-line">
-              A beautiful site nobody finds is a brochure in a drawer. You
-              need the whole click.
-            </span>
-          </p>
-        </div>
-      </div>
-
-      {/* the trust row — what the machine runs on. Calm, constant, unfenced. */}
-      <div
-        className="lm mt-fib-5 pb-fib-5 md:mt-fib-7 md:pb-fib-7"
-        role="list"
-        aria-label={`Built on ${STACK.join(", ")}`}
-      >
-        <div className="lm-track" aria-hidden>
-          {[0, 1].map((set) => (
-            <div key={set} className="lm-set">
-              {STACK.map((name) => (
-                <span key={name} className="lm-mark">
-                  {name}
-                </span>
-              ))}
-            </div>
-          ))}
-        </div>
+    // CENTERED like viral's mission (Jake, 2026-07-17) on the white run —
+    // eyebrow, the statement reading itself in, the mini-about breath
+    <section ref={root} className="relative bg-white">
+      <div className="wrap py-fib-6 text-center md:py-fib-7">
+        <p data-anim="label" className="t-meta uppercase text-ink/45">
+          Our approach
+        </p>
+        <p className="t-statement mx-auto mt-fib-3 max-w-[30ch]">
+          <span>
+            Ads without a page that converts is paying rent on strangers.
+          </span>{" "}
+          <span className="vr-line">
+            A beautiful site nobody finds is a brochure in a drawer. You
+            need the whole click.
+          </span>
+        </p>
+        {/* the mini-about: identity + locality, one breath */}
+        <p data-anim="label" className="mx-auto mt-fib-4 max-w-[52ch] text-ink/60">
+          We&rsquo;re Executive AI Solutions &mdash; a Mesa team that designs
+          the ad, builds the page, and wires the follow-up, end to end. The
+          number is on the page before you spend a dollar.
+        </p>
       </div>
     </section>
   );
