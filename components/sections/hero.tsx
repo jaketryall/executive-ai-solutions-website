@@ -216,7 +216,10 @@ export function Hero() {
       {/* TIGHT well (Hormozi shape, Jake 2026-07-17): the hero deliberately
           does NOT fill the viewport — the audit's "free" headline crests
           the fold below it, and curiosity earns the scroll for free */}
-      <div className="hero-in wrap relative z-10 flex min-h-[60svh] flex-col items-center justify-center pb-fib-4 pt-[120px] text-center md:pt-fib-6">
+      {/* md:pt 144 (was 89): the stars row sat ~15px under the nav capsule
+          (Jake: "content is really close to nav bar") — the capsule bottoms
+          at ~81, so 144 gives the crown real air */}
+      <div className="hero-in wrap relative z-10 flex min-h-[60svh] flex-col items-center justify-center pb-fib-4 pt-[120px] text-center md:pt-fib-7">
         {/* ── the SearchKings stack, our true content (Jake, 2026-07-16):
             trust → outcome → how → incentives. Their stars/badges are
             earned marks we don't hold, so every trust beat here is a
