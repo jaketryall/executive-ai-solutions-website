@@ -941,27 +941,25 @@ export function Hero() {
           )}
         </div>
 
-        {/* the marquee (Jake's logo-marquee instinct, in motion): the real
-            surfaces we put clients on, drifting under BOTH columns — the
-            hero's ground line. FOUR sets: a -50% loop is only seamless
-            when each HALF of the track outspans the window. */}
-        <div
-          data-anim="marquee"
-          className="hero-marquee mt-fib-6 w-full lg:col-span-2"
-          aria-hidden
-        >
-          <div className="hero-marquee-track">
-            {[0, 1, 2, 3].map((set) => (
-              <span key={set} className="hero-marquee-set">
-                {MARKS.map(([label, icon]) => (
-                  <span key={label} className="hm-item">
-                    <span className="hm-logo">{icon}</span>
-                    {label}
-                  </span>
-                ))}
-              </span>
-            ))}
-          </div>
+      </div>
+
+      {/* THE STRIP — its own thin band (Jake: "struggling with spacing…
+          it's tricky" — floating after the grid meant the gap was measured
+          from the taller column and could never look right; a band with
+          symmetric padding removes the judgment call, the viral/SK form).
+          Full-bleed, feathered edges. */}
+      <div data-anim="marquee" className="hero-marquee py-fib-4" aria-hidden>
+        <div className="hero-marquee-track">
+          {[0, 1, 2, 3].map((set) => (
+            <span key={set} className="hero-marquee-set">
+              {MARKS.map(([label, icon]) => (
+                <span key={label} className="hm-item">
+                  <span className="hm-logo">{icon}</span>
+                  {label}
+                </span>
+              ))}
+            </span>
+          ))}
         </div>
       </div>
     </section>

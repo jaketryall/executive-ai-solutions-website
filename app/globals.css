@@ -1975,6 +1975,7 @@ img.g-fav {
 .hero-marquee {
   width: 100%;
   overflow: hidden;
+  /* its own band: symmetric py in the JSX; nothing floats */
   mask-image: linear-gradient(
     90deg,
     transparent,
