@@ -1871,6 +1871,32 @@ img.g-fav {
   color: var(--color-accent);
 }
 
+/* the pile — overlapping client marks riding beside the stars. The
+   ring wears the hero's WHITE ground (the borderless-facepile trick);
+   initials placeholders until the three real photos land. */
+.hero-pile {
+  display: inline-flex;
+  margin-right: 5px;
+}
+.hero-pile > * {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 2px solid #fff;
+  background: var(--color-panel);
+  color: var(--color-accent);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  object-fit: cover;
+}
+.hero-pile > * + * {
+  margin-left: -9px;
+}
+
 /* the hero's trust crown — five REAL stars (all reviews are 5.0; the
    count joins when it's worth printing, Jake 2026-07-17). Stars wear
    the ACCENT (his call, same day) — the palette stays closed. */

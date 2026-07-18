@@ -237,6 +237,15 @@ export function Hero() {
             className="flex items-center gap-fib-1"
             aria-label="Rated 5.0 by our clients"
           >
+            {/* the pile — PLACEHOLDER initials until Jake's three real
+                client photos land (he's collecting them, 2026-07-17).
+                Swap: replace each span with <img src="/work/face-N.jpg">.
+                NEVER ship stock faces. */}
+            <span className="hero-pile" aria-hidden>
+              <span>DW</span>
+              <span>MR</span>
+              <span>JT</span>
+            </span>
             <span className="hero-stars" aria-hidden>
               {[0, 1, 2, 3, 4].map((s) => (
                 <svg key={s} viewBox="0 0 20 20" fill="currentColor">
