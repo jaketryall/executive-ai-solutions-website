@@ -398,11 +398,6 @@ export function Services() {
           </article>
         </div>
 
-        {/* the one shared ask, centered under the grid — the card CTAs
-            route into depth; this one routes to the number */}
-        <div className="mt-fib-5 flex justify-center">
-          <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
-        </div>
       </div>
     </section>
   );
