@@ -5239,18 +5239,12 @@ span.g-m-fav {
    (top ~45% visible, so screen type stays legible), resting on its win
    frame. The well is a whisper-gray shelf: it separates the phone's
    white screen from the white tile. ── */
-/* the grid's focus choreography (Jake, 2026-07-17; the one Rhythm
-   Influence steal): hover a door and the others recede while the
-   hovered card's phone rises to meet you — RESPONDING motion, cards
-   stay complete at rest per the win-frame law. Hover-capable
-   pointers only; reduced-motion keeps the dim, drops the lift. */
+/* door hover (Jake, 2026-07-17): the hovered card's phone rises to
+   meet you — and NOTHING dims. His call, and the right one: the grid
+   exists for comparison shopping; receding siblings punishes looking
+   at the other services. Responding motion only, hover pointers
+   only, reduced-motion sits still. */
 @media (hover: hover) {
-  .svc-card {
-    transition: opacity 0.3s var(--ease-ui);
-  }
-  .svc-grid:has(.svc-card:hover) .svc-card:not(:hover) {
-    opacity: 0.55;
-  }
   .svc-card .svc-card-demo .dvc {
     transition: transform 0.45s var(--ease-ui);
   }
