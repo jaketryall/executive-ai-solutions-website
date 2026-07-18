@@ -327,12 +327,19 @@ export function Hero() {
 
 
       tl
+        // the how resolves the claim into a method
+        .fromTo(
+          q("[data-anim='how']"),
+          { autoAlpha: 0, y: 16 },
+          { autoAlpha: 1, y: 0, duration: 0.7, ease: EASE_UI },
+          0.65
+        )
         // the resolve — the sequence lands on the one action
         .fromTo(
           q("[data-anim='ctas']"),
           { autoAlpha: 0, y: 18 },
           { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
-          0.8
+          0.9
         )
         // the ambient layer wakes last, already drifting
         .fromTo(
@@ -650,9 +657,7 @@ export function Hero() {
               specifics) */}
           <h1
             data-anim="statement"
-            className={`t-statement t-statement--hero mx-auto mt-fib-2 ${
-              adaptive ? "lg:mx-0 lg:text-[3rem]!" : ""
-            }`}
+            className="t-statement t-statement--hero mx-auto mt-fib-2 lg:mx-0"
             aria-label={`${ariaPair.out} ${ariaPair.who}. We run the whole click.`}
           >
             {/* ALWAYS TWO LINES (Jake, 2026-07-17): the rolling sentence
@@ -661,7 +666,7 @@ export function Hero() {
                 wraps naturally. The visual text swaps on the roll; the
                 aria-label is the stable sentence screen readers get. */}
             <span aria-hidden>
-              <span className="block text-ink lg:whitespace-nowrap">
+              <span className="block text-ink">
                 <span data-roll-out className="inline-block">
                   {ariaPair.out}
                 </span>{" "}
@@ -677,13 +682,26 @@ export function Hero() {
             </span>
           </h1>
 
-          {/* the one action (the Hormozi shape, Jake 2026-07-17): powerful
-              heading, ONE loud CTA, nothing else to read — the audit's
-              "free" headline peeks below and earns the scroll. Lede and
-              chips cut same day ("i dont think we need the sub heading…
-              get rid of the little pills"). */}
-          <div data-anim="ctas" className="mt-fib-4">
+          {/* the HOW returns (fill-the-left, Jake 2026-07-17): with the
+              phone owning the right, the text column needs real mass —
+              claim at full size, the machine named in one line, the
+              action plus the quiet audit path */}
+          <p
+            data-anim="how"
+            className="t-lede mx-auto mt-fib-3 max-w-[42ch] text-ink/65 lg:mx-0"
+          >
+            The ad, the landing page, the AI follow-up &mdash; one team owns
+            every step between the search and the booked job.
+          </p>
+
+          <div
+            data-anim="ctas"
+            className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-3 lg:justify-start"
+          >
             <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
+            <a href="#site-check" className="u-link text-ink/70">
+              Not sure yet? Run the free audit
+            </a>
           </div>
 
         </div>
