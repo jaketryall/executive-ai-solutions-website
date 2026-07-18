@@ -114,16 +114,18 @@ const SERP_DEMOS: Record<(typeof IND_KEYS)[number], SerpDemo> = {
   },
 };
 
-function GmSerp({ d }: { d: SerpDemo }) {
+/* the ONE persistent surface: bar + tabs + location. The enactment
+   backspaces and retypes in THIS bar — the page never teleports. */
+function GmChrome({ q: initialQ }: { q: string }) {
   return (
-        <div className="g-m" aria-hidden>
+    <>
           <div className="g-m-bar">
             <svg viewBox="0 0 20 20" fill="none">
               <circle cx="8.6" cy="8.6" r="5.4" stroke="currentColor" strokeWidth="2" />
               <path d="m13 13 4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
             <span className="g-m-q">
-              <span data-hq>{d.q}</span>
+              <span data-hq>{initialQ}</span>
               <span className="g-m-caret" aria-hidden />
             </span>
             <svg viewBox="0 0 20 20" fill="none">
@@ -151,9 +153,16 @@ function GmSerp({ d }: { d: SerpDemo }) {
             <span>&middot;</span>
             <span className="is-link">Choose area</span>
           </div>
-          {/* everything below the chrome is "the results" — the roll's
-              enactment types the query first, then fades this in */}
-          <div data-hres>
+    </>
+  );
+}
+
+/* per-industry RESULTS only — the chrome (bar/tabs/loc) is one
+   persistent surface; a real phone's page doesn't teleport, only the
+   query and results change */
+function GmResults({ d }: { d: SerpDemo }) {
+  return (
+    <>
           <div className="g-m-ad">
             <p className="g-m-sponsored">Sponsored</p>
             <div className="g-m-src">
@@ -200,15 +209,7 @@ function GmSerp({ d }: { d: SerpDemo }) {
             </div>
             <p className="g-m-title">{d.org[2]}</p>
           </div>
-          <div className="g-skel">
-            <span className="g-skel-thumb" />
-            <span className="g-skel-lines">
-              <span className="g-skel-line block w-[82%]" />
-              <span className="g-skel-line block w-[64%]" />
-            </span>
-          </div>
-          </div>
-        </div>
+    </>
   );
 }
 
@@ -393,51 +394,55 @@ export function Hero() {
               idx = (idx + 1) % ROLL_PAIRS.length;
               out.textContent = ROLL_PAIRS[idx].out;
               who.textContent = `${ROLL_PAIRS[idx].who}.`;
-              // the phone re-searches in step with the headline — and it
-              // ENACTS it (Jake, 2026-07-17: "show them search, like
-              // actually type in"): the next screen arrives with an empty
-              // bar, the query types at a diegetic constant rate, then
-              // the results land. Demonstrating motion on the roll's beat.
-              const demos = q("[data-phone-demo]") as HTMLElement[];
-              const nextL = demos[idx];
-              if (demos[prev] && nextL) {
-                const hq = nextL.querySelector("[data-hq]") as HTMLElement;
-                const hres = nextL.querySelector("[data-hres]") as HTMLElement;
-                const full = SERP_DEMOS[IND_KEYS[idx]].q;
-                gsap.to(demos[prev], {
-                  autoAlpha: 0,
-                  duration: 0.3,
-                  ease: EASE_UI,
-                });
-                if (hq && hres) {
-                  hq.textContent = "";
-                  gsap.set(hres, { autoAlpha: 0 });
-                  gsap.set(nextL, { autoAlpha: 1, delay: 0.25 });
-                  const st = { n: 0 };
-                  gsap.to(st, {
-                    n: full.length,
-                    duration: 0.75,
-                    delay: 0.35,
-                    ease: "none", // diegetic typing, constant rate
-                    snap: { n: 1 },
-                    onUpdate: () => {
-                      hq.textContent = full.slice(0, st.n);
+              // THE ENACTMENT v2 (Jake: "it doesn't feel real") — one
+              // persistent page, a real re-search: the old query
+              // BACKSPACES out of the one bar, the new one types with
+              // human jitter (real typing is never metronome-constant),
+              // an enter-beat, the old results drop with a skeleton
+              // loading blink, and the new results land.
+              const bar = q("[data-hq]")[0] as HTMLElement;
+              const layers = q("[data-hres-l]") as HTMLElement[];
+              const skel = q("[data-hskel]")[0] as HTMLElement;
+              if (bar && skel && layers[prev] && layers[idx]) {
+                const oldQ = SERP_DEMOS[IND_KEYS[prev]].q;
+                const newQ = SERP_DEMOS[IND_KEYS[idx]].q;
+                const seq = gsap.timeline();
+                // backspace run — quick, slightly uneven
+                for (let n = oldQ.length - 1; n >= 0; n--) {
+                  const at = n;
+                  seq.call(
+                    () => {
+                      bar.textContent = oldQ.slice(0, at);
                     },
-                    onComplete: () => {
-                      gsap.to(hres, {
-                        autoAlpha: 1,
-                        duration: 0.45,
-                        ease: EASE_UI,
-                      });
-                    },
-                  });
-                } else {
-                  gsap.fromTo(
-                    nextL,
-                    { autoAlpha: 0 },
-                    { autoAlpha: 1, duration: 0.5, delay: 0.12, ease: EASE_UI }
+                    [],
+                    `+=${(0.016 + Math.random() * 0.022).toFixed(3)}`
                   );
                 }
+                // the breath before typing the new thing
+                seq.to({}, { duration: 0.2 });
+                // human typing: jittered inter-key intervals, 30–85ms
+                for (let n = 1; n <= newQ.length; n++) {
+                  const at = n;
+                  seq.call(
+                    () => {
+                      bar.textContent = newQ.slice(0, at);
+                    },
+                    [],
+                    `+=${(0.03 + Math.random() * 0.055).toFixed(3)}`
+                  );
+                }
+                seq
+                  // enter — the page answers: results drop, loading blinks
+                  .to({}, { duration: 0.14 })
+                  .to(layers[prev], { autoAlpha: 0, duration: 0.1, ease: "none" })
+                  .set(skel, { autoAlpha: 1 }, "<")
+                  .to({}, { duration: 0.34 })
+                  .set(skel, { autoAlpha: 0 })
+                  .fromTo(
+                    layers[idx],
+                    { autoAlpha: 0 },
+                    { autoAlpha: 1, duration: 0.28, ease: EASE_UI }
+                  );
               }
             })
             .fromTo(
@@ -645,18 +650,31 @@ export function Hero() {
               aria-label="A phone showing a Google search with our client's ad on top"
             >
               <div className="dvc-screen dvc-screen--ui">
-                <div className="relative h-full w-full">
-                  {IND_KEYS.map((k, idx) => (
-                    <div
-                      key={k}
-                      data-phone-demo={idx}
-                      className={`absolute inset-0 ${
-                        idx !== (locked ?? 0) ? "opacity-0" : ""
-                      }`}
-                    >
-                      <GmSerp d={SERP_DEMOS[k]} />
+                <div className="g-m" aria-hidden>
+                  <GmChrome q={SERP_DEMOS[IND_KEYS[locked ?? 0]].q} />
+                  <div className="hres-stack">
+                    {IND_KEYS.map((k, idx) => (
+                      <div
+                        key={k}
+                        data-hres-l={idx}
+                        className={idx !== (locked ?? 0) ? "opacity-0" : ""}
+                      >
+                        <GmResults d={SERP_DEMOS[k]} />
+                      </div>
+                    ))}
+                    {/* the loading blink between enter and results */}
+                    <div data-hskel className="opacity-0">
+                      {[0, 1, 2].map((i) => (
+                        <div key={i} className="g-skel">
+                          <span className="g-skel-thumb" />
+                          <span className="g-skel-lines">
+                            <span className="g-skel-line block w-[82%]" />
+                            <span className="g-skel-line block w-[64%]" />
+                          </span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
                 </div>
               </div>
             </div>

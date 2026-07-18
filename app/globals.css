@@ -1871,6 +1871,17 @@ img.g-fav {
   color: var(--color-accent);
 }
 
+/* the results stack — all four industries' results share one grid
+   cell under the single persistent chrome; the enactment crossfades
+   them. Grid (not absolute) so the tallest layer sizes the area. */
+.hres-stack {
+  display: grid;
+}
+.hres-stack > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+
 /* the adaptive hero phone (labeled ad traffic) — a self-sized dvc on
    the split grid's right column; the chat variant needs its booked
    toast visible without the service-page GSAP hook */
