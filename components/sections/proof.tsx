@@ -67,8 +67,17 @@ export function Proof() {
          the wheel DOM only replaces it on this armed path. */
       const C0 = 0.9;
       const C1 = 0.99;
-      (q("[data-count]") as HTMLElement[]).forEach((el) => {
-        const m = (el.textContent ?? "").match(/^([^\d]*)(\d+)(.*)$/);
+      const countEls = q("[data-count]") as HTMLElement[];
+      countEls.forEach((el) => {
+        /* STUCK-AT-ZERO FIX (Jake, 2026-07-18): the wheels REPLACE the
+           element's text, so a re-mount (Fast Refresh, strict) used to
+           re-parse the wheel digits as a garbage target, bail on the
+           >=1000 guard, and leave dead wheels at 0. The original value
+           lives on the element now; every mount parses THAT and
+           rebuilds fresh. */
+        const original = el.dataset.countFull ?? el.textContent ?? "";
+        el.dataset.countFull = original;
+        const m = original.match(/^([^\d]*)(\d+)(.*)$/);
         if (!m) return;
         const [, pre, num, suf] = m;
         const target = parseInt(num, 10);
@@ -114,6 +123,12 @@ export function Proof() {
           scrollTrigger: { trigger: el, start: "top 85%" },
           onUpdate: () => render(proxy.v),
           onComplete: () => render(target, true),
+        });
+      });
+      // cleanup: hand the plain text back so the next mount starts clean
+      context.add(() => () => {
+        countEls.forEach((el) => {
+          if (el.dataset.countFull) el.textContent = el.dataset.countFull;
         });
       });
 
