@@ -1921,10 +1921,15 @@ img.g-fav {
    ring wears the hero's WHITE ground (the borderless-facepile trick);
    initials placeholders until the three real photos land. */
 .hero-pile {
-  display: inline-flex;
+  position: relative;
+  width: 72px; /* 3 slots: 30 + 2×21 pitch */
+  height: 30px;
   margin-right: 5px;
 }
-.hero-pile > * {
+.hero-pile [data-face] {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1938,9 +1943,14 @@ img.g-fav {
   font-weight: 700;
   letter-spacing: 0.02em;
   object-fit: cover;
+  will-change: transform;
 }
-.hero-pile > * + * {
-  margin-left: -9px;
+/* no-JS / reduced-motion: the 3 mounted slots hold still via nth-child */
+.hero-pile [data-face]:nth-child(2) {
+  left: 21px;
+}
+.hero-pile [data-face]:nth-child(3) {
+  left: 42px;
 }
 
 /* the hero's trust crown — five REAL stars (all reviews are 5.0; the

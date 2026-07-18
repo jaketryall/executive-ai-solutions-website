@@ -36,6 +36,13 @@ const ROLL_LOCK: Record<string, number> = {
 };
 const IND_KEYS = ["other", "flight", "restaurant", "trades"] as const;
 
+/* the pile's roster — PLACEHOLDER initials until Jake's real client
+   photos land (each entry becomes an <img>). The conveyor needs >= 4
+   faces to cycle without adjacent duplicates; fewer -> static pile.
+   LAUNCH RULE: every face must be a real client. Never pad with
+   invented people to fake volume. */
+const FACES = ["DW", "MR", "JT", "KL", "AS"];
+
 /* ══ THE ADAPTIVE PHONE (Jake, 2026-07-17: "if a plumber looked it up the
    words would change in the hero and in the animation") — Phase A: labeled
    ad traffic (?i= / ?svc=) gets a SPLIT hero with a phone showing THEIR
@@ -569,6 +576,79 @@ export function Hero() {
         }
       }
 
+      /* ── the pile conveyor (Jake, 2026-07-17: "a cool animation to
+         make that feel infinite — a new one comes in, one leaves").
+         Runs only with >= 4 faces (fewer would show duplicates side by
+         side); gated to in-view + visible tab like the roll. ── */
+      const pileEls = q(".hero-pile [data-face]") as HTMLElement[];
+      if (pileEls.length === 4 && FACES.length >= 4) {
+        const PITCH = 21; // circle 30 − overlap 9
+        let order = [0, 1, 2, 3];
+        let face = 3; // next face to enter (0-2 are on stage at mount)
+        pileEls.forEach((el, n) =>
+          gsap.set(
+            el,
+            n < 3
+              ? { x: n * PITCH, zIndex: 10 - n, autoAlpha: 1, scale: 1 }
+              : { x: -14, zIndex: 11, autoAlpha: 0, scale: 0.4 }
+          )
+        );
+        let active = false;
+        let dc: gsap.core.Tween | null = null;
+        const cycle = () => {
+          if (!active || !root.current) return;
+          const [a, b, c, d] = order;
+          face = (face + 1) % FACES.length;
+          pileEls[d].textContent = FACES[face];
+          const tl = gsap.timeline({
+            onComplete: () => {
+              dc = gsap.delayedCall(2.6, cycle);
+            },
+          });
+          tl.set(pileEls[d], { x: -14, scale: 0.4, autoAlpha: 0, zIndex: 11 })
+            // the back face slips out to the right…
+            .to(
+              pileEls[c],
+              { x: 2 * PITCH + 12, autoAlpha: 0, scale: 0.6, duration: 0.45, ease: EASE_UI },
+              0
+            )
+            // …the row makes room…
+            .to(pileEls[a], { x: PITCH, zIndex: 9, duration: 0.5, ease: EASE_UI }, 0.05)
+            .to(pileEls[b], { x: 2 * PITCH, zIndex: 8, duration: 0.5, ease: EASE_UI }, 0.05)
+            // …and the new face blooms in at the front
+            .to(
+              pileEls[d],
+              { x: 0, scale: 1, autoAlpha: 1, duration: 0.5, ease: EASE_UI },
+              0.15
+            )
+            .set(pileEls[d], { zIndex: 10 });
+          order = [d, a, b, c];
+        };
+        const syncPile = () => {
+          const st = ScrollTrigger.getById("hero-pile");
+          const on = (st?.isActive ?? true) && !document.hidden;
+          if (on && !active) {
+            active = true;
+            dc = gsap.delayedCall(1.8, cycle);
+          } else if (!on) {
+            active = false;
+            dc?.kill();
+          }
+        };
+        ScrollTrigger.create({
+          id: "hero-pile",
+          trigger: root.current,
+          start: "top bottom",
+          end: "bottom top",
+          onToggle: syncPile,
+        });
+        document.addEventListener("visibilitychange", syncPile);
+        context.add(() => () =>
+          document.removeEventListener("visibilitychange", syncPile)
+        );
+        syncPile();
+      }
+
       /* ── exit parallax (not a pin): the statement lifts slightly faster
          than the scroll as the hero leaves ── */
       gsap.to(q(".hero-left"), {
@@ -629,9 +709,18 @@ export function Hero() {
                 Swap: replace each span with <img src="/work/face-N.jpg">.
                 NEVER ship stock faces. */}
             <span className="hero-pile" aria-hidden>
-              <span>DW</span>
-              <span>MR</span>
-              <span>JT</span>
+              {/* 4 nodes: 3 visible slots + 1 offstage — the conveyor
+                  rotates roles (a new face blooms in at the front, the
+                  back one slips out) */}
+              {[0, 1, 2, 3].map((n) => (
+                <span
+                  key={n}
+                  data-face
+                  className={n === 3 ? "opacity-0" : ""}
+                >
+                  {FACES[n]}
+                </span>
+              ))}
             </span>
             <span className="hero-stars" aria-hidden>
               {[0, 1, 2, 3, 4].map((s) => (
