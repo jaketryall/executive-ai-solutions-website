@@ -15,8 +15,13 @@
   --color-dark: #101111;
   --color-dark-2: #191b1a;
   --color-paper: #eff0ee;
-  --color-accent: #4c6b7c;
-  --color-accent-bright: #a6bfcc;
+  /* TRYING (Jake, 2026-07-17: "do i need a brighter accent") — the
+     cool-ground pivot demoted old steel #4c6b7c to a neighbor of its
+     own backgrounds. Candidate: same hue family, real voltage.
+     White-on-accent contrast ~5:1 (AA for button text). Revert = the
+     two old values in this comment. */
+  --color-accent: #256e93;
+  --color-accent-bright: #7ec3e8;
 
   /* ─── Fibonacci spacing scale ─── */
   --spacing-fib-1: 8px;
