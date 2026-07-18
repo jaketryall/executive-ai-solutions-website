@@ -774,11 +774,11 @@ export function Hero() {
       {/* the SearchKings hero: CENTERED — claim, one action, the quiet
           audit path, the de-risk line. No mockup; the services cards
           directly below carry the demos. */}
-      {/* md:pt 120 (2026-07-17 tune, was 144): the split's tall phone made
-          144 read low — 120 lifts both columns while keeping ~39px of air
-          under the nav capsule (bottoms ~81) */}
+      {/* md:pt 108 (third lift, 2026-07-17): 27px of air under the nav
+          capsule (bottoms ~81) — the floor of the range; below ~100 we're
+          back to the "content is really close to nav" complaint */}
       <div
-        className={`hero-in wrap relative z-10 flex min-h-[60svh] flex-col items-center justify-center pb-fib-4 pt-[110px] text-center md:pt-[120px] ${
+        className={`hero-in wrap relative z-10 flex min-h-[60svh] flex-col items-center justify-center pb-fib-4 pt-[100px] text-center md:pt-[108px] ${
           adaptive
             ? "lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-fib-6 lg:text-left"
             : ""
