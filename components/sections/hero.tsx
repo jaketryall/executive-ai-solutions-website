@@ -368,9 +368,8 @@ export function Hero() {
          CTA row never jumps. ── */
       if (locked === null) {
         const out = q("[data-roll-out]")[0] as HTMLElement;
-        const who = q("[data-roll-who]")[0] as HTMLElement;
         const h1 = q("[data-anim='statement']")[0] as HTMLElement;
-        if (out && who && h1) {
+        if (out && h1) {
           // pair 0 is the longest — lock its height so the CTA never
           // jumps between pairs. Lock AFTER fonts land: measuring the
           // fallback font baked a ~3-line min-height into a 2-line h1
@@ -386,18 +385,16 @@ export function Hero() {
             // 5.5s hold: ~3.6s of enactment + ~2s resting on the WON
             // state before the next industry
             .to({}, { duration: 5.5 })
-            .to([out, who], {
+            .to(out, {
               yPercent: -55,
               autoAlpha: 0,
               duration: 0.4,
               ease: EASE_UI,
-              stagger: 0.06,
             })
             .call(() => {
               const prev = idx;
               idx = (idx + 1) % ROLL_PAIRS.length;
-              out.textContent = ROLL_PAIRS[idx].out;
-              who.textContent = `${ROLL_PAIRS[idx].who}.`;
+              out.textContent = `${ROLL_PAIRS[idx].out}.`;
               // ONE CONDUCTOR (Jake: "so glitchy") — the previous
               // enactment dies and the stage hard-resets before a new one
               // starts; overlapping timelines were fighting over the bar
@@ -506,14 +503,13 @@ export function Hero() {
               }
             })
             .fromTo(
-              [out, who],
+              out,
               { yPercent: 55, autoAlpha: 0 },
               {
                 yPercent: 0,
                 autoAlpha: 1,
                 duration: 0.5,
                 ease: EASE_UI,
-                stagger: 0.06,
                 /* THE ROLL BUG (found 2026-07-17): default immediateRender
                    parked the spans at this from-state AT CREATION, the
                    fade-out then captured that as its start, and every
@@ -659,12 +655,12 @@ export function Hero() {
         <div className="hero-left relative flex w-full flex-col items-center">
           {/* NO eyebrow (Jake, 2026-07-21: six2eight proportions) — the
               headline carries alone; Mesa lives in the phone's SERP */}
-          {/* THREE SHORT LINES (Jake, 2026-07-21: "closer to the
-              proportions of the other one"): reference-scale type only
-              works on short lines, so the roll pair splits — outcome /
-              audience / accent — each line clearing the wrap at
-              .t-statement--62 size. The visual text swaps on the roll;
-              the aria-label is the stable sentence screen readers get. */}
+          {/* TWO LINES, PUNCH PAIR (Jake, 2026-07-21: "the title should
+              be 2 lines, every other site has two lines"): the roll is
+              the outcome alone — "More jobs." — huge; the WHO left the
+              headline (the phone's SERP carries the industry mirror now,
+              and the who survives in the aria sentence). The visual text
+              swaps on the roll; screen readers get the stable claim. */}
           <h1
             data-anim="statement"
             className="t-statement t-statement--hero t-statement--62 mx-auto"
@@ -673,12 +669,7 @@ export function Hero() {
             <span aria-hidden>
               <span className="block text-ink">
                 <span data-roll-out className="inline-block">
-                  {ariaPair.out}
-                </span>
-              </span>
-              <span className="block text-ink">
-                <span data-roll-who className="inline-block">
-                  {ariaPair.who}.
+                  {ariaPair.out}.
                 </span>
               </span>
               {/* the two-tone goes SearchKings: the second clause wears the

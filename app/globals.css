@@ -1921,12 +1921,13 @@ img.g-fav {
   position: relative;
 }
 /* six2eight scale (Jake, 2026-07-21: "closer to the proportions of the
-   other one"): reference-size display type at EVERY width, possible only
-   because the headline runs three SHORT stacked lines — the longest
-   segment ("for local business.", 19ch) must clear the wrap throughout */
+   other one" + "the title should be 2 lines"): reference-size display
+   type at EVERY width — TWO lines, punch pair. The fixed accent line
+   ("We run the whole click.", 23ch) is the width limiter; the roll outs
+   are all shorter. 6.9vw ≈ 99px at 1440. */
 .t-statement--62 {
-  font-size: clamp(2.5rem, 6.2vw, 5.6rem);
-  line-height: 1.04;
+  font-size: clamp(2.5rem, 6.9vw, 6.2rem);
+  line-height: 1.05;
 }
 @media (min-width: 1024px) {
   .hero-float {
