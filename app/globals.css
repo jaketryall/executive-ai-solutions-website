@@ -5419,8 +5419,9 @@ span.g-m-fav {
   position: absolute;
   top: 13px;
   /* the screen IS the stage (Jake, 2026-07-21 v2): the laptop fills the
-     well and bleeds off the right edge — SK proportions */
-  right: -10%;
+     well and bleeds off the right edge — SK proportions ("moved a
+     little to the right", same day) */
+  right: -14%;
   width: 105%;
 }
 .svc-duo .dvc {
@@ -5431,6 +5432,18 @@ span.g-m-fav {
   width: min(46%, 172px);
   margin-top: 0;
   filter: drop-shadow(0 13px 21px rgba(19, 20, 19, 0.3));
+  /* the house bezel radius is VIEWPORT-clamped (58px at desktop) — a
+     third of this little phone's width, which read as a pill (Jake:
+     "phone still looks too round"). Real corners run ~15% of width. */
+  padding: 8px;
+  border-radius: 26px;
+}
+.svc-duo .dvc .dvc-screen {
+  border-radius: 19px;
+}
+.svc-duo .dvc .dvc-island {
+  top: 12px;
+  height: 8px;
 }
 /* the mobile diet (audit 2026-07-21: Services alone ran 5 viewports on a
    phone) — shallower wells; every win frame lives at the TOP of its mock,
