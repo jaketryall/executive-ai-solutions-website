@@ -14,6 +14,7 @@ import { Monogram } from "@/components/ui/monogram";
 import { Segmented } from "@/components/ui/segmented";
 import { Odometer } from "@/components/estimator/odometer";
 import { getBuild, getBuildServer, subscribeBuild } from "@/components/builder/store";
+import { capturePersona, getPersona } from "@/lib/persona";
 import { buildPath, describeBuild } from "@/components/builder/packs";
 import {
   PROJECT_TYPES,
@@ -39,11 +40,31 @@ export function Estimate({ standalone = false }: { standalone?: boolean } = {}) 
   const result = useMemo(() => compute(est), [est]);
   const summary = useMemo(() => summarize(est), [est]);
 
-  // the persistent CTA capsule carries the visitor's live total once they
-  // have TOUCHED the estimator (est leaves its default reference on first
-  // change) — an untouched default price in the pill would read as a claim
+  // the ad's label reaches the money page (review 2026-07-21): ?i= visitors
+  // came through a Google Ads campaign, so ads management starts selected;
+  // ?svc=ai starts the AI line selected. Both are monthly chips — the
+  // headline BUILD number stays at its untouched default, so the preselect
+  // personalizes without inflating the first price they see.
+  const baseline = useRef<EstimateState>(DEFAULT_STATE);
   useEffect(() => {
-    if (est === DEFAULT_STATE) return;
+    capturePersona();
+    const p = getPersona();
+    const monthly = [
+      ...(p.i ? ["ads"] : []),
+      ...(p.svc === "ai" ? ["ai"] : []),
+    ];
+    if (!monthly.length) return;
+    const next: EstimateState = { ...DEFAULT_STATE, monthly };
+    baseline.current = next;
+    setEst(next);
+  }, []);
+
+  // the persistent CTA capsule carries the visitor's live total once they
+  // have TOUCHED the estimator (est leaves the baseline reference on first
+  // change; the baseline is DEFAULT_STATE or the persona preselect) — an
+  // untouched price in the pill would read as a claim
+  useEffect(() => {
+    if (est === baseline.current) return;
     window.dispatchEvent(
       new CustomEvent("eas:estimate", { detail: { total: result.total } })
     );

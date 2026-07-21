@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/nav";
+import { PersonaCapture } from "@/components/persona-capture";
 import { PersistentCta } from "@/components/ui/persistent-cta";
 import { SiteChat } from "@/components/ui/site-chat";
 import { Footer } from "@/components/footer";
@@ -89,6 +90,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
+        <PersonaCapture />
         <Nav />
         <PersistentCta />
         <SiteChat />

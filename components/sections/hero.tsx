@@ -12,6 +12,7 @@ import {
 import { CTA } from "@/components/ui/cta";
 import { Monogram } from "@/components/ui/monogram";
 import { whenArrived } from "@/components/anim/arrival";
+import { capturePersona, getPersona } from "@/lib/persona";
 
 /* The hero — the SearchKings shape (Jake, 2026-07-16): NO mockup here.
    The demos live where the choosing happens — one per service card below,
@@ -275,10 +276,14 @@ export function Hero() {
   const [svc, setSvc] = useState<"ai" | "websites" | null>(null);
 
   useIsomorphicLayoutEffect(() => {
+    // params win; the sessionStorage persona (lib/persona.ts) covers the
+    // visitor who navigated back home after the params fell off the URL
+    capturePersona();
+    const stored = getPersona();
     const params = new URLSearchParams(window.location.search);
-    const i = params.get("i");
+    const i = params.get("i") ?? stored.i;
     if (i && ROLL_LOCK[i] !== undefined) setLocked(ROLL_LOCK[i]);
-    const s = params.get("svc");
+    const s = params.get("svc") ?? stored.svc;
     if (s === "ai" || s === "websites") setSvc(s);
   }, []);
 
