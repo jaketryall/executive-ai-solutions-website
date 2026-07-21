@@ -5417,18 +5417,20 @@ span.g-m-fav {
 }
 .svc-duo .lap {
   position: absolute;
-  top: 21px;
-  right: -5%;
-  width: min(74%, 290px);
+  top: 13px;
+  /* the screen IS the stage (Jake, 2026-07-21 v2): the laptop fills the
+     well and bleeds off the right edge — SK proportions */
+  right: -10%;
+  width: 105%;
 }
 .svc-duo .dvc {
   position: absolute;
   z-index: 2;
   top: 34px;
-  left: 5%;
-  width: min(44%, 168px);
+  left: 4%;
+  width: min(46%, 172px);
   margin-top: 0;
-  filter: drop-shadow(0 13px 21px rgba(19, 20, 19, 0.25));
+  filter: drop-shadow(0 13px 21px rgba(19, 20, 19, 0.3));
 }
 /* the mobile diet (audit 2026-07-21: Services alone ran 5 viewports on a
    phone) — shallower wells; every win frame lives at the TOP of its mock,

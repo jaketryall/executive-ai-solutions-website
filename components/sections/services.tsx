@@ -165,13 +165,18 @@ export function Services() {
                 <div className="dvc">
                   <span className="dvc-island" />
                   <div className="dvc-screen">
+                    {/* cropped to the BRIGHT sky band (headline + Book a
+                        tour): the dark nav crop drowned the phone's black
+                        bezel — light content is what makes the phone read
+                        as a phone against the laptop behind it */}
                     <Image
-                      src="/work/live/dw-mobile-booking.jpg"
-                      alt="The same build's booking flow, on a phone"
+                      src="/work/live/dw-mobile-hero.jpg"
+                      alt="The same build's mobile hero, on a phone"
                       width={1170}
                       height={2532}
-                      sizes="(min-width: 1280px) 160px, 40vw"
+                      sizes="(min-width: 1280px) 172px, 46vw"
                       className="block h-auto w-full"
+                      style={{ transform: "translateY(-12%)" }}
                     />
                   </div>
                 </div>
