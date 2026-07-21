@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PricingPage, PricingSheet } from "@/components/pricing/pricing-page";
+import { PricingCompare } from "@/components/pricing/compare";
 import { Estimate } from "@/components/sections/estimate";
 import {
   PROJECT_TYPES,
@@ -58,6 +59,9 @@ export default function Page() {
     <>
       <PricingPage />
       <Estimate standalone />
+      {/* the comparison catches whoever scrolled past the ask still
+          shopping — their agency comparison, already done (no names) */}
+      <PricingCompare />
       <PricingSheet />
       <script
         type="application/ld+json"
