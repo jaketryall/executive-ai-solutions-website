@@ -1920,6 +1920,14 @@ img.g-fav {
 .hero-tilt {
   position: relative;
 }
+/* six2eight scale (Jake, 2026-07-21: "closer to the proportions of the
+   other one"): reference-size display type at EVERY width, possible only
+   because the headline runs three SHORT stacked lines — the longest
+   segment ("for local business.", 19ch) must clear the wrap throughout */
+.t-statement--62 {
+  font-size: clamp(2.5rem, 6.2vw, 5.6rem);
+  line-height: 1.04;
+}
 @media (min-width: 1024px) {
   .hero-float {
     position: absolute;
@@ -1929,7 +1937,9 @@ img.g-fav {
        phone's occlusion lands on the FIXED accent line's tail — the
        roll line varies per industry, the cover must not */
     top: -8px;
-    right: 13%;
+    /* 10%: at 62-scale type the fixed accent line must keep "cl…"
+       visible left of the phone — the signature word stays guessable */
+    right: 10%;
   }
   .hero-tilt {
     transform: rotate(4deg);

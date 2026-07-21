@@ -314,14 +314,8 @@ export function Hero() {
         { autoAlpha: 1, y: 0, duration: 0.8, clearProps: "transform" },
         0.05
       )
-        // track A — the eyebrow sets the category, the statement rises
-        // (the trust group rides the CTA row's beat now — six2eight order)
-        .fromTo(
-          q("[data-anim='eyebrow']"),
-          { autoAlpha: 0, y: 13 },
-          { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
-          0.16
-        )
+        // track A — the statement rises alone (no eyebrow, no stars up
+        // here — six2eight proportions; trust rides the CTA row's beat)
         .fromTo(
           q("[data-anim='statement']"),
           { autoAlpha: 0, y: 34 },
@@ -659,33 +653,30 @@ export function Hero() {
       {/* md:pt 108 (third lift, 2026-07-17): 27px of air under the nav
           capsule (bottoms ~81) — the floor of the range; below ~100 we're
           back to the "content is really close to nav" complaint */}
-      <div className="hero-in wrap relative z-10 flex min-h-[86svh] flex-col items-center justify-center pb-fib-4 pt-[100px] text-center md:pt-[108px]">
+      <div className="hero-in wrap relative z-10 flex min-h-[86svh] flex-col items-center justify-center pb-fib-4 pt-[110px] text-center md:pt-[120px]">
         {/* relative: the float anchors to this column, so the exit
             parallax carries text AND phone together */}
         <div className="hero-left relative flex w-full flex-col items-center">
-          <p data-anim="eyebrow" className="t-meta uppercase text-ink/70">
-            Full-funnel ads agency &middot; Mesa, AZ
-          </p>
-          {/* the two-tone statement (the signature): bright outcome, dim
-              continuation IN the same sentence. The dim clause stays five
-              words — that's what lets the whole thing hold display size
-              without reading as a wall (the eyebrow + the ad demo carry the
-              specifics) */}
+          {/* NO eyebrow (Jake, 2026-07-21: six2eight proportions) — the
+              headline carries alone; Mesa lives in the phone's SERP */}
+          {/* THREE SHORT LINES (Jake, 2026-07-21: "closer to the
+              proportions of the other one"): reference-scale type only
+              works on short lines, so the roll pair splits — outcome /
+              audience / accent — each line clearing the wrap at
+              .t-statement--62 size. The visual text swaps on the roll;
+              the aria-label is the stable sentence screen readers get. */}
           <h1
             data-anim="statement"
-            className="t-statement t-statement--hero mx-auto mt-fib-2"
+            className="t-statement t-statement--hero t-statement--62 mx-auto"
             aria-label={`${ariaPair.out} ${ariaPair.who}. We run the whole click.`}
           >
-            {/* ALWAYS TWO LINES (Jake, 2026-07-17): the rolling sentence
-                owns line one (nowrap from lg — the longest pair clears the
-                column there), the accent clause owns line two. Below lg it
-                wraps naturally. The visual text swaps on the roll; the
-                aria-label is the stable sentence screen readers get. */}
             <span aria-hidden>
               <span className="block text-ink">
                 <span data-roll-out className="inline-block">
                   {ariaPair.out}
-                </span>{" "}
+                </span>
+              </span>
+              <span className="block text-ink">
                 <span data-roll-who className="inline-block">
                   {ariaPair.who}.
                 </span>
@@ -698,12 +689,12 @@ export function Hero() {
             </span>
           </h1>
 
-          {/* 32ch (not 42): the centered lede must END before the float's
-              left edge (~987px at 1440) — a paragraph cut mid-word reads
-              broken, unlike the headline's deliberate occlusion */}
+          {/* 36ch (not 42): the centered lede must END before the float's
+              left edge (~1026px at 1440, float at 10%) — a paragraph cut
+              mid-word reads broken, unlike the headline's occlusion */}
           <p
             data-anim="how"
-            className="t-lede mx-auto mt-fib-3 max-w-[32ch] text-ink/65"
+            className="t-lede mx-auto mt-fib-3 max-w-[36ch] text-ink/65"
           >
             The ad, the landing page, the AI follow-up &mdash; one team owns
             every step between the search and the booked job.
@@ -750,11 +741,8 @@ export function Hero() {
               </span>
             </div>
           </div>
-          <p data-anim="ctas" className="mt-fib-3">
-            <a href="#site-check" className="u-link u-link--tap text-ink/70">
-              Not sure yet? Run the free audit
-            </a>
-          </p>
+          {/* no quiet audit link (Jake, 2026-07-21): the audit tray
+              cresting the fold IS the invitation */}
 
           {/* the adaptive phone — THEIR search, won (or the svc campaign's
               surface) — floating over the statement's right flank at lg+
