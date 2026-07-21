@@ -142,18 +142,27 @@ export function Services() {
           {/* ── 02 · THE LANDING ── */}
           <article data-svc-row className="svc-card p-fib-3 text-ink">
             <div data-anim="artifact" className="svc-card-demo">
-              {/* the win frame: the site we built, on the phone it's seen on.
-                  A photo screen keeps its island (Jake's cutout law) */}
-              <div className="dvc" aria-hidden>
-                <span className="dvc-island" />
-                <div className="dvc-screen">
+              {/* the win frame: the site we built, in a browser window —
+                  the one desktop frame among the phones, because a WEBSITE
+                  is bought as a big-screen thing (the landing card owns the
+                  phone). Hover pans the tall capture: the demo tours it. */}
+              <div className="brw" aria-hidden>
+                <div className="brw-bar">
+                  <span className="brw-dots">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <span className="brw-url">desertwingsflightschool.com</span>
+                </div>
+                <div className="brw-screen">
                   <Image
-                    src="/work/dw-phone-tour.jpg"
-                    alt="The Desert Wings site we designed and built, on a phone"
-                    width={780}
-                    height={10128}
-                    sizes="(min-width: 1280px) 270px, 70vw"
-                    className="block h-auto w-full"
+                    src="/work/dw-tour.jpg"
+                    alt="The Desert Wings site we designed and built, in a desktop browser"
+                    width={2880}
+                    height={4446}
+                    sizes="(min-width: 1280px) 340px, 86vw"
+                    className="brw-page"
                   />
                 </div>
               </div>
@@ -325,19 +334,20 @@ export function Services() {
           {/* ── 05 · LANDING PAGES ── */}
           <article data-svc-row className="svc-card p-fib-3 text-ink">
             <div data-anim="artifact" className="svc-card-demo">
-              {/* the win frame: a deeper band of the same real build — the
-                  page the ad's click lands on. Photo screen keeps its island */}
+              {/* the win frame: the page the ad's click lands on, on the
+                  phone the click happens on — the landing card owns the
+                  phone now that the websites card went desktop. Photo
+                  screen keeps its island (Jake's cutout law) */}
               <div className="dvc" aria-hidden>
                 <span className="dvc-island" />
                 <div className="dvc-screen">
                   <Image
-                    src="/work/dw-phone-tour.jpg"
-                    alt="A landing section of the Desert Wings build, on a phone"
-                    width={780}
-                    height={10128}
+                    src="/work/live/dw-mobile-hero.jpg"
+                    alt="The Desert Wings landing hero the ad's click lands on, on a phone"
+                    width={1170}
+                    height={2532}
                     sizes="(min-width: 1280px) 310px, 86vw"
                     className="block h-auto w-full"
-                    style={{ transform: "translateY(-30%)" }}
                   />
                 </div>
               </div>
