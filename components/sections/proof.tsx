@@ -206,7 +206,9 @@ export function Proof() {
           data-anim="head"
           className="wrap flex flex-col justify-between gap-fib-3 md:flex-row md:items-end"
         >
-          <h2 className="t-display-lg">Where the click lands</h2>
+          {/* copy audit 2026-07-21: "Where the click lands" read as poetry
+              to a cold visitor — the proof section should announce proof */}
+          <h2 className="t-display-lg">The work, and the numbers</h2>
           <p className="max-w-[38ch] text-ink/70 md:text-right">
             The ad you watched climb the search is real. These are the pages
             our clicks land on: designed, built, and tracked by us.

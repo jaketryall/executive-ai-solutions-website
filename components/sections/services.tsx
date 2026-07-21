@@ -124,13 +124,13 @@ export function Services() {
                 </div>
               </div>
             </div>
-            <h3 data-anim="copy" className="t-title--lg mt-fib-4">
+            <h3 data-anim="copy" className="t-title--lg mt-fib-3 md:mt-fib-4">
               Google Ads, managed
             </h3>
             <p data-anim="copy" className="mt-fib-2 text-ink/70">
               Campaigns built on what your customers actually search.
             </p>
-            <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
+            <div data-anim="copy" className="mt-fib-3 hidden flex-wrap gap-fib-1 sm:flex">
               <span className="chip">$500/mo + ad spend</span>
               <span className="chip">No lock-in</span>
             </div>
@@ -158,13 +158,13 @@ export function Services() {
                 </div>
               </div>
             </div>
-            <h3 data-anim="copy" className="t-title--lg mt-fib-4">
+            <h3 data-anim="copy" className="t-title--lg mt-fib-3 md:mt-fib-4">
               Websites that convert
             </h3>
             <p data-anim="copy" className="mt-fib-2 text-ink/70">
               Hand-built pages that turn the click into a call.
             </p>
-            <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
+            <div data-anim="copy" className="mt-fib-3 hidden flex-wrap gap-fib-1 sm:flex">
               <span className="chip">From $2.5k, fixed quote</span>
               <span className="chip">You own everything</span>
             </div>
@@ -229,7 +229,7 @@ export function Services() {
             >
               This one&rsquo;s real &mdash; ask it something
             </button>
-            <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
+            <div data-anim="copy" className="mt-fib-3 hidden flex-wrap gap-fib-1 sm:flex">
               <span className="chip">Quoted per project</span>
               <span className="chip">Managed for you</span>
             </div>
@@ -303,13 +303,17 @@ export function Services() {
                 </div>
               </div>
             </div>
-            <h3 data-anim="copy" className="t-title--lg mt-fib-4">
-              Local Services Ads
+            {/* benefit-first title (copy audit 2026-07-21): a plumber
+                doesn't know "Local Services Ads"; the description names
+                the product for the ones who do */}
+            <h3 data-anim="copy" className="t-title--lg mt-fib-3 md:mt-fib-4">
+              Pay only when the phone rings
             </h3>
             <p data-anim="copy" className="mt-fib-2 text-ink/70">
-              Google Guaranteed leads &mdash; pay per call, not per click.
+              Local Services Ads &mdash; Google Guaranteed leads, billed per
+              call, not per click.
             </p>
-            <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
+            <div data-anim="copy" className="mt-fib-3 hidden flex-wrap gap-fib-1 sm:flex">
               <span className="chip">Pay per lead</span>
               <span className="chip">For the trades</span>
             </div>
@@ -338,13 +342,13 @@ export function Services() {
                 </div>
               </div>
             </div>
-            <h3 data-anim="copy" className="t-title--lg mt-fib-4">
+            <h3 data-anim="copy" className="t-title--lg mt-fib-3 md:mt-fib-4">
               Landing pages
             </h3>
             <p data-anim="copy" className="mt-fib-2 text-ink/70">
               One fast page, purpose-built to catch your ad&rsquo;s click.
             </p>
-            <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
+            <div data-anim="copy" className="mt-fib-3 hidden flex-wrap gap-fib-1 sm:flex">
               <span className="chip">Days, not weeks</span>
               <span className="chip">Fixed quote</span>
             </div>
@@ -382,13 +386,13 @@ export function Services() {
                 </div>
               </div>
             </div>
-            <h3 data-anim="copy" className="t-title--lg mt-fib-4">
+            <h3 data-anim="copy" className="t-title--lg mt-fib-3 md:mt-fib-4">
               Be the answer on ChatGPT
             </h3>
             <p data-anim="copy" className="mt-fib-2 text-ink/70">
               When customers ask AI who to call, it should say you.
             </p>
-            <div data-anim="copy" className="mt-fib-3 flex flex-wrap gap-fib-1">
+            <div data-anim="copy" className="mt-fib-3 hidden flex-wrap gap-fib-1 sm:flex">
               <span className="chip">Search + AI engines</span>
               <span className="chip">Quoted per project</span>
             </div>

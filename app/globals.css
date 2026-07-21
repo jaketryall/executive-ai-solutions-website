@@ -5290,6 +5290,19 @@ span.g-m-fav {
   flex-shrink: 0;
   margin-top: 21px;
 }
+/* the mobile diet (audit 2026-07-21: Services alone ran 5 viewports on a
+   phone) — shallower wells; every win frame lives at the TOP of its mock,
+   so the deeper crop costs nothing the visitor needed */
+@media (max-width: 767px) {
+  .svc-card-demo {
+    height: 240px;
+  }
+  /* except the chat demo: the booked toast is the payoff and may never
+     fall past the crop */
+  .svc-card-demo:has(.chat-thread) {
+    height: 290px;
+  }
+}
 /* the win frame IS the rest state here — no reveal loop on the router
    cards, so the booked toast simply shows */
 .svc-card-demo .chat-booked {

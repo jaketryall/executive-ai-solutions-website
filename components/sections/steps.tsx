@@ -72,8 +72,10 @@ export function Steps() {
             card — a gray field on the white run, white step cards popping
             inside it (white objects on gray, per the object rule) */}
         <div className="rounded-panel bg-panel px-fib-3 py-fib-5 md:px-fib-5 md:py-fib-6">
+          {/* concrete beats reassuring (copy audit 2026-07-21): "easy" is
+              every agency's word; the numbers are the promise */}
           <h2 data-anim="steps-title" className="t-display-lg text-center">
-            Getting started is easy
+            Three steps. Two-day quote.
           </h2>
           <div className="mt-fib-5">
             <ProcessCards steps={STEPS} anim="steps-card" numeralLead />
