@@ -142,29 +142,23 @@ export function Services() {
           {/* ── 02 · THE LANDING ── */}
           <article data-svc-row className="svc-card p-fib-3 text-ink">
             <div data-anim="artifact" className="svc-card-demo">
-              {/* the win frame: the site we built, in a browser window —
-                  the one desktop frame among the phones, because a WEBSITE
-                  is bought as a big-screen thing (the landing card owns the
-                  phone). Hover pans the tall capture: the demo tours it. */}
-              <div className="brw" aria-hidden>
-                <div className="brw-bar">
-                  <span className="brw-dots">
-                    <i />
-                    <i />
-                    <i />
-                  </span>
-                  <span className="brw-url">desertwingsflightschool.com</span>
-                </div>
-                <div className="brw-screen">
+              {/* the win frame: the site we built, on a laptop (Jake's
+                  call: real bezel, not a browser chrome) — the one big
+                  screen among the phones, because a WEBSITE is bought as
+                  a big-screen thing (the landing card owns the phone).
+                  Hover pans the tall capture: the demo tours the site. */}
+              <div className="lap" aria-hidden>
+                <div className="lap-screen">
                   <Image
                     src="/work/dw-tour.jpg"
-                    alt="The Desert Wings site we designed and built, in a desktop browser"
+                    alt="The Desert Wings site we designed and built, on a laptop"
                     width={2880}
                     height={4446}
-                    sizes="(min-width: 1280px) 340px, 86vw"
-                    className="brw-page"
+                    sizes="(min-width: 1280px) 350px, 86vw"
+                    className="lap-page"
                   />
                 </div>
+                <div className="lap-base" />
               </div>
             </div>
             <h3 data-anim="copy" className="t-title--lg mt-fib-3 md:mt-fib-4">

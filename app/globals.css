@@ -5255,28 +5255,28 @@ span.g-m-fav {
    only, reduced-motion sits still. */
 @media (hover: hover) {
   .svc-card .svc-card-demo .dvc,
-  .svc-card .svc-card-demo .brw {
+  .svc-card .svc-card-demo .lap {
     transition: transform 0.45s var(--ease-ui);
   }
   .svc-card:hover .svc-card-demo .dvc,
-  .svc-card:hover .svc-card-demo .brw {
+  .svc-card:hover .svc-card-demo .lap {
     transform: translateY(-10px);
   }
-  /* the websites tour: the desktop capture pans up inside its browser
-     window on hover — the demo literally tours the site (long linearish
-     glide there, same road back) */
-  .svc-card .brw-page {
+  /* the websites tour: the desktop capture pans up inside the laptop
+     screen on hover — the demo literally tours the site (long glide
+     there, same road back) */
+  .svc-card .lap-page {
     transition: transform 5s var(--ease-ui);
   }
-  .svc-card:hover .brw-page {
-    /* -50% of the rendered capture never outruns what the well can show
-       (tour is 2880×4446 → ~1.5 own-heights taller than the window) */
+  .svc-card:hover .lap-page {
+    /* screen shows ~46% of the rendered capture (16:10 window on a
+       2880×4446 image) — -50% never outruns the bottom edge */
     transform: translateY(-50%);
   }
   @media (prefers-reduced-motion: reduce) {
     .svc-card:hover .svc-card-demo .dvc,
-    .svc-card:hover .svc-card-demo .brw,
-    .svc-card:hover .brw-page {
+    .svc-card:hover .svc-card-demo .lap,
+    .svc-card:hover .lap-page {
       transform: none;
     }
   }
@@ -5305,61 +5305,46 @@ span.g-m-fav {
   flex-shrink: 0;
   margin-top: 21px;
 }
-/* ── the browser window (the websites card, 2026-07-21): a website is
-   bought as a big-screen thing — one desktop frame among the phones
-   differentiates "whole site" from "landing page" at a glance. DOM-built
-   like the Google mocks; first use of the reusable-device-frame idea.
-   (A literal laptop was considered and dropped: at a ~240px well the
-   bezel+keyboard tax makes the screen unreadable.) ── */
-.brw {
-  width: min(92%, 340px);
+/* ── the laptop (the websites card — Jake, 2026-07-21: "i want an actual
+   laptop looking bezel"): a website is bought as a big-screen thing, and
+   one laptop among the phones differentiates "whole site" from "landing
+   page" at a glance. Thin MacBook-ish bezel so the screen keeps its
+   pixels; the base lip + notch sell the object. House DOM artifact —
+   second use of the reusable-device-frame idea. ── */
+.lap {
+  align-self: center;
+  width: min(94%, 350px);
   flex-shrink: 0;
-  margin-top: 21px;
-  border-radius: 10px 10px 0 0;
+  filter: drop-shadow(0 13px 21px rgba(19, 20, 19, 0.22));
+}
+.lap-screen {
+  aspect-ratio: 16 / 10;
   overflow: hidden;
-  background: #fff;
-  box-shadow:
-    0 0 0 1px rgba(19, 20, 19, 0.08),
-    0 13px 34px -8px rgba(19, 20, 19, 0.28);
+  border: 7px solid #17181a;
+  border-bottom-width: 12px;
+  border-radius: 13px 13px 4px 4px;
+  background: #17181a;
 }
-.brw-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 28px;
-  padding: 0 10px;
-  background: var(--color-panel);
-  border-bottom: 1px solid rgba(19, 20, 19, 0.06);
+/* the deck: wider than the screen, with the thumb-groove notch */
+.lap-base {
+  position: relative;
+  height: 10px;
+  margin-inline: -5.5%;
+  border-radius: 2px 2px 8px 8px;
+  background: linear-gradient(#e6e7e9, #c9cbcf 70%, #9fa2a8);
 }
-.brw-dots {
-  display: flex;
-  gap: 4px;
+.lap-base::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 16%;
+  height: 4px;
+  transform: translateX(-50%);
+  border-radius: 0 0 6px 6px;
+  background: #b2b5ba;
 }
-.brw-dots i {
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: rgba(19, 20, 19, 0.16);
-}
-.brw-url {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  height: 17px;
-  margin-right: 19px; /* optically recenters against the dots */
-  border-radius: 999px;
-  background: rgba(19, 20, 19, 0.05);
-  font-size: 9px;
-  letter-spacing: 0.02em;
-  color: rgba(19, 20, 19, 0.55);
-  white-space: nowrap;
-}
-.brw-screen {
-  overflow: hidden;
-}
-.brw-page {
+.lap-page {
   display: block;
   width: 100%;
   height: auto;
