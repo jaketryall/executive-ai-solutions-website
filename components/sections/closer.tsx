@@ -16,7 +16,9 @@ import { CTA } from "@/components/ui/cta";
    and the oversized statement reads itself across the frame while you're
    held there — the whole sentence passes, landing on the ask, the pill
    arriving with it — then the box releases into the footer reveal.
-   Reduced motion rests it with the statement wrapped and centered. */
+   Reduced motion rests it with the statement wrapped and centered.
+   NOTE (2026-07-21): the review flagged this pin against the motion
+   taxonomy; Jake's call — the pin STAYS ("i liked it pinned"). */
 
 export function Closer() {
   const root = useRef<HTMLElement>(null!);

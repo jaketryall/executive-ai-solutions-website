@@ -96,7 +96,7 @@ export function Faq() {
               Anything else, ask us directly. We reply within one business day.
             </p>
             <div className="mt-fib-3">
-              <CTA href="#contact" label="Ask your question" tone="ink" />
+              <CTA href="/contact" label="Ask your question" tone="ink" />
             </div>
           </div>
         </div>
