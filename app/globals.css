@@ -462,6 +462,14 @@ main {
 .u-link:focus-visible::after {
   transform: scaleX(1);
 }
+/* quiet text links are ~26px tall — this grows the TAP zone to the 44px
+   HIG floor without moving a visible pixel (::after is the underline, so
+   the extender lives on ::before). Mobile audit, 2026-07-21. */
+.u-link--tap::before {
+  content: "";
+  position: absolute;
+  inset: -9px 0;
+}
 
 /* segmented selector — pill-in-pill variant B (sliding thumb) */
 .seg {
@@ -1115,8 +1123,9 @@ section[id] {
 .schat-send {
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  /* 44px floor — the HIG tap minimum (mobile audit 2026-07-21) */
+  width: 44px;
+  height: 44px;
   flex: none;
   border-radius: 999px;
   background: var(--color-ink);

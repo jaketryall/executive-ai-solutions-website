@@ -771,7 +771,7 @@ export function Hero() {
             className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-3 lg:justify-start"
           >
             <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
-            <a href="#site-check" className="u-link text-ink/70">
+            <a href="#site-check" className="u-link u-link--tap text-ink/70">
               Not sure yet? Run the free audit
             </a>
           </div>

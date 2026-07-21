@@ -257,7 +257,7 @@ export function SiteCheck() {
             </div>
             <div className="scheck-next mt-fib-4 flex flex-wrap items-center gap-fib-3">
               <CTA href="/pricing#estimate" label="Price my project" tone="paper" />
-              <Link href="/contact" className="u-link t-meta text-paper/70">
+              <Link href="/contact" className="u-link u-link--tap t-meta text-paper/70">
                 Want the human read? Send it over
               </Link>
             </div>
