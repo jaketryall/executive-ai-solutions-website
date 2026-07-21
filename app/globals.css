@@ -5406,6 +5406,30 @@ span.g-m-fav {
   width: 100%;
   height: auto;
 }
+/* ── the duo (websites card — Jake, 2026-07-21: "laptop behind and then
+   phone like that", SK composition): laptop behind-right, the mobile
+   build on a phone front-left. The well's clip crops both devices'
+   feet; both existing hover rules (lift + laptop pan) still apply. ── */
+.svc-duo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.svc-duo .lap {
+  position: absolute;
+  top: 21px;
+  right: -5%;
+  width: min(74%, 290px);
+}
+.svc-duo .dvc {
+  position: absolute;
+  z-index: 2;
+  top: 34px;
+  left: 5%;
+  width: min(44%, 168px);
+  margin-top: 0;
+  filter: drop-shadow(0 13px 21px rgba(19, 20, 19, 0.25));
+}
 /* the mobile diet (audit 2026-07-21: Services alone ran 5 viewports on a
    phone) — shallower wells; every win frame lives at the TOP of its mock,
    so the deeper crop costs nothing the visitor needed */

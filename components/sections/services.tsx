@@ -142,23 +142,39 @@ export function Services() {
           {/* ── 02 · THE LANDING ── */}
           <article data-svc-row className="svc-card p-fib-3 text-ink">
             <div data-anim="artifact" className="svc-card-demo">
-              {/* the win frame: the site we built, on a laptop (Jake's
-                  call: real bezel, not a browser chrome) — the one big
-                  screen among the phones, because a WEBSITE is bought as
-                  a big-screen thing (the landing card owns the phone).
-                  Hover pans the tall capture: the demo tours the site. */}
-              <div className="lap" aria-hidden>
-                <div className="lap-screen">
-                  <Image
-                    src="/work/dw-tour.jpg"
-                    alt="The Desert Wings site we designed and built, on a laptop"
-                    width={2880}
-                    height={4446}
-                    sizes="(min-width: 1280px) 350px, 86vw"
-                    className="lap-page"
-                  />
+              {/* the win frame, DUO composition (Jake, 2026-07-21: "laptop
+                  behind and then phone like that"): the desktop build sits
+                  BEHIND on the laptop, the mobile build stands in FRONT on
+                  a phone — one glance says "we build both screens." The
+                  phone shows the BOOKING section (the landing card owns
+                  the hero crop). Hover still pans the laptop's capture. */}
+              <div className="svc-duo" aria-hidden>
+                <div className="lap">
+                  <div className="lap-screen">
+                    <Image
+                      src="/work/dw-tour.jpg"
+                      alt="The Desert Wings site we designed and built, on a laptop"
+                      width={2880}
+                      height={4446}
+                      sizes="(min-width: 1280px) 300px, 70vw"
+                      className="lap-page"
+                    />
+                  </div>
+                  <div className="lap-base" />
                 </div>
-                <div className="lap-base" />
+                <div className="dvc">
+                  <span className="dvc-island" />
+                  <div className="dvc-screen">
+                    <Image
+                      src="/work/live/dw-mobile-booking.jpg"
+                      alt="The same build's booking flow, on a phone"
+                      width={1170}
+                      height={2532}
+                      sizes="(min-width: 1280px) 160px, 40vw"
+                      className="block h-auto w-full"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             <h3 data-anim="copy" className="t-title--lg mt-fib-3 md:mt-fib-4">
