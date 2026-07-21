@@ -649,7 +649,10 @@ export function Hero() {
       {/* md:pt 108 (third lift, 2026-07-17): 27px of air under the nav
           capsule (bottoms ~81) — the floor of the range; below ~100 we're
           back to the "content is really close to nav" complaint */}
-      <div className="hero-in wrap relative z-10 flex min-h-[86svh] flex-col items-center justify-center pb-fib-4 pt-[110px] text-center md:pt-[120px]">
+      {/* 80svh (Jake, 2026-07-21: "raise the card under so we see free
+          site audit text"): the peek must include the tray's TITLE, not
+          just its gray shoulder — the fold shows the words */}
+      <div className="hero-in wrap relative z-10 flex min-h-[80svh] flex-col items-center justify-center pb-fib-4 pt-[110px] text-center md:pt-[120px]">
         {/* relative: the float anchors to this column, so the exit
             parallax carries text AND phone together */}
         <div className="hero-left relative flex w-full flex-col items-center">

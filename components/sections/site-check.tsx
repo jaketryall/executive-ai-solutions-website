@@ -139,7 +139,10 @@ export function SiteCheck() {
       // full width, floating on the hero's white stage (the section keeps
       // bg-white so the tray's surround matches the hero, not the cream).
       // Revert = drop the tray div, put bg-panel back on the section.
-      className="relative bg-white px-fib-1 pb-fib-4 pt-fib-4 text-ink md:px-fib-2 md:pt-fib-5"
+      // pt fib-3 (Jake, 2026-07-21): the shorter hero + tighter seam put
+      // the tray's "Free site audit" TITLE above the fold, not just the
+      // card's gray shoulder
+      className="relative bg-white px-fib-1 pb-fib-4 pt-fib-3 text-ink md:px-fib-2"
     >
       <div className="rounded-panel bg-panel pb-fib-7 pt-fib-5">
       <div className="wrap">
