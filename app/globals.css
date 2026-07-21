@@ -1904,9 +1904,55 @@ img.g-fav {
      grab my attention a lot more, felt more balanced" — size yes,
      gray stage no): 40svh of width caps the ~2.13x-tall bezel at
      ~85svh — 360px on a 900 screen, the full 400 on tall ones,
-     never past the fold. */
+     never past the fold. (Below lg this is still the size law; at
+     lg+ the six2eight float overrides it, below.) */
   width: min(400px, 88vw, 40svh);
   flex-shrink: 0;
+}
+/* ── the six2eight float (Jake, 2026-07-21, ref six2eight.com): the
+   phone lives INSIDE the statement — overlapping the centered
+   headline's right flank — so the eye never has to choose between
+   text and visual. Transform hygiene: .hero-float carries position
+   only (it sits inside .hero-left, so the exit parallax carries it
+   for free); .hero-tilt carries the CSS rotation + the backing tile
+   (his yellow sticker, in our gray); the entrance animates the
+   [data-anim=phone] div inside. No transform has two writers. ── */
+.hero-tilt {
+  position: relative;
+}
+@media (min-width: 1024px) {
+  .hero-float {
+    position: absolute;
+    z-index: 20;
+    /* INSIDE the words, not beside them (the six2eight trick): the
+       sentence resumes past the phone's right edge. Tuned so the
+       phone's occlusion lands on the FIXED accent line's tail — the
+       roll line varies per industry, the cover must not */
+    top: -8px;
+    right: 13%;
+  }
+  .hero-tilt {
+    transform: rotate(4deg);
+  }
+  .hero-tilt::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -4% -5%;
+    border-radius: var(--radius-panel);
+    background: var(--color-panel);
+    /* NET tilt matters: this rotation is INSIDE the tilted parent, so
+       -9 here reads as -5 on screen — opposing the phone's +4. (-4 and
+       +4 cancel to a static slab; the sticker needs the shear.) */
+    transform: rotate(-9deg);
+    box-shadow: 0 21px 55px -21px rgba(19, 20, 19, 0.28);
+  }
+  .hero-float .hero-phone {
+    /* 200 caps the bezel at ~426 tall: the float's bottom (plus tile +
+       shadow) must die above the CTA row — the trust text may never be
+       cut. Occlusion belongs to the HEADLINE only. */
+    width: min(200px, 15vw);
+  }
 }
 .hero-phone .dvc {
   width: 100%;

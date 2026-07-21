@@ -288,10 +288,9 @@ export function Hero() {
   }, []);
 
   // THE hero for everyone (Jake, 2026-07-17: "the adaptive hero on home
-  // page too") — organic gets the split with the phone SYNCED to the
-  // roll (headline swaps industry → the phone re-searches); labeled
-  // traffic gets it locked to their industry / campaign surface.
-  const adaptive = true;
+  // page too") — organic gets the phone SYNCED to the roll (headline
+  // swaps industry → the phone re-searches); labeled traffic gets it
+  // locked to their industry / campaign surface.
 
   const ariaPair = ROLL_PAIRS[locked ?? 0];
 
@@ -315,14 +314,8 @@ export function Hero() {
         { autoAlpha: 1, y: 0, duration: 0.8, clearProps: "transform" },
         0.05
       )
-        // track A — trust crowns first (the SK order), the eyebrow sets
-        // the category, the statement rises
-        .fromTo(
-          q("[data-anim='stars']"),
-          { autoAlpha: 0, y: 10 },
-          { autoAlpha: 1, y: 0, duration: 0.55, ease: EASE_UI },
-          0.05
-        )
+        // track A — the eyebrow sets the category, the statement rises
+        // (the trust group rides the CTA row's beat now — six2eight order)
         .fromTo(
           q("[data-anim='eyebrow']"),
           { autoAlpha: 0, y: 13 },
@@ -658,68 +651,19 @@ export function Hero() {
     // audit section's warm-gray band below reads as a visible chapter line
     // right at the fold — the ground change announces "there's more"
     <section id="top" ref={root} className="hero relative bg-white">
-      {/* the SearchKings hero: CENTERED — claim, one action, the quiet
-          audit path, the de-risk line. No mockup; the services cards
-          directly below carry the demos. */}
+      {/* the six2eight hero (Jake, 2026-07-21, ref six2eight.com): one
+          CENTERED statement with the adaptive phone floating INSIDE it —
+          overlapping the headline's right flank — trust beside the CTA
+          where their platform icons sit, and the audit tray cresting the
+          fold below (their peek, our give). */}
       {/* md:pt 108 (third lift, 2026-07-17): 27px of air under the nav
           capsule (bottoms ~81) — the floor of the range; below ~100 we're
           back to the "content is really close to nav" complaint */}
-      <div
-        className={`hero-in wrap relative z-10 flex min-h-[60svh] flex-col items-center justify-center pb-fib-4 pt-[100px] text-center md:pt-[108px] ${
-          adaptive
-            ? "lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-fib-6 lg:text-left"
-            : ""
-        }`}
-      >
-        {/* ── the SearchKings stack, our true content (Jake, 2026-07-16):
-            trust → outcome → how → incentives. Their stars/badges are
-            earned marks we don't hold, so every trust beat here is a
-            checkable fact instead: place in the eyebrow, real surfaces
-            in the marks row, real terms in the chips. ── */}
-        {/* w-full keeps the column honest inside the grid */}
-        <div
-          className={`hero-left flex w-full flex-col items-center ${
-            adaptive ? "lg:items-start" : ""
-          }`}
-        >
-          {/* the trust crown (Jake's SK decode: stars first) — REAL reviews,
-              all five-star; the count is deliberately unstated until it's
-              a number worth printing. No volume implied. */}
-          <div
-            data-anim="stars"
-            className="flex items-center gap-fib-1"
-            aria-label="Rated 5.0 by our clients"
-          >
-            {/* the pile — PLACEHOLDER initials until Jake's three real
-                client photos land (he's collecting them, 2026-07-17).
-                Swap: replace each span with <img src="/work/face-N.jpg">.
-                NEVER ship stock faces. */}
-            <span className="hero-pile" aria-hidden>
-              {/* 4 nodes: 3 visible slots + 1 offstage — the conveyor
-                  rotates roles (a new face blooms in at the front, the
-                  back one slips out) */}
-              {[0, 1, 2, 3].map((n) => (
-                <span
-                  key={n}
-                  data-face
-                  className={n === 3 ? "opacity-0" : ""}
-                >
-                  {FACES[n]}
-                </span>
-              ))}
-            </span>
-            <span className="hero-stars" aria-hidden>
-              {[0, 1, 2, 3, 4].map((s) => (
-                <svg key={s} viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.8L10 1.5z" />
-                </svg>
-              ))}
-            </span>
-            <span className="t-meta text-ink/70" aria-hidden>
-              5.0 from our clients
-            </span>
-          </div>
-          <p data-anim="eyebrow" className="t-meta mt-fib-2 uppercase text-ink/70">
+      <div className="hero-in wrap relative z-10 flex min-h-[86svh] flex-col items-center justify-center pb-fib-4 pt-[100px] text-center md:pt-[108px]">
+        {/* relative: the float anchors to this column, so the exit
+            parallax carries text AND phone together */}
+        <div className="hero-left relative flex w-full flex-col items-center">
+          <p data-anim="eyebrow" className="t-meta uppercase text-ink/70">
             Full-funnel ads agency &middot; Mesa, AZ
           </p>
           {/* the two-tone statement (the signature): bright outcome, dim
@@ -729,7 +673,7 @@ export function Hero() {
               specifics) */}
           <h1
             data-anim="statement"
-            className="t-statement t-statement--hero mx-auto mt-fib-2 lg:mx-0"
+            className="t-statement t-statement--hero mx-auto mt-fib-2"
             aria-label={`${ariaPair.out} ${ariaPair.who}. We run the whole click.`}
           >
             {/* ALWAYS TWO LINES (Jake, 2026-07-17): the rolling sentence
@@ -754,36 +698,73 @@ export function Hero() {
             </span>
           </h1>
 
-          {/* the HOW returns (fill-the-left, Jake 2026-07-17): with the
-              phone owning the right, the text column needs real mass —
-              claim at full size, the machine named in one line, the
-              action plus the quiet audit path */}
+          {/* 32ch (not 42): the centered lede must END before the float's
+              left edge (~987px at 1440) — a paragraph cut mid-word reads
+              broken, unlike the headline's deliberate occlusion */}
           <p
             data-anim="how"
-            className="t-lede mx-auto mt-fib-3 max-w-[42ch] text-ink/65 lg:mx-0"
+            className="t-lede mx-auto mt-fib-3 max-w-[32ch] text-ink/65"
           >
             The ad, the landing page, the AI follow-up &mdash; one team owns
             every step between the search and the booked job.
           </p>
 
+          {/* the action row, six2eight shape: the CTA with the trust group
+              where their platform icons sit — REAL reviews, all five-star;
+              the count stays unstated until it's a number worth printing */}
           <div
             data-anim="ctas"
-            className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-3 lg:justify-start"
+            className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-3"
           >
             <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
+            <div
+              className="flex items-center gap-fib-1"
+              aria-label="Rated 5.0 by our clients"
+            >
+              {/* the pile — PLACEHOLDER initials until Jake's real client
+                  photos land. Swap: replace each span with
+                  <img src="/work/face-N.jpg">. NEVER ship stock faces. */}
+              <span className="hero-pile" aria-hidden>
+                {/* 4 nodes: 3 visible slots + 1 offstage — the conveyor
+                    rotates roles (a new face blooms in at the front, the
+                    back one slips out) */}
+                {[0, 1, 2, 3].map((n) => (
+                  <span
+                    key={n}
+                    data-face
+                    className={n === 3 ? "opacity-0" : ""}
+                  >
+                    {FACES[n]}
+                  </span>
+                ))}
+              </span>
+              <span className="hero-stars" aria-hidden>
+                {[0, 1, 2, 3, 4].map((s) => (
+                  <svg key={s} viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.8L10 1.5z" />
+                  </svg>
+                ))}
+              </span>
+              <span className="t-meta text-ink/70" aria-hidden>
+                5.0 from our clients
+              </span>
+            </div>
+          </div>
+          <p data-anim="ctas" className="mt-fib-3">
             <a href="#site-check" className="u-link u-link--tap text-ink/70">
               Not sure yet? Run the free audit
             </a>
-          </div>
+          </p>
 
-        </div>
-
-        {/* the adaptive phone — THEIR search, won (or the svc campaign's
-            surface). All four SERPs ride stacked in one screen; organic
-            crossfades them on the roll's beat, labeled traffic pins its
-            own. Each frame is a static win frame; the performing cycle
-            lives on the service pages. */}
-        <div data-anim="phone" className="hero-phone mx-auto mt-fib-5 lg:mt-0">
+          {/* the adaptive phone — THEIR search, won (or the svc campaign's
+              surface) — floating over the statement's right flank at lg+
+              (backing tile + tilt live on .hero-tilt), in the flow below
+              the text on smaller screens. All four SERPs ride stacked in
+              one screen; organic crossfades them on the roll's beat,
+              labeled traffic pins its own. */}
+          <div className="hero-float">
+            <div className="hero-tilt">
+              <div data-anim="phone" className="hero-phone mx-auto mt-fib-5 lg:mt-0">
           {svc === "ai" ? (
             <HeroChatPhone />
           ) : svc === "websites" ? (
@@ -824,10 +805,11 @@ export function Hero() {
               </div>
             </div>
           )}
+              </div>
+            </div>
+          </div>
         </div>
-
       </div>
-
     </section>
   );
 }
