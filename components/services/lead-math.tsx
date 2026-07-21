@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CTA } from "@/components/ui/cta";
 import { revealUp } from "@/components/anim/reveal";
 import { gsap, useGSAP, reducedMotion } from "@/components/anim/ease";
+import { getPersona } from "@/lib/persona";
 
 /* The lead math — the ads convincer (Jake, 2026-07-15: "i want to convince
    them they need ads"). Three numbers every owner knows by heart, pure
@@ -18,6 +19,20 @@ import { gsap, useGSAP, reducedMotion } from "@/components/anim/ease";
    math says what they're worth. */
 
 const MGMT = 500;
+
+/* per-vertical starting positions (market research, 2026-07-21): the ad's
+   ?i= label seeds the sliders with that trade's realistic figures — a
+   flight school shouldn't have to drag "customer worth" up from a generic
+   $1,500. Starts only, not claims: the owner's own numbers overwrite them
+   the moment they touch a slider, and the arithmetic stays theirs.
+   flight — a certificate student runs ~$10–14k (slider caps at 10k);
+   trades — a CUSTOMER with repeat work, not one ~$340 call ticket;
+   restaurant — a regular's worth (~$685 researched), not one visit. */
+const VERTICAL_DEFAULTS: Record<string, { value: number; close: number }> = {
+  flight: { value: 10000, close: 15 },
+  trades: { value: 1000, close: 30 },
+  restaurant: { value: 600, close: 45 },
+};
 
 const fmt = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
 
@@ -78,6 +93,16 @@ export function LeadMathCore({
   const [value, setValue] = useState(1500);
   const [close, setClose] = useState(25);
   const [budget, setBudget] = useState(750);
+
+  // effect, not initializer: sessionStorage on first render would mismatch
+  // the server HTML at hydration
+  useEffect(() => {
+    const p = getPersona();
+    const d = p.i ? VERTICAL_DEFAULTS[p.i] : undefined;
+    if (!d) return;
+    setValue(d.value);
+    setClose(d.close);
+  }, []);
 
   const rate = close / 100;
   const leadWorth = value * rate;
