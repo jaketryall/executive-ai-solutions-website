@@ -46,7 +46,14 @@ export function Estimate({ standalone = false }: { standalone?: boolean } = {}) 
   // headline BUILD number stays at its untouched default, so the preselect
   // personalizes without inflating the first price they see.
   const baseline = useRef<EstimateState>(DEFAULT_STATE);
+  const personaApplied = useRef(false);
   useEffect(() => {
+    // once only: StrictMode re-runs effects, and a second run would build a
+    // FRESH baseline object — est would no longer === baseline.current and
+    // the pill below would claim a price nobody asked for (caught live,
+    // 2026-07-21: the capsule showed $2,500 on an untouched estimator)
+    if (personaApplied.current) return;
+    personaApplied.current = true;
     capturePersona();
     const p = getPersona();
     const monthly = [
@@ -60,11 +67,13 @@ export function Estimate({ standalone = false }: { standalone?: boolean } = {}) 
   }, []);
 
   // the persistent CTA capsule carries the visitor's live total once they
-  // have TOUCHED the estimator (est leaves the baseline reference on first
-  // change; the baseline is DEFAULT_STATE or the persona preselect) — an
-  // untouched price in the pill would read as a claim
+  // have TOUCHED the estimator — an untouched price in the pill would read
+  // as a claim. Guard against BOTH untouched states: DEFAULT_STATE covers
+  // the commit where the persona effect has already moved baseline.current
+  // but this effect still closes over the pre-persona est (same-commit
+  // ordering, caught live 2026-07-21); baseline covers the persona render.
   useEffect(() => {
-    if (est === baseline.current) return;
+    if (est === DEFAULT_STATE || est === baseline.current) return;
     window.dispatchEvent(
       new CustomEvent("eas:estimate", { detail: { total: result.total } })
     );
