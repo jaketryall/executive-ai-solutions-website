@@ -5501,6 +5501,66 @@ span.g-m-fav {
 .svc-card-demo .chat-booked {
   opacity: 1;
 }
+/* ── THE EMPHASIS GRAMMAR (Jake, 2026-07-22, SK reference: "they have
+   the ad and search highlighted… the response is in a box… it
+   highlights everything"): in every service mock THE WIN floats — an
+   elevated white card — and everything around it recedes. Scoped to
+   the router cards; the hero phone keeps its live enactment dimming. ── */
+/* card 1 · Google Ads: the ad is the win */
+.svc-card-demo .g-m-ad {
+  margin: 1.5cqw 3cqw 3cqw;
+  padding: 3cqw 3.6cqw 3.6cqw;
+  border-radius: 3.6cqw;
+  background: #fff;
+  box-shadow:
+    0 1px 3px rgba(60, 64, 67, 0.16),
+    0 4.6cqw 8.7cqw -4.1cqw rgba(60, 64, 67, 0.38);
+}
+.svc-card-demo .g-m-tabs,
+.svc-card-demo .g-m-loc {
+  opacity: 0.45;
+}
+/* card 4 · LSA: the Guaranteed listing is the win */
+.svc-card-demo .g-lsa-row.is-win {
+  margin: 1cqw 0 1.5cqw;
+  padding: 3.1cqw 3.1cqw;
+  border-radius: 3.6cqw;
+  border-bottom: 0;
+  background: #fff;
+  box-shadow:
+    0 1px 3px rgba(60, 64, 67, 0.16),
+    0 4.6cqw 8.7cqw -4.1cqw rgba(60, 64, 67, 0.38);
+}
+.svc-card-demo .g-lsa-row:not(.is-win),
+.svc-card-demo .g-lsa .g-skel,
+.svc-card-demo .g-lsa-head {
+  opacity: 0.45;
+}
+/* card 3 · the follow-up: the answer + the booked toast are the win */
+.svc-card-demo .chat-b--user {
+  opacity: 0.55;
+}
+.svc-card-demo .chat-b--bot,
+.svc-card-demo .chat-booked {
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgba(60, 64, 67, 0.14),
+    0 13px 26px -10px rgba(60, 64, 67, 0.3);
+}
+/* card 6 · AEO: the recommendation is the win */
+.svc-card-demo .ai-m-a {
+  margin-top: 2cqw;
+  padding: 3.6cqw 4.1cqw;
+  border-radius: 3.6cqw;
+  background: #fff;
+  box-shadow:
+    0 1px 3px rgba(60, 64, 67, 0.16),
+    0 4.6cqw 8.7cqw -4.1cqw rgba(60, 64, 67, 0.38);
+}
+.svc-card-demo .ai-m-top,
+.svc-card-demo .ai-m-q {
+  opacity: 0.5;
+}
 .svc-card-demo .chat-thread {
   display: flex;
   flex-direction: column;

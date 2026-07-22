@@ -286,7 +286,7 @@ export function Services() {
                         </svg>
                         GOOGLE GUARANTEED
                       </p>
-                      <div className="g-lsa-row">
+                      <div className="g-lsa-row is-win">
                         <span className="g-lsa-av">M</span>
                         <span className="g-lsa-t">
                           <span className="g-lsa-name">Mesa Rapid Plumbing</span>
