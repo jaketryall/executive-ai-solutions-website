@@ -5106,12 +5106,11 @@ html.wki-lock body {
 .dvc-screen.dvc-screen--ui {
   background: #fff;
   color: var(--color-ink);
-  /* the status-bar breath — tuned by Jake's eye twice: 2026-07-17
-     "a little high" pushed it to 9%; 2026-07-21 "a little low" (with
-     a real-bezel reference) pulled it back to 6%. NOTE: % padding
-     resolves against WIDTH, and .g-m-bar adds its own 5.6cqw margin
-     below this. */
-  padding-top: 6%;
+  /* the status-bar breath — tuned by Jake's eye THRICE: 9% ("a little
+     high", 07-17) → 6% ("a little low", 07-21) → 4% ("again a little
+     low", 07-22). NOTE: % padding resolves against WIDTH, and .g-m-bar
+     adds its own 5.6cqw margin below this. */
+  padding-top: 4%;
 }
 /* ── the mobile Google skin (.g-m): pixel-true replica of the 2026
    mobile SERP, every value measured off Google's live DOM in light
