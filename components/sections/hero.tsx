@@ -342,11 +342,17 @@ export function Hero() {
         ;
       // the adaptive phone rises with the claim (only exists for labeled traffic)
       if (q("[data-anim='phone']").length) {
+        // the six2eight reveal (Jake, 2026-07-21: "the title starts
+        // with no image, then the text separates or something to reveal
+        // the images"): the statement gets its SOLO moment first — the
+        // phone blooms through it last, growing from behind the words
+        // (scale on the inner div; the tilt/tile live on .hero-tilt so
+        // no transform has two writers)
         tl.fromTo(
           q("[data-anim='phone']"),
-          { autoAlpha: 0, y: 26 },
-          { autoAlpha: 1, y: 0, duration: 0.9 },
-          0.5
+          { autoAlpha: 0, scale: 0.55, y: 21 },
+          { autoAlpha: 1, scale: 1, y: 0, duration: 0.9 },
+          1.15
         );
       }
 
