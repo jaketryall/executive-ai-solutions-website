@@ -1909,12 +1909,12 @@ img.g-fav {
   flex-shrink: 0;
 }
 /* the split statement (Jake, 2026-07-22: "get found get booked no
-   periods" in the viral split) — short fixed lines afford true
-   reference scale inside the ~665px left column ("Get booked", 10ch,
-   is the limiter). */
+   periods" in the viral split) — viral's register, not a billboard
+   ("its a little big i feel like the subtlety for virals is good"):
+   ~86px at 1440, generous air around it. */
 .t-statement--62 {
-  font-size: clamp(2.75rem, 7.4vw, 6.8rem);
-  line-height: 1.02;
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  line-height: 1.04;
 }
 /* the platform logo marquee (Jake, 2026-07-22: "black and the actual
    logos… infinite marquee… inside the box still just like viral"): the
