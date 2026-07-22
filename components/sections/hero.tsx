@@ -360,6 +360,27 @@ export function Hero() {
           { autoAlpha: 1, scale: 1, duration: 0.5, ease: EASE_UI },
           2.0
         );
+        // THE CLICK BEAT (Jake, 2026-07-21: "something cool with the
+        // click text… it becomes the phone"): the sentence lands whole,
+        // then its last word gets literally CLICKED — a button press —
+        // and the falling phone absorbs it. The word the phone replaces
+        // is the thing the phone shows: a won click. lg+ only (the
+        // float doesn't exist below; mobile keeps the full sentence).
+        const clickWord = q("[data-click-word]")[0];
+        if (clickWord && window.matchMedia("(min-width: 1024px)").matches) {
+          tl.to(
+            clickWord,
+            { scale: 0.92, y: 3, duration: 0.12, ease: EASE_UI },
+            1.15
+          )
+            .to(clickWord, { scale: 1, y: 0, duration: 0.2, ease: EASE_UI }, 1.27)
+            // mid-fall: the word gives way under the descending phone
+            .to(
+              clickWord,
+              { autoAlpha: 0, scale: 0.85, duration: 0.35, ease: EASE_UI },
+              1.75
+            );
+        }
       }
 
       // fonts measurable AND the route-transition sheet landed
@@ -692,7 +713,14 @@ export function Hero() {
                   reserved for the CTA and the phone's blue links. The
                   two-tone era (accent second clause) ended here. */}
               <span className="block text-ink">
-                We run the whole click.
+                We run the whole{" "}
+                {/* the last word gets CLICKED in the entrance (lg+): a
+                    button-press, then the falling phone absorbs it — the
+                    word becomes the phone showing a won click. Mobile
+                    keeps the whole sentence (no float there). */}
+                <span data-click-word className="inline-block">
+                  click.
+                </span>
               </span>
             </span>
           </h1>
