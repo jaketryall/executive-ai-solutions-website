@@ -1,4 +1,5 @@
 import { Hero } from "@/components/sections/hero";
+import { SurfaceMarquee } from "@/components/sections/surface-marquee";
 import { Services } from "@/components/sections/services";
 import { SiteCheck } from "@/components/sections/site-check";
 import { Proof } from "@/components/sections/proof";
@@ -18,6 +19,9 @@ export default function Home() {
           the hero's "run the free audit" link now lands one scroll later.
           Services shelve the fixes right below the diagnosis. */}
       <Hero />
+      {/* the names band (Jake, 2026-07-22): logos in the hero chips,
+          NAMES drifting here — the frame that later holds client logos */}
+      <SurfaceMarquee />
       <SiteCheck />
       <Services />
       <Proof />

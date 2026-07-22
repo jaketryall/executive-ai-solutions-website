@@ -1901,91 +1901,105 @@ img.g-fav {
    toast visible without the service-page GSAP hook */
 .hero-phone {
   /* BIG but height-aware (Jake, 2026-07-17: the bigger phone "did
-     grab my attention a lot more, felt more balanced" — size yes,
-     gray stage no): 40svh of width caps the ~2.13x-tall bezel at
-     ~85svh — 360px on a 900 screen, the full 400 on tall ones,
-     never past the fold. (Below lg this is still the size law; at
-     lg+ the six2eight float overrides it, below.) */
+     grab my attention a lot more, felt more balanced"; the viral split
+     2026-07-22 restores it as the right column's whole job): 40svh of
+     width caps the ~2.13x-tall bezel at ~85svh — 360px on a 900
+     screen, the full 400 on tall ones, never past the fold. */
   width: min(400px, 88vw, 40svh);
   flex-shrink: 0;
 }
-/* ── the six2eight float (Jake, 2026-07-21, ref six2eight.com): the
-   phone lives INSIDE the statement — overlapping the centered
-   headline's right flank — so the eye never has to choose between
-   text and visual. Transform hygiene: .hero-float carries position
-   only (it sits inside .hero-left, so the exit parallax carries it
-   for free); .hero-tilt carries the CSS rotation + the backing tile
-   (his yellow sticker, in our gray); the entrance animates the
-   [data-anim=phone] div inside. No transform has two writers. ── */
-.hero-tilt {
-  position: relative;
-}
-/* the sticker tile exists only where the float does (lg+) */
-.hero-tile {
-  display: none;
-}
-/* six2eight scale (Jake, 2026-07-21: "closer to the proportions of the
-   other one" + "the title should be 2 lines"): reference-size display
-   type at EVERY width — TWO lines, punch pair. The fixed accent line
-   ("We run the whole click.", 23ch) is the width limiter; the roll outs
-   are all shorter. 6.9vw ≈ 99px at 1440. */
+/* the split statement (Jake, 2026-07-22: "get found get booked no
+   periods" in the viral split) — short fixed lines afford true
+   reference scale inside the ~665px left column ("Get booked", 10ch,
+   is the limiter). */
 .t-statement--62 {
-  font-size: clamp(2.5rem, 6.9vw, 6.2rem);
-  line-height: 1.05;
+  font-size: clamp(2.75rem, 7.4vw, 6.8rem);
+  line-height: 1.02;
 }
-@media (min-width: 1024px) {
-  .hero-float {
-    position: absolute;
-    z-index: 20;
-    /* INSIDE the words, not beside them (the six2eight trick): the
-       sentence resumes past the phone's right edge. Tuned so the
-       phone's occlusion lands on the FIXED accent line's tail — the
-       roll line varies per industry, the cover must not */
-    top: -8px;
-    /* 10%: at 62-scale type the fixed accent line must keep "cl…"
-       visible left of the phone — the signature word stays guessable */
-    right: 10%;
+/* the platform logo marquee (Jake, 2026-07-22: "black and the actual
+   logos… infinite marquee… inside the box still just like viral"): the
+   drift lives INSIDE the gray capsule; the WINDOW carries the fade (a
+   mask on the moving track would drift with it). -50% loop law: track
+   halves must outspan the window. */
+.hero-logos {
+  width: min(100%, 320px);
+  padding: 10px 8px;
+  border-radius: 999px;
+  background: var(--color-panel);
+}
+.hero-logos-win {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 12%,
+    #000 88%,
+    transparent
+  );
+}
+.hero-logos-track {
+  display: flex;
+  width: max-content;
+  animation: smq-drift 16s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-logos-track {
+    animation: none;
   }
-  .hero-tilt {
-    transform: rotate(4deg);
+}
+.hero-logos-set {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  padding-right: 26px;
+  color: var(--color-ink);
+}
+.hero-chip {
+  display: inline-flex;
+}
+.hero-chip svg {
+  width: 22px;
+  height: 22px;
+}
+/* ── the names marquee band (surface-marquee.tsx): quiet wordmarks
+   drifting; edges fade so the loop has no hard entry ── */
+.smq {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+.smq-track {
+  display: flex;
+  width: max-content;
+  animation: smq-drift 42s linear infinite;
+}
+.smq-set {
+  display: flex;
+  align-items: center;
+  gap: 55px;
+  padding-right: 55px;
+}
+.smq-set span {
+  white-space: nowrap;
+  font-family: var(--font-bricolage);
+  font-size: clamp(1.05rem, 1.5vw, 1.375rem);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: rgba(19, 20, 19, 0.34);
+}
+@keyframes smq-drift {
+  to {
+    transform: translateX(-50%);
   }
-  /* the tile — a real element now (a ::before can't animate apart from
-     its parent; the gray sat visible through the statement's solo).
-     Blooms at the phone's touchdown in the entrance. */
-  .hero-tile {
-    display: block;
-    position: absolute;
-    z-index: -1;
-    inset: -4% -5%;
-    border-radius: var(--radius-panel);
-    background: var(--color-panel);
-    /* NET tilt matters: this rotation is INSIDE the tilted parent, so
-       -9 here reads as -5 on screen — opposing the phone's +4. (-4 and
-       +4 cancel to a static slab; the sticker needs the shear.)
-       GSAP scale-tweens this element: GSAP decomposes and preserves
-       this rotation, so one writer still holds. */
-    transform: rotate(-9deg);
-    box-shadow: 0 21px 55px -21px rgba(19, 20, 19, 0.28);
-  }
-  .hero-float .hero-phone {
-    /* 200 caps the bezel at ~426 tall: the float's bottom (plus tile +
-       shadow) must die above the CTA row — the trust text may never be
-       cut. Occlusion belongs to the HEADLINE only. */
-    width: min(200px, 15vw);
-  }
-  /* the house bezel radius is VIEWPORT-clamped (58px at desktop) — 29%
-     of this 200px phone's width read as a pill (Jake: "the hero image
-     phone looks goofy too"). ~15% of width = real hardware. */
-  .hero-float .dvc {
-    padding: 9px;
-    border-radius: 30px;
-  }
-  .hero-float .dvc .dvc-screen {
-    border-radius: 22px;
-  }
-  .hero-float .dvc .dvc-island {
-    top: 13px;
-    height: 8px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .smq-track {
+    animation: none;
   }
 }
 .hero-phone .dvc {

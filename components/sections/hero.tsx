@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import {
   gsap,
   ScrollTrigger,
@@ -14,21 +14,11 @@ import { Monogram } from "@/components/ui/monogram";
 import { whenArrived } from "@/components/anim/arrival";
 import { capturePersona, getPersona } from "@/lib/persona";
 
-/* The hero — the SearchKings shape (Jake, 2026-07-16): NO mockup here.
-   The demos live where the choosing happens — one per service card below,
-   one per service-page phone — so the hero is just the claim, the one
-   action, the quiet audit path, and the de-risk line. (The old search
-   enactment lives in git history at 6ac2517 if it's ever wanted back.)
-
-   The statement keeps the rolling industry mirror: it cycles for organic
-   visitors and locks to ?i= for labeled traffic (ads + reopened build links —
-   same param the builder reads). Outcome leads, industry follows. */
-const ROLL_PAIRS = [
-  { out: "More customers", who: "for local business" },
-  { out: "More students", who: "for flight schools" },
-  { out: "More bookings", who: "for restaurants" },
-  { out: "More jobs", who: "for the trades" },
-];
+/* The hero — THE VIRAL SPLIT (Jake, 2026-07-22, ref
+   viral-sma.framer.website): platform chips + a short fixed statement
+   ("Get found / Get booked") + lede + CTA on the left, the adaptive
+   phone big on the right. The h1 roll is retired; the phone alone
+   carries the industry cycle (organic cycles, ?i= locks). */
 const ROLL_LOCK: Record<string, number> = {
   flight: 1,
   restaurant: 2,
@@ -43,6 +33,53 @@ const IND_KEYS = ["other", "flight", "restaurant", "trades"] as const;
    LAUNCH RULE: every face must be a real client. Never pad with
    invented people to fake volume. */
 const FACES = ["DW", "MR", "JT", "KL", "AS"];
+
+/* the hero logo marks (Jake, 2026-07-22: "black and the actual logos"):
+   MONOCHROME ink, real marks — the OpenAI blossom is the genuine brand
+   path, the Google marks are the true geometry in single color.
+   Nominative use; we genuinely run these surfaces. They drift in a
+   compact infinite marquee (his call); the NAMES band below the hero
+   spells them out. */
+const MARKS: [string, ReactNode][] = [
+  [
+    "Google Ads",
+    <svg key="ga" viewBox="0 0 24 24" fill="currentColor">
+      <rect x="9.4" y="2.6" width="5.2" height="16.4" rx="2.6" transform="rotate(30 12 10.8)" />
+      <rect x="9.4" y="2.6" width="5.2" height="16.4" rx="2.6" transform="rotate(-30 12 10.8)" opacity="0.55" />
+      <circle cx="5.05" cy="18.6" r="2.85" opacity="0.75" />
+    </svg>,
+  ],
+  [
+    "Google Maps",
+    <svg key="gm" viewBox="0 0 24 24" fill="currentColor">
+      <path
+        fillRule="evenodd"
+        d="M12 1.5a7.5 7.5 0 0 0-7.5 7.5c0 5.4 6.55 12.57 6.83 12.87a.9.9 0 0 0 1.34 0c.28-.3 6.83-7.47 6.83-12.87A7.5 7.5 0 0 0 12 1.5Zm0 10.3a2.8 2.8 0 1 0 0-5.6 2.8 2.8 0 0 0 0 5.6Z"
+      />
+    </svg>,
+  ],
+  [
+    "Google Guaranteed",
+    <svg key="gg" viewBox="0 0 24 24" fill="currentColor">
+      <path
+        fillRule="evenodd"
+        d="M12 1.8 4 5v6.1c0 5 3.4 9.66 8 10.9 4.6-1.24 8-5.9 8-10.9V5l-8-3.2Zm-1.2 13.55-3.24-3.25 1.48-1.49 1.76 1.77 4.16-4.16 1.49 1.48-5.65 5.65Z"
+      />
+    </svg>,
+  ],
+  [
+    "ChatGPT",
+    <svg key="cg" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.073zM13.2599 22.4301a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6455zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865a4.504 4.504 0 0 1-1.6464-6.1408zm16.5963 3.8558-5.8331-3.3874L15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.4069-.6669zm2.0107-3.0231-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654 2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997z" />
+    </svg>,
+  ],
+  [
+    "AI Overviews",
+    <svg key="ao" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2c.55 5.05 4.13 8.63 9.18 9.18l.82.82-.82.82C16.13 13.37 12.55 16.95 12 22c-.55-5.05-4.13-8.63-9.18-9.18L2 12l.82-.82C7.87 10.63 11.45 7.05 12 2Z" />
+    </svg>,
+  ],
+];
 
 
 /* ══ THE ADAPTIVE PHONE (Jake, 2026-07-17: "if a plumber looked it up the
@@ -288,11 +325,8 @@ export function Hero() {
   }, []);
 
   // THE hero for everyone (Jake, 2026-07-17: "the adaptive hero on home
-  // page too") — organic gets the phone SYNCED to the roll (headline
-  // swaps industry → the phone re-searches); labeled traffic gets it
-  // locked to their industry / campaign surface.
-
-  const ariaPair = ROLL_PAIRS[locked ?? 0];
+  // page too") — organic gets the phone cycling industries; labeled
+  // traffic gets it locked to their industry / campaign surface.
 
   useGSAP(
     (context) => {
@@ -305,8 +339,9 @@ export function Hero() {
         return;
       }
 
-      /* ── Title sequence: the statement is the protagonist; the CTA
-         resolves it; the de-risk line lands last. ── */
+      /* ── Title sequence (the viral split, Jake 2026-07-22): chips set
+         the platforms, the short statement lands, the how resolves it,
+         the CTA closes, and the phone rises beside it all. ── */
       const tl = gsap.timeline({ paused: true, defaults: { ease: EASE_STRUCTURE } });
       tl.fromTo(
         navEl,
@@ -314,17 +349,18 @@ export function Hero() {
         { autoAlpha: 1, y: 0, duration: 0.8, clearProps: "transform" },
         0.05
       )
-        // track A — the statement rises alone (no eyebrow, no stars up
-        // here — six2eight proportions; trust rides the CTA row's beat)
+        .fromTo(
+          q("[data-anim='chips']"),
+          { autoAlpha: 0, y: 13 },
+          { autoAlpha: 1, y: 0, duration: 0.55, ease: EASE_UI },
+          0.1
+        )
         .fromTo(
           q("[data-anim='statement']"),
           { autoAlpha: 0, y: 34 },
-          { autoAlpha: 1, y: 0, duration: 1.0, stagger: 0.12 },
+          { autoAlpha: 1, y: 0, duration: 1.0 },
           0.22
-        );
-
-
-      tl
+        )
         // the how resolves the claim into a method
         .fromTo(
           q("[data-anim='how']"),
@@ -339,49 +375,13 @@ export function Hero() {
           { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE_UI },
           0.9
         )
-        ;
-      // the adaptive phone rises with the claim (only exists for labeled traffic)
-      if (q("[data-anim='phone']").length) {
-        // the six2eight entrance, decoded from their live CSS (2026-07-21):
-        // their words wipe in FIRST, then the media cards DROP from far
-        // above and land as the headline finishes making room. Our
-        // adaptation (their literal spacer-channel needs a SHORT visual —
-        // our 426px phone would drive through the lede): the statement
-        // gets its solo, then the phone FALLS in from above the fold and
-        // lands on the flank; the tile blooms behind it at touchdown.
-        tl.fromTo(
+        // the phone rises WITH the claim — beside it, never over it
+        .fromTo(
           q("[data-anim='phone']"),
-          { autoAlpha: 0, y: -420, scale: 0.95 },
-          { autoAlpha: 1, y: 0, scale: 1, duration: 1.0 },
-          1.2
-        ).fromTo(
-          q("[data-anim='tile']"),
-          { autoAlpha: 0, scale: 0.9 },
-          { autoAlpha: 1, scale: 1, duration: 0.5, ease: EASE_UI },
-          2.0
+          { autoAlpha: 0, y: 26 },
+          { autoAlpha: 1, y: 0, duration: 0.9 },
+          0.5
         );
-        // THE CLICK BEAT (Jake, 2026-07-21: "something cool with the
-        // click text… it becomes the phone"): the sentence lands whole,
-        // then its last word gets literally CLICKED — a button press —
-        // and the falling phone absorbs it. The word the phone replaces
-        // is the thing the phone shows: a won click. lg+ only (the
-        // float doesn't exist below; mobile keeps the full sentence).
-        const clickWord = q("[data-click-word]")[0];
-        if (clickWord && window.matchMedia("(min-width: 1024px)").matches) {
-          tl.to(
-            clickWord,
-            { scale: 0.92, y: 3, duration: 0.12, ease: EASE_UI },
-            1.15
-          )
-            .to(clickWord, { scale: 1, y: 0, duration: 0.2, ease: EASE_UI }, 1.27)
-            // mid-fall: the word gives way under the descending phone
-            .to(
-              clickWord,
-              { autoAlpha: 0, scale: 0.85, duration: 0.35, ease: EASE_UI },
-              1.75
-            );
-        }
-      }
 
       // fonts measurable AND the route-transition sheet landed
       Promise.all([document.fonts.ready, whenArrived()]).then(() => {
@@ -394,40 +394,23 @@ export function Hero() {
         );
       });
 
-      /* ── the rolling industry mirror — the hero's one living element.
-         Organic visitors see the outcome line cycle through industries;
+      /* ── the industry cycle — the hero's one living element, now the
+         PHONE's alone (the h1 went fixed, 2026-07-22: "Get found Get
+         booked"): organic visitors watch the search re-run per industry;
          ?i= traffic stays locked to its own. Governed: in-view + visible
-         tab only, and the h1 height is locked to the longest pair so the
-         CTA row never jumps. ── */
+         tab only. ── */
       if (locked === null) {
-        const out = q("[data-roll-out]")[0] as HTMLElement;
-        const h1 = q("[data-anim='statement']")[0] as HTMLElement;
-        if (out && h1) {
-          // pair 0 is the longest — lock its height so the CTA never
-          // jumps between pairs. Lock AFTER fonts land: measuring the
-          // fallback font baked a ~3-line min-height into a 2-line h1
-          // and left a phantom gap under the claim (Jake: "spacing in
-          // hero looks goofy", 2026-07-17)
-          document.fonts.ready.then(() => {
-            if (root.current) h1.style.minHeight = `${h1.offsetHeight}px`;
-          });
+        {
           let idx = 0;
           let currentSeq: gsap.core.Timeline | null = null;
           const roll = gsap.timeline({ repeat: -1, paused: true });
           roll
-            // 5.5s hold: ~3.6s of enactment + ~2s resting on the WON
-            // state before the next industry
-            .to({}, { duration: 5.5 })
-            .to(out, {
-              yPercent: -55,
-              autoAlpha: 0,
-              duration: 0.4,
-              ease: EASE_UI,
-            })
+            // 6.4s beat: ~3.6s of enactment + rest on the WON state
+            // before the next industry re-searches
+            .to({}, { duration: 6.4 })
             .call(() => {
               const prev = idx;
-              idx = (idx + 1) % ROLL_PAIRS.length;
-              out.textContent = `${ROLL_PAIRS[idx].out}.`;
+              idx = (idx + 1) % IND_KEYS.length;
               // ONE CONDUCTOR (Jake: "so glitchy") — the previous
               // enactment dies and the stage hard-resets before a new one
               // starts; overlapping timelines were fighting over the bar
@@ -534,23 +517,7 @@ export function Hero() {
                     "+=0.1"
                   );
               }
-            })
-            .fromTo(
-              out,
-              { yPercent: 55, autoAlpha: 0 },
-              {
-                yPercent: 0,
-                autoAlpha: 1,
-                duration: 0.5,
-                ease: EASE_UI,
-                /* THE ROLL BUG (found 2026-07-17): default immediateRender
-                   parked the spans at this from-state AT CREATION, the
-                   fade-out then captured that as its start, and every
-                   repeat-rewind restored it — so the 3.8s hold played
-                   INVISIBLE and the pair only flashed ~0.6s per cycle. */
-                immediateRender: false,
-              }
-            );
+            });
           const sync = () => {
             const st = ScrollTrigger.getById("hero-roll");
             const on = (st?.isActive ?? true) && !document.hidden;
@@ -674,74 +641,67 @@ export function Hero() {
     // audit section's warm-gray band below reads as a visible chapter line
     // right at the fold — the ground change announces "there's more"
     <section id="top" ref={root} className="hero relative bg-white">
-      {/* the six2eight hero (Jake, 2026-07-21, ref six2eight.com): one
-          CENTERED statement with the adaptive phone floating INSIDE it —
-          overlapping the headline's right flank — trust beside the CTA
-          where their platform icons sit, and the audit tray cresting the
-          fold below (their peek, our give). */}
-      {/* md:pt 108 (third lift, 2026-07-17): 27px of air under the nav
-          capsule (bottoms ~81) — the floor of the range; below ~100 we're
-          back to the "content is really close to nav" complaint */}
-      {/* 80svh (Jake, 2026-07-21: "raise the card under so we see free
-          site audit text"): the peek must include the tray's TITLE, not
-          just its gray shoulder — the fold shows the words */}
-      <div className="hero-in wrap relative z-10 flex min-h-[80svh] flex-col items-center justify-center pb-fib-4 pt-[110px] text-center md:pt-[120px]">
-        {/* relative: the float anchors to this column, so the exit
-            parallax carries text AND phone together */}
-        <div className="hero-left relative flex w-full flex-col items-center">
-          {/* NO eyebrow (Jake, 2026-07-21: six2eight proportions) — the
-              headline carries alone; Mesa lives in the phone's SERP */}
-          {/* TWO LINES, PUNCH PAIR (Jake, 2026-07-21: "the title should
-              be 2 lines, every other site has two lines"): the roll is
-              the outcome alone — "More jobs." — huge; the WHO left the
-              headline (the phone's SERP carries the industry mirror now,
-              and the who survives in the aria sentence). The visual text
-              swaps on the roll; screen readers get the stable claim. */}
+      {/* THE VIRAL SPLIT (Jake, 2026-07-22, ref viral-sma.framer.website:
+          "i want to go back in to split hero like this"): text left —
+          platform chips, the short fixed statement, lede, CTA + trust —
+          and the adaptive phone BIG on the right (his law: "the bigger
+          phone did grab my attention"). The h1 roll retired; the phone
+          alone carries the industry cycle. The names marquee rides in
+          its own band below the hero. */}
+      <div className="hero-in wrap relative z-10 flex min-h-[74svh] flex-col items-center justify-center pb-fib-4 pt-[110px] text-center md:pt-[120px] lg:grid lg:grid-cols-[minmax(0,54fr)_minmax(0,46fr)] lg:items-center lg:gap-fib-5 lg:text-left">
+        <div className="hero-left relative flex w-full flex-col items-center lg:items-start">
+          {/* the platform logos (Jake, 2026-07-22: black, actual marks,
+              infinite marquee) — a compact drift; -50% loop law: 4 sets,
+              each half outspans the ~340px window */}
+          <div
+            data-anim="chips"
+            className="hero-logos"
+            role="img"
+            aria-label="Platforms we run: Google Ads, Google Maps, Google Guaranteed, ChatGPT, AI Overviews"
+          >
+            {/* the WINDOW carries the fade mask — a mask on the moving
+                track would drift with it */}
+            <div className="hero-logos-win" aria-hidden>
+              <div className="hero-logos-track">
+              {[0, 1, 2, 3].map((set) => (
+                <span key={set} className="hero-logos-set">
+                  {MARKS.map(([name, icon]) => (
+                    <span key={name} className="hero-chip" title={name}>
+                      {icon}
+                    </span>
+                  ))}
+                </span>
+              ))}
+              </div>
+            </div>
+          </div>
+
+          {/* the short statement (Jake, 2026-07-22: "get found get booked
+              no periods") — fixed, two lines, instantly legible; the
+              phone's SERP carries the adaptive story now */}
           <h1
             data-anim="statement"
-            className="t-statement t-statement--hero t-statement--62 mx-auto"
-            aria-label={`${ariaPair.out} ${ariaPair.who}. We run the whole click.`}
+            className="t-statement t-statement--hero t-statement--62 mt-fib-3 text-ink"
           >
-            <span aria-hidden>
-              <span className="block text-ink">
-                <span data-roll-out className="inline-block">
-                  {ariaPair.out}.
-                </span>
-              </span>
-              {/* SOLID INK (Jake, 2026-07-21: "none of the others do") —
-                  at 99px the statement carries itself; the accent stays
-                  reserved for the CTA and the phone's blue links. The
-                  two-tone era (accent second clause) ended here. */}
-              <span className="block text-ink">
-                We run the whole{" "}
-                {/* the last word gets CLICKED in the entrance (lg+): a
-                    button-press, then the falling phone absorbs it — the
-                    word becomes the phone showing a won click. Mobile
-                    keeps the whole sentence (no float there). */}
-                <span data-click-word className="inline-block">
-                  click.
-                </span>
-              </span>
-            </span>
+            Get found
+            <br />
+            Get booked
           </h1>
 
-          {/* 36ch (not 42): the centered lede must END before the float's
-              left edge (~1026px at 1440, float at 10%) — a paragraph cut
-              mid-word reads broken, unlike the headline's occlusion */}
           <p
             data-anim="how"
-            className="t-lede mx-auto mt-fib-3 max-w-[36ch] text-ink/65"
+            className="t-lede mx-auto mt-fib-3 max-w-[38ch] text-ink/65 lg:mx-0"
           >
             The ad, the landing page, the AI follow-up &mdash; one team owns
             every step between the search and the booked job.
           </p>
 
-          {/* the action row, six2eight shape: the CTA with the trust group
-              where their platform icons sit — REAL reviews, all five-star;
-              the count stays unstated until it's a number worth printing */}
+          {/* the action row: the CTA with the trust group — REAL reviews,
+              all five-star; the count stays unstated until it's a number
+              worth printing */}
           <div
             data-anim="ctas"
-            className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-3"
+            className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-3 lg:justify-start"
           >
             <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
             <div
@@ -777,23 +737,14 @@ export function Hero() {
               </span>
             </div>
           </div>
-          {/* no quiet audit link (Jake, 2026-07-21): the audit tray
-              cresting the fold IS the invitation */}
+        </div>
 
-          {/* the adaptive phone — THEIR search, won (or the svc campaign's
-              surface) — floating over the statement's right flank at lg+
-              (backing tile + tilt live on .hero-tilt), in the flow below
-              the text on smaller screens. All four SERPs ride stacked in
-              one screen; organic crossfades them on the roll's beat,
-              labeled traffic pins its own. */}
-          <div className="hero-float">
-            <div className="hero-tilt">
-              {/* the tile is its OWN element (was a ::before — which
-                  couldn't animate apart from its parent, so the gray
-                  sat visible through the statement's solo): it blooms
-                  only as the phone LANDS */}
-              <div className="hero-tile" data-anim="tile" aria-hidden />
-              <div data-anim="phone" className="hero-phone mx-auto mt-fib-5 lg:mt-0">
+        {/* the adaptive phone — THEIR search, won (or the svc campaign's
+            surface) — BESIDE the text now (the viral split), never over
+            it. All four SERPs ride stacked in one screen; organic re-runs
+            the search per industry, labeled traffic pins its own. */}
+        <div className="w-full lg:justify-self-center">
+          <div data-anim="phone" className="hero-phone mx-auto mt-fib-5 lg:mt-0">
           {svc === "ai" ? (
             <HeroChatPhone />
           ) : svc === "websites" ? (
@@ -834,8 +785,6 @@ export function Hero() {
               </div>
             </div>
           )}
-              </div>
-            </div>
           </div>
         </div>
       </div>
