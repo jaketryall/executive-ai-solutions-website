@@ -1920,6 +1920,10 @@ img.g-fav {
 .hero-tilt {
   position: relative;
 }
+/* the sticker tile exists only where the float does (lg+) */
+.hero-tile {
+  display: none;
+}
 /* six2eight scale (Jake, 2026-07-21: "closer to the proportions of the
    other one" + "the title should be 2 lines"): reference-size display
    type at EVERY width — TWO lines, punch pair. The fixed accent line
@@ -1945,8 +1949,11 @@ img.g-fav {
   .hero-tilt {
     transform: rotate(4deg);
   }
-  .hero-tilt::before {
-    content: "";
+  /* the tile — a real element now (a ::before can't animate apart from
+     its parent; the gray sat visible through the statement's solo).
+     Blooms at the phone's touchdown in the entrance. */
+  .hero-tile {
+    display: block;
     position: absolute;
     z-index: -1;
     inset: -4% -5%;
@@ -1954,7 +1961,9 @@ img.g-fav {
     background: var(--color-panel);
     /* NET tilt matters: this rotation is INSIDE the tilted parent, so
        -9 here reads as -5 on screen — opposing the phone's +4. (-4 and
-       +4 cancel to a static slab; the sticker needs the shear.) */
+       +4 cancel to a static slab; the sticker needs the shear.)
+       GSAP scale-tweens this element: GSAP decomposes and preserves
+       this rotation, so one writer still holds. */
     transform: rotate(-9deg);
     box-shadow: 0 21px 55px -21px rgba(19, 20, 19, 0.28);
   }

@@ -342,17 +342,23 @@ export function Hero() {
         ;
       // the adaptive phone rises with the claim (only exists for labeled traffic)
       if (q("[data-anim='phone']").length) {
-        // the six2eight reveal (Jake, 2026-07-21: "the title starts
-        // with no image, then the text separates or something to reveal
-        // the images"): the statement gets its SOLO moment first — the
-        // phone blooms through it last, growing from behind the words
-        // (scale on the inner div; the tilt/tile live on .hero-tilt so
-        // no transform has two writers)
+        // the six2eight entrance, decoded from their live CSS (2026-07-21):
+        // their words wipe in FIRST, then the media cards DROP from far
+        // above and land as the headline finishes making room. Our
+        // adaptation (their literal spacer-channel needs a SHORT visual —
+        // our 426px phone would drive through the lede): the statement
+        // gets its solo, then the phone FALLS in from above the fold and
+        // lands on the flank; the tile blooms behind it at touchdown.
         tl.fromTo(
           q("[data-anim='phone']"),
-          { autoAlpha: 0, scale: 0.55, y: 21 },
-          { autoAlpha: 1, scale: 1, y: 0, duration: 0.9 },
-          1.15
+          { autoAlpha: 0, y: -420, scale: 0.95 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 1.0 },
+          1.2
+        ).fromTo(
+          q("[data-anim='tile']"),
+          { autoAlpha: 0, scale: 0.9 },
+          { autoAlpha: 1, scale: 1, duration: 0.5, ease: EASE_UI },
+          2.0
         );
       }
 
@@ -754,6 +760,11 @@ export function Hero() {
               labeled traffic pins its own. */}
           <div className="hero-float">
             <div className="hero-tilt">
+              {/* the tile is its OWN element (was a ::before — which
+                  couldn't animate apart from its parent, so the gray
+                  sat visible through the statement's solo): it blooms
+                  only as the phone LANDS */}
+              <div className="hero-tile" data-anim="tile" aria-hidden />
               <div data-anim="phone" className="hero-phone mx-auto mt-fib-5 lg:mt-0">
           {svc === "ai" ? (
             <HeroChatPhone />
