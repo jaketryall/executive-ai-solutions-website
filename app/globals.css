@@ -1909,12 +1909,12 @@ img.g-fav {
   flex-shrink: 0;
 }
 /* the split statement (Jake, 2026-07-22: "get found get booked no
-   periods" in the viral split) — viral's register, not a billboard
-   ("its a little big i feel like the subtlety for virals is good"):
-   ~86px at 1440, generous air around it. */
+   periods" in the viral split) — short fixed lines afford reference
+   scale inside the ~665px left column ("Get booked", 10ch, is the
+   limiter). (His 'a little big' note was about the CAPSULE, not this.) */
 .t-statement--62 {
-  font-size: clamp(2.5rem, 6vw, 5.5rem);
-  line-height: 1.04;
+  font-size: clamp(2.75rem, 7.4vw, 6.8rem);
+  line-height: 1.02;
 }
 /* the platform logo marquee (Jake, 2026-07-22: "black and the actual
    logos… infinite marquee… inside the box still just like viral"): the
@@ -1922,8 +1922,10 @@ img.g-fav {
    mask on the moving track would drift with it). -50% loop law: track
    halves must outspan the window. */
 .hero-logos {
-  width: min(100%, 320px);
-  padding: 10px 8px;
+  /* viral's subtlety (Jake, 2026-07-22: "the box and marquee is big"):
+     a small quiet pill, not a banner */
+  width: min(100%, 240px);
+  padding: 7px 6px;
   border-radius: 999px;
   background: var(--color-panel);
 }
@@ -1950,16 +1952,16 @@ img.g-fav {
 .hero-logos-set {
   display: flex;
   align-items: center;
-  gap: 26px;
-  padding-right: 26px;
+  gap: 21px;
+  padding-right: 21px;
   color: var(--color-ink);
 }
 .hero-chip {
   display: inline-flex;
 }
 .hero-chip svg {
-  width: 22px;
-  height: 22px;
+  width: 17px;
+  height: 17px;
 }
 /* ── the names marquee band (surface-marquee.tsx): quiet wordmarks
    drifting; edges fade so the loop has no hard entry ── */
