@@ -675,9 +675,11 @@ export function Hero() {
                   {ariaPair.out}.
                 </span>
               </span>
-              {/* the two-tone goes SearchKings: the second clause wears the
-                  click color instead of a dim — accent IS the click */}
-              <span className="block text-accent">
+              {/* SOLID INK (Jake, 2026-07-21: "none of the others do") —
+                  at 99px the statement carries itself; the accent stays
+                  reserved for the CTA and the phone's blue links. The
+                  two-tone era (accent second clause) ended here. */}
+              <span className="block text-ink">
                 We run the whole click.
               </span>
             </span>
