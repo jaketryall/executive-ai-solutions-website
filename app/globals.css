@@ -5894,6 +5894,25 @@ span.g-m-fav {
   color: var(--color-ink);
 }
 
+/* ── the sub-offer band (#lsa/#landing/#aeo, 2026-07-22): the anchor
+   chapters the homepage doors promise. The band is a panel-gray tray, so
+   the demo well INVERTS to white (on the cards it's gray-on-white); the
+   emphasis grammar rides along on the shared .svc-card-demo class. Taller
+   than the card wells — a chapter artifact, not a card thumbnail. ── */
+.svc-sub-demo {
+  height: 400px;
+  background: #fff;
+}
+/* chips sit on the gray tray, so they go white to stay pills */
+.svc-sub .chip {
+  background: #fff;
+}
+@media (max-width: 767px) {
+  .svc-sub-demo {
+    height: 300px;
+  }
+}
+
 /* ── the work index: full-bleed chapters that stay CARDS ──
    Each project is one near-viewport inset rounded panel floating on the
    canvas (the dark-chapter grammar at showcase scale): the build fills the

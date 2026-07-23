@@ -17,6 +17,7 @@ import { CTA } from "@/components/ui/cta";
 import { Builder } from "@/components/sections/builder";
 import { LeadMath } from "@/components/services/lead-math";
 import { ArtifactFrame } from "@/components/ui/artifact";
+import { SubOffer } from "@/components/services/sub-offer";
 import { Monogram } from "@/components/ui/monogram";
 import { ProcessCards } from "@/components/ui/process-cards";
 import { HighlightsGallery, type Highlight } from "@/components/ui/highlights-gallery";
@@ -821,6 +822,9 @@ export function ServicePage({ service }: { service: ServiceDef }) {
       revealUp(q("[data-anim='proc']"), q(".svc-process")[0]);
       revealUp(q("[data-anim='proc-card']"), q(".proc-card")[0]);
 
+      /* ── the sub-offer band (#lsa/#landing/#aeo) rises as one beat ── */
+      revealUp(q("[data-anim='sub']"), q(".svc-sub")[0], { stagger: 0.06 });
+
       /* ── price beat: the peak — lead line, then the number rises ── */
       const priceTl = gsap.timeline({
         defaults: { ease: EASE_STRUCTURE },
@@ -1006,6 +1010,10 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           </div>
         </div>
       </section>
+
+      {/* ── THE SUB-OFFER · the anchor chapter the homepage door promises
+          (#lsa / #landing / #aeo) — the deep-link finally has a landing ── */}
+      <SubOffer slug={service.slug} />
 
       {/* ── BUILD YOURS · the toy lives HERE, not on the homepage: on this
           page the visitor has self-selected into website intent, so "what
