@@ -5356,21 +5356,12 @@ span.g-m-fav {
   .svc-card:hover .svc-card-demo .lap {
     transform: translateY(-10px);
   }
-  /* the websites tour: the desktop capture pans up inside the laptop
-     screen on hover — the demo literally tours the site (long glide
-     there, same road back) */
-  .svc-card .lap-page {
-    transition: transform 5s var(--ease-ui);
-  }
-  .svc-card:hover .lap-page {
-    /* screen shows ~46% of the rendered capture (16:10 window on a
-       2880×4446 image) — -50% never outruns the bottom edge */
-    transform: translateY(-50%);
-  }
+  /* (the laptop's 5s hover scroll-tour lived here — cut 2026-07-22,
+     Jake: "i dont like the scrolling down thing"; the screen holds its
+     hero crop and only the lift responds) */
   @media (prefers-reduced-motion: reduce) {
     .svc-card:hover .svc-card-demo .dvc,
-    .svc-card:hover .svc-card-demo .lap,
-    .svc-card:hover .lap-page {
+    .svc-card:hover .svc-card-demo .lap {
       transform: none;
     }
   }
@@ -5446,7 +5437,7 @@ span.g-m-fav {
 /* ── the duo (websites card — Jake, 2026-07-21: "laptop behind and then
    phone like that", SK composition): laptop behind-right, the mobile
    build on a phone front-left. The well's clip crops both devices'
-   feet; both existing hover rules (lift + laptop pan) still apply. ── */
+   feet; the hover lift still applies (the pan is gone). ── */
 .svc-duo {
   position: relative;
   width: 100%;

@@ -147,7 +147,7 @@ export function Services() {
                   BEHIND on the laptop, the mobile build stands in FRONT on
                   a phone — one glance says "we build both screens." The
                   phone shows the BOOKING section (the landing card owns
-                  the hero crop). Hover still pans the laptop's capture. */}
+                  the hero crop). */}
               <div className="svc-duo" aria-hidden>
                 <div className="lap">
                   <div className="lap-screen">
