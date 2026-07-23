@@ -5898,6 +5898,70 @@ span.g-m-fav {
    Each project is one near-viewport inset rounded panel floating on the
    canvas (the dark-chapter grammar at showcase scale): the build fills the
    card, the name + numbers compose over it on a PLACED directional scrim. */
+/* ── the rail (six2eight composition, 2026-07-22): the dark index panel
+   pinned left while the showcase column scrolls. An INDEX, not a filter —
+   scrollspy lights the entry whose card owns the viewport, and the one
+   action rides along at the bottom. lg+ only. ── */
+.wk-rail {
+  flex-direction: column;
+  gap: 8px;
+  /* tall enough that the CTA sits low with air, never taller than the
+     viewport minus nav + sticky inset */
+  min-height: min(555px, calc(100svh - 144px));
+  padding: 21px 13px;
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.wk-rail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 8px;
+}
+.wk-rail-link {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 13px;
+  padding: 10px 13px;
+  border-radius: 13px;
+  color: rgba(239, 240, 238, 0.5);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    color 0.25s var(--ease-ui),
+    background 0.25s var(--ease-ui);
+}
+.wk-rail-link:hover {
+  color: rgba(239, 240, 238, 0.85);
+}
+.wk-rail-link.is-on {
+  color: var(--color-paper);
+  background: rgba(255, 255, 255, 0.08);
+}
+/* the pill: white on ink, the rail's whole reason to exist */
+.wk-rail-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: auto;
+  padding: 15px 21px;
+  border-radius: 999px;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.25s var(--ease-ui);
+}
+.wk-rail-cta svg {
+  width: 15px;
+  height: 15px;
+}
+.wk-rail-cta:hover {
+  transform: translateY(-2px);
+}
 /* the work grid tile — itsjay's grid in the site's card grammar */
 .wkt {
   display: block;
