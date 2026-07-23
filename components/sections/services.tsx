@@ -349,21 +349,46 @@ export function Services() {
           {/* ── 05 · LANDING PAGES ── */}
           <article data-svc-row className="svc-card p-fib-3 text-ink">
             <div data-anim="artifact" className="svc-card-demo">
-              {/* the win frame: the page the ad's click lands on, on the
-                  phone the click happens on — the landing card owns the
-                  phone now that the websites card went desktop. Photo
-                  screen keeps its island (Jake's cutout law) */}
+              {/* the win frame: not a screenshot — the ANATOMY of a landing
+                  page (Jake, 2026-07-22: the photo "wasn't an accurate
+                  representation"). Logo + call pill and nothing else to
+                  click, one headline that ECHOES the ad card's promise
+                  (message match — the craft the service sells), and the
+                  lead form as the elevated win. Illustrative DW mock, not
+                  a live capture. */}
               <div className="dvc" aria-hidden>
-                <span className="dvc-island" />
-                <div className="dvc-screen">
-                  <Image
-                    src="/work/live/dw-mobile-hero.jpg"
-                    alt="The Desert Wings landing hero the ad's click lands on, on a phone"
-                    width={1170}
-                    height={2532}
-                    sizes="(min-width: 1280px) 310px, 86vw"
-                    className="block h-auto w-full"
-                  />
+                <div className="dvc-screen dvc-screen--ui">
+                  <div className="ldg">
+                    <div className="ldg-top">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/work/dw-favicon.png" alt="" className="ldg-logo" width={64} height={64} />
+                      <span className="ldg-brand">Desert Wings</span>
+                      <span className="ldg-call">
+                        <svg viewBox="0 0 20 20" fill="none">
+                          <path
+                            d="M4.2 3.5c.4-.7 1.3-.9 1.9-.4l1.6 1.3c.5.4.7 1.2.4 1.8l-.7 1.4a.9.9 0 0 0 .1 1c.8 1.1 1.9 2.2 3 3a.9.9 0 0 0 1 .1l1.4-.7c.6-.3 1.4-.1 1.8.4l1.3 1.6c.5.6.3 1.5-.4 1.9l-1.5.9c-.6.4-1.4.4-2.1.1-3.6-1.7-6.5-4.6-8.2-8.2-.3-.7-.3-1.5.1-2.1l.9-1.5Z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                        Call
+                      </span>
+                    </div>
+                    <p className="ldg-h">
+                      Learn to fly
+                      <br />
+                      at Falcon Field.
+                    </p>
+                    <div className="ldg-form">
+                      <p className="ldg-form-t">Book a discovery flight</p>
+                      <span className="ldg-in-row">
+                        <span className="ldg-in">Name</span>
+                        <span className="ldg-in">Phone</span>
+                      </span>
+                      <span className="ldg-btn">Check available times</span>
+                    </div>
+                    <span className="ldg-skel" />
+                    <span className="ldg-skel ldg-skel--short" />
+                  </div>
                 </div>
               </div>
             </div>

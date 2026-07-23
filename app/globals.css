@@ -5546,6 +5546,12 @@ span.g-m-fav {
     0 1px 2px rgba(60, 64, 67, 0.14),
     0 13px 26px -10px rgba(60, 64, 67, 0.3);
 }
+/* card 5 · landing: the form is the win (already elevated in its base
+   style) — the micro-header recedes; the headline stays full ink, it IS
+   the pitch */
+.svc-card-demo .ldg-top {
+  opacity: 0.55;
+}
 /* card 6 · AEO: the recommendation is the win */
 .svc-card-demo .ai-m-a {
   margin-top: 2cqw;
@@ -5707,6 +5713,129 @@ span.g-m-fav {
 }
 .ai-m-a b {
   font-weight: 600;
+}
+/* ── the landing-page anatomy (.ldg, card 5 — Jake, 2026-07-22: the DW
+   photo "wasn't an accurate representation of a landing page"): not a
+   screenshot but the SHAPE of one — logo + call pill (no nav, nothing
+   else to click), one headline echoing the ad's promise, a lead form
+   above the fold, skeleton whispers below. cqw like the .g-m family;
+   font INHERITED (this page is ours, so it wears the house type). ── */
+.ldg {
+  container-type: inline-size;
+  min-height: 100%;
+  background: #fff;
+  color: var(--color-ink);
+  text-align: left;
+}
+/* GOTCHA (found 2026-07-22): NEVER pad the container itself in cqw —
+   a container's own cqw resolves against the nearest ANCESTOR container
+   (here: none → small viewport), so the padding exploded to ~80px/side
+   at desktop and crushed the content box to half. Like .g-m/.ai-m, all
+   insets live on the CHILDREN. */
+.ldg-top {
+  display: flex;
+  align-items: center;
+  gap: 2.6cqw;
+  margin: 4.6cqw 5.6cqw 0;
+}
+.ldg-logo {
+  width: 6.7cqw;
+  height: 6.7cqw;
+  flex-shrink: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #ebedef;
+  background: #fff;
+  object-fit: cover;
+}
+.ldg-brand {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 3.6cqw;
+  font-weight: 650;
+}
+.ldg-call {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5cqw;
+  padding: 1.8cqw 3.6cqw;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: #fff;
+  font-size: 3.1cqw;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ldg-call svg {
+  width: 3.1cqw;
+  height: 3.1cqw;
+}
+.ldg-h {
+  /* 5.1 not 5.6: the mobile well (240px) clears the form by ~6px at the
+     looser stack — this + the form's 4.6 buys the 8px safety margin */
+  margin: 5.1cqw 5.6cqw 0;
+  font-size: 7.7cqw;
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+/* the win: the form floats on the family shadow, name+phone in ONE row
+   so the whole card clears even the 240px mobile well */
+.ldg-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2.3cqw;
+  margin: 4.6cqw 5.6cqw 0;
+  padding: 3.9cqw 4.1cqw 4.1cqw;
+  border-radius: 4.1cqw;
+  background: #fff;
+  box-shadow:
+    0 1px 3px rgba(60, 64, 67, 0.16),
+    0 4.6cqw 8.7cqw -4.1cqw rgba(60, 64, 67, 0.38);
+}
+.ldg-form-t {
+  font-size: 3.9cqw;
+  font-weight: 650;
+}
+.ldg-in-row {
+  display: flex;
+  gap: 2.3cqw;
+}
+.ldg-in {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  height: 9.7cqw;
+  padding: 0 3.1cqw;
+  border: 1px solid rgba(19, 20, 19, 0.14);
+  border-radius: 2.6cqw;
+  font-size: 3.3cqw;
+  color: rgba(19, 20, 19, 0.45);
+}
+.ldg-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 10.3cqw;
+  border-radius: 2.6cqw;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 3.6cqw;
+  font-weight: 650;
+}
+/* proof lives below, but the page visibly ENDS soon — one goal */
+.ldg-skel {
+  display: block;
+  height: 2.6cqw;
+  margin: 4.6cqw 5.6cqw 0;
+  border-radius: 1.3cqw;
+  background: rgba(19, 20, 19, 0.07);
+}
+.ldg-skel--short {
+  width: 55%;
+  margin-top: 2.3cqw;
 }
 /* the page continues below the screen's edge (the ChatGPT-mock trick:
    skeleton content signals a live page, not a finished poster) */
