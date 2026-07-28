@@ -8,6 +8,7 @@ import {
   useGSAP,
   reducedMotion,
 } from "@/components/anim/ease";
+import { whenArrived } from "@/components/anim/arrival";
 import { CTA } from "@/components/ui/cta";
 import { Monogram } from "@/components/ui/monogram";
 import { RollLink } from "@/components/ui/roll-link";
@@ -56,6 +57,15 @@ export function Footer() {
       setH();
       document.fonts.ready.then(setH);
       window.addEventListener("resize", setH);
+      // soft navs re-run this effect while the NEW page's subtree may not
+      // have committed yet (App Router streams children after the layout
+      // re-renders), so the homepage's closer pin-spacer can be missing
+      // from the first measurement and nothing refreshes later — soft navs
+      // never fire the window `load` refresh that saves hard loads. The
+      // arrival gate resolves only once the transition (and the page under
+      // it) has settled: re-measure then.
+      let dead = false;
+      whenArrived().then(() => !dead && setH());
 
       let st: ScrollTrigger | undefined;
       const blocks = q("[data-foot-rise]") as HTMLElement[];
@@ -74,6 +84,13 @@ export function Footer() {
         gsap.set(blocks, { autoAlpha: 0, y: 21 });
         st = ScrollTrigger.create({
           trigger: main,
+          // refresh LAST: on soft navs this trigger is created before the
+          // incoming page's pins, and refresh processes triggers in
+          // creation order with pins reverted — measured first, the reveal
+          // window lands one pin-duration early (the homepage bug,
+          // 2026-07-28). Low priority = measured after every pin re-adds
+          // its spacing.
+          refreshPriority: -1,
           start: "bottom bottom",
           end: () =>
             `bottom ${window.innerHeight - (root.current?.offsetHeight ?? 0)}px`,
@@ -103,6 +120,7 @@ export function Footer() {
         gsap.set(lines, { yPercent: 34 });
         st = ScrollTrigger.create({
           trigger: main,
+          refreshPriority: -1, // measure after the closer pin — see above
           start: "bottom bottom",
           end: () =>
             `bottom ${Math.max(120, window.innerHeight - (root.current?.offsetHeight ?? 0))}px`,
@@ -126,6 +144,7 @@ export function Footer() {
       }
 
       return () => {
+        dead = true;
         window.removeEventListener("resize", setH);
         st?.kill();
         if (main) {
@@ -134,7 +153,15 @@ export function Footer() {
         }
       };
     },
-    { scope: root }
+    /* re-run per ROUTE (bug found 2026-07-28): the footer mounts once in
+       the layout, so without a pathname dependency both the plain/elevated
+       branch AND the trigger geometry froze at the first-loaded page. On a
+       soft nav to the homepage the reveal window then sat one closer-pin
+       duration (~734px) EARLY — the rise finished behind the still-pinned
+       closer and the wordmark arrived pre-risen. Re-running after the new
+       page's effects (tree order: main's children before the footer) means
+       the pin-spacer exists before setH's refresh remeasures. */
+    { scope: root, dependencies: [pathname], revertOnUpdate: true }
   );
 
   return (
