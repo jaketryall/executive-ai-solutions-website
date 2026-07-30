@@ -68,6 +68,19 @@
   }
 }
 
+/* ── the page sheet (Jake, 2026-07-30): <main> is a SHEET lifting off the
+   fixed footer, so its bottom edge wears the panel radius — and clips, so
+   whatever section a page ends on rounds with it (pricing's appendix runs
+   flush; services end on a gapped panel; both must round). The reveal
+   shadow footer.tsx paints on main follows the radius for free. overflow
+   clip is safe here: it is NOT a scroll container (sticky rails keep
+   sticking to the viewport) and position:fixed pin phases aren't in main's
+   clip chain. ── */
+.page-sheet {
+  overflow: clip;
+  border-radius: 0 0 var(--radius-panel) var(--radius-panel);
+}
+
 /* ───────────────────────── base ───────────────────────── */
 
 html {

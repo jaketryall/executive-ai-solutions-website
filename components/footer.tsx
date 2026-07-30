@@ -164,8 +164,10 @@ export function Footer() {
     { scope: root, dependencies: [pathname], revertOnUpdate: true }
   );
 
+  // panel ground, not canvas: the sheet lifting away needs a color step
+  // beneath it on pages that END light (canvas-on-canvas hid the seam)
   return (
-    <footer ref={root} className="fixed inset-x-0 bottom-0 z-0 overflow-hidden bg-canvas text-ink">
+    <footer ref={root} className="fixed inset-x-0 bottom-0 z-0 overflow-hidden bg-panel text-ink">
       <div className="wrap pt-[89px] md:pt-[144px]">
         <div className="flex flex-col justify-between gap-[55px] md:flex-row md:items-start">
           {/* contact block — the diagonal counterweight */}

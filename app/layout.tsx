@@ -94,7 +94,10 @@ export default function RootLayout({
         <Nav />
         <PersistentCta />
         <SiteChat />
-        <main className="bg-canvas relative z-10">{children}</main>
+        {/* .page-sheet: the page is a SHEET lifting off the footer — rounded
+            bottom corners + clip so every page's last section rounds with it
+            (Jake, 2026-07-30: the straight seam "feels a little odd") */}
+        <main className="page-sheet bg-canvas relative z-10">{children}</main>
         <Footer />
         <SmoothScroll />
         <ViewTransitions />
