@@ -10,6 +10,10 @@ export type ServiceDef = {
   stage: string;
   stageIndex: string;
   nav: string;
+  /** the LITERAL service name, worn as the hero chip (SK clarity law,
+      Jake 2026-08-03: "you know exactly which service they are
+      providing" — the stage names were insider funnel-speak) */
+  label: string;
   /** hero statement, one mask-line per entry */
   title: string[];
   support: string;
@@ -41,6 +45,7 @@ export const SERVICES: ServiceDef[] = [
     stage: "The click",
     stageIndex: "01",
     nav: "Google Ads",
+    label: "Google Ads management",
     title: ["Every click,", "accounted for"],
     support:
       "Google Ads, managed. Campaigns built on what your customers actually search, conversion tracking you can read, and a monthly number that says what a lead cost.",
@@ -112,6 +117,7 @@ export const SERVICES: ServiceDef[] = [
     stage: "The landing",
     stageIndex: "02",
     nav: "Websites",
+    label: "Custom websites",
     title: ["The page the", "click deserves"],
     support:
       "A custom website, designed from your business and built by hand. Fast enough that nobody leaves while it loads, and every line of it yours.",
@@ -183,6 +189,7 @@ export const SERVICES: ServiceDef[] = [
     stage: "The follow-up",
     stageIndex: "03",
     nav: "AI automation",
+    label: "AI automation",
     title: ["No lead", "goes cold"],
     support:
       "AI that answers and chases. Chat that answers visitors from your own pages, and follow-ups that send themselves, at 9pm on a Sunday.",

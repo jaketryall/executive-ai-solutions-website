@@ -904,10 +904,13 @@ export function ServicePage({ service }: { service: ServiceDef }) {
             the mobile fold is the mobile hook). */}
         <div className="wrap flex flex-col items-center pb-fib-5 pt-fib-6 text-center md:pt-[176px] lg:grid lg:min-h-[74svh] lg:grid-cols-[minmax(0,54fr)_minmax(0,46fr)] lg:items-center lg:gap-fib-5 lg:pt-fib-7 xl:gap-fib-6">
           <div className="flex w-full flex-col items-center lg:items-start lg:text-left">
-            <p data-anim="h-sub" className="t-meta text-ink/55">
-              {service.stage}
-            </p>
-            <h1 className="t-display-title mt-fib-2">
+            {/* the SERVICE, named literally (SK clarity law) — the funnel
+                stage name was insider language; the chip says the thing
+                being bought, the h1 keeps the promise */}
+            <span data-anim="h-sub" className="chip chip--sm">
+              {service.label}
+            </span>
+            <h1 className="t-display-title mt-fib-3">
               {service.title.map((line) => (
                 <span key={line} className="mask-line">
                   <span className="mask-inner">{line}</span>
