@@ -5119,6 +5119,20 @@ html.wki-lock body {
 @media (min-width: 1024px) {
   .svc-phone .dvc {
     width: min(310px, 36svh);
+    margin-top: 34px;
+  }
+  /* the MAT (Jake, 2026-08-03: the sub-offer band "looks better than the
+     hero" — because it obeys the card law and the hero didn't): at lg the
+     phone stops floating bare on the canvas and sits in a white well,
+     cropped at the bottom edge like the sub-band exhibit. Flat — white on
+     canvas separates by color, not shadow (Apple grammar). Below lg the
+     unmatted phone bleeding past the fold stays the mobile hook. */
+  .svc-phone {
+    align-items: flex-start;
+    height: min(62svh, 610px);
+    overflow: clip;
+    border-radius: var(--radius-panel);
+    background: #fff;
   }
 }
 /* screens that hold UI (not a photo) get a light ground — doubled
