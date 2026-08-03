@@ -16,7 +16,6 @@ import { revealUp } from "@/components/anim/reveal";
 import { CTA } from "@/components/ui/cta";
 import { Builder } from "@/components/sections/builder";
 import { LeadMath } from "@/components/services/lead-math";
-import { ArtifactFrame } from "@/components/ui/artifact";
 import { SubOffer } from "@/components/services/sub-offer";
 import { Monogram } from "@/components/ui/monogram";
 import { ProcessCards } from "@/components/ui/process-cards";
@@ -881,8 +880,6 @@ export function ServicePage({ service }: { service: ServiceDef }) {
       revealUp(q("[data-anim='why-tile']"), q(".why-tile")[0]);
       revealUp(q("[data-anim='faq']"), q(".svc-faq")[0], { stagger: 0.07 });
 
-      revealUp(q("[data-anim='x-card']"), q(".svc-funnel")[0]);
-
       revealUp(q("[data-anim='ask']"), q(".svc-ask")[0]);
 
       return () => {
@@ -927,12 +924,54 @@ export function ServicePage({ service }: { service: ServiceDef }) {
               See the whole pricing sheet
             </Link>
           </div>
+          {/* the price, IN the hero (Apple: "From $1099" sits beside Buy —
+              nothing withheld; SK hides price entirely, and transparency is
+              exactly where we beat them) */}
+          <p data-anim="h-sub" className="t-meta mt-fib-3 text-ink/55">
+            {service.heroPrice}
+          </p>
           <div
             data-anim="h-art"
             className="mt-fib-5 w-full md:mt-fib-6"
           >
             <HeroArtifact slug={service.slug} />
           </div>
+        </div>
+      </section>
+
+      {/* ── THE RECEIPT BAND (SK decode 2026-08-02: their award band sits
+          DIRECTLY under the hero — trust adjacent to the first ask, at
+          heading scale, before any feature copy. We hold no awards, so our
+          version is the thing an award stands in for: a real result with
+          real stars, linked to the case it came from.
+          PLACEHOLDER metric — same swap list as lib/work.ts results. ── */}
+      <section className="svc-receipt border-y border-ink/10 py-fib-3">
+        <div
+          data-anim="h-sub"
+          className="wrap flex flex-wrap items-center justify-center gap-x-fib-3 gap-y-fib-1 text-center"
+        >
+          <span className="flex items-center gap-fib-2">
+            <span className="hero-stars" aria-hidden>
+              {[0, 1, 2, 3, 4].map((s) => (
+                <svg key={s} viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.8L10 1.5z" />
+                </svg>
+              ))}
+            </span>
+            <span className="t-meta text-ink/70">5.0 from our clients</span>
+          </span>
+          <span className="hidden text-ink/25 md:inline" aria-hidden>
+            &middot;
+          </span>
+          <span className="t-meta text-ink/70">
+            3x more bookings for Desert Wings in 90 days
+          </span>
+          <Link
+            href="/work/desert-wings"
+            className="u-link u-link--chev t-meta text-ink/70"
+          >
+            See the case
+          </Link>
         </div>
       </section>
 
@@ -989,28 +1028,6 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         </div>
       </section>
 
-      {/* ── HOW IT RUNS · the Lesse process row, EAS skin ── */}
-      <section className="svc-process py-fib-5 md:py-fib-6">
-        <div className="wrap">
-          <div className="flex flex-col justify-between gap-fib-3 md:flex-row md:items-end">
-            <h2 data-anim="proc" className="t-display-lg max-w-[12ch]">
-              How it runs
-            </h2>
-            <p data-anim="proc" className="max-w-[38ch] text-ink/70 md:text-right">
-              {service.slug === "google-ads" &&
-                "From first call to a report you can hold us to. No setup fees, no lock-in."}
-              {service.slug === "websites" &&
-                "From first call to launch. The quote is fixed on day two and never moves."}
-              {service.slug === "ai" &&
-                "Scoped, built, checked and managed. Nothing goes live until you've seen it work."}
-            </p>
-          </div>
-          <div className="mt-fib-4 md:mt-fib-5">
-            <ProcessCards steps={service.process} anim="proc-card" />
-          </div>
-        </div>
-      </section>
-
       {/* ── THE SUB-OFFER · the anchor chapter the homepage door promises
           (#lsa / #landing / #aeo) — the deep-link finally has a landing ── */}
       <SubOffer slug={service.slug} />
@@ -1023,8 +1040,11 @@ export function ServicePage({ service }: { service: ServiceDef }) {
       {/* ── THE PRICE · the one centered statement peak, open on the canvas,
           with the client voices floating around it (the home price-beat
           grammar) ── */}
+      {/* compressed 2026-08-02 ("earn every scroll"): the number now also
+          lives in the hero, so this peak keeps its statement but gives back
+          a third of the viewport it used to hold hostage */}
       <section className="svc-price relative overflow-x-clip" data-pcta-hide>
-        <div className="wrap relative flex min-h-[88svh] flex-col items-center justify-center py-fib-6 text-center md:py-fib-7">
+        <div className="wrap relative flex min-h-[62svh] flex-col items-center justify-center py-fib-5 text-center md:py-fib-6">
           <p data-anim="p-lead" className="t-meta text-ink/60">
             {service.price.lead}
           </p>
@@ -1167,51 +1187,27 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         </div>
       </section>
 
-      {/* ── THE REST OF THE FUNNEL · motif carries out ── */}
-      <section className="svc-funnel py-fib-6">
+      {/* ── HOW IT RUNS · the easy-bridge (SK decode: a short "getting
+          started is easy" band sits between the proof and the form — it
+          kills the "this will be work" objection right before the
+          commitment; moved here from before the price 2026-08-02) ── */}
+      <section className="svc-process py-fib-5 md:py-fib-6">
         <div className="wrap">
           <div className="flex flex-col justify-between gap-fib-3 md:flex-row md:items-end">
-            <h2 data-anim="x-card" className="t-display-lg max-w-[14ch]">
-              The rest of the funnel
+            <h2 data-anim="proc" className="t-display-lg max-w-[12ch]">
+              How it runs
             </h2>
-            <p data-anim="x-card" className="max-w-[38ch] text-ink/70 md:text-right">
-              {service.stage} is one of three stages. Buy the stage you need,
-              or the whole path.
+            <p data-anim="proc" className="max-w-[38ch] text-ink/70 md:text-right">
+              {service.slug === "google-ads" &&
+                "From first call to a report you can hold us to. No setup fees, no lock-in."}
+              {service.slug === "websites" &&
+                "From first call to launch. The quote is fixed on day two and never moves."}
+              {service.slug === "ai" &&
+                "Scoped, built, checked and managed. Nothing goes live until you've seen it work."}
             </p>
           </div>
-          <div className="mt-fib-4 grid gap-fib-3 md:grid-cols-2 md:gap-fib-4">
-            {siblings.map((s) => (
-              <Link
-                key={s.slug}
-                href={`/services/${s.slug}`}
-                data-anim="x-card"
-                className="svc-x"
-              >
-                <span className="chip chip--sm">
-                  Stage {s.stageIndex} · {s.stage}
-                </span>
-                <span className="t-title--lg mt-fib-3 block font-display">
-                  {s.nav}
-                </span>
-                <span className="mt-fib-2 block max-w-[36ch] text-ink/70">
-                  {SERVICE_META[s.slug].line}
-                </span>
-                <span className="svc-x-foot">
-                  <span className="t-meta text-ink/60">
-                    {SERVICE_META[s.slug].price}
-                  </span>
-                  <svg viewBox="0 0 16 16" fill="none" aria-hidden>
-                    <path
-                      d="M2 8h11M9 3.5 13.5 8 9 12.5"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </span>
-              </Link>
-            ))}
+          <div className="mt-fib-4 md:mt-fib-5">
+            <ProcessCards steps={service.process} anim="proc-card" />
           </div>
         </div>
       </section>
@@ -1237,6 +1233,31 @@ export function ServicePage({ service }: { service: ServiceDef }) {
               >
                 Or just tell us about your business
               </Link>
+            </div>
+          </div>
+          {/* objection-kill AT the commitment point (SK's form-side copy)
+              + the siblings demoted from a full section to quiet doors —
+              the cross-sell no longer owns an exit ramp before the ask.
+              The hairline runs panel-wide; the CONTENT sits in the wrap
+              (first render escaped the gutters and clipped at the edge). */}
+          <div data-anim="ask" className="mt-fib-5 border-t border-paper/15 pt-fib-3">
+            <div className="wrap flex flex-wrap items-center justify-between gap-fib-3">
+              <p className="t-meta text-paper/55">
+                No obligation. The number is fixed in writing before anything
+                starts.
+              </p>
+              <p className="t-meta flex flex-wrap items-center gap-fib-3 text-paper/55">
+                <span>Also:</span>
+                {siblings.map((s) => (
+                  <Link
+                    key={s.slug}
+                    href={`/services/${s.slug}`}
+                    className="u-link text-paper/70"
+                  >
+                    {s.nav} · {SERVICE_META[s.slug].price}
+                  </Link>
+                ))}
+              </p>
             </div>
           </div>
         </div>

@@ -13,6 +13,9 @@ export type ServiceDef = {
   /** hero statement, one mask-line per entry */
   title: string[];
   support: string;
+  /** the price, IN the hero (Apple law: nothing is withheld — and price
+      transparency is the EAS differentiator SearchKings doesn't have) */
+  heroPrice: string;
   /** the price beat (the page's one statement peak) */
   price: {
     lead: string;
@@ -41,6 +44,7 @@ export const SERVICES: ServiceDef[] = [
     title: ["Every click,", "accounted for"],
     support:
       "Google Ads, managed. Campaigns built on what your customers actually search, conversion tracking you can read, and a monthly number that says what a lead cost.",
+    heroPrice: "$500/mo + your ad spend · no lock-in",
     price: {
       lead: "Management is",
       big: "$500/mo",
@@ -111,6 +115,7 @@ export const SERVICES: ServiceDef[] = [
     title: ["The page the", "click deserves"],
     support:
       "A custom website, designed from your business and built by hand. Fast enough that nobody leaves while it loads, and every line of it yours.",
+    heroPrice: "From $2.5k · fixed quote in 2 days",
     price: {
       lead: "Projects start at",
       big: "$2.5k",
@@ -181,6 +186,7 @@ export const SERVICES: ServiceDef[] = [
     title: ["No lead", "goes cold"],
     support:
       "AI that answers and chases. Chat that answers visitors from your own pages, and follow-ups that send themselves, at 9pm on a Sunday.",
+    heroPrice: "Quoted per project · no retainer",
     price: {
       lead: "AI automation is",
       big: "Quoted per project",
