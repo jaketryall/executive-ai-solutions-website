@@ -896,43 +896,49 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           statement, one gray sentence, the action, then THE artifact,
           enormous and centered beneath the words (never beside them) ── */}
       <section className="svc-hero relative overflow-x-clip">
-        {/* mobile trims the top air so the artifact's bottom clears the
-            identity bar on the FIRST viewport — the demo is the sell */}
-        <div className="wrap flex flex-col items-center pb-fib-6 pt-fib-6 text-center md:pt-[176px]">
-          <p data-anim="h-sub" className="t-meta text-ink/55">
-            {service.stage}
-          </p>
-          <h1 className="t-display-title mt-fib-2">
-            {service.title.map((line) => (
-              <span key={line} className="mask-line">
-                <span className="mask-inner">{line}</span>
-              </span>
-            ))}
-          </h1>
-          <p data-anim="h-sub" className="t-lede mx-auto mt-fib-3 max-w-[46ch] text-ink/70">
-            {service.support}
-          </p>
-          <div
-            data-anim="h-sub"
-            className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-3"
-          >
-            <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
-            <Link
-              href="/pricing"
-              className="u-link u-link--chev t-meta py-fib-2 text-ink/70"
+        {/* THE SPLIT (Jake, 2026-08-02: the stacked phone cost two viewports
+            before any proof): copy left, artifact right at lg — the homepage
+            viral-split echoed, and SK's own hero shape. Pitch + ask + price
+            + the performing phone + the receipt band peeking now share the
+            first paint. Below lg the stack survives (the phone bleeding past
+            the mobile fold is the mobile hook). */}
+        <div className="wrap flex flex-col items-center pb-fib-5 pt-fib-6 text-center md:pt-[176px] lg:grid lg:min-h-[74svh] lg:grid-cols-[minmax(0,54fr)_minmax(0,46fr)] lg:items-center lg:gap-fib-5 lg:pt-fib-7 xl:gap-fib-6">
+          <div className="flex w-full flex-col items-center lg:items-start lg:text-left">
+            <p data-anim="h-sub" className="t-meta text-ink/55">
+              {service.stage}
+            </p>
+            <h1 className="t-display-title mt-fib-2">
+              {service.title.map((line) => (
+                <span key={line} className="mask-line">
+                  <span className="mask-inner">{line}</span>
+                </span>
+              ))}
+            </h1>
+            <p data-anim="h-sub" className="t-lede mx-auto mt-fib-3 max-w-[46ch] text-ink/70 lg:mx-0">
+              {service.support}
+            </p>
+            <div
+              data-anim="h-sub"
+              className="mt-fib-4 flex flex-wrap items-center justify-center gap-fib-3 lg:justify-start"
             >
-              See the whole pricing sheet
-            </Link>
+              <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
+              <Link
+                href="/pricing"
+                className="u-link u-link--chev t-meta py-fib-2 text-ink/70"
+              >
+                See the whole pricing sheet
+              </Link>
+            </div>
+            {/* the price, IN the hero (Apple: "From $1099" sits beside Buy —
+                nothing withheld; SK hides price entirely, and transparency is
+                exactly where we beat them) */}
+            <p data-anim="h-sub" className="t-meta mt-fib-3 text-ink/55">
+              {service.heroPrice}
+            </p>
           </div>
-          {/* the price, IN the hero (Apple: "From $1099" sits beside Buy —
-              nothing withheld; SK hides price entirely, and transparency is
-              exactly where we beat them) */}
-          <p data-anim="h-sub" className="t-meta mt-fib-3 text-ink/55">
-            {service.heroPrice}
-          </p>
           <div
             data-anim="h-art"
-            className="mt-fib-5 w-full md:mt-fib-6"
+            className="mt-fib-5 w-full md:mt-fib-6 lg:mt-0"
           >
             <HeroArtifact slug={service.slug} />
           </div>

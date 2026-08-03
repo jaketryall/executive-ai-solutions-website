@@ -5113,6 +5113,14 @@ html.wki-lock body {
      chrome; do not shrink the phone to dodge it. */
   width: min(78vw, 310px);
 }
+/* the split hero (2026-08-02): at lg the phone rides BESIDE the copy, so
+   it must fit the first paint — svh joins the clamp (short laptops get a
+   smaller phone, tall screens the full 310) */
+@media (min-width: 1024px) {
+  .svc-phone .dvc {
+    width: min(310px, 36svh);
+  }
+}
 /* screens that hold UI (not a photo) get a light ground — doubled
    selector: the base .dvc-screen is declared later in the file and its
    dark ground out-cascades a single class at equal specificity */
