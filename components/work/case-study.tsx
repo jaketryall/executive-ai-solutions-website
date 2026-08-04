@@ -385,12 +385,29 @@ export function CaseStudy({
         <p className="t-statement max-w-[30ch]" data-anim="cs-reveal">
           {project.lede}
         </p>
-        <p
-          data-anim="cs-reveal"
-          className="mt-[55px] max-w-[62ch] text-[1.125rem] leading-[1.6] text-ink/80 md:mt-[89px]"
-        >
-          {project.paras[0]}
-        </p>
+        <div className="mt-[55px] md:mt-[89px] md:grid md:grid-cols-[minmax(0,1fr)_340px] md:items-center md:gap-fib-6">
+          <p
+            data-anim="cs-reveal"
+            className="max-w-[62ch] text-[1.125rem] leading-[1.6] text-ink/80"
+          >
+            {project.paras[0]}
+          </p>
+          {/* the artifact beside the narrative (density law, 2026-08-03:
+              the story was the page's one prose-only stretch) — the real
+              ad that starts the funnel, when the case has one */}
+          {project.results?.ad && (
+            <figure data-anim="cs-reveal" className="cs-story-ad mt-fib-4 md:mt-0">
+              <div className="hlg-float">
+                <p className="g-sponsored">Sponsored</p>
+                {project.urlLabel && <p className="g-url">{project.urlLabel}</p>}
+                <p className="g-title">{project.results.ad.title}</p>
+              </div>
+              <figcaption className="t-meta mt-fib-2 text-center text-ink/50">
+                The ad that starts the funnel
+              </figcaption>
+            </figure>
+          )}
+        </div>
       </section>
 
       {/* ── first look: a couple of images ── */}
@@ -499,6 +516,37 @@ export function CaseStudy({
         </section>
       )}
 
+      {/* ── the receipts: for cases without client numbers, the numbers
+          the BUILD itself can prove (EAS's own case — solves the teased-
+          metrics sin with substance instead of omission) ── */}
+      {!project.results && project.receipts && (
+        <section id="cs-results" className="pb-[89px] md:pb-[144px]">
+          <div className="dark-chapter mx-[8px] rounded-panel py-fib-6 md:mx-[13px]">
+            <div className="mx-auto max-w-[1400px] px-[21px] md:px-[55px]">
+              <div
+                data-anim="cs-reveal"
+                className="flex flex-col justify-between gap-[13px] md:flex-row md:items-end"
+              >
+                <h2 className="t-display-lg max-w-[12ch]">The receipts</h2>
+                <p className="max-w-[38ch] text-paper/70 md:text-right">
+                  {project.receipts.note}
+                </p>
+              </div>
+              <div className="mt-fib-5 grid gap-fib-4 sm:grid-cols-3">
+                {project.receipts.items.map((m) => (
+                  <div key={m.label} data-anim="cs-reveal">
+                    <p className="t-display-lg t-num">{m.value}</p>
+                    <p className="mt-fib-1 max-w-[24ch] text-paper/70">
+                      {m.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── next case + the ask ── */}
       <section id="cs-next" className="mx-auto max-w-[1400px] px-[21px] pb-[144px] md:px-[55px] md:pb-[178px]">
         <p className="t-meta text-ink/55" data-anim="cs-reveal">
@@ -548,7 +596,9 @@ export function CaseStudy({
         </span>
         <a href="#cs-story">Story</a>
         <a href="#cs-build">Build</a>
-        {project.results && <a href="#cs-results">Results</a>}
+        {(project.results || project.receipts) && (
+          <a href="#cs-results">Results</a>
+        )}
         <a href="#cs-next">Next</a>
         {project.url && (
           <a
@@ -581,6 +631,12 @@ export function CaseStudy({
             </span>
           </a>
         )}
+        {/* the money ask, IN the dock (2026-08-03, the Apple localnav law:
+            anchors + ONE Buy pill — before this the dock's only pull was
+            Visit site, an exit with no return path) */}
+        <Link href="/pricing#estimate" className="cs-dock-cta">
+          Price my project
+        </Link>
       </nav>
     </article>
   );

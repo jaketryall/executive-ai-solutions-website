@@ -4514,26 +4514,51 @@ a.work-card:hover {
     display: inline-flex;
   }
 }
-/* the one highlighted action: a paper chip (the only light surface in the
-   ink capsule, so it reads first) with a fly-through arrow on hover.
-   Selector carries the `a` — the shared .cs-onpage a color rule would otherwise
-   out-specifies this and paints paper text on the paper chip. */
+/* Visit site — DEMOTED to a quiet link (2026-08-03: it was the dock's
+   only highlighted action, and its pull is an EXIT; the money pill below
+   owns the light now). Keeps its fly-through arrow. MOBILE: hidden — the
+   money pill's arrival ran the dock to 431px on a 390 viewport, clipping
+   both ends; the hero already carries the live-site link. */
 .cs-onpage a.cs-dock-visit {
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: 7px;
+  margin-left: 2px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(239, 240, 238, 0.7);
+  background: transparent;
+  text-decoration: none;
+  transition:
+    background 0.1s linear,
+    color 0.1s linear;
+}
+@media (min-width: 821px) {
+  .cs-onpage a.cs-dock-visit {
+    display: inline-flex;
+  }
+}
+/* the ONE highlighted action (Apple localnav law: anchors + one Buy
+   pill): the money ask, accent on ink so it reads first */
+.cs-onpage a.cs-dock-cta {
+  display: inline-flex;
+  align-items: center;
   margin-left: 2px;
   padding: 11px 16px;
   border-radius: 10px;
   font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--color-ink);
-  background: var(--color-paper);
+  color: #fff;
+  background: var(--color-accent);
   text-decoration: none;
-  transition:
-    background 0.1s linear,
-    color 0.1s linear;
+  transition: background 0.1s linear;
+}
+.cs-onpage a.cs-dock-cta:hover {
+  background: #1f5f80;
 }
 .cs-dock-visit .dv-arrow {
   position: relative;
@@ -4553,14 +4578,26 @@ a.work-card:hover {
   transform: translate(-120%, 120%);
 }
 .cs-onpage a.cs-dock-visit:hover {
-  background: #fff;
-  color: var(--color-ink);
+  background: transparent;
+  color: var(--color-paper);
 }
 .cs-dock-visit:hover .dv-arrow svg:first-child {
   transform: translate(120%, -120%);
 }
 .cs-dock-visit:hover .dv-arrow svg:last-child {
   transform: translate(0, 0);
+}
+
+/* the story's ad chip (2026-08-03): the funnel's first artifact seated
+   beside the narrative — white on canvas with the Google-toned shadow,
+   a witness-card tilt for life */
+.cs-story-ad .hlg-float {
+  width: 100%;
+  background: #fff;
+  box-shadow:
+    0 1px 3px rgba(60, 64, 67, 0.16),
+    0 21px 34px -21px rgba(60, 64, 67, 0.35);
+  transform: rotate(1deg);
 }
 
 /* the hero well as the door: the visit pill IS the cursor over it */

@@ -71,6 +71,14 @@ export type Project = {
   /** homepage proof row: the receipts. A project with results (and ideally a
       tall `tour` capture) gets a work-and-results row on the homepage. */
   results?: ProjectResults;
+  /** the case page's numbers band for projects WITHOUT client results —
+      receipts we can measure on the build itself (2026-08-03: the EAS
+      case solved the teased-metrics sin by omission; this solves it with
+      substance). Does NOT trigger the homepage proof row. */
+  receipts?: {
+    note: string;
+    items: { value: string; label: string }[];
+  };
   /** tall stitched capture that pans inside the proof frame on scroll */
   tour?: WorkImage;
 };
@@ -227,6 +235,14 @@ export const PROJECTS: Project[] = [
       width: 1600,
       height: 1000,
       alt: "The Executive AI Solutions instant estimator",
+    },
+    receipts: {
+      note: "Numbers you can check by using the site. Lighthouse scores join after launch.",
+      items: [
+        { value: "60s", label: "from six questions to a real price, in the estimator" },
+        { value: "0", label: "templates, page builders, or plugin stacks in the build" },
+        { value: "100%", label: "hand-written code, designed and built in-house" },
+      ],
     },
     lede: "The site you're scrolling is the second case study. Every interaction here, from the estimator to the page transition that brought you to this line, is the product demo.",
     paras: [
