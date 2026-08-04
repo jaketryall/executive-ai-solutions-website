@@ -227,9 +227,7 @@ export function WorkIndex() {
                     STATED, in ink that never dims */}
                 <p className="t-meta mt-fib-1 flex flex-wrap items-center justify-between gap-x-fib-2 gap-y-1 px-fib-1 pb-fib-1">
                   <span className="wk-metric">
-                    {hero
-                      ? `${hero.value} ${hero.label}`
-                      : "The build you're inside right now"}
+                    {hero ? `${hero.value} ${hero.label}` : (p.listLine ?? "")}
                   </span>
                   <span className="wk-live">
                     {p.status === "Live" && p.urlLabel

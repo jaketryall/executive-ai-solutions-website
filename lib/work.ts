@@ -40,6 +40,9 @@ export type Project = {
   slug: string;
   /** short display name for the index list (must survive huge type) */
   listName: string;
+  /** the tile's one-line metric when there are no client results — was a
+      hardcoded EAS fallback that leaked onto AAHG's tile (2026-08-03) */
+  listLine?: string;
   client: string;
   kind: string;
   /** industry label for the index's sector rail (jump-nav now, filter as the list grows) */
@@ -210,8 +213,89 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    slug: "aahg",
+    listName: "AAHG",
+    listLine: "$0/mo in platform fees after leaving Wix",
+    client: "Arizona Aviation Historical Group",
+    kind: "Website",
+    sector: "Nonprofit",
+    year: "2026",
+    status: "Live",
+    url: "https://www.aahg.org",
+    urlLabel: "aahg.org",
+    tags: ["Custom design", "Next.js", "Static build", "Motion design", "No CMS"],
+    cover: {
+      src: "/work/aahg-hero.jpg",
+      width: 2880,
+      height: 1800,
+      alt: "The AAHG homepage: 'Keep the record.' over an aerial photograph cut into the shape of Arizona",
+    },
+    demo: {
+      src: "/work/aahg-programs.jpg",
+      width: 2880,
+      height: 1800,
+      alt: "The AAHG project ledger: what we preserve, what we restore",
+    },
+    /* 1x capture (Chrome's 16,384px ceiling blocks DPR2 on a 13,090px
+       page) — soft on retina; re-capture in stitched halves if it shows */
+    tour: {
+      src: "/work/aahg-tour.jpg",
+      width: 1440,
+      height: 13090,
+      alt: "Scrolling through the Arizona Aviation Historical Group homepage",
+    },
+    receipts: {
+      note: "Numbers from the build itself. A site a volunteer organization can actually run.",
+      items: [
+        { value: "$0", label: "monthly platform fees, now that the Wix subscription is gone" },
+        { value: "100%", label: "statically prerendered, nothing to break, nothing to patch" },
+        { value: "57", label: "photographs from their own archive doing the storytelling" },
+      ],
+    },
+    lede: "A volunteer group keeping Arizona's aviation history alive, on a website that finally matches the mission. We retired the old Wix site and built the record a permanent home, from their own photographs down to the last date.",
+    paras: [
+      "The AAHG preserves Arizona's aviation story: the RAF cadets who trained at Falcon Field, the aircraft their volunteers restore, the school programs that pass it on. The site's job is to make that record feel worth joining, and to route every kind of support — donations, event seats, program enquiries — to the right door.",
+      "We designed it from their own photo archive and built it by hand on Next.js. Every page is statically prerendered: no CMS to break, no database to patch, no platform subscription to renew. The Arizona-shaped hero mask, the polaroid mats, the numbered project ledger — all custom.",
+      "It runs the way a nonprofit needs it to. Content lives in one file, the featured fundraiser switches in one line, and the whole thing deploys in a push. Project Tweet takes donations through PayPal; everything else lands in the inbox they already check.",
+    ],
+    shipped: [
+      "Custom design & build",
+      "Next.js",
+      "Static, no CMS",
+      "GSAP + Framer Motion",
+      "Content in one file",
+    ],
+    gallery: [
+      {
+        src: "/work/aahg-numbers.jpg",
+        width: 2880,
+        height: 1800,
+        alt: "The AAHG by-the-numbers section: numbers worth remembering",
+        name: "Numbers worth remembering",
+        caption: "Their history, told in figures a visitor can hold",
+        span: "half",
+      },
+      {
+        src: "/work/aahg-support.jpg",
+        width: 2880,
+        height: 1800,
+        alt: "The AAHG support section with the tilted crew polaroid and donation paths",
+        name: "The support closer",
+        caption: "Three ways in: donate, programs, a seat at the next evening",
+        span: "half",
+      },
+    ],
+    phoneTour: {
+      src: "/work/aahg-phone-tour.jpg",
+      width: 390,
+      height: 12771,
+      alt: "The full AAHG site scrolling by at phone width",
+    },
+  },
+  {
     slug: "executive-ai-solutions",
     listName: "Executive AI",
+    listLine: "The build you're inside right now",
     client: "Executive AI Solutions",
     kind: "Website · AI",
     sector: "AI & Web",

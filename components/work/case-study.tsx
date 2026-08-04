@@ -316,7 +316,11 @@ export function CaseStudy({
       <div className="cs-mat relative mx-[8px] mt-[55px] md:mx-[13px] md:mt-[89px]">
         {(() => {
           const media = project.tour ? (
-            /* the page itself, riding: the self-scrolling tour loop */
+            /* the page itself, riding: the self-scrolling tour loop.
+               unoptimized: tall stitched captures blow WebP's 16,383px
+               variant ceiling — the optimizer clamps then UPSCALES
+               (AAHG's 13,090px tour served at 1036px into a 1372px slot,
+               2026-08-03). The originals are pre-compressed JPEGs. */
             <Image
               data-cs-tour
               src={project.tour.src}
@@ -327,6 +331,7 @@ export function CaseStudy({
               className="block h-auto w-full"
               priority
               fetchPriority="high"
+              unoptimized
             />
           ) : (
             <div className="cs-par absolute inset-0">
@@ -429,6 +434,8 @@ export function CaseStudy({
                   <div className="dvc">
                     <span className="dvc-island" aria-hidden />
                     <div className="dvc-screen" data-well>
+                      {/* unoptimized: same 16,383px variant-ceiling trap as
+                          the hero tour (mobile got a 152px-wide serve) */}
                       <Image
                         data-cs-tour
                         src={project.phoneTour.src}
@@ -437,6 +444,7 @@ export function CaseStudy({
                         height={project.phoneTour.height}
                         sizes="(min-width: 821px) 340px, 64vw"
                         className="block h-auto w-full"
+                        unoptimized
                       />
                     </div>
                   </div>

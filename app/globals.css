@@ -5096,8 +5096,12 @@ html.wki-lock body {
 .cs-mat-well--phone {
   aspect-ratio: 16 / 10;
   /* the whole device must sit in ONE viewport (Jake, 2026-07-16) — on
-     wide screens the 16/10 well outgrows the fold, so height wins */
+     wide screens the 16/10 well outgrows the fold, so height wins.
+     margin auto (2026-08-03): when max-height clamps, aspect-ratio
+     COLLAPSES the width below the mat's — unmargined, the well hugged
+     the left edge with ~335px of dead space right ("looks broken") */
   max-height: 72svh;
+  margin-inline: auto;
   background: var(--color-accent);
 }
 @media (max-width: 820px) {
