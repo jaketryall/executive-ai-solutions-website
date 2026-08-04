@@ -4,6 +4,16 @@
 // plain numbers, never a claim the homepage doesn't already make.
 // ─────────────────────────────────────────────────────────────
 
+/** the RECEIPT beside each deliverable claim (fusion, 2026-08-03: the
+    dark chapter ran paragraphs where the homepage grammar demands
+    artifacts — every claim now carries the thing it produces). Three
+    shapes: a big stat, label/value rows, or a checklist with ✗ rows
+    (the negative-keyword craft made visible). */
+export type DeliverableReceipt =
+  | { kind: "stat"; value: string; label: string }
+  | { kind: "rows"; rows: [string, string][] }
+  | { kind: "checks"; items: { text: string; no?: boolean }[] };
+
 export type ServiceDef = {
   slug: string;
   /** funnel position — a true category, so it earns its chip */
@@ -29,7 +39,7 @@ export type ServiceDef = {
     note: string;
     chips: string[];
   };
-  deliverables: { name: string; body: string }[];
+  deliverables: { name: string; body: string; receipt: DeliverableReceipt }[];
   /** the Lesse-grammar process cards: how this stage actually runs */
   process: { name: string; body: string }[];
   faqs: { q: string; a: string }[];
@@ -61,18 +71,46 @@ export const SERVICES: ServiceDef[] = [
       {
         name: "Campaigns built on real searches",
         body: "We build around what your customers actually type, not what a keyword tool guesses. Negative lists keep the budget off the wrong clicks.",
+        /* the demo-fiction plumber universe (shared with the LSA mocks) */
+        receipt: {
+          kind: "checks",
+          items: [
+            { text: "emergency plumber mesa" },
+            { text: "water heater replacement" },
+            { text: "free plumbing advice", no: true },
+            { text: "diy drain cleaning", no: true },
+          ],
+        },
       },
       {
         name: "Tracking you can read",
         body: "Calls, forms and bookings wired up as conversions. You see which ad produced which lead, in a report that fits on one screen.",
+        /* PLACEHOLDER numbers — same swap list as lib/work.ts results */
+        receipt: {
+          kind: "rows",
+          rows: [
+            ["Calls", "18"],
+            ["Form leads", "8"],
+            ["Cost per lead", "$38"],
+          ],
+        },
       },
       {
         name: "A monthly number that means something",
         body: "Every month: what you spent, what a lead cost, and what we are changing next. If a campaign isn't earning, we say so.",
+        /* PLACEHOLDER — the same $38 the highlights and homepage quote */
+        receipt: { kind: "stat", value: "$38", label: "per lead · last 30 days" },
       },
       {
         name: "The landing page, tuned with it",
         body: "If we built your site, the ads and the page get tuned from the same data. One team, accountable for the whole click.",
+        receipt: {
+          kind: "rows",
+          rows: [
+            ["The ad promises", "Learn to fly at Falcon Field"],
+            ["The page delivers", "Learn to fly at Falcon Field"],
+          ],
+        },
       },
     ],
     process: [
@@ -133,18 +171,50 @@ export const SERVICES: ServiceDef[] = [
       {
         name: "Designed from your business",
         body: "No templates. We design from your customers, your prices and your photos, so the page could not belong to anyone else.",
+        receipt: {
+          kind: "checks",
+          items: [
+            { text: "Designed from scratch" },
+            { text: "Templates", no: true },
+            { text: "Stock photos", no: true },
+          ],
+        },
       },
       {
         name: "Built by hand, built to load",
         body: "No page builders, no plugin stacks. Hand-coded pages that load before your visitor thinks about leaving.",
+        receipt: {
+          kind: "rows",
+          rows: [
+            ["Page builders", "None"],
+            ["Plugin bloat", "None"],
+            ["The code", "Written by hand"],
+          ],
+        },
       },
       {
         name: "Built to convert the click",
         body: "Booking and quote forms where the eye lands, one clear action per page, and tracking wired in so you can see it working.",
+        receipt: {
+          kind: "checks",
+          items: [
+            { text: "Form above the fold" },
+            { text: "One clear action per page" },
+            { text: "Tracking wired in" },
+          ],
+        },
       },
       {
         name: "Yours, outright",
         body: "Your domain, your content, your code. Nothing you will outgrow, no platform rent, no lock-in.",
+        receipt: {
+          kind: "rows",
+          rows: [
+            ["The domain", "Yours"],
+            ["The code", "Yours"],
+            ["The content", "Yours"],
+          ],
+        },
       },
     ],
     process: [
@@ -205,18 +275,46 @@ export const SERVICES: ServiceDef[] = [
       {
         name: "Chat that answers from your pages",
         body: "Visitors ask, it answers from your actual content, and it offers the booking. No canned scripts, no wrong prices.",
+        receipt: {
+          kind: "rows",
+          rows: [
+            ["A visitor asks", "Do you fly weekends?"],
+            ["It answers from", "Your own pages"],
+          ],
+        },
       },
       {
         name: "Follow-ups that send themselves",
         body: "An enquiry at 9pm on a Sunday gets a reply at 9:01, not on Monday. The chase happens whether or not you're at a desk.",
+        receipt: {
+          kind: "rows",
+          rows: [
+            ["Enquiry lands", "Sunday 9:04 PM"],
+            ["Reply sent", "Sunday 9:05 PM"],
+          ],
+        },
       },
       {
         name: "Pages that adapt to the visitor",
         body: "The headline a flight student sees isn't the one a restaurant owner sees. Same site, aimed at each visitor.",
+        receipt: {
+          kind: "rows",
+          rows: [
+            ["A pilot sees", "Learn to fly"],
+            ["A diner sees", "Book a table"],
+          ],
+        },
       },
       {
         name: "Built and managed for you",
         body: "We build it, watch it and tune it. You read the results, not the manuals.",
+        receipt: {
+          kind: "rows",
+          rows: [
+            ["You", "Read the results"],
+            ["We", "Watch, tune, manage"],
+          ],
+        },
       },
     ],
     process: [

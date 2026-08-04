@@ -20,8 +20,70 @@ import { SubOffer } from "@/components/services/sub-offer";
 import { Monogram } from "@/components/ui/monogram";
 import { ProcessCards } from "@/components/ui/process-cards";
 import { HighlightsGallery, type Highlight } from "@/components/ui/highlights-gallery";
-import { SERVICE_META, siblingServices, type ServiceDef } from "@/lib/services";
+import {
+  SERVICE_META,
+  siblingServices,
+  type DeliverableReceipt,
+  type ServiceDef,
+} from "@/lib/services";
 import { QUOTES, AV_TINTS } from "@/lib/quotes";
+
+/* the receipt beside each deliverable claim — a small white artifact on
+   the ink chapter (the fusion, 2026-08-03: show the thing, not the
+   sentence about the thing) */
+function DReceipt({ r }: { r: DeliverableReceipt }) {
+  if (r.kind === "stat") {
+    return (
+      <div className="svc-rcpt svc-rcpt--stat">
+        <p className="t-num font-display text-[2.6rem] font-[650] leading-none">
+          {r.value}
+        </p>
+        <p className="t-meta mt-fib-1 text-ink/55">{r.label}</p>
+      </div>
+    );
+  }
+  if (r.kind === "rows") {
+    return (
+      <div className="svc-rcpt">
+        {r.rows.map(([k, v]) => (
+          <div key={k} className="svc-rcpt-row">
+            <span>{k}</span>
+            <b>{v}</b>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return (
+    <div className="svc-rcpt">
+      {r.items.map((it) => (
+        <div key={it.text} className={`svc-rcpt-check ${it.no ? "is-no" : ""}`}>
+          {it.no ? (
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden>
+              <path
+                d="M3.5 3.5l7 7M10.5 3.5l-7 7"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden>
+              <path
+                d="M2.5 7.5L5.5 10.5L11.5 3.5"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+          <span>{it.text}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function PersonIcon() {
   return (
@@ -1012,9 +1074,15 @@ export function ServicePage({ service }: { service: ServiceDef }) {
               <ul className="flex flex-col gap-fib-2 md:gap-fib-3">
                 {service.deliverables.map((d) => (
                   <li key={d.name} data-anim="d-row" className="svc-d">
-                    <div className="svc-d-in">
-                      <h3 className="t-title--lg font-display">{d.name}</h3>
-                      <p className="mt-fib-2 max-w-[52ch] text-paper/70">{d.body}</p>
+                    {/* claim left, RECEIPT right (the fusion): the artifact
+                        rides inside .svc-d-in so the index-sweep dims the
+                        whole pair together */}
+                    <div className="svc-d-in md:grid md:grid-cols-[minmax(0,1fr)_280px] md:items-center md:gap-fib-4">
+                      <div>
+                        <h3 className="t-title--lg font-display">{d.name}</h3>
+                        <p className="mt-fib-2 max-w-[52ch] text-paper/70">{d.body}</p>
+                      </div>
+                      <DReceipt r={d.receipt} />
                     </div>
                   </li>
                 ))}
@@ -1041,6 +1109,10 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           a third of the viewport it used to hold hostage */}
       <section className="svc-price relative overflow-x-clip" data-pcta-hide>
         <div className="wrap relative flex min-h-[62svh] flex-col items-center justify-center py-fib-5 text-center md:py-fib-6">
+          {/* the price on a SURFACE (2026-08-03: the peak floated bare on
+              the canvas — the one section that broke the card law; the
+              witnesses stay on the canvas around the tray) */}
+          <div className="svc-price-card flex w-full max-w-[680px] flex-col items-center rounded-panel bg-white px-fib-4 py-fib-5 md:px-fib-5">
           <p data-anim="p-lead" className="t-meta text-ink/60">
             {service.price.lead}
           </p>
@@ -1073,6 +1145,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           </div>
           <div data-anim="p-out" className="mt-fib-4 flex justify-center">
             <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
+          </div>
           </div>
 
           {/* the witnesses — quieter, floating around the claim (desktop);
