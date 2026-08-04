@@ -377,62 +377,35 @@ function HeroArtifact({ slug }: { slug: string }) {
   );
 }
 
-/* ── the ads page's highlights (the macbook-neo gallery, our content):
-   each card is one thing the service actually produces. Numbers are
-   PLACEHOLDER — same swap list as lib/work.ts results. ── */
-const ADS_HIGHLIGHTS: Highlight[] = [
+/* ── the WEBSITES page's highlights (moved off the ads page 2026-08-04,
+   Jake: "that section only makes sense for website design services" —
+   right on both counts: the ads gallery re-showed receipts the
+   deliverables fusion now carries, and the one VISUAL service had no
+   showcase). Real frames from both live builds, alternating — the
+   gallery now shows RANGE. ── */
+const WEB_HIGHLIGHTS: Highlight[] = [
   {
-    key: "ad",
-    caption: "Your ad, live on Google.",
-    media: (
-      <div className="hlg-float">
-        <p className="g-sponsored">Sponsored</p>
-        <p className="g-url">desertwingsflightschool.com</p>
-        <p className="g-title">
-          Desert Wings Flight School | Learn to Fly at Falcon Field
-        </p>
-        <p className="g-desc">
-          Discovery flights and PPL through CFI training in Mesa, AZ.
-        </p>
-      </div>
-    ),
-  },
-  {
-    key: "landing",
-    caption: "Every click lands on a page built to convert.",
+    key: "dw-home",
+    caption: "Desert Wings — designed from the business, not a template.",
     fill: true,
     media: (
       <Image
-        src="/work/dw-tour.jpg"
-        alt="The Desert Wings landing page we designed and built"
-        width={2880}
-        height={4446}
+        src="/work/desert-wings-hero.png"
+        alt="The Desert Wings homepage hero: a Piper over the Arizona desert"
+        width={1600}
+        height={741}
         sizes="88vw"
       />
     ),
   },
   {
-    key: "tracking",
-    caption: "Tracked to the dollar, in your own account.",
-    media: (
-      <div className="text-center">
-        <p className="t-num font-display text-[clamp(3.4rem,7vw,6rem)] font-[650] leading-none">
-          $38
-        </p>
-        <p className="t-meta mt-[13px] text-paper/60">
-          cost per lead · last 30 days
-        </p>
-      </div>
-    ),
-  },
-  {
-    key: "reviews",
-    caption: "The proof the click reads before calling.",
+    key: "aahg-home",
+    caption: "AAHG — a nonprofit's history, given a permanent home.",
     fill: true,
     media: (
       <Image
-        src="/work/live/dw-reviews.jpg"
-        alt="The reviews section on the Desert Wings site"
+        src="/work/aahg-hero.jpg"
+        alt="The AAHG homepage: 'Keep the record.' over the Arizona-shaped photo cutout"
         width={2880}
         height={1800}
         sizes="88vw"
@@ -440,8 +413,8 @@ const ADS_HIGHLIGHTS: Highlight[] = [
     ),
   },
   {
-    key: "booking",
-    caption: "The form that catches it.",
+    key: "dw-booking",
+    caption: "The form that catches the click.",
     fill: true,
     media: (
       <Image
@@ -454,25 +427,45 @@ const ADS_HIGHLIGHTS: Highlight[] = [
     ),
   },
   {
-    key: "report",
-    caption: "A report you can read in one minute.",
+    key: "aahg-ledger",
+    caption: "The project ledger, numbered and tracked.",
+    fill: true,
     media: (
-      <div className="hlg-float">
-        {[
-          ["Leads", "26"],
-          ["Cost per lead", "$38"],
-          ["Search impression share", "74%"],
-        ].map(([k, v]) => (
-          <div
-            key={k}
-            className="flex items-baseline justify-between gap-[13px] border-b border-ink/10 py-[9px] text-[0.9375rem] last:border-b-0"
-          >
-            <span className="text-ink/70">{k}</span>
-            <span className="t-num font-[600]">{v}</span>
-          </div>
-        ))}
-        <p className="t-meta mt-[13px] text-ink/50">Sent every Monday</p>
-      </div>
+      <Image
+        src="/work/aahg-programs.jpg"
+        alt="The AAHG projects chapter: what we preserve, what we restore"
+        width={2880}
+        height={1800}
+        sizes="88vw"
+      />
+    ),
+  },
+  {
+    key: "dw-reviews",
+    caption: "The proof a visitor reads before calling.",
+    fill: true,
+    media: (
+      <Image
+        src="/work/live/dw-reviews.jpg"
+        alt="The reviews section on the Desert Wings site"
+        width={2880}
+        height={1800}
+        sizes="88vw"
+      />
+    ),
+  },
+  {
+    key: "aahg-numbers",
+    caption: "Their history, told in numbers.",
+    fill: true,
+    media: (
+      <Image
+        src="/work/aahg-numbers.jpg"
+        alt="The AAHG by-the-numbers section"
+        width={2880}
+        height={1800}
+        sizes="88vw"
+      />
     ),
   },
 ];
@@ -1046,12 +1039,13 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           de-risks harder than a trophy) ── */}
       {service.slug === "google-ads" && <LeadMath />}
 
-      {/* ── THE HIGHLIGHTS · the swiping gallery (ads page only) ── */}
-      {service.slug === "google-ads" && (
+      {/* ── THE HIGHLIGHTS · the swiping gallery — websites only (the
+          visual service gets the visual showcase; both live builds) ── */}
+      {service.slug === "websites" && (
         <HighlightsGallery
-          label="Google Ads highlights"
+          label="Website highlights"
           heading="The highlights."
-          items={ADS_HIGHLIGHTS}
+          items={WEB_HIGHLIGHTS}
         />
       )}
 
