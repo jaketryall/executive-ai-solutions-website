@@ -1321,9 +1321,16 @@ section[id] {
    filled track is painted from --p, set by React per input — the slider
    renders its own state, pure f(input) ── */
 .lm-card {
-  background: #fff;
+  /* panel on the WHITE pitch chapter (ground script 2026-08-03) — the
+     homepage audit-tray grammar: gray tool tray floating on white */
+  background: var(--color-panel);
   border-radius: var(--radius-panel);
   padding: 34px;
+}
+/* the pitch chapter runs WHITE through the tool + gallery sections */
+.svc-math,
+.hlg {
+  background: #fff;
 }
 .lm-out {
   background: rgba(19, 20, 19, 0.04);
@@ -5159,16 +5166,18 @@ html.wki-lock body {
   }
   /* the MAT (Jake, 2026-08-03: the sub-offer band "looks better than the
      hero" — because it obeys the card law and the hero didn't): at lg the
-     phone stops floating bare on the canvas and sits in a white well,
-     cropped at the bottom edge like the sub-band exhibit. Flat — white on
-     canvas separates by color, not shadow (Apple grammar). Below lg the
-     unmatted phone bleeding past the fold stays the mobile hook. */
+     phone stops floating bare and sits in a matted well, cropped at the
+     bottom edge like the sub-band exhibit. Flat — separation by surface
+     color, not shadow (Apple grammar). PANEL, not white, since the ground
+     script sent the hero chapter WHITE (the homepage demo-well grammar:
+     gray well on white). Below lg the unmatted phone bleeding past the
+     fold stays the mobile hook. */
   .svc-phone {
     align-items: flex-start;
     height: min(62svh, 610px);
     overflow: clip;
     border-radius: var(--radius-panel);
-    background: #fff;
+    background: var(--color-panel);
   }
 }
 /* the demo's POINT, highlighted (Jake, 2026-08-03: "the image demo can

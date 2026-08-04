@@ -944,7 +944,15 @@ export function ServicePage({ service }: { service: ServiceDef }) {
       {/* ── HERO · the Apple center-stage: one thing at a time, stacked —
           statement, one gray sentence, the action, then THE artifact,
           enormous and centered beneath the words (never beside them) ── */}
-      <section className="svc-hero relative overflow-x-clip">
+      {/* ── THE GROUND SCRIPT (Jake, 2026-08-03: "the section backgrounds
+          are all the same") — Apple long-runs, not checkerboard:
+          WHITE (the pitch: hero → receipt → tool → highlights)
+          → INK (what you actually get)
+          → CANVAS (the decision: sub-offer tray, price tray, why, faq,
+            process — white objects on the gray ground)
+          → INK (the ask). The color line at each seam announces the
+          chapter, exactly like the homepage's white stage → gray tray. ── */}
+      <section className="svc-hero relative overflow-x-clip bg-white">
         {/* THE SPLIT (Jake, 2026-08-02: the stacked phone cost two viewports
             before any proof): copy left, artifact right at lg — the homepage
             viral-split echoed, and SK's own hero shape. Pitch + ask + price
@@ -1003,7 +1011,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           version is the thing an award stands in for: a real result with
           real stars, linked to the case it came from.
           PLACEHOLDER metric — same swap list as lib/work.ts results. ── */}
-      <section className="svc-receipt border-y border-ink/10 py-fib-3">
+      <section className="svc-receipt border-y border-ink/10 bg-white py-fib-3">
         <div
           data-anim="h-sub"
           className="wrap flex flex-wrap items-center justify-center gap-x-fib-3 gap-y-fib-1 text-center"
