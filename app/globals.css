@@ -1851,27 +1851,13 @@ img.g-fav {
   filter: drop-shadow(0 2px 4px rgba(19, 20, 19, 0.25));
   will-change: transform;
 }
-.g-click-ring {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  border: 1.5px solid var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
-  opacity: 0;
-  pointer-events: none;
-}
 @media (prefers-reduced-motion: reduce) {
   .g-row .g-sponsored,
   .g-org-row,
   .g-expand {
     transition: none;
   }
-  .g-cursor,
-  .g-click-ring {
+  .g-cursor {
     display: none;
   }
 }
@@ -5118,7 +5104,10 @@ html.wki-lock body {
    smaller phone, tall screens the full 310) */
 @media (min-width: 1024px) {
   .svc-phone .dvc {
-    width: min(310px, 36svh);
+    /* grew 310->340 with the mat (2026-08-03, "the image demo can be
+       more clear"): the well crops overflow now, so the phone can spend
+       its pixels on TYPE size instead of fitting whole */
+    width: min(340px, 40svh);
     margin-top: 34px;
   }
   /* the MAT (Jake, 2026-08-03: the sub-offer band "looks better than the
@@ -5134,6 +5123,32 @@ html.wki-lock body {
     border-radius: var(--radius-panel);
     background: #fff;
   }
+}
+/* the demo's POINT, highlighted (Jake, 2026-08-03: "the image demo can
+   be more clear") — the hero phones finally get the emphasis grammar
+   the router cards wear: THE WIN floats on an elevated white card, the
+   surroundings recede. Scoped AWAY from the loop's own tweens (.g-m-loc
+   and .chat-q are loop-driven; the junk beat reads uniformly receded,
+   which IS its message). */
+.svc-phone .g-m-ad {
+  margin: 1.5cqw 3cqw 3cqw;
+  padding: 3cqw 3.6cqw 3.6cqw;
+  border-radius: 3.6cqw;
+  background: #fff;
+  box-shadow:
+    0 1px 3px rgba(60, 64, 67, 0.16),
+    0 4.6cqw 8.7cqw -4.1cqw rgba(60, 64, 67, 0.38);
+}
+.svc-phone .g-m-tabs,
+.svc-phone .g-m-org,
+.svc-phone .g-m .g-skel {
+  opacity: 0.5;
+}
+.svc-phone .chat-a {
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgba(60, 64, 67, 0.14),
+    0 13px 26px -10px rgba(60, 64, 67, 0.3);
 }
 /* screens that hold UI (not a photo) get a light ground — doubled
    selector: the base .dvc-screen is declared later in the file and its

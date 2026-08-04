@@ -169,8 +169,6 @@ function HeroArtifact({ slug }: { slug: string }) {
                 </svg>
               </span>
             </div>
-            {/* the stage's namesake, on loop: a thumb-tap takes the click */}
-            <span className="g-click-ring" />
           </div>
           <div className="g-m-sep" />
           <div className="g-m-org">
@@ -551,25 +549,20 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         /* the SEARCH CYCLE: the one surface ads management is visible on
            is the SERP itself, so the loop performs the craft there —
            found for the money searches, absent from the junk one
-           (negative keywords made visible), then the tap takes the click */
-        const ring = q(".g-click-ring")[0] as HTMLElement;
-        const link = q(".g-m-link")[0] as HTMLElement;
+           (negative keywords made visible). (The tap-ring click beat was
+           cut 2026-08-03 — Jake: "i dont like the tap animation"; the
+           emphasis card already carries the ad's win.) */
         const qEl = q("[data-g-q]")[0] as HTMLElement;
         const caret = q(".g-m-caret")[0] as HTMLElement;
         const cap = q("[data-g-cap]")[0] as HTMLElement;
         const results = q("[data-g-results]")[0] as HTMLElement;
         const money = q("[data-serp-money]")[0] as HTMLElement;
         const junk = q("[data-serp-junk]")[0] as HTMLElement;
-        if (ring && link && qEl && caret && cap && results && money && junk) {
+        if (qEl && caret && cap && results && money && junk) {
           const Q1 = "flight school near me";
           const Q2 = "discovery flight mesa";
           const Q3 = "free flight simulator games";
           const CAP1 = "Found for the searches that matter.";
-          const pt = () => ({
-            x: link.offsetLeft + link.offsetWidth * 0.5,
-            y: link.offsetTop + link.offsetHeight * 0.55,
-          });
-          gsap.set(ring, { xPercent: -50, yPercent: -50 });
           const c = gsap.timeline({ repeat: -1, paused: true, repeatRefresh: true });
           // the query retypes in place — the deleting/typing runs on proxy
           // objects, so repeatRefresh restarts them clean each cycle
@@ -644,17 +637,11 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           refresh(true);
           say("Never for the ones that waste your budget.");
           c.to({}, { duration: 2.6 });
-          // beat 4 — back to money, and the tap takes the click
+          // beat 4 — back to money: the ad returns to the top and HOLDS
           retype(Q3, Q1);
           refresh(false);
           say("Then the click becomes a customer.");
-          c.to({}, { duration: 0.6 })
-            // set-then-to, never fromTo: repeatRefresh re-renders an
-            // invalidated fromTo's FROM state at every cycle start
-            .set(ring, { x: () => pt().x, y: () => pt().y, autoAlpha: 0.55, scale: 0.25 })
-            .to(ring, { autoAlpha: 0, scale: 1, duration: 0.6, ease: EASE_UI })
-            .to(link, { opacity: 0.5, duration: 0.09, yoyo: true, repeat: 1, ease: "none" }, "<")
-            .to({}, { duration: 1.8 });
+          c.to({}, { duration: 2.4 });
           // restore the opening caption so the repeat is seamless
           say(CAP1);
           c.to({}, { duration: 0.9 });
