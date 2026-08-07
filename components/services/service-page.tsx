@@ -1004,11 +1004,16 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           version is the thing an award stands in for: a real result with
           real stars, linked to the case it came from.
           PLACEHOLDER metric — same swap list as lib/work.ts results. ── */}
-      <section className="svc-receipt border-y border-ink/10 bg-white py-fib-3">
-        <div
-          data-anim="h-sub"
-          className="wrap flex flex-wrap items-center justify-center gap-x-fib-3 gap-y-fib-1 text-center"
-        >
+      {/* the receipt as a TRAY, not a ruled band (Jake, 2026-08-07: didn't
+          like the hairlines above/below) — a gray capsule floating on the
+          white chapter, separation by surface color not divider lines
+          (our own Apple grammar). The card law reaches the trust strip. */}
+      <section className="svc-receipt bg-white py-fib-3">
+        <div className="wrap flex justify-center">
+          <div
+            data-anim="h-sub"
+            className="flex flex-wrap items-center justify-center gap-x-fib-3 gap-y-fib-1 rounded-2xl bg-panel px-fib-4 py-fib-3 text-center md:rounded-full md:py-fib-2"
+          >
           <span className="flex items-center gap-fib-2">
             <span className="hero-stars" aria-hidden>
               {[0, 1, 2, 3, 4].map((s) => (
@@ -1025,12 +1030,13 @@ export function ServicePage({ service }: { service: ServiceDef }) {
           <span className="t-meta text-ink/70">
             3x more bookings for Desert Wings in 90 days
           </span>
-          <Link
-            href="/work/desert-wings"
-            className="u-link u-link--chev t-meta text-ink/70"
-          >
-            See the case
-          </Link>
+            <Link
+              href="/work/desert-wings"
+              className="u-link u-link--chev t-meta text-ink/70"
+            >
+              See the case
+            </Link>
+          </div>
         </div>
       </section>
 
