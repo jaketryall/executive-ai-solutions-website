@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { gsap, EASE_STRUCTURE, EASE_UI, reducedMotion } from "@/components/anim/ease";
 import { Monogram } from "@/components/ui/monogram";
 import { CTA } from "@/components/ui/cta";
+import { PROJECTS } from "@/lib/work";
+import { SERVICES, SERVICE_META } from "@/lib/services";
 
 
 const LINKS = [
@@ -83,52 +85,43 @@ function LinksCapsule() {
   );
 
   const panels = [
-    // Work — the proof, small: a thumb beside the words, not a banner
-    // two static halves on purpose: the swell is a focus mechanism for
-    // picking among peers (services); a pair just seesaws
+    // Work — the proof, DATA-DRIVEN from the roster (2026-08-07: hardcoded
+    // to a single DW case, went stale when AAHG + Riled Up landed). The
+    // first three roster entries (clients-first order) + an All-work card,
+    // in the 2x2 grid. Never drifts from lib/work.ts again.
     <div key="w" className="nav-panel">
-      {mini(
-        "/work",
-        <>
-          <span className="nav-mini-meta">Case study</span>
-          <span className="text-trim">Desert Wings Flight School</span>
-        </>,
-        0,
+      {PROJECTS.slice(0, 3).map((p, i) =>
+        mini(
+          `/work/${p.slug}`,
+          <>
+            <span className="text-trim">{p.listName}</span>
+            <span className="nav-mini-meta">{p.sector}</span>
+          </>,
+          i,
+        ),
       )}
       {mini(
         "/work",
         <>
-          <span className="nav-mini-meta">All work</span>
-          <span className="text-trim">Every build, live and linked</span>
+          <span className="text-trim">All work</span>
+          <span className="nav-mini-meta">Every build, live &amp; linked</span>
         </>,
-        1,
+        3,
       )}
     </div>,
-    // Services — the funnel, three stages, each with its own page
+    // Services — the funnel, three stages, DATA-DRIVEN (2026-08-07: was the
+    // retired funnel-jargon "The click/landing/follow-up"; the pages now
+    // lead with literal service names, so the nav does too)
     <div key="s" className="nav-panel nav-panel--swell">
-      {mini(
-        "/services/google-ads",
-        <>
-          <span className="text-trim">The click</span>
-          <span className="nav-mini-meta">$500/mo + spend</span>
-        </>,
-        0,
-      )}
-      {mini(
-        "/services/websites",
-        <>
-          <span className="text-trim">The landing</span>
-          <span className="nav-mini-meta">From $2.5k</span>
-        </>,
-        1,
-      )}
-      {mini(
-        "/services/ai",
-        <>
-          <span className="text-trim">The follow-up</span>
-          <span className="nav-mini-meta">Per project</span>
-        </>,
-        2,
+      {SERVICES.map((s, i) =>
+        mini(
+          `/services/${s.slug}`,
+          <>
+            <span className="text-trim">{s.nav}</span>
+            <span className="nav-mini-meta">{SERVICE_META[s.slug].price}</span>
+          </>,
+          i,
+        ),
       )}
     </div>,
     // Pricing — a plain destination; the page needs no preview
