@@ -31,8 +31,13 @@ const IND_KEYS = ["other", "flight", "restaurant", "trades"] as const;
    photos land (each entry becomes an <img>). The conveyor needs >= 4
    faces to cycle without adjacent duplicates; fewer -> static pile.
    LAUNCH RULE: every face must be a real client. Never pad with
-   invented people to fake volume. */
-const FACES = ["DW", "MR", "JT", "KL", "AS"];
+   invented people to fake volume.
+   2026-08-08: swapped the invented DW/MR/JT/KL/AS initials for REAL
+   client-people (Rick Ryall + Jake Johnson · Desert Wings; Tim Brown ·
+   AAHG). Three real clients -> the pile rests STATIC (the conveyor only
+   runs at >= 4, and we never pad). Upgrade to real photos when they
+   land. */
+const FACES = ["RR", "JJ", "TB"];
 
 /* the hero logo marks (Jake, 2026-07-22: "black and the actual logos"):
    MONOCHROME ink, real marks — the OpenAI blossom is the genuine brand

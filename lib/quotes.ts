@@ -1,28 +1,24 @@
-/* ═══════════════════════════════════════════════════════════════════
-   ⚠️  DEMO PLACEHOLDERS — NAMED, NOT REAL. DO NOT SHIP TO PRODUCTION.
-   ═══════════════════════════════════════════════════════════════════
-   Jake, 2026-08-08: temporary named voices so he can show the site to
-   someone; real permissioned quotes coming soon. These are INVENTED
-   quotes attributed to REAL people (Tim Brown / Rick Ryall / Jake
-   Johnson). That is fine for a private preview but is a genuine
-   liability on the PUBLIC domain — putting words in a real person's
-   mouth. BEFORE merging redesign/hero-v2 -> main (which deploys to
-   www.executiveaisolutions.com), these MUST be replaced with real
-   permissioned quotes OR de-named. Text is build/experience-scoped —
-   no fabricated metrics, no ads/SEO-credit claims.
+/* PLACEHOLDER voices, DE-NAMED (Jake, 2026-08-08: "de name them"). The
+   sentiment mirrors what real clients would say (they'd rate 5 stars),
+   but until permissioned quotes land these carry NO real person's name
+   and NO exact business — role/sector attribution only, so no
+   identifiable individual is quoted with words they didn't say (safe
+   even if it reaches production). Text is build/experience-scoped: no
+   fabricated metrics, no ads/SEO-credit claims. Swap for real
+   permissioned quotes (with names) when they arrive.
    Shared by the homepage price beat + service-page price beats. */
 export const QUOTES = [
   {
     text: "They moved decades of history off a clunky old platform and gave it a home that finally does it justice.",
-    name: "Tim Brown, Arizona Aviation Historical Group",
+    name: "Director, aviation history nonprofit",
   },
   {
     text: "The site does the selling for us now — people land on it and show up ready to book a discovery flight.",
-    name: "Rick Ryall, Desert Wings Flight School",
+    name: "Owner, flight school",
   },
   {
     text: "Fast, clean, and it just works on a phone. Booking is finally the easy part.",
-    name: "Jake Johnson, Desert Wings Flight School",
+    name: "Head instructor, flight school",
   },
 ];
 

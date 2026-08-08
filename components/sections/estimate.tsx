@@ -427,16 +427,15 @@ export function Estimate({ standalone = false }: { standalone?: boolean } = {}) 
                 Your estimate rides along automatically. No call, no spam,
                 one reply with your fixed quote.
               </p>
-              {/* ⚠️ DEMO PLACEHOLDER — invented quote, REAL name. Do not
-                  ship public as-is (see lib/quotes.ts header); swap for a
-                  real permissioned quote before merging to main */}
+              {/* PLACEHOLDER voice, de-named (see lib/quotes.ts); swap for
+                  a real permissioned quote when it lands */}
               <figure data-anim="form" className="mt-fib-3">
                 <blockquote className="text-[1.0625rem] leading-[1.5] text-paper/75">
                   &ldquo;The site does the selling for us now — people land
                   on it and show up ready to book.&rdquo;
                 </blockquote>
                 <figcaption className="t-meta mt-fib-1 text-paper/45">
-                  Rick Ryall, Desert Wings Flight School
+                  Owner, flight school
                 </figcaption>
               </figure>
               {status === "error" && (
