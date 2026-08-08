@@ -670,9 +670,13 @@ section[id] {
      beneath smears into tone instead of ghosting through.
      0.6 -> 0.72 (a11y 2026-08-08): at 0.6 the frost blended to mid-gray
      over the white hero and the light text failed 4.5:1 contrast; the
-     deeper tint (still frosted, ~Apple's 0.8 local nav) clears it. */
+     deeper tint (still frosted, ~Apple's 0.8 local nav) clears it.
+     blur 36 -> 20 (Safari pass 2026-08-08): Safari re-rasterizes the
+     backdrop blur every scroll frame — a 36px radius on always-visible
+     chrome is a big jank source. At 0.72 alpha the tint now carries the
+     legibility, so 20px stays frosted for a fraction of the cost. */
   background: rgba(25, 26, 25, 0.72);
-  backdrop-filter: blur(36px);
+  backdrop-filter: blur(20px);
   color: var(--color-paper);
   box-shadow: 0 10px 34px rgba(19, 20, 19, 0.16);
 }
@@ -1206,9 +1210,12 @@ section[id] {
   gap: 13px;
   padding: 8px;
   border-radius: var(--radius-capsule);
-  /* heavier glass than the top capsules — 12px type needs solid ground */
+  /* heavier glass than the top capsules — 12px type needs solid ground.
+     blur 36 -> 18 (Safari pass 2026-08-08): at 0.88 alpha the tint
+     already carries it; the fixed bottom bar is on screen through every
+     scroll, so a cheaper blur is a real Safari smoothness win. */
   background: rgba(22, 23, 22, 0.88);
-  backdrop-filter: blur(36px);
+  backdrop-filter: blur(18px);
   color: var(--color-paper);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   pointer-events: auto;
