@@ -706,6 +706,7 @@ export function Hero() {
             <CTA href="/pricing#estimate" label="Price my project" tone="accent" />
             <div
               className="flex items-center gap-fib-1"
+              role="img"
               aria-label="Rated 5.0 by our clients"
             >
               {/* the pile — PLACEHOLDER initials until Jake's real client

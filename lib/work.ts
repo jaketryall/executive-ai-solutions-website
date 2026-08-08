@@ -71,6 +71,11 @@ export type Project = {
   /** full-length phone-width capture — the case page's single-device
       exhibit scrolls it inside the screen (optional) */
   phoneTour?: WorkImage;
+  /** skip next/image optimization on the tour + phoneTour (2026-08-08):
+      needed ONLY for extreme-aspect captures whose height would exceed
+      WebP's 16,383px ceiling when next/image upscales to a device size
+      (AAHG's ~9:1 tours). Normal tours optimize to a small WebP. */
+  tourUnoptimized?: boolean;
   /** homepage proof row: the receipts. A project with results (and ideally a
       tall `tour` capture) gets a work-and-results row on the homepage. */
   results?: ProjectResults;
@@ -120,8 +125,8 @@ export const PROJECTS: Project[] = [
     },
     tour: {
       src: "/work/dw-tour.jpg",
-      width: 2880,
-      height: 4446,
+      width: 1600,
+      height: 2470,
       alt: "Scrolling through the Desert Wings homepage the ad lands on",
     },
     /* Honest, BUILD-scoped numbers (Jake, 2026-08-08: "use what stats we
@@ -194,8 +199,8 @@ export const PROJECTS: Project[] = [
     ],
     phoneTour: {
       src: "/work/dw-phone-tour.jpg",
-      width: 780,
-      height: 10128,
+      width: 620,
+      height: 8050,
       alt: "The full Desert Wings site scrolling by at phone width",
     },
     phones: [
@@ -217,6 +222,9 @@ export const PROJECTS: Project[] = [
     slug: "aahg",
     listName: "AAHG",
     listLine: "$0/mo in platform fees after leaving Wix",
+    // ~9:1 tours blow WebP's 16,383px ceiling when next/image upscales —
+    // serve raw (they're already small: 428KB hero / 170KB phone)
+    tourUnoptimized: true,
     client: "Arizona Aviation Historical Group",
     kind: "Website",
     sector: "Nonprofit",
@@ -319,8 +327,8 @@ export const PROJECTS: Project[] = [
     },
     tour: {
       src: "/work/riled-tour.jpg",
-      width: 2880,
-      height: 15474,
+      width: 1600,
+      height: 8596,
       alt: "Scrolling through the Riled Up Pickleball homepage",
     },
     receipts: {

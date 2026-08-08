@@ -213,7 +213,7 @@ export function Footer() {
             className="h-[34px] w-[34px] text-ink/80"
             label="Executive AI Solutions monogram"
           />
-          <p className="t-meta text-ink/55">© 2026</p>
+          <p className="t-meta text-ink/70">© 2026</p>
         </div>
 
         {/* the sign-off: the name at Lesse scale — TWO fitted lines, each

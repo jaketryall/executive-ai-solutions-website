@@ -667,8 +667,11 @@ section[id] {
   border-radius: var(--radius-capsule);
   /* the Lesse glass (decoded from their DOM: rgba(36,36,36,.5) + blur(36px)):
      the heavy blur does the legibility work, not the alpha — whatever scrolls
-     beneath smears into tone instead of ghosting through */
-  background: rgba(25, 26, 25, 0.6);
+     beneath smears into tone instead of ghosting through.
+     0.6 -> 0.72 (a11y 2026-08-08): at 0.6 the frost blended to mid-gray
+     over the white hero and the light text failed 4.5:1 contrast; the
+     deeper tint (still frosted, ~Apple's 0.8 local nav) clears it. */
+  background: rgba(25, 26, 25, 0.72);
   backdrop-filter: blur(36px);
   color: var(--color-paper);
   box-shadow: 0 10px 34px rgba(19, 20, 19, 0.16);
@@ -1998,7 +2001,10 @@ img.g-fav {
   font-size: clamp(1.05rem, 1.5vw, 1.375rem);
   font-weight: 650;
   letter-spacing: -0.01em;
-  color: rgba(19, 20, 19, 0.34);
+  /* 0.34 -> 0.66 (a11y 2026-08-08): the faint band measured 2.2:1 on
+     white; 0.66 clears 4.5:1. Still reads as a quiet gray platform
+     marquee, now legible (it names the surfaces we run on) */
+  color: rgba(19, 20, 19, 0.66);
 }
 @keyframes smq-drift {
   to {
