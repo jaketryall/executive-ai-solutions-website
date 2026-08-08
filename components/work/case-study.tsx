@@ -492,9 +492,13 @@ export function CaseStudy({
                 className="flex flex-col justify-between gap-[13px] md:flex-row md:items-end"
               >
                 <h2 className="t-display-lg max-w-[12ch]">The numbers</h2>
-                <p className="max-w-[38ch] text-paper/70 md:text-right">
-                  Tracked in the client&apos;s own Ads and analytics accounts —
-                  not our slides.
+                {/* credits the client's team for traffic/SEO, scopes our
+                    claim to the build (Jake, 2026-08-08 — don't take the
+                    SEO person's credit) */}
+                <p className="max-w-[40ch] text-paper/70 md:text-right">
+                  The site&apos;s own numbers, from the client&apos;s
+                  analytics. The traffic and SEO are their team&apos;s &mdash;
+                  we built the page that turns it into leads.
                 </p>
               </div>
               <div className="mt-fib-5 grid gap-fib-4 sm:grid-cols-3">

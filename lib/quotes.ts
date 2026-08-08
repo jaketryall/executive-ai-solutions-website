@@ -1,19 +1,21 @@
 /* ═══ PLACEHOLDER TRACKING — Jake is collecting three real quotes ═══
    The ONE set of client voices, shared by the homepage price beat and the
    service-page price beats. Swap each entry (text + name) as they land.
-   Entry 1 shares the DW voice with the proof section until his real band
-   quote arrives; 2-3 are sector-generic slots (no invented business names). */
+   These are still placeholder voices, but scoped to the BUILD (Jake,
+   2026-08-08): NO ads/SEO/traffic-credit claims, and NO real client
+   NAMED (entry 1 previously put a fabricated ads-credit quote in the
+   real Desert Wings owner's mouth — removed). Sector-generic slots. */
 export const QUOTES = [
   {
-    text: "The phone started ringing the week the ads went live.",
-    name: "Owner, Desert Wings Flight School",
+    text: "The new site actually converts — people fill the form instead of clicking away.",
+    name: "Owner, local service business",
   },
   {
-    text: "I finally know what a lead costs me, and it keeps going down.",
+    text: "It loads fast, and it's mine — no platform rent, no login I don't control.",
     name: "Owner, local trades company",
   },
   {
-    text: "The ads bring people in, the site books them, I see all of it.",
+    text: "Finally a site I'm proud to send people to.",
     name: "Owner, family restaurant",
   },
 ];

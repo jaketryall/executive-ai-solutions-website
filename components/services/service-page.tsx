@@ -1028,7 +1028,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
             &middot;
           </span>
           <span className="t-meta text-ink/70">
-            3x more bookings for Desert Wings in 90 days
+            1,000+ page views for Desert Wings, converting to leads
           </span>
             <Link
               href="/work/desert-wings"

@@ -427,15 +427,16 @@ export function Estimate({ standalone = false }: { standalone?: boolean } = {}) 
                 Your estimate rides along automatically. No call, no spam,
                 one reply with your fixed quote.
               </p>
-              {/* PLACEHOLDER — excerpt of the proof-section quote; swap with
-                  the real one (one voice on the page, echoed at the ask) */}
+              {/* PLACEHOLDER voice — build-scoped, de-attributed from the
+                  real client (Jake, 2026-08-08: no ads credit, no real
+                  name); swap with a real permissioned quote */}
               <figure data-anim="form" className="mt-fib-3">
                 <blockquote className="text-[1.0625rem] leading-[1.5] text-paper/75">
-                  &ldquo;The phone started ringing the week the ads went
-                  live.&rdquo;
+                  &ldquo;The new site actually converts — people fill the
+                  form instead of clicking away.&rdquo;
                 </blockquote>
                 <figcaption className="t-meta mt-fib-1 text-paper/45">
-                  Owner, Desert Wings Flight School
+                  Owner, local service business
                 </figcaption>
               </figure>
               {status === "error" && (

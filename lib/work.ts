@@ -124,20 +124,21 @@ export const PROJECTS: Project[] = [
       height: 4446,
       alt: "Scrolling through the Desert Wings homepage the ad lands on",
     },
-    /* ═══ PLACEHOLDER results — swap with real Desert Wings data + the real
-       owner quote (with permission) before launch ═══ */
+    /* Honest, BUILD-scoped numbers (Jake, 2026-08-08: "use what stats we
+       can grab... i dont want to piss off our seo person by taking
+       credits"). Only what's real and ours: the site's page-view count +
+       the contact-form leads it converts. NO ads/SEO/traffic credit —
+       that's the client's team's, and the numbers-section note says so.
+       The fabricated ads-credit quote was removed. Contact-form COUNT
+       still to confirm — "Leads" holds the slot until Jake gives it. */
     results: {
-      story: "Filling discovery flights for a Mesa flight school",
-      did: "We designed and built the site from scratch, launched Google Ads with full conversion tracking, and wired the follow-up \u2014 one funnel, tracked to the dollar.",
-      window: "In the first 90 days",
+      story: "The new site a Mesa flight school's visitors act on",
+      did: "We designed and built the site from scratch and wired the contact form and conversion tracking, so the traffic the client earns turns into leads that land in the inbox \u2014 not bounces.",
+      window: "Since launch",
       metrics: [
-        { value: "3x", label: "more discovery-flight bookings" },
-        { value: "$38", label: "cost per lead" },
+        { value: "1,000+", label: "page views the new site has served" },
+        { value: "Leads", label: "coming in through the contact form" },
       ],
-      quote: {
-        text: "The phone started ringing the week the ads went live, and the new site actually books people instead of just looking good.",
-        name: "Owner, Desert Wings Flight School",
-      },
       ad: { title: "Desert Wings Flight School | Learn to Fly at Falcon Field" },
     },
     lede: "A flight school with students to win, not a brochure to park. We designed and built the site, then wired the growth engine behind it so every enquiry traces back to the dollar that bought it.",
