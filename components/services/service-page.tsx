@@ -792,21 +792,27 @@ export function ServicePage({ service }: { service: ServiceDef }) {
       /* hero artifact drift — contained one-plane parallax against the
          scroll. The self-scrolling tour already owns its plane's motion, so
          the websites frame stays put (two movements on one axis double up). */
+      // DESKTOP ONLY (mobile motion diet 2026-08-08): the hero-artifact
+      // drift is a scrubbed transform every scroll frame on the service
+      // pages — exactly the ad-traffic landing where mobile smoothness
+      // matters; the phone just stays put on touch.
       if (!q("[data-svc-tour]")[0]) {
-        gsap.fromTo(
-          q("[data-anim='h-art']"),
-          { y: 0 },
-          {
-            y: -21,
-            ease: "none",
-            scrollTrigger: {
-              trigger: q(".svc-hero")[0],
-              start: "top top",
-              end: "bottom top",
-              scrub: true,
-            },
-          }
-        );
+        gsap.matchMedia().add("(min-width: 821px)", () => {
+          gsap.fromTo(
+            q("[data-anim='h-art']"),
+            { y: 0 },
+            {
+              y: -21,
+              ease: "none",
+              scrollTrigger: {
+                trigger: q(".svc-hero")[0],
+                start: "top top",
+                end: "bottom top",
+                scrub: true,
+              },
+            }
+          );
+        });
       }
 
       /* ── deliverables: rows enter with a directional stagger; on desktop the

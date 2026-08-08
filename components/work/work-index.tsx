@@ -91,21 +91,28 @@ export function WorkIndex() {
       (q("[data-anim='chapter']") as HTMLElement[]).forEach((el) =>
         revealUp(el, el)
       );
-      (q("[data-wkc-par]") as HTMLElement[]).forEach((el) => {
-        gsap.fromTo(
-          el,
-          { yPercent: -4 },
-          {
-            yPercent: 4,
-            ease: "none",
-            scrollTrigger: {
-              trigger: el.closest(".wkt"),
-              start: "top bottom",
-              end: "bottom top",
-              scrub: true,
-            },
-          }
-        );
+      // contained parallax — DESKTOP ONLY (mobile motion diet 2026-08-08):
+      // a scrubbed transform every scroll frame is the classic
+      // expensive-on-mobile-for-nothing effect; the overscan scale keeps
+      // the image looking right static, so touch just loses the drift.
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 821px)", () => {
+        (q("[data-wkc-par]") as HTMLElement[]).forEach((el) => {
+          gsap.fromTo(
+            el,
+            { yPercent: -4 },
+            {
+              yPercent: 4,
+              ease: "none",
+              scrollTrigger: {
+                trigger: el.closest(".wkt"),
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true,
+              },
+            }
+          );
+        });
       });
 
       return () => {
