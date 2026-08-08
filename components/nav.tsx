@@ -240,8 +240,13 @@ export function Nav() {
   const overlayRef = useRef<HTMLDivElement>(null!);
   const barRef = useRef<HTMLDivElement>(null!);
   const [open, setOpen] = useState(false);
+  const [svcOpen, setSvcOpen] = useState(false); // Services sub-menu (mobile overlay)
   const [total, setTotal] = useState<number | null>(null);
   const pathname = usePathname();
+  // the Services sub-menu resets to collapsed whenever the overlay closes
+  useEffect(() => {
+    if (!open) setSvcOpen(false);
+  }, [open]);
   // case pages: the dock owns the bottom edge — the bar stands down entirely
   const onCasePage = /^\/work\/.+/.test(pathname);
 
@@ -321,8 +326,14 @@ export function Nav() {
     // kill any in-flight open/close so a rapid toggle can't strand the menu
     ovTl.current?.kill();
 
+    // preventScroll (bug 2026-08-08): focusing the first link WHILE it's
+    // mid-rise made the browser scroll-into-view it, yanking only that
+    // item ("Work slides up and disappears"; the unfocused links were
+    // fine). preventScroll keeps focus without the scroll jump.
     const focusFirst = () =>
-      (overlay.querySelector("a") as HTMLElement)?.focus();
+      (overlay.querySelector("a") as HTMLElement)?.focus({
+        preventScroll: true,
+      });
     if (reducedMotion()) {
       overlay.style.display = open ? "flex" : "none";
       overlay.style.clipPath = "inset(0 0 0% 0)";
@@ -508,19 +519,75 @@ export function Nav() {
       >
         <div className="flex h-full w-full flex-col justify-between px-fib-3 pb-fib-4 pt-fib-6">
           <nav className="flex flex-col gap-fib-2" aria-label="Menu">
-            {LINKS.map((l) => (
-              <span key={l.href} className="mask-line">
-                <span className="mask-inner">
-                  <Link
-                    href={l.href}
-                    className="ov-item t-display-lg"
-                    onClick={() => setOpen(false)}
+            {LINKS.map((l) =>
+              l.label === "Services" ? (
+                // Services EXPANDS to its three stages (Jake, 2026-08-08:
+                // "services should definitely be a dropdown"). The mask-line
+                // wraps ONLY the toggle — the sub-list sits outside it, or
+                // the mask's overflow:hidden would clip the expansion.
+                <div key={l.href} className="ov-svc">
+                  <span className="mask-line">
+                    <span className="mask-inner">
+                      <button
+                        type="button"
+                        className="ov-item ov-svc-toggle t-display-lg"
+                        aria-expanded={svcOpen}
+                        aria-controls="ov-svc-sub"
+                        onClick={() => setSvcOpen((v) => !v)}
+                      >
+                        Services
+                        <svg
+                          className="ov-svc-chev"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          aria-hidden
+                        >
+                          <path
+                            d="M5 9l7 7 7-7"
+                            stroke="currentColor"
+                            strokeWidth="2.4"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    </span>
+                  </span>
+                  <div
+                    id="ov-svc-sub"
+                    className={`ov-svc-sub ${svcOpen ? "is-open" : ""}`}
                   >
-                    {l.label}
-                  </Link>
+                    <div className="ov-svc-sub-in">
+                      {SERVICES.map((s) => (
+                        <Link
+                          key={s.slug}
+                          href={`/services/${s.slug}`}
+                          className="ov-svc-link"
+                          onClick={() => setOpen(false)}
+                        >
+                          <span className="text-trim">{s.nav}</span>
+                          <span className="ov-svc-price">
+                            {SERVICE_META[s.slug].price}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <span key={l.href} className="mask-line">
+                  <span className="mask-inner">
+                    <Link
+                      href={l.href}
+                      className="ov-item t-display-lg"
+                      onClick={() => setOpen(false)}
+                    >
+                      {l.label}
+                    </Link>
+                  </span>
                 </span>
-              </span>
-            ))}
+              ),
+            )}
           </nav>
           {/* the menu ends in the one action (it had none), then the two
               human facts: a real inbox and a ticking Mesa clock */}

@@ -2251,6 +2251,101 @@ img.g-fav {
   color: var(--color-accent-bright);
 }
 
+/* ── the mobile Services dropdown (Jake, 2026-08-08) — the row expands to
+   its three stages, a smooth grid-rows reveal + a rotating chevron; open
+   turns the word accent so the state reads at a glance ── */
+.ov-svc-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.ov-svc-chev {
+  width: 0.5em;
+  height: 0.5em;
+  flex-shrink: 0;
+  transition: transform 0.4s var(--ease-structure);
+}
+.ov-svc-toggle[aria-expanded="true"] {
+  color: var(--color-accent-bright);
+}
+.ov-svc-toggle[aria-expanded="true"] .ov-svc-chev {
+  transform: rotate(180deg);
+}
+/* the grid-rows 0fr -> 1fr trick: animates to auto height, no JS measure */
+.ov-svc-sub {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s var(--ease-structure);
+}
+.ov-svc-sub.is-open {
+  grid-template-rows: 1fr;
+}
+.ov-svc-sub-in {
+  min-height: 0; /* required for the 0fr collapse to actually clip */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 21px;
+}
+.ov-svc-link {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 13px;
+  padding: 8px 0;
+  color: rgba(239, 240, 238, 0.75);
+  text-decoration: none;
+  /* each sub-link slides in from the left, staggered, once the row opens */
+  transform: translateX(-10px);
+  opacity: 0;
+  transition:
+    transform 0.4s var(--ease-structure),
+    opacity 0.4s var(--ease-ui),
+    color 0.15s linear;
+}
+.ov-svc-link:first-child {
+  padding-top: 13px;
+}
+.ov-svc-sub.is-open .ov-svc-link {
+  transform: translateX(0);
+  opacity: 1;
+}
+.ov-svc-sub.is-open .ov-svc-link:nth-child(1) {
+  transition-delay: 0.08s;
+}
+.ov-svc-sub.is-open .ov-svc-link:nth-child(2) {
+  transition-delay: 0.15s;
+}
+.ov-svc-sub.is-open .ov-svc-link:nth-child(3) {
+  transition-delay: 0.22s;
+}
+.ov-svc-link:active {
+  color: var(--color-accent-bright);
+}
+.ov-svc-link .text-trim {
+  font-family: var(--font-display);
+  font-weight: 650;
+  font-size: 1.5rem;
+}
+.ov-svc-price {
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  color: rgba(239, 240, 238, 0.45);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ov-svc-sub,
+  .ov-svc-chev,
+  .ov-svc-link {
+    transition: none;
+  }
+}
+
 /* ───────────────────── surfaces ───────────────────── */
 
 .dark-chapter {
