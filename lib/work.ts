@@ -137,7 +137,7 @@ export const PROJECTS: Project[] = [
       window: "Since launch",
       metrics: [
         { value: "1,000+", label: "page views the new site has served" },
-        { value: "Leads", label: "coming in through the contact form" },
+        { value: "Dozens", label: "of contact-form leads through the site" },
       ],
       ad: { title: "Desert Wings Flight School | Learn to Fly at Falcon Field" },
     },
