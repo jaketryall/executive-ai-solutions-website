@@ -334,6 +334,11 @@ export function Nav() {
     const ovFoot = overlay.querySelector(".ov-foot");
     if (open) {
       overlay.style.display = "flex";
+      // pre-hide the links SYNCHRONOUSLY (bug 2026-08-08): their rise
+      // tween starts 0.3s into the timeline, so before the fix the links
+      // flashed at their visible default as the clip opened, then snapped
+      // down and rose ("Work starts on screen and disappears")
+      gsap.set(links, { yPercent: 120 });
       ovTl.current = gsap
         .timeline()
         .fromTo(

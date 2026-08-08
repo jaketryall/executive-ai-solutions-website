@@ -348,10 +348,15 @@ export function Hero() {
          the platforms, the short statement lands, the how resolves it,
          the CTA closes, and the phone rises beside it all. ── */
       const tl = gsap.timeline({ paused: true, defaults: { ease: EASE_STRUCTURE } });
+      // autoAlpha ONLY, no y (bug 2026-08-08): a transform on .site-nav
+      // makes it the containing block for the FIXED mobile bar (.mnav),
+      // so the bar rendered at the TOP during the tween then hard-snapped
+      // to the bottom on clearProps. Interior pages already fade nav-only;
+      // this matches them and kills the mobile glitch.
       tl.fromTo(
         navEl,
-        { autoAlpha: 0, y: -16 },
-        { autoAlpha: 1, y: 0, duration: 0.8, clearProps: "transform" },
+        { autoAlpha: 0 },
+        { autoAlpha: 1, duration: 0.8 },
         0.05
       )
         .fromTo(
