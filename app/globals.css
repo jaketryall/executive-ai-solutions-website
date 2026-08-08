@@ -2243,6 +2243,32 @@ img.g-fav {
      "the links dont work"). display:none keeps the closed state inert. */
   pointer-events: auto;
 }
+/* privacy / legal prose — the base reset strips lists, so restore them */
+.pv-prose {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+.pv-prose p + p,
+.pv-prose ul + p,
+.pv-prose p + ul {
+  margin-top: 13px;
+}
+.pv-prose ul {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 21px;
+  list-style: disc;
+}
+.pv-prose li {
+  padding-left: 4px;
+}
+.pv-prose b {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
 .ov-item {
   color: var(--color-paper);
   text-decoration: none;

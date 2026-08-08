@@ -200,6 +200,9 @@ export function Footer() {
             <RollLink href="/contact" className="t-meta text-ink/70">
               Contact
             </RollLink>
+            <RollLink href="/privacy" className="t-meta text-ink/70">
+              Privacy
+            </RollLink>
             <RollLink href="#top" className="t-meta text-ink/70">
               Back to top
             </RollLink>
