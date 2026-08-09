@@ -97,16 +97,29 @@ export function ViewTransitions() {
         ])
       ) as PropertyIndexedKeyframes;
 
+    // MOBILE (2026-08-08, Jake: "the dim on the slide still looks odd"): the
+    // 3D sheet-stack — old page scaling back + lifting + a dim — is a desktop
+    // gesture; on a small screen you just watch the whole page shrink and
+    // reveal canvas around its edges, which reads as "everything dims". On
+    // mobile the buried page stays PUT (no scale, no lift, no filter) and the
+    // new page simply sheets up over it. Clean cover, zero dim.
+    const FLAT_BURIED = {
+      transform: ["translateY(0) scale(1)", "translateY(0) scale(1)"],
+    };
+
     const choreograph = (backward: boolean) => {
+      const buried = window.matchMedia("(max-width: 820px)").matches
+        ? FLAT_BURIED
+        : BURIED;
       // forward: old page buried under the rising sheet.
       // backward: the sheet rides off; the buried page returns to full light
       // (z-order flips via html.vt-back in globals.css).
       document.documentElement.animate(
-        backward ? reverse(SHEET) : BURIED,
+        backward ? reverse(SHEET) : buried,
         { duration: DUR, easing: EASE, pseudoElement: "::view-transition-old(root)" }
       );
       document.documentElement.animate(
-        backward ? reverse(BURIED) : SHEET,
+        backward ? reverse(buried) : SHEET,
         { duration: DUR, easing: EASE, pseudoElement: "::view-transition-new(root)" }
       );
     };
