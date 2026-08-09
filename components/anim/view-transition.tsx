@@ -23,7 +23,7 @@ import { beginArrival, releaseArrival } from "@/components/anim/arrival";
 // light. Traversals are caught with the Navigation API where it exists
 // (Chromium, recent Safari) and stay plain soft navs elsewhere.
 
-const DUR = 800;
+const DUR = 620;
 // --ease-structure, as a WAAPI easing string (a CustomEase name means nothing here)
 const EASE = "cubic-bezier(0.62, 0.05, 0.1, 1)";
 
@@ -75,13 +75,15 @@ export function ViewTransitions() {
     const doc = document as VTDocument;
 
     /* the two root layers of the stack, as WAAPI keyframes.
-       The buried page darkens via BRIGHTNESS, never opacity: opacity lets
-       the stage bleed through the snapshot (bright wash on dark pages, dark
-       wash on light ones — the "random flashes"); brightness darkens the
-       page's own pixels, so it sinks into shadow on every surface color. */
+       The buried page recedes by SCALE + LIFT, not a heavy dim: the backdrop
+       is now the light canvas (2026-08-08, Jake: "the dim feels very odd"),
+       so a deep brightness darken would sink the page into shadow against a
+       bright frame — the opposite of receding. A whisper of brightness keeps
+       it reading as "behind" without the wash; still brightness not opacity,
+       which would let the stage bleed through the snapshot. */
     const BURIED = {
-      transform: ["translateY(0) scale(1)", "translateY(-89px) scale(0.95)"],
-      filter: ["brightness(1)", "brightness(0.55)"],
+      transform: ["translateY(0) scale(1)", "translateY(-55px) scale(0.96)"],
+      filter: ["brightness(1)", "brightness(0.94)"],
     };
     const SHEET = {
       transform: ["translateY(100%)", "translateY(0)"],

@@ -289,12 +289,18 @@ export function Proof() {
                     story title) and isolation air: in viral's version your
                     eye goes straight to the numbers because nothing near
                     them competes (Jake, 2026-07-17) */}
-                <div className="mt-fib-5 grid max-w-[440px] grid-cols-2 gap-fib-4 border-t border-paper/10 pt-fib-4">
+                {/* stack on mobile, 2-up on desktop (2026-08-08): the fixed
+                    2-col + 56px broke once the values grew from "3x"/"$38"
+                    to "1,000+"/"Dozens" — 6-char values wrapped mid-number
+                    in the narrow phone columns. Full width on mobile, a
+                    size that fits the desktop 2-up, and nowrap so a number
+                    never splits after its first digit. */}
+                <div className="mt-fib-5 grid max-w-[440px] grid-cols-1 gap-fib-4 border-t border-paper/10 pt-fib-4 sm:grid-cols-2">
                   {metrics.map((m) => (
-                    <div key={m.label}>
+                    <div key={m.label} className="min-w-0">
                       <p
                         data-count
-                        className="t-num font-display text-[3.5rem] font-extrabold leading-none tracking-[-0.03em] text-paper"
+                        className="t-num font-display text-[2.75rem] font-extrabold leading-none tracking-[-0.03em] whitespace-nowrap text-paper"
                       >
                         {m.value}
                       </p>

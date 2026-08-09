@@ -8,6 +8,13 @@ import { useGSAP } from "@gsap/react";
 // Single registration point for the whole app. Import gsap from here, never from "gsap".
 gsap.registerPlugin(ScrollTrigger, SplitText, CustomEase, Observer, useGSAP);
 
+// ignoreMobileResize (2026-08-08): on iOS/Android the URL bar shows and hides
+// as you scroll, resizing the visual viewport HEIGHT every few frames.
+// ScrollTrigger's default reaction is a full refresh on each — the "framy
+// scroll" Jake felt on Safari. This flag tells it to ignore those height-only
+// mobile-chrome resizes (a genuine orientation/width change still refreshes).
+ScrollTrigger.config({ ignoreMobileResize: true });
+
 // The two project curves (+ the one sanctioned loop). Referenced by name everywhere;
 // a raw cubic-bezier string passed to gsap silently no-ops.
 export const EASE_STRUCTURE = "eas-structure";

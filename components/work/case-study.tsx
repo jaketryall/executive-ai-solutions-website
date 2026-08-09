@@ -645,8 +645,12 @@ export function CaseStudy({
         {/* the money ask, IN the dock (2026-08-03, the Apple localnav law:
             anchors + ONE Buy pill — before this the dock's only pull was
             Visit site, an exit with no return path) */}
+        {/* short label on the crowded mobile dock (2026-08-08: full text
+            was squeezed to ~78px and wrapped to 3 lines, bulging out of
+            the bar); full label from 380px up */}
         <Link href="/pricing#estimate" className="cs-dock-cta">
-          Price my project
+          <span className="cs-dock-cta-full">Price my project</span>
+          <span className="cs-dock-cta-short">Price</span>
         </Link>
       </nav>
     </article>

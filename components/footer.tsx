@@ -56,7 +56,20 @@ export function Footer() {
       };
       setH();
       document.fonts.ready.then(setH);
-      window.addEventListener("resize", setH);
+      // width-GATE the resize (2026-08-08): on mobile, scrolling shows/hides
+      // the browser chrome, which fires a continuous stream of resize events
+      // that only change the VIEWPORT HEIGHT. Re-fitting + refreshing on each
+      // one thrashed ScrollTrigger every frame — framy scroll + a jumping
+      // footer. The lockup fit and reveal geometry depend on WIDTH, so only
+      // a real width change needs the work; height-only chrome slides are
+      // ignored.
+      let lastW = window.innerWidth;
+      const onResize = () => {
+        if (window.innerWidth === lastW) return;
+        lastW = window.innerWidth;
+        setH();
+      };
+      window.addEventListener("resize", onResize);
       // soft navs re-run this effect while the NEW page's subtree may not
       // have committed yet (App Router streams children after the layout
       // re-renders), so the homepage's closer pin-spacer can be missing
@@ -145,7 +158,7 @@ export function Footer() {
 
       return () => {
         dead = true;
-        window.removeEventListener("resize", setH);
+        window.removeEventListener("resize", onResize);
         st?.kill();
         if (main) {
           main.style.marginBottom = "";

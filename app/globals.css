@@ -4584,12 +4584,13 @@ a.work-card:hover {
   /* the overlay never blocks the user: mid-flight scrolls and clicks pass
      through to the live incoming page (in-flight link clicks are swallowed
      in JS so a second capture can't skip the riding transition) */
-  /* the stage stays DARK: the old page dims into shadow as it sinks — without
-     this the backdrop is the raw paper background and every transition
-     over dark surfaces flashes bright */
+  /* backdrop = the site's canvas (2026-08-08, Jake: "the dim feels very
+     odd"). It was near-black + a brightness(0.55) darken on the old page,
+     which dimmed EVERY light->light nav into shadow. Canvas keeps the
+     common (light) transitions seamless; the brightness dim is gone too. */
   ::view-transition {
     pointer-events: none;
-    background: #131413;
+    background: var(--color-canvas);
   }
   ::view-transition-old(root),
   ::view-transition-new(root) {
@@ -4687,6 +4688,8 @@ a.work-card:hover {
 .cs-onpage a.cs-dock-cta {
   display: inline-flex;
   align-items: center;
+  flex-shrink: 0; /* never let the dock squeeze + wrap the pill (2026-08-08) */
+  white-space: nowrap;
   margin-left: 2px;
   padding: 11px 16px;
   border-radius: 10px;
@@ -4700,6 +4703,23 @@ a.work-card:hover {
 }
 .cs-onpage a.cs-dock-cta:hover {
   background: #1f5f80;
+}
+/* the label swaps SHORT on phones (the dock also carries 4 section
+   anchors — the full 'Price my project' + those needs ~450px), FULL on
+   larger screens */
+.cs-dock-cta-short {
+  display: inline;
+}
+.cs-dock-cta-full {
+  display: none;
+}
+@media (min-width: 460px) {
+  .cs-dock-cta-short {
+    display: none;
+  }
+  .cs-dock-cta-full {
+    display: inline;
+  }
 }
 .cs-dock-visit .dv-arrow {
   position: relative;
@@ -5262,7 +5282,11 @@ html.wki-lock body {
    each context sizes it (the exhibit by stage height, heroes by width) */
 .dvc {
   position: relative;
-  aspect-ratio: 9 / 19.2;
+  /* TRUE iPhone proportions (2026-08-08, Jake: "doesn't feel like an iphone,
+     the mockup may be a little wide" — right instinct): every current iPhone
+     is 1179x2556-class = 9/19.5. At 9/19.2 the frame read ~1.6% stubbier than
+     a real phone, and the eye catches that as "off". */
+  aspect-ratio: 9 / 19.5;
   padding: clamp(7px, 0.8vw, 11px);
   border-radius: clamp(38px, 4.2vw, 58px);
   background: linear-gradient(160deg, #3a3d3c 0%, #171818 55%, #232525 100%);
