@@ -1221,10 +1221,12 @@ section[id] {
   color: var(--color-paper);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   pointer-events: auto;
-  /* own compositor layer: keeps the bar off the main raster thread so the
-     iOS URL-bar show/hide moves it without repainting */
-  transform: translateZ(0);
-  will-change: transform;
+  /* NO will-change/translateZ (2026-08-13, Jake: "on safari it lags, chrome
+     fine"). A permanent will-change on a fixed element makes iOS Safari hold
+     and recomposite a backing layer every scroll frame — laggy on iPhone,
+     invisible on Chrome. Solid bar, no compositor-forcing hints, is what
+     Safari scrolls most predictably. (The blur removal above is the real
+     stutter fix; these hints were speculative and backfired on Safari.) */
   transition:
     transform 0.45s var(--ease-structure),
     opacity 0.3s var(--ease-ui);
