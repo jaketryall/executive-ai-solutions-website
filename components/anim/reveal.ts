@@ -15,12 +15,21 @@ import { gsap } from "@/components/anim/ease";
 export function revealUp(
   targets: gsap.TweenTarget,
   trigger: Element | null | undefined,
-  opts: { stagger?: number; start?: string; once?: boolean } = {}
+  opts: { stagger?: number; start?: string } = {}
 ) {
-  const { stagger = 0.1, start = "top 100%", once = true } = opts;
+  const { stagger = 0.1, start = "top 100%" } = opts;
   if (!trigger) return;
   const tl = gsap.timeline({
-    scrollTrigger: { trigger, start, once },
+    /* toggleActions, NEVER once:true (2026-08-13 — the "This page couldn't
+       load" crash). once:true auto-KILLS the trigger after it fires; on a
+       soft/back nav the page effect re-runs and a ScrollTrigger.refresh()
+       (view-transition + footer + case-study all fire one) hits the
+       orphaned trigger -> reads `.end` of undefined -> recursive refresh ->
+       stack overflow -> the renderer hangs and Chrome kills the tab. Every
+       hand-written section already uses this; the shared helper was the one
+       holdout. See reference_dev_gotchas_css_gsap memory. play-once-and-stay
+       = "play none none none". */
+    scrollTrigger: { trigger, start, toggleActions: "play none none none" },
   });
   tl.fromTo(
     targets,
