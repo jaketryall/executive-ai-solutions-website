@@ -93,12 +93,25 @@ export function SmoothScroll() {
   useEffect(() => {
     if (reducedMotion()) return;
 
-    const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
-    lenisRef.current = lenis;
-    lenis.on("scroll", ScrollTrigger.update);
-    const raf = (t: number) => lenis.raf(t * 1000);
-    gsap.ticker.add(raf);
-    gsap.ticker.lagSmoothing(0);
+    // Lenis (smooth WHEEL) is DESKTOP-ONLY (2026-08-13, Jake: "on safari it
+    // lags, chrome fine"). On a phone there is no wheel to smooth, but Lenis
+    // still ran its rAF loop EVERY frame (gsap.ticker) alongside Safari's
+    // native momentum scroll — pure overhead that makes iOS scrolling lag
+    // (and dragged the fixed bottom bar with it). Touch devices now scroll
+    // 100% natively; ScrollTrigger reads native scroll directly, so every
+    // scrubbed beat still works. Gate on a real pointer, not width, so a
+    // desktop at a narrow window keeps smooth wheel.
+    const desktop = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    let lenis: Lenis | null = null;
+    let raf: ((t: number) => void) | null = null;
+    if (desktop) {
+      lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
+      lenisRef.current = lenis;
+      lenis.on("scroll", ScrollTrigger.update);
+      raf = (t: number) => lenis!.raf(t * 1000);
+      gsap.ticker.add(raf);
+      gsap.ticker.lagSmoothing(0);
+    }
 
     const onAnchor = (e: Event) => {
       const a = (e.target as HTMLElement).closest?.(
@@ -112,15 +125,24 @@ export function SmoothScroll() {
       const el = document.querySelector(href.replace(/^\//, ""));
       if (!el) return;
       e.preventDefault();
-      lenis.scrollTo(el as HTMLElement, { offset: -72 });
+      if (lenis) {
+        lenis.scrollTo(el as HTMLElement, { offset: -72 });
+      } else {
+        // native path (touch): same -72 header offset, native smooth scroll
+        const top =
+          (el as HTMLElement).getBoundingClientRect().top + window.scrollY - 72;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
     };
     document.addEventListener("click", onAnchor);
 
     return () => {
       document.removeEventListener("click", onAnchor);
-      gsap.ticker.remove(raf);
-      lenis.destroy();
-      lenisRef.current = null;
+      if (lenis) {
+        if (raf) gsap.ticker.remove(raf);
+        lenis.destroy();
+        lenisRef.current = null;
+      }
     };
   }, []);
 
