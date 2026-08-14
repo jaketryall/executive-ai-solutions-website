@@ -1210,15 +1210,21 @@ section[id] {
   gap: 13px;
   padding: 8px;
   border-radius: var(--radius-capsule);
-  /* heavier glass than the top capsules — 12px type needs solid ground.
-     blur 36 -> 18 (Safari pass 2026-08-08): at 0.88 alpha the tint
-     already carries it; the fixed bottom bar is on screen through every
-     scroll, so a cheaper blur is a real Safari smoothness win. */
-  background: rgba(22, 23, 22, 0.88);
-  backdrop-filter: blur(18px);
+  /* SOLID, no backdrop-filter (2026-08-13, Jake: the bar "stutters, not
+     clean" as you scroll on mobile). A fixed, always-on-screen bar with a
+     backdrop blur re-rasterizes the blur EVERY frame as content scrolls
+     under it — and the marquee animating inside got caught in that repaint.
+     At 0.88 the tint already carried it; go near-opaque and drop the blur so
+     the bar is a cheap composited layer that scrolls dead-smooth. (blur was
+     36 -> 18 in the Aug 8 Safari pass; this finishes the job.) */
+  background: rgb(20, 21, 20);
   color: var(--color-paper);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   pointer-events: auto;
+  /* own compositor layer: keeps the bar off the main raster thread so the
+     iOS URL-bar show/hide moves it without repainting */
+  transform: translateZ(0);
+  will-change: transform;
   transition:
     transform 0.45s var(--ease-structure),
     opacity 0.3s var(--ease-ui);
