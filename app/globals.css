@@ -1203,7 +1203,15 @@ section[id] {
   position: fixed;
   left: 13px;
   right: 13px;
-  bottom: calc(13px + env(safe-area-inset-bottom));
+  /* CONSTANT bottom offset, NO env(safe-area-inset-bottom) (2026-08-16, Jake:
+     the bar jitters on Safari because Safari's toolbar collapses incrementally
+     as you scroll). safe-area-inset-bottom is NOT constant on iOS — it reads
+     ~0 with the toolbar expanded and climbs toward ~34px as the toolbar
+     collapses, so folding it into `bottom` made the bar move the inherent
+     viewport amount PLUS up to 34px of shifting inset = the doubled jitter.
+     itsjay.us (Jake's reference) uses a flat bottom:16px and is smooth — the
+     bar just rides the viewport, nothing amplifies it. Matched. */
+  bottom: 16px;
   z-index: 45;
   display: flex;
   align-items: center;
