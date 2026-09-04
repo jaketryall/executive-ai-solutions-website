@@ -11,7 +11,7 @@
    The only thing that ever happens to it is that light travels along it.
    ══════════════════════════════════════════════════════════════════ */
 
-.darkroom {
+.dr-root {
   /* ── ground + surfaces (elevation is LIGHTNESS ONLY — zero box-shadows) */
   --void: #000000;
   --surface-1: #121214;
@@ -56,20 +56,26 @@
   color: var(--ink-2);
 }
 
+/* FIRST PAINT, not first effect. This stylesheet only ships on this route,
+   and .dr-root is server-rendered, so :has() lets the ground be black in the
+   very first frame. The moment the route unmounts the selector stops
+   matching and every other page is untouched. */
+:root:has(.dr-root),
+body:has(.dr-root) { background: #000; }
+
 /* the legacy chrome does not exist in this room (iteration route only) */
-.darkroom .site-nav,
-.darkroom .mnav,
-.darkroom .pcta,
-.darkroom .schat-pill,
-.darkroom > body > footer,
-.darkroom footer { display: none !important; }
-.darkroom main { margin-bottom: 0 !important; box-shadow: none !important; }
-.darkroom body { background: var(--void); }
+body:has(.dr-root) .site-nav,
+body:has(.dr-root) .mnav,
+body:has(.dr-root) .pcta,
+body:has(.dr-root) .schat-pill,
+body:has(.dr-root) > footer,
+body:has(.dr-root) footer { display: none !important; }
+body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !important; }
 /* the root layout paints every page on a light sheet (.page-sheet.bg-canvas,
    #f5f5f7 at z-10) — it sits ON TOP of the black body and has to be
    neutralised here or the whole room is lit grey. */
-.darkroom .page-sheet,
-.darkroom .bg-canvas { background: var(--void) !important; }
+body:has(.dr-root) .page-sheet,
+body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 /* ══ atmosphere ══════════════════════════════════════════════════ */
 

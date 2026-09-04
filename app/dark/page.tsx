@@ -44,14 +44,14 @@ export default function DarkRoom() {
   const monoRef = useRef<HTMLSpanElement>(null);
   const tailRef = useRef<HTMLDivElement>(null);
 
+  /* Theming is NOT done here any more. Adding the class in an effect meant
+     the browser painted the root layout's light sheet first and the reload
+     flashed white. The room's ground and its fonts now ride on the
+     server-rendered wrapper below, so the first frame is already black.
+     This effect only arms the entrance. */
   useEffect(() => {
-    const root = document.documentElement;
-    root.classList.add("darkroom", archivo.variable, instrument.variable);
     const id = requestAnimationFrame(() => setLit(true));
-    return () => {
-      cancelAnimationFrame(id);
-      root.classList.remove("darkroom", archivo.variable, instrument.variable);
-    };
+    return () => cancelAnimationFrame(id);
   }, []);
 
   /* THE RAIL'S TITLE SEQUENCE
@@ -138,7 +138,11 @@ export default function DarkRoom() {
   }, []);
 
   return (
-    <div className={lit ? "dr-lit" : undefined}>
+    <div
+      className={`dr-root ${archivo.variable} ${instrument.variable}${
+        lit ? " dr-lit" : ""
+      }`}
+    >
       {/* the mark is the ROOM, not the object: engraved into the black,
           bled off the edge, with light travelling around its cut contour */}
       <div className="dr-mark" aria-hidden>
