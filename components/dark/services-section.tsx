@@ -88,6 +88,9 @@ export default function ServicesSection() {
   return (
     <section className="dr-svc" ref={ref} aria-labelledby="dr-svc-h">
       <div className="wrap">
+        {/* the whole funnel rides ONE surface — same frosted material as the
+            hero's work cards, at the scale of a section rather than a row */}
+        <div className="dr-svc-card">
         <header className="dr-svc-head">
           <div className="dr-svc-headline">
             <span className="t-label dr-svc-kicker">Services</span>
@@ -138,6 +141,7 @@ export default function ServicesSection() {
             </li>
           ))}
         </ul>
+        </div>
       </div>
     </section>
   );

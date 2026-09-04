@@ -706,6 +706,20 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    as one room rather than two slabs. */
 .dr-svc { position: relative; z-index: 4;
           padding-block: clamp(80px, 14svh, 168px) clamp(72px, 12svh, 144px); }
+
+/* THE SECTION IS A SURFACE. Same material as a work card, at section
+   scale: the frost means the mark and the two lights carry THROUGH the
+   panel rather than being blocked by it, so the room still reads as one
+   room. Padding is the card's own, so the section's rhythm above and
+   below is unchanged. */
+.dr-svc-card {
+  position: relative;
+  border-radius: clamp(18px, 2.2vw, 30px);
+  background: rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  padding: clamp(32px, 5.6svh, 76px) clamp(24px, 4vw, 64px);
+}
 .dr-svc-head { margin-bottom: clamp(48px, 8svh, 96px);
   display: grid; grid-template-columns: minmax(0, 1fr) var(--works-col);
   column-gap: clamp(20px, 3vw, 48px); align-items: end; }
