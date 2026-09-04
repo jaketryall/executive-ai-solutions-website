@@ -134,24 +134,24 @@ export default function DarkRoom() {
         <div className="dr-top" ref={topRef} aria-hidden />
         <header className="dr-nav wrap">
           <div className="dr-rail dr-edge" data-stuck={stuck ? "true" : undefined}>
+            <nav className="dr-links" aria-label="Main">
+              <Link href="/work" aria-label="Work">
+                <Roll label="Work" />
+              </Link>
+              <Link href="/services/websites" aria-label="Services">
+                <Roll label="Services" />
+              </Link>
+              <Link href="/pricing" aria-label="Pricing">
+                <Roll label="Pricing" />
+              </Link>
+            </nav>
+
             <div className="dr-rail-in">
               <Link className="dr-lockup" href="/">
                 <span className="dr-mono" aria-hidden />
                 <b>Executive AI Solutions</b>
               </Link>
 
-              <div className="dr-rail-tail">
-                <nav className="dr-links" aria-label="Main">
-                  <Link href="/work" aria-label="Work">
-                    <Roll label="Work" />
-                  </Link>
-                  <Link href="/services/websites" aria-label="Services">
-                    <Roll label="Services" />
-                  </Link>
-                  <Link href="/pricing" aria-label="Pricing">
-                    <Roll label="Pricing" />
-                  </Link>
-                </nav>
 
                 {/* collapsed at the top of the page, so it must not be
                     reachable by keyboard or read out until it is really there */}
@@ -163,7 +163,6 @@ export default function DarkRoom() {
                 >
                   Book the call
                 </Link>
-              </div>
             </div>
           </div>
         </header>
