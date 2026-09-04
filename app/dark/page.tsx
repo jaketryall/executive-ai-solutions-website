@@ -180,43 +180,53 @@ export default function DarkRoom() {
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
 
+      {/* THE NAV LIVES OUTSIDE .dr-stage. It is position:fixed at
+          z-index 30, but .dr-stage is position:relative z-index:4 — a
+          stacking context — so that 30 was only ever ranked INSIDE the
+          stage, never against the stage's siblings. Section 02 is a later
+          sibling at the same z-index 4, so it painted over the entire
+          stage subtree, nav included: past the hero the header and its CTA
+          were invisible AND unclickable (elementFromPoint at the nav's
+          centre returned .dr-svc-title). Out here the 30 competes where it
+          was always meant to. */}
+      <header className="dr-nav wrap">
+        <div className="dr-rail dr-edge" data-stuck={stuck ? "true" : undefined}>
+          <nav className="dr-links" aria-label="Main">
+            <Link href="/work" aria-label="Work">
+              <Roll label="Work" />
+            </Link>
+            <Link href="/services/websites" aria-label="Services">
+              <Roll label="Services" />
+            </Link>
+            <Link href="/pricing" aria-label="Pricing">
+              <Roll label="Pricing" />
+            </Link>
+          </nav>
+
+          <div className="dr-rail-in">
+            <Link className="dr-lockup" href="/">
+              <span className="dr-mono" aria-hidden />
+              <b>Executive AI Solutions</b>
+            </Link>
+
+
+              {/* collapsed at the top of the page, so it must not be
+                  reachable by keyboard or read out until it is really there */}
+              <Link
+                href="/contact"
+                className="dr-navcta dr-edge t-cta"
+                tabIndex={stuck ? undefined : -1}
+                aria-hidden={!stuck}
+              >
+                Book the call
+              </Link>
+          </div>
+        </div>
+      </header>
+
       <div className="dr-stage">
         {/* the rail watches this, not a scroll number */}
         <div className="dr-top" ref={topRef} aria-hidden />
-        <header className="dr-nav wrap">
-          <div className="dr-rail dr-edge" data-stuck={stuck ? "true" : undefined}>
-            <nav className="dr-links" aria-label="Main">
-              <Link href="/work" aria-label="Work">
-                <Roll label="Work" />
-              </Link>
-              <Link href="/services/websites" aria-label="Services">
-                <Roll label="Services" />
-              </Link>
-              <Link href="/pricing" aria-label="Pricing">
-                <Roll label="Pricing" />
-              </Link>
-            </nav>
-
-            <div className="dr-rail-in">
-              <Link className="dr-lockup" href="/">
-                <span className="dr-mono" aria-hidden />
-                <b>Executive AI Solutions</b>
-              </Link>
-
-
-                {/* collapsed at the top of the page, so it must not be
-                    reachable by keyboard or read out until it is really there */}
-                <Link
-                  href="/contact"
-                  className="dr-navcta dr-edge t-cta"
-                  tabIndex={stuck ? undefined : -1}
-                  aria-hidden={!stuck}
-                >
-                  Book the call
-                </Link>
-            </div>
-          </div>
-        </header>
 
         <main className="dr-main wrap">
           <div className="dr-hero">
