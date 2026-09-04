@@ -32,46 +32,6 @@ CustomEase.create(S, "M0,0 C0.25,1 0.5,1 1,1"); //   --ease-structure
 CustomEase.create(U, "M0,0 C0.16,1 0.3,1 1,1"); //   --ease-ui
 
 
-const ICON = { fill: "none", stroke: "currentColor", strokeWidth: 1.6 } as const;
-
-/* Real handles have never existed in this repo. Rather than ship three dead
-   links, an entry with no href renders as a mark and lights up the moment a
-   URL is dropped in. */
-const SOCIALS: { name: string; href: string; icon: React.ReactNode }[] = [
-  {
-    name: "LinkedIn",
-    href: "",
-    icon: (
-      <svg viewBox="0 0 24 24" width="18" height="18">
-        <rect x="3" y="3" width="18" height="18" rx="4" {...ICON} />
-        <path d="M7.6 10.6V17" {...ICON} strokeLinecap="round" />
-        <circle cx="7.6" cy="7.5" r="1" fill="currentColor" stroke="none" />
-        <path d="M11.2 17v-3.5a2.3 2.3 0 0 1 4.6 0V17" {...ICON} strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    name: "Instagram",
-    href: "",
-    icon: (
-      <svg viewBox="0 0 24 24" width="18" height="18">
-        <rect x="3" y="3" width="18" height="18" rx="5" {...ICON} />
-        <circle cx="12" cy="12" r="4" {...ICON} />
-        <circle cx="17.1" cy="6.9" r="1.1" fill="currentColor" stroke="none" />
-      </svg>
-    ),
-  },
-  {
-    name: "Facebook",
-    href: "",
-    icon: (
-      <svg viewBox="0 0 24 24" width="18" height="18">
-        <rect x="3" y="3" width="18" height="18" rx="4" {...ICON} />
-        <path d="M14.6 8.2h-1.4a1.7 1.7 0 0 0-1.7 1.7V17M9.9 12.5h4.2" {...ICON} strokeLinecap="round" />
-      </svg>
-    ),
-  },
-];
 
 
 /* §01 · COLD OPEN — "The Dark Room"
@@ -215,10 +175,6 @@ export default function DarkRoom() {
             </div>
 
             <div className="dr-left">
-              <p className="t-label dr-eyebrow">
-                Mesa, Arizona · Web design + the system behind it
-              </p>
-
               <h1 className="t-hero">
                 <span className="dr-line">
                   <span className="sweep">A website that books</span>
@@ -238,30 +194,6 @@ export default function DarkRoom() {
             </div>
 
             <WorksList />
-
-            {/* where the reference parks its SCROLL DOWN cue */}
-            <div className="dr-foot">
-              <Link href="/contact" className="dr-pill t-cta">
-                Book the call
-              </Link>
-              <ul className="dr-social">
-                  {SOCIALS.map((s) => (
-                    <li key={s.name}>
-                      {s.href ? (
-                        <a href={s.href} aria-label={s.name} target="_blank" rel="noreferrer">
-                          {s.icon}
-                        </a>
-                      ) : (
-                        /* no dead links: until a real handle exists this is a
-                           mark, not a promise that it goes somewhere */
-                        <span title={s.name} aria-hidden>
-                          {s.icon}
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-            </div>
 
           </div>
         </main>

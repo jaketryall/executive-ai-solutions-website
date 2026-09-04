@@ -145,10 +145,10 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    way to get cinematic scale out of a sentence this long. */
 .t-hero {
   font-family: var(--font-archivo), "Arial Black", "Helvetica Neue", sans-serif;
-  font-variation-settings: "wdth" 102, "wght" 720;
+  font-variation-settings: "wdth" 100, "wght" 660;
   font-size: var(--hero-fs);
-  letter-spacing: -0.022em; line-height: var(--hero-lh);
-  text-transform: uppercase; color: #d6d6da;
+  letter-spacing: -0.028em; line-height: 1.04;
+  text-transform: none; color: #d6d6da;
   margin: 0;
 }
 .t-hero .dr-line > span { white-space: nowrap; }
@@ -366,7 +366,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) clamp(310px, 29vw, 418px);
-  grid-template-rows: 1fr auto;
   column-gap: var(--fib-5);
   align-items: center;
   flex: 1;
@@ -378,17 +377,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    top of itself and pushed the action off the fold */
 /* top-aligned like the reference: it puts the first case in the strongest
    corner of the frame instead of floating it mid-column */
-.dr-works { grid-column: 2; grid-row: 1 / -1; align-self: start; }
-/* the reference parks a SCROLL DOWN cue here; the action is worth more */
-.dr-foot  { grid-column: 1; grid-row: 2; display: flex; align-items: center;
-            gap: var(--fib-4); padding-top: clamp(18px, 3.6svh, 34px); }
-/* the reference staggers its lines rightward; ours can too, and it opens
-   the void the card column nests into */
+.dr-works { grid-column: 2; grid-row: 1; align-self: start; }
 .dr-line:nth-of-type(2) > span { padding-left: var(--fib-4); }
 .dr-line:nth-of-type(3) > span { padding-left: var(--fib-6); }
-
-.dr-eyebrow { opacity: 0; margin-bottom: var(--fib-3); }
-.dr-lit .dr-eyebrow { animation: dr-fadein 600ms var(--ease-structure) 250ms forwards; }
 
 /* h1 lines mask-rise, 800ms outQuart, 140ms stagger */
 .dr-line { overflow: hidden; transform: skewX(-4deg);
@@ -399,23 +390,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-lit .dr-line:nth-of-type(3) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 590ms forwards; }
 @keyframes dr-rise { to { transform: translateY(0); } }
 
-.dr-sub { opacity: 0; margin-top: var(--fib-4); }
+.dr-sub { opacity: 0; margin-top: var(--fib-4); max-width: 46ch; }
 .dr-lit .dr-sub { animation: dr-fadein var(--t-enter) var(--ease-structure) 620ms forwards; }
-
-
-/* the ONE pure-white fill on the site */
-.dr-pill {
-  display: inline-flex; align-items: center; gap: 10px;
-  background: var(--ink); color: #000; border: 0; border-radius: 999px;
-  padding: 16px 30px; cursor: pointer; text-decoration: none;
-  opacity: 0; transform: scale(.94);
-  transition: transform var(--t-micro) var(--ease-ui);
-}
-.dr-lit .dr-pill { animation: dr-pop var(--t-enter) var(--ease-structure) 760ms forwards; }
-@keyframes dr-pop { to { opacity: 1; transform: scale(1); } }
-.dr-pill:hover { transform: scale(1.02); }
-.dr-pill:active { transform: scale(.99); }
-.dr-pill:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 
 /* ══ THE WORK CHAIN ══════════════════════════════════════════════
    A thumbnail, a name, one line of what we did. The thumbnail plays a real
@@ -511,37 +487,17 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   animation: dr-edgelight 15s linear infinite;
 }
 
-/* ══ THE NOTE — the social rail sits where the reference puts its
-      decorative block, doing a job instead of decorating ══════════ */
-.dr-social { list-style: none; margin: 0; padding: 0;
-             display: flex; gap: 6px; flex: 0 0 auto; }
-.dr-social a, .dr-social span {
-  display: grid; place-items: center; width: 34px; height: 34px;
-  border-radius: 10px; border: 1px solid var(--edge); color: var(--ink-3);
-  transition: color var(--t-micro) var(--ease-ui),
-              border-color var(--t-micro) var(--ease-ui); }
-.dr-social a:hover { color: var(--ink); border-color: var(--edge-strong); }
-.dr-social a:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
-
-
-
-/* the one lit object */
 /* 720p laptops. Everything above is fluid, but the stack still needs a
    final trim to hold one viewport at the shortest realistic desktop. */
 @media (min-width: 901px) and (max-height: 780px) {
-  .dr-social a, .dr-social span { width: 30px; height: 30px; }
-  .dr-pill { padding: 13px 26px; }
   .dr-main { padding-block: 12px 6px; }
 }
 
 @media (max-width: 900px) {
   .dr-hero { grid-template-columns: minmax(0, 1fr); }
-  .dr-left, .dr-works, .dr-foot { grid-column: 1; grid-row: auto; }
-  /* stacked, source order buries the action under all three cards. The
-     promise, then the action, then the proof. */
+  .dr-left, .dr-works { grid-column: 1; grid-row: auto; }
   .dr-left { order: 1; }
-  .dr-foot { order: 2; padding-top: var(--fib-4); }
-  .dr-works { order: 3; }
+  .dr-works { order: 2; }
   .dr-line:nth-of-type(2) > span,
   .dr-line:nth-of-type(3) > span { padding-left: 0; }
   /* stacked, the cards run full width, so the mark rides UP into the
@@ -580,19 +536,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-lockup b { font-size: 10px; letter-spacing: .06em; }
   .dr-navcta { font-size: 11px; letter-spacing: .06em; }
   .dr-rail[data-stuck] .dr-navcta { padding: 9px 14px; }
-  /* the eyebrow is two lines here; wide tracking turns it into a slab */
-  .dr-eyebrow { letter-spacing: .08em; }
-  /* stacked, the desktop breath between the promise and the button opens
-     into a void you have to scroll past */
 }
 
 @media (prefers-reduced-motion: reduce) {
   .dr-key, .dr-key::after, .dr-figure span { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
-  .dr-lit .dr-nav-in { transform: scaleX(1); animation: none; }
-  .dr-lit .dr-nav-in > *, .dr-lit .dr-eyebrow, .dr-lit .dr-sub,
+  .dr-lit .dr-sub,
   .dr-lit .dr-wk { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
-  .dr-lit .dr-pill { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-vignette { animation: none; opacity: .35; }
 }
