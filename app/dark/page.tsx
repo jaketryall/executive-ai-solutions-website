@@ -116,6 +116,21 @@ export default function DarkRoom() {
        it; a slow climb is what makes it read as depth rather than wallpaper.
        Capped so it never drifts out of frame on a long page. */
     const wall = document.querySelector<HTMLElement>(".dr-wall");
+    /* THE HERO RECEDES SO THE NEXT SECTION CAN RISE OVER IT.
+       Nothing about §02 moves — it scrolls 1:1 like any block. The rising
+       is entirely a DEPTH CUE paid for up here: the hero's content drifts
+       DOWN at 0.4x the scroll (so it climbs at only 0.6x) while shrinking
+       to 0.8. Moving slower and getting smaller is what "further away"
+       looks like, and the section arriving at full speed then reads as
+       coming UP over it rather than merely following it.
+
+       It rides .dr-main because .dr-line and .dr-sub already own transform
+       for the entrance, and a second writer on the same property is the
+       collision this room keeps re-learning. Written to `translate` and
+       `scale` — the individual properties — so it cannot collide with the
+       `transform` shorthand anywhere beneath it either. */
+    const main = document.querySelector<HTMLElement>(".dr-main");
+    const stage = document.querySelector<HTMLElement>(".dr-stage");
     let frame = 0;
     const onScroll = () => {
       if (frame || !wall) return;
@@ -123,6 +138,15 @@ export default function DarkRoom() {
         frame = 0;
         const y = Math.min(window.scrollY * 0.1, window.innerHeight * 0.42);
         wall.style.transform = `translate3d(0, ${-y}px, 0)`;
+
+        if (main && stage) {
+          const h = stage.offsetHeight || window.innerHeight;
+          const p = Math.max(0, Math.min(1, window.scrollY / h));
+          // clamp the TRAVEL, not the rate: past the hero it holds its
+          // final offset instead of drifting on down the page
+          main.style.setProperty("--hero-y", `${Math.min(window.scrollY, h) * 0.4}px`);
+          main.style.setProperty("--hero-p", String(p));
+        }
       });
     };
     window.addEventListener("scroll", onScroll, { passive: true });

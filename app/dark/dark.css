@@ -392,7 +392,18 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* main: flex-1 + justify-end + items-end does ALL the corner composition.
    Zero absolute positioning. */
 .dr-main { flex: 1; min-height: 0; display: flex; flex-direction: column;
-           padding-block: 0 clamp(16px, 3.8svh, 34px); }
+           padding-block: 0 clamp(16px, 3.8svh, 34px);
+  /* THE RECEDE. See the note in page.tsx: the next section rising is a
+     depth cue bought up here, not motion down there. Individual
+     `translate`/`scale` rather than the `transform` shorthand, so this can
+     never collide with the entrance animations beneath it. Shrinks about a
+     point above centre, so the headline holds its place on the page longer
+     than the roster does. */
+  transform-origin: 50% 34%;
+  translate: 0 var(--hero-y, 0px);
+  scale: calc(1 - .2 * var(--hero-p, 0));
+  will-change: transform;
+}
 
 /* THE NESTED GRID — not a split. The statement keeps its full width, and
    because its last two lines are SHORT it carves a stepped void on the
@@ -678,6 +689,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .dr-main { translate: none; scale: 1; }
   .dr-key, .dr-key::after,
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
