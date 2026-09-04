@@ -108,8 +108,28 @@ export default function DarkRoom() {
       ay((e.clientY / window.innerHeight - 0.5) * 46);
     };
     window.addEventListener("pointermove", onMove, { passive: true });
+
+    /* THE WALL RISES ON SCROLL, at a tenth of the page's rate. It is a fixed
+       layer, so without this it sits dead still while everything moves past
+       it; a slow climb is what makes it read as depth rather than wallpaper.
+       Capped so it never drifts out of frame on a long page. */
+    const wall = document.querySelector<HTMLElement>(".dr-wall");
+    let frame = 0;
+    const onScroll = () => {
+      if (frame || !wall) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const y = Math.min(window.scrollY * 0.1, window.innerHeight * 0.42);
+        wall.style.transform = `translate3d(0, ${-y}px, 0)`;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
     return () => {
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
       gsap.killTweensOf(atmos);
       gsap.set(atmos, { clearProps: "transform" });
     };
@@ -125,8 +145,12 @@ export default function DarkRoom() {
         <div className="dr-key" />
       </div>
       {/* massive, half off the left edge, barely there — the room's own wall.
-          No contour: the shape is carried entirely by its material. */}
-      <div className="dr-figure" aria-hidden />
+          No contour: the shape is carried entirely by its material. The
+          wrapper exists so scroll can move the wall while the wall keeps its
+          own drift — both want `transform`, and one would overwrite the other. */}
+      <div className="dr-wall" aria-hidden>
+        <div className="dr-figure" />
+      </div>
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
 

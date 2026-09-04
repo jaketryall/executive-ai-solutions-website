@@ -530,15 +530,18 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      reaches just past the middle and sits under everything, so it reads as
      the wall of the room rather than a logo placed on the page. Centred by
      inset; nothing may put a transform on it. */
-  position: fixed; left: -13vw; top: 0; bottom: 0; margin: auto 0;
+  position: absolute; left: -13vw; top: 0; bottom: 0; margin: auto 0;
   height: min(126vh, 1160px); width: auto; aspect-ratio: 1;
-  z-index: 0; pointer-events: none;
+  pointer-events: none;
 }
 /* THE BODY, and the reason the mark can have texture at all: a 1px contour
    has no area to texture. This is the glyph's solid shape filled with a fine
    diagonal hatch and grain, then INTERSECTED with a left-to-right fade, so
    the material is strongest where the wall is cut by the screen edge and
    gone by the time it reaches the middle. */
+/* the wrapper takes the SCROLL rise; the wall keeps its own slow drift,
+   because both want `transform` and the last one written would win */
+.dr-wall { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 .dr-figure { animation: dr-wall-drift 54s ease-in-out infinite alternate; }
 @keyframes dr-wall-drift {
   from { transform: translate3d(0, 0, 0) scale(1); }
