@@ -445,7 +445,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 .dr-wk {
   display: flex; align-items: stretch; gap: 14px;
-  padding: 10px;
+  /* the thumbnail keeps the reference's 10px inset; the arrow needs more
+     room than that or it sits on the card's edge */
+  padding: 10px 18px 10px 10px;
   border-radius: 13px; text-decoration: none;
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(15px);
