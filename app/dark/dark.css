@@ -202,6 +202,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 /* ══ §01 COLD OPEN ═══════════════════════════════════════════════ */
 
+.dr-top { position: absolute; top: 0; left: 0; width: 1px; height: 1px; }
 .dr-stage {
   position: relative; z-index: 4;
   min-height: 100svh; display: flex; flex-direction: column;
@@ -255,17 +256,27 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    Not a bar with a rule under it — a floating object that OPENS from
    its own centre, then hands off to its contents. */
 .dr-nav { padding-top: clamp(13px, 2.4svh, 21px); }
+/* AT REST this is not a bar. The wordmark and the links simply float on the
+   room; the pill, the lit edge and the action are what SCROLL earns. */
 .dr-rail {
   height: 62px; margin-inline: auto; border-radius: 999px;
-  --glint-delay: -1.6s;
-  /* JS measures offsetHeight for the opening circle, so the rail owns a
-     fixed height. Contents are vertically centred inside it. */
+  --glint-delay: -1.6s; opacity: 0;
 }
+.dr-lit .dr-rail { animation: dr-fadein 480ms var(--ease-ui) 140ms forwards; }
+.dr-rail::before { opacity: 0; transition: opacity .5s var(--ease-ui); }
+.dr-rail[data-stuck]::before { opacity: 1; }
+
 .dr-rail-in {
   position: relative; z-index: 2; height: 100%;
   display: flex; align-items: center; gap: var(--fib-4);
+  padding: 0 4px; border-radius: inherit;
+  background: transparent;
+  transition: background .5s var(--ease-ui),
+              padding .55s var(--ease-structure),
+              backdrop-filter .5s var(--ease-ui);
+}
+.dr-rail[data-stuck] .dr-rail-in {
   padding: 0 9px 0 var(--fib-3);
-  border-radius: inherit; overflow: hidden;
   background: rgba(11, 11, 13, 0.72);
   backdrop-filter: blur(14px) saturate(120%);
   -webkit-backdrop-filter: blur(14px) saturate(120%);
@@ -274,16 +285,23 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* ONE line, not two: "Mesa, Arizona" already opens the hero, and a
    single-line lockup is what lets the wordmark sit dead-centre in the
    pill during the title beat. */
-.dr-lockup { display: flex; align-items: center; gap: var(--fib-2);
+.dr-lockup { display: flex; align-items: center; gap: 0;
   text-decoration: none; flex: 0 0 auto; }
+/* the name collapses and the mark opens in its place */
 .dr-lockup b { display: block; color: var(--ink); white-space: nowrap;
+  overflow: hidden; max-width: 32ch;
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wght" 700; font-size: 13px; letter-spacing: .14em;
-  text-transform: uppercase; transform-origin: center center; }
-.dr-mono { flex: 0 0 auto; width: 21px; height: 21px; display: block;
-  background: var(--ink);
+  text-transform: uppercase;
+  transition: max-width .55s var(--ease-structure),
+              opacity .3s var(--ease-ui); }
+.dr-rail[data-stuck] .dr-lockup b { max-width: 0; opacity: 0; }
+.dr-mono { flex: 0 0 auto; width: 0; height: 21px; display: block;
+  opacity: 0; overflow: hidden; background: var(--ink);
   -webkit-mask: url("/brand/eas-mark.svg") center / contain no-repeat;
-          mask: url("/brand/eas-mark.svg") center / contain no-repeat; }
+          mask: url("/brand/eas-mark.svg") center / contain no-repeat;
+  transition: width .55s var(--ease-structure), opacity .35s var(--ease-ui); }
+.dr-rail[data-stuck] .dr-mono { width: 21px; opacity: 1; }
 
 .dr-rail-tail { display: flex; align-items: center; gap: var(--fib-4);
   margin-left: auto; }
@@ -313,11 +331,21 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    keeps the room's only pure-white surface, so the action still wins. */
 .dr-navcta {
   display: inline-flex; align-items: center; border-radius: 999px;
-  padding: 12px 22px; text-decoration: none; color: var(--ink);
+  text-decoration: none; color: var(--ink); white-space: nowrap;
   background: var(--surface-2);
   --glint-t: 4.5s;
-  transition: background var(--t-micro) var(--ease-ui);
+  max-width: 0; opacity: 0; padding: 12px 0; margin-left: 0; overflow: hidden;
+  transition: max-width .55s var(--ease-structure),
+              padding .55s var(--ease-structure),
+              margin-left .55s var(--ease-structure),
+              opacity .35s var(--ease-ui),
+              background var(--t-micro) var(--ease-ui);
 }
+.dr-navcta::before { opacity: 0; transition: opacity .4s var(--ease-ui); }
+.dr-rail[data-stuck] .dr-navcta {
+  max-width: 260px; opacity: 1; padding: 12px 22px; margin-left: var(--fib-3);
+}
+.dr-rail[data-stuck] .dr-navcta::before { opacity: 1; }
 .dr-navcta:hover { background: var(--surface-3); }
 .dr-navcta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 
@@ -357,19 +385,19 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-line:nth-of-type(3) > span { padding-left: var(--fib-6); }
 
 .dr-eyebrow { opacity: 0; margin-bottom: var(--fib-3); }
-.dr-lit .dr-eyebrow { animation: dr-fadein 600ms var(--ease-structure) 1250ms forwards; }
+.dr-lit .dr-eyebrow { animation: dr-fadein 600ms var(--ease-structure) 250ms forwards; }
 
 /* h1 lines mask-rise, 800ms outQuart, 140ms stagger */
 .dr-line { overflow: hidden; transform: skewX(-9deg);
            transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
-.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1350ms forwards; }
-.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1470ms forwards; }
-.dr-lit .dr-line:nth-of-type(3) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1590ms forwards; }
+.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 350ms forwards; }
+.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 470ms forwards; }
+.dr-lit .dr-line:nth-of-type(3) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 590ms forwards; }
 @keyframes dr-rise { to { transform: translateY(0); } }
 
 .dr-sub { opacity: 0; margin-top: var(--fib-4); }
-.dr-lit .dr-sub { animation: dr-fadein var(--t-enter) var(--ease-structure) 1600ms forwards; }
+.dr-lit .dr-sub { animation: dr-fadein var(--t-enter) var(--ease-structure) 620ms forwards; }
 
 
 /* the ONE pure-white fill on the site */
@@ -380,7 +408,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   opacity: 0; transform: scale(.94);
   transition: transform var(--t-micro) var(--ease-ui);
 }
-.dr-lit .dr-pill { animation: dr-pop var(--t-enter) var(--ease-structure) 1740ms forwards; }
+.dr-lit .dr-pill { animation: dr-pop var(--t-enter) var(--ease-structure) 760ms forwards; }
 @keyframes dr-pop { to { opacity: 1; transform: scale(1); } }
 .dr-pill:hover { transform: scale(1.02); }
 .dr-pill:active { transform: scale(.99); }
@@ -446,10 +474,10 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-wk.is-focal .dr-wk-arrow { color: var(--ink); transform: translateX(3px); }
 
 .dr-lit .dr-wk { animation: dr-cardin 620ms var(--ease-structure) forwards; }
-.dr-lit .dr-wk:nth-of-type(1) { animation-delay: 1860ms; }
-.dr-lit .dr-wk:nth-of-type(2) { animation-delay: 1980ms; }
-.dr-lit .dr-wk:nth-of-type(3) { animation-delay: 2100ms; }
-.dr-lit .dr-wk:nth-of-type(4) { animation-delay: 2220ms; }
+.dr-lit .dr-wk:nth-of-type(1) { animation-delay: 900ms; }
+.dr-lit .dr-wk:nth-of-type(2) { animation-delay: 1020ms; }
+.dr-lit .dr-wk:nth-of-type(3) { animation-delay: 1140ms; }
+.dr-lit .dr-wk:nth-of-type(4) { animation-delay: 1260ms; }
 @keyframes dr-cardin { to { opacity: 1; transform: translateY(0); } }
 
 /* ══ THE MARK, CENTRE STAGE ══════════════════════════════════════
@@ -522,7 +550,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-rail { height: 56px; }
   .dr-links { display: none; }
   .dr-rail-in { padding: 0 6px 0 var(--fib-2); gap: var(--fib-1); }
-  .dr-navcta { padding: 10px 15px; font-size: 12px; white-space: nowrap; }
+  .dr-navcta { font-size: 12px; }
+  .dr-rail[data-stuck] .dr-navcta { padding: 10px 15px; }
   .dr-lockup b { font-size: 11px; letter-spacing: .1em; }
   /* sheared caps at tight tracking clot at 390px: relax the shear to 6°,
      let the statement wrap, and scale UP (a phone is narrow, not small) */
@@ -537,10 +566,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* the true phone bucket. At 390 the rail's two objects stop fitting, so
    both give up tracking and weight rather than the pill giving up its shape */
 @media (max-width: 560px) {
-  .dr-mono { width: 18px; height: 18px; }
+  .dr-mono { height: 18px; }
+  .dr-rail[data-stuck] .dr-mono { width: 18px; }
   .dr-lockup { gap: var(--fib-1); }
   .dr-lockup b { font-size: 10px; letter-spacing: .06em; }
-  .dr-navcta { font-size: 11px; letter-spacing: .06em; padding: 9px 14px; }
+  .dr-navcta { font-size: 11px; letter-spacing: .06em; }
+  .dr-rail[data-stuck] .dr-navcta { padding: 9px 14px; }
   /* the eyebrow is two lines here; wide tracking turns it into a slab */
   .dr-eyebrow { letter-spacing: .08em; }
   /* stacked, the desktop breath between the promise and the button opens

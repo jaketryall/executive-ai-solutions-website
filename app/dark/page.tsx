@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import WorksList from "@/components/dark/works-list";
 import { Archivo, Instrument_Sans } from "next/font/google";
@@ -73,7 +73,6 @@ const SOCIALS: { name: string; href: string; icon: React.ReactNode }[] = [
   },
 ];
 
-const useIsoLayout = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 /* §01 · COLD OPEN — "The Dark Room"
    Job: state the offer, the geography and the promise in three seconds;
@@ -81,10 +80,6 @@ const useIsoLayout = typeof window !== "undefined" ? useLayoutEffect : useEffect
    commitment levels. ~78% untouched black, six text objects. */
 export default function DarkRoom() {
   const [lit, setLit] = useState(false);
-  const railRef = useRef<HTMLDivElement>(null);
-  const wordRef = useRef<HTMLElement>(null);
-  const monoRef = useRef<HTMLSpanElement>(null);
-  const tailRef = useRef<HTMLDivElement>(null);
 
   /* Theming is NOT done here any more. Adding the class in an effect meant
      the browser painted the root layout's light sheet first and the reload
@@ -96,111 +91,45 @@ export default function DarkRoom() {
     return () => cancelAnimationFrame(id);
   }, []);
 
-  /* THE RAIL'S TITLE SEQUENCE
-     A circle arrives → stretches into the pill → the wordmark appears at
-     full scale, centred inside it → shrinks into its resting place → the
-     mark lands to its left → the rest of the rail arrives from the right.
-     Measured, not guessed: the centred position is the live delta between
-     the rail's centre and the wordmark's own, so it holds at every width. */
-  useIsoLayout(() => {
-    const rail = railRef.current;
-    const word = wordRef.current;
-    const mono = monoRef.current;
-    const tail = tailRef.current;
-    if (!rail || !word || !mono || !tail) return;
+  /* The rail transforms on SCROLL, not on load. A sentinel at the very top
+     of the stage says the moment the page has left the top — cheaper and
+     more honest than guessing a scroll offset. */
+  const topRef = useRef<HTMLDivElement>(null);
+  const [stuck, setStuck] = useState(false);
+  useEffect(() => {
+    const top = topRef.current;
+    if (!top) return;
+    const io = new IntersectionObserver(([e]) => setStuck(!e.isIntersecting), {
+      threshold: 0,
+    });
+    io.observe(top);
+    return () => io.disconnect();
+  }, []);
 
-    const tailKids = gsap.utils.toArray<HTMLElement>(tail.children);
-
-    if (reducedMotion()) {
-      gsap.set([rail, word, mono, ...tailKids], { autoAlpha: 1, clearProps: "transform" });
+  /* PARALLAX — the LIGHT only. The mark holds still: it is the object in the
+     room, and an object that slides with your cursor stops reading as one.
+     Pointer only; on touch there is nothing to answer and the ambient drift
+     already carries it. */
+  useEffect(() => {
+    const atmos = document.querySelector<HTMLElement>(".dr-atmos");
+    if (
+      !atmos ||
+      reducedMotion() ||
+      !window.matchMedia("(hover: hover)").matches
+    )
       return;
-    }
-
-    const ctx = gsap.context(() => {
-
-      /* Hide FIRST, synchronously, so nothing flashes — then measure only
-         once the route CSS and the variable font have actually landed.
-         Measuring in the layout effect read a 1400px rail (the wrap padding
-         had not applied yet) and a pre-swap wordmark width, so the centred
-         beat sat 37px off. Fonts change the wordmark's width; CSS changes
-         the rail's. Both have to be settled before a single measurement. */
-      gsap.set([word, mono], { autoAlpha: 0 });
-      gsap.set(tailKids, { autoAlpha: 0, y: 9 });
-      gsap.set(rail, { autoAlpha: 0 });
-
-      let raf = 0;
-      const cleanups: (() => void)[] = [];
-      const play = () => {
-        const railBox = rail.getBoundingClientRect();
-        const wordBox = word.getBoundingClientRect();
-        // scale is about the wordmark's own centre, so this delta alone
-        // parks it dead-centre in the pill at any width
-        const dx =
-          railBox.left + railBox.width / 2 - (wordBox.left + wordBox.width / 2);
-
-        // 2.2 is the ceiling, not the value: on a phone rail that scale runs
-        // the wordmark wider than the pill and it clips. Derive it.
-        const big = Math.min(2.2, (railBox.width - 56) / wordBox.width);
-
-        gsap.set(rail, { width: rail.offsetHeight, scale: 0.5 });
-
-        const tl = gsap
-          .timeline({ defaults: { ease: S } })
-          .to(rail, { autoAlpha: 1, scale: 1, duration: 0.45, ease: U })
-          .to(rail, { width: "100%", duration: 0.65 }, "+=0.05")
-          .fromTo(
-            word,
-            { autoAlpha: 0, x: dx, scale: big },
-            { autoAlpha: 1, x: dx, scale: big, duration: 0.35 },
-            "-=0.2"
-          )
-          .to(word, { x: 0, scale: 1, duration: 0.6 }, "+=0.15")
-          .to(mono, { autoAlpha: 1, duration: 0.4, ease: U }, "-=0.3")
-          .to(
-            tailKids,
-            { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.07, ease: U },
-            "-=0.24"
-          )
-          // hand the width back to CSS so the rail stays fluid afterwards
-          .set(rail, { clearProps: "width" });
-
-        /* A load choreography is over before any screenshot fires, so the
-           only way to review it is to seek it paused. Exposed on purpose. */
-        (window as unknown as { __drIntro?: gsap.core.Timeline }).__drIntro = tl;
-      };
-
-        /* PARALLAX — the LIGHT only. The mark holds still: it is the object in
-         the room, and an object that slides with your cursor stops reading as
-         one. Pointer only; on touch there is nothing to answer and the
-         ambient drift already carries it. */
-      const atmos = document.querySelector(".dr-atmos");
-      if (
-        atmos && !reducedMotion() &&
-        window.matchMedia("(hover: hover)").matches
-      ) {
-        const ax = gsap.quickTo(atmos, "x", { duration: 1.2, ease: U });
-        const ay = gsap.quickTo(atmos, "y", { duration: 1.2, ease: U });
-        const onMove = (e: PointerEvent) => {
-          ax((e.clientX / window.innerWidth - 0.5) * 78);
-          ay((e.clientY / window.innerHeight - 0.5) * 46);
-        };
-        window.addEventListener("pointermove", onMove, { passive: true });
-        cleanups.push(() => window.removeEventListener("pointermove", onMove));
-      }
-
-    const fonts = (document as Document & { fonts?: FontFaceSet }).fonts;
-      Promise.resolve(fonts ? fonts.ready : undefined).then(() => {
-        raf = requestAnimationFrame(() => {
-          raf = requestAnimationFrame(play);
-        });
-      });
-      return () => {
-        cancelAnimationFrame(raf);
-        cleanups.forEach((fn) => fn());
-      };
-    }, railRef);
-
-    return () => ctx.revert();
+    const ax = gsap.quickTo(atmos, "x", { duration: 1.2, ease: U });
+    const ay = gsap.quickTo(atmos, "y", { duration: 1.2, ease: U });
+    const onMove = (e: PointerEvent) => {
+      ax((e.clientX / window.innerWidth - 0.5) * 78);
+      ay((e.clientY / window.innerHeight - 0.5) * 46);
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      gsap.killTweensOf(atmos);
+      gsap.set(atmos, { clearProps: "transform" });
+    };
   }, []);
 
   return (
@@ -216,15 +145,17 @@ export default function DarkRoom() {
       <div className="dr-vignette" aria-hidden />
 
       <div className="dr-stage">
+        {/* the rail watches this, not a scroll number */}
+        <div className="dr-top" ref={topRef} aria-hidden />
         <header className="dr-nav wrap">
-          <div className="dr-rail dr-edge" ref={railRef}>
+          <div className="dr-rail dr-edge" data-stuck={stuck ? "true" : undefined}>
             <div className="dr-rail-in">
               <Link className="dr-lockup" href="/">
-                <span className="dr-mono" ref={monoRef} aria-hidden />
-                <b ref={wordRef}>Executive AI Solutions</b>
+                <span className="dr-mono" aria-hidden />
+                <b>Executive AI Solutions</b>
               </Link>
 
-              <div className="dr-rail-tail" ref={tailRef}>
+              <div className="dr-rail-tail">
                 <nav className="dr-links" aria-label="Main">
                   <Link href="/work">
                     <span data-label="Work">Work</span>
@@ -237,7 +168,14 @@ export default function DarkRoom() {
                   </Link>
                 </nav>
 
-                <Link href="/contact" className="dr-navcta dr-edge t-cta">
+                {/* collapsed at the top of the page, so it must not be
+                    reachable by keyboard or read out until it is really there */}
+                <Link
+                  href="/contact"
+                  className="dr-navcta dr-edge t-cta"
+                  tabIndex={stuck ? undefined : -1}
+                  aria-hidden={!stuck}
+                >
                   Book the call
                 </Link>
               </div>
