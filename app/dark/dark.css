@@ -82,6 +82,15 @@
     radial-gradient(30% 28% at 64% 68%, var(--fill), transparent 72%);
   animation: dr-drift 26s ease-in-out infinite alternate;
 }
+.dr-key::after {
+  content: ""; position: absolute; inset: 12%;
+  background: radial-gradient(36% 32% at 74% 22%, rgba(255,255,255,.06), transparent 72%);
+  animation: dr-drift-b 37s ease-in-out infinite alternate;
+}
+@keyframes dr-drift-b {
+  from { transform: translate3d(3.5%, 2%, 0) scale(1.05); }
+  to   { transform: translate3d(-3%, -2.5%, 0) scale(1); }
+}
 @keyframes dr-drift {
   from { transform: translate3d(-2.5%, -1.5%, 0) scale(1); }
   to   { transform: translate3d(2.5%, 2%, 0) scale(1.06); }
@@ -237,24 +246,116 @@
         padding-inline: var(--fib-3); }
 @media (min-width: 768px) { .wrap { padding-inline: var(--fib-5); } }
 
-/* nav is a designed object: a rule that DRAWS, then the lockup resolves */
-.dr-nav { padding-top: var(--fib-4); }
-.dr-nav-in {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  gap: var(--fib-3); padding-bottom: var(--fib-3);
-  border-bottom: 1px solid var(--edge);
-  transform-origin: left; transform: scaleX(0);
-}
-.dr-lit .dr-nav-in { animation: dr-draw 900ms var(--ease-structure) 120ms forwards; }
-@keyframes dr-draw { to { transform: scaleX(1); } }
-.dr-nav-in > * { opacity: 0; }
-.dr-lit .dr-nav-in > * { animation: dr-fadein 600ms var(--ease-structure) 700ms forwards; }
 @keyframes dr-fadein { to { opacity: 1; } }
 
-.dr-lockup { display: flex; flex-direction: column; gap: 3px; }
-.dr-lockup b { color: var(--ink); font-family: var(--font-archivo), sans-serif;
+/* ══ THE LIT EDGE — one component, used everywhere ═══════════════
+   The law says the 1px stroke is the same object in every section and
+   the only thing that happens to it is that light travels along it.
+   So it is a REAL hairline: a moving gradient carved down to the border
+   box by mask-composite, not a shadow pretending to be a line. Each
+   surface owns its own peak brightness and period, so no two edges ever
+   pulse in unison. */
+.dr-edge {
+  position: relative;
+  --glint-peak: rgba(255, 255, 255, 0.90);
+  --glint-t: 7s;
+  --glint-delay: 0s;
+}
+.dr-edge::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  box-sizing: border-box; padding: 1px; pointer-events: none; z-index: 1;
+  background: linear-gradient(90deg,
+    var(--edge) 0%, var(--edge) 30%,
+    var(--glint-peak) 50%,
+    var(--edge) 70%, var(--edge) 100%);
+  background-size: 260% 100%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask-composite: exclude;
+  animation: dr-glint var(--glint-t) linear var(--glint-delay) infinite;
+}
+@keyframes dr-glint { to { background-position: -260% 0; } }
+
+/* surfaces. Content sits ON something; nothing floats bare on the canvas. */
+.dr-panel {
+  border-radius: var(--radius-panel);
+  background: rgba(16, 16, 19, 0.55);
+  backdrop-filter: blur(12px) saturate(115%);
+  -webkit-backdrop-filter: blur(12px) saturate(115%);
+  --glint-peak: rgba(255, 255, 255, 0.42);
+  --glint-t: 13s;
+}
+
+/* ══ THE RAIL ════════════════════════════════════════════════════
+   Not a bar with a rule under it — a floating object that OPENS from
+   its own centre, then hands off to its contents. */
+.dr-nav { padding-top: var(--fib-3); }
+.dr-rail {
+  height: 62px; margin-inline: auto; border-radius: 999px;
+  --glint-delay: -1.6s;
+  /* JS measures offsetHeight for the opening circle, so the rail owns a
+     fixed height. Contents are vertically centred inside it. */
+}
+.dr-rail-in {
+  position: relative; z-index: 2; height: 100%;
+  display: flex; align-items: center; gap: var(--fib-4);
+  padding: 0 9px 0 var(--fib-3);
+  border-radius: inherit; overflow: hidden;
+  background: rgba(11, 11, 13, 0.72);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+}
+
+/* ONE line, not two: "Mesa, Arizona" already opens the hero, and a
+   single-line lockup is what lets the wordmark sit dead-centre in the
+   pill during the title beat. */
+.dr-lockup { display: flex; align-items: center; gap: var(--fib-2);
+  text-decoration: none; flex: 0 0 auto; }
+.dr-lockup b { display: block; color: var(--ink); white-space: nowrap;
+  font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wght" 700; font-size: 13px; letter-spacing: .14em;
-  text-transform: uppercase; }
+  text-transform: uppercase; transform-origin: center center; }
+.dr-mono { flex: 0 0 auto; width: 21px; height: 21px; display: block;
+  background: var(--ink);
+  -webkit-mask: url("/brand/eas-mark.svg") center / contain no-repeat;
+          mask: url("/brand/eas-mark.svg") center / contain no-repeat; }
+
+.dr-rail-tail { display: flex; align-items: center; gap: var(--fib-4);
+  margin-left: auto; }
+
+/* the label ROLLS one line-height and swaps to white. Nothing glows —
+   in this room a hover is a change of light, not a change of colour. */
+.dr-links { display: flex; align-items: center; gap: var(--fib-4); }
+.dr-links a {
+  position: relative; overflow: hidden; display: inline-flex; line-height: 1.35;
+  text-decoration: none; color: var(--ink-3);
+  font-family: var(--font-archivo), sans-serif; font-variation-settings: "wght" 700;
+  font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+}
+.dr-links a > span {
+  display: block; position: relative;
+  transition: transform 460ms var(--ease-ui);
+}
+.dr-links a > span::after {
+  content: attr(data-label); position: absolute; left: 0; top: 100%;
+  color: var(--ink);
+}
+.dr-links a:hover > span,
+.dr-links a:focus-visible > span { transform: translateY(-100%); }
+.dr-links a:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 5px; border-radius: 3px; }
+
+/* the nav CTA is a LIT EDGE, not a second white fill — the hero pill
+   keeps the room's only pure-white surface, so the action still wins. */
+.dr-navcta {
+  display: inline-flex; align-items: center; border-radius: 999px;
+  padding: 12px 22px; text-decoration: none; color: var(--ink);
+  background: var(--surface-2);
+  --glint-t: 4.5s;
+  transition: background var(--t-micro) var(--ease-ui);
+}
+.dr-navcta:hover { background: var(--surface-3); }
+.dr-navcta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 
 /* main: flex-1 + justify-end + items-end does ALL the corner composition.
    Zero absolute positioning. */
@@ -267,18 +368,18 @@
 .dr-copy { flex: 1 1 auto; min-width: 0; }
 
 .dr-eyebrow { opacity: 0; }
-.dr-lit .dr-eyebrow { animation: dr-fadein 600ms var(--ease-structure) 250ms forwards; }
+.dr-lit .dr-eyebrow { animation: dr-fadein 600ms var(--ease-structure) 1250ms forwards; }
 
 /* h1 lines mask-rise, 800ms outQuart, 140ms stagger */
 .dr-line { overflow: hidden; }
 .dr-line > span { display: block; transform: translateY(103%); }
-.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 350ms forwards; }
-.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 490ms forwards; }
-.dr-lit .dr-line:nth-of-type(3) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 630ms forwards; }
+.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1350ms forwards; }
+.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1470ms forwards; }
+.dr-lit .dr-line:nth-of-type(3) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1590ms forwards; }
 @keyframes dr-rise { to { transform: translateY(0); } }
 
 .dr-sub { margin-top: var(--fib-4); opacity: 0; }
-.dr-lit .dr-sub { animation: dr-fadein var(--t-enter) var(--ease-structure) 620ms forwards; }
+.dr-lit .dr-sub { animation: dr-fadein var(--t-enter) var(--ease-structure) 1600ms forwards; }
 
 .dr-actions { margin-top: var(--fib-5); display: flex; flex-direction: column;
               gap: var(--fib-3); align-items: flex-start; }
@@ -291,35 +392,51 @@
   opacity: 0; transform: scale(.94);
   transition: transform var(--t-micro) var(--ease-ui);
 }
-.dr-lit .dr-pill { animation: dr-pop var(--t-enter) var(--ease-structure) 760ms forwards; }
+.dr-lit .dr-pill { animation: dr-pop var(--t-enter) var(--ease-structure) 1740ms forwards; }
 @keyframes dr-pop { to { opacity: 1; transform: scale(1); } }
 .dr-pill:hover { transform: scale(1.02); }
 .dr-pill:active { transform: scale(.99); }
 .dr-pill:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 
-/* the second action is a FIELD, never a second button — a text field
-   cannot compete with a button for the primary click */
-.dr-check { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-            opacity: 0; }
-.dr-lit .dr-check { animation: dr-fadein var(--t-enter) var(--ease-structure) 900ms forwards; }
+/* the second action is a FIELD on its own surface, never a second button —
+   a text field cannot compete with a button for the primary click */
+.dr-check {
+  display: flex; flex-direction: column; gap: var(--fib-1);
+  padding: var(--fib-3); width: min(100%, 400px);
+  opacity: 0; --glint-delay: -4s;
+}
+.dr-lit .dr-check { animation: dr-fadein var(--t-enter) var(--ease-structure) 1880ms forwards; }
+.dr-check-h { color: var(--ink-3); }
+.dr-check-row { display: flex; align-items: center; gap: var(--fib-2); }
 .dr-check input {
+  flex: 1 1 auto; min-width: 0;
   background: transparent; border: 0; border-bottom: 1px solid var(--edge-strong);
-  color: var(--ink); padding: 8px 2px; min-width: 190px;
+  color: var(--ink); padding: 8px 2px;
   font-family: var(--font-instrument), sans-serif; font-size: 15px;
 }
 .dr-check input::placeholder { color: var(--ink-4); }
 .dr-check input:focus-visible { outline: 0; border-bottom-color: var(--ink); }
 .dr-check button {
+  flex: 0 0 auto;
   background: 0; border: 0; color: var(--ink-3); cursor: pointer; padding: 8px 0;
-  border-bottom: 1px solid transparent; transition: color var(--t-micro) var(--ease-ui);
+  transition: color var(--t-micro) var(--ease-ui);
 }
 .dr-check button:hover { color: var(--ink); }
 
 /* the one lit object */
 .dr-object { flex-shrink: 0; opacity: 0; }
-.dr-lit .dr-object { animation: dr-fadein 900ms var(--ease-structure) forwards; }
+.dr-showcase { margin: 0; padding: var(--fib-2); --glint-delay: -8s;
+  display: flex; flex-direction: column; gap: var(--fib-2); }
+.dr-showcase figcaption { display: flex; flex-direction: column; gap: 2px;
+  padding: 0 var(--fib-1) var(--fib-1); }
+.dr-showcase figcaption b { color: var(--ink-2);
+  font-family: var(--font-archivo), sans-serif; font-variation-settings: "wght" 700;
+  font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+.dr-lit .dr-object { animation: dr-fadein 900ms var(--ease-structure) 1300ms forwards; }
 .dr-device {
-  position: relative; width: min(22vw, 248px); aspect-ratio: 9 / 19.5;
+  --dev-w: min(22vw, 248px);
+  position: relative; flex: 0 0 auto;
+  width: var(--dev-w); height: calc(var(--dev-w) * 19.5 / 9);
   border-radius: 34px; padding: 6px;
   background: linear-gradient(160deg, #303235 0%, #0e0f10 55%, #1c1d1f 100%);
   /* the edge, lit — the same stroke as everywhere else */
@@ -347,9 +464,16 @@
 @media (max-width: 900px) {
   .dr-row { flex-direction: column; align-items: stretch; gap: var(--fib-5); }
   .dr-object { align-self: center; }
-  .dr-device { width: min(52vw, 200px); }
+  .dr-device { --dev-w: min(52vw, 200px); }
   .dr-main { padding-bottom: var(--fib-4); }
   .dr-vignette { display: none; }          /* dropped below 820px */
+  /* the rail keeps the lockup and the one action; the link set needs a
+     real overlay menu rather than a squeezed row (deferred, not shipped) */
+  .dr-rail { height: 56px; }
+  .dr-links { display: none; }
+  .dr-rail-in { padding: 0 7px 0 var(--fib-2); gap: var(--fib-2); }
+  .dr-navcta { padding: 10px 16px; font-size: 12px; }
+  .dr-lockup b { font-size: 11px; letter-spacing: .1em; }
   /* sheared caps at tight tracking clot at 390px: relax the shear to 6°,
      let the statement wrap, and scale UP (a phone is narrow, not small) */
   .t-hero { transform: skewX(-6deg); letter-spacing: -0.015em;
@@ -360,7 +484,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dr-key { animation: none; }
+  .dr-key, .dr-key::after { animation: none; }
+  .dr-edge::before { animation: none; background-position: 46% 0; }
   .dr-lit .dr-nav-in { transform: scaleX(1); animation: none; }
   .dr-lit .dr-nav-in > *, .dr-lit .dr-eyebrow, .dr-lit .dr-sub,
   .dr-lit .dr-check, .dr-lit .dr-object { opacity: 1; animation: none; }
