@@ -87,6 +87,56 @@
   to   { transform: translate3d(2.5%, 2%, 0) scale(1.06); }
 }
 
+/* ── THE MARK AS THE ROOM ────────────────────────────────────────
+   Not a logo you look at — the surface the light falls on. Massive,
+   bled off two edges, engraved into the black at a contrast you feel
+   before you notice. This is why we don't borrow anyone else's
+   sculptural object: the brand IS the object. */
+.dr-mark {
+  position: fixed; z-index: 0; pointer-events: none;
+  right: -18%; top: 50%; translate: 0 -50%;
+  width: min(115vh, 1180px); aspect-ratio: 1;
+}
+.dr-mark span {
+  position: absolute; inset: 0; display: block;
+  -webkit-mask-image: url("/brand/eas-mark.svg"); mask-image: url("/brand/eas-mark.svg");
+  -webkit-mask-size: contain; mask-size: contain;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+  /* engraved: the recess is barely above the ground, and a 1px light lip
+     sits BELOW it because the lower wall of a cut is what catches light */
+  background: #0a0a0b;
+  filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 0.055));
+}
+/* the same travelling light as everywhere else, riding the cut edge —
+   masked by the STROKED path so only the contour lights */
+.dr-mark i {
+  position: absolute; inset: 0; display: block; overflow: hidden;
+  -webkit-mask-image: url("/brand/eas-mark-outline.svg"); mask-image: url("/brand/eas-mark-outline.svg");
+  -webkit-mask-size: contain; mask-size: contain;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+  opacity: .5;
+}
+.dr-mark i::before {
+  content: ""; position: absolute; top: -100%; left: -100%;
+  width: 300%; height: 300%; border-radius: 50%; scale: 1.41;
+  background: conic-gradient(from 0deg,
+    transparent 30deg,
+    rgba(255,255,255,.16) 70deg,
+    rgba(255,255,255,.5) 90deg,
+    rgba(255,255,255,.16) 110deg,
+    transparent 150deg);
+  animation: dr-spin 14s linear infinite;
+}
+@keyframes dr-spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 900px) {
+  /* on a phone it sits behind the stack, larger and dimmer still */
+  .dr-mark { right: -34%; width: 150vw; }
+  .dr-mark i { opacity: .34; }
+}
+
 /* 20-point ramp = a spotlight. A soft one reads as a dirty lens. */
 .dr-vignette {
   position: fixed; inset: 0; z-index: 2; pointer-events: none;

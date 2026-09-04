@@ -40,6 +40,12 @@ export default function DarkRoom() {
 
   return (
     <div className={lit ? "dr-lit" : undefined}>
+      {/* the mark is the ROOM, not the object: engraved into the black,
+          bled off the edge, with light travelling around its cut contour */}
+      <div className="dr-mark" aria-hidden>
+        <span />
+        <i />
+      </div>
       <div className="dr-key" aria-hidden />
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
@@ -61,22 +67,22 @@ export default function DarkRoom() {
           <div className="dr-row">
             <div className="dr-copy">
               <p className="t-label dr-eyebrow">
-                Mesa, Arizona · Web design + the front desk behind it
+                Mesa, Arizona · Web design + the system behind it
               </p>
 
               <h1 className="t-hero" style={{ marginTop: "var(--fib-4)" }}>
                 <span className="dr-line">
-                  <span className="sweep">The site they see.</span>
+                  <span className="sweep">A website that books</span>
                 </span>
                 <span className="dr-line">
-                  <span className="sweep">The front desk they don&rsquo;t.</span>
+                  <span className="sweep">while you&rsquo;re on the job.</span>
                 </span>
               </h1>
 
               <p className="t-body dr-sub">
-                We build your website and wire up the front desk behind it, so
-                every lead that comes in gets answered in seconds instead of
-                days — and you can finally see which ad paid for which job.
+                We build your site and wire up the system behind it — so every
+                call, form and text gets answered in seconds instead of days,
+                and you can finally see which ad paid for which job.
               </p>
 
               <div className="dr-actions">
