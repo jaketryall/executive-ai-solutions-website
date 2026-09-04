@@ -147,6 +147,7 @@ export default function DarkRoom() {
       gsap.set(rail, { autoAlpha: 0 });
 
       let raf = 0;
+      const cleanups: (() => void)[] = [];
       const play = () => {
         const railBox = rail.getBoundingClientRect();
         const wordBox = word.getBoundingClientRect();
@@ -186,13 +187,40 @@ export default function DarkRoom() {
         (window as unknown as { __drIntro?: gsap.core.Timeline }).__drIntro = tl;
       };
 
-      const fonts = (document as Document & { fonts?: FontFaceSet }).fonts;
+        /* PARALLAX. The room answers the pointer at two depths: the light
+         leads, the mark trails against it, so the background separates as
+         you move instead of sitting flat. Pointer only — on touch there is
+         nothing to answer, and the ambient drift already carries it there. */
+      const atmos = document.querySelector(".dr-atmos");
+      const fig = document.querySelector(".dr-figure");
+      if (
+        atmos && fig && !reducedMotion() &&
+        window.matchMedia("(hover: hover)").matches
+      ) {
+        const ax = gsap.quickTo(atmos, "x", { duration: 1.2, ease: U });
+        const ay = gsap.quickTo(atmos, "y", { duration: 1.2, ease: U });
+        const fx = gsap.quickTo(fig, "x", { duration: 0.9, ease: U });
+        const fy = gsap.quickTo(fig, "y", { duration: 0.9, ease: U });
+        const onMove = (e: PointerEvent) => {
+          const nx = e.clientX / window.innerWidth - 0.5;
+          const ny = e.clientY / window.innerHeight - 0.5;
+          ax(nx * 78); ay(ny * 46);
+          fx(nx * -44); fy(ny * -26);
+        };
+        window.addEventListener("pointermove", onMove, { passive: true });
+        cleanups.push(() => window.removeEventListener("pointermove", onMove));
+      }
+
+    const fonts = (document as Document & { fonts?: FontFaceSet }).fonts;
       Promise.resolve(fonts ? fonts.ready : undefined).then(() => {
         raf = requestAnimationFrame(() => {
           raf = requestAnimationFrame(play);
         });
       });
-      return () => cancelAnimationFrame(raf);
+      return () => {
+        cancelAnimationFrame(raf);
+        cleanups.forEach((fn) => fn());
+      };
     }, railRef);
 
     return () => ctx.revert();
@@ -204,7 +232,9 @@ export default function DarkRoom() {
         lit ? " dr-lit" : ""
       }`}
     >
-      <div className="dr-key" aria-hidden />
+      <div className="dr-atmos" aria-hidden>
+        <div className="dr-key" />
+      </div>
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
 
@@ -264,8 +294,20 @@ export default function DarkRoom() {
                 </span>
               </h1>
 
-              <div className="dr-note">
-                <ul className="dr-social">
+              <p className="t-body dr-sub">
+                We build your site and wire up the system behind it, so every
+                call, form and text gets answered in seconds instead of days.
+              </p>
+            </div>
+
+            <HeroCards />
+
+            {/* where the reference parks its SCROLL DOWN cue */}
+            <div className="dr-foot">
+              <Link href="/contact" className="dr-pill t-cta">
+                Book the call
+              </Link>
+              <ul className="dr-social">
                   {SOCIALS.map((s) => (
                     <li key={s.name}>
                       {s.href ? (
@@ -282,21 +324,6 @@ export default function DarkRoom() {
                     </li>
                   ))}
                 </ul>
-                <p className="t-body dr-sub">
-                  We build your site and wire up the system behind it, so every
-                  call, form and text gets answered in seconds instead of days.
-                </p>
-              </div>
-
-            </div>
-
-            <HeroCards />
-
-            {/* where the reference parks its SCROLL DOWN cue */}
-            <div className="dr-foot">
-              <Link href="/contact" className="dr-pill t-cta">
-                Book the call
-              </Link>
             </div>
 
           </div>

@@ -34,7 +34,7 @@ const WORK = [
   },
 ];
 
-const CHIPS = ["What does a website cost?", "How fast can it launch?"];
+const CHIPS = ["What does it cost?", "How fast?"];
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -187,8 +187,8 @@ export default function HeroCards() {
         <div className="dr-chat-log" ref={logRef} aria-live="polite">
           {msgs.length === 0 ? (
             <p className="t-meta dr-chat-hi">
-              Ask about prices, timelines, or how any of it works. It answers
-              from this site, and a human reads every conversation.
+              Answers from this site&rsquo;s own pages. A human reads every
+              conversation.
             </p>
           ) : (
             msgs.map((m, n) => (

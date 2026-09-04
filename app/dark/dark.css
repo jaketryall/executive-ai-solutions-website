@@ -41,7 +41,7 @@
 
   --radius-btn: 12px; --radius-frame: 18px; --radius-panel: 24px;
 
-  --hero-fs: clamp(1.9rem, 3.6vw, 3.1rem);
+  --hero-fs: clamp(1.75rem, min(3.6vw, 6.6svh), 3.1rem);
   --hero-lh: 1.06;
 
   /* ── exactly two curves. */
@@ -84,15 +84,17 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 /* The room is alive on its OWN clock, never the cursor: a pointer-driven
    rig is a no-op on touch, and half this traffic is a phone. */
+/* the wrapper takes the pointer parallax; the child keeps its own drift,
+   because both would otherwise be fighting for `transform` */
+.dr-atmos { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 .dr-key {
-  position: fixed; inset: -25%; z-index: 0; pointer-events: none;
+  position: absolute; inset: -25%;
   background:
-    radial-gradient(36% 32% at 30% 26%, var(--key), transparent 70%),
-    /* the field the cards are see-through ONTO. Without it the blur is a
-       no-op and the panes read as tinted plastic, not glass. */
-    radial-gradient(48% 60% at 84% 38%, rgba(255,255,255,.185), transparent 76%),
-    radial-gradient(30% 34% at 66% 82%, rgba(255,255,255,.085), transparent 74%),
-    radial-gradient(26% 24% at 52% 62%, var(--fill), transparent 72%);
+    /* TWO lights, and you are meant to see them. The upper-left one is the
+       key; the right-hand one is what the frosted panes glow with. */
+    radial-gradient(27% 32% at 20% 18%, rgba(255,255,255,.165), transparent 66%),
+    radial-gradient(32% 40% at 83% 37%, rgba(255,255,255,.205), transparent 68%),
+    radial-gradient(26% 24% at 52% 88%, var(--fill), transparent 74%);
   animation: dr-drift 26s ease-in-out infinite alternate;
 }
 .dr-key::after {
@@ -147,7 +149,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   font-size: var(--hero-fs);
   letter-spacing: -0.03em; line-height: var(--hero-lh);
   text-transform: uppercase; color: #d6d6da;
-  transform: skewX(-9deg); transform-origin: left bottom;
   margin: 0;
 }
 .t-hero .dr-line > span { white-space: nowrap; }
@@ -253,7 +254,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* ══ THE RAIL ════════════════════════════════════════════════════
    Not a bar with a rule under it — a floating object that OPENS from
    its own centre, then hands off to its contents. */
-.dr-nav { padding-top: var(--fib-3); }
+.dr-nav { padding-top: clamp(13px, 2.4svh, 21px); }
 .dr-rail {
   height: 62px; margin-inline: auto; border-radius: 999px;
   --glint-delay: -1.6s;
@@ -323,7 +324,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* main: flex-1 + justify-end + items-end does ALL the corner composition.
    Zero absolute positioning. */
 .dr-main { flex: 1; display: flex; flex-direction: column;
-           padding-block: var(--fib-3) var(--fib-4); }
+           padding-block: clamp(13px, 2.4svh, 21px) clamp(16px, 3.8svh, 34px); }
 
 /* THE NESTED GRID — not a split. The statement keeps its full width, and
    because its last two lines are SHORT it carves a stepped void on the
@@ -346,25 +347,26 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    top of itself and pushed the action off the fold */
 .dr-cards { grid-column: 2; grid-row: 1 / -1; }
 /* the reference parks a SCROLL DOWN cue here; the action is worth more */
-.dr-foot  { grid-column: 1; grid-row: 2; display: flex; align-items: flex-end;
-            padding-top: var(--fib-4); }
+.dr-foot  { grid-column: 1; grid-row: 2; display: flex; align-items: center;
+            gap: var(--fib-4); padding-top: clamp(18px, 3.6svh, 34px); }
 /* the reference staggers its lines rightward; ours can too, and it opens
    the void the card column nests into */
 .dr-line:nth-of-type(2) > span { padding-left: var(--fib-4); }
 .dr-line:nth-of-type(3) > span { padding-left: var(--fib-6); }
 
-.dr-eyebrow { opacity: 0; margin-bottom: var(--fib-2); }
+.dr-eyebrow { opacity: 0; margin-bottom: var(--fib-3); }
 .dr-lit .dr-eyebrow { animation: dr-fadein 600ms var(--ease-structure) 1250ms forwards; }
 
 /* h1 lines mask-rise, 800ms outQuart, 140ms stagger */
-.dr-line { overflow: hidden; }
+.dr-line { overflow: hidden; transform: skewX(-9deg);
+           transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
 .dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1350ms forwards; }
 .dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1470ms forwards; }
 .dr-lit .dr-line:nth-of-type(3) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1590ms forwards; }
 @keyframes dr-rise { to { transform: translateY(0); } }
 
-.dr-sub { opacity: 0; }
+.dr-sub { opacity: 0; margin-top: var(--fib-4); }
 .dr-lit .dr-sub { animation: dr-fadein var(--t-enter) var(--ease-structure) 1600ms forwards; }
 
 
@@ -386,11 +388,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    The reference's glass-widget column, in this room's black and white.
    Elevation is LIGHTNESS ONLY, so a card is a faint white wash over the
    void rather than a shadow — the same law the tokens open with. */
-.dr-cards { display: flex; flex-direction: column; gap: 10px;
+.dr-cards { display: flex; flex-direction: column; gap: clamp(6px, 1.1svh, 10px);
             align-self: start; position: relative; z-index: 2; }
 
 .dr-c {
-  position: relative; padding: 17px;
+  position: relative; padding: clamp(12px, 1.8svh, 17px);
   border-radius: 18px;
   background: linear-gradient(152deg,
     rgba(255, 255, 255, 0.105) 0%,
@@ -419,7 +421,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-c:hover .dr-c-go { color: var(--ink); border-color: var(--edge-strong); }
 
 /* works */
-.dr-c-shot { position: relative; width: 100%; aspect-ratio: 16 / 9;
+.dr-c-shot { position: relative; width: 100%;
+             height: clamp(96px, 17svh, 196px);
              border-radius: 12px; overflow: hidden; }
 .dr-c-shot img { object-fit: cover; object-position: left top; }
 .dr-c-nav { display: flex; align-items: center; gap: var(--fib-2); margin-top: 4px; }
@@ -438,7 +441,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* results — the ONE numeral the token file rations pure white for */
 .dr-c-big { font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 110, "wght" 800;
-  font-size: 44px; line-height: 1; color: var(--ink);
+  font-size: clamp(32px, 4.6svh, 44px); line-height: 1; color: var(--ink);
   font-variant-numeric: tabular-nums; }
 .dr-c-split { display: flex; gap: var(--fib-4); margin-top: var(--fib-2); }
 .dr-c-split div { display: flex; flex-direction: column; gap: 1px; }
@@ -446,11 +449,15 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* the chat — live, and the product itself */
 .dr-chat-slot { display: block; }
 .dr-chat-log { display: flex; flex-direction: column; gap: var(--fib-1);
-               max-height: 72px; overflow-y: auto; }
+               max-height: clamp(38px, 7svh, 80px); overflow-y: auto; }
 .dr-chat-hi { margin: 0; }
 .dr-chat-msg { margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink-2); }
 .dr-chat-msg[data-role="user"] { color: var(--ink); }
-.dr-chat-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+/* one row, always: wrapped chips were costing 70px of vertical budget */
+.dr-chat-chips { display: flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto;
+                 scrollbar-width: none; }
+.dr-chat-chips::-webkit-scrollbar { display: none; }
+.dr-chat-chips button { white-space: nowrap; }
 .dr-chat-chips button { border: 1px solid var(--edge); background: transparent;
   color: var(--ink-3); border-radius: 999px; padding: 6px 11px; cursor: pointer;
   font-family: var(--font-instrument), sans-serif; font-size: 12px;
@@ -498,26 +505,28 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    crops its subject's own headline, which is fine for a portfolio shot and
    not fine when the headline is the sales argument. */
 .dr-figure {
-  position: absolute; left: 49%; top: 55%; translate: -50% -50%;
-  width: min(40vw, 468px); aspect-ratio: 1; z-index: 0; pointer-events: none;
+  /* centred by INSET, never by a transform: the parallax owns `transform`,
+     and GSAP bakes a percentage translate into pixels the moment it touches
+     it, which freezes the centring at whatever size it was measured. */
+  position: absolute; inset: 4% 0 0 0; margin: auto;
+  width: min(64vw, 780px); aspect-ratio: 1; z-index: 0; pointer-events: none;
 }
 .dr-figure span {
   position: absolute; inset: 0; display: block;
-  -webkit-mask: url("/brand/eas-mark.svg") center / contain no-repeat;
-          mask: url("/brand/eas-mark.svg") center / contain no-repeat;
-  /* a lit EDGE falling to black, not a pale slab: the highlight is a
-     narrow band at the top-left shoulder and everything after is room */
-  background: linear-gradient(146deg,
-    #ffffff 0%, #cfcfd6 5%, #7e7e88 13%,
-    #43434b 25%, #212127 42%, #121216 64%, #191920 84%, #0a0a0c 100%);
+  -webkit-mask: url("/brand/eas-mark-outline.svg") center / contain no-repeat;
+          mask: url("/brand/eas-mark-outline.svg") center / contain no-repeat;
+  /* only the CONTOUR is painted. The glyph's body is not dark — it is not
+     drawn at all, so the mark is invisible except where light finds an edge */
+  background: linear-gradient(139deg,
+    rgba(255,255,255,.95) 0%, rgba(255,255,255,.52) 10%,
+    rgba(255,255,255,.20) 25%, rgba(255,255,255,.07) 44%,
+    rgba(255,255,255,.02) 64%, transparent 80%);
 }
 
 /* ══ THE NOTE — the social rail sits where the reference puts its
       decorative block, doing a job instead of decorating ══════════ */
-.dr-note { display: flex; align-items: flex-start; gap: var(--fib-3);
-           margin-top: var(--fib-3); position: relative; z-index: 1; }
 .dr-social { list-style: none; margin: 0; padding: 0;
-             display: flex; flex-direction: column; gap: 6px; flex: 0 0 auto; }
+             display: flex; gap: 6px; flex: 0 0 auto; }
 .dr-social a, .dr-social span {
   display: grid; place-items: center; width: 34px; height: 34px;
   border-radius: 10px; border: 1px solid var(--edge); color: var(--ink-3);
@@ -529,6 +538,18 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 
 /* the one lit object */
+/* 720p laptops. Everything above is fluid, but the stack still needs a
+   final trim to hold one viewport at the shortest realistic desktop. */
+@media (min-width: 901px) and (max-height: 780px) {
+  .dr-c-head { margin-bottom: 0; }
+  .dr-c-nav { margin-top: 0; }
+  .dr-c-nav button { width: 26px; height: 26px; }
+  .dr-c-split { margin-top: var(--fib-1); }
+  .dr-social a, .dr-social span { width: 30px; height: 30px; }
+  .dr-pill { padding: 13px 26px; }
+  .dr-main { padding-block: 12px 6px; }
+}
+
 @media (max-width: 900px) {
   .dr-hero { grid-template-columns: minmax(0, 1fr); }
   .dr-left, .dr-cards, .dr-foot { grid-column: 1; grid-row: auto; }
@@ -556,7 +577,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-lockup b { font-size: 11px; letter-spacing: .1em; }
   /* sheared caps at tight tracking clot at 390px: relax the shear to 6°,
      let the statement wrap, and scale UP (a phone is narrow, not small) */
-  .t-hero { transform: skewX(-6deg); letter-spacing: -0.015em;
+  .dr-line { transform: skewX(-6deg); }
+  .t-hero { letter-spacing: -0.015em;
             font-size: clamp(1.75rem, 7.2vw, 2.6rem); }
   /* left to itself the first phrase drops 'BOOKS' alone on a line;
      balance splits it evenly instead. Safari <17.5 just wraps normally. */
