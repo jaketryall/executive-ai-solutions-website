@@ -164,15 +164,17 @@
 /* THE TYPE LAW: headlines lean, data stands straight.
    Nine degrees of attitude on the argument, zero on the evidence. */
 /* Sized to FIT, not to a nominal tier: the statement is two long lines
-   (26 characters at the widest) and each must hold on ONE line. Expanded
-   Archivo at 850 runs ~0.62em average advance, so the ceiling is set by
-   the column, not by taste. Measured, not guessed. */
+   and each must hold on ONE line. MEASURED, not guessed: expanded Archivo
+   at wght 850 / wdth 125 runs 0.72-0.78em per character — far wider than
+   instinct — so the ceiling is set by the longest line against the column.
+   That is why the statement breaks into THREE short lines: it is the only
+   way to get cinematic scale out of a sentence this long. */
 .t-hero {
   font-family: var(--font-archivo), "Arial Black", "Helvetica Neue", sans-serif;
   font-variation-settings: "wdth" 125, "wght" 850;
-  font-size: clamp(1.75rem, 3.3vw, 3rem);
+  font-size: clamp(2rem, 4.05vw, 3.5rem);
   letter-spacing: -0.03em; line-height: 1.06;
-  text-transform: uppercase; color: var(--ink-3);
+  text-transform: uppercase; color: #b4b4b9;
   transform: skewX(-9deg); transform-origin: left bottom;
   margin: 0;
 }
@@ -257,7 +259,7 @@
 /* main: flex-1 + justify-end + items-end does ALL the corner composition.
    Zero absolute positioning. */
 .dr-main { flex: 1; display: flex; flex-direction: column;
-           justify-content: flex-end; padding-block: var(--fib-5) var(--fib-5); }
+           justify-content: center; padding-block: var(--fib-4) var(--fib-5); }
 .dr-row { display: flex; justify-content: space-between; align-items: flex-end;
           gap: var(--fib-5); }
 /* the column gets the room the statement needs; body copy keeps its own
@@ -272,6 +274,7 @@
 .dr-line > span { display: block; transform: translateY(103%); }
 .dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 350ms forwards; }
 .dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 490ms forwards; }
+.dr-lit .dr-line:nth-of-type(3) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 630ms forwards; }
 @keyframes dr-rise { to { transform: translateY(0); } }
 
 .dr-sub { margin-top: var(--fib-4); opacity: 0; }
@@ -316,14 +319,27 @@
 .dr-object { flex-shrink: 0; opacity: 0; }
 .dr-lit .dr-object { animation: dr-fadein 900ms var(--ease-structure) forwards; }
 .dr-device {
-  position: relative; width: min(24vw, 260px); aspect-ratio: 9 / 19.5;
+  position: relative; width: min(26vw, 280px); aspect-ratio: 9 / 19.5;
   border-radius: 34px; padding: 6px;
   background: linear-gradient(160deg, #303235 0%, #0e0f10 55%, #1c1d1f 100%);
   /* the edge, lit — the same stroke as everywhere else */
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
 }
 .dr-device img { width: 100%; height: 100%; object-fit: cover;
-                 object-position: top; border-radius: 28px; display: block; }
+                 object-position: top; border-radius: 28px; display: block;
+                 opacity: .90; }
+/* directional scrim — every screenshot the site shows gets this. It reaches
+   FULL black at 75%, not 100%, so anything sitting over it is on true #000
+   and stays AA-safe regardless of what the screenshot contains. */
+.dr-device::after {
+  content: ""; position: absolute; inset: 6px; border-radius: 28px;
+  pointer-events: none; z-index: 2;
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,.55) 0%, transparent 22%,
+                    transparent 62%, rgba(0,0,0,.85) 100%),
+    linear-gradient(to right, transparent 0%, transparent 30%,
+                    rgba(0,0,0,.30) 62%, rgba(0,0,0,.55) 100%);
+}
 /* two nested WIDE low-alpha shadows, never one tight bright one */
 .dr-glow { position: absolute; inset: 8%; border-radius: 40px; z-index: -1;
   background: #fff; filter: blur(60px); opacity: .10; }
@@ -337,7 +353,7 @@
   /* sheared caps at tight tracking clot at 390px: relax the shear to 6°,
      let the statement wrap, and scale UP (a phone is narrow, not small) */
   .t-hero { transform: skewX(-6deg); letter-spacing: -0.015em;
-            font-size: clamp(1.9rem, 7.4vw, 2.75rem); }
+            font-size: clamp(2rem, 8vw, 2.9rem); }
   .t-hero .dr-line > span { white-space: normal; }
 }
 
