@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
-import HeroCards from "@/components/dark/hero-cards";
+import WorksList from "@/components/dark/works-list";
 import { Archivo, Instrument_Sans } from "next/font/google";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
@@ -85,7 +85,6 @@ export default function DarkRoom() {
   const wordRef = useRef<HTMLElement>(null);
   const monoRef = useRef<HTMLSpanElement>(null);
   const tailRef = useRef<HTMLDivElement>(null);
-  const numRef = useRef<HTMLElement>(null);
 
   /* Theming is NOT done here any more. Adding the class in an effect meant
      the browser painted the root layout's light sheet first and the reload
@@ -118,23 +117,6 @@ export default function DarkRoom() {
     }
 
     const ctx = gsap.context(() => {
-      /* The promise is "answered in seconds", so the hero counts it rather
-         than claiming it. Rests on the win; it never loops. */
-      const num = numRef.current;
-      if (num) {
-        if (reducedMotion()) {
-          num.textContent = "4";
-        } else {
-          const c = { v: 0 };
-          gsap.to(c, {
-            v: 4,
-            duration: 0.7,
-            delay: 2.35,
-            ease: S,
-            onUpdate: () => { num.textContent = String(Math.round(c.v)); },
-          });
-        }
-      }
 
       /* Hide FIRST, synchronously, so nothing flashes — then measure only
          once the route CSS and the variable font have actually landed.
@@ -300,7 +282,7 @@ export default function DarkRoom() {
               </p>
             </div>
 
-            <HeroCards />
+            <WorksList />
 
             {/* where the reference parks its SCROLL DOWN cue */}
             <div className="dr-foot">
