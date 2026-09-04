@@ -731,6 +731,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    costs nothing and removes the class of bug entirely. */
 .dr-svc {
   margin-top: -1px;
+  /* the receding content is cut at the white block's own edge, which is
+     what makes §03 read as arriving OVER it rather than after it */
+  overflow: hidden;
   --ink:   #0a0a0b;   /* 18.9:1 — titles, the lit row */
   --ink-2: #35353a;   /* 10.6:1 — price, body */
   --ink-3: #5c5c63;   /*  6.4:1 — unlit title, secondary */
@@ -1236,4 +1239,18 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 @media (prefers-reduced-motion: reduce) {
   .dr-svc-shot { clip-path: none; }
   .dr-svc-shot img { translate: none; scale: 1; }
+}
+
+
+/* §02 leaves the way §01 does. One law for both seams: the section going
+   away recedes, and the section arriving at full speed reads as rising
+   over it. Individual `translate`/`scale` again, never the shorthand. */
+.dr-svc-in {
+  transform-origin: 50% 30%;
+  translate: 0 var(--ey, 0px);
+  scale: calc(1 - .2 * var(--ep, 0));
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dr-svc-in { translate: none; scale: 1; }
 }

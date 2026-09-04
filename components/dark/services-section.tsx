@@ -148,6 +148,41 @@ export default function ServicesSection() {
     addEventListener("resize", onLit, { passive: true });
     lit();
 
+    /* THE SAME LAW AS THE HERO SEAM, so the page has one grammar rather
+       than two unrelated tricks: the section leaving RECEDES — drifting
+       down at 0.4x and shrinking to 0.8 — and §03 arriving at full speed
+       reads as rising over it.
+
+       Measured off .dr-svc, which is NOT the element being transformed. A
+       transformed element cannot be its own ruler: reading its moved rect
+       to decide how far to move it is a feedback loop.
+
+       Everything else this section measures — the word ramp, the lit rows,
+       the shot reveals — is clamped at 1 long before the exit begins, so
+       the two never contend for the same scroll range. */
+    const inner = el.querySelector<HTMLElement>(".dr-svc-in");
+    const exit = () => {
+      if (!inner) return;
+      const b = el.getBoundingClientRect();
+      /* Scaled to the VIEWPORT, not the section. The hero is exactly one
+         screen tall so its own height was the seam; this section is two,
+         and running the recede across all of it lagged the last row and
+         the testimonial 700px down into the clip — content nobody would
+         ever reach. The recede belongs to the SEAM, so it runs across the
+         final screenful: 0 when the section's bottom meets the viewport's,
+         1 when that bottom reaches the top. */
+      const ep = Math.max(0, Math.min(1, (innerHeight - (b.top + b.height)) / innerHeight));
+      inner.style.setProperty("--ey", `${ep * innerHeight * 0.4}px`);
+      inner.style.setProperty("--ep", String(ep));
+    };
+    let eframe = 0;
+    const onExit = () => {
+      if (!eframe) eframe = requestAnimationFrame(() => { eframe = 0; exit(); });
+    };
+    addEventListener("scroll", onExit, { passive: true });
+    addEventListener("resize", onExit, { passive: true });
+    exit();
+
     // added, never removed: a reveal that un-reveals reads as a bug
     const io = new IntersectionObserver(
       (entries) =>
@@ -167,6 +202,9 @@ export default function ServicesSection() {
       removeEventListener("resize", onScroll);
       removeEventListener("scroll", onLit);
       removeEventListener("resize", onLit);
+      removeEventListener("scroll", onExit);
+      removeEventListener("resize", onExit);
+      if (eframe) cancelAnimationFrame(eframe);
       if (frame) cancelAnimationFrame(frame);
       if (lframe) cancelAnimationFrame(lframe);
     };
@@ -176,6 +214,10 @@ export default function ServicesSection() {
 
   return (
     <section className="dr-svc" ref={ref} aria-labelledby="dr-svc-h">
+      {/* the exit rides this, never .dr-svc itself — the section's own rect
+          is what the exit progress is measured FROM, and a transformed
+          element cannot be its own ruler */}
+      <div className="dr-svc-in">
       <div className="dr-say">
         <div className="dr-marks" aria-hidden>
           {MARKS.map((m, i) => (
@@ -268,6 +310,7 @@ export default function ServicesSection() {
             <figcaption>{QUOTES[2].name}</figcaption>
           </span>
         </figure>
+      </div>
       </div>
     </section>
   );
