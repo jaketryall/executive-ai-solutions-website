@@ -43,6 +43,7 @@ export default function DarkRoom() {
   const wordRef = useRef<HTMLElement>(null);
   const monoRef = useRef<HTMLSpanElement>(null);
   const tailRef = useRef<HTMLDivElement>(null);
+  const numRef = useRef<HTMLElement>(null);
 
   /* Theming is NOT done here any more. Adding the class in an effect meant
      the browser painted the root layout's light sheet first and the reload
@@ -75,6 +76,24 @@ export default function DarkRoom() {
     }
 
     const ctx = gsap.context(() => {
+      /* The promise is "answered in seconds", so the hero counts it rather
+         than claiming it. Rests on the win; it never loops. */
+      const num = numRef.current;
+      if (num) {
+        if (reducedMotion()) {
+          num.textContent = "4";
+        } else {
+          const c = { v: 0 };
+          gsap.to(c, {
+            v: 4,
+            duration: 0.7,
+            delay: 2.35,
+            ease: S,
+            onUpdate: () => { num.textContent = String(Math.round(c.v)); },
+          });
+        }
+      }
+
       /* Hide FIRST, synchronously, so nothing flashes — then measure only
          once the route CSS and the variable font have actually landed.
          Measuring in the layout effect read a 1400px rail (the wrap padding
@@ -184,78 +203,83 @@ export default function DarkRoom() {
         </header>
 
         <main className="dr-main wrap">
-          <div className="dr-row">
-            <div className="dr-copy">
-              <p className="t-label dr-eyebrow">
-                Mesa, Arizona · Web design + the system behind it
-              </p>
+          <div className="dr-hero">
+            <p className="t-label dr-eyebrow">
+              Mesa, Arizona · Web design + the system behind it
+            </p>
 
-              <h1 className="t-hero" style={{ marginTop: "var(--fib-4)" }}>
-                <span className="dr-line">
-                  <span className="sweep">A website that books</span>
-                </span>
-                <span className="dr-line">
-                  <span className="sweep">while you&rsquo;re</span>
-                </span>
-                <span className="dr-line">
-                  <span className="sweep">on the job.</span>
-                </span>
-              </h1>
+            <h1 className="t-hero">
+              <span className="dr-line">
+                <span className="sweep">A website that books</span>
+              </span>
+              <span className="dr-line">
+                <span className="sweep">while you&rsquo;re</span>
+              </span>
+              <span className="dr-line">
+                <span className="sweep">on the job.</span>
+              </span>
+            </h1>
 
-              <p className="t-body dr-sub">
-                We build your site and wire up the system behind it — so every
-                call, form and text gets answered in seconds instead of days,
-                and you can finally see which ad paid for which job.
-              </p>
+            <p className="t-body dr-sub">
+              We build your site and wire up the system behind it, so every
+              call, form and text gets answered in seconds instead of days.
+            </p>
 
-              <div className="dr-actions">
-                <Link href="/contact" className="dr-pill t-cta">
-                  Book the call
-                </Link>
+            <div className="dr-actions">
+              <Link href="/contact" className="dr-pill t-cta">
+                Book the call
+              </Link>
 
-                {/* the second action is a FIELD on its own surface, never a
-                    second button — a text field cannot compete with a button
-                    for the primary click */}
-                <form
-                  className="dr-check dr-panel dr-edge"
-                  onSubmit={(e) => e.preventDefault()}
-                  aria-label="Free site check"
-                >
-                  <span className="t-label dr-check-h">Free site check</span>
-                  <div className="dr-check-row">
-                    <input
-                      type="text"
-                      placeholder="yoursite.com"
-                      aria-label="Your website address"
-                    />
-                    <button type="submit" className="t-label">
-                      Check it
-                    </button>
-                  </div>
-                  <span className="t-meta">15 checks, ten seconds, no email</span>
-                </form>
-              </div>
+              {/* the second action is a FIELD on its own surface, never a
+                  second button — a text field cannot compete with a button
+                  for the primary click */}
+              <form
+                className="dr-check dr-panel dr-edge"
+                onSubmit={(e) => e.preventDefault()}
+                aria-label="Free site check"
+              >
+                <span className="t-label dr-check-h">Free site check</span>
+                <div className="dr-check-row">
+                  <input
+                    type="text"
+                    placeholder="yoursite.com"
+                    aria-label="Your website address"
+                  />
+                  <button type="submit" className="t-label">
+                    Check it
+                  </button>
+                </div>
+                <span className="t-meta">15 checks, ten seconds, no email</span>
+              </form>
             </div>
 
-            {/* the one lit object: a real client site, glowing against nothing,
-                sitting on a surface that says whose it is */}
-            <div className="dr-object">
-              <figure className="dr-showcase dr-panel dr-edge">
-                <div className="dr-device">
-                  <div className="dr-glow" aria-hidden />
-                  <Image
-                    src="/work/dw-phone-tour.jpg"
-                    alt="Desert Wings flight school website on a phone"
-                    width={620}
-                    height={1343}
-                    priority
-                  />
-                </div>
-                <figcaption>
-                  <b>Desert Wings Flight School</b>
-                  <span className="t-meta">Falcon Field, Mesa</span>
-                </figcaption>
-              </figure>
+            {/* THE LEAD SYSTEM — the hero stops describing the service and
+                becomes an instance of it. Three surfaces cascade down and to
+                the LEFT, so the eye finishes the sequence pointing at the
+                button. Labelled as what happens, never dressed up as a
+                record of a real customer. */}
+            <div className="dr-system">
+              <span className="t-label dr-system-h">When a lead comes in</span>
+
+              <div className="dr-card dr-panel dr-edge" data-step="1">
+                <span className="t-meta">6:41 PM</span>
+                <b>Missed call</b>
+                <span className="t-meta">Nobody was at the desk</span>
+              </div>
+
+              <div className="dr-card dr-panel dr-edge" data-step="2">
+                <span className="dr-num">
+                  <i ref={numRef}>0</i>
+                  <em>sec</em>
+                </span>
+                <b>Texted back, automatically</b>
+                <span className="t-meta">Before they call the next guy</span>
+              </div>
+
+              <div className="dr-card dr-panel dr-edge" data-step="3">
+                <b>Booked</b>
+                <span className="t-meta">Tuesday, 9:00 AM</span>
+              </div>
             </div>
           </div>
         </main>

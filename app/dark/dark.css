@@ -1,3 +1,34 @@
+/* ══ THE LEAD SYSTEM ═════════════════════════════════════════════
+   Three surfaces stepping down and to the LEFT, so the cascade finishes
+   aimed at the button rather than trailing off the frame. */
+.dr-system { display: flex; flex-direction: column; gap: var(--fib-2);
+             align-self: start; }
+.dr-system-h { color: var(--ink-4); margin-bottom: var(--fib-1); }
+
+.dr-card { padding: var(--fib-3); display: flex; flex-direction: column; gap: 3px;
+           opacity: 0; transform: translateY(14px); --glint-t: 15s; }
+.dr-card[data-step="1"] { margin-left: var(--fib-6); --glint-delay: -2s; }
+.dr-card[data-step="2"] { margin-left: var(--fib-4); --glint-delay: -7s; }
+.dr-card[data-step="3"] { margin-left: 0;            --glint-delay: -11s; }
+.dr-card b { color: var(--ink); font-family: var(--font-instrument), sans-serif;
+             font-size: 16px; font-weight: 600; line-height: 1.3; }
+
+/* the ONE numeral the token file rations pure white for */
+.dr-num { display: flex; align-items: baseline; gap: 3px; color: var(--ink);
+          font-family: var(--font-archivo), sans-serif;
+          font-variation-settings: "wdth" 110, "wght" 800;
+          font-size: 38px; line-height: 1; font-variant-numeric: tabular-nums;
+          margin-bottom: 2px; }
+.dr-num i { font-style: normal; }
+.dr-num em { font-style: normal; font-size: 15px; letter-spacing: .06em;
+             color: var(--ink-3); font-family: var(--font-instrument), sans-serif; }
+
+.dr-lit .dr-card { animation: dr-cardin 620ms var(--ease-structure) forwards; }
+.dr-lit .dr-card[data-step="1"] { animation-delay: 1900ms; }
+.dr-lit .dr-card[data-step="2"] { animation-delay: 2080ms; }
+.dr-lit .dr-card[data-step="3"] { animation-delay: 2260ms; }
+@keyframes dr-cardin { to { opacity: 1; transform: translateY(0); } }
+
 /* ══════════════════════════════════════════════════════════════════
    THE DARK ROOM — v4 tokens (§3 of the build plan)
 
@@ -40,6 +71,9 @@
   --fib-5: 55px; --fib-6: 89px; --fib-7: 144px; --fib-8: 233px;
 
   --radius-btn: 12px; --radius-frame: 18px; --radius-panel: 24px;
+
+  --hero-fs: clamp(2rem, 4.05vw, 3.5rem);
+  --hero-lh: 1.06;
 
   /* ── exactly two curves. */
   --ease-structure: cubic-bezier(0.25, 1, 0.5, 1);  /* every entrance/reveal */
@@ -109,8 +143,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    sculptural object: the brand IS the object. */
 .dr-mark {
   position: fixed; z-index: 0; pointer-events: none;
-  right: -24%; top: 50%; translate: 0 -50%;
-  width: min(104vh, 1060px); aspect-ratio: 1;
+  right: -30%; top: 50%; translate: 0 -50%;
+  width: min(104vh, 1060px); aspect-ratio: 1; opacity: .55;
 }
 .dr-mark span {
   position: absolute; inset: 0; display: block;
@@ -187,8 +221,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .t-hero {
   font-family: var(--font-archivo), "Arial Black", "Helvetica Neue", sans-serif;
   font-variation-settings: "wdth" 125, "wght" 850;
-  font-size: clamp(2rem, 4.05vw, 3.5rem);
-  letter-spacing: -0.03em; line-height: 1.06;
+  font-size: var(--hero-fs);
+  letter-spacing: -0.03em; line-height: var(--hero-lh);
   text-transform: uppercase; color: #d6d6da;
   transform: skewX(-9deg); transform-origin: left bottom;
   margin: 0;
@@ -367,13 +401,26 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    Zero absolute positioning. */
 .dr-main { flex: 1; display: flex; flex-direction: column;
            justify-content: center; padding-block: var(--fib-4) var(--fib-5); }
-.dr-row { display: flex; justify-content: space-between; align-items: center;
-          gap: var(--fib-5); }
-/* the column gets the room the statement needs; body copy keeps its own
-   62ch measure so the prose never runs long */
-.dr-copy { flex: 1 1 auto; min-width: 0; }
 
-.dr-eyebrow { opacity: 0; }
+/* THE NESTED GRID — not a split. The statement keeps its full width, and
+   because its last two lines are SHORT it carves a stepped void on the
+   right. The lead system nests into that void: it lives in the same grid
+   row as the headline, pushed down by exactly one headline line, so it can
+   never collide with the long first line no matter how the clamp resolves. */
+.dr-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(290px, 27vw, 380px);
+  column-gap: var(--fib-5);
+  align-content: center;
+}
+.dr-eyebrow  { grid-column: 1; grid-row: 1; }
+.t-hero      { grid-column: 1 / -1; grid-row: 2; }
+.dr-sub      { grid-column: 1; grid-row: 3; }
+.dr-actions  { grid-column: 1; grid-row: 4; }
+.dr-system   { grid-column: 2; grid-row: 2 / span 3;
+               margin-top: calc(var(--hero-fs) * var(--hero-lh) + var(--fib-2)); }
+
+.dr-eyebrow { opacity: 0; margin-bottom: var(--fib-3); }
 .dr-lit .dr-eyebrow { animation: dr-fadein 600ms var(--ease-structure) 1250ms forwards; }
 
 /* h1 lines mask-rise, 800ms outQuart, 140ms stagger */
@@ -430,56 +477,24 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-check button:hover { color: var(--ink); }
 
 /* the one lit object */
-.dr-object { flex-shrink: 0; opacity: 0; }
-.dr-showcase { margin: 0; padding: var(--fib-2); --glint-delay: -8s;
-  display: flex; flex-direction: column; gap: var(--fib-2); }
-.dr-showcase figcaption { display: flex; flex-direction: column; gap: 2px;
-  padding: 0 var(--fib-1) var(--fib-1); }
-.dr-showcase figcaption b { color: var(--ink-2);
-  font-family: var(--font-archivo), sans-serif; font-variation-settings: "wght" 700;
-  font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
-.dr-lit .dr-object { animation: dr-fadein 900ms var(--ease-structure) 1300ms forwards; }
-.dr-device {
-  --dev-w: min(22vw, 248px);
-  position: relative; flex: 0 0 auto;
-  width: var(--dev-w); height: calc(var(--dev-w) * 19.5 / 9);
-  border-radius: 34px; padding: 6px;
-  background: linear-gradient(160deg, #303235 0%, #0e0f10 55%, #1c1d1f 100%);
-  /* the edge, lit — the same stroke as everywhere else */
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
-}
-.dr-device img { width: 100%; height: 100%; object-fit: cover;
-                 object-position: top; border-radius: 28px; display: block;
-                 opacity: .72; }
-/* directional scrim — every screenshot the site shows gets this. It reaches
-   FULL black at 75%, not 100%, so anything sitting over it is on true #000
-   and stays AA-safe regardless of what the screenshot contains. */
-.dr-device::after {
-  content: ""; position: absolute; inset: 6px; border-radius: 28px;
-  pointer-events: none; z-index: 2;
-  background:
-    linear-gradient(to bottom, rgba(0,0,0,.60) 0%, transparent 24%,
-                    transparent 50%, rgba(0,0,0,.72) 78%, rgba(0,0,0,.94) 100%),
-    linear-gradient(to right, transparent 0%, transparent 26%,
-                    rgba(0,0,0,.38) 60%, rgba(0,0,0,.62) 100%);
-}
-/* two nested WIDE low-alpha shadows, never one tight bright one */
-.dr-glow { position: absolute; inset: 8%; border-radius: 40px; z-index: -1;
-  background: #fff; filter: blur(60px); opacity: .10; }
-
 @media (max-width: 900px) {
-  .dr-row { flex-direction: column; align-items: stretch; gap: var(--fib-5); }
-  .dr-object { align-self: center; }
-  .dr-device { --dev-w: min(52vw, 200px); }
+  .dr-hero { grid-template-columns: minmax(0, 1fr); }
+  .dr-eyebrow, .t-hero, .dr-sub, .dr-actions, .dr-system {
+    grid-column: 1; grid-row: auto; }
+  /* the stagger is a desktop luxury: at 390px an indented card just looks
+     broken, so the cascade squares up and the stack stays full-bleed */
+  .dr-system { margin-top: var(--fib-5); }
+  .dr-card[data-step="1"], .dr-card[data-step="2"] { margin-left: 0; }
   .dr-main { padding-bottom: var(--fib-4); }
   .dr-vignette { display: none; }          /* dropped below 820px */
   /* the rail keeps the lockup and the one action; the link set needs a
      real overlay menu rather than a squeezed row (deferred, not shipped) */
   .dr-rail { height: 56px; }
   .dr-links { display: none; }
-  .dr-rail-in { padding: 0 7px 0 var(--fib-2); gap: var(--fib-2); }
-  .dr-navcta { padding: 10px 16px; font-size: 12px; }
+  .dr-rail-in { padding: 0 6px 0 var(--fib-2); gap: var(--fib-1); }
+  .dr-navcta { padding: 10px 15px; font-size: 12px; white-space: nowrap; }
   .dr-lockup b { font-size: 11px; letter-spacing: .1em; }
+  .dr-mark { opacity: .3; }
   /* sheared caps at tight tracking clot at 390px: relax the shear to 6°,
      let the statement wrap, and scale UP (a phone is narrow, not small) */
   .t-hero { transform: skewX(-6deg); letter-spacing: -0.015em;
@@ -489,12 +504,27 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
 }
 
+/* the true phone bucket. At 390 the rail's two objects stop fitting, so
+   both give up tracking and weight rather than the pill giving up its shape */
+@media (max-width: 560px) {
+  .dr-mono { width: 18px; height: 18px; }
+  .dr-lockup { gap: var(--fib-1); }
+  .dr-lockup b { font-size: 10px; letter-spacing: .06em; }
+  .dr-navcta { font-size: 11px; letter-spacing: .06em; padding: 9px 14px; }
+  /* the eyebrow is two lines here; wide tracking turns it into a slab */
+  .dr-eyebrow { letter-spacing: .08em; }
+  /* stacked, the desktop breath between the promise and the button opens
+     into a void you have to scroll past */
+  .dr-actions { margin-top: var(--fib-4); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dr-key, .dr-key::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
   .dr-lit .dr-nav-in { transform: scaleX(1); animation: none; }
   .dr-lit .dr-nav-in > *, .dr-lit .dr-eyebrow, .dr-lit .dr-sub,
-  .dr-lit .dr-check, .dr-lit .dr-object { opacity: 1; animation: none; }
+  .dr-lit .dr-check { opacity: 1; animation: none; }
+  .dr-lit .dr-card { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
   .dr-lit .dr-pill { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-vignette { animation: none; opacity: .35; }
