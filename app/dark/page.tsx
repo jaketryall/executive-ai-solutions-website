@@ -288,33 +288,17 @@ export default function DarkRoom() {
                 </p>
               </div>
 
-              <div className="dr-actions">
-                <Link href="/contact" className="dr-pill t-cta">
-                  Book the call
-                </Link>
-
-                <form
-                  className="dr-check dr-panel dr-edge"
-                  onSubmit={(e) => e.preventDefault()}
-                  aria-label="Free site check"
-                >
-                  <span className="t-label dr-check-h">Free site check</span>
-                  <div className="dr-check-row">
-                    <input
-                      type="text"
-                      placeholder="yoursite.com"
-                      aria-label="Your website address"
-                    />
-                    <button type="submit" className="t-label">
-                      Check it
-                    </button>
-                  </div>
-                  <span className="t-meta">15 checks, ten seconds, no email</span>
-                </form>
-              </div>
             </div>
 
             <HeroCards />
+
+            {/* where the reference parks its SCROLL DOWN cue */}
+            <div className="dr-foot">
+              <Link href="/contact" className="dr-pill t-cta">
+                Book the call
+              </Link>
+            </div>
+
           </div>
         </main>
       </div>
