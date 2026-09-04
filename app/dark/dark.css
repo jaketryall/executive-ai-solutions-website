@@ -223,7 +223,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-top { position: absolute; top: 0; left: 0; width: 1px; height: 1px; }
 .dr-stage {
   position: relative; z-index: 4;
-  min-height: 100svh; display: flex; flex-direction: column;
+  /* +1px pays for §02's -1px overlap. The overlap is what stops a black
+     hairline at the seam, but on its own it put the white section's first
+     row at 899 in a 900 viewport — a sliver of the next section visible
+     under the hero at rest. The hero absorbs the pixel instead. */
+  min-height: calc(100svh + 1px); display: flex; flex-direction: column;
   /* the fixed rail is out of flow, so the hero reserves its height here */
   padding-top: var(--nav-space);
 }
@@ -231,7 +235,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    the grid's 1fr row has nothing to resolve against, so the long roster grew
    the row, pushed the copy down and ran the page 69px past the fold. Mobile
    keeps min-height, because there the page is meant to scroll. */
-@media (min-width: 901px) { .dr-stage { height: 100svh; } }
+@media (min-width: 901px) { .dr-stage { height: calc(100svh + 1px); } }
 .wrap { max-width: 1400px; margin-inline: auto; width: 100%;
         padding-inline: var(--fib-3); }
 @media (min-width: 768px) { .wrap { padding-inline: var(--fib-5); } }
