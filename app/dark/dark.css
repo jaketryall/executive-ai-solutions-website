@@ -703,16 +703,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-svc-list { position: relative; list-style: none; margin: 0; padding: 0;
                display: flex; flex-direction: column; gap: clamp(8px, 1.6svh, 18px); }
 
-/* THE FUNNEL LINE. Not a divider — it is the sequence itself, which is the
-   only thing that earns a rule in this room. The track is barely there; the
-   light on it is what you actually read, and it runs on scroll. */
-.dr-svc-line { position: absolute; top: 0; bottom: 0; left: 3.5rem;
-               width: 1px; background: var(--edge); opacity: .35;
-               pointer-events: none; }
-.dr-svc-line i { position: absolute; inset: 0 0 auto 0; display: block;
-  height: 100%; transform-origin: top; scale: 1 var(--funnel, 0);
-  background: linear-gradient(to bottom,
-    rgba(255,255,255,.10), rgba(255,255,255,.75)); }
 
 .dr-svc-row {
   display: grid; align-items: center;
@@ -744,19 +734,23 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 600;
   font-size: 13px; letter-spacing: .14em; font-variant-numeric: tabular-nums;
-  transition: color .5s var(--ease-ui); }
-/* each stage takes full ink as the light reaches it */
-.dr-svc-num.is-lit { color: var(--ink); }
+  transition: color .55s var(--ease-ui); }
+/* THE ARRIVAL. Each stage sits dim until the scroll reaches it, then takes
+   ink — numeral, label and statement together. No rule beside it; the row
+   itself is the thing that lights. */
+.dr-svc-row.is-lit .dr-svc-num { color: var(--ink); }
+.dr-svc-row.is-lit .dr-svc-stage { color: var(--ink-3); }
+.dr-svc-row.is-lit .dr-svc-title { color: var(--ink); }
 
 .dr-svc-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.dr-svc-stage { color: var(--ink-4); }
+.dr-svc-stage { color: var(--ink-4); transition: color .55s var(--ease-ui); }
 .dr-svc-title {
-  color: var(--ink-2);
+  color: var(--ink-3);
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 620;
   font-size: clamp(1.5rem, 1rem + 2vw, 2.5rem);
   line-height: 1.06; letter-spacing: -0.026em;
-  transition: color var(--t-micro) var(--ease-ui);
+  transition: color .55s var(--ease-ui);
 }
 .dr-svc-what { color: var(--ink-3);
   font-family: var(--font-instrument), sans-serif; font-size: 15px; }
@@ -782,7 +776,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
                 padding: var(--fib-4) 0; }
   /* the price is placed explicitly, so the arrow must be too — left to
      auto-placement it flowed past the price into a row of its own */
-  .dr-svc-line { left: 2rem; }
   .dr-svc-num   { grid-column: 1; grid-row: 1; }
   .dr-svc-body  { grid-column: 2; grid-row: 1; }
   .dr-svc-arrow { grid-column: 3; grid-row: 1; align-self: start; }

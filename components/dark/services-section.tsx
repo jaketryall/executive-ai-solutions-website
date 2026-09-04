@@ -45,11 +45,11 @@ export default function ServicesSection() {
         0,
         Math.min(1, (start - b.top) / (innerHeight * 0.05 + b.height))
       );
-      list.style.setProperty("--funnel", String(p));
       const y = b.top + b.height * p;
       nums.forEach((n) => {
         const r = n.getBoundingClientRect();
-        n.classList.toggle("is-lit", y >= r.top);
+        // the ROW takes ink, not a rule beside it
+        n.closest(".dr-svc-row")?.classList.toggle("is-lit", y >= r.top);
       });
     };
     const onScroll = () => {
@@ -60,8 +60,7 @@ export default function ServicesSection() {
       addEventListener("resize", onScroll, { passive: true });
       draw();
     } else {
-      list?.style.setProperty("--funnel", "1");
-      nums.forEach((n) => n.classList.add("is-lit"));
+      nums.forEach((n) => n.closest(".dr-svc-row")?.classList.add("is-lit"));
     }
 
     const io = new IntersectionObserver(
@@ -113,9 +112,6 @@ export default function ServicesSection() {
         </header>
 
         <ul className="dr-svc-list">
-          <span className="dr-svc-line" aria-hidden>
-            <i />
-          </span>
           {SERVICES.map((s, i) => (
             <li key={s.slug}>
               <Link
