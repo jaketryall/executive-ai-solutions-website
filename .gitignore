@@ -49,3 +49,6 @@ public/Final Comp.mp4
 public/builder/raw-*.png
 
 .qa-shots/
+
+# local AI context — personal notes + strategy. NEVER commit: this repo is public.
+.ai-context/
