@@ -388,7 +388,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 .dr-hero > * { position: relative; z-index: 1; }
 .dr-left  { grid-column: 1; grid-row: 1; display: flex; flex-direction: column;
-            justify-content: flex-end; align-self: stretch; }
+            justify-content: flex-end; align-self: stretch;
+            /* lifted off the floor rather than sitting on it */
+            padding-bottom: clamp(20px, 5.5svh, 58px); }
 /* the stack spans BOTH rows: as its own row it added the foot's height on
    top of itself and pushed the action off the fold */
 /* top-aligned like the reference: it puts the first case in the strongest
@@ -396,7 +398,10 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    the bottom so a long roster reads as continuing, not as clipped. The side
    padding is what lets the focal card's 12px shift live INSIDE the clip. */
 .dr-works { grid-column: 2; grid-row: 1; align-self: start;
-            max-height: 76svh; display: flex; flex-direction: column; gap: 8px; }
+            /* dropped off the nav so the rail and the roster read as two
+               separate objects, not one stack */
+            margin-top: clamp(8px, 1.6svh, 16px);
+            max-height: 73svh; display: flex; flex-direction: column; gap: 8px; }
 /* the roster takes whatever is left after the action has its space, then
    clips and fades. The side padding is what lets the focal card's 12px shift
    live INSIDE the clip instead of being cut off by it. */
