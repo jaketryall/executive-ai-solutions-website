@@ -123,10 +123,9 @@ export default function DarkRoom() {
       <div className="dr-atmos" aria-hidden>
         <div className="dr-key" />
       </div>
-      {/* massive, half off the left edge, barely there — the room's own wall */}
-      <div className="dr-figure" aria-hidden>
-        <span />
-      </div>
+      {/* massive, half off the left edge, barely there — the room's own wall.
+          No contour: the shape is carried entirely by its material. */}
+      <div className="dr-figure" aria-hidden />
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
 
