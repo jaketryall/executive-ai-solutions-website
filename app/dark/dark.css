@@ -1,0 +1,302 @@
+/* ══════════════════════════════════════════════════════════════════
+   THE DARK ROOM — v4 tokens (§3 of the build plan)
+
+   THE LAW, written here so it survives handoff:
+   There is no brand accent. White light is the only colour.
+   Loss is dim, the fix is bright, and the brightest thing on any
+   screen is the action.
+
+   GOVERNING IDEA — THE EDGE: one 1px stroke is the same object in
+   every section. It never changes colour and never gains weight.
+   The only thing that ever happens to it is that light travels along it.
+   ══════════════════════════════════════════════════════════════════ */
+
+.darkroom {
+  /* ── ground + surfaces (elevation is LIGHTNESS ONLY — zero box-shadows) */
+  --void: #000000;
+  --surface-1: #121214;
+  --surface-2: #171719;
+  --surface-3: #202024;
+
+  /* ── ink. Contrast measured on #000; --ink-4 is the TEXT FLOOR. */
+  --ink: #ffffff;        /* 21:1   — rationed: CTA, titles, one numeral/band */
+  --ink-2: #d4d4d8;      /* 14.2:1 — all running body copy */
+  --ink-3: #949498;      /* 7.76:1 — hero h1, labels, secondary */
+  --ink-4: #8a8a8e;      /* 6.11:1 — FLOOR. nothing dimmer carries text. */
+
+  /* ── edges. --edge is DECORATIVE ONLY; anything that carries meaning
+        (focus, fields, the only affordance) must use --edge-strong. */
+  --edge: #565759;         /* 2.87:1 — strokes, frames, rules */
+  --edge-strong: #6e7075;  /* 4.24:1 — clears WCAG 1.4.11 with headroom */
+  --hairline: rgb(156 163 175 / 0.30); /* the ONE hued token — cool at 30% */
+  --alarm: #ff6b62;        /* validation only. success is the edge lighting up. */
+
+  /* ── the light rig: 5:1 key-to-fill. No midtone surfaces exist. */
+  --key: rgba(255, 255, 255, 0.10);
+  --fill: rgba(255, 255, 255, 0.02);
+
+  /* ── spacing: Fibonacci, ported verbatim. No other values exist. */
+  --fib-1: 8px;  --fib-2: 13px; --fib-3: 21px; --fib-4: 34px;
+  --fib-5: 55px; --fib-6: 89px; --fib-7: 144px; --fib-8: 233px;
+
+  --radius-btn: 12px; --radius-frame: 18px; --radius-panel: 24px;
+
+  /* ── exactly two curves. */
+  --ease-structure: cubic-bezier(0.25, 1, 0.5, 1);  /* every entrance/reveal */
+  --ease-ui: cubic-bezier(0.16, 1, 0.3, 1);         /* overlays + hover */
+
+  /* ── duration ladder */
+  --t-micro: 300ms;  /* every hover on the site */
+  --t-exit: 250ms;   /* exits are always faster than entrances */
+  --t-enter: 600ms;
+  --t-stagger: 800ms;
+  --t-atmos: 1800ms; /* the vignette, and nothing else */
+
+  background: var(--void);
+  color: var(--ink-2);
+}
+
+/* the legacy chrome does not exist in this room (iteration route only) */
+.darkroom .site-nav,
+.darkroom .mnav,
+.darkroom .pcta,
+.darkroom .schat-pill,
+.darkroom > body > footer,
+.darkroom footer { display: none !important; }
+.darkroom main { margin-bottom: 0 !important; box-shadow: none !important; }
+.darkroom body { background: var(--void); }
+/* the root layout paints every page on a light sheet (.page-sheet.bg-canvas,
+   #f5f5f7 at z-10) — it sits ON TOP of the black body and has to be
+   neutralised here or the whole room is lit grey. */
+.darkroom .page-sheet,
+.darkroom .bg-canvas { background: var(--void) !important; }
+
+/* ══ atmosphere ══════════════════════════════════════════════════ */
+
+/* The room is alive on its OWN clock, never the cursor: a pointer-driven
+   rig is a no-op on touch, and half this traffic is a phone. */
+.dr-key {
+  position: fixed; inset: -25%; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(38% 34% at 38% 30%, var(--key), transparent 70%),
+    radial-gradient(30% 28% at 64% 68%, var(--fill), transparent 72%);
+  animation: dr-drift 26s ease-in-out infinite alternate;
+}
+@keyframes dr-drift {
+  from { transform: translate3d(-2.5%, -1.5%, 0) scale(1); }
+  to   { transform: translate3d(2.5%, 2%, 0) scale(1.06); }
+}
+
+/* 20-point ramp = a spotlight. A soft one reads as a dirty lens. */
+.dr-vignette {
+  position: fixed; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(circle at center,
+    transparent 0%, transparent 15%,
+    rgba(0,0,0,.95) 35%, rgba(0,0,0,.95) 100%);
+  opacity: 0;
+}
+.dr-lit .dr-vignette {
+  animation: dr-fade var(--t-atmos) var(--ease-structure) 300ms forwards;
+}
+@keyframes dr-fade { to { opacity: .5; } }
+
+/* GRAIN IS INFRASTRUCTURE, not decoration: at .95-black over a 20-point
+   ramp every large dark gradient bands on 8-bit phone displays, and
+   dither is the only fix. Never put a backdrop-filter on it. */
+.dr-grain {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  opacity: .012; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ══ type tiers — no font-size may be declared outside a tier ═════ */
+
+/* THE TYPE LAW: headlines lean, data stands straight.
+   Nine degrees of attitude on the argument, zero on the evidence. */
+/* Sized to FIT, not to a nominal tier: the statement is two long lines
+   (26 characters at the widest) and each must hold on ONE line. Expanded
+   Archivo at 850 runs ~0.62em average advance, so the ceiling is set by
+   the column, not by taste. Measured, not guessed. */
+.t-hero {
+  font-family: var(--font-archivo), "Arial Black", "Helvetica Neue", sans-serif;
+  font-variation-settings: "wdth" 125, "wght" 850;
+  font-size: clamp(1.75rem, 3.3vw, 3rem);
+  letter-spacing: -0.03em; line-height: 1.06;
+  text-transform: uppercase; color: var(--ink-3);
+  transform: skewX(-9deg); transform-origin: left bottom;
+  margin: 0;
+}
+.t-hero .dr-line > span { white-space: nowrap; }
+.t-section {
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-variation-settings: "wdth" 122, "wght" 800;
+  font-size: clamp(2rem, 1.2rem + 3.2vw, 3.5rem);
+  letter-spacing: -0.02em; line-height: 1.08;
+  text-transform: uppercase; color: var(--ink);
+  transform: skewX(-9deg); margin: 0;
+}
+.t-label {
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 700;
+  font-size: 13px;              /* fixed. never scales. */
+  letter-spacing: .14em; line-height: 1.4;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.t-body {
+  font-family: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.125rem);
+  line-height: 1.62; color: var(--ink-2); max-width: 62ch; margin: 0;
+}
+.t-cta {
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: 14px; letter-spacing: .1em; line-height: 1.2;
+  text-transform: uppercase;
+}
+.t-meta {
+  font-family: var(--font-instrument), sans-serif;
+  font-size: 12px; letter-spacing: .02em; line-height: 1.45;
+  color: var(--ink-4); font-variant-numeric: tabular-nums;
+}
+
+/* the specular sweep — used on exactly TWO headings site-wide */
+@media (prefers-reduced-motion: no-preference) {
+  .t-hero .sweep {
+    background: linear-gradient(90deg, transparent 0%, #fff 20%, transparent 40%);
+    background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    animation: dr-sweep 6s linear infinite;
+  }
+}
+@keyframes dr-sweep { to { background-position: -300% 0; } }
+/* motion off: a static dim headline loses the sweep's compensation */
+@media (prefers-reduced-motion: reduce) {
+  .t-hero { color: #b0b0b4; }
+}
+
+/* ══ §01 COLD OPEN ═══════════════════════════════════════════════ */
+
+.dr-stage {
+  position: relative; z-index: 4;
+  min-height: 100svh; display: flex; flex-direction: column;
+}
+.wrap { max-width: 1400px; margin-inline: auto; width: 100%;
+        padding-inline: var(--fib-3); }
+@media (min-width: 768px) { .wrap { padding-inline: var(--fib-5); } }
+
+/* nav is a designed object: a rule that DRAWS, then the lockup resolves */
+.dr-nav { padding-top: var(--fib-4); }
+.dr-nav-in {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--fib-3); padding-bottom: var(--fib-3);
+  border-bottom: 1px solid var(--edge);
+  transform-origin: left; transform: scaleX(0);
+}
+.dr-lit .dr-nav-in { animation: dr-draw 900ms var(--ease-structure) 120ms forwards; }
+@keyframes dr-draw { to { transform: scaleX(1); } }
+.dr-nav-in > * { opacity: 0; }
+.dr-lit .dr-nav-in > * { animation: dr-fadein 600ms var(--ease-structure) 700ms forwards; }
+@keyframes dr-fadein { to { opacity: 1; } }
+
+.dr-lockup { display: flex; flex-direction: column; gap: 3px; }
+.dr-lockup b { color: var(--ink); font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wght" 700; font-size: 13px; letter-spacing: .14em;
+  text-transform: uppercase; }
+
+/* main: flex-1 + justify-end + items-end does ALL the corner composition.
+   Zero absolute positioning. */
+.dr-main { flex: 1; display: flex; flex-direction: column;
+           justify-content: flex-end; padding-block: var(--fib-5) var(--fib-5); }
+.dr-row { display: flex; justify-content: space-between; align-items: flex-end;
+          gap: var(--fib-5); }
+/* the column gets the room the statement needs; body copy keeps its own
+   62ch measure so the prose never runs long */
+.dr-copy { flex: 1 1 auto; min-width: 0; }
+
+.dr-eyebrow { opacity: 0; }
+.dr-lit .dr-eyebrow { animation: dr-fadein 600ms var(--ease-structure) 250ms forwards; }
+
+/* h1 lines mask-rise, 800ms outQuart, 140ms stagger */
+.dr-line { overflow: hidden; }
+.dr-line > span { display: block; transform: translateY(103%); }
+.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 350ms forwards; }
+.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 490ms forwards; }
+@keyframes dr-rise { to { transform: translateY(0); } }
+
+.dr-sub { margin-top: var(--fib-4); opacity: 0; }
+.dr-lit .dr-sub { animation: dr-fadein var(--t-enter) var(--ease-structure) 620ms forwards; }
+
+.dr-actions { margin-top: var(--fib-5); display: flex; flex-direction: column;
+              gap: var(--fib-3); align-items: flex-start; }
+
+/* the ONE pure-white fill on the site */
+.dr-pill {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--ink); color: #000; border: 0; border-radius: 999px;
+  padding: 16px 30px; cursor: pointer; text-decoration: none;
+  opacity: 0; transform: scale(.94);
+  transition: transform var(--t-micro) var(--ease-ui);
+}
+.dr-lit .dr-pill { animation: dr-pop var(--t-enter) var(--ease-structure) 760ms forwards; }
+@keyframes dr-pop { to { opacity: 1; transform: scale(1); } }
+.dr-pill:hover { transform: scale(1.02); }
+.dr-pill:active { transform: scale(.99); }
+.dr-pill:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
+
+/* the second action is a FIELD, never a second button — a text field
+   cannot compete with a button for the primary click */
+.dr-check { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+            opacity: 0; }
+.dr-lit .dr-check { animation: dr-fadein var(--t-enter) var(--ease-structure) 900ms forwards; }
+.dr-check input {
+  background: transparent; border: 0; border-bottom: 1px solid var(--edge-strong);
+  color: var(--ink); padding: 8px 2px; min-width: 190px;
+  font-family: var(--font-instrument), sans-serif; font-size: 15px;
+}
+.dr-check input::placeholder { color: var(--ink-4); }
+.dr-check input:focus-visible { outline: 0; border-bottom-color: var(--ink); }
+.dr-check button {
+  background: 0; border: 0; color: var(--ink-3); cursor: pointer; padding: 8px 0;
+  border-bottom: 1px solid transparent; transition: color var(--t-micro) var(--ease-ui);
+}
+.dr-check button:hover { color: var(--ink); }
+
+/* the one lit object */
+.dr-object { flex-shrink: 0; opacity: 0; }
+.dr-lit .dr-object { animation: dr-fadein 900ms var(--ease-structure) forwards; }
+.dr-device {
+  position: relative; width: min(24vw, 260px); aspect-ratio: 9 / 19.5;
+  border-radius: 34px; padding: 6px;
+  background: linear-gradient(160deg, #303235 0%, #0e0f10 55%, #1c1d1f 100%);
+  /* the edge, lit — the same stroke as everywhere else */
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
+}
+.dr-device img { width: 100%; height: 100%; object-fit: cover;
+                 object-position: top; border-radius: 28px; display: block; }
+/* two nested WIDE low-alpha shadows, never one tight bright one */
+.dr-glow { position: absolute; inset: 8%; border-radius: 40px; z-index: -1;
+  background: #fff; filter: blur(60px); opacity: .10; }
+
+@media (max-width: 900px) {
+  .dr-row { flex-direction: column; align-items: stretch; gap: var(--fib-5); }
+  .dr-object { order: -1; align-self: center; }
+  .dr-device { width: min(62vw, 260px); }
+  .dr-main { padding-bottom: var(--fib-4); }
+  .dr-vignette { display: none; }          /* dropped below 820px */
+  /* sheared caps at tight tracking clot at 390px: relax the shear to 6°,
+     let the statement wrap, and scale UP (a phone is narrow, not small) */
+  .t-hero { transform: skewX(-6deg); letter-spacing: -0.015em;
+            font-size: clamp(1.9rem, 7.4vw, 2.75rem); }
+  .t-hero .dr-line > span { white-space: normal; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dr-key { animation: none; }
+  .dr-lit .dr-nav-in { transform: scaleX(1); animation: none; }
+  .dr-lit .dr-nav-in > *, .dr-lit .dr-eyebrow, .dr-lit .dr-sub,
+  .dr-lit .dr-check, .dr-lit .dr-object { opacity: 1; animation: none; }
+  .dr-lit .dr-line > span { transform: none; animation: none; }
+  .dr-lit .dr-pill { opacity: 1; transform: none; animation: none; }
+  .dr-lit .dr-vignette { animation: none; opacity: .35; }
+}
