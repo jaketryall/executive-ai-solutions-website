@@ -169,25 +169,20 @@ export default function DarkRoom() {
         (window as unknown as { __drIntro?: gsap.core.Timeline }).__drIntro = tl;
       };
 
-        /* PARALLAX. The room answers the pointer at two depths: the light
-         leads, the mark trails against it, so the background separates as
-         you move instead of sitting flat. Pointer only — on touch there is
-         nothing to answer, and the ambient drift already carries it there. */
+        /* PARALLAX — the LIGHT only. The mark holds still: it is the object in
+         the room, and an object that slides with your cursor stops reading as
+         one. Pointer only; on touch there is nothing to answer and the
+         ambient drift already carries it. */
       const atmos = document.querySelector(".dr-atmos");
-      const fig = document.querySelector(".dr-figure");
       if (
-        atmos && fig && !reducedMotion() &&
+        atmos && !reducedMotion() &&
         window.matchMedia("(hover: hover)").matches
       ) {
         const ax = gsap.quickTo(atmos, "x", { duration: 1.2, ease: U });
         const ay = gsap.quickTo(atmos, "y", { duration: 1.2, ease: U });
-        const fx = gsap.quickTo(fig, "x", { duration: 0.9, ease: U });
-        const fy = gsap.quickTo(fig, "y", { duration: 0.9, ease: U });
         const onMove = (e: PointerEvent) => {
-          const nx = e.clientX / window.innerWidth - 0.5;
-          const ny = e.clientY / window.innerHeight - 0.5;
-          ax(nx * 78); ay(ny * 46);
-          fx(nx * -44); fy(ny * -26);
+          ax((e.clientX / window.innerWidth - 0.5) * 78);
+          ay((e.clientY / window.innerHeight - 0.5) * 46);
         };
         window.addEventListener("pointermove", onMove, { passive: true });
         cleanups.push(() => window.removeEventListener("pointermove", onMove));
