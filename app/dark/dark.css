@@ -472,6 +472,33 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   height: min(126vh, 1160px); width: auto; aspect-ratio: 1;
   z-index: 0; pointer-events: none;
 }
+/* THE BODY, and the reason the mark can have texture at all: a 1px contour
+   has no area to texture. This is the glyph's solid shape filled with a fine
+   diagonal hatch and grain, then INTERSECTED with a left-to-right fade, so
+   the material is strongest where the wall is cut by the screen edge and
+   gone by the time it reaches the middle. */
+.dr-figure::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    repeating-linear-gradient(126deg,
+      rgba(255,255,255,.075) 0 1px, transparent 1px 8px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: auto, 160px 160px;
+  -webkit-mask-image: url("/brand/eas-mark.svg"),
+    linear-gradient(101deg, #000 0%, rgba(0,0,0,.42) 44%, transparent 76%);
+  -webkit-mask-size: contain, 100% 100%;
+  -webkit-mask-repeat: no-repeat, no-repeat;
+  -webkit-mask-position: center, center;
+  -webkit-mask-composite: source-in;
+  mask-image: url("/brand/eas-mark.svg"),
+    linear-gradient(101deg, #000 0%, rgba(0,0,0,.42) 44%, transparent 76%);
+  mask-size: contain, 100% 100%;
+  mask-repeat: no-repeat, no-repeat;
+  mask-position: center, center;
+  mask-composite: intersect;
+  opacity: .55;
+}
+
 .dr-figure span {
   position: absolute; inset: 0; display: block;
   -webkit-mask: url("/brand/eas-mark-outline.svg") center / contain no-repeat;
@@ -505,7 +532,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      statement's half rather than sitting behind a pane */
   /* on a phone the same idea, scaled: bled off the left, reaching past
      the middle, under everything */
-  .dr-figure { left: -30vw; height: min(88vh, 720px); opacity: .62; }
+  /* the body reads much heavier on a small screen, where the wall takes a
+     far bigger share of the frame */
+  .dr-figure { left: -30vw; height: min(88vh, 720px); opacity: .42; }
   /* the stagger is a desktop luxury: at 390px an indented card just looks
      broken, so the cascade squares up and the stack stays full-bleed */
   .dr-works { margin-top: var(--fib-5); }
