@@ -478,15 +478,16 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
           mask: url("/brand/eas-mark-outline.svg") center / contain no-repeat;
   /* only the CONTOUR is painted. The glyph's body is not dark — it is not
      drawn at all, so the mark is invisible except where light finds an edge */
-  /* barely there: the light that travels it never gets bright enough to
-     compete with the work, it only proves the wall is a shape */
+  /* AMBIENT, not a graphic. The peak is a tenth of what a foreground mark
+     would take, and the travel is slow enough that it registers as the room
+     breathing rather than as something moving on the page. */
   background: linear-gradient(139deg,
-    rgba(255,255,255,.012) 0%,  rgba(255,255,255,.022) 22%,
-    rgba(255,255,255,.30) 36%,  rgba(255,255,255,.11) 45%,
-    rgba(255,255,255,.030) 57%, rgba(255,255,255,.014) 78%,
-    rgba(255,255,255,.020) 100%);
+    rgba(255,255,255,.004) 0%,  rgba(255,255,255,.009) 22%,
+    rgba(255,255,255,.105) 36%, rgba(255,255,255,.038) 45%,
+    rgba(255,255,255,.013) 57%, rgba(255,255,255,.005) 78%,
+    rgba(255,255,255,.008) 100%);
   background-size: 300% 300%;
-  animation: dr-edgelight 15s linear infinite;
+  animation: dr-edgelight 34s linear infinite;
 }
 
 /* 720p laptops. Everything above is fluid, but the stack still needs a
@@ -504,7 +505,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      statement's half rather than sitting behind a pane */
   /* on a phone the same idea, scaled: bled off the left, reaching past
      the middle, under everything */
-  .dr-figure { left: -30vw; height: min(88vh, 720px); opacity: .5; }
+  .dr-figure { left: -30vw; height: min(88vh, 720px); opacity: .62; }
   /* the stagger is a desktop luxury: at 390px an indented card just looks
      broken, so the cascade squares up and the stack stays full-bleed */
   .dr-works { margin-top: var(--fib-5); }
