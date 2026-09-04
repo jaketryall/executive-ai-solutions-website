@@ -671,8 +671,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 /* the witness — small, dim, and after the promise it vouches for */
 .dr-vouch { display: flex; align-items: flex-start; gap: var(--fib-2);
-  margin-top: clamp(22px, 4.2svh, 44px); max-width: 46ch; opacity: 0; }
-.dr-lit .dr-vouch { animation: dr-fadein var(--t-enter) var(--ease-structure) 900ms forwards; }
+  max-width: 46ch; padding: 0; }
 .dr-vouch-av { flex: 0 0 auto; width: 30px; height: 30px; border-radius: 999px;
   display: grid; place-items: center; color: var(--ink-3);
   background: rgba(255, 255, 255, 0.07); }
@@ -689,7 +688,10 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    as one room rather than two slabs. */
 .dr-svc { position: relative; z-index: 4;
           padding-block: clamp(80px, 14svh, 168px) clamp(72px, 12svh, 144px); }
-.dr-svc-head { max-width: 40ch; margin-bottom: clamp(48px, 8svh, 96px); }
+.dr-svc-head { margin-bottom: clamp(48px, 8svh, 96px);
+  display: grid; grid-template-columns: minmax(0, 1fr) var(--works-col);
+  column-gap: clamp(20px, 3vw, 48px); align-items: end; }
+.dr-svc-headline { max-width: 40ch; }
 .dr-svc-kicker { color: var(--ink-4); display: block; margin-bottom: var(--fib-3); }
 .dr-svc-lead {
   margin: 0; color: var(--ink-2);
@@ -707,12 +709,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   column-gap: clamp(20px, 3vw, 48px);
   padding: clamp(22px, 3.4svh, 40px) 0;
   text-decoration: none;
-  opacity: 0; transform: translateY(22px);
-  transition: opacity .7s var(--ease-structure) calc(var(--row) * 90ms),
-              transform .7s var(--ease-structure) calc(var(--row) * 90ms),
-              scale .5s var(--ease-ui);
+  transition: scale .5s var(--ease-ui);
 }
-.dr-svc-row.is-in { opacity: 1; transform: translateY(0); }
+/* the reveal, separate from any layout, so a figure can use it too */
+.dr-reveal { opacity: 0; transform: translateY(22px);
+  transition: opacity .7s var(--ease-structure) calc(var(--row, 0) * 90ms),
+              transform .7s var(--ease-structure) calc(var(--row, 0) * 90ms),
+              scale .5s var(--ease-ui); }
+.dr-reveal.is-in { opacity: 1; transform: translateY(0); }
 
 /* the hovered row scales, its neighbours DO NOT — neighbour growth on a
    text list reads finicky, and the list is not a dock */
@@ -758,6 +762,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
               transform var(--t-micro) var(--ease-ui); }
 
 @media (max-width: 900px) {
+  .dr-svc-head { grid-template-columns: minmax(0, 1fr); row-gap: var(--fib-4); }
+  .dr-vouch { max-width: none; }
   .dr-svc-row { grid-template-columns: 2.6rem minmax(0, 1fr) auto;
                 column-gap: var(--fib-3); row-gap: var(--fib-2);
                 padding: var(--fib-4) 0; }

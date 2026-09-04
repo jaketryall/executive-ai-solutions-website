@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { SERVICES } from "@/lib/services";
+import { QUOTES } from "@/lib/quotes";
+import { PersonIcon } from "@/components/ui/person-icon";
 
 /* §02 · THE FUNNEL
    Type-led on purpose: the hero's right column is card-led, and repeating
@@ -18,7 +20,7 @@ export default function ServicesSection() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const rows = Array.from(el.querySelectorAll<HTMLElement>(".dr-svc-row"));
+    const rows = Array.from(el.querySelectorAll<HTMLElement>(".dr-reveal"));
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       rows.forEach((r) => r.classList.add("is-in"));
       return;
@@ -44,10 +46,26 @@ export default function ServicesSection() {
     <section className="dr-svc" ref={ref} aria-labelledby="dr-svc-h">
       <div className="wrap">
         <header className="dr-svc-head">
-          <span className="t-label dr-svc-kicker">Services</span>
-          <h2 className="dr-svc-lead" id="dr-svc-h">
-            The click, the page it lands on, and the follow-up after.
-          </h2>
+          <div className="dr-svc-headline">
+            <span className="t-label dr-svc-kicker">Services</span>
+            <h2 className="dr-svc-lead" id="dr-svc-h">
+              The click, the page it lands on, and the follow-up after.
+            </h2>
+          </div>
+
+          {/* Role-and-sector attribution with the repo's placeholder glyph,
+              not a name and a face: lib/quotes.ts carries no real person and
+              no exact business, so a photo would invent a customer. The slot
+              is shaped for the real thing. */}
+          <figure className="dr-vouch dr-reveal">
+            <span className="dr-vouch-av" aria-hidden>
+              <PersonIcon />
+            </span>
+            <span className="dr-vouch-body">
+              <blockquote>{QUOTES[2].text}</blockquote>
+              <figcaption>{QUOTES[2].name}</figcaption>
+            </span>
+          </figure>
         </header>
 
         <ul className="dr-svc-list">
@@ -55,7 +73,7 @@ export default function ServicesSection() {
             <li key={s.slug}>
               <Link
                 href={`/services/${s.slug}`}
-                className="dr-svc-row"
+                className="dr-svc-row dr-reveal"
                 style={{ "--row": i } as React.CSSProperties}
               >
                 <span className="dr-svc-num" aria-hidden>
