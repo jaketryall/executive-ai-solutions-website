@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
-import LeadWidgets from "@/components/dark/lead-widgets";
+import HeroCards from "@/components/dark/hero-cards";
 import { Archivo, Instrument_Sans } from "next/font/google";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
@@ -30,6 +30,48 @@ const S = "dr-structure";
 const U = "dr-ui";
 CustomEase.create(S, "M0,0 C0.25,1 0.5,1 1,1"); //   --ease-structure
 CustomEase.create(U, "M0,0 C0.16,1 0.3,1 1,1"); //   --ease-ui
+
+
+const ICON = { fill: "none", stroke: "currentColor", strokeWidth: 1.6 } as const;
+
+/* Real handles have never existed in this repo. Rather than ship three dead
+   links, an entry with no href renders as a mark and lights up the moment a
+   URL is dropped in. */
+const SOCIALS: { name: string; href: string; icon: React.ReactNode }[] = [
+  {
+    name: "LinkedIn",
+    href: "",
+    icon: (
+      <svg viewBox="0 0 24 24" width="18" height="18">
+        <rect x="3" y="3" width="18" height="18" rx="4" {...ICON} />
+        <path d="M7.6 10.6V17" {...ICON} strokeLinecap="round" />
+        <circle cx="7.6" cy="7.5" r="1" fill="currentColor" stroke="none" />
+        <path d="M11.2 17v-3.5a2.3 2.3 0 0 1 4.6 0V17" {...ICON} strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    name: "Instagram",
+    href: "",
+    icon: (
+      <svg viewBox="0 0 24 24" width="18" height="18">
+        <rect x="3" y="3" width="18" height="18" rx="5" {...ICON} />
+        <circle cx="12" cy="12" r="4" {...ICON} />
+        <circle cx="17.1" cy="6.9" r="1.1" fill="currentColor" stroke="none" />
+      </svg>
+    ),
+  },
+  {
+    name: "Facebook",
+    href: "",
+    icon: (
+      <svg viewBox="0 0 24 24" width="18" height="18">
+        <rect x="3" y="3" width="18" height="18" rx="4" {...ICON} />
+        <path d="M14.6 8.2h-1.4a1.7 1.7 0 0 0-1.7 1.7V17M9.9 12.5h4.2" {...ICON} strokeLinecap="round" />
+      </svg>
+    ),
+  },
+];
 
 const useIsoLayout = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
@@ -162,12 +204,6 @@ export default function DarkRoom() {
         lit ? " dr-lit" : ""
       }`}
     >
-      {/* the mark is the ROOM, not the object: engraved into the black,
-          bled off the edge, with light travelling around its cut contour */}
-      <div className="dr-mark" aria-hidden>
-        <span />
-        <i />
-      </div>
       <div className="dr-key" aria-hidden />
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
@@ -204,61 +240,81 @@ export default function DarkRoom() {
 
         <main className="dr-main wrap">
           <div className="dr-hero">
-            <p className="t-label dr-eyebrow">
-              Mesa, Arizona · Web design + the system behind it
-            </p>
-
-            <h1 className="t-hero">
-              <span className="dr-line">
-                <span className="sweep">A website that books</span>
-              </span>
-              <span className="dr-line">
-                <span className="sweep">while you&rsquo;re</span>
-              </span>
-              <span className="dr-line">
-                <span className="sweep">on the job.</span>
-              </span>
-            </h1>
-
-            <p className="t-body dr-sub">
-              We build your site and wire up the system behind it, so every
-              call, form and text gets answered in seconds instead of days.
-            </p>
-
-            <div className="dr-actions">
-              <Link href="/contact" className="dr-pill t-cta">
-                Book the call
-              </Link>
-
-              {/* the second action is a FIELD on its own surface, never a
-                  second button — a text field cannot compete with a button
-                  for the primary click */}
-              <form
-                className="dr-check dr-panel dr-edge"
-                onSubmit={(e) => e.preventDefault()}
-                aria-label="Free site check"
-              >
-                <span className="t-label dr-check-h">Free site check</span>
-                <div className="dr-check-row">
-                  <input
-                    type="text"
-                    placeholder="yoursite.com"
-                    aria-label="Your website address"
-                  />
-                  <button type="submit" className="t-label">
-                    Check it
-                  </button>
-                </div>
-                <span className="t-meta">15 checks, ten seconds, no email</span>
-              </form>
+            {/* THE MARK, CENTRE STAGE — lit from the upper left and falling
+                to black, so it reads as an object in the room rather than a
+                logo pasted on it. */}
+            <div className="dr-figure" aria-hidden>
+              <span />
             </div>
 
-            {/* THE LEAD SYSTEM — the hero stops describing the service and
-                becomes an instance of it. Three widgets cascade down and to
-                the LEFT, so the eye finishes the sequence pointing at the
-                button. Each rests as a complete statement and OPENS into a
-                larger panel, so nothing essential is behind a hover. */}
-            <LeadWidgets numRef={numRef} />
+            <div className="dr-left">
+              <p className="t-label dr-eyebrow">
+                Mesa, Arizona · Web design + the system behind it
+              </p>
+
+              <h1 className="t-hero">
+                <span className="dr-line">
+                  <span className="sweep">A website that books</span>
+                </span>
+                <span className="dr-line">
+                  <span className="sweep">while you&rsquo;re</span>
+                </span>
+                <span className="dr-line">
+                  <span className="sweep">on the job.</span>
+                </span>
+              </h1>
+
+              <div className="dr-note">
+                <ul className="dr-social">
+                  {SOCIALS.map((s) => (
+                    <li key={s.name}>
+                      {s.href ? (
+                        <a href={s.href} aria-label={s.name} target="_blank" rel="noreferrer">
+                          {s.icon}
+                        </a>
+                      ) : (
+                        /* no dead links: until a real handle exists this is a
+                           mark, not a promise that it goes somewhere */
+                        <span title={s.name} aria-hidden>
+                          {s.icon}
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+                <p className="t-body dr-sub">
+                  We build your site and wire up the system behind it, so every
+                  call, form and text gets answered in seconds instead of days.
+                </p>
+              </div>
+
+              <div className="dr-actions">
+                <Link href="/contact" className="dr-pill t-cta">
+                  Book the call
+                </Link>
+
+                <form
+                  className="dr-check dr-panel dr-edge"
+                  onSubmit={(e) => e.preventDefault()}
+                  aria-label="Free site check"
+                >
+                  <span className="t-label dr-check-h">Free site check</span>
+                  <div className="dr-check-row">
+                    <input
+                      type="text"
+                      placeholder="yoursite.com"
+                      aria-label="Your website address"
+                    />
+                    <button type="submit" className="t-label">
+                      Check it
+                    </button>
+                  </div>
+                  <span className="t-meta">15 checks, ten seconds, no email</span>
+                </form>
+              </div>
+            </div>
+
+            <HeroCards />
           </div>
         </main>
       </div>

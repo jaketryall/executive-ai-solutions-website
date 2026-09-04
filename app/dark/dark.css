@@ -41,7 +41,7 @@
 
   --radius-btn: 12px; --radius-frame: 18px; --radius-panel: 24px;
 
-  --hero-fs: clamp(2rem, 4.05vw, 3.5rem);
+  --hero-fs: clamp(1.9rem, 3.6vw, 3.1rem);
   --hero-lh: 1.06;
 
   /* ── exactly two curves. */
@@ -103,56 +103,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 @keyframes dr-drift {
   from { transform: translate3d(-2.5%, -1.5%, 0) scale(1); }
   to   { transform: translate3d(2.5%, 2%, 0) scale(1.06); }
-}
-
-/* ── THE MARK AS THE ROOM ────────────────────────────────────────
-   Not a logo you look at — the surface the light falls on. Massive,
-   bled off two edges, engraved into the black at a contrast you feel
-   before you notice. This is why we don't borrow anyone else's
-   sculptural object: the brand IS the object. */
-.dr-mark {
-  position: fixed; z-index: 0; pointer-events: none;
-  right: -30%; top: 50%; translate: 0 -50%;
-  width: min(104vh, 1060px); aspect-ratio: 1; opacity: .55;
-}
-.dr-mark span {
-  position: absolute; inset: 0; display: block;
-  -webkit-mask-image: url("/brand/eas-mark.svg"); mask-image: url("/brand/eas-mark.svg");
-  -webkit-mask-size: contain; mask-size: contain;
-  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-  -webkit-mask-position: center; mask-position: center;
-  /* engraved: the recess is barely above the ground, and a 1px light lip
-     sits BELOW it because the lower wall of a cut is what catches light */
-  background: #08080a;
-  filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 0.038));
-}
-/* the same travelling light as everywhere else, riding the cut edge —
-   masked by the STROKED path so only the contour lights */
-.dr-mark i {
-  position: absolute; inset: 0; display: block; overflow: hidden;
-  -webkit-mask-image: url("/brand/eas-mark-outline.svg"); mask-image: url("/brand/eas-mark-outline.svg");
-  -webkit-mask-size: contain; mask-size: contain;
-  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-  -webkit-mask-position: center; mask-position: center;
-  opacity: .5;
-}
-.dr-mark i::before {
-  content: ""; position: absolute; top: -100%; left: -100%;
-  width: 300%; height: 300%; border-radius: 50%; scale: 1.41;
-  background: conic-gradient(from 0deg,
-    transparent 30deg,
-    rgba(255,255,255,.16) 70deg,
-    rgba(255,255,255,.5) 90deg,
-    rgba(255,255,255,.16) 110deg,
-    transparent 150deg);
-  animation: dr-spin 14s linear infinite;
-}
-@keyframes dr-spin { to { transform: rotate(360deg); } }
-
-@media (max-width: 900px) {
-  /* on a phone it sits behind the stack, larger and dimmer still */
-  .dr-mark { right: -46%; width: 168vw; opacity: .45; }
-  .dr-mark i { opacity: .28; }
 }
 
 /* 20-point ramp = a spotlight. A soft one reads as a dirty lens. */
@@ -270,8 +220,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   --glint-t: 7s;
   --glint-delay: 0s;
 }
-.dr-edge::before,
-.dr-w-open::before {
+.dr-edge::before {
   content: ""; position: absolute; inset: 0; border-radius: inherit;
   box-sizing: border-box; padding: 1px; pointer-events: none; z-index: 1;
   background: linear-gradient(90deg,
@@ -370,7 +319,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* main: flex-1 + justify-end + items-end does ALL the corner composition.
    Zero absolute positioning. */
 .dr-main { flex: 1; display: flex; flex-direction: column;
-           justify-content: center; padding-block: var(--fib-4) var(--fib-5); }
+           justify-content: center; padding-block: var(--fib-3) var(--fib-4); }
 
 /* THE NESTED GRID — not a split. The statement keeps its full width, and
    because its last two lines are SHORT it carves a stepped void on the
@@ -378,19 +327,22 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    row as the headline, pushed down by exactly one headline line, so it can
    never collide with the long first line no matter how the clamp resolves. */
 .dr-hero {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) clamp(290px, 27vw, 380px);
   column-gap: var(--fib-5);
-  align-content: center;
+  align-items: center;
 }
-.dr-eyebrow  { grid-column: 1; grid-row: 1; }
-.t-hero      { grid-column: 1 / -1; grid-row: 2; }
-.dr-sub      { grid-column: 1; grid-row: 3; }
-.dr-actions  { grid-column: 1; grid-row: 4; }
-.dr-system   { grid-column: 2; grid-row: 2 / span 3;
-               margin-top: calc(var(--hero-fs) * var(--hero-lh) + var(--fib-2)); }
+.dr-hero > * { position: relative; z-index: 1; }
+.dr-left { grid-column: 1; display: flex; flex-direction: column;
+           justify-content: center; }
+.dr-cards { grid-column: 2; }
+/* the reference staggers its lines rightward; ours can too, and it opens
+   the void the card column nests into */
+.dr-line:nth-of-type(2) > span { padding-left: var(--fib-4); }
+.dr-line:nth-of-type(3) > span { padding-left: var(--fib-6); }
 
-.dr-eyebrow { opacity: 0; margin-bottom: var(--fib-3); }
+.dr-eyebrow { opacity: 0; margin-bottom: var(--fib-2); }
 .dr-lit .dr-eyebrow { animation: dr-fadein 600ms var(--ease-structure) 1250ms forwards; }
 
 /* h1 lines mask-rise, 800ms outQuart, 140ms stagger */
@@ -401,11 +353,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-lit .dr-line:nth-of-type(3) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1590ms forwards; }
 @keyframes dr-rise { to { transform: translateY(0); } }
 
-.dr-sub { margin-top: var(--fib-4); opacity: 0; }
+.dr-sub { opacity: 0; }
 .dr-lit .dr-sub { animation: dr-fadein var(--t-enter) var(--ease-structure) 1600ms forwards; }
 
-.dr-actions { margin-top: var(--fib-5); display: flex; flex-direction: column;
-              gap: var(--fib-3); align-items: flex-start; }
+.dr-actions { margin-top: var(--fib-4); display: flex; flex-direction: column;
+              gap: var(--fib-2); align-items: flex-start; }
 
 /* the ONE pure-white fill on the site */
 .dr-pill {
@@ -424,8 +376,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* the second action is a FIELD on its own surface, never a second button —
    a text field cannot compete with a button for the primary click */
 .dr-check {
-  display: flex; flex-direction: column; gap: var(--fib-1);
-  padding: var(--fib-3); width: min(100%, 400px);
+  display: flex; flex-direction: column; gap: 5px;
+  padding: 17px; width: min(100%, 380px);
   opacity: 0; --glint-delay: -4s;
 }
 .dr-lit .dr-check { animation: dr-fadein var(--t-enter) var(--ease-structure) 1880ms forwards; }
@@ -446,125 +398,158 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 .dr-check button:hover { color: var(--ink); }
 
-/* ══ THE WIDGET STACK ═══════════════════════════════════════════
-   The popular version of this is three glass cards of invented telemetry.
-   Each of these rests as a COMPLETE statement and OPENS into a larger
-   panel, so the open state adds depth and never hides the essential — a
-   phone with no hover loses nothing. They step down and to the LEFT, so
-   the cascade finishes aimed at the button. */
-.dr-system { display: flex; flex-direction: column; gap: var(--fib-2);
-             align-self: start; }
-.dr-system-h { color: var(--ink-4); margin-bottom: var(--fib-1); }
+/* ══ THE CARD STACK ══════════════════════════════════════════════
+   The reference's glass-widget column, in this room's black and white.
+   Elevation is LIGHTNESS ONLY, so a card is a faint white wash over the
+   void rather than a shadow — the same law the tokens open with. */
+.dr-cards { display: flex; flex-direction: column; gap: 10px;
+            align-self: start; position: relative; z-index: 2; }
 
-.dr-w { position: relative; z-index: 1; padding: var(--fib-3); cursor: pointer;
-        opacity: 0; transform: translateY(14px); --glint-t: 15s;
-        transition: filter var(--t-micro) var(--ease-ui); }
-.dr-w:nth-of-type(1) { margin-left: var(--fib-6); --glint-delay: -2s; }
-.dr-w:nth-of-type(2) { margin-left: var(--fib-4); --glint-delay: -7s; }
-.dr-w:nth-of-type(3) { margin-left: 0;            --glint-delay: -11s; }
-.dr-w:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
-.dr-w b { color: var(--ink); font-family: var(--font-instrument), sans-serif;
+.dr-c {
+  position: relative; padding: 17px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(20px) saturate(115%);
+  -webkit-backdrop-filter: blur(20px) saturate(115%);
+  display: flex; flex-direction: column; gap: 6px;
+  opacity: 0; transform: translateY(14px); --glint-t: 15s;
+}
+.dr-c:nth-of-type(1) { --glint-delay: -2s; }
+.dr-c:nth-of-type(2) { --glint-delay: -7s; }
+.dr-c:nth-of-type(3) { --glint-delay: -11s; }
+.dr-c b { color: var(--ink); font-family: var(--font-instrument), sans-serif;
           font-size: 15px; font-weight: 600; line-height: 1.3; }
-.dr-w-k { color: var(--ink-4); }
-/* the affordance: hover-to-open is invisible without one */
-.dr-w::after { content: "↗"; position: absolute; z-index: 2;
-  top: var(--fib-3); right: var(--fib-3); font-size: 13px; line-height: 1;
-  color: var(--ink-4);
-  transition: color var(--t-micro) var(--ease-ui),
-              transform var(--t-micro) var(--ease-ui); }
-.dr-w:hover::after { color: var(--ink); transform: translate(2px, -2px); }
-.dr-w-face { display: flex; flex-direction: column; gap: 3px;
-             transition: opacity 240ms var(--ease-ui); }
 
-/* the open panel grows LEFT out of the column, over the widgets beneath */
-.dr-w-open {
-  position: absolute; top: 0; right: 0; z-index: 3;
-  width: calc(100% + var(--fib-7));
-  padding: var(--fib-3); border-radius: var(--radius-panel);
-  /* solid, not glass: what sits behind an open panel is another WIDGET,
-     and at 95% its text ghosted through and read as a rendering fault */
-  background: #101013;
-  display: flex; flex-direction: column; gap: var(--fib-2);
-  opacity: 0; pointer-events: none;
-  transform: scale(.965); transform-origin: top right;
-  transition: opacity 240ms var(--ease-ui),
-              transform 460ms var(--ease-structure);
-}
-/* the last one would open off the bottom of the screen */
-.dr-w:nth-of-type(3) .dr-w-open { top: auto; bottom: 0;
-                                  transform-origin: bottom right; }
-
-.dr-w:focus-within, .dr-w[data-open="true"] { z-index: 5; }
-.dr-w:focus-within > .dr-w-open,
-.dr-w[data-open="true"] > .dr-w-open {
-  opacity: 1; transform: scale(1); pointer-events: auto; }
-.dr-w:focus-within > .dr-w-face,
-.dr-w[data-open="true"] > .dr-w-face { opacity: 0; }
-/* the entrance holds opacity with `forwards`, so the siblings have to
-   recede on a property that animation is not already driving */
-.dr-system[data-any] .dr-w:not([data-open="true"]) { filter: brightness(.62); }
-
-@media (hover: hover) {
-  .dr-w:hover { z-index: 5; }
-  .dr-w:hover > .dr-w-open { opacity: 1; transform: scale(1); pointer-events: auto; }
-  .dr-w:hover > .dr-w-face { opacity: 0; }
-  .dr-system:has(.dr-w:hover) .dr-w:not(:hover) { filter: brightness(.62); }
-}
-
-/* recent work */
-.dr-w-thumbs { display: flex; gap: 5px; margin: 5px 0 3px; }
-.dr-w-thumbs span { position: relative; display: block; width: 52px; height: 33px;
-                    border-radius: 7px; overflow: hidden; }
-.dr-w-thumbs img { object-fit: cover; opacity: .7; }
-.dr-w-shot { position: relative; width: 100%; aspect-ratio: 16 / 10;
-             border-radius: var(--radius-frame); overflow: hidden; }
-.dr-w-shot img { object-fit: cover; object-position: left top; }
-.dr-w-nav { display: flex; align-items: center; gap: var(--fib-2); }
-.dr-w-nav button { width: 32px; height: 32px; border-radius: 999px; padding: 0;
-  border: 1px solid var(--edge-strong); background: transparent; color: var(--ink-2);
-  cursor: pointer; display: grid; place-items: center; font-size: 14px;
+.dr-c-head { display: flex; align-items: center; justify-content: space-between;
+             gap: var(--fib-2); margin-bottom: 2px; }
+.dr-c-head .t-label { color: var(--ink-2); }
+.dr-c-go { width: 26px; height: 26px; border-radius: 8px; flex: 0 0 auto;
+  display: grid; place-items: center; font-size: 12px; text-decoration: none;
+  border: 1px solid var(--edge); color: var(--ink-3);
   transition: color var(--t-micro) var(--ease-ui),
               border-color var(--t-micro) var(--ease-ui); }
-.dr-w-nav button:hover { color: var(--ink); border-color: var(--ink); }
-.dr-w-dots { display: flex; gap: 5px; }
-.dr-w-dots i { display: block; width: 5px; height: 5px; border-radius: 999px;
+.dr-c:hover .dr-c-go { color: var(--ink); border-color: var(--edge-strong); }
+
+/* works */
+.dr-c-shot { position: relative; width: 100%; aspect-ratio: 16 / 9;
+             border-radius: 12px; overflow: hidden; }
+.dr-c-shot img { object-fit: cover; object-position: left top; }
+.dr-c-nav { display: flex; align-items: center; gap: var(--fib-2); margin-top: 4px; }
+.dr-c-nav button { width: 28px; height: 28px; border-radius: 999px; padding: 0;
+  border: 1px solid var(--edge-strong); background: transparent; color: var(--ink-2);
+  cursor: pointer; display: grid; place-items: center; font-size: 13px;
+  transition: color var(--t-micro) var(--ease-ui),
+              border-color var(--t-micro) var(--ease-ui); }
+.dr-c-nav button:hover { color: var(--ink); border-color: var(--ink); }
+.dr-c-dots { display: flex; gap: 5px; }
+.dr-c-dots i { display: block; width: 5px; height: 5px; border-radius: 999px;
   background: var(--edge-strong);
   transition: background var(--t-micro) var(--ease-ui); }
-.dr-w-dots i[data-on] { background: var(--ink); }
-.dr-w-go { margin-left: auto; color: var(--ink); text-decoration: none; }
-.dr-w-go:hover { color: var(--ink-2); }
+.dr-c-dots i[data-on] { background: var(--ink); }
 
-.dr-w-time, .dr-w-parts { list-style: none; margin: 0; padding: 0;
-  display: flex; flex-direction: column; gap: var(--fib-2); }
-.dr-w-time li, .dr-w-parts li { display: flex; flex-direction: column; gap: 2px; }
+/* results — the ONE numeral the token file rations pure white for */
+.dr-c-big { font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 110, "wght" 800;
+  font-size: 44px; line-height: 1; color: var(--ink);
+  font-variant-numeric: tabular-nums; }
+.dr-c-split { display: flex; gap: var(--fib-4); margin-top: var(--fib-2); }
+.dr-c-split div { display: flex; flex-direction: column; gap: 1px; }
 
-/* the ONE numeral the token file rations pure white for */
-.dr-num { display: flex; align-items: baseline; gap: 3px; color: var(--ink);
-          font-family: var(--font-archivo), sans-serif;
-          font-variation-settings: "wdth" 110, "wght" 800;
-          font-size: 38px; line-height: 1; font-variant-numeric: tabular-nums;
-          margin-bottom: 2px; }
-.dr-num i { font-style: normal; }
-.dr-num em { font-style: normal; font-size: 15px; letter-spacing: .06em;
-             color: var(--ink-3); font-family: var(--font-instrument), sans-serif; }
+/* the chat — live, and the product itself */
+.dr-chat-slot { display: block; }
+.dr-chat-log { display: flex; flex-direction: column; gap: var(--fib-1);
+               max-height: 72px; overflow-y: auto; }
+.dr-chat-hi { margin: 0; }
+.dr-chat-msg { margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink-2); }
+.dr-chat-msg[data-role="user"] { color: var(--ink); }
+.dr-chat-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.dr-chat-chips button { border: 1px solid var(--edge); background: transparent;
+  color: var(--ink-3); border-radius: 999px; padding: 6px 11px; cursor: pointer;
+  font-family: var(--font-instrument), sans-serif; font-size: 12px;
+  transition: color var(--t-micro) var(--ease-ui),
+              border-color var(--t-micro) var(--ease-ui); }
+.dr-chat-chips button:hover { color: var(--ink); border-color: var(--edge-strong); }
+.dr-chat-row { display: flex; align-items: center; gap: var(--fib-1); }
+.dr-chat-row input { flex: 1 1 auto; min-width: 0; background: transparent;
+  border: 0; border-bottom: 1px solid var(--edge-strong); color: var(--ink);
+  padding: 7px 2px; font-family: var(--font-instrument), sans-serif; font-size: 14px; }
+.dr-chat-row input::placeholder { color: var(--ink-4); }
+.dr-chat-row input:focus-visible { outline: 0; border-bottom-color: var(--ink); }
+.dr-chat-row button { flex: 0 0 auto; width: 30px; height: 30px; padding: 0;
+  border-radius: 999px; border: 1px solid var(--edge-strong); background: transparent;
+  color: var(--ink-2); cursor: pointer;
+  transition: color var(--t-micro) var(--ease-ui),
+              border-color var(--t-micro) var(--ease-ui); }
+.dr-chat-row button:hover:not(:disabled) { color: var(--ink); border-color: var(--ink); }
+.dr-chat-row button:disabled { opacity: .45; cursor: default; }
 
-.dr-lit .dr-w { animation: dr-widgetin 620ms var(--ease-structure) forwards; }
-.dr-lit .dr-w:nth-of-type(1) { animation-delay: 1900ms; }
-.dr-lit .dr-w:nth-of-type(2) { animation-delay: 2080ms; }
-.dr-lit .dr-w:nth-of-type(3) { animation-delay: 2260ms; }
-@keyframes dr-widgetin { to { opacity: 1; transform: translateY(0); } }
+/* SHRINK + STICK. Past the hero the chat leaves the column and docks to the
+   corner as just its input row. `position` cannot be transitioned, so it
+   arrives on its own short beat instead of snapping. */
+.dr-chat[data-docked="true"] {
+  position: fixed; right: var(--fib-3); bottom: var(--fib-3); z-index: 40;
+  width: min(340px, calc(100vw - 2 * var(--fib-3)));
+  background: #101013;
+  animation: dr-dock 420ms var(--ease-structure);
+}
+.dr-chat[data-docked="true"] .dr-chat-log,
+.dr-chat[data-docked="true"] .dr-chat-chips { display: none; }
+@keyframes dr-dock {
+  from { opacity: 0; transform: translateY(14px) scale(.96); }
+}
+
+.dr-lit .dr-c { animation: dr-cardin 620ms var(--ease-structure) forwards; }
+.dr-lit .dr-c:nth-of-type(1) { animation-delay: 1900ms; }
+.dr-lit .dr-c:nth-of-type(2) { animation-delay: 2080ms; }
+.dr-lit .dr-c:nth-of-type(3) { animation-delay: 2260ms; }
+@keyframes dr-cardin { to { opacity: 1; transform: translateY(0); } }
+
+/* ══ THE MARK, CENTRE STAGE ══════════════════════════════════════
+   Lit from the upper left and falling to black — an object standing in the
+   room, not a logo pasted onto it. It sits BEHIND the type: the reference
+   crops its subject's own headline, which is fine for a portfolio shot and
+   not fine when the headline is the sales argument. */
+.dr-figure {
+  position: absolute; left: 63%; top: 58%; translate: -50% -50%;
+  width: min(31vw, 372px); aspect-ratio: 1; z-index: 0; pointer-events: none;
+}
+.dr-figure span {
+  position: absolute; inset: 0; display: block;
+  -webkit-mask: url("/brand/eas-mark.svg") center / contain no-repeat;
+          mask: url("/brand/eas-mark.svg") center / contain no-repeat;
+  /* a lit EDGE falling to black, not a pale slab: the highlight is a
+     narrow band at the top-left shoulder and everything after is room */
+  background: linear-gradient(146deg,
+    #ffffff 0%, #cfcfd6 5%, #7e7e88 13%,
+    #43434b 25%, #212127 42%, #121216 64%, #191920 84%, #0a0a0c 100%);
+}
+
+/* ══ THE NOTE — the social rail sits where the reference puts its
+      decorative block, doing a job instead of decorating ══════════ */
+.dr-note { display: flex; align-items: flex-start; gap: var(--fib-3);
+           margin-top: var(--fib-3); position: relative; z-index: 1; }
+.dr-social { list-style: none; margin: 0; padding: 0;
+             display: flex; flex-direction: column; gap: 6px; flex: 0 0 auto; }
+.dr-social a, .dr-social span {
+  display: grid; place-items: center; width: 34px; height: 34px;
+  border-radius: 10px; border: 1px solid var(--edge); color: var(--ink-3);
+  transition: color var(--t-micro) var(--ease-ui),
+              border-color var(--t-micro) var(--ease-ui); }
+.dr-social a:hover { color: var(--ink); border-color: var(--edge-strong); }
+.dr-social a:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
+
 
 
 /* the one lit object */
 @media (max-width: 900px) {
   .dr-hero { grid-template-columns: minmax(0, 1fr); }
-  .dr-eyebrow, .t-hero, .dr-sub, .dr-actions, .dr-system {
-    grid-column: 1; grid-row: auto; }
+  .dr-left, .dr-cards { grid-column: 1; grid-row: auto; }
+  .dr-line:nth-of-type(2) > span,
+  .dr-line:nth-of-type(3) > span { padding-left: 0; }
+  .dr-figure { width: 78vw; top: 40%; opacity: .32; }
   /* the stagger is a desktop luxury: at 390px an indented card just looks
      broken, so the cascade squares up and the stack stays full-bleed */
-  .dr-system { margin-top: var(--fib-5); }
-  .dr-w:nth-of-type(1), .dr-w:nth-of-type(2) { margin-left: 0; }
-  .dr-w-open { width: 100%; }
+  .dr-cards { margin-top: var(--fib-5); }
   .dr-main { padding-bottom: var(--fib-4); }
   .dr-vignette { display: none; }          /* dropped below 820px */
   /* the rail keeps the lockup and the one action; the link set needs a
@@ -574,7 +559,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-rail-in { padding: 0 6px 0 var(--fib-2); gap: var(--fib-1); }
   .dr-navcta { padding: 10px 15px; font-size: 12px; white-space: nowrap; }
   .dr-lockup b { font-size: 11px; letter-spacing: .1em; }
-  .dr-mark { opacity: .3; }
   /* sheared caps at tight tracking clot at 390px: relax the shear to 6°,
      let the statement wrap, and scale UP (a phone is narrow, not small) */
   .t-hero { transform: skewX(-6deg); letter-spacing: -0.015em;
@@ -604,7 +588,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-lit .dr-nav-in { transform: scaleX(1); animation: none; }
   .dr-lit .dr-nav-in > *, .dr-lit .dr-eyebrow, .dr-lit .dr-sub,
   .dr-lit .dr-check { opacity: 1; animation: none; }
-  .dr-lit .dr-w { opacity: 1; transform: none; animation: none; }
+  .dr-lit .dr-c { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
   .dr-lit .dr-pill { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-vignette { animation: none; opacity: .35; }
