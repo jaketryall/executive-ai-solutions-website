@@ -21,10 +21,49 @@ export default function ServicesSection() {
     const el = ref.current;
     if (!el) return;
     const rows = Array.from(el.querySelectorAll<HTMLElement>(".dr-reveal"));
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      rows.forEach((r) => r.classList.add("is-in"));
-      return;
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (still) rows.forEach((r) => r.classList.add("is-in"));
+    /* THE FUNNEL DRAWS ITSELF. A light runs the column as you scroll and each
+       stage takes full ink as it passes — the sequence stops being three
+       numbers and becomes one path. Same law as everywhere else in this room:
+       the thing that happens to a line is that light travels along it. */
+    const list = el.querySelector<HTMLElement>(".dr-svc-list");
+    const nums = Array.from(el.querySelectorAll<HTMLElement>(".dr-svc-num"));
+    let frame = 0;
+    const draw = () => {
+      frame = 0;
+      if (!list) return;
+      const b = list.getBoundingClientRect();
+      /* 0 when the list's TOP enters at 95% of the viewport, 1 once its
+         BOTTOM has cleared 90%. Anchoring the finish to the bottom is what
+         makes it reachable: the first version asked the list's top to climb
+         to 42%, which this page is not tall enough to allow, so the light
+         stalled at half and the third stage never lit. Written off the
+         list's own box, so it still resolves when the page grows. */
+      const start = innerHeight * 0.95;
+      const p = Math.max(
+        0,
+        Math.min(1, (start - b.top) / (innerHeight * 0.05 + b.height))
+      );
+      list.style.setProperty("--funnel", String(p));
+      const y = b.top + b.height * p;
+      nums.forEach((n) => {
+        const r = n.getBoundingClientRect();
+        n.classList.toggle("is-lit", y >= r.top);
+      });
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(draw);
+    };
+    if (!still) {
+      addEventListener("scroll", onScroll, { passive: true });
+      addEventListener("resize", onScroll, { passive: true });
+      draw();
+    } else {
+      list?.style.setProperty("--funnel", "1");
+      nums.forEach((n) => n.classList.add("is-lit"));
     }
+
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -39,7 +78,12 @@ export default function ServicesSection() {
       { rootMargin: "0px 0px -18% 0px", threshold: 0 }
     );
     rows.forEach((r) => io.observe(r));
-    return () => io.disconnect();
+    return () => {
+      io.disconnect();
+      removeEventListener("scroll", onScroll);
+      removeEventListener("resize", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (
@@ -69,6 +113,9 @@ export default function ServicesSection() {
         </header>
 
         <ul className="dr-svc-list">
+          <span className="dr-svc-line" aria-hidden>
+            <i />
+          </span>
           {SERVICES.map((s, i) => (
             <li key={s.slug}>
               <Link
