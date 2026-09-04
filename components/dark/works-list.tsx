@@ -105,7 +105,7 @@ export default function WorksList() {
   return (
     <div className="dr-works" ref={listRef}>
       {ROWS.map((r) => (
-        <Link key={r.slug} href={`/work/${r.slug}`} className="dr-wk dr-edge">
+        <Link key={r.slug} href={`/work/${r.slug}`} className="dr-wk">
           <span className="dr-wk-thumb">
             <video
               muted
@@ -131,7 +131,7 @@ export default function WorksList() {
       ))}
 
       {/* the roster's open slot — a CTA, never dressed up as a project */}
-      <Link href="/contact" className="dr-wk dr-wk-open dr-edge">
+      <Link href="/contact" className="dr-wk dr-wk-open">
         <span className="dr-wk-thumb dr-wk-thumb-open" aria-hidden />
         <span className="dr-wk-body">
           <span className="dr-wk-top">
