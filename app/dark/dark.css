@@ -376,8 +376,20 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* the stack spans BOTH rows: as its own row it added the foot's height on
    top of itself and pushed the action off the fold */
 /* top-aligned like the reference: it puts the first case in the strongest
-   corner of the frame instead of floating it mid-column */
-.dr-works { grid-column: 2; grid-row: 1; align-self: start; }
+   corner of the frame instead of floating it mid-column. Capped and faded at
+   the bottom so a long roster reads as continuing, not as clipped. The side
+   padding is what lets the focal card's 12px shift live INSIDE the clip. */
+.dr-works { grid-column: 2; grid-row: 1; align-self: start;
+            max-height: 76svh; display: flex; flex-direction: column; gap: 8px; }
+/* the roster takes whatever is left after the action has its space, then
+   clips and fades. The side padding is what lets the focal card's 12px shift
+   live INSIDE the clip instead of being cut off by it. */
+.dr-works-roll { flex: 1 1 auto; min-height: 0; overflow: hidden;
+                 display: flex; flex-direction: column; gap: 8px;
+                 padding-left: 16px; margin-left: -16px;
+                 -webkit-mask-image: linear-gradient(to bottom, #000 0 72%, transparent 99%);
+                         mask-image: linear-gradient(to bottom, #000 0 72%, transparent 99%); }
+.dr-works > .dr-wk { flex: 0 0 auto; }
 
 /* h1 lines mask-rise, 800ms outQuart, 140ms stagger */
 .dr-line { overflow: hidden; transform: skewX(-4deg);
@@ -453,11 +465,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
                            transform var(--t-micro) var(--ease-ui); }
 .dr-wk.is-focal .dr-wk-arrow { color: var(--ink); transform: translateX(3px); }
 
-.dr-lit .dr-wk { animation: dr-cardin 620ms var(--ease-structure) forwards; }
-.dr-lit .dr-wk:nth-of-type(1) { animation-delay: 900ms; }
-.dr-lit .dr-wk:nth-of-type(2) { animation-delay: 1020ms; }
-.dr-lit .dr-wk:nth-of-type(3) { animation-delay: 1140ms; }
-.dr-lit .dr-wk:nth-of-type(4) { animation-delay: 1260ms; }
+.dr-lit .dr-wk { animation: dr-cardin 620ms var(--ease-structure) forwards;
+                 animation-delay: 900ms; }
+.dr-lit .dr-wk:nth-of-type(2) { animation-delay: 1010ms; }
+.dr-lit .dr-wk:nth-of-type(3) { animation-delay: 1120ms; }
+.dr-lit .dr-wk:nth-of-type(4) { animation-delay: 1230ms; }
+.dr-lit .dr-wk:nth-of-type(5) { animation-delay: 1340ms; }
+.dr-lit .dr-wk:nth-of-type(6) { animation-delay: 1450ms; }
+.dr-lit .dr-wk:nth-of-type(n+7) { animation-delay: 1560ms; }
 @keyframes dr-cardin { to { opacity: 1; transform: translateY(0); } }
 
 /* ══ THE MARK, CENTRE STAGE ══════════════════════════════════════
@@ -480,8 +495,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    diagonal hatch and grain, then INTERSECTED with a left-to-right fade, so
    the material is strongest where the wall is cut by the screen edge and
    gone by the time it reaches the middle. */
+.dr-figure { animation: dr-wall-drift 54s ease-in-out infinite alternate; }
+@keyframes dr-wall-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(1.5%, -1.1%, 0) scale(1.03); }
+}
 .dr-figure::before {
   content: ""; position: absolute; inset: 0; pointer-events: none;
+  animation: dr-wall-grain 61s linear infinite;
   background-image:
     repeating-linear-gradient(126deg,
       rgba(255,255,255,.075) 0 1px, transparent 1px 8px),
@@ -500,6 +521,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   mask-position: center, center;
   mask-composite: intersect;
   opacity: .55;
+}
+@keyframes dr-wall-grain {
+  to { background-position: 168px -84px, 168px -84px; }
 }
 
 /* 720p laptops. Everything above is fluid, but the stack still needs a
@@ -556,7 +580,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dr-key, .dr-key::after { animation: none; }
+  .dr-key, .dr-key::after, .dr-figure, .dr-figure::before { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
   .dr-lit .dr-sub,
   .dr-lit .dr-wk { opacity: 1; transform: none; animation: none; }
