@@ -372,14 +372,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 .dr-hero > * { position: relative; z-index: 1; }
 .dr-left  { grid-column: 1; grid-row: 1; display: flex; flex-direction: column;
-            justify-content: center; }
+            justify-content: flex-end; align-self: stretch; }
 /* the stack spans BOTH rows: as its own row it added the foot's height on
    top of itself and pushed the action off the fold */
 /* top-aligned like the reference: it puts the first case in the strongest
    corner of the frame instead of floating it mid-column */
 .dr-works { grid-column: 2; grid-row: 1; align-self: start; }
-.dr-line:nth-of-type(2) > span { padding-left: var(--fib-4); }
-.dr-line:nth-of-type(3) > span { padding-left: var(--fib-6); }
 
 /* h1 lines mask-rise, 800ms outQuart, 140ms stagger */
 .dr-line { overflow: hidden; transform: skewX(-4deg);
@@ -466,11 +464,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    crops its subject's own headline, which is fine for a portfolio shot and
    not fine when the headline is the sales argument. */
 .dr-figure {
-  /* LEFT, and behind the statement. Centred by INSET, never by a transform:
-     the parallax owns `transform`, and GSAP bakes a percentage translate into
-     pixels the moment it touches it, freezing the centring at one size. */
-  position: absolute; inset: 2% 34% 0 0; margin: auto;
-  width: min(50vw, 610px); aspect-ratio: 1; z-index: 0; pointer-events: none;
+  /* MASSIVE, and cut by the left edge of the SCREEN — which is why it is
+     an atmosphere layer and not a child of the padded hero column. It
+     reaches just past the middle and sits under everything, so it reads as
+     the wall of the room rather than a logo placed on the page. Centred by
+     inset; nothing may put a transform on it. */
+  position: fixed; left: -13vw; top: 0; bottom: 0; margin: auto 0;
+  height: min(126vh, 1160px); width: auto; aspect-ratio: 1;
+  z-index: 0; pointer-events: none;
 }
 .dr-figure span {
   position: absolute; inset: 0; display: block;
@@ -478,11 +479,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
           mask: url("/brand/eas-mark-outline.svg") center / contain no-repeat;
   /* only the CONTOUR is painted. The glyph's body is not dark — it is not
      drawn at all, so the mark is invisible except where light finds an edge */
+  /* barely there: the light that travels it never gets bright enough to
+     compete with the work, it only proves the wall is a shape */
   background: linear-gradient(139deg,
-    rgba(255,255,255,.030) 0%,  rgba(255,255,255,.055) 22%,
-    rgba(255,255,255,.90) 36%,  rgba(255,255,255,.34) 45%,
-    rgba(255,255,255,.075) 57%, rgba(255,255,255,.030) 78%,
-    rgba(255,255,255,.045) 100%);
+    rgba(255,255,255,.012) 0%,  rgba(255,255,255,.022) 22%,
+    rgba(255,255,255,.30) 36%,  rgba(255,255,255,.11) 45%,
+    rgba(255,255,255,.030) 57%, rgba(255,255,255,.014) 78%,
+    rgba(255,255,255,.020) 100%);
   background-size: 300% 300%;
   animation: dr-edgelight 15s linear infinite;
 }
@@ -498,11 +501,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-left, .dr-works { grid-column: 1; grid-row: auto; }
   .dr-left { order: 1; }
   .dr-works { order: 2; }
-  .dr-line:nth-of-type(2) > span,
-  .dr-line:nth-of-type(3) > span { padding-left: 0; }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
-  .dr-figure { width: 74vw; top: 27%; opacity: .15; }
+  /* on a phone the same idea, scaled: bled off the left, reaching past
+     the middle, under everything */
+  .dr-figure { left: -30vw; height: min(88vh, 720px); opacity: .5; }
   /* the stagger is a desktop luxury: at 390px an indented card just looks
      broken, so the cascade squares up and the stack stays full-bleed */
   .dr-works { margin-top: var(--fib-5); }

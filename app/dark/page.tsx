@@ -123,6 +123,10 @@ export default function DarkRoom() {
       <div className="dr-atmos" aria-hidden>
         <div className="dr-key" />
       </div>
+      {/* massive, half off the left edge, barely there — the room's own wall */}
+      <div className="dr-figure" aria-hidden>
+        <span />
+      </div>
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
 
@@ -167,13 +171,6 @@ export default function DarkRoom() {
 
         <main className="dr-main wrap">
           <div className="dr-hero">
-            {/* THE MARK, CENTRE STAGE — lit from the upper left and falling
-                to black, so it reads as an object in the room rather than a
-                logo pasted on it. */}
-            <div className="dr-figure" aria-hidden>
-              <span />
-            </div>
-
             <div className="dr-left">
               <h1 className="t-hero">
                 <span className="dr-line">
