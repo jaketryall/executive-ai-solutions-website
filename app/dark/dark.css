@@ -895,16 +895,27 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-pf-card {
   position: relative;
   border-radius: clamp(13px, 1.5vw, 21px);
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  /* OPAQUE, unlike the hero's rows. At .08 over the ground this card is
+     ~14x the area of one of those, which is long enough for the mark to
+     travel through it and read as shapes moving INSIDE the panel. A card
+     is a surface, not a window. The base is set to the surface value the
+     hero's cards actually measure (28) so the material still matches at a
+     glance, with a top-down sheen to keep it from going flat — and the
+     backdrop blur comes off, since nothing behind it shows through now. */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .035)),
+    #121216;
   padding: clamp(20px, 2.4vw, 34px);
 }
 /* the media keeps the thumbnail's relationship to its card: inset by the
    padding, and a corner one step tighter than the corner around it */
 .dr-pf-card .dr-pf-media { border-radius: clamp(9px, 1vw, 14px); }
 
-.dr-pf-head { max-width: 34ch; margin-bottom: clamp(28px, 5svh, 56px); }
+/* NO max-width here. `ch` on this wrapper resolves against ITS font-size
+   (the inherited 16px), not the headline's 43px, so 34ch clamped a 925px
+   line to 385px and broke it over three. The measure belongs on the
+   heading, in `em`, so it scales with the type it is measuring. */
+.dr-pf-head { margin-bottom: clamp(28px, 5svh, 56px); }
 .dr-pf-kicker { color: var(--ink-4); display: block; margin-bottom: var(--fib-3); }
 .dr-pf-lead {
   margin: 0; color: var(--ink);
@@ -912,6 +923,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   font-variation-settings: "wdth" 100, "wght" 620;
   font-size: clamp(1.6rem, 1rem + 2.2vw, 2.7rem);
   line-height: 1.08; letter-spacing: -0.028em;
+  /* 14em against a natural 21.4em line = two, at every size, because the
+     measure scales with the font instead of against a fixed pixel box */
+  max-width: 14em; text-wrap: balance;
 }
 .dr-pf-meta { margin: var(--fib-3) 0 0; color: var(--ink-4);
   font-family: var(--font-instrument), sans-serif; font-size: 14px; }
