@@ -45,7 +45,8 @@
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
   --works-col: clamp(310px, 29vw, 418px);
-  --floor: clamp(20px, 5.5svh, 58px);
+  --floor: clamp(20px, 5.5svh, 58px);       /* the action's floor */
+  --copy-floor: clamp(44px, 13svh, 138px);  /* the copy rides higher */
   --hero-lh: 1.06;
 
   /* ── exactly two curves. */
@@ -399,8 +400,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-hero > * { position: relative; z-index: 1; }
 .dr-left  { grid-column: 1; grid-row: 1; display: flex; flex-direction: column;
             justify-content: flex-end; align-self: stretch;
-            /* lifted off the floor rather than sitting on it */
-            padding-bottom: var(--floor); }
+            /* the copy sits higher than the action does; they used to
+               share one floor, which moved both together */
+            padding-bottom: var(--copy-floor); }
 /* the stack spans BOTH rows: as its own row it added the foot's height on
    top of itself and pushed the action off the fold */
 /* top-aligned like the reference: it puts the first case in the strongest
