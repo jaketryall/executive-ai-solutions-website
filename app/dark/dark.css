@@ -559,8 +559,37 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   opacity: .55;
 }
 @keyframes dr-wall-grain {
-  to { background-position: 168px -84px, 168px -84px; }
+  0%   { background-position: 0 0, 0 0;                 opacity: .48; }
+  50%  {                                                opacity: .64; }
+  100% { background-position: 168px -84px, 168px -84px; opacity: .48; }
 }
+
+/* THE WAVE. A wide soft band of light travels diagonally across the glyph,
+   so the material lifts and settles as it passes rather than sitting at one
+   brightness. Same two-layer mask as the body — the glyph intersected with
+   the left-to-right fade — so the wave dies out before it reaches the middle
+   of the screen, exactly like the material it is lighting. */
+.dr-figure::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: linear-gradient(112deg,
+    transparent 28%, rgba(255,255,255,.085) 44%,
+    rgba(255,255,255,.085) 56%, transparent 72%);
+  background-size: 280% 280%;
+  -webkit-mask-image: url("/brand/eas-mark.svg"),
+    linear-gradient(101deg, #000 0%, rgba(0,0,0,.42) 44%, transparent 76%);
+  -webkit-mask-size: contain, 100% 100%;
+  -webkit-mask-repeat: no-repeat, no-repeat;
+  -webkit-mask-position: center, center;
+  -webkit-mask-composite: source-in;
+  mask-image: url("/brand/eas-mark.svg"),
+    linear-gradient(101deg, #000 0%, rgba(0,0,0,.42) 44%, transparent 76%);
+  mask-size: contain, 100% 100%;
+  mask-repeat: no-repeat, no-repeat;
+  mask-position: center, center;
+  mask-composite: intersect;
+  animation: dr-wall-wave 29s linear infinite;
+}
+@keyframes dr-wall-wave { to { background-position: 100% 100%; } }
 
 /* 720p laptops. Everything above is fluid, but the stack still needs a
    final trim to hold one viewport at the shortest realistic desktop. */
@@ -622,7 +651,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dr-key, .dr-key::after, .dr-figure, .dr-figure::before { animation: none; }
+  .dr-key, .dr-key::after,
+  .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
   .dr-lit .dr-sub,
   .dr-lit .dr-wk { opacity: 1; transform: none; animation: none; }
