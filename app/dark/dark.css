@@ -94,22 +94,30 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    rig is a no-op on touch, and half this traffic is a phone. */
 /* the wrapper takes the pointer parallax; the child keeps its own drift,
    because both would otherwise be fighting for `transform` */
-.dr-atmos { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+/* the light rig rides ABOVE the vignette. A vignette is the room's falloff and
+   a key light is a source: the falloff shapes the wall and the empty ground,
+   it does not dim the lamps. Held under .dr-stage (4) so it never touches
+   content, and over .dr-vignette (2) so both orbs keep the brightness they
+   have on the first painted frame. */
+.dr-atmos { position: fixed; inset: 0; z-index: 3; pointer-events: none; }
 .dr-key {
   position: absolute; inset: -25%;
   background:
-    /* TWO lights, and you are meant to see them. The right-hand one moved off
-       the card column and came down hard: it was lifting the ground under the
-       cards to 21, so an 8% wash on top landed at 40 instead of the
-       reference's 23 and the cards had nothing to sit against. */
-    radial-gradient(27% 32% at 20% 18%, rgba(255,255,255,.165), transparent 66%),
-    radial-gradient(30% 38% at 66% 30%, rgba(255,255,255,.075), transparent 70%),
+    /* TWO lights, and you are meant to see them, at the brightness they have
+       on the first painted frame. The right one's core hugs the LEFT EDGE of
+       the card column rather than sitting under it: a frosted card is a
+       window onto the ground behind it, so a light parked under the stack
+       spends itself washing the top card and never reads as a light in the
+       room. At the edge it does both — open air to glow in, and a spill
+       across the cards it touches. */
+    radial-gradient(27% 32% at 20% 18%, rgba(255,255,255,.205), transparent 66%),
+    radial-gradient(24% 40% at 60% 29%, rgba(255,255,255,.125), transparent 68%),
     radial-gradient(26% 24% at 52% 88%, var(--fill), transparent 74%);
   animation: dr-drift 26s ease-in-out infinite alternate;
 }
 .dr-key::after {
   content: ""; position: absolute; inset: 12%;
-  background: radial-gradient(36% 32% at 74% 22%, rgba(255,255,255,.06), transparent 72%);
+  background: radial-gradient(28% 32% at 62% 22%, rgba(255,255,255,.075), transparent 70%);
   animation: dr-drift-b 37s ease-in-out infinite alternate;
 }
 @keyframes dr-drift-b {
@@ -125,14 +133,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-vignette {
   position: fixed; inset: 0; z-index: 2; pointer-events: none;
   background: radial-gradient(circle at center,
-    transparent 0%, transparent 15%,
-    rgba(0,0,0,.95) 35%, rgba(0,0,0,.95) 100%);
+    transparent 0%, transparent 46%,
+    rgba(0,0,0,.5) 66%, rgba(0,0,0,.92) 88%, rgba(0,0,0,.96) 100%);
   opacity: 0;
 }
 .dr-lit .dr-vignette {
   animation: dr-fade var(--t-atmos) var(--ease-structure) 300ms forwards;
 }
-@keyframes dr-fade { to { opacity: .5; } }
+@keyframes dr-fade { to { opacity: .8; } }
 
 /* GRAIN IS INFRASTRUCTURE, not decoration: at .95-black over a 20-point
    ramp every large dark gradient bands on 8-bit phone displays, and
@@ -592,15 +600,15 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
     rgba(255,255,255,.055) 59%, transparent 67%);
   background-size: 280% 280%;
   -webkit-mask-image: url("/brand/eas-mark.svg"),
-    linear-gradient(101deg, #000 0%, rgba(0,0,0,.66) 48%,
-      rgba(0,0,0,.44) 78%, rgba(0,0,0,.26) 92%, transparent 100%);
+    linear-gradient(101deg, #000 0%, rgba(0,0,0,.64) 46%,
+      rgba(0,0,0,.38) 70%, rgba(0,0,0,.12) 84%, transparent 91%);
   -webkit-mask-size: contain, 100% 100%;
   -webkit-mask-repeat: no-repeat, no-repeat;
   -webkit-mask-position: center, center;
   -webkit-mask-composite: source-in;
   mask-image: url("/brand/eas-mark.svg"),
-    linear-gradient(101deg, #000 0%, rgba(0,0,0,.66) 48%,
-      rgba(0,0,0,.44) 78%, rgba(0,0,0,.26) 92%, transparent 100%);
+    linear-gradient(101deg, #000 0%, rgba(0,0,0,.64) 46%,
+      rgba(0,0,0,.38) 70%, rgba(0,0,0,.12) 84%, transparent 91%);
   mask-size: contain, 100% 100%;
   mask-repeat: no-repeat, no-repeat;
   mask-position: center, center;
@@ -676,7 +684,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-lit .dr-sub,
   .dr-lit .dr-wk { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
-  .dr-lit .dr-vignette { animation: none; opacity: .35; }
+  .dr-lit .dr-vignette { animation: none; opacity: .8; }
 }
 
 /* the witness — small, dim, and after the promise it vouches for */
