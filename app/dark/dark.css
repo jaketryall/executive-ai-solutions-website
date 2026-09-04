@@ -45,6 +45,9 @@
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
   --works-col: clamp(310px, 29vw, 418px);
+  --nav-pad: clamp(13px, 2.4svh, 21px);
+  --nav-h: 62px;
+  --nav-space: calc(var(--nav-h) + var(--nav-pad));
   --floor: clamp(20px, 5.5svh, 58px);       /* the action's floor */
   --copy-floor: clamp(44px, 13svh, 138px);  /* the copy rides higher */
   --hero-lh: 1.06;
@@ -213,6 +216,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-stage {
   position: relative; z-index: 4;
   min-height: 100svh; display: flex; flex-direction: column;
+  /* the fixed rail is out of flow, so the hero reserves its height here */
+  padding-top: var(--nav-space);
 }
 /* On desktop the stage is a DEFINITE height, not just a minimum. Without it
    the grid's 1fr row has nothing to resolve against, so the long roster grew
@@ -267,7 +272,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* ══ THE RAIL ════════════════════════════════════════════════════
    Not a bar with a rule under it — a floating object that OPENS from
    its own centre, then hands off to its contents. */
-.dr-nav { padding-top: clamp(13px, 2.4svh, 21px); }
+.dr-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 30;
+          padding-top: var(--nav-pad); }
 /* AT REST this is not a bar. The wordmark and the links simply float on the
    room; the pill, the lit edge and the action are what SCROLL earns. */
 .dr-rail {
@@ -378,7 +384,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* main: flex-1 + justify-end + items-end does ALL the corner composition.
    Zero absolute positioning. */
 .dr-main { flex: 1; min-height: 0; display: flex; flex-direction: column;
-           padding-block: clamp(13px, 2.4svh, 21px) clamp(16px, 3.8svh, 34px); }
+           padding-block: 0 clamp(16px, 3.8svh, 34px); }
 
 /* THE NESTED GRID — not a split. The statement keeps its full width, and
    because its last two lines are SHORT it carves a stepped void on the
@@ -412,7 +418,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-works { grid-column: 2; grid-row: 1; align-self: stretch; min-height: 0;
             /* dropped off the nav so the rail and the roster read as two
                separate objects, not one stack */
-            margin-top: clamp(8px, 1.6svh, 16px);
+            margin-top: clamp(20px, 3.9svh, 38px);
             /* the SAME floor the copy stands on, so the action's bottom edge
                lands on the last line of the paragraph */
             padding-bottom: var(--floor);
@@ -625,6 +631,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   /* the rail keeps the lockup and the one action; the link set needs a
      real overlay menu rather than a squeezed row (deferred, not shipped) */
   .dr-rail { height: 56px; }
+  .dr-root { --nav-h: 56px; }
   .dr-links { display: none; }
   .dr-rail-in { padding: 0; gap: var(--fib-1); }
   .dr-rail[data-stuck] .dr-rail-in { padding: 0 6px 0 var(--fib-2); }
@@ -660,4 +667,90 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-lit .dr-wk { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
   .dr-lit .dr-vignette { animation: none; opacity: .35; }
+}
+
+/* ══ §02 · THE FUNNEL ════════════════════════════════════════════
+   TYPE-led, where the hero is CARD-led. Same ground, no hard cut — the
+   fixed mark carries straight through the seam, so the two sections read
+   as one room rather than two slabs. */
+.dr-svc { position: relative; z-index: 4;
+          padding-block: clamp(80px, 14svh, 168px) clamp(72px, 12svh, 144px); }
+.dr-svc-head { max-width: 40ch; margin-bottom: clamp(48px, 8svh, 96px); }
+.dr-svc-kicker { color: var(--ink-4); display: block; margin-bottom: var(--fib-3); }
+.dr-svc-lead {
+  margin: 0; color: var(--ink-2);
+  font-family: var(--font-instrument), sans-serif;
+  font-size: clamp(1.15rem, 0.9rem + 1vw, 1.6rem);
+  font-weight: 400; line-height: 1.42; letter-spacing: -0.015em;
+}
+
+.dr-svc-list { list-style: none; margin: 0; padding: 0;
+               display: flex; flex-direction: column; gap: clamp(8px, 1.6svh, 18px); }
+
+.dr-svc-row {
+  display: grid; align-items: center;
+  grid-template-columns: 4.5rem minmax(0, 1fr) auto 2rem;
+  column-gap: clamp(20px, 3vw, 48px);
+  padding: clamp(22px, 3.4svh, 40px) 0;
+  text-decoration: none;
+  opacity: 0; transform: translateY(22px);
+  transition: opacity .7s var(--ease-structure) calc(var(--row) * 90ms),
+              transform .7s var(--ease-structure) calc(var(--row) * 90ms),
+              scale .5s var(--ease-ui);
+}
+.dr-svc-row.is-in { opacity: 1; transform: translateY(0); }
+
+/* the hovered row scales, its neighbours DO NOT — neighbour growth on a
+   text list reads finicky, and the list is not a dock */
+@media (hover: hover) {
+  .dr-svc-row:hover { scale: 1.012; }
+  .dr-svc-row:hover .dr-svc-title { color: var(--ink); }
+  .dr-svc-row:hover .dr-svc-arrow { color: var(--ink); transform: translateX(6px); }
+  .dr-svc-row:hover .dr-svc-num { color: var(--ink-3); }
+}
+.dr-svc-row:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 6px;
+                            border-radius: 8px; }
+
+.dr-svc-num { align-self: start; color: var(--ink-4);
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: 13px; letter-spacing: .14em; font-variant-numeric: tabular-nums;
+  transition: color var(--t-micro) var(--ease-ui); }
+
+.dr-svc-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.dr-svc-stage { color: var(--ink-4); }
+.dr-svc-title {
+  color: var(--ink-2);
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 620;
+  font-size: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  line-height: 1.06; letter-spacing: -0.026em;
+  transition: color var(--t-micro) var(--ease-ui);
+}
+.dr-svc-what { color: var(--ink-3);
+  font-family: var(--font-instrument), sans-serif; font-size: 15px; }
+
+/* the price is never withheld — it is the differentiator, so it sits in
+   the list rather than behind the click */
+.dr-svc-price { color: var(--ink-2); text-align: right; max-width: 30ch;
+  font-family: var(--font-instrument), sans-serif;
+  font-size: 14px; line-height: 1.45;
+  /* 22ch was splitting "no lock-in" and "in 2 days" across the break */
+  text-wrap: balance; }
+
+.dr-svc-arrow { justify-self: end; font-style: normal; color: var(--ink-4);
+  font-size: 17px; line-height: 1;
+  transition: color var(--t-micro) var(--ease-ui),
+              transform var(--t-micro) var(--ease-ui); }
+
+@media (max-width: 900px) {
+  .dr-svc-row { grid-template-columns: 2.6rem minmax(0, 1fr) auto;
+                column-gap: var(--fib-3); row-gap: var(--fib-2);
+                padding: var(--fib-4) 0; }
+  /* the price is placed explicitly, so the arrow must be too — left to
+     auto-placement it flowed past the price into a row of its own */
+  .dr-svc-num   { grid-column: 1; grid-row: 1; }
+  .dr-svc-body  { grid-column: 2; grid-row: 1; }
+  .dr-svc-arrow { grid-column: 3; grid-row: 1; align-self: start; }
+  .dr-svc-price { grid-column: 2 / -1; grid-row: 2; text-align: left; max-width: none; }
 }
