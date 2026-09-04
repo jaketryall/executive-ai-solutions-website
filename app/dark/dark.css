@@ -888,6 +888,22 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-pf { --p: 0; position: relative; z-index: 4;
          padding-block: clamp(72px, 12svh, 150px) clamp(80px, 14svh, 168px); }
 
+/* ONE OF THE HERO'S CARDS, OPENED UP. Identical material to .dr-wk — the
+   same .08 frost and the same 15px blur — because §01 lists who we did it
+   for and this is one of those rows expanded. Only the corner grows with
+   the object, the way a bigger card would actually be drawn. */
+.dr-pf-card {
+  position: relative;
+  border-radius: clamp(13px, 1.5vw, 21px);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  padding: clamp(20px, 2.4vw, 34px);
+}
+/* the media keeps the thumbnail's relationship to its card: inset by the
+   padding, and a corner one step tighter than the corner around it */
+.dr-pf-card .dr-pf-media { border-radius: clamp(9px, 1vw, 14px); }
+
 .dr-pf-head { max-width: 34ch; margin-bottom: clamp(28px, 5svh, 56px); }
 .dr-pf-kicker { color: var(--ink-4); display: block; margin-bottom: var(--fib-3); }
 .dr-pf-lead {

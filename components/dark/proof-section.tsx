@@ -90,6 +90,10 @@ export default function ProofSection() {
   return (
     <section className="dr-pf" ref={ref} aria-labelledby="dr-pf-h">
       <div className="wrap">
+        {/* the proof rides the same card the hero's work rows do — same
+            frost, same corner. §01 lists who we did it for; this is one of
+            those rows opened up, so it should be made of the same thing. */}
+        <div className="dr-pf-card">
         <header className="dr-pf-head dr-reveal">
           <span className="t-label dr-pf-kicker">Proof</span>
           <h2 className="dr-pf-lead" id="dr-pf-h">
@@ -132,6 +136,7 @@ export default function ProofSection() {
               <i aria-hidden>→</i>
             </Link>
           </div>
+        </div>
         </div>
       </div>
     </section>
