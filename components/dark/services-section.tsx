@@ -7,12 +7,33 @@ import { QUOTES } from "@/lib/quotes";
 import { PersonIcon } from "@/components/ui/person-icon";
 
 /* §02 · THE FUNNEL
-   Type-led on purpose: the hero's right column is card-led, and repeating
-   that register here would make the two sections read as one long list.
+   THE LIGHTS COME ON. The one light section in a black room, and the only
+   place the page inverts — which is exactly why it can carry the whole
+   claim in one centred line instead of a header and a column.
 
    Everything is visible at rest — name, statement, and the PRICE. Nothing
    about a service sits behind a hover or a click, because the thing a
-   visitor most wants to know is the thing most sites make you dig for. */
+   visitor most wants to know is the thing most sites make you dig for.
+
+   THE SIGNATURE (after icomat.co.uk's second section, decoded rather than
+   guessed at): the statement arrives a word at a time as you scroll, and a
+   scattered field of marks converges onto its grid behind it. Both are
+   pure f(scroll) off ONE progress value, so the whole thing scrubs
+   backwards exactly. Measured off the source: words ramp from 0.2 to 1
+   left-to-right; the marks start ±300px out and settle to 0. */
+
+const SAY = "The click, the page it lands on, and the follow-up after.";
+
+/* five columns of marks at the grid's own positions. The x/y each one
+   travels FROM is its own, so the field converges from a scatter rather
+   than sliding in as one block. */
+const MARKS = [
+  { x: -300, dots: [-14, 0, 14] },
+  { x: -150, dots: [-10, 0, 10] },
+  { x: 0, dots: [-70, 70] },
+  { x: 150, dots: [10, 0, -10] },
+  { x: 300, dots: [14, 0, -14] },
+];
 
 export default function ServicesSection() {
   const ref = useRef<HTMLElement>(null);
@@ -20,26 +41,46 @@ export default function ServicesSection() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const rows = Array.from(el.querySelectorAll<HTMLElement>(".dr-reveal"));
+    const say = el.querySelector<HTMLElement>(".dr-say");
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (still) rows.forEach((r) => r.classList.add("is-in"));
-    /* THE FUNNEL DRAWS ITSELF. A light runs the column as you scroll and each
-       stage takes full ink as it passes — the sequence stops being three
-       numbers and becomes one path. Same law as everywhere else in this room:
-       the thing that happens to a line is that light travels along it. */
-    const list = el.querySelector<HTMLElement>(".dr-svc-list");
-    const nums = Array.from(el.querySelectorAll<HTMLElement>(".dr-svc-num"));
+    const rows = Array.from(el.querySelectorAll<HTMLElement>(".dr-reveal"));
+
+    if (still) {
+      el.style.setProperty("--sp", "1");
+      rows.forEach((r) => r.classList.add("is-in"));
+      return;
+    }
+
+    /* ONE progress value drives the words and the marks together. Written
+       off the statement's own box, so it still resolves if the section
+       grows or the copy rewraps. */
     let frame = 0;
     const draw = () => {
       frame = 0;
+      if (!say) return;
+      const b = say.getBoundingClientRect();
+      /* starts when the line is a little under the fold, finishes once it
+         has climbed past the third — the source's window, measured */
+      const from = innerHeight * 0.92;
+      const to = innerHeight * 0.3;
+      const raw = (from - b.top) / (from - to);
+      el.style.setProperty("--sp", String(Math.max(0, Math.min(1, raw))));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(draw);
+    };
+    addEventListener("scroll", onScroll, { passive: true });
+    addEventListener("resize", onScroll, { passive: true });
+    draw();
+
+    /* the funnel draws itself: a light runs the column and each stage takes
+       full ink as it passes, so the sequence stops being three numbers and
+       becomes one path */
+    const list = el.querySelector<HTMLElement>(".dr-svc-list");
+    const nums = Array.from(el.querySelectorAll<HTMLElement>(".dr-svc-num"));
+    const lit = () => {
       if (!list) return;
       const b = list.getBoundingClientRect();
-      /* 0 when the list's TOP enters at 95% of the viewport, 1 once its
-         BOTTOM has cleared 90%. Anchoring the finish to the bottom is what
-         makes it reachable: the first version asked the list's top to climb
-         to 42%, which this page is not tall enough to allow, so the light
-         stalled at half and the third stage never lit. Written off the
-         list's own box, so it still resolves when the page grows. */
       const start = innerHeight * 0.95;
       const p = Math.max(
         0,
@@ -48,72 +89,78 @@ export default function ServicesSection() {
       const y = b.top + b.height * p;
       nums.forEach((n) => {
         const r = n.getBoundingClientRect();
-        // the ROW takes ink, not a rule beside it
         n.closest(".dr-svc-row")?.classList.toggle("is-lit", y >= r.top);
       });
     };
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(draw);
+    let lframe = 0;
+    const onLit = () => {
+      if (!lframe) lframe = requestAnimationFrame(() => { lframe = 0; lit(); });
     };
-    if (!still) {
-      addEventListener("scroll", onScroll, { passive: true });
-      addEventListener("resize", onScroll, { passive: true });
-      draw();
-    } else {
-      nums.forEach((n) => n.closest(".dr-svc-row")?.classList.add("is-lit"));
-    }
+    addEventListener("scroll", onLit, { passive: true });
+    addEventListener("resize", onLit, { passive: true });
+    lit();
 
+    // added, never removed: a reveal that un-reveals reads as a bug
     const io = new IntersectionObserver(
-      (entries) => {
+      (entries) =>
         entries.forEach((e) => {
-          // added, never removed: a reveal that can un-reveal on the way back
-          // up reads as a bug, not a beat
           if (e.isIntersecting) {
             e.target.classList.add("is-in");
             io.unobserve(e.target);
           }
-        });
-      },
+        }),
       { rootMargin: "0px 0px -18% 0px", threshold: 0 }
     );
     rows.forEach((r) => io.observe(r));
+
     return () => {
       io.disconnect();
       removeEventListener("scroll", onScroll);
       removeEventListener("resize", onScroll);
+      removeEventListener("scroll", onLit);
+      removeEventListener("resize", onLit);
       if (frame) cancelAnimationFrame(frame);
+      if (lframe) cancelAnimationFrame(lframe);
     };
   }, []);
 
+  const words = SAY.split(" ");
+
   return (
     <section className="dr-svc" ref={ref} aria-labelledby="dr-svc-h">
+      <div className="dr-say">
+        <div className="dr-marks" aria-hidden>
+          {MARKS.map((m, i) => (
+            <span key={i} className="dr-mark-col">
+              {m.dots.map((d, j) => (
+                <i
+                  key={j}
+                  style={
+                    { "--dx": `${m.x}px`, "--dy": `${d}px` } as React.CSSProperties
+                  }
+                />
+              ))}
+            </span>
+          ))}
+        </div>
+
+        {/* one word per span so each can carry its own place in the ramp.
+            The sentence stays one readable string for a screen reader —
+            the spans are inline and the spaces are real. */}
+        <h2 className="dr-say-h" id="dr-svc-h">
+          {words.map((w, i) => (
+            <span
+              key={i}
+              className="dr-word"
+              style={{ "--i": i, "--n": words.length } as React.CSSProperties}
+            >
+              {w}
+            </span>
+          ))}
+        </h2>
+      </div>
+
       <div className="wrap">
-        {/* the whole funnel rides ONE surface — same frosted material as the
-            hero's work cards, at the scale of a section rather than a row */}
-        <div className="dr-svc-card">
-        <header className="dr-svc-head">
-          <div className="dr-svc-headline">
-            <span className="t-label dr-svc-kicker">Services</span>
-            <h2 className="dr-svc-lead" id="dr-svc-h">
-              The click, the page it lands on, and the follow-up after.
-            </h2>
-          </div>
-
-          {/* Role-and-sector attribution with the repo's placeholder glyph,
-              not a name and a face: lib/quotes.ts carries no real person and
-              no exact business, so a photo would invent a customer. The slot
-              is shaped for the real thing. */}
-          <figure className="dr-vouch dr-reveal">
-            <span className="dr-vouch-av" aria-hidden>
-              <PersonIcon />
-            </span>
-            <span className="dr-vouch-body">
-              <blockquote>{QUOTES[2].text}</blockquote>
-              <figcaption>{QUOTES[2].name}</figcaption>
-            </span>
-          </figure>
-        </header>
-
         <ul className="dr-svc-list">
           {SERVICES.map((s, i) => (
             <li key={s.slug}>
@@ -141,7 +188,20 @@ export default function ServicesSection() {
             </li>
           ))}
         </ul>
-        </div>
+
+        {/* Role-and-sector attribution with the repo's placeholder glyph,
+            not a name and a face: lib/quotes.ts carries no real person and
+            no exact business, so a photo would invent a customer. The slot
+            is shaped for the real thing. */}
+        <figure className="dr-vouch dr-reveal" style={{ "--row": 3 } as React.CSSProperties}>
+          <span className="dr-vouch-av" aria-hidden>
+            <PersonIcon />
+          </span>
+          <span className="dr-vouch-body">
+            <blockquote>{QUOTES[2].text}</blockquote>
+            <figcaption>{QUOTES[2].name}</figcaption>
+          </span>
+        </figure>
       </div>
     </section>
   );

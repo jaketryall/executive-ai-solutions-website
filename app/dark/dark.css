@@ -701,40 +701,77 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   font-family: var(--font-instrument), sans-serif; font-size: 12.5px; }
 
 /* ══ §02 · THE FUNNEL ════════════════════════════════════════════
-   TYPE-led, where the hero is CARD-led. Same ground, no hard cut — the
-   fixed mark carries straight through the seam, so the two sections read
-   as one room rather than two slabs. */
-.dr-svc { position: relative; z-index: 4;
-          padding-block: clamp(80px, 14svh, 168px) clamp(72px, 12svh, 144px); }
-
-/* THE SECTION IS A SURFACE. Same material as a work card, at section
-   scale: the frost means the mark and the two lights carry THROUGH the
-   panel rather than being blocked by it, so the room still reads as one
-   room. Padding is the card's own, so the section's rhythm above and
-   below is unchanged. */
-.dr-svc-card {
-  position: relative;
-  border-radius: clamp(18px, 2.2vw, 30px);
-  background: rgba(255, 255, 255, 0.045);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  padding: clamp(32px, 5.6svh, 76px) clamp(24px, 4vw, 64px);
-}
-.dr-svc-head { margin-bottom: clamp(48px, 8svh, 96px);
-  display: grid; grid-template-columns: minmax(0, 1fr) var(--works-col);
-  column-gap: clamp(20px, 3vw, 48px); align-items: end; }
-.dr-svc-headline { max-width: 40ch; }
-.dr-svc-kicker { color: var(--ink-4); display: block; margin-bottom: var(--fib-3); }
-.dr-svc-lead {
-  margin: 0; color: var(--ink-2);
-  font-family: var(--font-instrument), sans-serif;
-  font-size: clamp(1.15rem, 0.9rem + 1vw, 1.6rem);
-  font-weight: 400; line-height: 1.42; letter-spacing: -0.015em;
+   THE LIGHTS COME ON. The one light section in a black room, and the only
+   place the page inverts. The tokens are redefined here rather than the
+   rules being rewritten, so every row below keeps its existing styling and
+   simply flips — and the values are picked for contrast ON #f5f5f7, not
+   inverted arithmetically from the dark set. */
+.dr-svc {
+  --ink:   #0a0a0b;   /* 18.9:1 — titles, the lit row */
+  --ink-2: #35353a;   /* 10.6:1 — price, body */
+  --ink-3: #5c5c63;   /*  6.4:1 — unlit title, secondary */
+  --ink-4: #6e6e75;   /*  4.8:1 — FLOOR. labels, numerals, arrow. */
+  --edge-strong: rgba(0, 0, 0, .55);
+  --sp: 0;
+  position: relative; z-index: 4;
+  background: #f5f5f7; color: var(--ink);
+  padding-block: clamp(80px, 14svh, 168px) clamp(72px, 12svh, 144px);
 }
 
+/* ── the statement ───────────────────────────────────────────────
+   One centred line carrying the whole claim, which the section can only
+   afford because it is the page's single inversion. */
+.dr-say { position: relative; overflow: hidden;
+          padding-block: clamp(40px, 9svh, 118px);
+          margin-bottom: clamp(40px, 8svh, 92px); }
+
+.dr-say-h {
+  position: relative; z-index: 1;
+  margin: 0 auto; max-width: 17ch; text-align: center;
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 640;
+  font-size: clamp(1.9rem, 1rem + 3.5vw, 4.15rem);
+  line-height: .98; letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+/* THE LINE ARRIVES A WORD AT A TIME.
+   Each word owns its place in one ramp: --sp sweeps a front across the
+   line, and a word's own index decides when the front reaches it. Pure
+   f(scroll) — nothing is triggered, so scrubbing back up un-writes the
+   sentence exactly instead of leaving it stuck lit. The 0.2 floor is the
+   source's: the words are always READABLE, never invisible, so the effect
+   can never cost anyone the sentence. */
+.dr-word {
+  display: inline-block; white-space: pre;
+  /* the divisor is the WIDTH of the front. At 1.7 only one word was ever
+     mid-ramp and the line snapped on a word at a time; the source keeps
+     about four words in transition at once, which is what makes it read
+     as light moving across a sentence rather than words switching on. */
+  --local: calc(var(--sp) * (var(--n) + 4.2) - var(--i));
+  opacity: clamp(.2, calc(var(--local) / 3.6), 1);
+}
+.dr-word::after { content: " "; }
+
+/* ── the marks ───────────────────────────────────────────────────
+   A scattered field that CONVERGES onto the grid as the line writes
+   itself — the room assembling around the claim. 3px, because at that
+   size they are punctuation and never compete with the sentence. */
+.dr-marks { position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  display: flex; align-items: center; justify-content: space-between;
+  padding-inline: max(4vw, calc((100% - 1100px) / 2)); }
+.dr-mark-col { display: flex; flex-direction: column; justify-content: space-between;
+               align-self: stretch; padding-block: clamp(10px, 4svh, 40px); }
+.dr-mark-col i {
+  width: 3px; height: 3px; background: rgba(0, 0, 0, .62);
+  /* `translate`, not `transform` — nothing else here owns it, and keeping
+     the two apart is the standing rule in this room */
+  translate: calc((1 - var(--sp)) * var(--dx)) calc((1 - var(--sp)) * var(--dy));
+}
+
+/* ── the three stages ────────────────────────────────────────────
+   TYPE-led. Everything visible at rest, price included. */
 .dr-svc-list { position: relative; list-style: none; margin: 0; padding: 0;
                display: flex; flex-direction: column; gap: clamp(8px, 1.6svh, 18px); }
-
 
 .dr-svc-row {
   display: grid; align-items: center;
@@ -742,8 +779,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   column-gap: clamp(20px, 3vw, 48px);
   padding: clamp(22px, 3.4svh, 40px) 0;
   text-decoration: none;
+  border-top: 1px solid rgba(0, 0, 0, .09);
   transition: scale .5s var(--ease-ui);
 }
+.dr-svc-list li:last-child .dr-svc-row { border-bottom: 1px solid rgba(0, 0, 0, .09); }
+
 /* the reveal, separate from any layout, so a figure can use it too */
 .dr-reveal { opacity: 0; transform: translateY(22px);
   transition: opacity .7s var(--ease-structure) calc(var(--row, 0) * 90ms),
@@ -768,8 +808,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   font-size: 13px; letter-spacing: .14em; font-variant-numeric: tabular-nums;
   transition: color .55s var(--ease-ui); }
 /* THE ARRIVAL. Each stage sits dim until the scroll reaches it, then takes
-   ink — numeral, label and statement together. No rule beside it; the row
-   itself is the thing that lights. */
+   ink — numeral, label and statement together. */
 .dr-svc-row.is-lit .dr-svc-num { color: var(--ink); }
 .dr-svc-row.is-lit .dr-svc-stage { color: var(--ink-3); }
 .dr-svc-row.is-lit .dr-svc-title { color: var(--ink); }
@@ -792,7 +831,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-svc-price { color: var(--ink-2); text-align: right; max-width: 30ch;
   font-family: var(--font-instrument), sans-serif;
   font-size: 14px; line-height: 1.45;
-  /* 22ch was splitting "no lock-in" and "in 2 days" across the break */
   text-wrap: balance; }
 
 .dr-svc-arrow { justify-self: end; font-style: normal; color: var(--ink-4);
@@ -800,20 +838,37 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   transition: color var(--t-micro) var(--ease-ui),
               transform var(--t-micro) var(--ease-ui); }
 
+/* the witness — small, dim, and after the promise it vouches for */
+.dr-vouch { display: flex; align-items: flex-start; gap: var(--fib-2);
+  max-width: 46ch; padding: 0; margin-top: clamp(30px, 6svh, 66px); }
+.dr-vouch-av { flex: 0 0 auto; width: 30px; height: 30px; border-radius: 999px;
+  display: grid; place-items: center; color: var(--ink-4);
+  background: rgba(0, 0, 0, 0.06); }
+.dr-vouch-body { display: block; min-width: 0; }
+.dr-vouch blockquote { margin: 0; color: var(--ink-2);
+  font-family: var(--font-instrument), sans-serif;
+  font-size: 14px; line-height: 1.5; }
+.dr-vouch figcaption { margin-top: 4px; color: var(--ink-4);
+  font-family: var(--font-instrument), sans-serif; font-size: 12.5px; }
+
 @media (max-width: 900px) {
-  .dr-svc-head { grid-template-columns: minmax(0, 1fr); row-gap: var(--fib-4); }
-  .dr-vouch { max-width: none; }
-  .dr-svc-row { grid-template-columns: 2.6rem minmax(0, 1fr) auto;
-                column-gap: var(--fib-3); row-gap: var(--fib-2);
-                padding: var(--fib-4) 0; }
-  /* the price is placed explicitly, so the arrow must be too — left to
-     auto-placement it flowed past the price into a row of its own */
+  .dr-svc-row { grid-template-columns: 2.6rem minmax(0, 1fr);
+                row-gap: var(--fib-3); }
+  /* every cell placed explicitly — an unplaced one auto-flows into a row
+     of its own and the price ends up under the arrow */
   .dr-svc-num   { grid-column: 1; grid-row: 1; }
   .dr-svc-body  { grid-column: 2; grid-row: 1; }
-  .dr-svc-arrow { grid-column: 3; grid-row: 1; align-self: start; }
-  .dr-svc-price { grid-column: 2 / -1; grid-row: 2; text-align: left; max-width: none; }
+  .dr-svc-price { grid-column: 2; grid-row: 2; text-align: left; max-width: none; }
+  .dr-svc-arrow { grid-column: 1; grid-row: 2; justify-self: start; }
+  .dr-vouch { max-width: none; }
+  .dr-say-h { max-width: 14ch; }
+  .dr-marks { padding-inline: 5vw; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .dr-word { opacity: 1; }
+  .dr-mark-col i { translate: none; }
+}
 
 /* ══ §03 · THE PROOF ═════════════════════════════════════════════
    IMAGE-led. §01 is card-led and §02 is type-led, so this one changes
