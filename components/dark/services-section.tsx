@@ -5,6 +5,7 @@ import Link from "next/link";
 import { SERVICES } from "@/lib/services";
 import { QUOTES } from "@/lib/quotes";
 import { PersonIcon } from "@/components/ui/person-icon";
+import Image from "next/image";
 
 /* §02 · THE FUNNEL
    THE LIGHTS COME ON. The one light section in a black room, and the only
@@ -23,6 +24,34 @@ import { PersonIcon } from "@/components/ui/person-icon";
    left-to-right; the marks start ±300px out and settle to 0. */
 
 const SAY = "The click, the page it lands on, and the follow-up after.";
+
+/* One REAL screen per stage, and deliberately not all from one client:
+   a services list illustrated three times with the same site is a
+   portfolio of one. Kept here rather than in lib/services.ts while the
+   design is still moving — it graduates to the data once it settles.
+   §03 shows the Desert Wings hero at full size, so none of these is that. */
+/* `pos` is the crop point, per image, because a strip this shallow shows
+   maybe a third of a 2880x1800 screenshot and the default centre landed on
+   the site's nav bar every time — three rows of somebody's header. Each one
+   is aimed at the thing that makes the point instead: the estimate, the
+   hero, the form. */
+const SHOTS: Record<string, { src: string; alt: string; pos: string }> = {
+  "google-ads": {
+    src: "/work/live/dw-cost-calculator.jpg",
+    alt: "A training cost estimator on a client site, totalling $20,000",
+    pos: "50% 34%",
+  },
+  websites: {
+    src: "/work/aahg-hero.jpg",
+    alt: "The Arizona Aviation Historical Group homepage",
+    pos: "50% 46%",
+  },
+  ai: {
+    src: "/work/live/dw-booking.jpg",
+    alt: "The enquiry form a new lead lands in",
+    pos: "50% 58%",
+  },
+};
 
 /* five columns of marks at the grid's own positions. The x/y each one
    travels FROM is its own, so the field converges from a scatter rather
@@ -48,6 +77,12 @@ export default function ServicesSection() {
     if (still) {
       el.style.setProperty("--sp", "1");
       rows.forEach((r) => r.classList.add("is-in"));
+      // the shots are content, not decoration — they rest OPEN
+      el.querySelectorAll<HTMLElement>(".dr-svc-shot").forEach((sh) => {
+        sh.style.setProperty("--rp", "1");
+        sh.style.setProperty("--pp", "0.5");
+      });
+      el.querySelectorAll(".dr-svc-row").forEach((r) => r.classList.add("is-lit"));
       return;
     }
 
@@ -78,6 +113,7 @@ export default function ServicesSection() {
        becomes one path */
     const list = el.querySelector<HTMLElement>(".dr-svc-list");
     const nums = Array.from(el.querySelectorAll<HTMLElement>(".dr-svc-num"));
+    const shots = Array.from(el.querySelectorAll<HTMLElement>(".dr-svc-shot"));
     const lit = () => {
       if (!list) return;
       const b = list.getBoundingClientRect();
@@ -90,6 +126,18 @@ export default function ServicesSection() {
       nums.forEach((n) => {
         const r = n.getBoundingClientRect();
         n.closest(".dr-svc-row")?.classList.toggle("is-lit", y >= r.top);
+      });
+
+      /* Each row's own two numbers, from ONE pass over the same rects.
+         --rp opens the shot as the row arrives (0 -> 1, and it can run
+         back), and --pp is the row's travel through the viewport, which
+         is what the image drifts against. Both are pure f(scroll). */
+      shots.forEach((sh) => {
+        const r = sh.getBoundingClientRect();
+        const rp = (innerHeight * 0.86 - r.top) / (innerHeight * 0.3);
+        const pp = (innerHeight - r.top) / (innerHeight + r.height);
+        sh.style.setProperty("--rp", String(Math.max(0, Math.min(1, rp))));
+        sh.style.setProperty("--pp", String(Math.max(0, Math.min(1, pp))));
       });
     };
     let lframe = 0;
@@ -184,6 +232,24 @@ export default function ServicesSection() {
                 <i className="dr-svc-arrow" aria-hidden>
                   →
                 </i>
+
+                {/* the strip ALWAYS holds its height in layout. If it opened
+                    by growing, the section would get taller as you scrolled
+                    it, which moves the rows, which changes which row the
+                    light is on — the reveal would be feeding its own input.
+                    The space is reserved; only the image inside moves. */}
+                <span
+                  className="dr-svc-shot"
+                  style={{ "--pos": SHOTS[s.slug].pos } as React.CSSProperties}
+                >
+                  <Image
+                    src={SHOTS[s.slug].src}
+                    alt={SHOTS[s.slug].alt}
+                    width={2880}
+                    height={1800}
+                    sizes="(max-width: 900px) 100vw, 1100px"
+                  />
+                </span>
               </Link>
             </li>
           ))}

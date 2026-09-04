@@ -800,6 +800,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-svc-row {
   display: grid; align-items: center;
   grid-template-columns: 4.5rem minmax(0, 1fr) auto 2rem;
+  grid-template-rows: auto auto;
   column-gap: clamp(20px, 3vw, 48px);
   padding: clamp(22px, 3.4svh, 40px) 0;
   text-decoration: none;
@@ -1191,4 +1192,48 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-run.is-in .dr-demo-design i,
   .dr-run.is-in .dr-demo-build i,
   .dr-run.is-in .dr-demo-growth path { animation: none; }
+}
+
+
+/* ── §02 · the stages get a picture ──────────────────────────────
+   The list stays a list. Every word of it is still readable at rest —
+   what arrives is the EVIDENCE, and nothing that was ever information
+   is hidden behind the reveal.
+
+   The strip holds its height in layout at all times. Opening by GROWING
+   would make the section taller as you scroll it, which moves the rows,
+   which changes which row the travelling light is on — the reveal would
+   be feeding its own input. So the space is reserved and only the image
+   inside it moves. */
+.dr-svc-shot {
+  --rp: 0; --pp: .5;
+  grid-column: 2 / 4; grid-row: 2;
+  margin-top: clamp(16px, 2.4svh, 28px);
+  display: block; position: relative; overflow: hidden;
+  border-radius: clamp(8px, .8vw, 12px);
+  height: clamp(112px, 19svh, 188px);
+  background: rgba(0, 0, 0, .05);
+  /* opens from the left, the way the row itself reads */
+  clip-path: inset(0 calc((1 - var(--rp)) * 100%) 0 0
+             round clamp(8px, .8vw, 12px));
+  transition: clip-path .1s linear;
+}
+.dr-svc-shot img {
+  display: block; width: 100%;
+  /* TALLER than its frame — that surplus is the parallax's travel. With
+     height:100% there is nothing to move and the drift does nothing. */
+  height: 132%; object-fit: cover; object-position: var(--pos, 50% 40%);
+  translate: 0 calc(var(--pp) * -24%);
+  /* it also settles as it opens, so the picture is not simply uncovered */
+  scale: calc(1.04 - .04 * var(--rp));
+}
+
+@media (max-width: 900px) {
+  /* the mobile row is 2 columns, so the strip takes the full width under it */
+  .dr-svc-shot { grid-column: 1 / -1; grid-row: 3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dr-svc-shot { clip-path: none; }
+  .dr-svc-shot img { translate: none; scale: 1; }
 }
