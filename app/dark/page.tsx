@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import LeadWidgets from "@/components/dark/lead-widgets";
 import { Archivo, Instrument_Sans } from "next/font/google";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
@@ -254,33 +254,11 @@ export default function DarkRoom() {
             </div>
 
             {/* THE LEAD SYSTEM — the hero stops describing the service and
-                becomes an instance of it. Three surfaces cascade down and to
+                becomes an instance of it. Three widgets cascade down and to
                 the LEFT, so the eye finishes the sequence pointing at the
-                button. Labelled as what happens, never dressed up as a
-                record of a real customer. */}
-            <div className="dr-system">
-              <span className="t-label dr-system-h">When a lead comes in</span>
-
-              <div className="dr-card dr-panel dr-edge" data-step="1">
-                <span className="t-meta">6:41 PM</span>
-                <b>Missed call</b>
-                <span className="t-meta">Nobody was at the desk</span>
-              </div>
-
-              <div className="dr-card dr-panel dr-edge" data-step="2">
-                <span className="dr-num">
-                  <i ref={numRef}>0</i>
-                  <em>sec</em>
-                </span>
-                <b>Texted back, automatically</b>
-                <span className="t-meta">Before they call the next guy</span>
-              </div>
-
-              <div className="dr-card dr-panel dr-edge" data-step="3">
-                <b>Booked</b>
-                <span className="t-meta">Tuesday, 9:00 AM</span>
-              </div>
-            </div>
+                button. Each rests as a complete statement and OPENS into a
+                larger panel, so nothing essential is behind a hover. */}
+            <LeadWidgets numRef={numRef} />
           </div>
         </main>
       </div>

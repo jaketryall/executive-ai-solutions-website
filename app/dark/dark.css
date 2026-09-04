@@ -1,34 +1,3 @@
-/* ══ THE LEAD SYSTEM ═════════════════════════════════════════════
-   Three surfaces stepping down and to the LEFT, so the cascade finishes
-   aimed at the button rather than trailing off the frame. */
-.dr-system { display: flex; flex-direction: column; gap: var(--fib-2);
-             align-self: start; }
-.dr-system-h { color: var(--ink-4); margin-bottom: var(--fib-1); }
-
-.dr-card { padding: var(--fib-3); display: flex; flex-direction: column; gap: 3px;
-           opacity: 0; transform: translateY(14px); --glint-t: 15s; }
-.dr-card[data-step="1"] { margin-left: var(--fib-6); --glint-delay: -2s; }
-.dr-card[data-step="2"] { margin-left: var(--fib-4); --glint-delay: -7s; }
-.dr-card[data-step="3"] { margin-left: 0;            --glint-delay: -11s; }
-.dr-card b { color: var(--ink); font-family: var(--font-instrument), sans-serif;
-             font-size: 16px; font-weight: 600; line-height: 1.3; }
-
-/* the ONE numeral the token file rations pure white for */
-.dr-num { display: flex; align-items: baseline; gap: 3px; color: var(--ink);
-          font-family: var(--font-archivo), sans-serif;
-          font-variation-settings: "wdth" 110, "wght" 800;
-          font-size: 38px; line-height: 1; font-variant-numeric: tabular-nums;
-          margin-bottom: 2px; }
-.dr-num i { font-style: normal; }
-.dr-num em { font-style: normal; font-size: 15px; letter-spacing: .06em;
-             color: var(--ink-3); font-family: var(--font-instrument), sans-serif; }
-
-.dr-lit .dr-card { animation: dr-cardin 620ms var(--ease-structure) forwards; }
-.dr-lit .dr-card[data-step="1"] { animation-delay: 1900ms; }
-.dr-lit .dr-card[data-step="2"] { animation-delay: 2080ms; }
-.dr-lit .dr-card[data-step="3"] { animation-delay: 2260ms; }
-@keyframes dr-cardin { to { opacity: 1; transform: translateY(0); } }
-
 /* ══════════════════════════════════════════════════════════════════
    THE DARK ROOM — v4 tokens (§3 of the build plan)
 
@@ -301,7 +270,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   --glint-t: 7s;
   --glint-delay: 0s;
 }
-.dr-edge::before {
+.dr-edge::before,
+.dr-w-open::before {
   content: ""; position: absolute; inset: 0; border-radius: inherit;
   box-sizing: border-box; padding: 1px; pointer-events: none; z-index: 1;
   background: linear-gradient(90deg,
@@ -476,6 +446,115 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 .dr-check button:hover { color: var(--ink); }
 
+/* ══ THE WIDGET STACK ═══════════════════════════════════════════
+   The popular version of this is three glass cards of invented telemetry.
+   Each of these rests as a COMPLETE statement and OPENS into a larger
+   panel, so the open state adds depth and never hides the essential — a
+   phone with no hover loses nothing. They step down and to the LEFT, so
+   the cascade finishes aimed at the button. */
+.dr-system { display: flex; flex-direction: column; gap: var(--fib-2);
+             align-self: start; }
+.dr-system-h { color: var(--ink-4); margin-bottom: var(--fib-1); }
+
+.dr-w { position: relative; z-index: 1; padding: var(--fib-3); cursor: pointer;
+        opacity: 0; transform: translateY(14px); --glint-t: 15s;
+        transition: filter var(--t-micro) var(--ease-ui); }
+.dr-w:nth-of-type(1) { margin-left: var(--fib-6); --glint-delay: -2s; }
+.dr-w:nth-of-type(2) { margin-left: var(--fib-4); --glint-delay: -7s; }
+.dr-w:nth-of-type(3) { margin-left: 0;            --glint-delay: -11s; }
+.dr-w:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
+.dr-w b { color: var(--ink); font-family: var(--font-instrument), sans-serif;
+          font-size: 15px; font-weight: 600; line-height: 1.3; }
+.dr-w-k { color: var(--ink-4); }
+/* the affordance: hover-to-open is invisible without one */
+.dr-w::after { content: "↗"; position: absolute; z-index: 2;
+  top: var(--fib-3); right: var(--fib-3); font-size: 13px; line-height: 1;
+  color: var(--ink-4);
+  transition: color var(--t-micro) var(--ease-ui),
+              transform var(--t-micro) var(--ease-ui); }
+.dr-w:hover::after { color: var(--ink); transform: translate(2px, -2px); }
+.dr-w-face { display: flex; flex-direction: column; gap: 3px;
+             transition: opacity 240ms var(--ease-ui); }
+
+/* the open panel grows LEFT out of the column, over the widgets beneath */
+.dr-w-open {
+  position: absolute; top: 0; right: 0; z-index: 3;
+  width: calc(100% + var(--fib-7));
+  padding: var(--fib-3); border-radius: var(--radius-panel);
+  /* solid, not glass: what sits behind an open panel is another WIDGET,
+     and at 95% its text ghosted through and read as a rendering fault */
+  background: #101013;
+  display: flex; flex-direction: column; gap: var(--fib-2);
+  opacity: 0; pointer-events: none;
+  transform: scale(.965); transform-origin: top right;
+  transition: opacity 240ms var(--ease-ui),
+              transform 460ms var(--ease-structure);
+}
+/* the last one would open off the bottom of the screen */
+.dr-w:nth-of-type(3) .dr-w-open { top: auto; bottom: 0;
+                                  transform-origin: bottom right; }
+
+.dr-w:focus-within, .dr-w[data-open="true"] { z-index: 5; }
+.dr-w:focus-within > .dr-w-open,
+.dr-w[data-open="true"] > .dr-w-open {
+  opacity: 1; transform: scale(1); pointer-events: auto; }
+.dr-w:focus-within > .dr-w-face,
+.dr-w[data-open="true"] > .dr-w-face { opacity: 0; }
+/* the entrance holds opacity with `forwards`, so the siblings have to
+   recede on a property that animation is not already driving */
+.dr-system[data-any] .dr-w:not([data-open="true"]) { filter: brightness(.62); }
+
+@media (hover: hover) {
+  .dr-w:hover { z-index: 5; }
+  .dr-w:hover > .dr-w-open { opacity: 1; transform: scale(1); pointer-events: auto; }
+  .dr-w:hover > .dr-w-face { opacity: 0; }
+  .dr-system:has(.dr-w:hover) .dr-w:not(:hover) { filter: brightness(.62); }
+}
+
+/* recent work */
+.dr-w-thumbs { display: flex; gap: 5px; margin: 5px 0 3px; }
+.dr-w-thumbs span { position: relative; display: block; width: 52px; height: 33px;
+                    border-radius: 7px; overflow: hidden; }
+.dr-w-thumbs img { object-fit: cover; opacity: .7; }
+.dr-w-shot { position: relative; width: 100%; aspect-ratio: 16 / 10;
+             border-radius: var(--radius-frame); overflow: hidden; }
+.dr-w-shot img { object-fit: cover; object-position: left top; }
+.dr-w-nav { display: flex; align-items: center; gap: var(--fib-2); }
+.dr-w-nav button { width: 32px; height: 32px; border-radius: 999px; padding: 0;
+  border: 1px solid var(--edge-strong); background: transparent; color: var(--ink-2);
+  cursor: pointer; display: grid; place-items: center; font-size: 14px;
+  transition: color var(--t-micro) var(--ease-ui),
+              border-color var(--t-micro) var(--ease-ui); }
+.dr-w-nav button:hover { color: var(--ink); border-color: var(--ink); }
+.dr-w-dots { display: flex; gap: 5px; }
+.dr-w-dots i { display: block; width: 5px; height: 5px; border-radius: 999px;
+  background: var(--edge-strong);
+  transition: background var(--t-micro) var(--ease-ui); }
+.dr-w-dots i[data-on] { background: var(--ink); }
+.dr-w-go { margin-left: auto; color: var(--ink); text-decoration: none; }
+.dr-w-go:hover { color: var(--ink-2); }
+
+.dr-w-time, .dr-w-parts { list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: var(--fib-2); }
+.dr-w-time li, .dr-w-parts li { display: flex; flex-direction: column; gap: 2px; }
+
+/* the ONE numeral the token file rations pure white for */
+.dr-num { display: flex; align-items: baseline; gap: 3px; color: var(--ink);
+          font-family: var(--font-archivo), sans-serif;
+          font-variation-settings: "wdth" 110, "wght" 800;
+          font-size: 38px; line-height: 1; font-variant-numeric: tabular-nums;
+          margin-bottom: 2px; }
+.dr-num i { font-style: normal; }
+.dr-num em { font-style: normal; font-size: 15px; letter-spacing: .06em;
+             color: var(--ink-3); font-family: var(--font-instrument), sans-serif; }
+
+.dr-lit .dr-w { animation: dr-widgetin 620ms var(--ease-structure) forwards; }
+.dr-lit .dr-w:nth-of-type(1) { animation-delay: 1900ms; }
+.dr-lit .dr-w:nth-of-type(2) { animation-delay: 2080ms; }
+.dr-lit .dr-w:nth-of-type(3) { animation-delay: 2260ms; }
+@keyframes dr-widgetin { to { opacity: 1; transform: translateY(0); } }
+
+
 /* the one lit object */
 @media (max-width: 900px) {
   .dr-hero { grid-template-columns: minmax(0, 1fr); }
@@ -484,7 +563,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   /* the stagger is a desktop luxury: at 390px an indented card just looks
      broken, so the cascade squares up and the stack stays full-bleed */
   .dr-system { margin-top: var(--fib-5); }
-  .dr-card[data-step="1"], .dr-card[data-step="2"] { margin-left: 0; }
+  .dr-w:nth-of-type(1), .dr-w:nth-of-type(2) { margin-left: 0; }
+  .dr-w-open { width: 100%; }
   .dr-main { padding-bottom: var(--fib-4); }
   .dr-vignette { display: none; }          /* dropped below 820px */
   /* the rail keeps the lockup and the one action; the link set needs a
@@ -524,7 +604,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-lit .dr-nav-in { transform: scaleX(1); animation: none; }
   .dr-lit .dr-nav-in > *, .dr-lit .dr-eyebrow, .dr-lit .dr-sub,
   .dr-lit .dr-check { opacity: 1; animation: none; }
-  .dr-lit .dr-card { opacity: 1; transform: none; animation: none; }
+  .dr-lit .dr-w { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
   .dr-lit .dr-pill { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-vignette { animation: none; opacity: .35; }
