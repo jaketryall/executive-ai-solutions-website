@@ -87,11 +87,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-key {
   position: fixed; inset: -25%; z-index: 0; pointer-events: none;
   background:
-    radial-gradient(38% 34% at 34% 28%, var(--key), transparent 70%),
-    /* this one sits BEHIND the card column on purpose: it is what the glass
-       has to bend. Without it the blur is a no-op on black. */
-    radial-gradient(30% 40% at 79% 34%, rgba(255,255,255,.125), transparent 72%),
-    radial-gradient(26% 24% at 58% 78%, var(--fill), transparent 72%);
+    radial-gradient(36% 32% at 30% 26%, var(--key), transparent 70%),
+    /* the field the cards are see-through ONTO. Without it the blur is a
+       no-op and the panes read as tinted plastic, not glass. */
+    radial-gradient(48% 60% at 84% 38%, rgba(255,255,255,.185), transparent 76%),
+    radial-gradient(30% 34% at 66% 82%, rgba(255,255,255,.085), transparent 74%),
+    radial-gradient(26% 24% at 52% 62%, var(--fill), transparent 72%);
   animation: dr-drift 26s ease-in-out infinite alternate;
 }
 .dr-key::after {
@@ -392,12 +393,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   position: relative; padding: 17px;
   border-radius: 18px;
   background: linear-gradient(152deg,
-    rgba(255, 255, 255, 0.150) 0%,
-    rgba(255, 255, 255, 0.062) 30%,
-    rgba(255, 255, 255, 0.026) 64%,
-    rgba(255, 255, 255, 0.068) 100%);
-  backdrop-filter: blur(30px) brightness(1.75);
-  -webkit-backdrop-filter: blur(30px) brightness(1.75);
+    rgba(255, 255, 255, 0.105) 0%,
+    rgba(255, 255, 255, 0.050) 32%,
+    rgba(255, 255, 255, 0.030) 66%,
+    rgba(255, 255, 255, 0.058) 100%);
+  backdrop-filter: blur(46px) brightness(1.45) saturate(115%);
+  -webkit-backdrop-filter: blur(46px) brightness(1.45) saturate(115%);
   display: flex; flex-direction: column; gap: 6px;
   opacity: 0; transform: translateY(14px); --glint-t: 15s;
 }
@@ -497,8 +498,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    crops its subject's own headline, which is fine for a portfolio shot and
    not fine when the headline is the sales argument. */
 .dr-figure {
-  position: absolute; left: 62%; top: 56%; translate: -50% -50%;
-  width: min(40vw, 470px); aspect-ratio: 1; z-index: 0; pointer-events: none;
+  position: absolute; left: 49%; top: 55%; translate: -50% -50%;
+  width: min(40vw, 468px); aspect-ratio: 1; z-index: 0; pointer-events: none;
 }
 .dr-figure span {
   position: absolute; inset: 0; display: block;
@@ -538,7 +539,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-cards { order: 3; }
   .dr-line:nth-of-type(2) > span,
   .dr-line:nth-of-type(3) > span { padding-left: 0; }
-  .dr-figure { width: 78vw; top: 40%; opacity: .32; }
+  /* stacked, the cards run full width, so the mark rides UP into the
+     statement's half rather than sitting behind a pane */
+  .dr-figure { width: 74vw; top: 27%; opacity: .24; }
   /* the stagger is a desktop luxury: at 390px an indented card just looks
      broken, so the cascade squares up and the stack stays full-bleed */
   .dr-cards { margin-top: var(--fib-5); }
