@@ -45,6 +45,7 @@
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
   --works-col: clamp(310px, 29vw, 418px);
+  --floor: clamp(20px, 5.5svh, 58px);
   --hero-lh: 1.06;
 
   /* ── exactly two curves. */
@@ -212,6 +213,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   position: relative; z-index: 4;
   min-height: 100svh; display: flex; flex-direction: column;
 }
+/* On desktop the stage is a DEFINITE height, not just a minimum. Without it
+   the grid's 1fr row has nothing to resolve against, so the long roster grew
+   the row, pushed the copy down and ran the page 69px past the fold. Mobile
+   keeps min-height, because there the page is meant to scroll. */
+@media (min-width: 901px) { .dr-stage { height: 100svh; } }
 .wrap { max-width: 1400px; margin-inline: auto; width: 100%;
         padding-inline: var(--fib-3); }
 @media (min-width: 768px) { .wrap { padding-inline: var(--fib-5); } }
@@ -370,7 +376,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 /* main: flex-1 + justify-end + items-end does ALL the corner composition.
    Zero absolute positioning. */
-.dr-main { flex: 1; display: flex; flex-direction: column;
+.dr-main { flex: 1; min-height: 0; display: flex; flex-direction: column;
            padding-block: clamp(13px, 2.4svh, 21px) clamp(16px, 3.8svh, 34px); }
 
 /* THE NESTED GRID — not a split. The statement keeps its full width, and
@@ -382,26 +388,33 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--works-col);
+  /* the row is exactly the hero's height. Without this, a stretched column
+     still contributes its CONTENT height to an auto row, so the long roster
+     grew the row, pushed the copy down and overflowed the page by 69px. */
+  grid-template-rows: minmax(0, 1fr);
   column-gap: var(--fib-5);
   align-items: center;
-  flex: 1;
+  flex: 1; min-height: 0;
 }
 .dr-hero > * { position: relative; z-index: 1; }
 .dr-left  { grid-column: 1; grid-row: 1; display: flex; flex-direction: column;
             justify-content: flex-end; align-self: stretch;
             /* lifted off the floor rather than sitting on it */
-            padding-bottom: clamp(20px, 5.5svh, 58px); }
+            padding-bottom: var(--floor); }
 /* the stack spans BOTH rows: as its own row it added the foot's height on
    top of itself and pushed the action off the fold */
 /* top-aligned like the reference: it puts the first case in the strongest
    corner of the frame instead of floating it mid-column. Capped and faded at
    the bottom so a long roster reads as continuing, not as clipped. The side
    padding is what lets the focal card's 12px shift live INSIDE the clip. */
-.dr-works { grid-column: 2; grid-row: 1; align-self: start;
+.dr-works { grid-column: 2; grid-row: 1; align-self: stretch; min-height: 0;
             /* dropped off the nav so the rail and the roster read as two
                separate objects, not one stack */
             margin-top: clamp(8px, 1.6svh, 16px);
-            max-height: 73svh; display: flex; flex-direction: column; gap: 8px; }
+            /* the SAME floor the copy stands on, so the action's bottom edge
+               lands on the last line of the paragraph */
+            padding-bottom: var(--floor);
+            display: flex; flex-direction: column; gap: 8px; }
 /* the roster takes whatever is left after the action has its space, then
    clips and fades. The side padding is what lets the focal card's 12px shift
    live INSIDE the clip instead of being cut off by it. */
@@ -554,7 +567,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 @media (max-width: 900px) {
-  .dr-hero { grid-template-columns: minmax(0, 1fr); }
+  /* the desktop row is pinned to the viewport so the roster can clip. Stacked,
+     the page is meant to SCROLL instead, so the row goes back to auto and the
+     roster shows every card rather than fading them away. */
+  .dr-hero { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; }
+  .dr-works { align-self: auto; padding-bottom: 0; }
+  .dr-works-roll { overflow: visible; padding-left: 0; margin-left: 0;
+    -webkit-mask-image: none; mask-image: none; }
   .dr-left, .dr-works { grid-column: 1; grid-row: auto; }
   .dr-left { order: 1; }
   .dr-works { order: 2; }
