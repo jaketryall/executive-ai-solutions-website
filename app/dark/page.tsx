@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import WorksList from "@/components/dark/works-list";
 import ServicesSection from "@/components/dark/services-section";
+import { PersonIcon } from "@/components/ui/person-icon";
+import { QUOTES } from "@/lib/quotes";
 import { Archivo, Instrument_Sans } from "next/font/google";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
@@ -184,6 +186,20 @@ export default function DarkRoom() {
                 We build your site and wire up the system behind it, so every
                 call, form and text gets answered in seconds instead of days.
               </p>
+
+              {/* The witness. Role-and-sector attribution with a glyph avatar,
+                  not a name and a face: lib/quotes.ts is explicitly
+                  placeholder, so putting a photo and a full name on it would
+                  invent a person. The slot is shaped for the real thing. */}
+              <figure className="dr-vouch">
+                <span className="dr-vouch-av" aria-hidden>
+                  <PersonIcon />
+                </span>
+                <span className="dr-vouch-body">
+                  <blockquote>{QUOTES[2].text}</blockquote>
+                  <figcaption>{QUOTES[2].name}</figcaption>
+                </span>
+              </figure>
             </div>
 
             <WorksList />
