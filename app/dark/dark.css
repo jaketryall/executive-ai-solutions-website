@@ -111,13 +111,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
        room. At the edge it does both — open air to glow in, and a spill
        across the cards it touches. */
     radial-gradient(27% 32% at 20% 18%, rgba(255,255,255,.205), transparent 66%),
-    radial-gradient(24% 40% at 60% 29%, rgba(255,255,255,.125), transparent 68%),
+    radial-gradient(24% 40% at 60% 29%, rgba(255,255,255,.092), transparent 68%),
     radial-gradient(26% 24% at 52% 88%, var(--fill), transparent 74%);
   animation: dr-drift 26s ease-in-out infinite alternate;
 }
 .dr-key::after {
   content: ""; position: absolute; inset: 12%;
-  background: radial-gradient(28% 32% at 62% 22%, rgba(255,255,255,.075), transparent 70%);
+  background: radial-gradient(28% 32% at 62% 22%, rgba(255,255,255,.052), transparent 70%);
   animation: dr-drift-b 37s ease-in-out infinite alternate;
 }
 @keyframes dr-drift-b {
