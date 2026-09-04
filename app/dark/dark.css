@@ -582,9 +582,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    of the screen, exactly like the material it is lighting. */
 .dr-figure::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
+  /* A BAND, not a wash. The first version peaked at 8.6% across a 44-point
+     ramp, which measured as 0.6% of the mark's pixels changing by more than
+     3% — technically animating, perceptually invisible. Brighter, and tight
+     enough to have a leading and a trailing edge. */
   background-image: linear-gradient(112deg,
-    transparent 28%, rgba(255,255,255,.085) 44%,
-    rgba(255,255,255,.085) 56%, transparent 72%);
+    transparent 33%, rgba(255,255,255,.055) 41%,
+    rgba(255,255,255,.19) 47%, rgba(255,255,255,.19) 53%,
+    rgba(255,255,255,.055) 59%, transparent 67%);
   background-size: 280% 280%;
   -webkit-mask-image: url("/brand/eas-mark.svg"),
     linear-gradient(101deg, #000 0%, rgba(0,0,0,.42) 44%, transparent 76%);
@@ -598,7 +603,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   mask-repeat: no-repeat, no-repeat;
   mask-position: center, center;
   mask-composite: intersect;
-  animation: dr-wall-wave 29s linear infinite;
+  animation: dr-wall-wave 19s linear infinite;
 }
 @keyframes dr-wall-wave { to { background-position: 100% 100%; } }
 
