@@ -94,8 +94,8 @@
    sculptural object: the brand IS the object. */
 .dr-mark {
   position: fixed; z-index: 0; pointer-events: none;
-  right: -18%; top: 50%; translate: 0 -50%;
-  width: min(115vh, 1180px); aspect-ratio: 1;
+  right: -24%; top: 50%; translate: 0 -50%;
+  width: min(104vh, 1060px); aspect-ratio: 1;
 }
 .dr-mark span {
   position: absolute; inset: 0; display: block;
@@ -105,8 +105,8 @@
   -webkit-mask-position: center; mask-position: center;
   /* engraved: the recess is barely above the ground, and a 1px light lip
      sits BELOW it because the lower wall of a cut is what catches light */
-  background: #0a0a0b;
-  filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 0.055));
+  background: #08080a;
+  filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 0.038));
 }
 /* the same travelling light as everywhere else, riding the cut edge —
    masked by the STROKED path so only the contour lights */
@@ -133,8 +133,8 @@
 
 @media (max-width: 900px) {
   /* on a phone it sits behind the stack, larger and dimmer still */
-  .dr-mark { right: -34%; width: 150vw; }
-  .dr-mark i { opacity: .34; }
+  .dr-mark { right: -46%; width: 168vw; opacity: .45; }
+  .dr-mark i { opacity: .28; }
 }
 
 /* 20-point ramp = a spotlight. A soft one reads as a dirty lens. */
@@ -174,7 +174,7 @@
   font-variation-settings: "wdth" 125, "wght" 850;
   font-size: clamp(2rem, 4.05vw, 3.5rem);
   letter-spacing: -0.03em; line-height: 1.06;
-  text-transform: uppercase; color: #b4b4b9;
+  text-transform: uppercase; color: #d6d6da;
   transform: skewX(-9deg); transform-origin: left bottom;
   margin: 0;
 }
@@ -214,7 +214,7 @@
 /* the specular sweep — used on exactly TWO headings site-wide */
 @media (prefers-reduced-motion: no-preference) {
   .t-hero .sweep {
-    background: linear-gradient(90deg, transparent 0%, #fff 20%, transparent 40%);
+    background: linear-gradient(90deg, #d6d6da 0%, #ffffff 18%, #d6d6da 36%);
     background-size: 300% 100%;
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent; color: transparent;
@@ -224,7 +224,7 @@
 @keyframes dr-sweep { to { background-position: -300% 0; } }
 /* motion off: a static dim headline loses the sweep's compensation */
 @media (prefers-reduced-motion: reduce) {
-  .t-hero { color: #b0b0b4; }
+  .t-hero { color: #d6d6da; }
 }
 
 /* ══ §01 COLD OPEN ═══════════════════════════════════════════════ */
@@ -260,7 +260,7 @@
    Zero absolute positioning. */
 .dr-main { flex: 1; display: flex; flex-direction: column;
            justify-content: center; padding-block: var(--fib-4) var(--fib-5); }
-.dr-row { display: flex; justify-content: space-between; align-items: flex-end;
+.dr-row { display: flex; justify-content: space-between; align-items: center;
           gap: var(--fib-5); }
 /* the column gets the room the statement needs; body copy keeps its own
    62ch measure so the prose never runs long */
@@ -319,7 +319,7 @@
 .dr-object { flex-shrink: 0; opacity: 0; }
 .dr-lit .dr-object { animation: dr-fadein 900ms var(--ease-structure) forwards; }
 .dr-device {
-  position: relative; width: min(26vw, 280px); aspect-ratio: 9 / 19.5;
+  position: relative; width: min(22vw, 248px); aspect-ratio: 9 / 19.5;
   border-radius: 34px; padding: 6px;
   background: linear-gradient(160deg, #303235 0%, #0e0f10 55%, #1c1d1f 100%);
   /* the edge, lit — the same stroke as everywhere else */
@@ -327,7 +327,7 @@
 }
 .dr-device img { width: 100%; height: 100%; object-fit: cover;
                  object-position: top; border-radius: 28px; display: block;
-                 opacity: .90; }
+                 opacity: .72; }
 /* directional scrim — every screenshot the site shows gets this. It reaches
    FULL black at 75%, not 100%, so anything sitting over it is on true #000
    and stays AA-safe regardless of what the screenshot contains. */
@@ -335,10 +335,10 @@
   content: ""; position: absolute; inset: 6px; border-radius: 28px;
   pointer-events: none; z-index: 2;
   background:
-    linear-gradient(to bottom, rgba(0,0,0,.55) 0%, transparent 22%,
-                    transparent 62%, rgba(0,0,0,.85) 100%),
-    linear-gradient(to right, transparent 0%, transparent 30%,
-                    rgba(0,0,0,.30) 62%, rgba(0,0,0,.55) 100%);
+    linear-gradient(to bottom, rgba(0,0,0,.60) 0%, transparent 24%,
+                    transparent 50%, rgba(0,0,0,.72) 78%, rgba(0,0,0,.94) 100%),
+    linear-gradient(to right, transparent 0%, transparent 26%,
+                    rgba(0,0,0,.38) 60%, rgba(0,0,0,.62) 100%);
 }
 /* two nested WIDE low-alpha shadows, never one tight bright one */
 .dr-glow { position: absolute; inset: 8%; border-radius: 40px; z-index: -1;
@@ -346,15 +346,17 @@
 
 @media (max-width: 900px) {
   .dr-row { flex-direction: column; align-items: stretch; gap: var(--fib-5); }
-  .dr-object { order: -1; align-self: center; }
-  .dr-device { width: min(62vw, 260px); }
+  .dr-object { align-self: center; }
+  .dr-device { width: min(52vw, 200px); }
   .dr-main { padding-bottom: var(--fib-4); }
   .dr-vignette { display: none; }          /* dropped below 820px */
   /* sheared caps at tight tracking clot at 390px: relax the shear to 6°,
      let the statement wrap, and scale UP (a phone is narrow, not small) */
   .t-hero { transform: skewX(-6deg); letter-spacing: -0.015em;
-            font-size: clamp(2rem, 8vw, 2.9rem); }
-  .t-hero .dr-line > span { white-space: normal; }
+            font-size: clamp(1.75rem, 7.2vw, 2.6rem); }
+  /* left to itself the first phrase drops 'BOOKS' alone on a line;
+     balance splits it evenly instead. Safari <17.5 just wraps normally. */
+  .t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
 }
 
 @media (prefers-reduced-motion: reduce) {

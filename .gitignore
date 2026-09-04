@@ -52,3 +52,5 @@ public/builder/raw-*.png
 
 # local AI context — personal notes + strategy. NEVER commit: this repo is public.
 .ai-context/
+.screens/
+.claude/

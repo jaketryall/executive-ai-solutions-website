@@ -57,7 +57,7 @@ export default function DarkRoom() {
               <b>Executive AI Solutions</b>
               <span className="t-meta">Mesa, Arizona</span>
             </div>
-            <a href="#book" className="t-label" style={{ color: "var(--ink)" }}>
+            <a href="/contact" className="t-label" style={{ color: "var(--ink)" }}>
               Book the call
             </a>
           </div>
@@ -89,7 +89,7 @@ export default function DarkRoom() {
               </p>
 
               <div className="dr-actions">
-                <a href="#book" id="book" className="dr-pill t-cta">
+                <a href="/contact" className="dr-pill t-cta">
                   Book the call
                 </a>
 
