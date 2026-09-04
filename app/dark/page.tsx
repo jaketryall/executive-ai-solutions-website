@@ -78,6 +78,28 @@ const SOCIALS: { name: string; href: string; icon: React.ReactNode }[] = [
    Job: state the offer, the geography and the promise in three seconds;
    prove craft with one lit object; hand off two doors at different
    commitment levels. ~78% untouched black, six text objects. */
+
+/* Per-character roll. Each letter is its own cell with a duplicate one line
+   below and a delay keyed to its index, so the swap cascades across the word
+   instead of the whole label flipping at once. The link keeps a real label
+   for screen readers; the split is decoration. */
+function Roll({ label }: { label: string }) {
+  return (
+    <span className="dr-roll" aria-hidden>
+      {label.split("").map((ch, i) => (
+        <span
+          key={i}
+          className="dr-char"
+          data-char={ch}
+          style={{ "--i": i } as React.CSSProperties}
+        >
+          {ch}
+        </span>
+      ))}
+    </span>
+  );
+}
+
 export default function DarkRoom() {
   const [lit, setLit] = useState(false);
 
@@ -157,14 +179,14 @@ export default function DarkRoom() {
 
               <div className="dr-rail-tail">
                 <nav className="dr-links" aria-label="Main">
-                  <Link href="/work">
-                    <span data-label="Work">Work</span>
+                  <Link href="/work" aria-label="Work">
+                    <Roll label="Work" />
                   </Link>
-                  <Link href="/services/websites">
-                    <span data-label="Services">Services</span>
+                  <Link href="/services/websites" aria-label="Services">
+                    <Roll label="Services" />
                   </Link>
-                  <Link href="/pricing">
-                    <span data-label="Pricing">Pricing</span>
+                  <Link href="/pricing" aria-label="Pricing">
+                    <Roll label="Pricing" />
                   </Link>
                 </nav>
 

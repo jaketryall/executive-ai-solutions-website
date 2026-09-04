@@ -145,9 +145,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    way to get cinematic scale out of a sentence this long. */
 .t-hero {
   font-family: var(--font-archivo), "Arial Black", "Helvetica Neue", sans-serif;
-  font-variation-settings: "wdth" 125, "wght" 850;
+  font-variation-settings: "wdth" 102, "wght" 720;
   font-size: var(--hero-fs);
-  letter-spacing: -0.03em; line-height: var(--hero-lh);
+  letter-spacing: -0.022em; line-height: var(--hero-lh);
   text-transform: uppercase; color: #d6d6da;
   margin: 0;
 }
@@ -241,6 +241,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   animation: dr-glint var(--glint-t) linear var(--glint-delay) infinite;
 }
 @keyframes dr-glint { to { background-position: -260% 0; } }
+/* the highlight travels the contour instead of sitting on one shoulder */
+@keyframes dr-edgelight { to { background-position: 100% 100%; } }
 
 /* surfaces. Content sits ON something; nothing floats bare on the canvas. */
 .dr-panel {
@@ -310,21 +312,22 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    in this room a hover is a change of light, not a change of colour. */
 .dr-links { display: flex; align-items: center; gap: var(--fib-4); }
 .dr-links a {
-  position: relative; overflow: hidden; display: inline-flex; line-height: 1.35;
+  display: inline-block; overflow: hidden;
+  height: 1.15em; line-height: 1.15;
   text-decoration: none; color: var(--ink-3);
-  font-family: var(--font-archivo), sans-serif; font-variation-settings: "wght" 700;
-  font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+  font-family: var(--font-instrument), sans-serif; font-weight: 400;
+  font-size: 15px; letter-spacing: -0.008em; text-transform: none;
+  transition: color var(--t-micro) var(--ease-ui);
 }
-.dr-links a > span {
-  display: block; position: relative;
-  transition: transform 460ms var(--ease-ui);
-}
-.dr-links a > span::after {
-  content: attr(data-label); position: absolute; left: 0; top: 100%;
-  color: var(--ink);
-}
-.dr-links a:hover > span,
-.dr-links a:focus-visible > span { transform: translateY(-100%); }
+.dr-links a:hover, .dr-links a:focus-visible { color: var(--ink); }
+.dr-roll { display: inline-block; }
+/* the cascade lives in the per-letter delay */
+.dr-char { position: relative; display: inline-block; white-space: pre;
+  transition: transform .55s var(--ease-ui);
+  transition-delay: calc(var(--i) * .025s); }
+.dr-char::after { content: attr(data-char); position: absolute; left: 0; top: 100%; }
+.dr-links a:hover .dr-char,
+.dr-links a:focus-visible .dr-char { transform: translateY(-100%); }
 .dr-links a:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 5px; border-radius: 3px; }
 
 /* the nav CTA is a LIT EDGE, not a second white fill — the hero pill
@@ -388,7 +391,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-lit .dr-eyebrow { animation: dr-fadein 600ms var(--ease-structure) 250ms forwards; }
 
 /* h1 lines mask-rise, 800ms outQuart, 140ms stagger */
-.dr-line { overflow: hidden; transform: skewX(-9deg);
+.dr-line { overflow: hidden; transform: skewX(-4deg);
            transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
 .dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 350ms forwards; }
@@ -420,7 +423,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-works { display: flex; flex-direction: column; gap: 8px; }
 
 .dr-wk {
-  display: flex; align-items: center; gap: 13px;
+  display: flex; align-items: stretch; gap: 13px;
   padding: 9px 13px 9px 9px;
   border-radius: 13px; text-decoration: none;
   background: rgba(255, 255, 255, 0.055);
@@ -462,7 +465,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 .dr-wk-body { flex: 1 1 auto; min-width: 0;
-              display: flex; flex-direction: column; gap: 4px; }
+              display: flex; flex-direction: column;
+              justify-content: space-between; gap: 4px; }
 .dr-wk-top { display: flex; align-items: center; justify-content: space-between;
              gap: 10px; }
 .dr-wk-top b { color: var(--ink); font-family: var(--font-instrument), sans-serif;
@@ -499,9 +503,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   /* only the CONTOUR is painted. The glyph's body is not dark — it is not
      drawn at all, so the mark is invisible except where light finds an edge */
   background: linear-gradient(139deg,
-    rgba(255,255,255,.95) 0%, rgba(255,255,255,.52) 10%,
-    rgba(255,255,255,.20) 25%, rgba(255,255,255,.07) 44%,
-    rgba(255,255,255,.02) 64%, transparent 80%);
+    rgba(255,255,255,.030) 0%,  rgba(255,255,255,.055) 22%,
+    rgba(255,255,255,.90) 36%,  rgba(255,255,255,.34) 45%,
+    rgba(255,255,255,.075) 57%, rgba(255,255,255,.030) 78%,
+    rgba(255,255,255,.045) 100%);
+  background-size: 300% 300%;
+  animation: dr-edgelight 15s linear infinite;
 }
 
 /* ══ THE NOTE — the social rail sits where the reference puts its
@@ -539,7 +546,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-line:nth-of-type(3) > span { padding-left: 0; }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
-  .dr-figure { width: 74vw; top: 27%; opacity: .24; }
+  .dr-figure { width: 74vw; top: 27%; opacity: .15; }
   /* the stagger is a desktop luxury: at 390px an indented card just looks
      broken, so the cascade squares up and the stack stays full-bleed */
   .dr-works { margin-top: var(--fib-5); }
@@ -549,13 +556,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      real overlay menu rather than a squeezed row (deferred, not shipped) */
   .dr-rail { height: 56px; }
   .dr-links { display: none; }
-  .dr-rail-in { padding: 0 6px 0 var(--fib-2); gap: var(--fib-1); }
+  .dr-rail-in { padding: 0; gap: var(--fib-1); }
+  .dr-rail[data-stuck] .dr-rail-in { padding: 0 6px 0 var(--fib-2); }
   .dr-navcta { font-size: 12px; }
   .dr-rail[data-stuck] .dr-navcta { padding: 10px 15px; }
   .dr-lockup b { font-size: 11px; letter-spacing: .1em; }
   /* sheared caps at tight tracking clot at 390px: relax the shear to 6°,
      let the statement wrap, and scale UP (a phone is narrow, not small) */
-  .dr-line { transform: skewX(-6deg); }
+  .dr-line { transform: skewX(-3deg); }
   .t-hero { letter-spacing: -0.015em;
             font-size: clamp(1.75rem, 7.2vw, 2.6rem); }
   /* left to itself the first phrase drops 'BOOKS' alone on a line;
@@ -579,7 +587,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dr-key, .dr-key::after { animation: none; }
+  .dr-key, .dr-key::after, .dr-figure span { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
   .dr-lit .dr-nav-in { transform: scaleX(1); animation: none; }
   .dr-lit .dr-nav-in > *, .dr-lit .dr-eyebrow, .dr-lit .dr-sub,
