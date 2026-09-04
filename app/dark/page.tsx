@@ -5,6 +5,7 @@ import Link from "next/link";
 import WorksList from "@/components/dark/works-list";
 import ServicesSection from "@/components/dark/services-section";
 import ProofSection from "@/components/dark/proof-section";
+import RunsSection from "@/components/dark/runs-section";
 import { Archivo, Instrument_Sans } from "next/font/google";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
@@ -220,6 +221,7 @@ export default function DarkRoom() {
 
       <ServicesSection />
       <ProofSection />
+      <RunsSection />
     </div>
   );
 }

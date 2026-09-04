@@ -81,8 +81,11 @@ export default function ProofSection() {
     };
   }, []);
 
-  if (!p?.results) return null;
+  /* backdrop is optional on the Project type, and the section is nothing
+     without the image — so it gates on both rather than asserting */
+  if (!p?.results || !p.backdrop) return null;
   const r = p.results;
+  const bg = p.backdrop;
 
   return (
     <section className="dr-pf" ref={ref} aria-labelledby="dr-pf-h">
@@ -99,10 +102,10 @@ export default function ProofSection() {
 
         <figure className="dr-pf-media">
           <Image
-            src={p.backdrop.src}
-            alt={p.backdrop.alt}
-            width={p.backdrop.width}
-            height={p.backdrop.height}
+            src={bg.src}
+            alt={bg.alt}
+            width={bg.width}
+            height={bg.height}
             sizes="(max-width: 900px) 100vw, 1290px"
           />
         </figure>
