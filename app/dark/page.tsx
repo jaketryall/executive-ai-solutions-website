@@ -177,10 +177,7 @@ export default function DarkRoom() {
                   <span className="sweep">A website that books</span>
                 </span>
                 <span className="dr-line">
-                  <span className="sweep">while you&rsquo;re</span>
-                </span>
-                <span className="dr-line">
-                  <span className="sweep">on the job.</span>
+                  <span className="sweep">while you&rsquo;re on the job.</span>
                 </span>
               </h1>
 
