@@ -17,7 +17,7 @@ read these eight lines.
 
 | # | law | proof |
 |---|---|---|
-| 1 | Scrub every effect to scroll position. Never fire tweens at thresholds. | §1 |
+| 1 | Derive the TARGET from scroll; then DAMP toward it. Never fire tweens. | §1, §9 |
 | 2 | Declare effects with attributes against ONE engine. Don't hand-write each. | §2 |
 | 3 | Put three rates in a viewport, not one — and CONVERGE them, don't cross. | §3 |
 | 4 | Keep hover almost empty. Spend the energy on scroll. | §4 |
@@ -71,6 +71,27 @@ you. That difference is most of what reads as "fluid".
 
 **Ours already obeys this** — the §02 word ramp, the §03 develop, the hero
 dim, the §02 exit and §04's drift are all scrubbed off one progress value.
+
+**REFINED 2026-09-05, and this corrects my first reading of it.** It is
+not quite "the value IS f(scroll)". Measured on the horizontal track: a
+scroll jump moves `lenis.animatedScroll` instantly, but the transform
+takes **700–900ms** to reach its new value, easing the whole way, with
+`transitionDuration: 0s` — so it is not a CSS transition. There is a
+per-frame lerp layered on top:
+
+```
+target  = f(scrollY)          // derived, path-independent
+current += (target - current) * k     // k ≈ 0.12 per frame
+```
+
+So there are TWO smoothing layers, not one: Lenis smooths the *input*, and
+each effect damps toward its scroll-derived *target*. That second layer is
+a large part of what reads as fluid, and we do not have it.
+
+Not everything gets it, though — the background colour resolved to its
+correct value within a SINGLE frame after an identical jump test. Colour
+snaps to `f(scroll)`; transforms damp toward it. Worth copying that split
+rather than damping everything.
 
 ---
 
@@ -256,3 +277,55 @@ nothing about that. **Imported, not derived.** The icomat word ramp stayed
   compositor-friendly to layout-triggering properties
 - The helmet WebGL layer (lowest priority — not replicable without a 3D
   pipeline, and Jake does not want a 3D object anyway)
+
+---
+
+## 9 · THE HORIZONTAL TRACK, AND TWO CURVES IN ONE SECTION
+
+**The pin is native CSS `position: sticky; top: 0`** — not a JS transform
+or a fixed-position hack. The sticky elements are inert; they never
+receive a transform. Only a descendant does.
+
+The moving element takes a JS-written `transform: translate3d(Npx,0,0)`.
+Settled values across the pin span, 6 samples:
+
+```
+frac        0.0    0.2    0.4    0.6    0.8    1.0
+translateX  -692  -1032  -1372  -1713  -2053  -2394
+```
+
+Deltas ≈ −340.4px per step — **perfectly linear, ratio exactly 1:1**. One
+vertical scroll pixel buys one horizontal pixel, over a domain exactly
+equal to the section's own height, starting one viewport-height before the
+pin visually engages:
+
+```
+translateX = -clamp(scrollY - (sectionTop - vh), 0, sectionHeight)
+```
+
+`overflow: visible` and `will-change: auto` on every element in the chain.
+No clipping, no compositing hints. The restraint is notable.
+
+### Two curves, deliberately, in the same section
+
+The on-track/off-track panels are NOT pinned — plain scroll-linked
+transforms. Two pairs, each mirrored, both converging to exactly 0 with no
+overshoot. But they do not share an easing:
+
+| | window | curve |
+|---|---|---|
+| text columns | ~830px | perfectly LINEAR, 0.06693 px/px |
+| images | 1384px = exactly 2× viewport | cubic ease-out, `x = start × (1−p)³` |
+
+The cubic fit is essentially exact at every sampled point (at p=0.5,
+predicted −27.78 vs measured −27.775).
+
+**This is the craft.** Same section, same trigger convention, two authored
+curves: text slides in linearly over a short window while imagery
+decelerates in over twice the distance. That mismatch is deliberate — it
+is law 3 (rate disagreement) applied *within* a single composition rather
+than between sections.
+
+Both confirmed scrubbed by a 10px nudge test: the track moved exactly
+−10px (matching 1:1), the image moved +2.45px (matching the local slope of
+its cubic).
