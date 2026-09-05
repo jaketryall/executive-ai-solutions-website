@@ -1206,11 +1206,26 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   transition: clip-path .1s linear;
 }
 .dr-svc-shot img {
+  /* THE TRAVEL *IS* THE SURPLUS — one number, stated once, used twice.
+     Decoded off landonorris.com: their image moves -138px because it is
+     138px taller than its box. Not a number anybody liked, a number
+     DERIVED from the spare. Get that right and an edge can never show,
+     at any size, for any image.
+
+     This used to read `height: 132%` with `translate: -24%`. Those agree
+     — but only by coincidence, because a percentage in `translate`
+     resolves against the IMAGE's box while the 32% surplus is measured
+     against the FRAME's. 24% of a 132%-tall image happens to be 31.7% of
+     the frame against a 32% surplus. Correct to within a third of a
+     percent, and silently wrong the moment somebody edits either number.
+     In px both sides refer to the same thing and the relationship holds
+     by construction. */
+  --over: clamp(22px, 2.6vw, 34px);
+
   display: block; width: 100%;
-  /* TALLER than its frame — that surplus is the parallax's travel. With
-     height:100% there is nothing to move and the drift does nothing. */
-  height: 132%; object-fit: cover; object-position: var(--pos, 50% 40%);
-  translate: 0 calc(var(--pp) * -24%);
+  height: calc(100% + var(--over));
+  object-fit: cover; object-position: var(--pos, 50% 40%);
+  translate: 0 calc(var(--pp) * -1 * var(--over));
   /* it also settles as it opens, so the picture is not simply uncovered */
   scale: calc(1.04 - .04 * var(--rp));
 }
