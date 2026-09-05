@@ -149,17 +149,15 @@ export default function ServicesSection() {
     lit();
 
     /* THE SAME LAW AS THE HERO SEAM, so the page has one grammar rather
-       than two unrelated tricks: the section leaving RECEDES — drifting
-       down at 0.4x and shrinking to 0.8 — and §03 arriving at full speed
-       reads as rising over it.
+       than two unrelated tricks: the section leaving goes DARK. It used to
+       recede as well, and that came off for the reason it came off the
+       hero — this is a card full of type, and type that shrinks while you
+       are still reading it reads as a zoom, not as distance.
 
-       Measured off .dr-svc, which is NOT the element being transformed. A
-       transformed element cannot be its own ruler: reading its moved rect
-       to decide how far to move it is a feedback loop.
-
-       Everything else this section measures — the word ramp, the lit rows,
-       the shot reveals — is clamped at 1 long before the exit begins, so
-       the two never contend for the same scroll range. */
+       Measured off .dr-svc, whose own box never moves. Everything else
+       this section measures — the word ramp, the lit rows, the shot
+       reveals — is clamped at 1 long before the exit begins, so the two
+       never contend for the same scroll range. */
     const inner = el.querySelector<HTMLElement>(".dr-svc-in");
     const exit = () => {
       if (!inner) return;
@@ -172,7 +170,6 @@ export default function ServicesSection() {
          final screenful: 0 when the section's bottom meets the viewport's,
          1 when that bottom reaches the top. */
       const ep = Math.max(0, Math.min(1, (innerHeight - (b.top + b.height)) / innerHeight));
-      inner.style.setProperty("--ey", `${ep * innerHeight * 0.4}px`);
       inner.style.setProperty("--ep", String(ep));
 
     };

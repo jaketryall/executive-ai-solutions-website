@@ -1248,9 +1248,17 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 
-/* §02 leaves the way §01 does. One law for both seams: the section going
-   away recedes, and the section arriving at full speed reads as rising
-   over it. Individual `translate`/`scale` again, never the shorthand. */
+/* §02 leaves the way §01 does — it goes DARK. One law for both seams.
+
+   CUBED, where the hero is squared. The hero's content sits at its top,
+   so by the time its fade bites there is nothing left on screen to read.
+   This card runs its last row and the testimonial right down to its
+   bottom edge, and those are still being read while the exit is under
+   way — the cube holds them near full strength far longer and then drops
+   away quickly at the very end.
+
+     progress   0    .25    .50    .75   1.00
+     opacity  1.00   .99    .89    .61    .08 */
 .dr-svc-in {
   /* the card IS .wrap's content box, so its edges land on the same column
      as the proof card and the hero's roster — 1400 less the wrap's own
@@ -1262,14 +1270,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      out, and without this they would scatter across the black page */
   overflow: hidden;
   padding-block: clamp(56px, 11svh, 130px) clamp(48px, 9svh, 108px);
-  transform-origin: 50% 30%;
-  translate: 0 var(--ey, 0px);
-  scale: calc(1 - .2 * var(--ep, 0));
-  will-change: transform;
+  opacity: calc(1 - .92 * var(--ep, 0) * var(--ep, 0) * var(--ep, 0));
+  will-change: opacity;
 }
 /* .wrap inside the card would inset a second time against a box that is
    already the column — the card holds the measure now */
 .dr-svc-in > .wrap { max-width: none; padding-inline: clamp(20px, 4vw, 64px); }
 @media (prefers-reduced-motion: reduce) {
-  .dr-svc-in { translate: none; scale: 1; }
+  .dr-svc-in { opacity: 1; }
 }
