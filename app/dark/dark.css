@@ -1238,3 +1238,136 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 @media (prefers-reduced-motion: reduce) {
   .dr-svc-in { opacity: 1; }
 }
+
+
+/* ══ §05 · THE CLOSE ═════════════════════════════════════════════
+   The page's one action, and the thing that earns it. Centred and narrow
+   — every other section on this page is wide, so the close narrowing is
+   what says the browsing is over. */
+.dr-close { position: relative; z-index: 4;
+            padding-block: clamp(80px, 14svh, 170px) clamp(88px, 15svh, 190px); }
+.dr-close-in { max-width: 760px; display: flex; flex-direction: column;
+               align-items: center; text-align: center; }
+.dr-close-kicker { color: var(--ink-4); margin-bottom: var(--fib-3); }
+.dr-close-h {
+  margin: 0; color: var(--ink);
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 640;
+  font-size: clamp(1.7rem, 1rem + 2.6vw, 3rem);
+  line-height: 1.06; letter-spacing: -0.032em;
+  max-width: 15em; text-wrap: balance;
+}
+
+/* the ask comes FIRST and never depends on the tool — anyone who just
+   wants to book is one click away without running anything */
+.dr-close-act { margin-top: clamp(26px, 4.5svh, 46px);
+  display: flex; flex-direction: column; align-items: center; gap: var(--fib-3); }
+.dr-close-cta {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 54px; padding: 0 var(--fib-5); border-radius: 999px;
+  background: var(--ink); color: #000; text-decoration: none;
+  transition: transform var(--t-micro) var(--ease-ui),
+              opacity var(--t-micro) var(--ease-ui);
+}
+.dr-close-cta:hover { transform: translateY(-1px); opacity: .9; }
+.dr-close-cta:focus-visible { outline: 2px solid var(--ink);
+  outline-offset: 4px; }
+.dr-close-note { color: var(--ink-4);
+  font-family: var(--font-instrument), sans-serif; font-size: 14px; }
+
+/* ── the check ───────────────────────────────────────────────── */
+.dr-check { width: 100%; margin-top: clamp(38px, 7svh, 74px);
+  padding-top: clamp(30px, 5svh, 54px);
+  border-top: 1px solid var(--edge);
+  display: flex; flex-direction: column; align-items: center; gap: var(--fib-3); }
+.dr-check-label { color: var(--ink-3);
+  font-family: var(--font-instrument), sans-serif; font-size: 15px; }
+.dr-check-row { display: flex; gap: var(--fib-2); width: min(100%, 520px);
+                flex-wrap: wrap; justify-content: center; }
+.dr-check-input {
+  flex: 1 1 240px; min-width: 0; min-height: 50px;
+  padding: 0 var(--fib-4); border-radius: 999px;
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid var(--edge); color: var(--ink);
+  font-family: var(--font-instrument), sans-serif; font-size: 15px;
+  transition: border-color var(--t-micro) var(--ease-ui),
+              background var(--t-micro) var(--ease-ui);
+}
+.dr-check-input::placeholder { color: var(--ink-4); }
+.dr-check-input:hover { background: rgba(255, 255, 255, .07); }
+.dr-check-input:focus { outline: none; border-color: var(--edge-strong);
+                        background: rgba(255, 255, 255, .08); }
+.dr-check-go {
+  flex: 0 0 auto; min-height: 50px; padding: 0 var(--fib-4);
+  border-radius: 999px; border: 1px solid var(--edge-strong);
+  background: transparent; color: var(--ink); cursor: pointer;
+  font-family: var(--font-instrument), sans-serif; font-size: 15px;
+  transition: background var(--t-micro) var(--ease-ui),
+              opacity var(--t-micro) var(--ease-ui);
+}
+.dr-check-go:hover:not(:disabled) { background: rgba(255, 255, 255, .08); }
+.dr-check-go:disabled { opacity: .45; cursor: default; }
+.dr-check-go:focus-visible { outline: 2px solid var(--edge-strong);
+  outline-offset: 3px; }
+.dr-check-err { margin: 0; color: var(--ink-2); max-width: 46ch;
+  font-family: var(--font-instrument), sans-serif; font-size: 14px;
+  line-height: 1.5; }
+
+/* ── the report ──────────────────────────────────────────────── */
+.dr-report { width: 100%; }
+.dr-report-wait { margin: var(--fib-4) 0 0; color: var(--ink-4);
+  font-family: var(--font-instrument), sans-serif; font-size: 14px; }
+.dr-report-head { margin: clamp(30px, 5svh, 54px) 0 0;
+  display: flex; flex-direction: column; gap: 6px; }
+.dr-report-host { color: var(--ink);
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 620;
+  font-size: clamp(1.15rem, .9rem + .9vw, 1.5rem); letter-spacing: -0.022em; }
+.dr-report-sum { color: var(--ink-2);
+  font-family: var(--font-instrument), sans-serif; font-size: 15px;
+  line-height: 1.5; }
+
+.dr-report-list { list-style: none; margin: var(--fib-4) 0 0; padding: 0;
+  display: flex; flex-direction: column; gap: 2px; text-align: left; }
+
+/* THE REPORT DEVELOPS, one finding at a time. Same law as the rest of the
+   room, and here it is also honest pacing: a check that returned twelve
+   verdicts in a single frame would look fabricated whether or not it was. */
+.dr-finding {
+  display: grid; grid-template-columns: 22px minmax(0, 1fr);
+  gap: var(--fib-2); align-items: start;
+  padding: var(--fib-3) 0;
+  border-bottom: 1px solid var(--edge);
+  animation: dr-land .5s var(--ease-structure) calc(var(--i) * 85ms) both;
+}
+@keyframes dr-land { from { opacity: 0; transform: translateY(8px); } }
+.dr-finding-mark { width: 9px; height: 9px; margin-top: 6px; border-radius: 2px;
+                   justify-self: center; }
+/* the two verdicts differ in SHAPE as well as brightness — this room has
+   no colour to spend, so a fix is a filled mark and a pass is an outline */
+.dr-finding[data-status="fix"]  .dr-finding-mark { background: var(--ink); }
+.dr-finding[data-status="good"] .dr-finding-mark {
+  background: transparent; box-shadow: inset 0 0 0 1.5px var(--ink-4); }
+.dr-finding-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.dr-finding-body b { color: var(--ink); font-weight: 400;
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: 15.5px; letter-spacing: -0.012em; }
+.dr-finding[data-status="good"] .dr-finding-body b { color: var(--ink-2); }
+.dr-finding-body span { color: var(--ink-3);
+  font-family: var(--font-instrument), sans-serif;
+  font-size: 14.5px; line-height: 1.5; }
+
+.dr-report-foot { margin: clamp(24px, 4svh, 44px) 0 0; color: var(--ink-3);
+  font-family: var(--font-instrument), sans-serif; font-size: 15px; }
+.dr-report-link { color: var(--ink); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 8px; }
+.dr-report-link i { font-style: normal;
+  transition: transform var(--t-micro) var(--ease-ui); }
+.dr-report-link:hover i { transform: translateX(5px); }
+.dr-report-link:focus-visible { outline: 2px solid var(--edge-strong);
+  outline-offset: 4px; border-radius: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dr-finding { animation: none; }
+}
