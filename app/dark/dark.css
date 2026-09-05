@@ -907,147 +907,99 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 /* ══ §03 · THE PROOF ═════════════════════════════════════════════
-   A LEDGER, NOT A CARD. §02 is a card and §04 is four of them; a card
-   between them made three panels in a row. This section has no container
-   at all — each entry is a full-bleed band with the client's screen
-   running off the page edge and the numbers at display scale opposite it,
-   so the room shows through the whole way. */
-.dr-pf { position: relative; z-index: 4;
-         padding-block: clamp(72px, 12svh, 150px) clamp(80px, 14svh, 168px); }
-
-.dr-pf-head { margin-bottom: clamp(34px, 6svh, 72px); }
-.dr-pf-kicker { color: var(--ink-4); display: block; margin-bottom: var(--fib-3); }
-.dr-pf-lead {
-  margin: 0; color: var(--ink);
+   The shared highlights gallery, re-skinned. The behaviour is not
+   duplicated here — components/ui/highlights-gallery.tsx owns the caption
+   physics and the snap track, and this only changes what it looks like in
+   a black room. Everything below is scoped to .dr-hlg so the live site's
+   own gallery is untouched. */
+.dr-hlg {
+  position: relative; z-index: 4;
+  background: transparent;                /* the light site paints it white */
+  padding-block: clamp(72px, 12svh, 150px) clamp(64px, 11svh, 132px);
+}
+.dr-hlg .hlg-eyebrow { display: block; text-align: center; color: var(--ink-4);
+                       margin-bottom: var(--fib-3); }
+.dr-hlg .t-display-lg {
+  color: var(--ink);
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 620;
   font-size: clamp(1.6rem, 1rem + 2.2vw, 2.7rem);
   line-height: 1.08; letter-spacing: -0.028em;
-  /* the measure lives on the HEADING, in em. On the wrapper in `ch` it
-     resolved against the wrapper's own 16px and clamped a 925px line into
-     a 385px box — em scales with the type it is measuring. */
-  max-width: 14em; text-wrap: balance;
+  /* the measure belongs on the heading in `em`, so it scales with the
+     type it is measuring instead of against the wrapper's 16px */
+  max-width: 18em; margin-inline: auto; text-wrap: balance;
 }
 
-.dr-pf-list { list-style: none; margin: 0; padding: 0;
-              display: flex; flex-direction: column;
-              gap: clamp(56px, 10svh, 120px); }
-
-/* the band. The picture takes a hair over half and BLEEDS to whichever
-   page edge it is on; the copy keeps the page's column on the other side.
-   Sides alternate off the index, so entry two mirrors entry one with no
-   second rule to write. */
-.dr-pf-entry {
-  display: grid; align-items: center;
-  column-gap: clamp(28px, 4vw, 72px);
-  grid-template-columns:
-    minmax(0, 1fr)
-    minmax(0, calc(52% + var(--fib-5)));
-}
-.dr-pf-entry[data-side="right"] .dr-pf-media { grid-column: 2; }
-.dr-pf-entry[data-side="right"] .dr-pf-body  { grid-column: 1;
-  padding-left: max(var(--fib-5), calc((100vw - 1400px) / 2 + var(--fib-5))); }
-.dr-pf-entry[data-side="left"] { grid-template-columns:
-    minmax(0, calc(52% + var(--fib-5))) minmax(0, 1fr); }
-.dr-pf-entry[data-side="left"] .dr-pf-media { grid-column: 1; }
-.dr-pf-entry[data-side="left"] .dr-pf-body  { grid-column: 2;
-  padding-right: max(var(--fib-5), calc((100vw - 1400px) / 2 + var(--fib-5))); }
-
-/* THE PRINT COMES UP.
-   The proof arrives flat and underexposed and gains its light as it rises
-   — the one effect this room could not have borrowed, because developing
-   a print IS the room. Every value is a pure function of --p, which the
-   section recomputes from this figure's own box each frame. */
-.dr-pf-media {
-  --p: 0;
-  margin: 0; position: relative; overflow: hidden;
-  /* only the inboard corners round; the outboard pair runs off the page */
-  border-radius: clamp(10px, 1.2vw, 16px);
-  background: rgba(255, 255, 255, 0.03);
-  /* 2:1 against a 2.16 source crops 7% of the width. 16:10 cropped 26%,
-     which took a bite out of the client's own headline — the one thing in
-     the picture a visitor might actually read. */
-  aspect-ratio: 2 / 1;
-}
-.dr-pf-entry[data-side="right"] .dr-pf-media { border-radius: clamp(10px,1.2vw,16px) 0 0 clamp(10px,1.2vw,16px); }
-.dr-pf-entry[data-side="left"]  .dr-pf-media { border-radius: 0 clamp(10px,1.2vw,16px) clamp(10px,1.2vw,16px) 0; }
-.dr-pf-media img {
-  display: block; width: 100%; height: 100%; object-fit: cover;
-  /* top-left, where a site screenshot keeps its masthead and headline */
-  object-position: 0% 0%;
-  /* under-exposed and flat at 0, printed at 1 — and printed does NOT mean
-     100%: a photo at full brightness in a room this dark stops being a
-     print on the wall and becomes a hole in it. */
-  filter:
-    brightness(calc(0.18 + 0.74 * var(--p)))
-    contrast(calc(0.62 + 0.34 * var(--p)))
-    saturate(calc(0.15 + 0.73 * var(--p)));
-  scale: calc(1.055 - 0.055 * var(--p));
-}
-/* the print's own falloff, so its corners meet the room instead of ending
-   at a hard bright rectangle */
-.dr-pf-media::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  border-radius: inherit;
-  background: radial-gradient(120% 120% at 50% 45%,
-    transparent 42%, rgba(0, 0, 0, .34) 78%, rgba(0, 0, 0, .58) 100%);
-}
-
-.dr-pf-body { display: flex; flex-direction: column; align-items: flex-start;
-              gap: var(--fib-3); min-width: 0; }
-.dr-pf-meta { margin: 0; color: var(--ink-4);
-  font-family: var(--font-instrument), sans-serif; font-size: 14px; }
-.dr-pf-story { margin: 0; color: var(--ink);
+.dr-hlg .hlg-card { background: #101014; border-radius: clamp(14px, 1.6vw, 22px); }
+/* the caption sits over the client's own screenshot, so it gets the one
+   pure white on the page and the scrim underneath earns its keep */
+.dr-hlg .hlg-cap { color: #fff;
   font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wdth" 100, "wght" 620;
-  font-size: clamp(1.3rem, .9rem + 1.4vw, 2rem);
-  line-height: 1.1; letter-spacing: -0.026em; max-width: 18em; }
+  font-variation-settings: "wdth" 100, "wght" 620; }
+.dr-hlg .hlg-scrim { height: 46%;
+  background: linear-gradient(rgba(0,0,0,.72), rgba(0,0,0,.28) 62%, transparent); }
+/* and a second one at the foot, because the numbers live down there and a
+   screenshot is bright exactly where it feels like being bright */
+.dr-hlg .hlg-card--fill::after {
+  content: ""; position: absolute; inset: auto 0 0 0; z-index: 2; height: 68%;
+  /* deep enough that the CLIENT'S own body copy stops competing with our
+     numbers. A screenshot is busiest exactly where a caption wants to be,
+     and one of these covers is light-on-light — the scrim has to hold for
+     the brightest card in the set, not the average one. */
+  background: linear-gradient(transparent,
+    rgba(0,0,0,.40) 34%, rgba(0,0,0,.80) 62%, rgba(0,0,0,.94));
+  pointer-events: none;
+}
 
-/* the numbers take the loudest register on the page — louder than the
-   story above them, because they are the reason the section exists */
-.dr-pf-metrics { margin: var(--fib-2) 0 0; display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
-  gap: clamp(18px, 2.4vw, 40px); width: 100%; }
-.dr-pf-metrics dt {
-  color: var(--ink);
+.dr-hl-foot { position: absolute; z-index: 3;
+  left: clamp(20px, 3.4vw, 48px); right: clamp(20px, 3.4vw, 48px);
+  bottom: clamp(18px, 3svh, 36px);
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: var(--fib-2); }
+.dr-hl-who { margin: 0; color: rgba(255, 255, 255, .62);
+  font-family: var(--font-instrument), sans-serif; font-size: 13.5px; }
+
+/* the numbers take the loudest register in the card — they are the reason
+   the section exists */
+.dr-hl-stats { margin: 0; display: flex; flex-wrap: wrap;
+               gap: clamp(18px, 3vw, 52px); }
+.dr-hl-stats dt {
+  color: #fff;
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 700;
-  font-size: clamp(2rem, 1.1rem + 2.6vw, 3.1rem);
+  font-size: clamp(1.7rem, 1rem + 2.2vw, 2.9rem);
   line-height: 1; letter-spacing: -0.035em;
   font-variant-numeric: tabular-nums;
-  /* 1,000+ must never break after its first digit */
-  white-space: nowrap;
+  white-space: nowrap;                 /* 1,000+ never breaks after a digit */
 }
-.dr-pf-metrics dd { margin: var(--fib-3) 0 0; color: var(--ink-2);
+.dr-hl-stats dd { margin: 6px 0 0; color: rgba(255, 255, 255, .8);
   font-family: var(--font-instrument), sans-serif;
-  font-size: 15px; line-height: 1.4; max-width: 22ch; }
-
-.dr-pf-window { color: var(--ink-4); }
-.dr-pf-open { display: inline-flex; align-items: center; gap: 10px;
-  color: var(--ink-2); text-decoration: none;
-  font-family: var(--font-instrument), sans-serif; font-size: 15px;
-  transition: color var(--t-micro) var(--ease-ui); }
-.dr-pf-open i { font-style: normal;
+  font-size: 14px; line-height: 1.35; max-width: 20ch; }
+.dr-hl-kind { margin: 0; color: rgba(255, 255, 255, .86);
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 620;
+  font-size: clamp(1.05rem, .9rem + .6vw, 1.35rem); letter-spacing: -0.02em; }
+.dr-hl-when { color: rgba(255, 255, 255, .55);
+  font-family: var(--font-instrument), sans-serif;
+  font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+.dr-hl-open { display: inline-flex; align-items: center; gap: 9px;
+  margin-top: var(--fib-2); color: #fff; text-decoration: none;
+  font-family: var(--font-instrument), sans-serif; font-size: 14.5px;
+  transition: opacity var(--t-micro) var(--ease-ui); }
+.dr-hl-open i { font-style: normal;
   transition: transform var(--t-micro) var(--ease-ui); }
-.dr-pf-open:hover { color: var(--ink); }
-.dr-pf-open:hover i { transform: translateX(5px); }
-.dr-pf-open:focus-visible { outline: 2px solid var(--edge-strong);
-  outline-offset: 5px; border-radius: 6px; }
+.dr-hl-open:hover { opacity: .8; }
+.dr-hl-open:hover i { transform: translateX(5px); }
+.dr-hl-open:focus-visible { outline: 2px solid #fff; outline-offset: 5px;
+  border-radius: 6px; }
 
-@media (max-width: 900px) {
-  /* the bleed stops being an idea on a phone — one column, picture over
-     copy, and the copy back on the page's own gutter */
-  .dr-pf-entry,
-  .dr-pf-entry[data-side="left"] { grid-template-columns: minmax(0, 1fr);
-                                   row-gap: var(--fib-4); }
-  .dr-pf-entry .dr-pf-media,
-  .dr-pf-entry .dr-pf-body { grid-column: 1; }
-  .dr-pf-entry .dr-pf-body { padding-inline: var(--fib-3); }
-  .dr-pf-entry .dr-pf-media { border-radius: 0; aspect-ratio: 16 / 9; }
-}
+/* the dots invert for the dark ground */
+.dr-hlg .hlg-dot { background: rgba(255, 255, 255, .26); }
+.dr-hlg .hlg-dot.is-on { background: #fff; }
 
-@media (prefers-reduced-motion: reduce) {
-  .dr-pf-media img { filter: none; scale: 1; }
+@media (max-width: 700px) {
+  .dr-hl-stats { gap: var(--fib-3) clamp(16px, 6vw, 32px); }
+  .dr-hl-foot { gap: 7px; }
 }
 
 /* ══ §04 · HOW IT RUNS ═══════════════════════════════════════════

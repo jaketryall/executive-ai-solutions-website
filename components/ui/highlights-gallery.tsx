@@ -30,10 +30,17 @@ export function HighlightsGallery({
   heading,
   items,
   label,
+  eyebrow,
+  className,
 }: {
   heading: string;
   items: Highlight[];
   label: string;
+  /** optional kicker above the heading — additive, callers that omit it
+      render exactly what they did before */
+  eyebrow?: string;
+  /** lets a route theme the gallery without forking the behaviour */
+  className?: string;
 }) {
   const root = useRef<HTMLElement>(null!);
   const trackRef = useRef<HTMLUListElement>(null!);
@@ -107,8 +114,9 @@ export function HighlightsGallery({
   };
 
   return (
-    <section ref={root} className="hlg" aria-label={label}>
+    <section ref={root} className={`hlg${className ? ` ${className}` : ""}`} aria-label={label}>
       <div className="wrap">
+        {eyebrow && <span className="t-label hlg-eyebrow">{eyebrow}</span>}
         <h2 className="t-display-lg text-center">{heading}</h2>
       </div>
       <ul ref={trackRef} className="hlg-track" aria-label={`${label} cards`}>
