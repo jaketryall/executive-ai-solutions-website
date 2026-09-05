@@ -90,10 +90,12 @@ export default function ProofSection() {
   return (
     <section className="dr-pf" ref={ref} aria-labelledby="dr-pf-h">
       <div className="wrap">
-        {/* the proof rides the same card the hero's work rows do — same
-            frost, same corner. §01 lists who we did it for; this is one of
-            those rows opened up, so it should be made of the same thing. */}
-        <div className="dr-pf-card">
+        {/* the HEADER stays on the canvas. §02 is a card and so is this
+            section's evidence, and two cards stacked with nothing between
+            them read as one long panel with a seam. The bare header IS the
+            gap. It also sorts the hierarchy: the card holds the proof — the
+            screen, the numbers, the window they cover — and the claim about
+            it sits outside, unframed. */}
         <header className="dr-pf-head dr-reveal">
           <span className="t-label dr-pf-kicker">Proof</span>
           <h2 className="dr-pf-lead" id="dr-pf-h">
@@ -103,6 +105,10 @@ export default function ProofSection() {
             {p.client} · {p.sector} · {p.year}
           </p>
         </header>
+        {/* the evidence rides the same card the hero's work rows do — same
+            corner, same surface. §01 lists who we did it for; this is one of
+            those rows opened up. */}
+        <div className="dr-pf-card">
 
         <figure className="dr-pf-media">
           <Image
