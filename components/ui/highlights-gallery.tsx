@@ -24,6 +24,9 @@ export type Highlight = {
   media: React.ReactNode;
   /** full-bleed image cards get a top scrim so the caption stays legible */
   fill?: boolean;
+  /** extra content shown with the caption — only rendered when the gallery
+      is in `captionsOutside` mode, where there is room for it */
+  detail?: React.ReactNode;
 };
 
 export function HighlightsGallery({
@@ -32,6 +35,7 @@ export function HighlightsGallery({
   label,
   eyebrow,
   className,
+  captionsOutside,
 }: {
   heading: string;
   items: Highlight[];
@@ -41,6 +45,12 @@ export function HighlightsGallery({
   eyebrow?: string;
   /** lets a route theme the gallery without forking the behaviour */
   className?: string;
+  /** move the captions OUT of the cards into a band beneath the track.
+      Text over a screenshot is text competing with somebody else's design
+      — outside, it sits on the page's own ground and is simply readable.
+      The distance physics are untouched: same elements, same math, new
+      parent. */
+  captionsOutside?: boolean;
 }) {
   const root = useRef<HTMLElement>(null!);
   const trackRef = useRef<HTMLUListElement>(null!);
@@ -51,8 +61,11 @@ export function HighlightsGallery({
     if (!track) return;
     track.scrollLeft = 0; // first paint opens on card 0 (snap can wander pre-layout)
     const cards = Array.from(track.children) as HTMLElement[];
-    const captions = cards.map(
-      (c) => c.querySelector<HTMLElement>(".hlg-cap")!
+    /* queried off the ROOT, not off each card, so the same loop drives
+       them whether they sit inside the cards or in a band below. Order is
+       document order, which is items order in both layouts. */
+    const captions = Array.from(
+      root.current.querySelectorAll<HTMLElement>(".hlg-cap")
     );
     if (reducedMotion()) return; // CSS rests captions fully visible
 
@@ -125,14 +138,32 @@ export function HighlightsGallery({
             key={it.key}
             className={`hlg-card ${it.fill ? "hlg-card--fill" : ""}`}
           >
-            {it.fill && <span className="hlg-scrim" aria-hidden />}
-            <div className="hlg-cap-wrap">
-              <p className="hlg-cap">{it.caption}</p>
-            </div>
+            {it.fill && !captionsOutside && (
+              <span className="hlg-scrim" aria-hidden />
+            )}
+            {!captionsOutside && (
+              <div className="hlg-cap-wrap">
+                <p className="hlg-cap">{it.caption}</p>
+              </div>
+            )}
             <div className="hlg-media">{it.media}</div>
           </li>
         ))}
       </ul>
+
+      {/* one band, every caption stacked in it, only the centred one lit.
+          Same elements and same distance function as the in-card version —
+          they have simply stopped sitting on somebody else's artwork. */}
+      {captionsOutside && (
+        <div className="hlg-cap-band">
+          {items.map((it) => (
+            <div key={it.key} className="hlg-cap">
+              <p className="hlg-cap-line">{it.caption}</p>
+              {it.detail}
+            </div>
+          ))}
+        </div>
+      )}
       <div className="hlg-dots">
         {items.map((it, i) => (
           <button

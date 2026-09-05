@@ -1502,6 +1502,21 @@ section[id] {
     aspect-ratio: 4 / 5;
   }
 }
+/* captionsOutside: one band under the track holding every caption,
+   stacked in the same place. Only the centred one is lit — the distance
+   function paints them exactly as it does inside a card. */
+.hlg-cap-band {
+  position: relative;
+  margin-top: 34px;
+  display: grid;
+}
+.hlg-cap-band > .hlg-cap {
+  grid-area: 1 / 1;                 /* all of them share one cell */
+  justify-self: center;
+  text-align: center;
+  max-width: min(92vw, 760px);
+}
+
 .hlg-cap-wrap {
   position: absolute;
   inset-inline: 0;
@@ -6762,3 +6777,4 @@ div.fit-row:first-child {
 /* build-marker: svc-pricing-contact-v1 */
 
 /* build-marker: work-chapters-v2 */
+
