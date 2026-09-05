@@ -204,12 +204,23 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 /* the specular sweep — used on exactly TWO headings site-wide */
 @media (prefers-reduced-motion: no-preference) {
-  .t-hero .sweep {
+  /* on the CHARACTERS, not the line. background-clip:text does not carry
+     into inline-block descendants — the line kept the gradient and the
+     characters inside it rendered as nothing at all.
+
+     Each character now runs the same 6s sweep against its own box, offset
+     by a NEGATIVE delay proportional to its position, so the highlight
+     still travels along the line as one continuous shine rather than
+     every letter flashing together. --i is the character's real index
+     here, not its shuffled exit rank: the shine reads left to right even
+     though the exit does not. */
+  .t-hero .dr-char {
     background: linear-gradient(90deg, #d6d6da 0%, #ffffff 18%, #d6d6da 36%);
     background-size: 300% 100%;
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent; color: transparent;
     animation: dr-sweep 6s linear infinite;
+    animation-delay: calc(var(--i, 0) * -0.055s);
   }
 }
 @keyframes dr-sweep { to { background-position: -300% 0; } }

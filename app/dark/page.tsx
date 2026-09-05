@@ -74,8 +74,13 @@ function shuffledRanks(n: number) {
 function Split({ text }: { text: string }) {
   const chars = Array.from(text);
   const rank = shuffledRanks(chars.length);
+  /* NOT .sweep any more. That class painted the headline ONLY through a
+     gradient with text-fill-color:transparent, and an inline-block child
+     inherits the transparent fill while having no background of its own —
+     so every character rendered as nothing. The gradient moved down onto
+     the characters, where it composes with their transforms. */
   return (
-    <span className="sweep dr-split">
+    <span className="dr-split">
       {/* the real sentence, for anything that reads rather than looks */}
       <span className="dr-sr">{text}</span>
       <span aria-hidden="true">
@@ -84,7 +89,7 @@ function Split({ text }: { text: string }) {
             key={i}
             className="dr-char"
             style={
-              { "--r": rank[i], "--n": chars.length } as React.CSSProperties
+              { "--r": rank[i], "--i": i, "--n": chars.length } as React.CSSProperties
             }
           >
             {c === " " ? "\u00A0" : c}
