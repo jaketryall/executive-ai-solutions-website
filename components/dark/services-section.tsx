@@ -70,7 +70,6 @@ export default function ServicesSection() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const say = el.querySelector<HTMLElement>(".dr-say");
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const rows = Array.from(el.querySelectorAll<HTMLElement>(".dr-reveal"));
 
@@ -86,31 +85,19 @@ export default function ServicesSection() {
       return;
     }
 
-    /* ONE progress value drives the words and the marks together. Written
-       off the statement's own box, so it still resolves if the section
-       grows or the copy rewraps. */
-    let frame = 0;
-    const draw = () => {
-      frame = 0;
-      if (!say) return;
-      const b = say.getBoundingClientRect();
-      /* starts when the line is a little under the fold, finishes once it
-         has climbed past the third — the source's window, measured */
-      const from = innerHeight * 0.92;
-      const to = innerHeight * 0.3;
-      const raw = (from - b.top) / (from - to);
-      el.style.setProperty("--sp", String(Math.max(0, Math.min(1, raw))));
-    };
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(draw);
-    };
-    addEventListener("scroll", onScroll, { passive: true });
-    addEventListener("resize", onScroll, { passive: true });
-    draw();
+    /* THE ONE PASS THAT CANNOT BE DECLARATIVE, and it is worth saying why
+       rather than forcing it through the engine anyway.
 
-    /* the funnel draws itself: a light runs the column and each stage takes
-       full ink as it passes, so the sequence stops being three numbers and
-       becomes one path */
+       The engine writes ONE progress per element from ONE window. This
+       pass needs neither: the travelling light is compared against every
+       ROW's own rect (so rows of unequal height stay correct — they are
+       not equal, the images made sure of that), and each shot needs TWO
+       windows at once, a reveal and a travel, which are genuinely
+       different ranges rather than one scaled.
+
+       Reframing it as index-based CSS would assume equal row heights and
+       be wrong the first time a title wraps. So it stays measured, and
+       §02 keeps exactly one hand-rolled listener instead of three. */
     const list = el.querySelector<HTMLElement>(".dr-svc-list");
     const nums = Array.from(el.querySelectorAll<HTMLElement>(".dr-svc-num"));
     const shots = Array.from(el.querySelectorAll<HTMLElement>(".dr-svc-shot"));
@@ -148,38 +135,7 @@ export default function ServicesSection() {
     addEventListener("resize", onLit, { passive: true });
     lit();
 
-    /* THE SAME LAW AS THE HERO SEAM, so the page has one grammar rather
-       than two unrelated tricks: the section leaving goes DARK. It used to
-       recede as well, and that came off for the reason it came off the
-       hero — this is a card full of type, and type that shrinks while you
-       are still reading it reads as a zoom, not as distance.
 
-       Measured off .dr-svc, whose own box never moves. Everything else
-       this section measures — the word ramp, the lit rows, the shot
-       reveals — is clamped at 1 long before the exit begins, so the two
-       never contend for the same scroll range. */
-    const inner = el.querySelector<HTMLElement>(".dr-svc-in");
-    const exit = () => {
-      if (!inner) return;
-      const b = el.getBoundingClientRect();
-      /* Scaled to the VIEWPORT, not the section. The hero is exactly one
-         screen tall so its own height was the seam; this section is two,
-         and running the recede across all of it lagged the last row and
-         the testimonial 700px down into the clip — content nobody would
-         ever reach. The recede belongs to the SEAM, so it runs across the
-         final screenful: 0 when the section's bottom meets the viewport's,
-         1 when that bottom reaches the top. */
-      const ep = Math.max(0, Math.min(1, (innerHeight - (b.top + b.height)) / innerHeight));
-      inner.style.setProperty("--ep", String(ep));
-
-    };
-    let eframe = 0;
-    const onExit = () => {
-      if (!eframe) eframe = requestAnimationFrame(() => { eframe = 0; exit(); });
-    };
-    addEventListener("scroll", onExit, { passive: true });
-    addEventListener("resize", onExit, { passive: true });
-    exit();
 
     // added, never removed: a reveal that un-reveals reads as a bug
     const io = new IntersectionObserver(
@@ -196,22 +152,28 @@ export default function ServicesSection() {
 
     return () => {
       io.disconnect();
-      removeEventListener("scroll", onScroll);
-      removeEventListener("resize", onScroll);
       removeEventListener("scroll", onLit);
       removeEventListener("resize", onLit);
-      removeEventListener("scroll", onExit);
-      removeEventListener("resize", onExit);
-      if (eframe) cancelAnimationFrame(eframe);
-      if (frame) cancelAnimationFrame(frame);
       if (lframe) cancelAnimationFrame(lframe);
     };
   }, []);
 
   const words = SAY.split(" ");
 
+  /* the exit ramp: 0 when this section's bottom meets the fold, 1 when
+     that bottom reaches the top. Measured from the section's own box,
+     which never moves — the card inside it is what fades. */
   return (
-    <section className="dr-svc" ref={ref} aria-labelledby="dr-svc-h">
+    <section
+      className="dr-svc"
+      ref={ref}
+      aria-labelledby="dr-svc-h"
+      data-sp
+      data-sp-edge="bottom"
+      data-sp-from="1"
+      data-sp-to="0"
+      data-sp-var="--ep"
+    >
       {/* the exit rides this, never .dr-svc itself — the section's own rect
           is what the exit progress is measured FROM, and a transformed
           element cannot be its own ruler */}
@@ -227,7 +189,11 @@ export default function ServicesSection() {
         data-sp-var="--ap"
         data-sp-lerp="0.1"
       >
-      <div className="dr-say">
+      {/* the word ramp's window, declared. Lives on .dr-say rather than the
+          section because that is the box it was always measured from — and
+          --sp only ever needs to reach the words and the marks, both of
+          which are inside it. */}
+      <div className="dr-say" data-sp data-sp-from="0.92" data-sp-to="0.3">
         <div className="dr-marks" aria-hidden>
           {MARKS.map((m, i) => (
             <span key={i} className="dr-mark-col">

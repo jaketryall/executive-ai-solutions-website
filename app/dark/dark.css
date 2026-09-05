@@ -794,7 +794,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    Converging: full offset while the card is still arriving, zero by the
    time you are reading it. Nothing is dimmed or moved while it is being
    read. */
-.dr-say        { translate: 0 calc((1 - var(--ap, 1)) * 12px); }
+/* the lag rides the statement's CONTENTS, never .dr-say itself. The
+   engine measures .dr-say's rect to derive --sp, and an element that
+   moves cannot be its own ruler — translating the box fed its own
+   displacement back into the measurement. Same rule this room keeps
+   re-learning: if something is measured, move a wrapper or a child. */
+.dr-say-h,
+.dr-marks      { translate: 0 calc((1 - var(--ap, 1)) * 12px); }
 .dr-svc-list   { translate: 0 calc((1 - var(--ap, 1)) * 32px); }
 .dr-vouch      { translate: 0 calc((1 - var(--ap, 1)) * 50px); }
 
@@ -947,7 +953,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dr-say, .dr-svc-list, .dr-vouch { translate: none; }
+  .dr-say-h, .dr-marks, .dr-svc-list, .dr-vouch { translate: none; }
   .dr-word { opacity: 1; }
   .dr-mark-col i { translate: none; }
 }
