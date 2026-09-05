@@ -19,6 +19,24 @@ import { useEffect } from "react";
      --sp   0 → 1, this element's progress through its declared window
      --spx  the same progress in pixels of viewport travel
 
+   DAMPING, opt-in per element with data-sp-lerp.
+   Decoded off landonorris.com, and it corrected my first reading of that
+   site. It is not quite "the value IS f(scroll)": a scroll jump moves
+   their scroll position instantly, but the transform takes 700-900ms to
+   arrive, easing the whole way, with transitionDuration 0s. So there are
+   TWO smoothing layers — Lenis smooths the INPUT, and each effect then
+   chases its scroll-derived TARGET:
+
+     target   = f(scrollY)              // derived, path-independent
+     current += (target - current) * k  // k ~= 0.1
+
+   Their Lenis runs lerp: 0.1, which is the same constant, so it is
+   plausibly one number driving both.
+
+   NOT everything should damp. On the same site the background COLOUR
+   resolves within a single frame while transforms chase — so this is
+   opt-in, and an element without data-sp-lerp behaves exactly as before.
+
    It deliberately does NOT animate anything. The engine produces INPUTS;
    the stylesheet turns them into motion with calc(). That split is what
    keeps every effect in this room a pure function of scroll position —
@@ -35,6 +53,10 @@ type Track = {
   edge: "top" | "bottom";
   /** custom property to write the 0→1 value into */
   varName: string;
+  /** 0 = write the target directly. >0 = chase it at this rate per frame. */
+  lerp: number;
+  /** the damped value, carried between frames */
+  current: number;
 };
 
 const num = (v: string | null, fallback: number) => {
@@ -49,6 +71,8 @@ function read(el: HTMLElement): Track {
     to: num(el.getAttribute("data-sp-to"), 0),
     edge: el.getAttribute("data-sp-edge") === "bottom" ? "bottom" : "top",
     varName: el.getAttribute("data-sp-var") || "--sp",
+    lerp: Math.max(0, Math.min(1, num(el.getAttribute("data-sp-lerp"), 0))),
+    current: NaN, // first frame snaps, so nothing eases in from zero on load
   };
 }
 
@@ -69,9 +93,14 @@ export function useScrollEngine(deps: unknown[] = []) {
     }
 
     let frame = 0;
+    /* a damped track has to keep being drawn after the scroll stops, or it
+       freezes partway to its target. So the loop runs on while anything is
+       still chasing, and idles the moment everything has arrived. */
     const draw = () => {
       frame = 0;
       const vh = window.innerHeight;
+      let settling = false;
+
       for (const t of tracks) {
         const b = t.el.getBoundingClientRect();
         const mark = t.edge === "top" ? b.top : b.bottom;
@@ -80,10 +109,27 @@ export function useScrollEngine(deps: unknown[] = []) {
         // guard a zero-length window rather than dividing by it
         const span = from - to;
         const p = span === 0 ? 1 : (from - mark) / span;
-        const clamped = p < 0 ? 0 : p > 1 ? 1 : p;
-        t.el.style.setProperty(t.varName, String(clamped));
-        t.el.style.setProperty(`${t.varName}x`, `${clamped * vh}px`);
+        const target = p < 0 ? 0 : p > 1 ? 1 : p;
+
+        let value = target;
+        if (t.lerp > 0) {
+          if (Number.isNaN(t.current)) {
+            t.current = target; // first paint lands on the real frame
+          } else {
+            t.current += (target - t.current) * t.lerp;
+            // snap once the gap is below a pixel's worth of a 0→1 range,
+            // so the loop can actually stop instead of chasing forever
+            if (Math.abs(target - t.current) < 0.0004) t.current = target;
+            else settling = true;
+          }
+          value = t.current;
+        }
+
+        t.el.style.setProperty(t.varName, String(value));
+        t.el.style.setProperty(`${t.varName}x`, `${value * vh}px`);
       }
+
+      if (settling && !frame) frame = requestAnimationFrame(draw);
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(draw);

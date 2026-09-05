@@ -147,7 +147,15 @@ export default function RunsSection() {
         {/* DECLARES its window; the engine fills in --sp. No scroll code
             lives in this file — the whole section is now two attributes
             and a stylesheet rule. */}
-        <ol className="dr-runs-grid" data-sp data-sp-from="1.15" data-sp-to="0.05">
+        <ol
+          className="dr-runs-grid"
+          data-sp
+          data-sp-from="1.15"
+          data-sp-to="0.05"
+          /* chase the target rather than snapping to it — the second
+             smoothing layer, matching the reference's own lerp constant */
+          data-sp-lerp="0.1"
+        >
           {STEPS.map((s, i) => {
             const Demo = DEMOS[s.demo];
             return (
