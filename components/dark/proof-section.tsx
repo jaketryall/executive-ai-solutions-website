@@ -3,54 +3,60 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getProject } from "@/lib/work";
+import { PROJECTS } from "@/lib/work";
 
-/* §03 · THE PROOF
-   IMAGE-led, where §01 is card-led and §02 is type-led. Three sections,
-   three registers, one room.
+/* §03 · THE PROOF — A LEDGER, NOT A CARD
+   §02 is a card and §04 is four of them, and a card between them made
+   three panels in a row. This one has no container at all: each entry is
+   a full-bleed band, the client's screen running off the page edge, the
+   numbers at display scale opposite it. The room shows through the whole
+   way, which a card was blocking.
 
-   ONE client, because one client is what we have real numbers for.
-   lib/work.ts carries results for desert-wings and nothing else, and the
-   note above them is explicit that they are build-scoped — the site's own
-   page views and the leads its form converts, with no credit taken for
-   traffic the client's people earned. A proof section that padded itself
-   out with invented figures for the other two would undo the point of
-   having a proof section. */
+   IT GROWS BY ITSELF. The entries are every project that HAS a results
+   block — not a hand-picked one — so adding numbers to a case in
+   lib/work.ts adds it here and removing them removes it. Sides alternate
+   off the index, so a second entry mirrors the first without anyone
+   choosing that, and the section renders nothing at all if the roster
+   ever holds no measured work.
+
+   THE SIGNATURE, per entry: the print develops. This is a dark room, so
+   the proof arrives underexposed and gains its light as it rises. Pure
+   f(scroll), recomputed per frame off each figure's own box, so scrubbing
+   back up runs it backwards exactly. */
 
 export default function ProofSection() {
   const ref = useRef<HTMLElement>(null);
-  const p = getProject("desert-wings");
+
+  /* every case that can actually show a number, in roster order. No slug
+     is named here on purpose — this is a view of the data, not a
+     hand-maintained copy of part of it. */
+  const entries = PROJECTS.filter((p) => p.results?.metrics?.length && p.backdrop);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    const figs = Array.from(el.querySelectorAll<HTMLElement>(".dr-pf-media"));
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const fig = el.querySelector<HTMLElement>(".dr-pf-media");
-    if (!fig) return;
 
     if (still) {
-      el.style.setProperty("--p", "1");
-      el.classList.add("is-in");
+      figs.forEach((f) => f.style.setProperty("--p", "1"));
+      el.querySelectorAll(".dr-reveal").forEach((r) => r.classList.add("is-in"));
       return;
     }
 
-    /* THE PRINT COMES UP.
-       This is a dark room, so the proof DEVELOPS: the site arrives flat and
-       underexposed and gains its light as it rises through the frame. Pure
-       f(scroll) recomputed per frame — never a tween fired at a threshold —
-       so scrubbing back up runs it backwards exactly, and landing mid-page
-       shows the right frame instead of an unplayed one. */
     let frame = 0;
     const draw = () => {
       frame = 0;
-      const b = fig.getBoundingClientRect();
-      /* 0 when the media's top is still a fifth of a screen below the fold,
-         1 once it has climbed to the two-thirds line. Written off the
-         element's own box so it survives the page growing beneath it. */
-      const from = innerHeight * 1.02;
-      const to = innerHeight * 0.42;
-      const raw = (from - b.top) / (from - to);
-      el.style.setProperty("--p", String(Math.max(0, Math.min(1, raw))));
+      figs.forEach((fig) => {
+        const b = fig.getBoundingClientRect();
+        /* 0 while the print is still below the fold, 1 once it has climbed
+           to the upper third. Written off the element's own box, so it
+           still resolves when entries are added above it. */
+        const from = innerHeight * 1.02;
+        const to = innerHeight * 0.42;
+        const raw = (from - b.top) / (from - to);
+        fig.style.setProperty("--p", String(Math.max(0, Math.min(1, raw))));
+      });
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(draw);
@@ -59,17 +65,16 @@ export default function ProofSection() {
     addEventListener("resize", onScroll, { passive: true });
     draw();
 
-    /* the surrounding type uses the same one-way reveal as §02 — added,
-       never removed, because a reveal that un-reveals reads as a bug */
+    // added, never removed: a reveal that un-reveals reads as a bug
     const io = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((e) => {
+      (es) =>
+        es.forEach((e) => {
           if (e.isIntersecting) {
             e.target.classList.add("is-in");
             io.unobserve(e.target);
           }
         }),
-      { rootMargin: "0px 0px -18% 0px", threshold: 0 }
+      { rootMargin: "0px 0px -16% 0px", threshold: 0 }
     );
     el.querySelectorAll(".dr-reveal").forEach((r) => io.observe(r));
 
@@ -79,72 +84,74 @@ export default function ProofSection() {
       removeEventListener("resize", onScroll);
       if (frame) cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [entries.length]);
 
-  /* backdrop is optional on the Project type, and the section is nothing
-     without the image — so it gates on both rather than asserting */
-  if (!p?.results || !p.backdrop) return null;
-  const r = p.results;
-  const bg = p.backdrop;
+  // nothing measured yet is a reason to show nothing, not an empty frame
+  if (!entries.length) return null;
 
   return (
     <section className="dr-pf" ref={ref} aria-labelledby="dr-pf-h">
       <div className="wrap">
-        {/* the HEADER stays on the canvas. §02 is a card and so is this
-            section's evidence, and two cards stacked with nothing between
-            them read as one long panel with a seam. The bare header IS the
-            gap. It also sorts the hierarchy: the card holds the proof — the
-            screen, the numbers, the window they cover — and the claim about
-            it sits outside, unframed. */}
         <header className="dr-pf-head dr-reveal">
           <span className="t-label dr-pf-kicker">Proof</span>
           <h2 className="dr-pf-lead" id="dr-pf-h">
-            {r.story}
+            {entries.length === 1
+              ? "One client, and the numbers their site actually earned."
+              : "The clients, and the numbers their sites actually earned."}
           </h2>
-          <p className="dr-pf-meta">
-            {p.client} · {p.sector} · {p.year}
-          </p>
         </header>
-        {/* the evidence rides the same card the hero's work rows do — same
-            corner, same surface. §01 lists who we did it for; this is one of
-            those rows opened up. */}
-        <div className="dr-pf-card">
-
-        <figure className="dr-pf-media">
-          <Image
-            src={bg.src}
-            alt={bg.alt}
-            width={bg.width}
-            height={bg.height}
-            sizes="(max-width: 900px) 100vw, 1290px"
-          />
-        </figure>
-
-        <div className="dr-pf-foot">
-          {/* the numbers are the section's point, so they take the loudest
-              register on the page — louder than the story above them */}
-          <dl className="dr-pf-metrics dr-reveal">
-            {r.metrics.map((m, i) => (
-              <div key={m.label} style={{ "--row": i } as React.CSSProperties}>
-                <dt>{m.value}</dt>
-                <dd>{m.label}</dd>
-              </div>
-            ))}
-          </dl>
-
-          <div className="dr-pf-note dr-reveal" style={{ "--row": 2 } as React.CSSProperties}>
-            {/* a number without a window is marketing; a number with one is
-                a report */}
-            <span className="t-label dr-pf-window">{r.window}</span>
-            <p>{r.did}</p>
-            <Link className="dr-pf-open" href={`/work/${p.slug}`}>
-              Read the case
-              <i aria-hidden>→</i>
-            </Link>
-          </div>
-        </div>
-        </div>
       </div>
+
+      <ol className="dr-pf-list">
+        {entries.map((p, i) => {
+          const r = p.results!;
+          const bg = p.backdrop!;
+          return (
+            <li
+              key={p.slug}
+              className="dr-pf-entry"
+              /* the side flips off the INDEX, so a second entry mirrors the
+                 first without anyone deciding that it should */
+              data-side={i % 2 ? "left" : "right"}
+            >
+              <figure className="dr-pf-media">
+                <Image
+                  src={bg.src}
+                  alt={bg.alt}
+                  width={bg.width}
+                  height={bg.height}
+                  sizes="(max-width: 900px) 100vw, 58vw"
+                />
+              </figure>
+
+              <div className="dr-pf-body dr-reveal">
+                <p className="dr-pf-meta">
+                  {p.client} · {p.sector} · {p.year}
+                </p>
+                <h3 className="dr-pf-story">{r.story}</h3>
+
+                <dl className="dr-pf-metrics">
+                  {r.metrics.map((m) => (
+                    <div key={m.label}>
+                      <dt>{m.value}</dt>
+                      <dd>{m.label}</dd>
+                    </div>
+                  ))}
+                </dl>
+
+                {/* a number without a window is marketing; a number with
+                    one is a report */}
+                <span className="t-label dr-pf-window">{r.window}</span>
+
+                <Link className="dr-pf-open" href={`/work/${p.slug}`}>
+                  Read the case
+                  <i aria-hidden>→</i>
+                </Link>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
     </section>
   );
 }

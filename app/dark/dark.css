@@ -808,7 +808,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-svc-row {
   display: grid; align-items: center;
   /* the shot sits IN the row now, between the numeral and the body, the
-     same place the hero's cards put their thumbnail */
+     same place the hero's cards put their thumbnail. `auto` on that track,
+     so a row whose service has no shot yet simply closes the gap instead
+     of leaving a hole the width of a picture. */
   grid-template-columns: 3.4rem auto minmax(0, 1fr) auto 2rem;
   column-gap: clamp(16px, 2.2vw, 34px);
   padding: clamp(16px, 2.4svh, 30px) 0;
@@ -905,40 +907,15 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 /* ══ §03 · THE PROOF ═════════════════════════════════════════════
-   IMAGE-led. §01 is card-led and §02 is type-led, so this one changes
-   register again rather than stacking a third list on the same ground. */
-.dr-pf { --p: 0; position: relative; z-index: 4;
+   A LEDGER, NOT A CARD. §02 is a card and §04 is four of them; a card
+   between them made three panels in a row. This section has no container
+   at all — each entry is a full-bleed band with the client's screen
+   running off the page edge and the numbers at display scale opposite it,
+   so the room shows through the whole way. */
+.dr-pf { position: relative; z-index: 4;
          padding-block: clamp(72px, 12svh, 150px) clamp(80px, 14svh, 168px); }
 
-/* ONE OF THE HERO'S CARDS, OPENED UP — but holding only the EVIDENCE.
-   The header sits outside on the black, because §02 is a card too and two
-   of them stacked with nothing between read as one panel with a seam. The
-   bare header is the gap, and it puts the hierarchy the right way round:
-   the claim is unframed, the thing that backs it up is the object. */
-.dr-pf-card {
-  position: relative;
-  border-radius: clamp(13px, 1.5vw, 21px);
-  /* OPAQUE, unlike the hero's rows. At .08 over the ground this card is
-     ~14x the area of one of those, which is long enough for the mark to
-     travel through it and read as shapes moving INSIDE the panel. A card
-     is a surface, not a window. The base is set to the surface value the
-     hero's cards actually measure (28) so the material still matches at a
-     glance, with a top-down sheen to keep it from going flat — and the
-     backdrop blur comes off, since nothing behind it shows through now. */
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .035)),
-    #121216;
-  padding: clamp(20px, 2.4vw, 34px);
-}
-/* the media keeps the thumbnail's relationship to its card: inset by the
-   padding, and a corner one step tighter than the corner around it */
-.dr-pf-card .dr-pf-media { border-radius: clamp(9px, 1vw, 14px); }
-
-/* NO max-width here. `ch` on this wrapper resolves against ITS font-size
-   (the inherited 16px), not the headline's 43px, so 34ch clamped a 925px
-   line to 385px and broke it over three. The measure belongs on the
-   heading, in `em`, so it scales with the type it is measuring. */
-.dr-pf-head { margin-bottom: clamp(26px, 4.5svh, 48px); }
+.dr-pf-head { margin-bottom: clamp(34px, 6svh, 72px); }
 .dr-pf-kicker { color: var(--ink-4); display: block; margin-bottom: var(--fib-3); }
 .dr-pf-lead {
   margin: 0; color: var(--ink);
@@ -946,64 +923,96 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   font-variation-settings: "wdth" 100, "wght" 620;
   font-size: clamp(1.6rem, 1rem + 2.2vw, 2.7rem);
   line-height: 1.08; letter-spacing: -0.028em;
-  /* 14em against a natural 21.4em line = two, at every size, because the
-     measure scales with the font instead of against a fixed pixel box */
+  /* the measure lives on the HEADING, in em. On the wrapper in `ch` it
+     resolved against the wrapper's own 16px and clamped a 925px line into
+     a 385px box — em scales with the type it is measuring. */
   max-width: 14em; text-wrap: balance;
 }
-.dr-pf-meta { margin: var(--fib-3) 0 0; color: var(--ink-4);
-  font-family: var(--font-instrument), sans-serif; font-size: 14px; }
+
+.dr-pf-list { list-style: none; margin: 0; padding: 0;
+              display: flex; flex-direction: column;
+              gap: clamp(56px, 10svh, 120px); }
+
+/* the band. The picture takes a hair over half and BLEEDS to whichever
+   page edge it is on; the copy keeps the page's column on the other side.
+   Sides alternate off the index, so entry two mirrors entry one with no
+   second rule to write. */
+.dr-pf-entry {
+  display: grid; align-items: center;
+  column-gap: clamp(28px, 4vw, 72px);
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, calc(52% + var(--fib-5)));
+}
+.dr-pf-entry[data-side="right"] .dr-pf-media { grid-column: 2; }
+.dr-pf-entry[data-side="right"] .dr-pf-body  { grid-column: 1;
+  padding-left: max(var(--fib-5), calc((100vw - 1400px) / 2 + var(--fib-5))); }
+.dr-pf-entry[data-side="left"] { grid-template-columns:
+    minmax(0, calc(52% + var(--fib-5))) minmax(0, 1fr); }
+.dr-pf-entry[data-side="left"] .dr-pf-media { grid-column: 1; }
+.dr-pf-entry[data-side="left"] .dr-pf-body  { grid-column: 2;
+  padding-right: max(var(--fib-5), calc((100vw - 1400px) / 2 + var(--fib-5))); }
 
 /* THE PRINT COMES UP.
    The proof arrives flat and underexposed and gains its light as it rises
-   — the one effect this room could not borrow from anywhere else, because
-   developing a print IS the room. Every value is a pure function of --p,
-   which the section recomputes from the media's own box each frame. */
+   — the one effect this room could not have borrowed, because developing
+   a print IS the room. Every value is a pure function of --p, which the
+   section recomputes from this figure's own box each frame. */
 .dr-pf-media {
+  --p: 0;
   margin: 0; position: relative; overflow: hidden;
-  border-radius: clamp(12px, 1.5vw, 20px);
-  /* the tray: what the print is lifted out of */
+  /* only the inboard corners round; the outboard pair runs off the page */
+  border-radius: clamp(10px, 1.2vw, 16px);
   background: rgba(255, 255, 255, 0.03);
-  aspect-ratio: 1600 / 741;
+  /* 2:1 against a 2.16 source crops 7% of the width. 16:10 cropped 26%,
+     which took a bite out of the client's own headline — the one thing in
+     the picture a visitor might actually read. */
+  aspect-ratio: 2 / 1;
+}
+.dr-pf-entry[data-side="right"] .dr-pf-media { border-radius: clamp(10px,1.2vw,16px) 0 0 clamp(10px,1.2vw,16px); }
+.dr-pf-entry[data-side="left"]  .dr-pf-media { border-radius: 0 clamp(10px,1.2vw,16px) clamp(10px,1.2vw,16px) 0; }
+.dr-pf-media img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+  /* top-left, where a site screenshot keeps its masthead and headline */
+  object-position: 0% 0%;
+  /* under-exposed and flat at 0, printed at 1 — and printed does NOT mean
+     100%: a photo at full brightness in a room this dark stops being a
+     print on the wall and becomes a hole in it. */
+  filter:
+    brightness(calc(0.18 + 0.74 * var(--p)))
+    contrast(calc(0.62 + 0.34 * var(--p)))
+    saturate(calc(0.15 + 0.73 * var(--p)));
+  scale: calc(1.055 - 0.055 * var(--p));
 }
 /* the print's own falloff, so its corners meet the room instead of ending
-   at a hard bright rectangle. Fades out as the print comes up, the same
-   way the tray stops mattering once the image is there. */
+   at a hard bright rectangle */
 .dr-pf-media::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   border-radius: inherit;
   background: radial-gradient(120% 120% at 50% 45%,
     transparent 42%, rgba(0, 0, 0, .34) 78%, rgba(0, 0, 0, .58) 100%);
 }
-.dr-pf-media img {
-  display: block; width: 100%; height: 100%; object-fit: cover;
-  /* under-exposed and low-contrast at 0, printed at 1 — but printed does
-     NOT mean 100%. A photo at full brightness in a room this dark stops
-     being a print on the wall and becomes a hole in it, so the developed
-     end lands just under, and the room still owns the exposure. */
-  filter:
-    brightness(calc(0.18 + 0.74 * var(--p)))
-    contrast(calc(0.62 + 0.34 * var(--p)))
-    saturate(calc(0.15 + 0.73 * var(--p)));
-  /* it settles INTO the frame rather than sliding, so nothing about it
-     competes with the row-by-row motion in the section above */
-  scale: calc(1.055 - 0.055 * var(--p));
-}
 
-.dr-pf-foot {
-  margin-top: clamp(28px, 5svh, 56px);
-  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-  column-gap: clamp(24px, 4vw, 72px); align-items: start;
-}
+.dr-pf-body { display: flex; flex-direction: column; align-items: flex-start;
+              gap: var(--fib-3); min-width: 0; }
+.dr-pf-meta { margin: 0; color: var(--ink-4);
+  font-family: var(--font-instrument), sans-serif; font-size: 14px; }
+.dr-pf-story { margin: 0; color: var(--ink);
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 620;
+  font-size: clamp(1.3rem, .9rem + 1.4vw, 2rem);
+  line-height: 1.1; letter-spacing: -0.026em; max-width: 18em; }
 
 /* the numbers take the loudest register on the page — louder than the
    story above them, because they are the reason the section exists */
-.dr-pf-metrics { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-                 gap: clamp(20px, 3vw, 44px); }
+.dr-pf-metrics { margin: var(--fib-2) 0 0; display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+  gap: clamp(18px, 2.4vw, 40px); width: 100%; }
 .dr-pf-metrics dt {
   color: var(--ink);
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 700;
-  font-size: clamp(2.1rem, 1.2rem + 3vw, 3.4rem);
+  font-size: clamp(2rem, 1.1rem + 2.6vw, 3.1rem);
   line-height: 1; letter-spacing: -0.035em;
   font-variant-numeric: tabular-nums;
   /* 1,000+ must never break after its first digit */
@@ -1013,14 +1022,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   font-family: var(--font-instrument), sans-serif;
   font-size: 15px; line-height: 1.4; max-width: 22ch; }
 
-.dr-pf-note { display: flex; flex-direction: column; align-items: flex-start;
-              gap: var(--fib-3); }
 .dr-pf-window { color: var(--ink-4); }
-.dr-pf-note p { margin: 0; color: var(--ink-3); max-width: 46ch;
-  font-family: var(--font-instrument), sans-serif;
-  font-size: 15px; line-height: 1.55; }
 .dr-pf-open { display: inline-flex; align-items: center; gap: 10px;
-  margin-top: var(--fib-2); color: var(--ink-2); text-decoration: none;
+  color: var(--ink-2); text-decoration: none;
   font-family: var(--font-instrument), sans-serif; font-size: 15px;
   transition: color var(--t-micro) var(--ease-ui); }
 .dr-pf-open i { font-style: normal;
@@ -1031,20 +1035,20 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   outline-offset: 5px; border-radius: 6px; }
 
 @media (max-width: 900px) {
-  .dr-pf-foot { grid-template-columns: minmax(0, 1fr); row-gap: var(--fib-5); }
-  .dr-pf-metrics { gap: var(--fib-4); }
-  /* 4/3 was forcing a 2.16 source through a 1.33 box: cover then ate 40%
-     of the width and cut the client's own headline mid-character on both
-     sides. 16/9 crops 18% instead, and anchoring left keeps the words
-     whole — the photo gives up its right edge rather than the type. */
-  .dr-pf-media { aspect-ratio: 16 / 9; }
-  .dr-pf-media img { object-position: 14% 50%; }
+  /* the bleed stops being an idea on a phone — one column, picture over
+     copy, and the copy back on the page's own gutter */
+  .dr-pf-entry,
+  .dr-pf-entry[data-side="left"] { grid-template-columns: minmax(0, 1fr);
+                                   row-gap: var(--fib-4); }
+  .dr-pf-entry .dr-pf-media,
+  .dr-pf-entry .dr-pf-body { grid-column: 1; }
+  .dr-pf-entry .dr-pf-body { padding-inline: var(--fib-3); }
+  .dr-pf-entry .dr-pf-media { border-radius: 0; aspect-ratio: 16 / 9; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .dr-pf-media img { filter: none; scale: 1; }
 }
-
 
 /* ══ §04 · HOW IT RUNS ═══════════════════════════════════════════
    FOUR SURFACES, where §02 is one and §03 is an image. The whole path

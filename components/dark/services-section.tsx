@@ -278,18 +278,23 @@ export default function ServicesSection() {
                     it, which moves the rows, which changes which row the
                     light is on — the reveal would be feeding its own input.
                     The space is reserved; only the image inside moves. */}
-                <span
-                  className="dr-svc-shot"
-                  style={{ "--pos": SHOTS[s.slug].pos } as React.CSSProperties}
-                >
-                  <Image
-                    src={SHOTS[s.slug].src}
-                    alt={SHOTS[s.slug].alt}
-                    width={2880}
-                    height={1800}
-                    sizes="(max-width: 900px) 100vw, 1100px"
-                  />
-                </span>
+                {/* a service added to lib/services.ts without a shot here
+                    must render a row, not crash the page — the picture is
+                    evidence, and evidence is allowed to be missing */}
+                {SHOTS[s.slug] && (
+                  <span
+                    className="dr-svc-shot"
+                    style={{ "--pos": SHOTS[s.slug].pos } as React.CSSProperties}
+                  >
+                    <Image
+                      src={SHOTS[s.slug].src}
+                      alt={SHOTS[s.slug].alt}
+                      width={2880}
+                      height={1800}
+                      sizes="(max-width: 900px) 100vw, 1100px"
+                    />
+                  </span>
+                )}
               </Link>
             </li>
           ))}
