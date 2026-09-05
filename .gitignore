@@ -54,3 +54,5 @@ public/builder/raw-*.png
 .ai-context/
 .screens/
 .claude/
+
+scroll-trace*.json.gz
