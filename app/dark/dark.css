@@ -1366,6 +1366,15 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
             padding-block: clamp(80px, 14svh, 170px) clamp(88px, 15svh, 190px); }
 .dr-close-in { max-width: 760px; display: flex; flex-direction: column;
                align-items: center; text-align: center; }
+/* Reuses the --sp this section ALREADY declares for its ground ramp —
+   one window driving the colour and the lag together, rather than a
+   second declaration that would only drift out of step with the first.
+   The ask lags least: it is the one thing on the page that should feel
+   like it was already there. */
+.dr-close-h    { translate: 0 calc((1 - var(--sp, 1)) * 10px); }
+.dr-close-act  { translate: 0 calc((1 - var(--sp, 1)) * 24px); }
+.dr-check      { translate: 0 calc((1 - var(--sp, 1)) * 40px); }
+
 .dr-close-kicker { color: var(--ink-4); margin-bottom: var(--fib-3); }
 .dr-close-h {
   margin: 0; color: var(--ink);
@@ -1487,6 +1496,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   outline-offset: 4px; border-radius: 6px; }
 
 @media (prefers-reduced-motion: reduce) {
+  .dr-obj-h, .dr-obj-chips, .dr-obj-form,
+  .dr-close-h, .dr-close-act, .dr-check { translate: none; }
   .dr-finding { animation: none; }
 }
 
@@ -1500,6 +1511,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
           padding-block: clamp(72px, 12svh, 150px) clamp(64px, 11svh, 132px); }
 .dr-obj-in { max-width: 880px; display: flex; flex-direction: column;
              align-items: center; text-align: center; }
+/* the same lag hierarchy as §02: each block trails the one above it, so
+   the section settles top-first and in reading order. Converging, so it
+   is still by the time anyone reads a word of it. */
+.dr-obj-h      { translate: 0 calc((1 - var(--ap, 1)) * 10px); }
+.dr-obj-chips  { translate: 0 calc((1 - var(--ap, 1)) * 26px); }
+.dr-obj-form   { translate: 0 calc((1 - var(--ap, 1)) * 42px); }
+
 .dr-obj-kicker { color: var(--ink-4); margin-bottom: var(--fib-3); }
 .dr-obj-h {
   margin: 0; color: var(--ink);

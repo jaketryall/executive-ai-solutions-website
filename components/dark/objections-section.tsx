@@ -78,7 +78,16 @@ export default function ObjectionsSection() {
 
   return (
     <section className="dr-obj" aria-labelledby="dr-obj-h">
-      <div className="wrap dr-obj-in">
+      {/* declares its arrival; the three blocks inside read --ap at three
+          rates, the same lag hierarchy §02 uses */}
+      <div
+        className="wrap dr-obj-in"
+        data-sp
+        data-sp-from="1"
+        data-sp-to="0.4"
+        data-sp-var="--ap"
+        data-sp-lerp="0.1"
+      >
         <span className="t-label dr-obj-kicker">Before you ask</span>
         <h2 className="dr-obj-h" id="dr-obj-h">
           The four questions everyone asks, answered without the call.
