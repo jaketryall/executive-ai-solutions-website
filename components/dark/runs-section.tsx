@@ -11,6 +11,11 @@ import { useEffect, useRef } from "react";
    Copy is the shipped site's, verbatim, because it is real and already
    approved. Only the expression is new.
 
+   THE LAYOUT: four steps standing on four steps. Equal panels in a row
+   are the shape of a MENU — four peers, pick one — and a process is an
+   order, not a menu. So the panels climb a tread each, on a rail the
+   light walks left to right. Still one glance, still no scroll-jack.
+
    THE SIGNATURE: four artifacts, not one stage. Each step owns a small
    working demo and runs it once, on its own arrival — a shared morphing
    stage was tried and lost, because one stage means three of the four
@@ -136,12 +141,18 @@ export default function RunsSection() {
   return (
     <section className="dr-runs" ref={ref} aria-labelledby="dr-runs-h">
       <div className="wrap">
+        {/* the header SPANS. Kicker hard left, the reassurance hard
+            right, on one baseline — the staircase climbs into the top
+            right of this section, and a header hugging the left corner
+            left that whole quadrant empty. */}
         <header className="dr-runs-head">
-          <span className="t-label dr-runs-kicker">How it runs</span>
+          <div className="dr-runs-band">
+            <span className="t-label dr-runs-kicker">How it runs</span>
+            <p className="dr-runs-sub">Fixed quote up front, no surprises after.</p>
+          </div>
           <h2 className="dr-runs-lead" id="dr-runs-h">
             Four steps from the first call to a site that earns.
           </h2>
-          <p className="dr-runs-sub">Fixed quote up front, no surprises after.</p>
         </header>
 
         {/* DECLARES its window; the engine fills in --sp. No scroll code
@@ -164,6 +175,15 @@ export default function RunsSection() {
                 className="dr-run"
                 style={{ "--i": i } as React.CSSProperties}
               >
+                {/* the tread this step stands on, and the riser up to
+                    the next. Two spans and no measurement: the geometry
+                    is all in the stylesheet, and the last step's riser
+                    is dropped by :last-child rather than by a flag. */}
+                <span className="dr-run-rail" aria-hidden>
+                  <i className="dr-run-tread" />
+                  <i className="dr-run-riser" />
+                </span>
+
                 <span className="dr-run-top">
                   <span className="dr-run-n">{s.n}</span>
                   <span className="t-label dr-run-meta">{s.meta}</span>

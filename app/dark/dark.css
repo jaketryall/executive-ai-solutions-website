@@ -1091,41 +1091,77 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-runs { position: relative; z-index: 4;
            padding-block: clamp(72px, 12svh, 150px) clamp(80px, 14svh, 168px); }
 
-.dr-runs-head { max-width: 40ch; margin-bottom: clamp(30px, 5.5svh, 62px); }
-.dr-runs-kicker { color: var(--ink-4); display: block; margin-bottom: var(--fib-3); }
+.dr-runs-head { margin-bottom: clamp(26px, 4.4svh, 52px); }
+/* kicker left, reassurance right, one baseline */
+.dr-runs-band { display: flex; align-items: baseline; justify-content: space-between;
+                gap: var(--fib-5); margin-bottom: clamp(14px, 2.4svh, 26px); }
+.dr-runs-kicker { color: var(--ink-4); }
 .dr-runs-lead {
+  /* the measure travels in EM, not ch. `ch` on the wrapper resolved
+     against the wrapper's 16px and had nothing to do with this type;
+     17em of the lead's own size is a real 2-line measure at every
+     viewport, because the font-size is already fluid. */
+  max-width: 17em;
   margin: 0; color: var(--ink);
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 620;
   font-size: clamp(1.5rem, 1rem + 1.9vw, 2.4rem);
   line-height: 1.1; letter-spacing: -0.026em;
 }
-.dr-runs-sub { margin: var(--fib-3) 0 0; color: var(--ink-3);
+.dr-runs-sub { margin: 0; color: var(--ink-3); text-align: right;
   font-family: var(--font-instrument), sans-serif; font-size: 15px; }
 
 .dr-runs-grid { list-style: none; margin: 0; padding: 0;
+  --col-gap: clamp(10px, 1.2vw, 18px);
+  --rise: clamp(22px, 2.9vw, 46px);
+  --rail-off: 14px;
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(10px, 1.2vw, 18px); }
+  gap: var(--col-gap);
+  /* the lift is a TRANSLATE, so it costs no layout space and the top
+     panel would otherwise climb straight into the header. The grid buys
+     back exactly what the staircase spends. */
+  margin-top: calc(var(--rise) * 3);
+}
 
-/* THE ROW DISAGREES WITH ITSELF.
-   Measured off itsoffbrand.com's work grid, where alternating columns
-   carry equal and OPPOSITE offsets — [+95, -95, +95, -95] — that shrink
-   toward zero as the section passes. Two rates in one view is what reads
-   as depth; one rate reads as a slab, which is what these four cards were.
+/* ── FOUR STEPS, ON FOUR STEPS ───────────────────────────────────
+   The old row was four equal panels side by side, which is the shape of
+   a MENU — four peers, pick one. A process is not a menu, it is an
+   ORDER, and equal boxes were flattening the one thing this section is
+   actually about. So the panels climb: each stands one tread higher
+   than the one before it, on a rail that runs under all four.
 
-   It CONVERGES rather than crossing: full offset while the row is still
-   arriving, zero once you have reached it. My first pass crossed through
-   zero at the midpoint instead, which meant the cards froze at maximum
-   scatter for the whole time you were actually reading them — the
-   opposite of the reference, where the magnitude shrinks 95 -> 45 as the
-   section comes in. `translate`, because the entrance owns `transform`. */
-.dr-run:nth-child(odd)  { --drift:  34px; }
-.dr-run:nth-child(even) { --drift: -34px; }
+   The rail is the connective, and the light walks it left to right as
+   you scroll — the same travelling light that walks §02's list, turned
+   on its side. That repetition is the point: one motif, restaged, is
+   what makes a page read as composed instead of assembled.
+
+   The whole path still lands in a single glance. The settled position
+   here (2026-07-06) is that a visitor deciding whether to call wants
+   reassurance rather than a ride — and a staircase you can see all of
+   at once is MORE reassuring than a grid, because it says how far it
+   is as well as what happens. */
 .dr-run {
-  translate: 0 calc((1 - var(--sp, 1)) * var(--drift, 0px));
+  /* --step is the tread this panel stands on. It tracks --i at four
+     columns and gets rewritten per row when the grid wraps, so the
+     stairs stay two-high in a pair rather than climbing off the top. */
+  --step: var(--i);
+  /* the light's position, per panel: --lp fills this tread, --rp snaps
+     the riser up to the next one right as the tread completes. Both are
+     pure f(--sp), so the whole path scrubs backwards exactly. */
+  --lp: clamp(0, var(--sp, 1) * 4 - var(--i), 1);
+  --rp: clamp(0, (var(--sp, 1) * 4 - var(--i) - 1) * 5, 1);
+  /* the stairs, plus the settle. Later panels travel further, so the
+     flight ASSEMBLES left to right instead of arriving as a slab. */
+  translate: 0 calc(
+    var(--step) * var(--rise) * -1
+    + (1 - var(--sp, 1)) * (16px + var(--i) * 9px)
+  );
+  position: relative;
   display: flex; flex-direction: column;
   border-radius: clamp(12px, 1.3vw, 18px);
-  background: rgba(255, 255, 255, 0.05);
+  /* the surface warms as the light reaches it, so the panel is part of
+     the signal and not just cargo sitting on top of it */
+  background: rgba(255, 255, 255, calc(0.038 + 0.026 * var(--lp, 1)));
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   padding: clamp(18px, 1.7vw, 26px);
@@ -1137,9 +1173,38 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 .dr-run.is-in { opacity: 1; transform: none; }
 
+/* ── the rail ────────────────────────────────────────────────────
+   One tread per panel plus one riser into the next, which makes the
+   line continuous without anything having to MEASURE anything: the
+   tread spans its panel AND the gap after it, and the riser climbs
+   exactly the height the next panel was lifted by. Pure geometry, so it
+   stays correct at any column width, and it costs no JS. */
+.dr-run-rail {
+  position: absolute; left: 0; bottom: calc(-1 * var(--rail-off));
+  width: calc(100% + var(--col-gap)); height: var(--rise);
+  pointer-events: none;
+}
+.dr-run:last-child .dr-run-rail  { width: 100%; }
+.dr-run:last-child .dr-run-riser { display: none; }
+
+.dr-run-tread, .dr-run-riser { position: absolute;
+                               background: rgba(255, 255, 255, .10); }
+.dr-run-tread { left: 0; right: 0; bottom: 0; height: 1px; }
+.dr-run-riser { right: 0; bottom: 0; width: 1px; height: 100%; }
+
+/* the lit length rides ON the dim rail rather than replacing it, so the
+   path is always fully drawn and only the LIGHT ever moves */
+.dr-run-tread::after, .dr-run-riser::after {
+  content: ""; position: absolute; inset: 0;
+  background: rgba(255, 255, 255, .58);
+}
+.dr-run-tread::after { transform-origin: left center;   transform: scaleX(var(--lp, 1)); }
+.dr-run-riser::after { transform-origin: center bottom; transform: scaleY(var(--rp, 1)); }
+
 .dr-run-top { display: flex; align-items: baseline; justify-content: space-between;
               gap: var(--fib-2); }
-.dr-run-n { color: var(--ink);
+/* the number is the station marker: dim until the light gets there */
+.dr-run-n { color: rgba(255, 255, 255, calc(.34 + .66 * var(--lp, 1)));
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 700;
   font-size: 13px; letter-spacing: .14em; font-variant-numeric: tabular-nums; }
@@ -1242,15 +1307,60 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 @media (max-width: 1100px) {
   .dr-runs-grid { grid-template-columns: repeat(2, minmax(0, 1fr));
-                  gap: clamp(10px, 1.6vw, 16px); }
+                  --col-gap: clamp(10px, 1.6vw, 16px);
+                  margin-top: var(--rise); }
+  /* two per row means the flight is two treads tall, twice. The light
+     still walks 1→2→3→4 in reading order, but a riser only ever
+     connects a pair that is genuinely side by side — a riser into the
+     next ROW would be drawing a step that is not there. */
+  .dr-run:nth-child(odd)  { --step: 0; }
+  .dr-run:nth-child(even) { --step: 1; }
+  .dr-run:nth-child(even) .dr-run-rail  { width: 100%; }
+  .dr-run:nth-child(even) .dr-run-riser { display: none; }
 }
 @media (max-width: 640px) {
-  .dr-runs-grid { grid-template-columns: minmax(0, 1fr); }
+  .dr-runs-grid { grid-template-columns: minmax(0, 1fr);
+                  --col-gap: clamp(10px, 1.6vw, 16px);
+                  /* the panels step IN so the rail has gutter to live in.
+                     Hung off the wrap's 21px alone it sat 7px off the
+                     screen edge and read as a scroll artifact. */
+                  padding-left: clamp(20px, 6vw, 28px);
+                  margin-top: 0; }
   .dr-demo { height: 40px; }
+  /* ONE COLUMN: the path turns and runs down the left edge. Same rail,
+     same light, same progress — scaleY instead of scaleX. A staircase
+     needs width it does not have here, so the stairs flatten and the
+     line does the sequencing on its own. */
+  .dr-run { --step: 0; }
+  .dr-run-rail {
+    left: calc(-1 * var(--rail-off)); bottom: auto; top: 0;
+    width: 1px; height: calc(100% + var(--col-gap));
+  }
+  .dr-run:last-child .dr-run-rail { width: 1px; height: 100%; }
+  .dr-run-riser { display: none; }
+  .dr-run-tread { left: 0; right: auto; top: 0; bottom: auto;
+                  width: 1px; height: 100%; }
+  .dr-run-tread::after { transform-origin: center top;
+                         transform: scaleY(var(--lp, 1)); }
+
+  /* the band unstacks. `display: contents` dissolves the wrapper so the
+     kicker and the note become siblings of the lead and can be ordered
+     around it — the note belongs UNDER the statement at this width, not
+     jammed onto the kicker's line. */
+  .dr-runs-head { display: flex; flex-direction: column;
+                  padding-left: clamp(20px, 6vw, 28px); }
+  .dr-runs-band { display: contents; }
+  .dr-runs-kicker { order: 1; margin-bottom: var(--fib-3); }
+  .dr-runs-lead   { order: 2; max-width: none; }
+  .dr-runs-sub    { order: 3; text-align: left; margin-top: var(--fib-3); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dr-run { opacity: 1; transform: none; transition: none; translate: none; }
+  /* the staircase is LAYOUT and stays; only the scroll settle goes, and
+     the rail rests fully lit rather than half-drawn */
+  .dr-run { opacity: 1; transform: none; transition: none;
+            --lp: 1; --rp: 1;
+            translate: 0 calc(var(--step) * var(--rise) * -1); }
   .dr-run.is-in .dr-demo-call i,
   .dr-run.is-in .dr-demo-design i,
   .dr-run.is-in .dr-demo-build i,
