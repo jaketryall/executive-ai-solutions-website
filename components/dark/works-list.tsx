@@ -46,11 +46,6 @@ const ROWS: Row[] = [
   },
 ];
 
-/* PREVIEW ONLY. Three real clients exist; this repeats them so the column's
-   LENGTH can be judged. Set back to 1 before this goes anywhere near
-   production — six cards implies six clients, and that would be a lie. */
-const PREVIEW_REPEAT = 2;
-
 export default function WorksList() {
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -111,10 +106,8 @@ export default function WorksList() {
     <div className="dr-works" ref={listRef}>
       {/* the roster clips and fades; the action below it never does */}
       <div className="dr-works-roll">
-      {Array.from({ length: PREVIEW_REPEAT }, () => ROWS)
-        .flat()
-        .map((r, n) => (
-        <Link key={`${r.slug}-${n}`} href={`/work/${r.slug}`} className="dr-wk">
+      {ROWS.map((r) => (
+        <Link key={r.slug} href={`/work/${r.slug}`} className="dr-wk">
           <span className="dr-wk-thumb">
             <video
               muted
