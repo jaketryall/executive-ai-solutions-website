@@ -488,7 +488,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
-  opacity: 0; transform: translateY(14px);
+  /* 24, not 14 — the rise has to be legible as a RISE next to the
+     headline's, which climbs a full line height out of its clip */
+  opacity: 0; transform: translateY(24px);
   --glint-t: 16s; --glint-peak: rgba(255,255,255,.5);
   /* padding is the REFLOW channel; `translate` carries the focal shift so it
      cannot collide with the entrance animation's hold on `transform` */
@@ -539,14 +541,22 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
                            transform var(--t-micro) var(--ease-ui); }
 .dr-wk.is-focal .dr-wk-arrow { color: var(--ink); transform: translateX(3px); }
 
+/* THE LIST ASSEMBLES UPWARD. Everything else entering this screen rises —
+   the headline's lines climb out of their own clip — and the roster used
+   to fill downward against that, so the two halves of the hero were
+   moving in opposite directions at the same moment.
+
+   Counted with nth-LAST-of-type, so the sequence is the mirror of the
+   old one and stays correct if the roster's length ever changes. Nothing
+   here knows how many cards there are. */
 .dr-lit .dr-wk { animation: dr-cardin 620ms var(--ease-structure) forwards;
                  animation-delay: 900ms; }
-.dr-lit .dr-wk:nth-of-type(2) { animation-delay: 1010ms; }
-.dr-lit .dr-wk:nth-of-type(3) { animation-delay: 1120ms; }
-.dr-lit .dr-wk:nth-of-type(4) { animation-delay: 1230ms; }
-.dr-lit .dr-wk:nth-of-type(5) { animation-delay: 1340ms; }
-.dr-lit .dr-wk:nth-of-type(6) { animation-delay: 1450ms; }
-.dr-lit .dr-wk:nth-of-type(n+7) { animation-delay: 1560ms; }
+.dr-lit .dr-wk:nth-last-of-type(2) { animation-delay: 1010ms; }
+.dr-lit .dr-wk:nth-last-of-type(3) { animation-delay: 1120ms; }
+.dr-lit .dr-wk:nth-last-of-type(4) { animation-delay: 1230ms; }
+.dr-lit .dr-wk:nth-last-of-type(5) { animation-delay: 1340ms; }
+.dr-lit .dr-wk:nth-last-of-type(6) { animation-delay: 1450ms; }
+.dr-lit .dr-wk:nth-last-of-type(n+7) { animation-delay: 1560ms; }
 @keyframes dr-cardin { to { opacity: 1; transform: translateY(0); } }
 
 /* ══ THE MARK, CENTRE STAGE ══════════════════════════════════════
