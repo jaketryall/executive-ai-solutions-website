@@ -414,7 +414,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   transform-origin: 50% 34%;
   translate: 0 var(--hero-y, 0px);
   scale: calc(1 - .2 * var(--hero-p, 0));
-  will-change: transform;
+  /* it goes DIM as it goes away, so the clip never has a hard edge to cut.
+     Squared, so the first half of the hero holds nearly full strength and
+     the fade only bites once it is genuinely leaving. */
+  opacity: calc(1 - .92 * var(--hero-p, 0) * var(--hero-p, 0));
+  will-change: transform, opacity;
 }
 
 /* THE NESTED GRID — not a split. The statement keeps its full width, and
@@ -701,7 +705,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dr-main { translate: none; scale: 1; }
+  .dr-main { translate: none; scale: 1; opacity: 1; }
   .dr-key, .dr-key::after,
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
@@ -743,8 +747,10 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   position: relative; z-index: 4;
   color: var(--ink);
   /* the gutter that makes it a card: the same column every other card on
-     the page sits in */
-  padding: clamp(18px, 3svh, 40px) var(--fib-5);
+     the page sits in. NO top gutter — the card meets the hero's bottom
+     edge, because a black band there is where you would watch the hero
+     get sliced by its own clip on the way past. */
+  padding: 0 var(--fib-5) clamp(18px, 3svh, 40px);
 }
 @media (max-width: 767px) { .dr-svc { padding-inline: var(--fib-3); } }
 
