@@ -130,11 +130,12 @@ export default function DarkRoom() {
        from it. Only the dim survives, which was the honest half: a thing
        moving away from the light gets darker.
 
-       It rides .dr-main because .dr-line and .dr-sub already own transform
-       for the entrance, and a second writer on one property is the
-       collision this room keeps re-learning. */
-    const main = document.querySelector<HTMLElement>(".dr-main");
-    const stage = document.querySelector<HTMLElement>(".dr-stage");
+       That progress now comes from the engine — .dr-stage declares the
+       window and --hero-p inherits down to everything in the hero. The
+       WALL stays hand-rolled here, and deliberately: it is a FIXED layer,
+       so its rect never moves and there is no element progress to measure.
+       Its input is absolute scroll, which is a genuinely different thing
+       from "how far through its own box has this element travelled". */
     let frame = 0;
     const onScroll = () => {
       if (frame || !wall) return;
@@ -142,14 +143,6 @@ export default function DarkRoom() {
         frame = 0;
         const y = Math.min(window.scrollY * 0.1, window.innerHeight * 0.42);
         wall.style.transform = `translate3d(0, ${-y}px, 0)`;
-
-        if (main && stage) {
-          const h = stage.offsetHeight || window.innerHeight;
-          const p = Math.max(0, Math.min(1, window.scrollY / h));
-          // clamp the TRAVEL, not the rate: past the hero it holds its
-          // final offset instead of drifting on down the page
-          main.style.setProperty("--hero-p", String(p));
-        }
       });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -227,7 +220,16 @@ export default function DarkRoom() {
         </div>
       </header>
 
-      <div className="dr-stage">
+      {/* the hero's own progress, 0 at the top and 1 once it has scrolled
+          its own height away. --hero-p inherits to the copy, the roster and
+          .dr-main's dim, so one number drives all three at different rates. */}
+      <div
+        className="dr-stage"
+        data-sp
+        data-sp-from="0"
+        data-sp-to="-1"
+        data-sp-var="--hero-p"
+      >
         {/* the rail watches this, not a scroll number */}
         <div className="dr-top" ref={topRef} aria-hidden />
 

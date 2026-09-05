@@ -434,6 +434,21 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   flex: 1; min-height: 0;
 }
 .dr-hero > * { position: relative; z-index: 1; }
+/* TWO RATES IN ONE VIEW.
+   The hero was the flattest thing on the page: both columns left at
+   exactly the scroll's rate, so there was nothing for depth to be
+   measured against. The roster is the nearer object — cards stacked in
+   front of a wall — and nearer things move MORE. So it leaves faster than
+   the copy, and the gap between them opens as the hero goes.
+
+   40 and 96 against a wall already climbing at 0.1x gives three rates in
+   one viewport, which is what the reference sites have and we did not.
+   `translate` on the columns; the lines inside own `transform` for the
+   entrance and the cards own it for the focal shift. Three properties,
+   three owners, no collision. */
+.dr-left  { translate: 0 calc(var(--hero-p, 0) * -40px); }
+.dr-works { translate: 0 calc(var(--hero-p, 0) * -96px); }
+
 .dr-left  { grid-column: 1; grid-row: 1; display: flex; flex-direction: column;
             justify-content: flex-end; align-self: stretch;
             /* the copy sits higher than the action does; they used to
@@ -711,6 +726,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .dr-main { opacity: 1; }
+  .dr-left, .dr-works { translate: none; }
   .dr-key, .dr-key::after,
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
