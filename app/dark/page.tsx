@@ -47,6 +47,54 @@ CustomEase.create(U, "M0,0 C0.16,1 0.3,1 1,1"); //   --ease-ui
    below and a delay keyed to its index, so the swap cascades across the word
    instead of the whole label flipping at once. The link keeps a real label
    for screen readers; the split is decoration. */
+/* THE HEADLINE LEAVES A CHARACTER AT A TIME, IN A SHUFFLED ORDER.
+   Decoded off itsoffbrand.com, where the h1 does exactly this: at a third
+   of the way through the exit, characters 0/3/5/7 were mid-flight at 90%,
+   61%, 86% and 53% while their immediate neighbours had not started. A
+   left-to-right sweep is what reads as mechanical; a scattered one is
+   what reads as alive, and it costs the same.
+
+   The order is DETERMINISTIC — a hash of the index, not Math.random —
+   because this renders on the server too and a different shuffle on each
+   side is a hydration mismatch. Same scatter every load, which also means
+   the effect is stable to look at rather than different every time.
+
+   The chars own `translate`; the line's entrance owns `transform` on the
+   wrapper above them. Two properties, two elements, no collision — the
+   rule this room keeps re-learning. */
+function shuffledRanks(n: number) {
+  return Array.from({ length: n }, (_, i) => i)
+    .sort((a, b) => ((a * 2654435761) % 4294967296) - ((b * 2654435761) % 4294967296))
+    .reduce<number[]>((rank, idx, place) => {
+      rank[idx] = place;
+      return rank;
+    }, []);
+}
+
+function Split({ text }: { text: string }) {
+  const chars = Array.from(text);
+  const rank = shuffledRanks(chars.length);
+  return (
+    <span className="sweep dr-split">
+      {/* the real sentence, for anything that reads rather than looks */}
+      <span className="dr-sr">{text}</span>
+      <span aria-hidden="true">
+        {chars.map((c, i) => (
+          <span
+            key={i}
+            className="dr-char"
+            style={
+              { "--r": rank[i], "--n": chars.length } as React.CSSProperties
+            }
+          >
+            {c === " " ? "\u00A0" : c}
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
+
 function Roll({ label }: { label: string }) {
   return (
     <span className="dr-roll" aria-hidden>
@@ -230,10 +278,10 @@ export default function DarkRoom() {
             <div className="dr-left">
               <h1 className="t-hero">
                 <span className="dr-line">
-                  <span className="sweep">A website that books</span>
+                  <Split text="A website that books" />
                 </span>
                 <span className="dr-line">
-                  <span className="sweep">while you&rsquo;re on the job.</span>
+                  <Split text="while you’re on the job." />
                 </span>
               </h1>
 
