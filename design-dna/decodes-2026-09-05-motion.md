@@ -24,7 +24,7 @@ read these eight lines.
 | 5 | Smooth the input (Lenis) and everything downstream inherits it. | §1, §5 |
 | 6 | Prefetch on hover so a transition is never network-gated. | §5 |
 | 7 | One committed idea per section beats five partial ones. | §0, §6 |
-| 8 | Transform and opacity only. The performance IS the feel. | §8 (pending) |
+| 8 | Transform and opacity only — measured 0 layout-triggering changes. | §11 |
 
 **The one that is not a technique:** decode by MEASURING. "It feels fluid"
 is not actionable. "The columns sit at ±95px and converge to zero" is
@@ -268,14 +268,12 @@ nothing about that. **Imported, not derived.** The icomat word ramp stayed
 
 ---
 
-## 8 · STILL OPEN (slices in flight)
+## 8 · STILL OPEN
 
-- Horizontal track + on-track/off-track panels — pin technique, px-per-px
-  ratio, converge vs cross
-- Performance profile — LCP/CLS, long tasks under scroll, and the ratio of
-  compositor-friendly to layout-triggering properties
-- The helmet WebGL layer (lowest priority — not replicable without a 3D
-  pipeline, and Jake does not want a 3D object anyway)
+All six slices landed. The only thing deliberately not decoded is the
+helmet WebGL layer itself — not replicable without a 3D pipeline, and Jake
+does not want a 3D object anyway. Its *performance* handling is in §11,
+which is the transferable part.
 
 ---
 
@@ -408,3 +406,83 @@ Two things to note against our own practice:
 site-wide, and two of them are the horizontal track's pin. Everything else
 — every parallax, the whole fan — is directly animated transform. Sticky
 is reserved for "pin while a section scrolls past", nothing else.
+
+---
+
+## 11 · WHY IT IS FAST (the measured answer)
+
+Field data, real users, p75: **LCP 1201ms · INP 140ms · CLS 0.00.**
+
+### The ratio, tested properly
+
+A static snapshot is misleading — ~50 elements carry `top/left/width/
+height` at any moment. The real test is a **diff across time**, same
+elements, two snapshots:
+
+| | properties that changed |
+|---|---|
+| idle, 600ms | `transform` only (9 elements) |
+| active scroll | `transform` (56), `opacity` (2), `clip-path` (1), `visibility` (2), `background-color` (1) |
+
+**Zero layout-property mutations in either.** The `top/left/width/height`
+values are one-time layout output, set once and never touched again. That
+is law 8, measured rather than asserted.
+
+### Zero long tasks under scroll
+
+Over ~2s of full-height scroll: **69,237 main-thread tasks, 10.3s busy,
+and not one task >= 50ms.** Longest single task 44.18ms. 92.8% of tasks
+finished under 1ms.
+
+`UpdateLayoutTree` (4,940 calls, avg 61.8us) pairs 1:1 with `PrePaint` on
+an even 7-9ms cadence — one clean style+layout pass per tick, no
+thrashing. Visibility runs on IntersectionObserver (9,807 calls, 146ms
+total), not on polled `getBoundingClientRect`.
+
+### The counterintuitive one: MANY small rAF loops
+
+`FireAnimationFrame` totalled 6,289ms across **20,001 calls averaging
+314us** — roughly 8-10 independent rAF loops, not one god-function.
+
+This looks like it contradicts our own consolidation (14b69d3 merged five
+loops into one). It does not. Ours were each re-reading
+`getBoundingClientRect` for the same layout in the same frame — duplicate
+*measurement*. Theirs are independent effects each doing tiny *work*. The
+law is **keep each frame's work small**, not "one loop" or "many loops".
+
+### CLS 0.00 with no image dimensions at all
+
+198 `<img>`, 196 lazy — and **zero** of them carry `width`/`height`
+attributes or CSS `aspect-ratio`. Yet CLS is 0.00, because every image
+sits in a wrapper with a **fixed pixel box**, itself `position: absolute;
+width/height 100%; object-fit: cover`.
+
+**Space is reserved on the parent, not the image.** Useful when media gets
+swapped or cross-faded, since the box never depends on what is in it.
+
+### will-change is rationed
+
+**18 of 2,088 elements (0.86%)**, and every single one is `transform` — no
+other value used anywhere. Applied only to things that loop indefinitely
+(marquee rows, the socials carousel). Never applied defensively to
+something that merely *might* animate.
+
+*Audit ours against this.* `.dr-main` and `.dr-svc-in` both carry it.
+
+### Resolution is a per-surface dial
+
+`devicePixelRatio: 2`. The cheap Rive UI canvases render at full 2.0x. The
+one expensive WebGL surface is deliberately capped at **1.25x** — about
+2.6x less fragment-shader work than native retina.
+
+Any site with a costly canvas, filter or shader can do the same: pay full
+resolution where it is cheap, cap it where it hurts.
+
+### Two structural moves
+
+- **The heavy thing is invisible to the metric.** LCP resolves to a button
+  label, because a `<canvas>` is never LCP-eligible. Their heaviest visual
+  cannot be penalised by the metric meant to represent main content.
+- **One-time cost is pushed off the critical path.** The 434ms 3D bootstrap
+  fires *after* first paint; Draco decode runs in Workers. Steady state
+  stays under 1ms per task.
