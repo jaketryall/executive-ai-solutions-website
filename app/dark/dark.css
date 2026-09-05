@@ -406,17 +406,20 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-main { flex: 1; min-height: 0; display: flex; flex-direction: column;
            padding-block: 0 clamp(16px, 3.8svh, 34px);
   /* THE RECEDE. See the note in page.tsx: the next section rising is a
-     depth cue bought up here, not motion down there. Individual
-     `translate`/`scale` rather than the `transform` shorthand, so this can
-     never collide with the entrance animations beneath it. Shrinks about a
-     point above centre, so the headline holds its place on the page longer
-     than the roster does. */
-  transform-origin: 50% 34%;
+     depth cue bought up here, not motion down there.
+
+     NO SCALE. It shrank to .8 to match the reference, and on a photo or a
+     card that reads as distance — but this hero is mostly TYPE, and type
+     that resizes while you read it reads as a zoom, not as depth. The lag
+     and the dim carry the cue on their own, and the headline holds the
+     size it was set at.
+
+     Individual `translate` rather than the `transform` shorthand, so it
+     can never collide with the entrance animations beneath it. */
   translate: 0 var(--hero-y, 0px);
-  scale: calc(1 - .2 * var(--hero-p, 0));
-  /* it goes DIM as it goes away, so the clip never has a hard edge to cut.
-     Squared, so the first half of the hero holds nearly full strength and
-     the fade only bites once it is genuinely leaving. */
+  /* it goes DIM as it goes away, which also means the stage's clip never
+     has a hard edge to cut. Squared, so the first half of the hero holds
+     nearly full strength and the fade only bites once it is leaving. */
   opacity: calc(1 - .92 * var(--hero-p, 0) * var(--hero-p, 0));
   will-change: transform, opacity;
 }
@@ -705,7 +708,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dr-main { translate: none; scale: 1; opacity: 1; }
+  .dr-main { translate: none; opacity: 1; }
   .dr-key, .dr-key::after,
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }

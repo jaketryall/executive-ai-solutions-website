@@ -144,7 +144,9 @@ export default function DarkRoom() {
           const p = Math.max(0, Math.min(1, window.scrollY / h));
           // clamp the TRAVEL, not the rate: past the hero it holds its
           // final offset instead of drifting on down the page
-          main.style.setProperty("--hero-y", `${Math.min(window.scrollY, h) * 0.4}px`);
+          // 0.22, down from the reference's 0.4: without the scale beside
+          // it a big lag just reads as the text sliding, not receding
+          main.style.setProperty("--hero-y", `${Math.min(window.scrollY, h) * 0.22}px`);
           main.style.setProperty("--hero-p", String(p));
         }
       });
