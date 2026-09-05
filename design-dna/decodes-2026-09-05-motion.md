@@ -272,7 +272,6 @@ nothing about that. **Imported, not derived.** The icomat word ramp stayed
 
 - Horizontal track + on-track/off-track panels — pin technique, px-per-px
   ratio, converge vs cross
-- Image parallax ratios, the socials fan-on-hover falloff, Lenis config
 - Performance profile — LCP/CLS, long tasks under scroll, and the ratio of
   compositor-friendly to layout-triggering properties
 - The helmet WebGL layer (lowest priority — not replicable without a 3D
@@ -329,3 +328,83 @@ than between sections.
 Both confirmed scrubbed by a 10px nudge test: the track moved exactly
 −10px (matching 1:1), the image moved +2.45px (matching the local slope of
 its cubic).
+
+---
+
+## 10 · PARALLAX RATIOS, THE FAN, AND THE LENIS CONFIG
+
+### The parallax rule: travel EXACTLY the surplus
+
+The hero-scale image runs `translateY 0 → -138px` and `scale 1.0 → 1.1`
+together, linearly, over 1384px of scroll (viewport + container). Its
+image is 830px tall in a 692px box — **the 138px of travel is exactly the
+138px of surplus.** That is the whole trick: an image never reveals an
+edge because its travel is defined by how much spare it has, not by a
+number somebody liked. Ratio works out ~1:10.
+
+A second set runs much slower, ~1:32.6, pure translate with no scale —
+and all four siblings read the **identical** value at any scroll position
+regardless of where each sits on screen. One shared tween over several
+targets, not per-element triggers.
+
+**Negative control, and the useful part:** a third oversized image is
+`scale(1.05)` at every sampled position — completely static. Not every
+oversized image is parallaxed; that one's surplus is a fixed crop margin
+for a hover. So the surplus is a *precondition* for parallax, not a
+trigger for it.
+
+### The socials fan
+
+Seven cards, symmetric at rest, centre card neutral:
+
+```
+idx        0      1      2     3     4      5      6
+rotation -21°   -14°   -7°    0°   +7°   +14°   +21°
+scale   0.776  0.850  0.935  1.0  0.935  0.850  0.776
+X       -333   -244   -122    0   +122   +244   +333
+Y        +81    +44    +14    0    +14    +44    +81
+```
+
+The X steps (122, 122, 89) are not arithmetic — **hand-authored per-card
+constants, not a radius formula.** Worth knowing before trying to derive
+one.
+
+`transitionDuration: 0s`; it is all inline transforms written per frame.
+
+**The entrance is the interesting bit.** Rotation, scale and X snap in
+instantly — never caught mid-tween. Only `translateY` animates, 111 → 0
+over ~700–780ms on a decelerating curve. And the stagger runs in **reverse
+DOM order**: rightmost card leaves first, each earlier one ~80–90ms later.
+Opacity is never touched. It plays once and does not reverse on scroll-up.
+
+Hover: the hovered card scales +8% and lifts ~28px, with rotation and X
+unchanged — "grow and rise in place". Neighbours get pushed along X, but
+the falloff is not linear by distance and is reproducibly asymmetric.
+Hand-tuned, not computed.
+
+### The Lenis config, verbatim from the live instance
+
+```
+lerp: 0.1                 // lerp mode, NOT duration mode
+smoothWheel: true
+syncTouch: true           // touch IS smoothed
+touchMultiplier: 1.25
+wheelMultiplier: 1
+gestureOrientation: "vertical"
+autoRaf: false            // RAF driven externally — GSAP-ticker pattern
+```
+
+Two things to note against our own practice:
+
+1. **`lerp: 0.1`** is within rounding distance of the `k ≈ 0.12` estimated
+   for the transform damping in §1. Plausibly the same constant reused for
+   both the scroll input and the effect targets. Cheap to try.
+2. **`syncTouch: true`** contradicts our standing rule of running Lenis on
+   desktop only and leaving touch native. They smooth touch too, with a
+   1.25 multiplier. Our rule came from real Safari/mobile pain, so this is
+   noted, not adopted — but it is evidence the other choice is shippable.
+
+**Sticky is rationed:** only four elements compute to `position: sticky`
+site-wide, and two of them are the horizontal track's pin. Everything else
+— every parallax, the whole fan — is directly animated transform. Sticky
+is reserved for "pin while a section scrolls past", nothing else.
