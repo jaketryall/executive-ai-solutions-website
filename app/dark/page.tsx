@@ -6,6 +6,7 @@ import WorksList from "@/components/dark/works-list";
 import ServicesSection from "@/components/dark/services-section";
 import ProofSection from "@/components/dark/proof-section";
 import RunsSection from "@/components/dark/runs-section";
+import ObjectionsSection from "@/components/dark/objections-section";
 import CloseSection from "@/components/dark/close-section";
 import { useScrollEngine } from "@/components/dark/scroll-engine";
 import { Archivo, Instrument_Sans } from "next/font/google";
@@ -258,6 +259,7 @@ export default function DarkRoom() {
       <ServicesSection />
       <ProofSection />
       <RunsSection />
+      <ObjectionsSection />
       <CloseSection />
     </div>
   );
