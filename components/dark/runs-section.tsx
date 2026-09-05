@@ -144,7 +144,10 @@ export default function RunsSection() {
           <p className="dr-runs-sub">Fixed quote up front, no surprises after.</p>
         </header>
 
-        <ol className="dr-runs-grid">
+        {/* DECLARES its window; the engine fills in --sp. No scroll code
+            lives in this file — the whole section is now two attributes
+            and a stylesheet rule. */}
+        <ol className="dr-runs-grid" data-sp data-sp-from="1.15" data-sp-to="0.05">
           {STEPS.map((s, i) => {
             const Demo = DEMOS[s.demo];
             return (

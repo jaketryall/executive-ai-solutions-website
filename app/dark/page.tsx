@@ -7,6 +7,7 @@ import ServicesSection from "@/components/dark/services-section";
 import ProofSection from "@/components/dark/proof-section";
 import RunsSection from "@/components/dark/runs-section";
 import CloseSection from "@/components/dark/close-section";
+import { useScrollEngine } from "@/components/dark/scroll-engine";
 import { Archivo, Instrument_Sans } from "next/font/google";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
@@ -80,6 +81,10 @@ export default function DarkRoom() {
   /* The rail transforms on SCROLL, not on load. A sentinel at the very top
      of the stage says the moment the page has left the top — cheaper and
      more honest than guessing a scroll offset. */
+  /* one loop for every [data-sp] on the page. Mounted here rather than
+     per-section so the whole page costs a single measurement pass. */
+  useScrollEngine();
+
   const topRef = useRef<HTMLDivElement>(null);
   const [stuck, setStuck] = useState(false);
   useEffect(() => {

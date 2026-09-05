@@ -1031,7 +1031,22 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(10px, 1.2vw, 18px); }
 
+/* THE ROW DISAGREES WITH ITSELF.
+   Measured off itsoffbrand.com's work grid, where alternating columns
+   carry equal and OPPOSITE offsets — [+95, -95, +95, -95] — that shrink
+   toward zero as the section passes. Two rates in one view is what reads
+   as depth; one rate reads as a slab, which is what these four cards were.
+
+   It CONVERGES rather than crossing: full offset while the row is still
+   arriving, zero once you have reached it. My first pass crossed through
+   zero at the midpoint instead, which meant the cards froze at maximum
+   scatter for the whole time you were actually reading them — the
+   opposite of the reference, where the magnitude shrinks 95 -> 45 as the
+   section comes in. `translate`, because the entrance owns `transform`. */
+.dr-run:nth-child(odd)  { --drift:  34px; }
+.dr-run:nth-child(even) { --drift: -34px; }
 .dr-run {
+  translate: 0 calc((1 - var(--sp, 1)) * var(--drift, 0px));
   display: flex; flex-direction: column;
   border-radius: clamp(12px, 1.3vw, 18px);
   background: rgba(255, 255, 255, 0.05);
@@ -1159,7 +1174,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dr-run { opacity: 1; transform: none; transition: none; }
+  .dr-run { opacity: 1; transform: none; transition: none; translate: none; }
   .dr-run.is-in .dr-demo-call i,
   .dr-run.is-in .dr-demo-design i,
   .dr-run.is-in .dr-demo-build i,
