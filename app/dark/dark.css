@@ -204,23 +204,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 /* the specular sweep — used on exactly TWO headings site-wide */
 @media (prefers-reduced-motion: no-preference) {
-  /* on the CHARACTERS, not the line. background-clip:text does not carry
-     into inline-block descendants — the line kept the gradient and the
-     characters inside it rendered as nothing at all.
-
-     Each character now runs the same 6s sweep against its own box, offset
-     by a NEGATIVE delay proportional to its position, so the highlight
-     still travels along the line as one continuous shine rather than
-     every letter flashing together. --i is the character's real index
-     here, not its shuffled exit rank: the shine reads left to right even
-     though the exit does not. */
-  .t-hero .dr-char {
+  .t-hero .sweep {
     background: linear-gradient(90deg, #d6d6da 0%, #ffffff 18%, #d6d6da 36%);
     background-size: 300% 100%;
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent; color: transparent;
     animation: dr-sweep 6s linear infinite;
-    animation-delay: calc(var(--i, 0) * -0.055s);
   }
 }
 @keyframes dr-sweep { to { background-position: -300% 0; } }
@@ -478,30 +467,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-line { overflow: hidden; transform: skewX(-4deg);
            transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
-
-/* the sentence a screen reader gets — the split copy beside it is
-   aria-hidden, so this is the only version that is ever announced */
-.dr-sr { position: absolute; width: 1px; height: 1px; padding: 0;
-         margin: -1px; overflow: hidden; clip-path: inset(50%);
-         white-space: nowrap; border: 0; }
-
-/* THE HEADLINE LEAVES A CHARACTER AT A TIME, SHUFFLED.
-   --r is the character's place in a deterministic scatter, not its
-   position in the line, so the exit never reads as a sweep. Same ramp
-   shape as §02's word fill: one progress value, a front that crosses the
-   line, and each character's own rank deciding when the front reaches it.
-
-   `translate`, because the wrapper above owns `transform` for the
-   entrance. The line clips, so a character at 101% is simply gone. */
-.dr-char {
-  display: inline-block;
-  /* the divisor is the WIDTH of the front — how many characters are in
-     flight at once. At 4 the line had cleared by a third of the hero's
-     exit, which reads as the headline running away rather than leaving
-     with it. At 8 the last character lands as the hero itself finishes. */
-  --local: calc(var(--hero-p, 0) * (var(--n) + 10) - var(--r));
-  translate: 0 calc(clamp(0, var(--local) / 8, 1) * 104%);
-}
 .dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 350ms forwards; }
 .dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 470ms forwards; }
 @keyframes dr-rise { to { transform: translateY(0); } }
@@ -746,7 +711,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .dr-main { opacity: 1; }
-  .dr-char { translate: none; }
   .dr-key, .dr-key::after,
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
