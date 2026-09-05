@@ -1222,6 +1222,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      by construction. */
   --over: clamp(22px, 2.6vw, 34px);
 
+  /* ABSOLUTE, so the frame's size can never depend on what is inside it.
+     CLS is already 0 here — the frame's aspect-ratio reserves the space —
+     so this is not fixing a shift. It is the other half of the reference's
+     pattern: an in-flow child still participates in layout, which means a
+     second image cross-faded into this same frame, or a swap to a taller
+     source, would have something to argue with. Out of flow there is
+     nothing to argue with, ever. */
+  position: absolute; inset: 0 0 auto 0;
   display: block; width: 100%;
   height: calc(100% + var(--over));
   object-fit: cover; object-position: var(--pos, 50% 40%);
