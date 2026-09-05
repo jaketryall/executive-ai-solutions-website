@@ -215,7 +215,18 @@ export default function ServicesSection() {
       {/* the exit rides this, never .dr-svc itself — the section's own rect
           is what the exit progress is measured FROM, and a transformed
           element cannot be its own ruler */}
-      <div className="dr-svc-in">
+      {/* the card DECLARES its arrival window; the engine writes --ap and
+          the three blocks inside read it at three different rates. Named
+          --ap so it cannot collide with the --sp this section still
+          computes by hand for the word ramp, or the --ep for its exit. */}
+      <div
+        className="dr-svc-in"
+        data-sp
+        data-sp-from="1"
+        data-sp-to="0.35"
+        data-sp-var="--ap"
+        data-sp-lerp="0.1"
+      >
       <div className="dr-say">
         <div className="dr-marks" aria-hidden>
           {MARKS.map((m, i) => (
