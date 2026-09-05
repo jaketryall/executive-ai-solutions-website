@@ -229,7 +229,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      overlap from showing at rest. A card cannot cover anything, so the
      hero contains itself and both pixels go away. */
   overflow: hidden;
-  min-height: 100svh; display: flex; flex-direction: column;
+  /* 170px of dead space at the foot, which is what buys §02 its slow
+     arrival: the card is lifted 170 early so it can climb at less than
+     scroll rate, and this is the height that lift is borrowed from. The
+     padding goes on the STAGE, not the main box, so .dr-main keeps the
+     height it had and the hero's composition does not move. */
+  min-height: calc(100svh + 170px); padding-bottom: 170px;
+  display: flex; flex-direction: column;
   /* the fixed rail is out of flow, so the hero reserves its height here */
   padding-top: var(--nav-space);
 }
@@ -237,7 +243,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    the grid's 1fr row has nothing to resolve against, so the long roster grew
    the row, pushed the copy down and ran the page 69px past the fold. Mobile
    keeps min-height, because there the page is meant to scroll. */
-@media (min-width: 901px) { .dr-stage { height: 100svh; } }
+@media (min-width: 901px) { .dr-stage { height: calc(100svh + 170px); } }
 .wrap { max-width: 1400px; margin-inline: auto; width: 100%;
         padding-inline: var(--fib-3); }
 @media (min-width: 768px) { .wrap { padding-inline: var(--fib-5); } }
@@ -709,6 +715,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .dr-main { translate: none; opacity: 1; }
+  .dr-svc-in { --ay: 0px; }
   .dr-key, .dr-key::after,
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
@@ -1270,7 +1277,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   overflow: hidden;
   padding-block: clamp(56px, 11svh, 130px) clamp(48px, 9svh, 108px);
   transform-origin: 50% 30%;
-  translate: 0 var(--ey, 0px);
+  translate: 0 calc(var(--ay, 0px) + var(--ey, 0px));
   scale: calc(1 - .2 * var(--ep, 0));
   will-change: transform;
 }

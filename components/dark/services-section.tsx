@@ -174,6 +174,18 @@ export default function ServicesSection() {
       const ep = Math.max(0, Math.min(1, (innerHeight - (b.top + b.height)) / innerHeight));
       inner.style.setProperty("--ey", `${ep * innerHeight * 0.4}px`);
       inner.style.setProperty("--ep", String(ep));
+
+      /* THE ARRIVAL, and it is the reverse of the exit rather than more of
+         it. Rising slower than the page means the card must be DISPLACED
+         UPWARD early and give that displacement back as it settles: the
+         offset runs from -LIFT to 0, so its climb is (1 - LIFT/screen) of
+         the scroll rate instead of 1:1.
+
+         The hero pays for the lift with a matching LIFT of dead space at
+         its foot (see .dr-stage), so at rest the card still sits exactly
+         on the fold instead of peeking out by that much. */
+      const ap = Math.max(0, Math.min(1, (innerHeight - b.top) / innerHeight));
+      inner.style.setProperty("--ay", `${(ap - 1) * 170}px`);
     };
     let eframe = 0;
     const onExit = () => {
