@@ -82,6 +82,12 @@ export function HighlightsGallery({
         const r = card.getBoundingClientRect();
         const dist = r.left + r.width / 2 - centerX;
         const f = Math.min(Math.abs(dist) / range, 1);
+        /* the SIGNED, clamped distance, published for anything that wants
+           it. Costs one property write on a rect this loop already had —
+           no second measurement, no second loop. Callers that ignore it
+           pay nothing. */
+        card.style.setProperty("--d", String(Math.max(-1, Math.min(1, dist / range))));
+
         const cap = captions[i];
         if (cap) {
           cap.style.transform = `translate3d(${dist * 0.1266}px,0,0)`;

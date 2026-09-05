@@ -978,6 +978,40 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 .dr-hlg .hlg-card { background: #101014; border-radius: clamp(14px, 1.6vw, 22px); }
 
+/* THE PICTURE LAGS ITS CARD.
+   Same law as §02's row shots — the travel IS the surplus — but on the
+   horizontal axis, because this section scrolls sideways. The image is
+   `over` wider on EACH side and moves at most `over` in either direction,
+   so an edge cannot appear no matter where the card sits.
+
+   Driven by --d, the card's signed distance from the track's centre,
+   which the gallery's loop already computes for the caption physics. One
+   extra property write on a rect it had measured anyway — no second
+   measurement and no second loop, which is the whole reason that number
+   was worth publishing.
+
+   Negative, so the picture trails the card: swipe left and the image
+   holds back inside its frame, exactly the way a near object lags a far
+   one. Scoped to .dr-hlg so the live site's gallery is untouched. */
+.dr-hlg .hlg-card--fill .hlg-media img {
+  --over: clamp(16px, 2.2vw, 40px);
+  position: absolute; top: 0;
+  left: calc(-1 * var(--over));
+  /* max-width:none FIRST, or the surplus never exists. Tailwind's preflight
+     sets `img { max-width: 100% }`, which silently clamped a width of
+     100%+2*over back to exactly the frame — `left` and `translate` both
+     applied, so the picture moved, but with no surplus to move THROUGH it
+     just slid an edge into view. A 52.8px gap, from a rule in a reset. */
+  max-width: none;
+  width: calc(100% + 2 * var(--over));
+  height: 100%;
+  object-fit: cover; object-position: top;
+  translate: calc(var(--d, 0) * var(--over) * -1) 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dr-hlg .hlg-card--fill .hlg-media img { translate: none; }
+}
+
 /* THE TEXT LIVES OUTSIDE THE CARDS.
    On the artwork this was white type over a client's own headline, hero
    photo and buttons — and one of the three covers is light-on-light, so
