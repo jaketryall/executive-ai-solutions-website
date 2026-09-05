@@ -62,7 +62,22 @@ export default function CloseSection() {
   };
 
   return (
-    <section className="dr-close" aria-labelledby="dr-close-h">
+    /* THE LIGHTS COME UP FOR THE ASK. Declares a ground ramp and the
+       engine resolves it against this room's own palette — `void` reads
+       --void, `surface-1` reads --surface-1, so no colour is restated
+       here. Two attributes, no scroll code in this file. Earned rather
+       than decorative: §05 is where the page finally asks, and a room
+       that lifts as you arrive at the question is the whole concept. */
+    <section
+      className="dr-close"
+      aria-labelledby="dr-close-h"
+      data-sp
+      data-sp-from="1"
+      data-sp-to="0.45"
+      data-sp-lerp="0.1"
+      data-bg-from="void"
+      data-bg-to="surface-1"
+    >
       <div className="wrap dr-close-in">
         <span className="t-label dr-close-kicker">The next step</span>
         <h2 className="dr-close-h" id="dr-close-h">

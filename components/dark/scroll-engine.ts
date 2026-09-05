@@ -37,7 +37,21 @@ import { useEffect } from "react";
    resolves within a single frame while transforms chase — so this is
    opt-in, and an element without data-sp-lerp behaves exactly as before.
 
-   It deliberately does NOT animate anything. The engine produces INPUTS;
+   GROUND COLOUR, opt-in with data-bg-from / data-bg-to.
+   The one genuinely architectural thing on landonorris.com: a section
+   DECLARES named colours and a generic engine resolves them against the
+   palette, lerps, and writes. Adding a colour change there is two
+   attributes, not new code. Names resolve against this room's own CSS
+   custom properties, so nothing is duplicated — `void` reads --void.
+
+   Eased, not linear: their sweep fits 2t - t^2 (ease-out quadratic) to
+   within +/-0.03, which is measurably not a straight lerp.
+
+   This is the ONE place the engine writes something other than a custom
+   property, because a page ground has no other home.
+
+   Otherwise it deliberately does NOT animate anything. The engine
+   produces INPUTS;
    the stylesheet turns them into motion with calc(). That split is what
    keeps every effect in this room a pure function of scroll position —
    scrub backwards and it runs backwards exactly, land mid-page and the
@@ -57,12 +71,59 @@ type Track = {
   lerp: number;
   /** the damped value, carried between frames */
   current: number;
+  /** ground colour ramp, resolved from named tokens. null = not declared. */
+  bg: { from: RGB; to: RGB; target: HTMLElement } | null;
 };
+
+type RGB = [number, number, number];
+
+/** #rgb / #rrggbb / rgb(...) → [r,g,b]. Returns null on anything else. */
+function parseColor(v: string): RGB | null {
+  const t = v.trim();
+  const hex = t.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (hex) {
+    const h = hex[1];
+    const full = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
+    return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16)) as RGB;
+  }
+  const rgb = t.match(/^rgba?\(([^)]+)\)$/i);
+  if (rgb) {
+    const n = rgb[1].split(/[,\s/]+/).filter(Boolean).map(Number);
+    if (n.length >= 3 && n.slice(0, 3).every(Number.isFinite)) {
+      return [n[0], n[1], n[2]] as RGB;
+    }
+  }
+  return null;
+}
+
+/** a token NAME ("void") resolved against --void on the room's root */
+function token(root: Element, name: string): RGB | null {
+  const raw = name.trim();
+  const direct = parseColor(raw);
+  if (direct) return direct;
+  const v = getComputedStyle(root).getPropertyValue(`--${raw}`);
+  return v ? parseColor(v) : null;
+}
 
 const num = (v: string | null, fallback: number) => {
   const n = v === null ? NaN : parseFloat(v);
   return Number.isFinite(n) ? n : fallback;
 };
+
+function readBg(el: HTMLElement): Track["bg"] {
+  const fromName = el.getAttribute("data-bg-from");
+  const toName = el.getAttribute("data-bg-to");
+  if (!fromName || !toName) return null;
+  const target =
+    (el.closest<HTMLElement>(el.getAttribute("data-bg-target") || ".dr-root")) ??
+    document.body;
+  const from = token(target, fromName);
+  const to = token(target, toName);
+  // an unresolvable name is a typo, and silently painting black over the
+  // page would be a worse failure than doing nothing
+  if (!from || !to) return null;
+  return { from, to, target };
+}
 
 function read(el: HTMLElement): Track {
   return {
@@ -71,6 +132,7 @@ function read(el: HTMLElement): Track {
     to: num(el.getAttribute("data-sp-to"), 0),
     edge: el.getAttribute("data-sp-edge") === "bottom" ? "bottom" : "top",
     varName: el.getAttribute("data-sp-var") || "--sp",
+    bg: readBg(el),
     lerp: Math.max(0, Math.min(1, num(el.getAttribute("data-sp-lerp"), 0))),
     current: NaN, // first frame snaps, so nothing eases in from zero on load
   };
@@ -88,7 +150,13 @@ export function useScrollEngine(deps: unknown[] = []) {
 
     if (still) {
       // resolved, not mid-flight: reduced motion gets the finished frame
-      tracks.forEach((t) => t.el.style.setProperty(t.varName, "1"));
+      tracks.forEach((t) => {
+        t.el.style.setProperty(t.varName, "1");
+        if (t.bg) {
+          const [r, g, b] = t.bg.to;
+          t.bg.target.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        }
+      });
       return;
     }
 
@@ -127,6 +195,16 @@ export function useScrollEngine(deps: unknown[] = []) {
 
         t.el.style.setProperty(t.varName, String(value));
         t.el.style.setProperty(`${t.varName}x`, `${value * vh}px`);
+
+        if (t.bg) {
+          // ease-out quadratic, measured off the reference rather than
+          // assumed — a straight lerp reads noticeably more mechanical
+          const e = value * (2 - value);
+          const c = t.bg.from.map((f, i) =>
+            Math.round(f + (t.bg!.to[i] - f) * e)
+          );
+          t.bg.target.style.backgroundColor = `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+        }
       }
 
       if (settling && !frame) frame = requestAnimationFrame(draw);
@@ -143,6 +221,10 @@ export function useScrollEngine(deps: unknown[] = []) {
       removeEventListener("scroll", onScroll);
       removeEventListener("resize", onScroll);
       if (frame) cancelAnimationFrame(frame);
+      // hand the ground back to the stylesheet
+      tracks.forEach((t) => {
+        if (t.bg) t.bg.target.style.backgroundColor = "";
+      });
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
