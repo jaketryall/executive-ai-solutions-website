@@ -116,19 +116,16 @@ export default function DarkRoom() {
        it; a slow climb is what makes it read as depth rather than wallpaper.
        Capped so it never drifts out of frame on a long page. */
     const wall = document.querySelector<HTMLElement>(".dr-wall");
-    /* THE HERO RECEDES SO THE NEXT SECTION CAN RISE OVER IT.
-       Nothing about §02 moves — it scrolls 1:1 like any block. The rising
-       is entirely a DEPTH CUE paid for up here: the hero's content drifts
-       DOWN at 0.4x the scroll (so it climbs at only 0.6x) while shrinking
-       to 0.8. Moving slower and getting smaller is what "further away"
-       looks like, and the section arriving at full speed then reads as
-       coming UP over it rather than merely following it.
+    /* THE HERO DIMS AS IT LEAVES. It used to shrink and lag as well —
+       copied wholesale off a reference where the hero is a photograph.
+       On type that read as a zoom rather than as depth, and it made §02
+       feel like it arrived too fast, because the hero was running away
+       from it. Only the dim survives, which was the honest half: a thing
+       moving away from the light gets darker.
 
        It rides .dr-main because .dr-line and .dr-sub already own transform
-       for the entrance, and a second writer on the same property is the
-       collision this room keeps re-learning. Written to `translate` and
-       `scale` — the individual properties — so it cannot collide with the
-       `transform` shorthand anywhere beneath it either. */
+       for the entrance, and a second writer on one property is the
+       collision this room keeps re-learning. */
     const main = document.querySelector<HTMLElement>(".dr-main");
     const stage = document.querySelector<HTMLElement>(".dr-stage");
     let frame = 0;
@@ -144,9 +141,6 @@ export default function DarkRoom() {
           const p = Math.max(0, Math.min(1, window.scrollY / h));
           // clamp the TRAVEL, not the rate: past the hero it holds its
           // final offset instead of drifting on down the page
-          // 0.22, down from the reference's 0.4: without the scale beside
-          // it a big lag just reads as the text sliding, not receding
-          main.style.setProperty("--hero-y", `${Math.min(window.scrollY, h) * 0.22}px`);
           main.style.setProperty("--hero-p", String(p));
         }
       });

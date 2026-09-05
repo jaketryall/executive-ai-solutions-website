@@ -223,19 +223,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-top { position: absolute; top: 0; left: 0; width: 1px; height: 1px; }
 .dr-stage {
   position: relative; z-index: 4;
-  /* the receding hero is clipped by its OWN box now. That used to be §02's
-     job — an edge-to-edge opaque section covering whatever escaped — and
-     it cost a 1px overlap, plus a matching 1px on this element to keep the
-     overlap from showing at rest. A card cannot cover anything, so the
-     hero contains itself and both pixels go away. */
-  overflow: hidden;
-  /* 170px of dead space at the foot, which is what buys §02 its slow
-     arrival: the card is lifted 170 early so it can climb at less than
-     scroll rate, and this is the height that lift is borrowed from. The
-     padding goes on the STAGE, not the main box, so .dr-main keeps the
-     height it had and the hero's composition does not move. */
-  min-height: calc(100svh + 170px); padding-bottom: 170px;
-  display: flex; flex-direction: column;
+  min-height: 100svh; display: flex; flex-direction: column;
   /* the fixed rail is out of flow, so the hero reserves its height here */
   padding-top: var(--nav-space);
 }
@@ -243,7 +231,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    the grid's 1fr row has nothing to resolve against, so the long roster grew
    the row, pushed the copy down and ran the page 69px past the fold. Mobile
    keeps min-height, because there the page is meant to scroll. */
-@media (min-width: 901px) { .dr-stage { height: calc(100svh + 170px); } }
+@media (min-width: 901px) { .dr-stage { height: 100svh; } }
 .wrap { max-width: 1400px; margin-inline: auto; width: 100%;
         padding-inline: var(--fib-3); }
 @media (min-width: 768px) { .wrap { padding-inline: var(--fib-5); } }
@@ -414,20 +402,18 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   /* THE RECEDE. See the note in page.tsx: the next section rising is a
      depth cue bought up here, not motion down there.
 
-     NO SCALE. It shrank to .8 to match the reference, and on a photo or a
-     card that reads as distance — but this hero is mostly TYPE, and type
-     that resizes while you read it reads as a zoom, not as depth. The lag
-     and the dim carry the cue on their own, and the headline holds the
-     size it was set at.
+     The scale and the lag are both GONE. Copying the reference's recede
+     wholesale was the mistake: it works there on a photograph, and this
+     hero is mostly type — type that resizes and slides while you are
+     still reading it reads as a zoom, not as depth, and it made §02 feel
+     like it arrived too fast because the hero was running away from it.
 
-     Individual `translate` rather than the `transform` shorthand, so it
-     can never collide with the entrance animations beneath it. */
-  translate: 0 var(--hero-y, 0px);
-  /* it goes DIM as it goes away, which also means the stage's clip never
-     has a hard edge to cut. Squared, so the first half of the hero holds
-     nearly full strength and the fade only bites once it is leaving. */
+     What survives is the DIM, which was the honest half all along:
+     something moving away from the light gets darker. Squared, so the
+     first half of the hero holds nearly full strength and the fade only
+     bites once it is genuinely leaving. */
   opacity: calc(1 - .92 * var(--hero-p, 0) * var(--hero-p, 0));
-  will-change: transform, opacity;
+  will-change: opacity;
 }
 
 /* THE NESTED GRID — not a split. The statement keeps its full width, and
@@ -714,8 +700,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dr-main { translate: none; opacity: 1; }
-  .dr-svc-in { --ay: 0px; }
+  .dr-main { opacity: 1; }
   .dr-key, .dr-key::after,
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
@@ -756,11 +741,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   --sp: 0;
   position: relative; z-index: 4;
   color: var(--ink);
-  /* the gutter that makes it a card: the same column every other card on
-     the page sits in. NO top gutter — the card meets the hero's bottom
-     edge, because a black band there is where you would watch the hero
-     get sliced by its own clip on the way past. */
-  padding: 0 var(--fib-5) clamp(18px, 3svh, 40px);
+  /* the distance this section had before the icomat rebuild, restored.
+     The band above the card only read badly while the hero was RECEDING
+     into it — that was where you watched the headline get sliced by the
+     stage's clip. With the hero scrolling away flat again the band is
+     just clean black, which is the rhythm that worked. */
+  padding: clamp(80px, 14svh, 168px) var(--fib-5) clamp(72px, 12svh, 144px);
 }
 @media (max-width: 767px) { .dr-svc { padding-inline: var(--fib-3); } }
 
@@ -1277,7 +1263,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   overflow: hidden;
   padding-block: clamp(56px, 11svh, 130px) clamp(48px, 9svh, 108px);
   transform-origin: 50% 30%;
-  translate: 0 calc(var(--ay, 0px) + var(--ey, 0px));
+  translate: 0 var(--ey, 0px);
   scale: calc(1 - .2 * var(--ep, 0));
   will-change: transform;
 }
