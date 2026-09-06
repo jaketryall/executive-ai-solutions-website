@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import Link from "next/link";
 import { SERVICES } from "@/lib/services";
 import { QUOTES } from "@/lib/quotes";
@@ -73,12 +73,7 @@ export default function ServicesSection() {
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (still) {
       el.style.setProperty("--sp", "1");
-      // the shots are content, not decoration — they rest OPEN
-      el.querySelectorAll<HTMLElement>(".dr-svc-shot").forEach((sh) => {
-        sh.style.setProperty("--rp", "1");
-        sh.style.setProperty("--pp", "0.5");
-      });
-      el.querySelectorAll(".dr-svc-row").forEach((r) => r.classList.add("is-lit"));
+      el.querySelectorAll(".dr-svc-row").forEach((r) => r.classList.add("is-lit", "is-now"));
       return;
     }
 
@@ -86,58 +81,60 @@ export default function ServicesSection() {
        rather than forcing it through the engine anyway.
 
        The engine writes ONE progress per element from ONE window. This
-       pass needs neither: the travelling light is compared against every
-       ROW's own rect (so rows of unequal height stay correct — they are
-       not equal, the images made sure of that), and each shot needs TWO
-       windows at once, a reveal and a travel, which are genuinely
-       different ranges rather than one scaled.
+       pass needs neither: the spotlight is every ROW's own rect compared
+       against one reading line, so rows of unequal height stay correct
+       (they are not equal, the images made sure of that), and which row
+       is lit depends on which rows sit above it — a relation between
+       elements, which one-progress-per-element cannot say.
 
        Reframing it as index-based CSS would assume equal row heights and
        be wrong the first time a title wraps. So it stays measured, and
        §02 keeps exactly one hand-rolled listener instead of three. */
-    const list = el.querySelector<HTMLElement>(".dr-svc-list");
-    const nums = Array.from(el.querySelectorAll<HTMLElement>(".dr-svc-num"));
-    const shots = Array.from(el.querySelectorAll<HTMLElement>(".dr-svc-shot"));
-    const arrivals = Array.from(
-      el.querySelectorAll<HTMLElement>(".dr-svc-list > li, .dr-vouch")
+    const rows = Array.from(
+      el.querySelectorAll<HTMLElement>(".dr-svc-list > li")
     );
+    const vouch = el.querySelector<HTMLElement>(".dr-vouch");
+    const ramp = (v: number) => String(Math.max(0, Math.min(1, v)));
     const lit = () => {
-      if (!list) return;
-      const b = list.getBoundingClientRect();
-      const start = innerHeight * 0.95;
-      const p = Math.max(
-        0,
-        Math.min(1, (start - b.top) / (innerHeight * 0.05 + b.height))
-      );
-      const y = b.top + b.height * p;
-      nums.forEach((n) => {
-        const r = n.getBoundingClientRect();
-        n.closest(".dr-svc-row")?.classList.toggle("is-lit", y >= r.top);
-      });
+      const vh = innerHeight;
 
-      /* Each row's own two numbers, from ONE pass over the same rects.
-         --rp opens the shot as the row arrives (0 -> 1, and it can run
-         back), and --pp is the row's travel through the viewport, which
-         is what the image drifts against. Both are pure f(scroll). */
-      shots.forEach((sh) => {
-        const r = sh.getBoundingClientRect();
-        const rp = (innerHeight * 0.86 - r.top) / (innerHeight * 0.3);
-        const pp = (innerHeight - r.top) / (innerHeight + r.height);
-        sh.style.setProperty("--rp", String(Math.max(0, Math.min(1, rp))));
-        sh.style.setProperty("--pp", String(Math.max(0, Math.min(1, pp))));
-      });
-
-      /* each row's ARRIVAL, off the same rects — scrubbed, not
-         triggered (law 11). Measured on the <li>, which never moves,
-         and written there for the row inside to read: the row climbs
-         on --rv, and a thing that moves cannot be its own ruler. The
-         bottom 22% of the viewport, so it is done before it is read. */
-      arrivals.forEach((a) => {
-        const rv =
-          (innerHeight * 0.98 - a.getBoundingClientRect().top) /
-          (innerHeight * 0.22);
-        a.style.setProperty("--rv", String(Math.max(0, Math.min(1, rv))));
-      });
+      /* THE SPOTLIGHT. One row is lit at a time: the last one whose top
+         has crossed the reading line, 60% of the way down the viewport —
+         about where the eye sits while it works down a list. Rows above
+         it are READ (is-lit), the one under the line is NOW (is-now),
+         rows below wait. This used to be a "travelling light" which,
+         once the maths was followed through, sat still at ~92vh — so
+         every row took ink the moment it was visible, at the bottom
+         edge, and by the time it was read nothing was left to happen
+         except the picture opening. That is where the eye went. Now the
+         ink lands on the row you are looking at, and only that one. */
+      const line = vh * 0.6;
+      let now: HTMLElement | null = null;
+      for (const li of rows) {
+        const top = li.getBoundingClientRect().top;
+        /* each row's ARRIVAL, off the same rect — scrubbed, not
+           triggered (law 11). Measured on the <li>, which never moves,
+           and written there for the row inside to read: the row climbs
+           on --rv, and a thing that moves cannot be its own ruler. The
+           bottom 22% of the viewport (98% → 76%), so it is done before
+           it is read; a later window was tried and read as late. */
+        li.style.setProperty("--rv", ramp((vh * 0.98 - top) / (vh * 0.22)));
+        const row = li.firstElementChild as HTMLElement | null;
+        if (!row) continue;
+        const on = top <= line;
+        row.classList.toggle("is-lit", on);
+        if (on) now = row;
+      }
+      for (const li of rows) {
+        li.firstElementChild?.classList.toggle(
+          "is-now",
+          li.firstElementChild === now
+        );
+      }
+      if (vouch) {
+        const top = vouch.getBoundingClientRect().top;
+        vouch.style.setProperty("--rv", ramp((vh * 0.98 - top) / (vh * 0.22)));
+      }
     };
     let lframe = 0;
     const onLit = () => {
@@ -232,7 +229,18 @@ export default function ServicesSection() {
 
                 <span className="dr-svc-body">
                   <span className="t-label dr-svc-stage">{s.stage}</span>
-                  <span className="dr-svc-title">{s.title.join(" ")}</span>
+                  {/* the two lines as AUTHORED. Joined into one line the
+                      title was a 40px caption beside a moving picture; as
+                      the block it was written to be it is the tallest
+                      object in the row, and the row is about the service */}
+                  <span className="dr-svc-title">
+                    {s.title.map((line, i) => (
+                      <Fragment key={i}>
+                        {i > 0 && <br />}
+                        {line}
+                      </Fragment>
+                    ))}
+                  </span>
                   <span className="dr-svc-what">{s.label}</span>
                 </span>
 
@@ -242,11 +250,10 @@ export default function ServicesSection() {
                   →
                 </i>
 
-                {/* the strip ALWAYS holds its height in layout. If it opened
-                    by growing, the section would get taller as you scrolled
-                    it, which moves the rows, which changes which row the
-                    light is on — the reveal would be feeding its own input.
-                    The space is reserved; only the image inside moves. */}
+                {/* STILL. The shot arrives with its row and then nothing on
+                    it moves — the open-and-drift it had dragged the eye off
+                    the service (2026-09-06). Its crop point is the one thing
+                    it carries. */}
                 {/* a service added to lib/services.ts without a shot here
                     must render a row, not crash the page — the picture is
                     evidence, and evidence is allowed to be missing */}

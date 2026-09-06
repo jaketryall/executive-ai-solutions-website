@@ -886,9 +886,10 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* THE ROWS ARE SCRUBBED, NOT TRIGGERED (law 11). A row's own arrival
    --rv is written by the section's one pass, measured off its static
    <li> so the row can move without feeding its own ruler: it fills in
-   and climbs 14px over the bottom fifth of the viewport, is resolved
-   before it is read, and runs backwards exactly. The figure gets the
-   fill only — its 50px --ap lag already carries the motion. */
+   and climbs 14px over the bottom quarter of the viewport (98% → 76%),
+   is resolved before it is read, and runs backwards exactly — a later
+   window (92 → 66) was tried on 2026-09-06 and read as late. The figure
+   gets the fill only — its 50px --ap lag already carries the motion. */
 .dr-svc-row { opacity: var(--rv, 1); translate: 0 calc((1 - var(--rv, 1)) * 14px); }
 .dr-vouch   { opacity: var(--rv, 1); }
 
@@ -908,24 +909,44 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   font-variation-settings: "wdth" 100, "wght" 600;
   font-size: 13px; letter-spacing: .14em; font-variant-numeric: tabular-nums;
   transition: color .55s var(--ease-ui); }
-/* THE ARRIVAL. Each stage sits dim until the scroll reaches it, then takes
-   ink — numeral, label and statement together. */
-.dr-svc-row.is-lit .dr-svc-num { color: var(--ink); }
+/* THE SPOTLIGHT. One row is lit at a time — the one under the reading
+   line — so it is the page, not the picture, that says where to look.
+   Rows the line has passed keep a READ weight (ink-2: still dark, no
+   longer the object); rows it has not reached wait in ink-3. The handoff
+   is a colour transition on the TEXT only — the picture is not in the
+   spotlight and never moves on scroll (see the shot, further down), so
+   the title taking ink is the only thing that changes, and that is
+   where the eye goes. Scrubbed — the class follows the line, so it
+   runs back exactly. */
+.dr-svc-row.is-lit .dr-svc-num   { color: var(--ink-2); }
 .dr-svc-row.is-lit .dr-svc-stage { color: var(--ink-3); }
-.dr-svc-row.is-lit .dr-svc-title { color: var(--ink); }
+.dr-svc-row.is-lit .dr-svc-title { color: var(--ink-2); }
+.dr-svc-row.is-now .dr-svc-num   { color: var(--ink); }
+.dr-svc-row.is-now .dr-svc-title { color: var(--ink); }
+.dr-svc-row.is-now .dr-svc-what  { color: var(--ink-2); }
+/* hover lights any row fully, and outranks the spotlight by order */
+@media (hover: hover) {
+  .dr-svc-row:hover .dr-svc-title { color: var(--ink); }
+  .dr-svc-row:hover .dr-svc-shot  { filter: saturate(1); opacity: 1; }
+}
 
 .dr-svc-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .dr-svc-stage { color: var(--ink-4); transition: color .55s var(--ease-ui); }
+/* THE OBJECT of the row. Two authored lines on the page's display tier
+   (the same clamp as §03's t-display-lg, 43px at the cap — tried at 52
+   and it fought the 66px statement above it): three times the shot's
+   width, and black under the spotlight, so a glance lands here. */
 .dr-svc-title {
   color: var(--ink-3);
   font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wdth" 100, "wght" 620;
-  font-size: clamp(1.5rem, 1rem + 2vw, 2.5rem);
-  line-height: 1.06; letter-spacing: -0.026em;
-  transition: color .55s var(--ease-ui);
+  font-variation-settings: "wdth" 100, "wght" 640;
+  font-size: clamp(1.6rem, 1rem + 2.2vw, 2.7rem);
+  line-height: 1.02; letter-spacing: -0.03em;
+  transition: color .7s var(--ease-ui);
 }
 .dr-svc-what { color: var(--ink-3);
-  font-family: var(--font-instrument), sans-serif; font-size: 15px; }
+  font-family: var(--font-instrument), sans-serif; font-size: 16px;
+  transition: color .7s var(--ease-ui); }
 
 /* the price is never withheld — it is the differentiator, so it sits in
    the list rather than behind the click */
@@ -1447,58 +1468,34 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 /* ── §02 · the stages get a picture ──────────────────────────────
    The list stays a list. Every word of it is still readable at rest —
-   what arrives is the EVIDENCE, and nothing that was ever information
-   is hidden behind the reveal.
+   the picture is EVIDENCE, and nothing that was ever information is
+   hidden behind it.
 
-   The strip holds its height in layout at all times. Opening by GROWING
-   would make the section taller as you scroll it, which moves the rows,
-   which changes which row the travelling light is on — the reveal would
-   be feeding its own input. So the space is reserved and only the image
-   inside it moves. */
+   STILL. It used to open from the left as the row arrived and drift
+   against the scroll (decoded off landonorris.com). Both went on
+   2026-09-06: "it drags my eyes to it" — a moving picture beside a
+   still title wins the glance every time, and the row is about the
+   service. So the shot arrives WITH the row (it rides the row's --rv)
+   and then nothing on it moves. It rests drained and a little back, so
+   the ink on the title is the loudest thing on the row; hover, on the
+   row you are already looking at, brings the colour up. */
 .dr-svc-shot {
-  --rp: 0; --pp: .5;
   grid-column: 2; grid-row: 1;
   display: block; position: relative; overflow: hidden;
   border-radius: clamp(7px, .7vw, 10px);
   width: clamp(112px, 13vw, 168px);
   aspect-ratio: 16 / 10;
   background: rgba(0, 0, 0, .05);
-  /* opens from the left, the way the row itself reads */
-  clip-path: inset(0 calc((1 - var(--rp)) * 100%) 0 0
-             round clamp(8px, .8vw, 12px));
-  transition: clip-path .1s linear;
+  filter: saturate(.25);
+  opacity: .82;
+  transition: filter .5s var(--ease-ui), opacity .5s var(--ease-ui);
 }
 .dr-svc-shot img {
-  /* THE TRAVEL *IS* THE SURPLUS — one number, stated once, used twice.
-     Decoded off landonorris.com: their image moves -138px because it is
-     138px taller than its box. Not a number anybody liked, a number
-     DERIVED from the spare. Get that right and an edge can never show,
-     at any size, for any image.
-
-     This used to read `height: 132%` with `translate: -24%`. Those agree
-     — but only by coincidence, because a percentage in `translate`
-     resolves against the IMAGE's box while the 32% surplus is measured
-     against the FRAME's. 24% of a 132%-tall image happens to be 31.7% of
-     the frame against a 32% surplus. Correct to within a third of a
-     percent, and silently wrong the moment somebody edits either number.
-     In px both sides refer to the same thing and the relationship holds
-     by construction. */
-  --over: clamp(22px, 2.6vw, 34px);
-
-  /* ABSOLUTE, so the frame's size can never depend on what is inside it.
-     CLS is already 0 here — the frame's aspect-ratio reserves the space —
-     so this is not fixing a shift. It is the other half of the reference's
-     pattern: an in-flow child still participates in layout, which means a
-     second image cross-faded into this same frame, or a swap to a taller
-     source, would have something to argue with. Out of flow there is
-     nothing to argue with, ever. */
-  position: absolute; inset: 0 0 auto 0;
-  display: block; width: 100%;
-  height: calc(100% + var(--over));
+  /* ABSOLUTE, so the frame's size can never depend on what is inside
+     it — a swap to a taller source has nothing to argue with */
+  position: absolute; inset: 0;
+  display: block; width: 100%; height: 100%;
   object-fit: cover; object-position: var(--pos, 50% 40%);
-  translate: 0 calc(var(--pp) * -1 * var(--over));
-  /* it also settles as it opens, so the picture is not simply uncovered */
-  scale: calc(1.04 - .04 * var(--rp));
 }
 
 @media (max-width: 900px) {
@@ -1506,11 +1503,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      band under the copy where it has room to read */
   .dr-svc-shot { grid-column: 1 / -1; grid-row: 3; width: auto;
                  aspect-ratio: 16 / 7; margin-top: var(--fib-3); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dr-svc-shot { clip-path: none; }
-  .dr-svc-shot img { translate: none; scale: 1; }
 }
 
 
