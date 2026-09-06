@@ -870,11 +870,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 .dr-svc-row {
   display: grid; align-items: center;
-  /* the shot sits IN the row now, between the numeral and the body, the
-     same place the hero's cards put their thumbnail. `auto` on that track,
-     so a row whose service has no shot yet simply closes the gap instead
-     of leaving a hole the width of a picture. */
-  grid-template-columns: 3.4rem auto minmax(0, 1fr) auto 2rem;
+  /* numeral · body (stage, title, name, price) · the WELL · arrow. The
+     well is the row's picture: a phone standing in a shallow tray and
+     cropped by it (2026-09-06, after the thumbnails — Jake: they should
+     "feel like they know what they are buying", which means SEEING it).
+     `auto` on that track, so a service with no phone yet closes the gap
+     instead of leaving a hole the width of a tray. */
+  grid-template-columns: 3.4rem minmax(0, 1fr) auto 2rem;
   column-gap: clamp(16px, 2.2vw, 34px);
   padding: clamp(16px, 2.4svh, 30px) 0;
   text-decoration: none;
@@ -914,7 +916,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    Rows the line has passed keep a READ weight (ink-2: still dark, no
    longer the object); rows it has not reached wait in ink-3. The handoff
    is a colour transition on the TEXT only — the picture is not in the
-   spotlight and never moves on scroll (see the shot, further down), so
+   spotlight and never moves on scroll (see the well, further down), so
    the title taking ink is the only thing that changes, and that is
    where the eye goes. Scrubbed — the class follows the line, so it
    runs back exactly. */
@@ -927,15 +929,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* hover lights any row fully, and outranks the spotlight by order */
 @media (hover: hover) {
   .dr-svc-row:hover .dr-svc-title { color: var(--ink); }
-  .dr-svc-row:hover .dr-svc-shot  { filter: saturate(1); opacity: 1; }
 }
 
 .dr-svc-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .dr-svc-stage { color: var(--ink-4); transition: color .55s var(--ease-ui); }
 /* THE OBJECT of the row. Two authored lines on the page's display tier
    (the same clamp as §03's t-display-lg, 43px at the cap — tried at 52
-   and it fought the 66px statement above it): three times the shot's
-   width, and black under the spotlight, so a glance lands here. */
+   and it fought the 66px statement above it): black under the spotlight,
+   so a glance lands here before it goes to the phone. */
 .dr-svc-title {
   color: var(--ink-3);
   font-family: var(--font-archivo), sans-serif;
@@ -949,11 +950,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   transition: color .7s var(--ease-ui); }
 
 /* the price is never withheld — it is the differentiator, so it sits in
-   the list rather than behind the click */
-.dr-svc-price { color: var(--ink-2); text-align: right; max-width: 30ch;
+   the list rather than behind the click. In the BODY now, the last line
+   under the name: with the phone at the row's end there is no right
+   edge left for it to sit against. */
+.dr-svc-price { display: block; margin-top: 6px; color: var(--ink-2); max-width: 34ch;
   font-family: var(--font-instrument), sans-serif;
-  font-size: 14px; line-height: 1.45;
-  text-wrap: balance; }
+  font-size: 14px; line-height: 1.45; }
 
 .dr-svc-arrow { justify-self: end; font-style: normal; color: var(--ink-4);
   font-size: 17px; line-height: 1;
@@ -974,14 +976,15 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   font-family: var(--font-instrument), sans-serif; font-size: 12.5px; }
 
 @media (max-width: 900px) {
-  .dr-svc-row { grid-template-columns: 2.6rem minmax(0, 1fr);
+  .dr-svc-row { grid-template-columns: 2.6rem minmax(0, 1fr) auto;
                 row-gap: var(--fib-3); }
   /* every cell placed explicitly — an unplaced one auto-flows into a row
-     of its own and the price ends up under the arrow */
+     of its own. The arrow closes the first line beside the body; the
+     well takes the whole second line (placed with the well, below). */
   .dr-svc-num   { grid-column: 1; grid-row: 1; }
   .dr-svc-body  { grid-column: 2; grid-row: 1; }
-  .dr-svc-price { grid-column: 2; grid-row: 2; text-align: left; max-width: none; }
-  .dr-svc-arrow { grid-column: 1; grid-row: 2; justify-self: start; }
+  .dr-svc-price { max-width: none; }
+  .dr-svc-arrow { grid-column: 3; grid-row: 1; align-self: start; margin-top: 3px; }
   .dr-vouch { max-width: none; }
   .dr-say-h { max-width: 14ch; }
   .dr-marks { padding-inline: 5vw; }
@@ -1466,43 +1469,63 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 
-/* ── §02 · the stages get a picture ──────────────────────────────
+/* ── §02 · the stages get a PHONE ────────────────────────────────
    The list stays a list. Every word of it is still readable at rest —
    the picture is EVIDENCE, and nothing that was ever information is
    hidden behind it.
 
-   STILL. It used to open from the left as the row arrived and drift
-   against the scroll (decoded off landonorris.com). Both went on
-   2026-09-06: "it drags my eyes to it" — a moving picture beside a
-   still title wins the glance every time, and the row is about the
-   service. So the shot arrives WITH the row (it rides the row's --rv)
-   and then nothing on it moves. It rests drained and a little back, so
-   the ink on the title is the loudest thing on the row; hover, on the
-   row you are already looking at, brings the colour up. */
-.dr-svc-shot {
-  grid-column: 2; grid-row: 1;
-  display: block; position: relative; overflow: hidden;
-  border-radius: clamp(7px, .7vw, 10px);
-  width: clamp(112px, 13vw, 168px);
-  aspect-ratio: 16 / 10;
-  background: rgba(0, 0, 0, .05);
-  filter: saturate(.25);
-  opacity: .82;
-  transition: filter .5s var(--ease-ui), opacity .5s var(--ease-ui);
+   WHAT YOU ARE BUYING, in the hand it will be bought on. The 16:10
+   thumbnails (2026-09-06) were desktop crops the size of a stamp — a
+   tradesperson off an ad could not tell what they were looking at. Each
+   row now stands a phone in a shallow tray and crops it by the tray, the
+   shipped site's win-frame move (the .dvc chrome and the Google / chat
+   skins are the shared ones in globals.css — ONE phone on this site):
+   the click shows the search WON, the landing shows the site on a phone,
+   the follow-up shows the thread ending in a booking. Three of them,
+   deliberately — a visitor should see all three stages at once
+   (reassurance, not a ride), and the same object three times says "one
+   system" without a word.
+
+   STILL. Nothing on a phone moves with the scroll or on hover: the tray
+   rides the row's --rv arrival and that is its only motion. The
+   spotlight stays on the TEXT — the phone is the proof, the title is the
+   thing being proved. Every screen is composed to live at the TOP of its
+   mock, so the crop costs nothing the visitor needed. */
+.dr-svc-well {
+  grid-column: 3; grid-row: 1;
+  display: flex; justify-content: center; align-items: flex-start;
+  width: clamp(280px, 32vw, 440px);
+  height: clamp(230px, 21vw, 300px);
+  overflow: clip;
+  border-radius: var(--radius-frame);
+  /* the shipped site's panel gray — a tray, not a tint: at #f5f5f7 it
+     vanished against the white card and the phone read as cut off */
+  background: #ededf0;
 }
-.dr-svc-shot img {
-  /* ABSOLUTE, so the frame's size can never depend on what is inside
-     it — a swap to a taller source has nothing to argue with */
-  position: absolute; inset: 0;
+/* the phone: wide enough that the SERP's type clears ~13px */
+.dr-svc-well .dvc { width: min(74%, 300px); flex-shrink: 0; margin-top: 22px; }
+/* the tour phone's screenshot fills its screen. Scoped to the ONE image
+   that is a screen — a bare `img` rule here also caught the Google
+   skin's favicon and blew it up to the width of the phone */
+.dr-svc-well .dr-svc-tour {
   display: block; width: 100%; height: 100%;
-  object-fit: cover; object-position: var(--pos, 50% 40%);
+  /* LEFT-anchored: the asset is a little wider than the screen (the nav
+     was cut off its top, so its ratio is not a phone's), and cover trims
+     the sides — centred it took a letter off "WHERE PILOTS". The
+     headline and the button are left-aligned; the plane can lose a
+     wingtip on the right. */
+  object-fit: cover; object-position: left top;
 }
+/* the chat's booked chip is revealed by a loop on the shipped hero; here
+   the thread rests in its FINISHED state */
+.dr-svc-well .chat-booked { opacity: 1; }
+.dr-svc-well .dr-chat { padding: 7% 7% 0; }
 
 @media (max-width: 900px) {
-  /* on the phone the row stacks, so the shot goes back to a full-width
-     band under the copy where it has room to read */
-  .dr-svc-shot { grid-column: 1 / -1; grid-row: 3; width: auto;
-                 aspect-ratio: 16 / 7; margin-top: var(--fib-3); }
+  /* on a phone the row stacks: the tray takes the whole second line,
+     shallower (the win frame lives at the top of every mock) */
+  .dr-svc-well { grid-column: 1 / -1; grid-row: 2; width: auto; height: 220px; }
+  .dr-svc-well .dvc { width: min(62%, 240px); margin-top: 18px; }
 }
 
 

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { SERVICES } from "@/lib/services";
 import { QUOTES } from "@/lib/quotes";
 import { PersonIcon } from "@/components/ui/person-icon";
-import Image from "next/image";
+import { PHONES } from "@/components/dark/service-phones";
 
 /* §02 · THE FUNNEL
    THE LIGHTS COME ON. The one light section in a black room, and the only
@@ -25,33 +25,11 @@ import Image from "next/image";
 
 const SAY = "The click, the page it lands on, and the follow-up after.";
 
-/* One REAL screen per stage, and deliberately not all from one client:
-   a services list illustrated three times with the same site is a
-   portfolio of one. Kept here rather than in lib/services.ts while the
-   design is still moving — it graduates to the data once it settles.
-   §03 shows the Desert Wings hero at full size, so none of these is that. */
-/* `pos` is the crop point, per image, because a strip this shallow shows
-   maybe a third of a 2880x1800 screenshot and the default centre landed on
-   the site's nav bar every time — three rows of somebody's header. Each one
-   is aimed at the thing that makes the point instead: the estimate, the
-   hero, the form. */
-const SHOTS: Record<string, { src: string; alt: string; pos: string }> = {
-  "google-ads": {
-    src: "/work/live/dw-cost-calculator.jpg",
-    alt: "A training cost estimator on a client site, totalling $20,000",
-    pos: "50% 34%",
-  },
-  websites: {
-    src: "/work/aahg-hero.jpg",
-    alt: "The Arizona Aviation Historical Group homepage",
-    pos: "50% 46%",
-  },
-  ai: {
-    src: "/work/live/dw-booking.jpg",
-    alt: "The enquiry form a new lead lands in",
-    pos: "50% 58%",
-  },
-};
+/* the phones — one per stage, keyed by slug — live in service-phones.tsx:
+   the click's won search, the landing on a phone, the follow-up thread.
+   ONE client across all three (Desert Wings), on purpose: the list is
+   the funnel, and the funnel is a story — their search won, their page,
+   their booking. The roster is the hero's job; this is the demonstration. */
 
 /* five columns of marks at the grid's own positions. The x/y each one
    travels FROM is its own, so the field converges from a scatter rather
@@ -242,34 +220,26 @@ export default function ServicesSection() {
                     ))}
                   </span>
                   <span className="dr-svc-what">{s.label}</span>
+                  <span className="dr-svc-price">{s.heroPrice}</span>
                 </span>
-
-                <span className="dr-svc-price">{s.heroPrice}</span>
 
                 <i className="dr-svc-arrow" aria-hidden>
                   →
                 </i>
 
-                {/* STILL. The shot arrives with its row and then nothing on
-                    it moves — the open-and-drift it had dragged the eye off
-                    the service (2026-09-06). Its crop point is the one thing
-                    it carries. */}
-                {/* a service added to lib/services.ts without a shot here
+                {/* THE PHONE. What this stage looks like in a customer's
+                    hand — the shipped site's win frame, standing in a tray
+                    the row crops it by. Still: nothing on it moves with the
+                    scroll or on hover (2026-09-06, "it drags my eyes to
+                    it"). Decoration to a screen reader: the row's text is
+                    the row's name. */}
+                {/* a service added to lib/services.ts without a phone here
                     must render a row, not crash the page — the picture is
                     evidence, and evidence is allowed to be missing */}
-                {SHOTS[s.slug] && (
-                  <span
-                    className="dr-svc-shot"
-                    style={{ "--pos": SHOTS[s.slug].pos } as React.CSSProperties}
-                  >
-                    <Image
-                      src={SHOTS[s.slug].src}
-                      alt={SHOTS[s.slug].alt}
-                      width={2880}
-                      height={1800}
-                      sizes="(max-width: 900px) 100vw, 1100px"
-                    />
-                  </span>
+                {PHONES[s.slug] && (
+                  <div className="dr-svc-well" aria-hidden>
+                    {PHONES[s.slug]}
+                  </div>
                 )}
               </Link>
             </li>
