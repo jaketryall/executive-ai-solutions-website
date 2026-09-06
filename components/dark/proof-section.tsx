@@ -112,7 +112,21 @@ export default function ProofSection() {
         {cases.map((p) => (
           <li key={p.slug} className="dr-pf">
             <Link href={`/work/${p.slug}`} className="dr-pf-card">
-              <span className="dr-pf-well">
+              {/* THE PICTURE LAGS ITS CARD. The well declares its own
+                  window — its top from the fold to 36vh above the top,
+                  which is the whole of its travel across the viewport —
+                  and the engine writes --pp; the stylesheet turns that
+                  into a shift of at most one surplus, so an edge can never
+                  appear. The VIDEO does not ride it: it sits in the well,
+                  not in the picture, and only ever moves on hover. */}
+              <span
+                className="dr-pf-well"
+                data-sp
+                data-sp-from="1"
+                data-sp-to="-0.36"
+                data-sp-var="--pp"
+                data-sp-lerp="0.1"
+              >
                 <Image
                   src={p.cover.src}
                   alt={p.cover.alt}

@@ -1158,11 +1158,23 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   aspect-ratio: 4 / 3; border-radius: clamp(8px, .9vw, 12px);
   background: #17171b;
 }
+/* THE PICTURE LAGS ITS CARD — the §02 / old-§03 law, vertical: the
+   image is `over` taller on EACH side and moves at most `over` either
+   way, so an edge cannot appear wherever the card sits. --pp is the
+   well's own progress across the viewport (declared on the well, written
+   by the engine, chased at 0.1); the fallback .5 is a zero shift, so
+   no-JS is simply still. Scroll-driven: `translate` is deliberately NOT
+   in the transition list. */
 .dr-pf-well img {
-  position: absolute; inset: 0; width: 100%; height: 100%;
+  --over: clamp(14px, 1.8vw, 30px);
+  position: absolute; left: 0; width: 100%;
+  top: calc(-1 * var(--over));
+  /* max-width:none first, or Tailwind's preflight clamps the surplus away */
+  max-width: none; height: calc(100% + 2 * var(--over));
   /* screenshots anchor to their own top-left so cover-crop never eats the
      client's nav or headline — the right-side scenery absorbs it */
   object-fit: cover; object-position: left top;
+  translate: 0 calc((var(--pp, .5) - .5) * 2 * var(--over));
   transition: filter .5s var(--ease-ui);
 }
 .dr-pf-veil {
@@ -1253,6 +1265,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 @media (prefers-reduced-motion: reduce) {
   .dr-pf { translate: none; }
+  .dr-pf-well img { translate: none; }
   .dr-pf-card, .dr-pf-veil, .dr-pf-demo, .dr-pf-well img { transition: none; }
 }
 
