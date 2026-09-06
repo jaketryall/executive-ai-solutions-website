@@ -105,8 +105,10 @@ export default function ObjectionsSection() {
         data-sp-var="--ap"
         data-sp-lerp="0.1"
       >
-        <span className="t-label dr-obj-kicker">Before you ask</span>
-        <h2 className="dr-obj-h" id="dr-obj-h">
+        <span className="t-label dr-obj-kicker" data-wipe>
+          Before you ask
+        </span>
+        <h2 className="dr-obj-h" id="dr-obj-h" data-wipe data-wipe-delay="150">
           The four questions everyone asks, answered without the call.
         </h2>
 

@@ -34,6 +34,8 @@ export function HighlightsGallery({
   items,
   label,
   eyebrow,
+  eyebrowProps,
+  headingProps,
   className,
   captionsOutside,
 }: {
@@ -43,6 +45,10 @@ export function HighlightsGallery({
   /** optional kicker above the heading — additive, callers that omit it
       render exactly what they did before */
   eyebrow?: string;
+  /** attributes for the eyebrow and heading elements (a page's own
+      data-* hooks, say) — nothing here changes what the gallery renders */
+  eyebrowProps?: React.HTMLAttributes<HTMLSpanElement> & Record<`data-${string}`, string>;
+  headingProps?: React.HTMLAttributes<HTMLHeadingElement> & Record<`data-${string}`, string>;
   /** lets a route theme the gallery without forking the behaviour */
   className?: string;
   /** move the captions OUT of the cards into a band beneath the track.
@@ -135,8 +141,14 @@ export function HighlightsGallery({
   return (
     <section ref={root} className={`hlg${className ? ` ${className}` : ""}`} aria-label={label}>
       <div className="wrap">
-        {eyebrow && <span className="t-label hlg-eyebrow">{eyebrow}</span>}
-        <h2 className="t-display-lg text-center">{heading}</h2>
+        {eyebrow && (
+          <span className="t-label hlg-eyebrow" {...eyebrowProps}>
+            {eyebrow}
+          </span>
+        )}
+        <h2 className="t-display-lg text-center" {...headingProps}>
+          {heading}
+        </h2>
       </div>
       <ul ref={trackRef} className="hlg-track" aria-label={`${label} cards`}>
         {items.map((it) => (

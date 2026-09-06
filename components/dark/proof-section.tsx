@@ -93,6 +93,9 @@ export default function ProofSection() {
       className="dr-hlg"
       captionsOutside
       eyebrow="Proof"
+      /* the one triggered vocabulary (law 11), same as §04's opener */
+      eyebrowProps={{ "data-wipe": "" }}
+      headingProps={{ "data-wipe": "", "data-wipe-delay": "150" }}
       heading="The sites we built, and what they have done since."
       label="Client work"
       items={items}

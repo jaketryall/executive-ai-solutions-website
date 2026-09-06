@@ -19,6 +19,10 @@ import { useEffect } from "react";
      --sp   0 → 1, this element's progress through its declared window
      --spx  the same progress in pixels of viewport travel
 
+   ONE-SHOTS are the single exception, and the grammar's (law 11): the
+   structure is scrubbed, the TEXT is triggered — once, in one
+   vocabulary, from the same measurement pass. See `Shot` below.
+
    DAMPING, opt-in per element with data-sp-lerp.
    Decoded off landonorris.com, and it corrected my first reading of that
    site. It is not quite "the value IS f(scroll)": a scroll jump moves
@@ -110,6 +114,105 @@ const num = (v: string | null, fallback: number) => {
   return Number.isFinite(n) ? n : fallback;
 };
 
+/* ONE-SHOTS — the only triggered things in the room (grammar law 11):
+   scrub the structure, trigger only the text, and trigger it with ONE
+   gesture everywhere. Declared like everything else:
+     data-once             add `is-in` when this element's top crosses
+                           90% of the viewport; data-once-at="0.86" moves
+                           the line
+     data-wipe             THE vocabulary. The element is split into its
+                           rendered lines; each line clip-wipes left to
+                           right behind a bar of light — 600ms a line,
+                           150ms between lines, the bar retreating from
+                           +300ms — once, at top 90%, so the heading has
+                           finished before it is in the reading zone
+     data-wipe-delay="150" ms before the first line, so a heading can
+                           follow its kicker
+   Fired from the same pass as the scrubs: one rect read a frame until
+   it fires, nothing after. An IntersectionObserver would be a second
+   system saying the same thing on a different clock. */
+type Shot = {
+  el: HTMLElement;
+  /** viewport fraction the element's top must cross */
+  at: number;
+  cls: string;
+  wipe: boolean;
+  /** ms before the first line (wipes only) */
+  wd: number;
+  /** puts the plain text back; null when no lines exist */
+  undo: (() => void) | null;
+  /** how long the whole wipe runs, so the lines can be unmade after it */
+  ms: number;
+};
+
+const WIPE_LINE = 600;
+const WIPE_STAGGER = 150;
+const WIPE_BAR = 300;
+
+function readShot(el: HTMLElement): Shot {
+  const wipe = el.hasAttribute("data-wipe");
+  const wd = wipe ? num(el.getAttribute("data-wipe-delay"), 0) : 0;
+  if (wipe) el.style.setProperty("--wd", `${wd}ms`);
+  return {
+    el,
+    at: num(el.getAttribute(wipe ? "data-wipe-at" : "data-once-at"), 0.9),
+    cls: wipe ? "is-wiped" : "is-in",
+    wipe,
+    wd,
+    undo: null,
+    ms: 0,
+  };
+}
+
+/* Split an element's text into one block span per RENDERED line. The
+   words are laid inline first and grouped by where the browser actually
+   put them, then rebuilt as lines — so `text-wrap: balance`, the measure
+   and the alignment all stay the browser's, never a guess. Plain-text
+   elements only, which every heading in this room is; the original
+   markup is kept and put back once the wipe has run, so a resize after
+   it reflows as ordinary text. */
+function splitLines(el: HTMLElement): { n: number; undo: () => void } {
+  const html = el.innerHTML;
+  const words = (el.textContent || "").split(/\s+/).filter(Boolean);
+  el.textContent = "";
+  const probes = words.map((w) => {
+    const s = document.createElement("span");
+    s.textContent = w;
+    el.append(s, " ");
+    return s;
+  });
+  const lines: string[][] = [];
+  let top = NaN;
+  for (const s of probes) {
+    const t = s.getBoundingClientRect().top;
+    // a new line is a real step down, not a sub-pixel wobble
+    if (!(Math.abs(t - top) < 2)) {
+      lines.push([]);
+      top = t;
+    }
+    lines[lines.length - 1].push(s.textContent || "");
+  }
+  el.textContent = "";
+  lines.forEach((ws, i) => {
+    const l = document.createElement("span");
+    l.className = "dr-wl";
+    l.style.setProperty("--l", String(i));
+    l.textContent = ws.join(" ");
+    el.append(l);
+  });
+  // a line hugs its own words, so the alignment has to be carried over
+  const align = getComputedStyle(el).textAlign;
+  el.classList.toggle("is-c", align === "center");
+  el.classList.toggle("is-r", align === "right" || align === "end");
+  return {
+    n: lines.length,
+    undo: () => {
+      el.innerHTML = html;
+      el.classList.remove("is-c", "is-r", "is-wiped");
+    },
+  };
+}
+
 function readBg(el: HTMLElement): Track["bg"] {
   const fromName = el.getAttribute("data-bg-from");
   const toName = el.getAttribute("data-bg-to");
@@ -144,7 +247,10 @@ export function useScrollEngine(deps: unknown[] = []) {
     const nodes = Array.from(
       document.querySelectorAll<HTMLElement>("[data-sp]")
     );
-    if (!nodes.length) return;
+    const shots = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-once], [data-wipe]")
+    ).map(readShot);
+    if (!nodes.length && !shots.length) return;
 
     const tracks = nodes.map(read);
 
@@ -157,8 +263,35 @@ export function useScrollEngine(deps: unknown[] = []) {
           t.bg.target.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
         }
       });
+      // and the text is simply there: no lines are made, nothing wipes
+      shots.forEach((s) => s.el.classList.add(s.cls));
       return;
     }
+
+    /* the lines a wipe needs are made now, from the browser's own
+       breaks — and remade whenever those breaks can change: the fonts
+       arriving (Archivo swaps in late) or a resize. Only for wipes that
+       have not fired; a fired one is already on its way back to text. */
+    let alive = true;
+    const made = shots.filter((s) => s.wipe);
+    const timers: number[] = [];
+    const split = (s: Shot) => {
+      s.undo?.();
+      const r = splitLines(s.el);
+      s.undo = r.undo;
+      s.ms = s.wd + (r.n - 1) * WIPE_STAGGER + WIPE_LINE + WIPE_BAR + 80;
+    };
+    const resplit = () => {
+      if (alive) shots.forEach((s) => s.wipe && split(s));
+    };
+    resplit();
+    let rt = 0;
+    const onResize = () => {
+      clearTimeout(rt);
+      rt = window.setTimeout(resplit, 120);
+    };
+    addEventListener("resize", onResize);
+    document.fonts?.ready.then(resplit);
 
     let frame = 0;
     /* a damped track has to keep being drawn after the scroll stops, or it
@@ -207,6 +340,24 @@ export function useScrollEngine(deps: unknown[] = []) {
         }
       }
 
+      /* the one-shots: fire, forget — and once a wipe has run, hand the
+         heading back as the plain text it was */
+      for (let i = shots.length - 1; i >= 0; i--) {
+        const s = shots[i];
+        if (s.el.getBoundingClientRect().top < vh * s.at) {
+          shots.splice(i, 1);
+          s.el.classList.add(s.cls);
+          if (s.undo) {
+            timers.push(
+              window.setTimeout(() => {
+                s.undo?.();
+                s.undo = null;
+              }, s.ms)
+            );
+          }
+        }
+      }
+
       if (settling && !frame) frame = requestAnimationFrame(draw);
     };
     const onScroll = () => {
@@ -218,8 +369,13 @@ export function useScrollEngine(deps: unknown[] = []) {
     draw();
 
     return () => {
+      alive = false;
       removeEventListener("scroll", onScroll);
       removeEventListener("resize", onScroll);
+      removeEventListener("resize", onResize);
+      clearTimeout(rt);
+      timers.forEach(clearTimeout);
+      made.forEach((s) => s.undo?.());
       if (frame) cancelAnimationFrame(frame);
       // hand the ground back to the stylesheet
       tracks.forEach((t) => {

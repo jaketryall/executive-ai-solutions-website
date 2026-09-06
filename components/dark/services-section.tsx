@@ -71,11 +71,8 @@ export default function ServicesSection() {
     const el = ref.current;
     if (!el) return;
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const rows = Array.from(el.querySelectorAll<HTMLElement>(".dr-reveal"));
-
     if (still) {
       el.style.setProperty("--sp", "1");
-      rows.forEach((r) => r.classList.add("is-in"));
       // the shots are content, not decoration — they rest OPEN
       el.querySelectorAll<HTMLElement>(".dr-svc-shot").forEach((sh) => {
         sh.style.setProperty("--rp", "1");
@@ -101,6 +98,9 @@ export default function ServicesSection() {
     const list = el.querySelector<HTMLElement>(".dr-svc-list");
     const nums = Array.from(el.querySelectorAll<HTMLElement>(".dr-svc-num"));
     const shots = Array.from(el.querySelectorAll<HTMLElement>(".dr-svc-shot"));
+    const arrivals = Array.from(
+      el.querySelectorAll<HTMLElement>(".dr-svc-list > li, .dr-vouch")
+    );
     const lit = () => {
       if (!list) return;
       const b = list.getBoundingClientRect();
@@ -126,6 +126,18 @@ export default function ServicesSection() {
         sh.style.setProperty("--rp", String(Math.max(0, Math.min(1, rp))));
         sh.style.setProperty("--pp", String(Math.max(0, Math.min(1, pp))));
       });
+
+      /* each row's ARRIVAL, off the same rects — scrubbed, not
+         triggered (law 11). Measured on the <li>, which never moves,
+         and written there for the row inside to read: the row climbs
+         on --rv, and a thing that moves cannot be its own ruler. The
+         bottom 22% of the viewport, so it is done before it is read. */
+      arrivals.forEach((a) => {
+        const rv =
+          (innerHeight * 0.98 - a.getBoundingClientRect().top) /
+          (innerHeight * 0.22);
+        a.style.setProperty("--rv", String(Math.max(0, Math.min(1, rv))));
+      });
     };
     let lframe = 0;
     const onLit = () => {
@@ -135,23 +147,7 @@ export default function ServicesSection() {
     addEventListener("resize", onLit, { passive: true });
     lit();
 
-
-
-    // added, never removed: a reveal that un-reveals reads as a bug
-    const io = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("is-in");
-            io.unobserve(e.target);
-          }
-        }),
-      { rootMargin: "0px 0px -18% 0px", threshold: 0 }
-    );
-    rows.forEach((r) => io.observe(r));
-
     return () => {
-      io.disconnect();
       removeEventListener("scroll", onLit);
       removeEventListener("resize", onLit);
       if (lframe) cancelAnimationFrame(lframe);
@@ -227,13 +223,9 @@ export default function ServicesSection() {
 
       <div className="wrap">
         <ul className="dr-svc-list">
-          {SERVICES.map((s, i) => (
+          {SERVICES.map((s) => (
             <li key={s.slug}>
-              <Link
-                href={`/services/${s.slug}`}
-                className="dr-svc-row dr-reveal"
-                style={{ "--row": i } as React.CSSProperties}
-              >
+              <Link href={`/services/${s.slug}`} className="dr-svc-row">
                 <span className="dr-svc-num" aria-hidden>
                   {s.stageIndex}
                 </span>
@@ -281,7 +273,7 @@ export default function ServicesSection() {
             not a name and a face: lib/quotes.ts carries no real person and
             no exact business, so a photo would invent a customer. The slot
             is shaped for the real thing. */}
-        <figure className="dr-vouch dr-reveal" style={{ "--row": 3 } as React.CSSProperties}>
+        <figure className="dr-vouch">
           <span className="dr-vouch-av" aria-hidden>
             <PersonIcon />
           </span>

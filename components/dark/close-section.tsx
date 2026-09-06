@@ -85,8 +85,10 @@ export default function CloseSection() {
         <span className="dr-close-mark" aria-hidden />
 
       <div className="dr-close-in">
-        <span className="t-label dr-close-kicker">The next step</span>
-        <h2 className="dr-close-h" id="dr-close-h">
+        <span className="t-label dr-close-kicker" data-wipe>
+          The next step
+        </span>
+        <h2 className="dr-close-h" id="dr-close-h" data-wipe data-wipe-delay="150">
           Book the call. Or check your site first — we&rsquo;ll tell you what
           we find.
         </h2>

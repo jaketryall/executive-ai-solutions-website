@@ -883,12 +883,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 .dr-svc-list li:last-child .dr-svc-row { border-bottom: 1px solid rgba(0, 0, 0, .09); }
 
-/* the reveal, separate from any layout, so a figure can use it too */
-.dr-reveal { opacity: 0; transform: translateY(22px);
-  transition: opacity .7s var(--ease-structure) calc(var(--row, 0) * 90ms),
-              transform .7s var(--ease-structure) calc(var(--row, 0) * 90ms),
-              scale .5s var(--ease-ui); }
-.dr-reveal.is-in { opacity: 1; transform: translateY(0); }
+/* THE ROWS ARE SCRUBBED, NOT TRIGGERED (law 11). A row's own arrival
+   --rv is written by the section's one pass, measured off its static
+   <li> so the row can move without feeding its own ruler: it fills in
+   and climbs 14px over the bottom fifth of the viewport, is resolved
+   before it is read, and runs backwards exactly. The figure gets the
+   fill only — its 50px --ap lag already carries the motion. */
+.dr-svc-row { opacity: var(--rv, 1); translate: 0 calc((1 - var(--rv, 1)) * 14px); }
+.dr-vouch   { opacity: var(--rv, 1); }
 
 /* the hovered row scales, its neighbours DO NOT — neighbour growth on a
    text list reads finicky, and the list is not a dock */
@@ -969,6 +971,38 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-word { opacity: 1; }
   .dr-mark-col i { translate: none; }
 }
+
+/* ── THE ONE TRIGGERED VOCABULARY ────────────────────────────────
+   Grammar law 11: scrub the structure, trigger only the text — and
+   trigger it with ONE gesture, everywhere. In this room the gesture is
+   the light itself: a bar of white crosses each line and the words are
+   what it leaves behind. Per line, 600ms on the structure curve, 150ms
+   between lines, the bar retreating from +300ms on the same curve — no
+   third curve is allowed in here. Fired ONCE, in the bottom 10% of the
+   viewport, so a heading has finished before it is in the reading zone.
+   The lines are made by the engine (data-wipe) and unmade after the
+   wipe, so no-JS, reduced motion and a later resize all read plain,
+   balanced text. The hero's own rise is the LOAD sequence, not this. */
+.dr-wl { display: block; position: relative; width: fit-content; max-width: 100%;
+         /* the vertical overshoot keeps ascenders and descenders: an
+            inset of 0 on a 1.08 line-height takes the tops off the tall
+            letters at the exact moment they are being revealed */
+         clip-path: inset(-0.12em 100% -0.12em 0); }
+.is-c .dr-wl { margin-inline: auto; }
+.is-r .dr-wl { margin-inline-start: auto; }
+.dr-wl::after { content: ""; position: absolute; inset: 0;
+                background: var(--ink);
+                transform: scaleX(1); transform-origin: right center; }
+.is-wiped .dr-wl {
+  animation: dr-wipe 600ms var(--ease-structure)
+             calc(var(--wd, 0ms) + var(--l, 0) * 150ms) forwards;
+}
+.is-wiped .dr-wl::after {
+  animation: dr-bar 600ms var(--ease-structure)
+             calc(var(--wd, 0ms) + 300ms + var(--l, 0) * 150ms) forwards;
+}
+@keyframes dr-wipe { to { clip-path: inset(-0.12em 0 -0.12em 0); } }
+@keyframes dr-bar  { to { transform: scaleX(0); } }
 
 /* ── THE OPENER, REPEATED ────────────────────────────────────────
    §03 and §04 are kin: one black ground and no paint change between
@@ -1204,13 +1238,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   padding: clamp(18px, 1.7vw, 26px);
-  /* the CARD arrives; the demo inside it is a separate beat, so the two
-     never fight for the same moment */
-  opacity: 0; transform: translateY(18px);
-  transition: opacity .7s var(--ease-structure) calc(var(--i) * 90ms),
-              transform .7s var(--ease-structure) calc(var(--i) * 90ms);
+  /* the card FILLS IN off the same --sp the light walks on — scrubbed,
+     not triggered (law 11) — left to right and resolved a third of the
+     way into the window, so the flight is whole before it is read. Only
+     the demo inside is a one-shot (data-once → .is-in), and that is the
+     graphic's own beat, not the surface's. */
+  opacity: clamp(0, (var(--sp, 1) - var(--i) * 0.04) * 4, 1);
 }
-.dr-run.is-in { opacity: 1; transform: none; }
 
 /* ── the rail ────────────────────────────────────────────────────
    One tread per panel plus one riser into the next, which makes the
@@ -1398,7 +1432,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 @media (prefers-reduced-motion: reduce) {
   /* the staircase is LAYOUT and stays; only the scroll settle goes, and
      the rail rests fully lit rather than half-drawn */
-  .dr-run { opacity: 1; transform: none; transition: none;
+  .dr-run { opacity: 1;
             --lp: 1; --rp: 1;
             translate: 0 calc(var(--step) * var(--rise) * -1); }
   .dr-run.is-in .dr-demo-call i,

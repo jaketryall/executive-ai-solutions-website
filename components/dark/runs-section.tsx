@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-
 /* §04 · HOW IT RUNS
    The whole path is visible at once and NOTHING here is scroll-jacked.
    That is the settled position on this section (2026-07-06): a visitor
@@ -112,45 +110,26 @@ const DEMOS = {
 } as const;
 
 export default function RunsSection() {
-  const ref = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const cards = Array.from(el.querySelectorAll<HTMLElement>(".dr-run"));
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      cards.forEach((c) => c.classList.add("is-in"));
-      return;
-    }
-    /* one-way: a demo that replays every time the card re-enters turns the
-       section into a flicker on the way back up */
-    const io = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("is-in");
-            io.unobserve(e.target);
-          }
-        }),
-      { rootMargin: "0px 0px -14% 0px", threshold: 0 }
-    );
-    cards.forEach((c) => io.observe(c));
-    return () => io.disconnect();
-  }, []);
-
   return (
-    <section className="dr-runs" ref={ref} aria-labelledby="dr-runs-h">
+    <section className="dr-runs" aria-labelledby="dr-runs-h">
       <div className="wrap">
         {/* the header SPANS. Kicker hard left, the reassurance hard
             right, on one baseline — the staircase climbs into the top
             right of this section, and a header hugging the left corner
             left that whole quadrant empty. */}
         <header className="dr-runs-head">
+          {/* the one triggered vocabulary (law 11): kicker, then the
+              lead, then the reassurance — each a declaration, all the
+              same gesture, fired once by the engine at top 90% */}
           <div className="dr-runs-band">
-            <span className="t-label dr-runs-kicker">How it runs</span>
-            <p className="dr-runs-sub">Fixed quote up front, no surprises after.</p>
+            <span className="t-label dr-runs-kicker" data-wipe>
+              How it runs
+            </span>
+            <p className="dr-runs-sub" data-wipe data-wipe-delay="450">
+              Fixed quote up front, no surprises after.
+            </p>
           </div>
-          <h2 className="dr-runs-lead" id="dr-runs-h">
+          <h2 className="dr-runs-lead" id="dr-runs-h" data-wipe data-wipe-delay="150">
             Four steps from the first call to a site that earns.
           </h2>
         </header>
@@ -174,6 +153,12 @@ export default function RunsSection() {
                 key={s.n}
                 className="dr-run"
                 style={{ "--i": i } as React.CSSProperties}
+                /* the card itself is scrubbed off --sp; this fires the
+                   demo inside it, once, on the engine's clock — one-way,
+                   because a demo that replays on the way back up turns
+                   the section into a flicker */
+                data-once
+                data-once-at="0.86"
               >
                 {/* the tread this step stands on, and the riser up to
                     the next. Two spans and no measurement: the geometry
