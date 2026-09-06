@@ -771,18 +771,21 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    THE SURFACE IS ONE VALUE. Jake, 2026-09-06: "the white that fast
    kinda throws off the feel of the site — I want to see section 2
    gray. I might go back." So --svc-bg is the dial: #f5f5f7 was the
-   white; #d4d4d9 is the gray (Apple-cool, a touch of blue, L ≈ .66).
-   The inks were re-cut for it — every ratio below is on the gray and
-   at or above what it was on the white, so nothing dropped under AA. */
+   white. #d4d4d9 was tried first and "still reads white" — on a black
+   page any light gray does, by contrast — so it is a true mid gray now,
+   #a4a4aa (Apple-cool, a touch of blue, L ≈ .37). The inks were re-cut
+   for it: four steps that are all near-black, because a mid ground
+   leaves no room for tone, so the hierarchy below is carried by size
+   and weight and the ratios hold — the floor is still 5.0:1. */
 /* THE LIGHT SECTION IS A CARD, not a slab. The section itself is only the
    frame — the black page shows around it, so the white reads as an object
    set down in the room rather than the room changing colour. */
 .dr-svc {
-  --svc-bg: #d4d4d9;  /* the dial. #f5f5f7 = the white it replaced */
-  --ink:   #0a0a0b;   /* 13.4:1 — titles, the lit row */
-  --ink-2: #2c2c31;   /*  9.4:1 — price, body */
-  --ink-3: #4a4a50;   /*  6.0:1 — unlit title, secondary */
-  --ink-4: #55555c;   /*  5.0:1 — FLOOR. labels, numerals, arrow. */
+  --svc-bg: #a4a4aa;  /* the dial. #f5f5f7 = the white; #d4d4d9 read white */
+  --ink:   #0a0a0b;   /*  7.9:1 — titles, the lit row */
+  --ink-2: #1a1a1e;   /*  6.9:1 — price, body */
+  --ink-3: #26262b;   /*  6.0:1 — unlit title, secondary */
+  --ink-4: #333339;   /*  5.0:1 — FLOOR. labels, numerals, arrow. */
   --edge-strong: rgba(0, 0, 0, .55);
   --sp: 0;
   position: relative; z-index: 4;
