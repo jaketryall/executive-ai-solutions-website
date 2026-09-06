@@ -881,7 +881,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   padding: clamp(16px, 2.4svh, 30px) 0;
   text-decoration: none;
   border-top: 1px solid rgba(0, 0, 0, .09);
-  transition: scale .5s var(--ease-ui);
 }
 .dr-svc-list li:last-child .dr-svc-row { border-bottom: 1px solid rgba(0, 0, 0, .09); }
 
@@ -895,14 +894,27 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-svc-row { opacity: var(--rv, 1); translate: 0 calc((1 - var(--rv, 1)) * 14px); }
 .dr-vouch   { opacity: var(--rv, 1); }
 
-/* the hovered row scales, its neighbours DO NOT — neighbour growth on a
-   text list reads finicky, and the list is not a dock */
-@media (hover: hover) {
-  .dr-svc-row:hover { scale: 1.012; }
-  .dr-svc-row:hover .dr-svc-title { color: var(--ink); }
-  .dr-svc-row:hover .dr-svc-arrow { color: var(--ink); transform: translateX(6px); }
-  .dr-svc-row:hover .dr-svc-num { color: var(--ink-3); }
-}
+/* THE SPOTLIGHT GROWS THE ROW (2026-09-06, Jake: "sections grow and
+   shrink where you enter and leave them … each section gets its own
+   spotlight for a second"). --spot is the second value the section's
+   one pass writes on the <li>: 0 while the row waits below the reading
+   line, 1 while the line is inside the row, 0 again once the row's
+   bottom has passed it — a plateau with a smoothstep ramp either side,
+   18% of the viewport wide and centred on the crossing, so the row is
+   half grown at the instant its title takes ink. A row therefore grows
+   as it ENTERS the spotlight and shrinks as it LEAVES, one at a time,
+   and the handoff between neighbours is a crossfade (each at half). 3%,
+   which is the old hover's 1.2% made legible as a scroll event; the
+   lines grow with the row, so it reads as the whole entry lifting
+   toward you rather than the text swelling between fixed rules.
+
+   This REPLACED the hover: a row lit by where you are on the page and a
+   row lit by where your cursor is were two spotlights on one list, and
+   the cursor's was the one that did nothing on a phone. Scrubbed, so it
+   runs backwards exactly; with reduced motion --spot is never written
+   and the scale resolves to 1. will-change so the scale rides the
+   compositor instead of re-rastering three phone trays a frame. */
+.dr-svc-row { scale: calc(1 + var(--spot, 0) * .03); will-change: transform; }
 .dr-svc-row:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 6px;
                             border-radius: 8px; }
 
@@ -915,9 +927,10 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    line — so it is the page, not the picture, that says where to look.
    Rows the line has passed keep a READ weight (ink-2: still dark, no
    longer the object); rows it has not reached wait in ink-3. The handoff
-   is a colour transition on the TEXT only — the picture is not in the
-   spotlight and never moves on scroll (see the well, further down), so
-   the title taking ink is the only thing that changes, and that is
+   is a colour transition on the TEXT, and the whole row grows into
+   the light on --spot (above) — the picture rides that with its row
+   and does nothing of its own (see the well, further down), so the
+   title taking ink and the entry lifting are one event, and that is
    where the eye goes. Scrubbed — the class follows the line, so it
    runs back exactly. */
 .dr-svc-row.is-lit .dr-svc-num   { color: var(--ink-2); }
@@ -926,10 +939,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-svc-row.is-now .dr-svc-num   { color: var(--ink); }
 .dr-svc-row.is-now .dr-svc-title { color: var(--ink); }
 .dr-svc-row.is-now .dr-svc-what  { color: var(--ink-2); }
-/* hover lights any row fully, and outranks the spotlight by order */
-@media (hover: hover) {
-  .dr-svc-row:hover .dr-svc-title { color: var(--ink); }
-}
+/* the arrow answers the spotlight the way it used to answer the cursor */
+.dr-svc-row.is-now .dr-svc-arrow { color: var(--ink); transform: translateX(6px); }
 
 .dr-svc-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .dr-svc-stage { color: var(--ink-4); transition: color .55s var(--ease-ui); }
@@ -1486,11 +1497,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    (reassurance, not a ride), and the same object three times says "one
    system" without a word.
 
-   STILL. Nothing on a phone moves with the scroll or on hover: the tray
-   rides the row's --rv arrival and that is its only motion. The
-   spotlight stays on the TEXT — the phone is the proof, the title is the
-   thing being proved. Every screen is composed to live at the TOP of its
-   mock, so the crop costs nothing the visitor needed. */
+   STILL, of its own accord. Nothing on a phone moves with the scroll or
+   on hover: the tray rides the row's --rv arrival and the row's --spot
+   growth (both above) and has no motion of its own. The spotlight is
+   the ROW's — the phone is the proof, the title is the thing being
+   proved, and they lift together. Every screen is composed to live at
+   the TOP of its mock, so the crop costs nothing the visitor needed. */
 .dr-svc-well {
   grid-column: 3; grid-row: 1;
   display: flex; justify-content: center; align-items: flex-start;

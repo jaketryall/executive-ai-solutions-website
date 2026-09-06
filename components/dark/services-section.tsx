@@ -87,9 +87,12 @@ export default function ServicesSection() {
          except the picture opening. That is where the eye went. Now the
          ink lands on the row you are looking at, and only that one. */
       const line = vh * 0.6;
+      /* the ramp either side of the crossing — see --spot in dark.css */
+      const r = vh * 0.18;
+      const ease = (t: number) => t * t * (3 - 2 * t);
       let now: HTMLElement | null = null;
       for (const li of rows) {
-        const top = li.getBoundingClientRect().top;
+        const { top, bottom } = li.getBoundingClientRect();
         /* each row's ARRIVAL, off the same rect — scrubbed, not
            triggered (law 11). Measured on the <li>, which never moves,
            and written there for the row inside to read: the row climbs
@@ -97,6 +100,15 @@ export default function ServicesSection() {
            bottom 22% of the viewport (98% → 76%), so it is done before
            it is read; a later window was tried and read as late. */
         li.style.setProperty("--rv", ramp((vh * 0.98 - top) / (vh * 0.22)));
+        /* THE SPOTLIGHT'S SIZE. 1 while the reading line is inside the
+           row, ramping in as the top reaches the line and out as the
+           bottom leaves it — the row grows as it enters the light and
+           shrinks as it leaves, so each stage gets its own moment. The
+           product of the two ramps, each centred on its crossing (+0.5),
+           so a row is half grown exactly when it takes ink. */
+        const grow = Math.max(0, Math.min(1, (line - top) / r + 0.5));
+        const shrink = Math.max(0, Math.min(1, (bottom - line) / r + 0.5));
+        li.style.setProperty("--spot", (ease(grow) * ease(shrink)).toFixed(3));
         const row = li.firstElementChild as HTMLElement | null;
         if (!row) continue;
         const on = top <= line;
@@ -229,10 +241,11 @@ export default function ServicesSection() {
 
                 {/* THE PHONE. What this stage looks like in a customer's
                     hand — the shipped site's win frame, standing in a tray
-                    the row crops it by. Still: nothing on it moves with the
-                    scroll or on hover (2026-09-06, "it drags my eyes to
-                    it"). Decoration to a screen reader: the row's text is
-                    the row's name. */}
+                    the row crops it by. Still of its own accord: nothing on
+                    it moves with the scroll or on hover (2026-09-06, "it
+                    drags my eyes to it"); it only rides the row's own
+                    spotlight growth. Decoration to a screen reader: the
+                    row's text is the row's name. */}
                 {/* a service added to lib/services.ts without a phone here
                     must render a row, not crash the page — the picture is
                     evidence, and evidence is allowed to be missing */}
