@@ -232,6 +232,18 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    the row, pushed the copy down and ran the page 69px past the fold. Mobile
    keeps min-height, because there the page is meant to scroll. */
 @media (min-width: 901px) { .dr-stage { height: 100svh; } }
+
+/* THE PIN. Desktop only, like every pin on the reference — below 900px
+   the stage is taller than the viewport and a sticky hero would just
+   trap the copy. The wrapper is [stage + §02], so the stage stays put for
+   exactly as long as §02 takes to climb and pass, then unsticks and leaves
+   with it. z: §02 must rank ABOVE the stage inside the wrapper, or the
+   climb happens underneath the thing it is meant to cover. */
+.dr-hero-wrap { position: relative; }
+@media (min-width: 901px) {
+  .dr-stage { position: sticky; top: 0; }
+  .dr-hero-wrap > .dr-svc { z-index: 10; }
+}
 .wrap { max-width: 1400px; margin-inline: auto; width: 100%;
         padding-inline: var(--fib-3); }
 @media (min-width: 768px) { .wrap { padding-inline: var(--fib-5); } }

@@ -220,19 +220,31 @@ export default function DarkRoom() {
         </div>
       </header>
 
-      {/* the hero's own progress, 0 at the top and 1 once it has scrolled
-          its own height away. --hero-p inherits to the copy, the roster and
-          .dr-main's dim, so one number drives all three at different rates. */}
+      {/* THE FIRST SEAM — a sticky-cover climb (grammar laws 5 + 9).
+          The stage PINS for one viewport and §02 climbs over it from the
+          fold: the wrapper holds [sticky stage][§02], so the section is a
+          plain sibling that rises across the pin for free — no JS, no
+          transform, native scroll. That is the "section rising up" feel
+          this page lost when the hero stopped receding: the hero now holds
+          still and DIMS while it is covered, instead of running away.
+
+          --hero-p lives on the WRAPPER, not the stage: a pinned element's
+          rect does not move, so measured on the stage the progress would
+          freeze at 0 the moment the pin engaged and the dim would never
+          fire. The wrapper's top travels 1:1, and the value inherits down. */}
       <div
-        className="dr-stage"
+        className="dr-hero-wrap"
         data-sp
         data-sp-from="0"
         data-sp-to="-1"
         data-sp-var="--hero-p"
       >
-        {/* the rail watches this, not a scroll number */}
+        {/* the rail watches this, not a scroll number — and it sits OUTSIDE
+            the sticky stage, because a sentinel that pins with the hero
+            never leaves the viewport and the CTA would never arrive */}
         <div className="dr-top" ref={topRef} aria-hidden />
 
+      <div className="dr-stage">
         <main className="dr-main wrap">
           <div className="dr-hero">
             <div className="dr-left">
@@ -258,7 +270,10 @@ export default function DarkRoom() {
         </main>
       </div>
 
-      <ServicesSection />
+        {/* second child of the wrapper on purpose: this is what climbs */}
+        <ServicesSection />
+      </div>
+
       <ProofSection />
       <RunsSection />
       <ObjectionsSection />
