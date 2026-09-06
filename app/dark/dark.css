@@ -1543,11 +1543,95 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   opacity: calc(1 - .92 * var(--ep, 0) * var(--ep, 0) * var(--ep, 0));
   will-change: opacity;
 }
+
+/* ── THE CARD GROWS INTO THE ROOM (desktop, with the pin) ─────────
+   Jake, 2026-09-06: "have it slowly grow, and by the time it reaches the
+   top of the viewport it fills up the full thing" — then "the reverse
+   when it leaves too, but at the end not shrink all the way back down."
+
+   So on desktop the card is LAID OUT full-bleed with no band above it —
+   its top is the section's top, which is what climbs — and the LIGHT
+   SURFACE is a separate solid layer under the copy (the ::before) that
+   starts at today's contained shape and spreads to the edges on
+   --hero-p, the number the climb already writes on the wrapper (0 with
+   the card's top at the fold, 1 with it at the top of the viewport). By
+   the time the card reaches the top it IS the viewport: edge to edge,
+   corners square, the hero under it covered and dimmed. On the way out
+   it contracts again on --ep, the number its fade already reads — but
+   only half way back, with the corners fully round, so it leaves as a
+   card without ever looking small.
+
+   Why a surface, and not a clip or a scale on the card. A scale shrinks
+   the copy (to half size at 2560, where the contained card is half the
+   screen) and moves every rect the engine and §02's own pass measure.
+   A clip-path moved nothing, and was tried first — but a rounded clip
+   on a layer this big is a mask Chrome re-rasterises every frame: 50ms
+   frames measured at 2560 against 33 without it. Growing a solid box by
+   its inset and radius was tried second and re-rastered just the same.
+   So the surface is a CONSTANT box — laid out 6% wider than the card so
+   that at full its corners sit past the edges and the card's own
+   overflow squares them, with a fixed radius — and the only thing that
+   ever changes on it is its transform: scaled down on X to today's
+   column at the fold, back up to full at the top. Rastered once, then a
+   quad. The text above it is never repainted, and nothing that is
+   measured ever moves. Below 900px there is no pin, so there is no
+   climb to grow with: the phone keeps the contained card and the band,
+   untouched. */
+@media (min-width: 901px) {
+  .dr-svc { padding-top: 0; padding-inline: 0; }
+  .dr-svc-in {
+    position: relative;
+    max-width: none; border-radius: 0; background: none;
+    /* today's contained column as a FRACTION of the screen. Lengths
+       cannot be divided in calc(), so the ratio comes out of a triangle:
+       tan(atan2(a, b)) = a / b. Never more than 84%, so there is always
+       8vw of room either side — at 1440 the column is already 90% of
+       the screen, and a grow you cannot see is not a grow. */
+    --cf: tan(atan2(1400px - 2 * var(--fib-5), 100vw));
+    --s0: min(var(--cf), .84);
+    --R: clamp(16px, 2vw, 30px);
+    /* the exit, on the last 85% of the fade's window so that on any
+       card at least .85vh tall it cannot begin before the grow has
+       finished; whichever of the two is larger holds the shape, so the
+       two never fight. The sides come back --xf of the way (half), and
+       --kx is the point on the scale that lands there: the box is 6%
+       wider than the card, so "half the scale" is NOT half the gutter —
+       at 1440 it would have been 36px against the 57 meant. */
+    --xp: clamp(0, (var(--ep, 0) - .15) / .85, 1);
+    --xf: .5;
+    --kx: calc((var(--xf) * .5 * (1 - var(--s0)) + .03) / (.5 * (1 - var(--s0)) + .03));
+    --k: max(1 - var(--hero-p, 0), var(--kx) * var(--xp));
+    /* 1 = the full 106% box; at k = 1 the box is exactly today's column */
+    --sx: calc(1 - (1 - var(--s0) / 1.06) * var(--k));
+  }
+  .dr-svc-in::before {
+    content: ""; position: absolute; z-index: -1;
+    inset: 0 -3%;
+    background: #f5f5f7;
+    /* a circle at the fold: a box scaled down on X squashes its corners,
+       so the horizontal radius is pre-stretched by the same ratio.
+       Constant, like everything else here — only the scale moves. */
+    border-radius: calc(var(--R) * 1.06 / var(--s0)) / var(--R);
+    transform-origin: 50% 50%;
+    scale: var(--sx) 1;
+    will-change: transform;
+  }
+}
 /* .wrap inside the card would inset a second time against a box that is
    already the column — the card holds the measure now */
 .dr-svc-in > .wrap { max-width: none; padding-inline: clamp(20px, 4vw, 64px); }
+/* …except on desktop, where the card is full-bleed (THE CARD GROWS,
+   above) and the column comes back to the wrap: today's measure,
+   centred — the card grew, the copy did not, and at the fold the copy
+   still sits inside the contained shape. Placed AFTER the rule above
+   on purpose: same specificity, and order is the tie-break. */
+@media (min-width: 901px) {
+  .dr-svc-in > .wrap { max-width: calc(1400px - 2 * var(--fib-5)); margin-inline: auto; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .dr-svc-in { opacity: 1; }
+  /* the finished frame: the engine resolves every window to 1, which
+     would also resolve the EXIT — so the surface is pinned open */
+  .dr-svc-in { opacity: 1; --xp: 0; }
 }
 
 
