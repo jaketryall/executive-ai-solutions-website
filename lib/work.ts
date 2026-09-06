@@ -55,6 +55,9 @@ export type Project = {
   tags: string[];
   /** case-study hero + morph source */
   cover: WorkImage;
+  /** a real scroll-through of the live site, for the proof cards' hover;
+      the poster is its first frame */
+  clip?: { src: string; poster: string };
   /** full-bleed backdrop for the cinematic index chapter (defaults to cover) */
   backdrop?: WorkImage;
   /** crop into the backdrop's clean region (screenshots carry their own
@@ -94,6 +97,7 @@ export type Project = {
 export const PROJECTS: Project[] = [
   {
     slug: "desert-wings",
+    clip: { src: "/work/clips/desert-wings.mp4", poster: "/work/clips/desert-wings.jpg" },
     listName: "Desert Wings",
     client: "Desert Wings Flight School",
     kind: "Website · Ads · SEO",
@@ -220,6 +224,7 @@ export const PROJECTS: Project[] = [
   },
   {
     slug: "aahg",
+    clip: { src: "/work/clips/aahg.mp4", poster: "/work/clips/aahg.jpg" },
     listName: "AAHG",
     listLine: "$0/mo in platform fees after leaving Wix",
     // ~9:1 tours blow WebP's 16,383px ceiling when next/image upscales —
@@ -303,6 +308,7 @@ export const PROJECTS: Project[] = [
   },
   {
     slug: "riled-up",
+    clip: { src: "/work/clips/riled-up.mp4", poster: "/work/clips/riled-up.jpg" },
     listName: "Riled Up",
     listLine: "A site that books and bills itself",
     client: "Riled Up Pickleball",
