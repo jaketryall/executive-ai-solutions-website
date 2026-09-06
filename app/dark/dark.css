@@ -1170,7 +1170,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    near exit only its bottom, and the surplus is spent where it is seen
    (feasible iff surplus ≥ 0.45 × (vh − h)/(vh + h); worst case 2560 →
    0.25 ≤ 0.26). --pp is the well's own progress across the viewport
-   (declared on the well, written by the engine, chased at 0.1).
+   (declared on the well, written by the engine, NOT chased: the margins are too thin for a
+   trailing value, and his has no spring of its own either).
    `translate` is deliberately NOT in the transition list. */
 .dr-pf-well img {
   position: absolute; left: 0; width: 100%;

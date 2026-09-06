@@ -125,7 +125,11 @@ export default function ProofSection() {
                 data-sp-from="1"
                 data-sp-to="-0.36"
                 data-sp-var="--pp"
-                data-sp-lerp="0.1"
+                /* no chase of its own: the picture covers only the VISIBLE
+                   part of the well with 1–4px to spare, and a 0.1 chase
+                   trailed the target by more than that at wheel speed.
+                   itsjay's has no spring of its own either — Lenis is the
+                   only smoothing, on both sites. */
               >
                 <Image
                   src={p.cover.src}
