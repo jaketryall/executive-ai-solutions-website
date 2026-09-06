@@ -814,7 +814,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-say-h,
 .dr-marks      { translate: 0 calc((1 - var(--ap, 1)) * 12px); }
 .dr-svc-list   { translate: 0 calc((1 - var(--ap, 1)) * 32px); }
-.dr-vouch      { translate: 0 calc((1 - var(--ap, 1)) * 50px); }
+.dr-vouch      { translate: 0 calc((1 - var(--ap, 1)) * 50px + var(--dy, 0px)); }
 
 .dr-say { position: relative; overflow: hidden;
           padding-block: clamp(24px, 4svh, 56px);
@@ -892,88 +892,85 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    window (92 → 66) was tried on 2026-09-06 and read as late. The figure
    gets the fill only — its 50px --ap lag already carries the motion. */
 .dr-svc-row { opacity: calc(var(--rv, 1) * (.5 + .5 * var(--spot, 1)));
-              translate: 0 calc((1 - var(--rv, 1)) * 14px); }
+              translate: 0 calc((1 - var(--rv, 1)) * 14px + var(--dy, 0px)); }
 .dr-vouch   { opacity: var(--rv, 1); }
 
-/* THE SPOTLIGHT GROWS THE ROW, AND DIMS THE OTHERS (2026-09-06, Jake:
-   "sections grow and shrink where you enter and leave them … each
-   section gets its own spotlight for a second", then "a little more
-   dramatic and smooth"). --spot is the second value the section's one
-   pass writes on the <li>: 0 while the row waits below the reading
-   line, 1 while the line is inside the row, 0 again once the row's
-   bottom has passed it — a plateau with a smoothstep ramp either side,
-   26% of the viewport wide and centred on the crossing, so the row is
-   half grown at the instant its title takes ink. A row therefore grows
-   as it ENTERS the spotlight and shrinks as it LEAVES, one at a time,
-   and the handoff between neighbours is a crossfade (each at half).
+/* THE LENS (2026-09-06, Jake: "sections grow and shrink where you
+   enter and leave them … each section gets its own spotlight for a
+   second", then "more dramatic and smooth", then "something with the
+   way they move"). --spot is the second value the section's one pass
+   writes on each <li>: a raised cosine of the row's distance from the
+   reading line, reaching 1.5 row heights, so the row under the line is
+   at ~1, its neighbours at ~0.2, and everything is ALWAYS somewhere on
+   the curve — there is no plateau, no threshold, and nothing here is a
+   class. Five things ride the one value, so they can only ever move
+   together:
 
-   Two things ride it. SIZE: 4.5%, the lines growing with the row, so it
-   reads as the whole entry lifting toward you. LIGHT: the rows outside
-   the spotlight sit at half strength, phones included, and come up to
-   full as the line reaches them — that is what makes it a spotlight
-   rather than a row that swells; before the dim (3%, no dim) the unlit
-   phones stood at full contrast beside the lit one and the growth read
-   as a nudge. The fallback for the dim is 1 and for the scale is 0: with
-   no JS at all every row is full and true-sized, and under reduced
-   motion --spot is never written, so the same.
+   SIZE     scale 1 + .045·spot from the row's bottom edge, the lines
+            growing with the row, so the entry lifts toward you AND up.
+   LIGHT    opacity .5 + .5·spot, phones included — the rows outside the
+            light sit at half strength and come up as the line reaches
+            them. That is what makes it a spotlight rather than a row
+            that swells. Multiplied into the row's arrival opacity.
+   INK      every colour on the row is a color-mix between its resting
+            and its lit shade at spot (below) — the title takes ink at
+            exactly the rate the row grows, not on a class with its own
+            transition half a second behind.
+   ARROW    slides its 6px on the same value.
+   ROOM     --dy (THE RIDE, in services-section.tsx): a row grows from
+            its bottom edge, so all its growth goes UP, and every row
+            above it rides that whole growth; then the whole list rides
+            the light's progress down it. Nothing ever moves down — the
+            list flows through the light, in the scroll's own direction
+            and a little faster, instead of one row twitching in a still
+            stack.
 
-   SMOOTH: the value CHASES its target at the engine's own 0.1 per frame
-   (see scroll-engine.ts, DAMPING) — the scroll is raw on this page, and
-   without the chase each wheel notch stepped the row. Multiplied into
-   the row's arrival opacity rather than layered on it, so the two never
-   fight for the property.
+   The value CHASES its target at the engine's 0.1 per frame — Lenis
+   smooths the wheel on desktop (root layout, lerp 0.1) and this is the
+   reference's second layer, the effect easing after the input; on
+   touch it is the only smoothing the row gets. Scrubbed (the target is
+   pure f(scroll)), so it runs backwards exactly. Fallbacks: opacity and
+   ink fall back to 1, scale, arrow and --dy to 0 — with no JS every row
+   is full, inked and true-sized, and under reduced motion --spot is
+   never written, so the same.
 
    This REPLACED the hover: a row lit by where you are on the page and a
    row lit by where your cursor is were two spotlights on one list, and
-   the cursor's was the one that did nothing on a phone. Scrubbed (the
-   target is pure f(scroll)), so it runs backwards exactly. will-change
-   so the scale rides the compositor instead of re-rastering three phone
-   trays a frame (2560: 26ms max / 0 slow with it, 37ms / 2 without). */
-.dr-svc-row { scale: calc(1 + var(--spot, 0) * .045); will-change: transform; }
+   the cursor's did nothing on a phone. will-change so the scale rides
+   the compositor instead of re-rastering three phone trays a frame
+   (2560: 26ms max / 0 slow with it, 37ms / 2 without). */
+.dr-svc-row { scale: calc(1 + var(--spot, 0) * .045); transform-origin: 50% 100%;
+              will-change: transform; }
 .dr-svc-row:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 6px;
                             border-radius: 8px; }
 
-.dr-svc-num { align-self: start; color: var(--ink-4);
+.dr-svc-num { align-self: start;
+  color: color-mix(in oklab, var(--ink) calc(var(--spot, 1) * 100%), var(--ink-4));
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 600;
-  font-size: 13px; letter-spacing: .14em; font-variant-numeric: tabular-nums;
-  transition: color .55s var(--ease-ui); }
-/* THE SPOTLIGHT. One row is lit at a time — the one under the reading
-   line — so it is the page, not the picture, that says where to look.
-   Rows the line has passed keep a READ weight (ink-2: still dark, no
-   longer the object); rows it has not reached wait in ink-3. The handoff
-   is a colour transition on the TEXT, and the whole row grows into
-   the light on --spot (above) — the picture rides that with its row
-   and does nothing of its own (see the well, further down), so the
-   title taking ink and the entry lifting are one event, and that is
-   where the eye goes. Scrubbed — the class follows the line, so it
-   runs back exactly. */
-.dr-svc-row.is-lit .dr-svc-num   { color: var(--ink-2); }
-.dr-svc-row.is-lit .dr-svc-stage { color: var(--ink-3); }
-.dr-svc-row.is-lit .dr-svc-title { color: var(--ink-2); }
-.dr-svc-row.is-now .dr-svc-num   { color: var(--ink); }
-.dr-svc-row.is-now .dr-svc-title { color: var(--ink); }
-.dr-svc-row.is-now .dr-svc-what  { color: var(--ink-2); }
-/* the arrow answers the spotlight the way it used to answer the cursor */
-.dr-svc-row.is-now .dr-svc-arrow { color: var(--ink); transform: translateX(6px); }
+  font-size: 13px; letter-spacing: .14em; font-variant-numeric: tabular-nums; }
+/* THE INK rides --spot (see THE LENS, above): resting shade → lit
+   shade, mixed in oklab at the row's own light. The title goes to
+   full ink — black under the spotlight, so a glance lands here before
+   it goes to the phone. */
 
 .dr-svc-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.dr-svc-stage { color: var(--ink-4); transition: color .55s var(--ease-ui); }
+.dr-svc-stage {
+  color: color-mix(in oklab, var(--ink-3) calc(var(--spot, 1) * 100%), var(--ink-4)); }
 /* THE OBJECT of the row. Two authored lines on the page's display tier
    (the same clamp as §03's t-display-lg, 43px at the cap — tried at 52
    and it fought the 66px statement above it): black under the spotlight,
    so a glance lands here before it goes to the phone. */
 .dr-svc-title {
-  color: var(--ink-3);
+  color: color-mix(in oklab, var(--ink) calc(var(--spot, 1) * 100%), var(--ink-3));
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 640;
   font-size: clamp(1.6rem, 1rem + 2.2vw, 2.7rem);
   line-height: 1.02; letter-spacing: -0.03em;
-  transition: color .7s var(--ease-ui);
 }
-.dr-svc-what { color: var(--ink-3);
-  font-family: var(--font-instrument), sans-serif; font-size: 16px;
-  transition: color .7s var(--ease-ui); }
+.dr-svc-what {
+  color: color-mix(in oklab, var(--ink-2) calc(var(--spot, 1) * 100%), var(--ink-3));
+  font-family: var(--font-instrument), sans-serif; font-size: 16px; }
 
 /* the price is never withheld — it is the differentiator, so it sits in
    the list rather than behind the click. In the BODY now, the last line
@@ -983,10 +980,10 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   font-family: var(--font-instrument), sans-serif;
   font-size: 14px; line-height: 1.45; }
 
-.dr-svc-arrow { justify-self: end; font-style: normal; color: var(--ink-4);
-  font-size: 17px; line-height: 1;
-  transition: color var(--t-micro) var(--ease-ui),
-              transform var(--t-micro) var(--ease-ui); }
+.dr-svc-arrow { justify-self: end; font-style: normal;
+  color: color-mix(in oklab, var(--ink) calc(var(--spot, 1) * 100%), var(--ink-4));
+  translate: calc(var(--spot, 0) * 6px) 0;
+  font-size: 17px; line-height: 1; }
 
 /* the witness — small, dim, and after the promise it vouches for */
 .dr-vouch { display: flex; align-items: flex-start; gap: var(--fib-2);

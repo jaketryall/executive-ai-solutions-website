@@ -51,7 +51,6 @@ export default function ServicesSection() {
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (still) {
       el.style.setProperty("--sp", "1");
-      el.querySelectorAll(".dr-svc-row").forEach((r) => r.classList.add("is-lit", "is-now"));
       return;
     }
 
@@ -61,9 +60,9 @@ export default function ServicesSection() {
        The engine writes ONE progress per element from ONE window. This
        pass needs neither: the spotlight is every ROW's own rect compared
        against one reading line, so rows of unequal height stay correct
-       (they are not equal, the images made sure of that), and which row
-       is lit depends on which rows sit above it — a relation between
-       elements, which one-progress-per-element cannot say.
+       (they are not equal, the images made sure of that), and the YIELD
+       moves every row by what its neighbours are doing — a relation
+       between elements, which one-progress-per-element cannot say.
 
        Reframing it as index-based CSS would assume equal row heights and
        be wrong the first time a title wraps. So it stays measured, and
@@ -83,26 +82,27 @@ export default function ServicesSection() {
       const vh = innerHeight;
       settling = false;
 
-      /* THE SPOTLIGHT. One row is lit at a time: the last one whose top
-         has crossed the reading line, 60% of the way down the viewport —
-         about where the eye sits while it works down a list. Rows above
-         it are READ (is-lit), the one under the line is NOW (is-now),
-         rows below wait. This used to be a "travelling light" which,
-         once the maths was followed through, sat still at ~92vh — so
-         every row took ink the moment it was visible, at the bottom
-         edge, and by the time it was read nothing was left to happen
-         except the picture opening. That is where the eye went. Now the
-         ink lands on the row you are looking at, and only that one. */
+      /* THE LENS. Every row's spotlight is a raised cosine of how far its
+         centre sits from the reading line, 60% of the way down the
+         viewport — about where the eye sits while it works down a list —
+         with a reach of 1.5 row heights, so the row under the line is
+         at ~1, its neighbours at ~0.2, the one beyond at 0. There is no
+         plateau and no threshold: every row is always somewhere on the
+         curve, so all three are always moving, together, and the light
+         passes down the list instead of jumping row to row. (The first
+         cut was a plateau with ramps and a class that flipped the ink —
+         2026-09-06, Jake: "something with the way they move" — most of
+         the travel nothing happened, then everything happened at once —
+         and then "the transition between each service is too fast": the
+         handoff now takes a full row of scroll, and the chase after.) */
       const line = vh * 0.6;
-      /* the ramp either side of the crossing — see --spot in dark.css */
-      const ease = (t: number) => t * t * (3 - 2 * t);
-      let now: HTMLElement | null = null;
+      const hs: number[] = [];
+      const tops: number[] = [];
+      const bottoms: number[] = [];
       for (const [i, li] of rows.entries()) {
         const { top, bottom } = li.getBoundingClientRect();
-        /* capped at 80% of the row's own height, so the plateau always
-           exists: on a 2560×1440 screen 26vh outgrew the row and its
-           spotlight peaked at 0.97 — it never quite arrived */
-        const r = Math.min(vh * 0.26, (bottom - top) * 0.8);
+        tops[i] = top;
+        bottoms[i] = bottom;
         /* each row's ARRIVAL, off the same rect — scrubbed, not
            triggered (law 11). Measured on the <li>, which never moves,
            and written there for the row inside to read: the row climbs
@@ -110,20 +110,18 @@ export default function ServicesSection() {
            bottom 22% of the viewport (98% → 76%), so it is done before
            it is read; a later window was tried and read as late. */
         li.style.setProperty("--rv", ramp((vh * 0.98 - top) / (vh * 0.22)));
-        /* THE SPOTLIGHT'S SIZE. 1 while the reading line is inside the
-           row, ramping in as the top reaches the line and out as the
-           bottom leaves it — the row grows as it enters the light and
-           shrinks as it leaves, so each stage gets its own moment. The
-           product of the two ramps, each centred on its crossing (+0.5),
-           so a row is half grown exactly when it takes ink. */
-        const grow = Math.max(0, Math.min(1, (line - top) / r + 0.5));
-        const shrink = Math.max(0, Math.min(1, (bottom - line) / r + 0.5));
-        const target = ease(grow) * ease(shrink);
+        const h = bottom - top;
+        hs[i] = h;
+        const d = Math.abs((top + bottom) / 2 - line);
+        const reach = h * 1.5;
+        const target = d >= reach ? 0 : 0.5 + 0.5 * Math.cos((Math.PI * d) / reach);
         /* THE CHASE — the engine's damping layer, by hand, for the one
            value the engine does not write: current += (target − current)
            × 0.1, snapped once the gap is under a pixel's worth so the
-           loop can stop. The scroll on this page is raw; without this
-           each wheel notch stepped the row and it read as mechanical. */
+           loop can stop. Lenis already smooths the wheel on desktop (the
+           root layout, lerp 0.1); this is the reference's SECOND layer,
+           the effect easing after the input — and on touch, where the
+           scroll is native, the only smoothing the row gets. */
         if (Number.isNaN(shown[i])) shown[i] = target;
         else {
           shown[i] += (target - shown[i]) * 0.1;
@@ -131,21 +129,35 @@ export default function ServicesSection() {
           else settling = true;
         }
         li.style.setProperty("--spot", shown[i].toFixed(3));
-        const row = li.firstElementChild as HTMLElement | null;
-        if (!row) continue;
-        const on = top <= line;
-        row.classList.toggle("is-lit", on);
-        if (on) now = row;
       }
-      for (const li of rows) {
-        li.firstElementChild?.classList.toggle(
-          "is-now",
-          li.firstElementChild === now
-        );
+
+      /* THE RIDE. Two lifts, both upward, nothing ever moves down (the
+         first cut split a row's growth half up / half down, and rows
+         below the light eased DOWN against the scroll — Jake, 2026-09-06:
+         "them all moving up … the first service riding it … continuous").
+         A row grows from its BOTTOM edge (transform-origin, in the CSS),
+         so all of its growth goes up, and every row above it rides that
+         whole growth — as the light reaches a row, everything above it
+         lifts by what the row gained, and holds while the light moves on
+         (the next row's growth replaces the last's). Then the whole list
+         rides the light's progress down it, 5% of the list's height by
+         the time the line reaches its bottom, the quote after it with it
+         — continuous, all of them, the same direction as the scroll and
+         a little faster, like the list is flowing through the light. */
+      const listTop = tops[0];
+      const listBottom = bottoms[rows.length - 1];
+      const listH = listBottom - listTop;
+      const through = Math.max(0, Math.min(1, (line - listTop) / listH));
+      const lift = through * listH * 0.05;
+      for (let i = 0; i < rows.length; i++) {
+        let dy = -lift;
+        for (let j = i + 1; j < rows.length; j++) dy -= hs[j] * 0.045 * shown[j];
+        rows[i].style.setProperty("--dy", `${dy.toFixed(2)}px`);
       }
       if (vouch) {
         const top = vouch.getBoundingClientRect().top;
         vouch.style.setProperty("--rv", ramp((vh * 0.98 - top) / (vh * 0.22)));
+        vouch.style.setProperty("--dy", `${(-lift).toFixed(2)}px`);
       }
       /* keep painting while any row is still chasing; a scroll event
          mid-settle just folds into the same frame */
