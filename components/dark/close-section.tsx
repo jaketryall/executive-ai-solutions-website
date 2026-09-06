@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 
-/* §05 · THE CLOSE
+/* §06 · THE CLOSE
    The page's one action, and the thing that earns it.
 
    GIVE, THEN ASK. The check runs against the visitor's OWN site and
@@ -62,23 +62,29 @@ export default function CloseSection() {
   };
 
   return (
-    /* THE LIGHTS COME UP FOR THE ASK. Declares a ground ramp and the
-       engine resolves it against this room's own palette — `void` reads
-       --void, `surface-1` reads --surface-1, so no colour is restated
-       here. Two attributes, no scroll code in this file. Earned rather
-       than decorative: §05 is where the page finally asks, and a room
-       that lifts as you arrive at the question is the whole concept. */
-    <section
-      className="dr-close"
-      aria-labelledby="dr-close-h"
-      data-sp
-      data-sp-from="1"
-      data-sp-to="0.45"
-      data-sp-lerp="0.1"
-      data-bg-from="void"
-      data-bg-to="surface-1"
-    >
-      <div className="wrap dr-close-in">
+    /* THE BOOKEND (grammar law 12). The last room reuses the first room's
+       grammar: the hero's black room, its light rig and its mark, arriving
+       at the bottom of the page as ONE rigid object on the lifted ground —
+       the composition without the motion. Nothing in here rides scroll:
+       no window, no lag, no ramp. The ground flip that used to live here
+       moved up to the §04→§05 seam, so by the time this arrives the room
+       is already light and the panel is the dark thing in it.
+
+       The seam in is glow → cut: white light pooled on the ground just
+       above the crest, then a hard edge into black — and the edge is an
+       elliptical cap rather than a straight line, so the panel reads as a
+       horizon the mark rises over. The mark is the ONE breaching object,
+       on the centre axis, part over the glow and part over the black. */
+    <section className="dr-close" aria-labelledby="dr-close-h">
+      <div className="dr-close-panel">
+        {/* painted UNDER the panel (negative z), so the dome cuts it */}
+        <div className="dr-close-glow" aria-hidden />
+        {/* the panel's black and the hero's rig, held still, in ONE layer
+            that also carries the dome — see the stylesheet */}
+        <div className="dr-close-rig" aria-hidden />
+        <span className="dr-close-mark" aria-hidden />
+
+      <div className="dr-close-in">
         <span className="t-label dr-close-kicker">The next step</span>
         <h2 className="dr-close-h" id="dr-close-h">
           Book the call. Or check your site first — we&rsquo;ll tell you what
@@ -169,6 +175,29 @@ export default function CloseSection() {
               </p>
             </>
           )}
+        </div>
+      </div>
+
+        {/* the utility row, on the object itself — the page's end, so the
+            legal line and the address live here. A div, not <footer>:
+            this route hides every footer element to drop the site's own,
+            and a real one here would vanish with it. Sits under the one
+            edge the whole room shares. */}
+        <div className="dr-close-util" role="contentinfo">
+          <span className="dr-close-copy">
+            &copy; {new Date().getFullYear()} Executive AI Solutions
+            <i aria-hidden>&middot;</i>
+            Phoenix, Arizona
+          </span>
+          <nav className="dr-close-links" aria-label="Footer">
+            <Link href="/work">Work</Link>
+            <Link href="/services/websites">Services</Link>
+            <Link href="/pricing">Pricing</Link>
+            <Link href="/privacy">Privacy</Link>
+          </nav>
+          <a className="dr-close-mail" href="mailto:hello@executiveaisolutions.com">
+            hello@executiveaisolutions.com
+          </a>
         </div>
       </div>
     </section>

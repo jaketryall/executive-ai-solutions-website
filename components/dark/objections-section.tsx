@@ -77,7 +77,24 @@ export default function ObjectionsSection() {
   if (!asked.length) return null;
 
   return (
-    <section className="dr-obj" aria-labelledby="dr-obj-h">
+    /* THE PAGE'S ONE GROUND FLIP LIVES HERE (grammar law 2). Black holds
+       from the top through §04; this seam lifts it ONCE, to --surface-2,
+       and it holds to the end. LATE and DECOUPLED: the ramp is declared on
+       the SECTION, on a later window than the content's own arrival
+       (--ap on .dr-obj-in), so the copy is already resolved when the room
+       around it brightens — the lift is the seam's event, not the text's.
+       §06 then paints its own black over the lifted ground, which is what
+       lets it read as an object rather than as more page. */
+    <section
+      className="dr-obj"
+      aria-labelledby="dr-obj-h"
+      data-sp
+      data-sp-from="0.72"
+      data-sp-to="0.22"
+      data-sp-var="--gp"
+      data-bg-from="void"
+      data-bg-to="surface-2"
+    >
       {/* declares its arrival; the three blocks inside read --ap at three
           rates, the same lag hierarchy §02 uses */}
       <div
