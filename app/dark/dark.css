@@ -970,6 +970,25 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-mark-col i { translate: none; }
 }
 
+/* ── THE OPENER, REPEATED ────────────────────────────────────────
+   §03 and §04 are kin: one black ground and no paint change between
+   them — the grammar's whitespace-only seam. What seams them instead is
+   a REPEATED opener, the same three beats in both: the mark, --fib-3,
+   the label, --fib-3, the headline. The glyph is the page's through-line
+   (the nav's monogram, the crest of §06), used here as a chapter mark.
+   Drawn as ::before so the shared gallery component stays untouched and
+   the live site's own gallery never sees it. Still, on purpose: this is
+   the silent seam, and the headings get their one vocabulary later. */
+.dr-hlg .hlg-eyebrow::before,
+.dr-runs-kicker::before {
+  content: ""; display: block;
+  width: clamp(22px, 1.9vw, 28px); aspect-ratio: 1;
+  margin: 0 auto var(--fib-3);
+  background: var(--ink-2);
+  -webkit-mask: url("/brand/eas-mark.svg") center / contain no-repeat;
+          mask: url("/brand/eas-mark.svg") center / contain no-repeat;
+}
+
 /* ══ §03 · THE PROOF ═════════════════════════════════════════════
    The shared highlights gallery, re-skinned. The behaviour is not
    duplicated here — components/ui/highlights-gallery.tsx owns the caption
@@ -979,7 +998,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-hlg {
   position: relative; z-index: 4;
   background: transparent;                /* the light site paints it white */
-  padding-block: clamp(72px, 12svh, 150px) clamp(64px, 11svh, 132px);
+  /* no bottom padding, on purpose: the §03→§04 seam is whitespace-only
+     and §04 owns the whole of that blank on one value (see .dr-runs) */
+  padding-block: clamp(72px, 12svh, 150px) 0;
 }
 .dr-hlg .hlg-eyebrow { display: block; text-align: center; color: var(--ink-4);
                        margin-bottom: var(--fib-3); }
@@ -1101,13 +1122,19 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    lands in a single glance and nothing here is scroll-jacked: a visitor
    deciding whether to call wants reassurance, not a ride. */
 .dr-runs { position: relative; z-index: 4;
-           padding-block: clamp(72px, 12svh, 150px) clamp(80px, 14svh, 168px); }
+  /* THE THIRD SEAM is nothing at all. §03 ends and §04 begins on the same
+     black with no paint change, and the whole blank lives HERE, on one
+     value, so it can be measured: ≥0.55vh of silence before the repeated
+     opener. A silent gap before a still beat, which is what §04 is. */
+  --seam: clamp(220px, 55svh, 520px);
+  padding-block: var(--seam) clamp(80px, 14svh, 168px); }
 
 .dr-runs-head { margin-bottom: clamp(26px, 4.4svh, 52px); }
 /* kicker left, reassurance right, one baseline */
 .dr-runs-band { display: flex; align-items: baseline; justify-content: space-between;
-                gap: var(--fib-5); margin-bottom: clamp(14px, 2.4svh, 26px); }
-.dr-runs-kicker { color: var(--ink-4); }
+                gap: var(--fib-5); margin-bottom: var(--fib-3); }
+.dr-runs-kicker { display: block; color: var(--ink-4); }
+.dr-runs-kicker::before { margin-inline: 0; }   /* §04 opens on its own left edge */
 .dr-runs-lead {
   /* the measure travels in EM, not ch. `ch` on the wrapper resolved
      against the wrapper's 16px and had nothing to do with this type;
@@ -1359,6 +1386,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      kicker and the note become siblings of the lead and can be ordered
      around it — the note belongs UNDER the statement at this width, not
      jammed onto the kicker's line. */
+  .dr-runs { --seam: clamp(160px, 34svh, 300px); }
   .dr-runs-head { display: flex; flex-direction: column;
                   padding-left: clamp(20px, 6vw, 28px); }
   .dr-runs-band { display: contents; }
