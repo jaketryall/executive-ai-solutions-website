@@ -73,8 +73,15 @@ export default function ServicesSection() {
     );
     const vouch = el.querySelector<HTMLElement>(".dr-vouch");
     const ramp = (v: number) => String(Math.max(0, Math.min(1, v)));
+    /* each row's spotlight value as SHOWN — it chases the measured
+       target (below) at the engine's constant, so this is the one
+       piece of state the pass keeps between frames. NaN until the first
+       paint, which lands on the real frame instead of easing up from 0. */
+    const shown = rows.map(() => NaN);
+    let settling = false;
     const lit = () => {
       const vh = innerHeight;
+      settling = false;
 
       /* THE SPOTLIGHT. One row is lit at a time: the last one whose top
          has crossed the reading line, 60% of the way down the viewport —
@@ -88,11 +95,14 @@ export default function ServicesSection() {
          ink lands on the row you are looking at, and only that one. */
       const line = vh * 0.6;
       /* the ramp either side of the crossing — see --spot in dark.css */
-      const r = vh * 0.18;
       const ease = (t: number) => t * t * (3 - 2 * t);
       let now: HTMLElement | null = null;
-      for (const li of rows) {
+      for (const [i, li] of rows.entries()) {
         const { top, bottom } = li.getBoundingClientRect();
+        /* capped at 80% of the row's own height, so the plateau always
+           exists: on a 2560×1440 screen 26vh outgrew the row and its
+           spotlight peaked at 0.97 — it never quite arrived */
+        const r = Math.min(vh * 0.26, (bottom - top) * 0.8);
         /* each row's ARRIVAL, off the same rect — scrubbed, not
            triggered (law 11). Measured on the <li>, which never moves,
            and written there for the row inside to read: the row climbs
@@ -108,7 +118,19 @@ export default function ServicesSection() {
            so a row is half grown exactly when it takes ink. */
         const grow = Math.max(0, Math.min(1, (line - top) / r + 0.5));
         const shrink = Math.max(0, Math.min(1, (bottom - line) / r + 0.5));
-        li.style.setProperty("--spot", (ease(grow) * ease(shrink)).toFixed(3));
+        const target = ease(grow) * ease(shrink);
+        /* THE CHASE — the engine's damping layer, by hand, for the one
+           value the engine does not write: current += (target − current)
+           × 0.1, snapped once the gap is under a pixel's worth so the
+           loop can stop. The scroll on this page is raw; without this
+           each wheel notch stepped the row and it read as mechanical. */
+        if (Number.isNaN(shown[i])) shown[i] = target;
+        else {
+          shown[i] += (target - shown[i]) * 0.1;
+          if (Math.abs(target - shown[i]) < 0.0004) shown[i] = target;
+          else settling = true;
+        }
+        li.style.setProperty("--spot", shown[i].toFixed(3));
         const row = li.firstElementChild as HTMLElement | null;
         if (!row) continue;
         const on = top <= line;
@@ -125,6 +147,9 @@ export default function ServicesSection() {
         const top = vouch.getBoundingClientRect().top;
         vouch.style.setProperty("--rv", ramp((vh * 0.98 - top) / (vh * 0.22)));
       }
+      /* keep painting while any row is still chasing; a scroll event
+         mid-settle just folds into the same frame */
+      if (settling) onLit();
     };
     let lframe = 0;
     const onLit = () => {

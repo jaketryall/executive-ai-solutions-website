@@ -891,30 +891,45 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    is resolved before it is read, and runs backwards exactly — a later
    window (92 → 66) was tried on 2026-09-06 and read as late. The figure
    gets the fill only — its 50px --ap lag already carries the motion. */
-.dr-svc-row { opacity: var(--rv, 1); translate: 0 calc((1 - var(--rv, 1)) * 14px); }
+.dr-svc-row { opacity: calc(var(--rv, 1) * (.5 + .5 * var(--spot, 1)));
+              translate: 0 calc((1 - var(--rv, 1)) * 14px); }
 .dr-vouch   { opacity: var(--rv, 1); }
 
-/* THE SPOTLIGHT GROWS THE ROW (2026-09-06, Jake: "sections grow and
-   shrink where you enter and leave them … each section gets its own
-   spotlight for a second"). --spot is the second value the section's
-   one pass writes on the <li>: 0 while the row waits below the reading
+/* THE SPOTLIGHT GROWS THE ROW, AND DIMS THE OTHERS (2026-09-06, Jake:
+   "sections grow and shrink where you enter and leave them … each
+   section gets its own spotlight for a second", then "a little more
+   dramatic and smooth"). --spot is the second value the section's one
+   pass writes on the <li>: 0 while the row waits below the reading
    line, 1 while the line is inside the row, 0 again once the row's
    bottom has passed it — a plateau with a smoothstep ramp either side,
-   18% of the viewport wide and centred on the crossing, so the row is
+   26% of the viewport wide and centred on the crossing, so the row is
    half grown at the instant its title takes ink. A row therefore grows
    as it ENTERS the spotlight and shrinks as it LEAVES, one at a time,
-   and the handoff between neighbours is a crossfade (each at half). 3%,
-   which is the old hover's 1.2% made legible as a scroll event; the
-   lines grow with the row, so it reads as the whole entry lifting
-   toward you rather than the text swelling between fixed rules.
+   and the handoff between neighbours is a crossfade (each at half).
+
+   Two things ride it. SIZE: 4.5%, the lines growing with the row, so it
+   reads as the whole entry lifting toward you. LIGHT: the rows outside
+   the spotlight sit at half strength, phones included, and come up to
+   full as the line reaches them — that is what makes it a spotlight
+   rather than a row that swells; before the dim (3%, no dim) the unlit
+   phones stood at full contrast beside the lit one and the growth read
+   as a nudge. The fallback for the dim is 1 and for the scale is 0: with
+   no JS at all every row is full and true-sized, and under reduced
+   motion --spot is never written, so the same.
+
+   SMOOTH: the value CHASES its target at the engine's own 0.1 per frame
+   (see scroll-engine.ts, DAMPING) — the scroll is raw on this page, and
+   without the chase each wheel notch stepped the row. Multiplied into
+   the row's arrival opacity rather than layered on it, so the two never
+   fight for the property.
 
    This REPLACED the hover: a row lit by where you are on the page and a
    row lit by where your cursor is were two spotlights on one list, and
-   the cursor's was the one that did nothing on a phone. Scrubbed, so it
-   runs backwards exactly; with reduced motion --spot is never written
-   and the scale resolves to 1. will-change so the scale rides the
-   compositor instead of re-rastering three phone trays a frame. */
-.dr-svc-row { scale: calc(1 + var(--spot, 0) * .03); will-change: transform; }
+   the cursor's was the one that did nothing on a phone. Scrubbed (the
+   target is pure f(scroll)), so it runs backwards exactly. will-change
+   so the scale rides the compositor instead of re-rastering three phone
+   trays a frame (2560: 26ms max / 0 slow with it, 37ms / 2 without). */
+.dr-svc-row { scale: calc(1 + var(--spot, 0) * .045); will-change: transform; }
 .dr-svc-row:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 6px;
                             border-radius: 8px; }
 
