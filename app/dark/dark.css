@@ -1143,8 +1143,18 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-pf-card:focus-visible { border-color: rgba(255, 255, 255, .18); }
 .dr-pf-card:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 4px; }
 
+/* NOTHING COMPOSITED AT REST. The first cut had a backdrop-filter veil
+   and a clip-path'd <video> live inside every card while the card
+   translated through its entrance — two compositor layers under a moving
+   ancestor, which is exactly what Chrome flickers on (Jake: "lots of
+   random flashing when scrolling to this section", 2026-09-06). So at
+   rest a card is plain raster: the cover, the text, a solid badge. The
+   blur is a `filter` on the cover itself and only exists while hovered;
+   the demo panel is `visibility: hidden` until hovered, so its video has
+   no layer to flash, and it stays visible through its closing transition
+   by delaying the visibility flip by the transition's length. */
 .dr-pf-well {
-  position: relative; overflow: hidden; isolation: isolate;
+  position: relative; overflow: hidden;
   aspect-ratio: 4 / 3; border-radius: clamp(8px, .9vw, 12px);
   background: #17171b;
 }
@@ -1153,11 +1163,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   /* screenshots anchor to their own top-left so cover-crop never eats the
      client's nav or headline — the right-side scenery absorbs it */
   object-fit: cover; object-position: left top;
+  transition: filter .5s var(--ease-ui);
 }
 .dr-pf-veil {
   position: absolute; inset: 0; z-index: 2;
-  background: rgba(10, 10, 11, .38);
-  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  background: rgba(10, 10, 11, .5);
   opacity: 0; transition: opacity .5s var(--ease-ui);
 }
 .dr-pf-demo {
@@ -1167,22 +1177,28 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   box-shadow: 0 24px 60px -20px rgba(0, 0, 0, .7);
   translate: -50% -42%;
   clip-path: polygon(30% 50%, 70% 50%, 70% 50%, 30% 50%);
-  transition: clip-path .7s var(--ease-structure), translate .7s var(--ease-structure);
+  visibility: hidden;
+  transition: clip-path .7s var(--ease-structure), translate .7s var(--ease-structure),
+              visibility 0s .7s;
 }
 .dr-pf-demo video { display: block; width: 100%; height: 100%;
                     object-fit: cover; object-position: top center; }
+.dr-pf-card:hover .dr-pf-well img,
+.dr-pf-card:focus-visible .dr-pf-well img { filter: blur(10px); }
 .dr-pf-card:hover .dr-pf-veil,
 .dr-pf-card:focus-visible .dr-pf-veil { opacity: 1; }
 .dr-pf-card:hover .dr-pf-demo,
 .dr-pf-card:focus-visible .dr-pf-demo {
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
   translate: -50% -50%;
+  visibility: visible;
+  transition: clip-path .7s var(--ease-structure), translate .7s var(--ease-structure),
+              visibility 0s 0s;
 }
 .dr-pf-badge {
   position: absolute; z-index: 4; top: 10px; left: 10px;
   padding: 7px 11px; border-radius: 999px;
-  background: rgba(10, 10, 11, .72); color: #fff;
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  background: rgba(10, 10, 11, .82); color: #fff;
   font-family: var(--font-instrument), sans-serif; font-size: 11.5px;
   letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
 }
@@ -1237,7 +1253,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 @media (prefers-reduced-motion: reduce) {
   .dr-pf { translate: none; }
-  .dr-pf-card, .dr-pf-veil, .dr-pf-demo { transition: none; }
+  .dr-pf-card, .dr-pf-veil, .dr-pf-demo, .dr-pf-well img { transition: none; }
 }
 
 /* ══ §04 · HOW IT RUNS ═══════════════════════════════════════════
