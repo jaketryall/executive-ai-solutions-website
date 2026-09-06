@@ -1155,26 +1155,34 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    by delaying the visibility flip by the transition's length. */
 .dr-pf-well {
   position: relative; overflow: hidden;
-  aspect-ratio: 4 / 3; border-radius: clamp(8px, .9vw, 12px);
+  aspect-ratio: 3 / 2; border-radius: clamp(8px, .9vw, 12px);
   background: #17171b;
 }
-/* THE PICTURE LAGS ITS CARD — the §02 / old-§03 law, vertical: the
-   image is `over` taller on EACH side and moves at most `over` either
-   way, so an edge cannot appear wherever the card sits. --pp is the
-   well's own progress across the viewport (declared on the well, written
-   by the engine, chased at 0.1); the fallback .5 is a zero shift, so
-   no-JS is simply still. Scroll-driven: `translate` is deliberately NOT
-   in the transition list. */
+/* THE PICTURE LAGS ITS CARD — itsjay's rate, decoded live 2026-09-06:
+   his wrapper is 120% tall at −15% with the image at scale 1.05 (a 26%
+   surplus) and it slides a flat 0.1286px per px of scroll — no easing,
+   no spring of its own, only Lenis under it. Ours: a 26% surplus split
+   19 above / 7 below (the picture lags, so the room it needs is above)
+   and a shift of 0.45 well-heights across the well's travel — at 1440
+   that is ~0.11px per px, his number. It does NOT keep the whole picture
+   inside the well at every moment; it keeps the picture over the
+   VISIBLE part of the well: near the fold only the well's top shows,
+   near exit only its bottom, and the surplus is spent where it is seen
+   (feasible iff surplus ≥ 0.45 × (vh − h)/(vh + h); worst case 2560 →
+   0.25 ≤ 0.26). --pp is the well's own progress across the viewport
+   (declared on the well, written by the engine, chased at 0.1).
+   `translate` is deliberately NOT in the transition list. */
 .dr-pf-well img {
-  --over: clamp(14px, 1.8vw, 30px);
   position: absolute; left: 0; width: 100%;
-  top: calc(-1 * var(--over));
+  top: -19%;
   /* max-width:none first, or Tailwind's preflight clamps the surplus away */
-  max-width: none; height: calc(100% + 2 * var(--over));
+  max-width: none; height: 126%;
   /* screenshots anchor to their own top-left so cover-crop never eats the
      client's nav or headline — the right-side scenery absorbs it */
   object-fit: cover; object-position: left top;
-  translate: 0 calc((var(--pp, .5) - .5) * 2 * var(--over));
+  /* (pp × .45 − .165) × well height, written as % of the picture's own
+     126% height; fallback pp .367 = a zero shift, so no-JS is still */
+  translate: 0 calc(var(--pp, .367) * 35.71% - 13.1%);
   transition: filter .5s var(--ease-ui);
 }
 .dr-pf-veil {
