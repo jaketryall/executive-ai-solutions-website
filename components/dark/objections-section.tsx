@@ -96,12 +96,15 @@ export default function ObjectionsSection() {
       data-bg-to="surface-2"
     >
       {/* declares its arrival; the three blocks inside read --ap at three
-          rates, the same lag hierarchy §02 uses */}
+          rates, the same lag hierarchy §02 uses. The window is spent by
+          the time the panel's top is 62% of the way up — it used to run
+          to 40%, which left the form still settling inside the reading
+          zone, and the back half is meant to be still (laws 6/7) */}
       <div
         className="wrap dr-obj-in"
         data-sp
         data-sp-from="1"
-        data-sp-to="0.4"
+        data-sp-to="0.62"
         data-sp-var="--ap"
         data-sp-lerp="0.1"
       >

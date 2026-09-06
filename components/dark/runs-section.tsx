@@ -11,8 +11,11 @@
 
    THE LAYOUT: four steps standing on four steps. Equal panels in a row
    are the shape of a MENU — four peers, pick one — and a process is an
-   order, not a menu. So the panels climb a tread each, on a rail the
-   light walks left to right. Still one glance, still no scroll-jack.
+   order, not a menu. So the panels climb a tread each, on one rail.
+   Still one glance, still no scroll-jack — and, since the 2026-09-06
+   lando pass, still in the literal sense: the flight arrives once and
+   then nothing here moves with the scroll (grammar laws 6/7 — the
+   back half is quiet so the sell lands on a calm reader).
 
    THE SIGNATURE: four artifacts, not one stage. Each step owns a small
    working demo and runs it once, on its own arrival — a shared morphing
@@ -136,12 +139,16 @@ export default function RunsSection() {
 
         {/* DECLARES its window; the engine fills in --sp. No scroll code
             lives in this file — the whole section is now two attributes
-            and a stylesheet rule. */}
+            and a stylesheet rule. The window is an ARRIVAL, not the
+            viewport's whole travel: it opens as the grid enters and is
+            spent by the time its top is 62% of the way up, so the flight
+            is whole while it is still low on the screen and the scroll
+            has nothing left to move (laws 6/7 — the still beat). */}
         <ol
           className="dr-runs-grid"
           data-sp
-          data-sp-from="1.15"
-          data-sp-to="0.05"
+          data-sp-from="1"
+          data-sp-to="0.62"
           /* chase the target rather than snapping to it — the second
              smoothing layer, matching the reference's own lerp constant */
           data-sp-lerp="0.1"
@@ -158,7 +165,10 @@ export default function RunsSection() {
                    because a demo that replays on the way back up turns
                    the section into a flicker */
                 data-once
-                data-once-at="0.86"
+                /* later panels stand higher on the flight and arrive
+                   later in the window, so each fires a little deeper —
+                   the demo should run on a panel that is already there */
+                data-once-at={(0.86 - i * 0.08).toFixed(2)}
               >
                 {/* the tread this step stands on, and the riser up to
                     the next. Two spans and no measurement: the geometry

@@ -1203,10 +1203,16 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    actually about. So the panels climb: each stands one tread higher
    than the one before it, on a rail that runs under all four.
 
-   The rail is the connective, and the light walks it left to right as
-   you scroll — the same travelling light that walks §02's list, turned
-   on its side. That repetition is the point: one motif, restaged, is
-   what makes a page read as composed instead of assembled.
+   The rail is the connective. It used to carry a light that walked the
+   flight left to right as you scrolled — §02's light turned on its
+   side — and that light is gone on purpose (grammar laws 6 + 7): the
+   back half of the page is where the sell lands, and it lands on a calm
+   reader. Every animated section hands to a stiller one, and this is
+   the still one. So the flight ARRIVES — each panel rises into place
+   and its tread lights under it, left to right, resolved while the
+   whole thing is still in the bottom half of the viewport — and then
+   nothing here answers the scroll again. The staircase stays as
+   composition; it just stops performing.
 
    The whole path still lands in a single glance. The settled position
    here (2026-07-06) is that a visitor deciding whether to call wants
@@ -1218,32 +1224,26 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      columns and gets rewritten per row when the grid wraps, so the
      stairs stay two-high in a pair rather than climbing off the top. */
   --step: var(--i);
-  /* the light's position, per panel: --lp fills this tread, --rp snaps
-     the riser up to the next one right as the tread completes. Both are
-     pure f(--sp), so the whole path scrubs backwards exactly. */
-  --lp: clamp(0, var(--sp, 1) * 4 - var(--i), 1);
-  --rp: clamp(0, (var(--sp, 1) * 4 - var(--i) - 1) * 5, 1);
-  /* the stairs, plus the settle. Later panels travel further, so the
-     flight ASSEMBLES left to right instead of arriving as a slab. */
-  translate: 0 calc(
-    var(--step) * var(--rise) * -1
-    + (1 - var(--sp, 1)) * (16px + var(--i) * 9px)
-  );
+  /* THE ARRIVAL, per panel — one number, and everything below derives
+     from it. Pure f(--sp) inside the grid's window, which is now an
+     ENTRANCE (the grid's top from 1vh to .62vh) rather than the whole
+     viewport's travel: the panels stagger left to right a tenth of the
+     window apart and each resolves in four tenths, so the last one is
+     whole while the flight is still in the bottom half of the screen.
+     Past --cp = 1 there is nothing left for the scroll to move. */
+  --cp: clamp(0, (var(--sp, 1) - var(--i) * 0.1) * 2.5, 1);
+  /* the stairs, plus the rise into place */
+  translate: 0 calc(var(--step) * var(--rise) * -1 + (1 - var(--cp)) * 18px);
+  opacity: var(--cp);
   position: relative;
   display: flex; flex-direction: column;
   border-radius: clamp(12px, 1.3vw, 18px);
-  /* the surface warms as the light reaches it, so the panel is part of
-     the signal and not just cargo sitting on top of it */
-  background: rgba(255, 255, 255, calc(0.038 + 0.026 * var(--lp, 1)));
+  background: rgba(255, 255, 255, .064);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   padding: clamp(18px, 1.7vw, 26px);
-  /* the card FILLS IN off the same --sp the light walks on — scrubbed,
-     not triggered (law 11) — left to right and resolved a third of the
-     way into the window, so the flight is whole before it is read. Only
-     the demo inside is a one-shot (data-once → .is-in), and that is the
-     graphic's own beat, not the surface's. */
-  opacity: clamp(0, (var(--sp, 1) - var(--i) * 0.04) * 4, 1);
+  /* only the demo inside is a one-shot (data-once → .is-in), and that
+     is the graphic's own beat, not the surface's */
 }
 
 /* ── the rail ────────────────────────────────────────────────────
@@ -1266,18 +1266,19 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-run-riser { right: 0; bottom: 0; width: 1px; height: 100%; }
 
 /* the lit length rides ON the dim rail rather than replacing it, so the
-   path is always fully drawn and only the LIGHT ever moves */
+   path is always fully drawn. It lights with the panel that stands on
+   it — the same --cp — and then holds. */
 .dr-run-tread::after, .dr-run-riser::after {
   content: ""; position: absolute; inset: 0;
   background: rgba(255, 255, 255, .58);
 }
-.dr-run-tread::after { transform-origin: left center;   transform: scaleX(var(--lp, 1)); }
-.dr-run-riser::after { transform-origin: center bottom; transform: scaleY(var(--rp, 1)); }
+.dr-run-tread::after { transform-origin: left center;   transform: scaleX(var(--cp, 1)); }
+.dr-run-riser::after { transform-origin: center bottom; transform: scaleY(var(--cp, 1)); }
 
 .dr-run-top { display: flex; align-items: baseline; justify-content: space-between;
               gap: var(--fib-2); }
-/* the number is the station marker: dim until the light gets there */
-.dr-run-n { color: rgba(255, 255, 255, calc(.34 + .66 * var(--lp, 1)));
+/* the station marker — lit, always; it stopped waiting for a light */
+.dr-run-n { color: var(--ink);
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 700;
   font-size: 13px; letter-spacing: .14em; font-variant-numeric: tabular-nums; }
@@ -1401,10 +1402,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
                   margin-top: 0; }
   .dr-demo { height: 40px; }
   /* ONE COLUMN: the path turns and runs down the left edge. Same rail,
-     same light, same progress — scaleY instead of scaleX. A staircase
+     same arrival — scaleY instead of scaleX. A staircase
      needs width it does not have here, so the stairs flatten and the
      line does the sequencing on its own. */
-  .dr-run { --step: 0; }
+  /* .dr-runs-grid .dr-run, not .dr-run: the two-column rule above sets
+     --step on :nth-child(even), and a bare class loses to that on
+     specificity — which had the even panels riding 22px up into the
+     one above them on every phone */
+  .dr-runs-grid .dr-run { --step: 0; }
   .dr-run-rail {
     left: calc(-1 * var(--rail-off)); bottom: auto; top: 0;
     width: 1px; height: calc(100% + var(--col-gap));
@@ -1414,7 +1419,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-run-tread { left: 0; right: auto; top: 0; bottom: auto;
                   width: 1px; height: 100%; }
   .dr-run-tread::after { transform-origin: center top;
-                         transform: scaleY(var(--lp, 1)); }
+                         transform: scaleY(var(--cp, 1)); }
 
   /* the band unstacks. `display: contents` dissolves the wrapper so the
      kicker and the note become siblings of the lead and can be ordered
@@ -1430,11 +1435,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* the staircase is LAYOUT and stays; only the scroll settle goes, and
-     the rail rests fully lit rather than half-drawn */
-  .dr-run { opacity: 1;
-            --lp: 1; --rp: 1;
-            translate: 0 calc(var(--step) * var(--rise) * -1); }
+  /* the staircase is LAYOUT and stays; the arrival is one number, so
+     resting it is one line — panel in place, tread lit */
+  .dr-run { --cp: 1; }
   .dr-run.is-in .dr-demo-call i,
   .dr-run.is-in .dr-demo-design i,
   .dr-run.is-in .dr-demo-build i,
