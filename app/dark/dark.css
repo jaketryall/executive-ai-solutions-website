@@ -765,16 +765,24 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    THE LIGHTS COME ON. The one light section in a black room, and the only
    place the page inverts. The tokens are redefined here rather than the
    rules being rewritten, so every row below keeps its existing styling and
-   simply flips — and the values are picked for contrast ON #f5f5f7, not
-   inverted arithmetically from the dark set. */
+   simply flips — and the values are picked for contrast ON --svc-bg, not
+   inverted arithmetically from the dark set.
+
+   THE SURFACE IS ONE VALUE. Jake, 2026-09-06: "the white that fast
+   kinda throws off the feel of the site — I want to see section 2
+   gray. I might go back." So --svc-bg is the dial: #f5f5f7 was the
+   white; #d4d4d9 is the gray (Apple-cool, a touch of blue, L ≈ .66).
+   The inks were re-cut for it — every ratio below is on the gray and
+   at or above what it was on the white, so nothing dropped under AA. */
 /* THE LIGHT SECTION IS A CARD, not a slab. The section itself is only the
    frame — the black page shows around it, so the white reads as an object
    set down in the room rather than the room changing colour. */
 .dr-svc {
-  --ink:   #0a0a0b;   /* 18.9:1 — titles, the lit row */
-  --ink-2: #35353a;   /* 10.6:1 — price, body */
-  --ink-3: #5c5c63;   /*  6.4:1 — unlit title, secondary */
-  --ink-4: #6e6e75;   /*  4.8:1 — FLOOR. labels, numerals, arrow. */
+  --svc-bg: #d4d4d9;  /* the dial. #f5f5f7 = the white it replaced */
+  --ink:   #0a0a0b;   /* 13.4:1 — titles, the lit row */
+  --ink-2: #2c2c31;   /*  9.4:1 — price, body */
+  --ink-3: #4a4a50;   /*  6.0:1 — unlit title, secondary */
+  --ink-4: #55555c;   /*  5.0:1 — FLOOR. labels, numerals, arrow. */
   --edge-strong: rgba(0, 0, 0, .55);
   --sp: 0;
   position: relative; z-index: 4;
@@ -1530,7 +1538,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      as the proof card and the hero's roster — 1400 less the wrap's own
      padding, not 1400 */
   max-width: calc(1400px - 2 * var(--fib-5)); margin-inline: auto;
-  background: #f5f5f7;
+  background: var(--svc-bg);
   border-radius: clamp(16px, 2vw, 30px);
   /* the card clips its own content — the statement's marks start ±300px
      out, and without this they would scatter across the black page */
@@ -1607,7 +1615,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-svc-in::before {
     content: ""; position: absolute; z-index: -1;
     inset: 0 -3%;
-    background: #f5f5f7;
+    background: var(--svc-bg);
     /* a circle at the fold: a box scaled down on X squashes its corners,
        so the horizontal radius is pre-stretched by the same ratio.
        Constant, like everything else here — only the scale moves. */
