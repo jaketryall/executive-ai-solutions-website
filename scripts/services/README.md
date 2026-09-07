@@ -1,3 +1,9 @@
+> **RETIRED for stills (2026-09-07).** The green-screen + corner-pin route below was replaced by a
+> direct one: attach the real screenshot to `nano_banana_pro` at **4k** and it keeps every word
+> intact. See `design-dna/higgsfield/README.md`. Step 1 here (capturing the real screens) is still
+> how you get the screenshot; the compositor is kept only for a photo you already have and cannot
+> re-generate, or for putting a screen into video frames.
+
 # Photoreal service phones — do it yourself in three commands
 
 1. **Capture the real screens** (the three §02 phones from /dark, 3× density, dev server running):
