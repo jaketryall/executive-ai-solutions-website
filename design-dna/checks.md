@@ -30,8 +30,18 @@ bug; never delete a line.
 - Entrance settle: `.dr-pf` `translate` resolves to `0` by the time `.dr-proof-grid`'s top edge reaches 62% of viewport height (±2%).
 - `.dr-pf-demo` clip-path at rest and open both contain `round 8px`; mid-transition (250ms after hover) it is an inset with round, never a polygon.
 
+## §03→§04 · Curtain lift
+- At p=1 (the `.dr-proof-lift` wrapper's bottom edge at its window end, .32vh): `.dr-proof` rect.bottom and `.dr-runs` rect.top both within ±6px of 0, at 1440 and 390 — no gap, no leftover overlap at the lock frame.
+- Speed: between W.bottom = .8vh and W.bottom = .6vh (180px of scroll at 1440), `.dr-proof` rect.bottom moves ≥255px (≈1.5× native scroll — measured 264.7px).
+- The curtain is opaque mid-lift: `elementFromPoint` just above `.dr-proof`'s bottom edge resolves inside `.dr-proof`; just below it resolves inside `.dr-runs` — the plate is visible only once the curtain has actually passed, never through it.
+- `.dr-runs-kicker` top ≥110px at p=1 (clears the nav).
+- Wipes (`data-wipe-at="0.45"` on the §04 kicker/lead/sub): at W.bottom = .8vh none have fired; by p=1 settled, all three have.
+- Every `.dr-run`'s `--cp` reaches `1` (±.02) by the time `.dr-runs-grid`'s top edge reaches .46× viewport height (the grid's own window is now data-sp-from="0.7" data-sp-to="0.35", scoped inside the already-uncovered plate).
+- `.dr-obj` rect.top sits `.dr-runs` rect.bottom − `--exit-lap` (±4px) — the white card's overlap onto the light room's tail; `elementFromPoint` at the card's own top resolves inside `.dr-obj-card` (paints above the plate).
+- `prefers-reduced-motion: reduce`: `.dr-proof { translate: none; }` and `.dr-runs { margin-top: 0; }` are declared AFTER their own base rules (source-order tie-break under equal specificity).
+
 ## §04 · How it runs
-- Every `.dr-run`'s `--cp` reaches `1` (±.02) by the time `.dr-runs-grid`'s top edge reaches .73× viewport height.
+- Every `.dr-run`'s `--cp` reaches `1` (±.02) by the time `.dr-runs-grid`'s top edge reaches .73× viewport height. — RETIRED 2026-09-06: the curtain-lift seam moved the grid's own window to data-sp-from="0.7" data-sp-to="0.35"; see the §03→§04 section below for the current threshold (≤.46vh).
 - Past that arrival point, `--cp` is identical across 3+ further scroll positions — no walking light, no continuing drift.
 - `prefers-reduced-motion: reduce`: `.dr-run { --cp: 1 }` — the reduced frame equals the fully-settled frame.
 - Each panel's demo fires once at its `data-once-at` threshold and does not retrigger on scroll back up past that threshold.
