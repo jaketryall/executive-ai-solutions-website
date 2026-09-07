@@ -1553,7 +1553,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    fourth. Three quotes as three full-width statements look deliberate,
    and a fourth just makes the column longer. */
 .dr-voices {
-  padding-block: clamp(150px, 24svh, 300px) clamp(20px, 4svh, 60px);
+  /* the top gap was 24svh ON TOP of a header that centres the title in
+     78svh of its own — so the claim sat the better part of a screen and a
+     half below §03 and the seam read as a hole (Jake, 2026-09-07: "can we
+     move the title a little closer up to the previous section"). The
+     isolation is the header's job, not the padding's; the padding is only
+     the seam. */
+  padding-block: clamp(60px, 9svh, 130px) clamp(20px, 4svh, 60px);
 }
 
 /* ISOLATED. The claim used to sit 64px above 56px quotes and read as one
@@ -1564,9 +1570,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    kind of object. */
 .dr-voices-head {
   text-align: center;
-  min-height: min(78svh, 720px);
+  /* still most of a screen, so the claim is alone when it is centred —
+     trimmed from 78svh as the section came up, and the gap BELOW grew to
+     match, so what was lost above the title was not taken out of the
+     space that keeps the first quote off its heels */
+  min-height: min(66svh, 620px);
   display: grid; align-content: center; justify-items: center;
-  margin-bottom: clamp(40px, 7svh, 96px);
+  margin-bottom: clamp(56px, 9svh, 120px);
 }
 .dr-voices-kicker { display: block; color: var(--ink-4); margin-bottom: var(--fib-3); }
 .dr-voices-lead {
@@ -1598,32 +1608,40 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   scale: calc(1 - var(--out, 0) * .045);
   transform-origin: 50% 30%;
 }
+/* the wrapper exists ONLY to carry the arrival's window — one track per
+   element, and the h2 inside is already spending its own on the exit. It
+   must hug the title exactly: any padding or min-height here and the
+   window would measure a box the title merely sits inside, which is the
+   mistake this replaced. */
+.dr-voices-lead-w { display: block; }
+
 /* the two sentences are two beats. Blocks, so each owns its own lines and
    the balance still happens per sentence. */
 .dr-voices-lead span { display: block; }
 
-/* THE ENTRANCE — the room's one exception, see voices-section.tsx.
-   Out of focus and a little too large, resolving to sharp and true: the
-   claim coming INTO focus. Numbers off the Apple decode (blur 12→0,
-   scale down, ~800ms, ~200ms between siblings), on this room's structure
-   curve so it still belongs to the page.
+/* THE ARRIVAL — scrubbed, and the exit's mirror image (Jake: "i want the
+   title to come up like move up come in to view"). It rises 64px into
+   place out of a blur as the scroll carries it up the screen: the same
+   gesture that later lifts it away, run the other way.
 
-   `backwards` fill is what makes the stagger work: the second sentence
-   holds its blurred, oversized first frame through its delay instead of
-   sitting sharp for 220ms and then jumping back out of focus. */
-.dr-voices-lead.is-in span {
-  animation: dr-voices-focus 850ms var(--ease-structure) backwards;
-  animation-delay: calc(var(--l, 0) * 220ms);
-}
-@keyframes dr-voices-focus {
-  from { opacity: 0; filter: blur(12px); scale: 1.05; translate: 0 18px; }
-  to   { opacity: 1; filter: blur(0);    scale: 1;    translate: 0 0; }
+   THE STAGGER IS SCROLL, NOT TIME. --a is each sentence's own ramp along
+   the shared --in, the second offset by .18 of the window, so the first
+   line resolves and the second follows as you keep scrolling. A
+   time-based delay would have to be triggered, and a triggered thing
+   cannot be scrubbed backwards; this can, exactly.
+
+   --in defaults to 1, so with no JS every sentence resolves whole. */
+.dr-voices-lead span {
+  --a: clamp(0, (var(--in, 1) - var(--l, 0) * .18) * 1.45, 1);
+  opacity: var(--a);
+  filter: blur(calc((1 - var(--a)) * 10px));
+  translate: 0 calc((1 - var(--a)) * 64px);
+  scale: calc(1 - (1 - var(--a)) * .04);
 }
 @media (prefers-reduced-motion: reduce) {
-  /* the rest state is already the finished frame, so removing the
-     animation is the whole of the reduced-motion story */
-  .dr-voices-lead.is-in span { animation: none; }
-  /* and the leaving is motion too */
+  /* both ends are motion, and both are only ever decoration over a frame
+     that is already correct — so reduced motion is just the frame */
+  .dr-voices-lead span { opacity: 1; filter: none; translate: 0 0; scale: 1; }
   .dr-voices-lead { opacity: 1; filter: none; translate: 0 0; scale: 1; }
 }
 

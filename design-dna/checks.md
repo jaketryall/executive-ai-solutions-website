@@ -13,6 +13,8 @@ bug; never delete a line.
 - Frame probe on a SETTLED page (wait 5-8s after load/last edit before sampling): `rAF` loop doing `scrollBy(0,14)` ×150 → 0 frames >34ms.
 - `prefers-reduced-motion: reduce`: every `[data-sp]` element's transform/opacity matches its resting (non-scrolled) value regardless of scroll position; nothing is left `visibility:hidden` or `opacity:0` with no reduced-motion path to reveal it.
 
+- The seam above the title: `.dr-voices`'s top padding plus the header's centring must not push the claim more than ~300px below the end of §03. The isolation is the header's `min-height` doing its job; the padding is only the seam.
+
 ## §02 · Services rows
 - `--dy` per `<li>` is monotonic non-increasing as scroll progresses (rows never translate downward) — sweep the whole section in 20px steps, settling the 0.1 chase before each read, and assert NO step increases `--dy`, on screen or off. It held only off-screen until 2026-09-07: the lift that covers the rows' give-back used to clamp the moment the line cleared the last row, which is exactly when that row's spot starts decaying with nothing after it to replace what it returns.
 - The currently-lit row's `--spot` reaches 1 (±.02) when its vertical centre crosses the 60vh reading line; neighbouring rows read <1 at the same moment.
@@ -30,7 +32,8 @@ bug; never delete a line.
 - Each `li.dr-voice`'s light peaks in the middle of its pass: sweep its window and assert computed opacity reaches ≥.98 and returns to the resting floor of .5 at both ends, and that opacity equals `.5 + .5 × (clamp(0, min(sp*2, (1-sp)*2), 1))²` (±.02) — squared, and floored at .5 so a resting quote still clears AA.
 - One at a time: at the middle quote's peak, each neighbour's computed opacity is at most 60% of the peak's. A RATIO, not an absolute — the resting floor is an accessibility decision (text at rest must clear AA against the ground) and the separation is a design one; an absolute ceiling silently couples them, and did: raising the floor for contrast broke the old ≤.45 line without the design getting any worse.
 - `ul.dr-voices-list` computed `flex-direction` is `column` and the three `li` share a left edge — it must never become a grid again; three cards in a row directly under §03's three cards in a row is the thing this section exists to avoid.
-- `h2.dr-voices-lead`'s spans are opacity 1 / filter none / scale 1 BEFORE `is-in` is added, and after the animation ends. An untriggered or settled headline is never invisible, blurred, or stuck.
+- `h2.dr-voices-lead`'s spans are opacity 1 / filter none / scale 1 with `--in` UNSET — the no-JS frame is the finished one. Below its window the engine writes `--in: 0` and the spans are deliberately blurred, small and 64px low: that is the start of the scrubbed arrival, not a stuck state, and the section is off screen whenever it is true. They must be fully sharp again through the hold zone.
+- The title's two windows never overlap: no scroll position has `--in` < 1 while `--out` > 0. The hold between them is ~190px of scroll at 1440 — that gap is the whole point, it is where the claim is simply readable.
 - The kicker above it still runs the room's standard wipe (gains `is-wiped`, ends at opacity 1) — the title is the only exception to law 11, and only the title.
 
 ## §03 · Proof cards

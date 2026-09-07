@@ -42,48 +42,53 @@ export default function VoicesSection() {
           <span className="t-label dr-voices-kicker" data-wipe>
             In their words
           </span>
-          {/* THE ONE EXCEPTION to law 11's single triggered vocabulary,
-              and it is deliberate (Jake, 2026-09-07: "the centered text
-              title needs a cool entrance"). Everything else in this room
-              wipes — including the kicker directly above, so the room's
-              own language is still being spoken here. This ONE line does
-              not, because it is the page's only centre-stage peak, and
-              the skill's rule for a signature is restraint everywhere
-              except one place.
+          {/* THE ONE EXCEPTION to law 11's single triggered vocabulary —
+              and now it is not triggered at all, which is a better answer
+              to the same law: the kicker above still wipes, and the title
+              is SCRUBBED, so the room has one triggered gesture and this
+              is simply not one of them.
 
-              It arrives the way Apple lands a title card, measured rather
-              than invented (design-dna, apple-kinetic-type): out of focus
-              and slightly too large, then resolving — blur 12→0, scale
-              1.05→1, up 18px, 850ms on the room's structure curve. It
-              reads as the sentence coming INTO focus, which is what a
-              claim should do.
+              It arrives the way Apple lands a title card (design-dna,
+              apple-kinetic-type) — out of focus, a little small, and
+              below where it belongs — but tied to the scroll rather than
+              to a clock: blur 10→0, scale .96→1, up 64px, all pure
+              f(scroll), so it runs backwards exactly and lands mid-window
+              already correct.
 
-              TWO SPANS, because the copy is two sentences and they land as
-              two beats 220ms apart: the first takes the website away, the
-              second says what they actually wanted. The split is authored,
-              not measured off rendered lines, so it survives every reflow.
+              TWO SPANS, because the copy is two sentences and they arrive
+              as two beats: the second's ramp is offset along the SAME
+              --in, so the stagger is a function of scroll position rather
+              than of milliseconds. The split is authored, not measured off
+              rendered lines, so it survives every reflow.
 
-              Rest state is FINISHED (the room's law for one-shots): with
-              no JS the line is simply whole and sharp, and `is-in` only
-              ever replays the journey to a frame that is already right. */}
-          {/* BOTH ENDS, ON THE TITLE ITSELF. The entrance is the one-shot
-              above; the exit is a scrubbed window declared right here —
-              the engine collects scrubs and one-shots separately, so one
-              element can carry both, and an arrival that happens once
-              sits happily beside a departure that tracks the scroll,
-              because you can scroll back up into a departure.
+              With no JS, --in defaults to 1 and the line is simply whole
+              and sharp. */}
+          {/* TWO WINDOWS, TWO BOXES. The engine keeps one track per
+              element, so an effect with two ends needs two elements —
+              this wrapper carries the ARRIVAL and the h2 inside it
+              carries the DEPARTURE. The wrapper hugs the title (no
+              padding, no min-height), so both are measured on the same
+              rect and both mean what they say. Measuring the <header>
+              instead was the earlier bug: its min-height makes it 702px
+              tall, and the title was already 37% faded while centred.
 
-              MEASURED ON THE TITLE, not on the header around it. The
-              window first sat on the <header>, whose min-height makes it
-              702px tall — so by the time the title was centred on screen
-              it was already 37% faded, defocusing while it was still the
-              thing being read. The h2's own rect is the only box whose
-              position means what this effect needs it to mean. */}
+              The arrival is SCRUBBED now, not a one-shot (Jake,
+              2026-09-07: "i want the title to come up like move up come
+              in to view"). It rises with the scroll instead of playing a
+              fixed animation at a threshold — so the title is lifted INTO
+              place by the same gesture that carries it away, and the two
+              ends are made of the same stuff. */}
+          <div
+            className="dr-voices-lead-w"
+            data-sp
+            data-sp-from="1"
+            data-sp-to="0.45"
+            data-sp-var="--in"
+            data-sp-lerp="0.1"
+          >
           <h2
             className="dr-voices-lead"
             id="dr-voices-h"
-            data-once
-            data-once-at="0.86"
             data-sp
             data-sp-from="0.24"
             data-sp-to="-0.35"
@@ -97,6 +102,7 @@ export default function VoicesSection() {
               They wanted the phone to ring.
             </span>
           </h2>
+          </div>
         </header>
 
         <ul className="dr-voices-list">
