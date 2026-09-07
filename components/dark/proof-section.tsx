@@ -85,7 +85,21 @@ export default function ProofSection() {
   if (!cases.length) return null;
 
   return (
-    <section className="dr-proof" aria-labelledby="dr-proof-h">
+    /* THE CURTAIN'S WRAPPER is what's measured; the SECTION is what moves.
+       A translating element's own rect would feed its progress back into
+       itself the moment it started moving (same trick as .dr-hero-wrap
+       in page.tsx) — so --lift lives on this plain, untransformed div,
+       and .dr-proof reads it via inheritance. */
+    <div
+      className="dr-proof-lift"
+      data-sp
+      data-sp-edge="bottom"
+      data-sp-from="1"
+      data-sp-to="0.32"
+      data-sp-var="--lift"
+      data-sp-lerp="0.1"
+    >
+      <section className="dr-proof" aria-labelledby="dr-proof-h">
       <header className="dr-proof-head wrap">
         {/* the one triggered vocabulary (law 11), same as §04's opener */}
         <span className="t-label dr-proof-kicker" data-wipe>
@@ -205,6 +219,7 @@ export default function ProofSection() {
           </li>
         ))}
       </ol>
-    </section>
+      </section>
+    </div>
   );
 }

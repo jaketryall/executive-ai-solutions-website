@@ -9,6 +9,10 @@
    Copy is the shipped site's, verbatim, because it is real and already
    approved. Only the expression is new.
 
+   THE GROUND is light now, not black: a room uncovered by a curtain
+   lift off §03 (see proof-section.tsx), not a body flip — that stays
+   the page's one true flip, on §05.
+
    THE LAYOUT: one ruled slab, four cells. Equal panels in a row used
    to read as a MENU — four peers, pick one — until the order was moved
    off the geometry and onto the numbers, the dates and one ruled line
@@ -123,30 +127,31 @@ export default function RunsSection() {
               lead, then the reassurance — each a declaration, all the
               same gesture, fired once by the engine at top 90% */}
           <div className="dr-runs-band">
-            <span className="t-label dr-runs-kicker" data-wipe>
+            <span className="t-label dr-runs-kicker" data-wipe data-wipe-at="0.45">
               How it runs
             </span>
-            <p className="dr-runs-sub" data-wipe data-wipe-delay="450">
+            <p className="dr-runs-sub" data-wipe data-wipe-delay="450" data-wipe-at="0.45">
               Fixed quote up front, no surprises after.
             </p>
           </div>
-          <h2 className="dr-runs-lead" id="dr-runs-h" data-wipe data-wipe-delay="150">
+          <h2 className="dr-runs-lead" id="dr-runs-h" data-wipe data-wipe-delay="150" data-wipe-at="0.45">
             Four steps from the first call to a site that earns.
           </h2>
         </header>
 
         {/* DECLARES its window; the engine fills in --sp. No scroll code
             lives in this file — the whole section is now two attributes
-            and a stylesheet rule. The window is an ARRIVAL, not the
-            viewport's whole travel: it opens as the grid enters and is
-            spent by the time its top is 62% of the way up, so the flight
-            is whole while it is still low on the screen and the scroll
-            has nothing left to move (laws 6/7 — the still beat). */}
+            and a stylesheet rule. The slab is already there when the
+            curtain lifts off it, so its own window opens LATE — once
+            the room is uncovered — and is spent by the time its top is
+            35% of the way up, so the line has walked 01→04 and settled
+            while the section is still low on the screen (laws 6/7 —
+            the still beat). */}
         <ol
           className="dr-runs-grid"
           data-sp
-          data-sp-from="1"
-          data-sp-to="0.62"
+          data-sp-from="0.7"
+          data-sp-to="0.35"
           /* chase the target rather than snapping to it — the second
              smoothing layer, matching the reference's own lerp constant */
           data-sp-lerp="0.1"
@@ -163,10 +168,9 @@ export default function RunsSection() {
                    because a demo that replays on the way back up turns
                    the section into a flicker */
                 data-once
-                /* cells arrive later left→right, so each fires a
-                   little deeper — the demo should run on a cell that is
-                   already there */
-                data-once-at={(0.86 - i * 0.08).toFixed(2)}
+                /* fires right after the uncover, a slight ripple
+                   left→right rather than all four at once */
+                data-once-at={(0.62 - i * 0.02).toFixed(2)}
               >
                 <span className="dr-run-top">
                   <span className="dr-run-n">{s.n}</span>
