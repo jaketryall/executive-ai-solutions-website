@@ -38,7 +38,22 @@ export default function VoicesSection() {
             overall (§02's statement is the other). The kicker speaks the
             room's standard vocabulary; the line beneath it is the single
             exception, and the comment on it says why. */}
-        <header className="dr-voices-head">
+        {/* THE HEADER DECLARES ITS OWN LEAVING. The entrance is a
+            one-shot (the focus pull on the spans below); this is the
+            other end of it — a scrubbed window measured off the header's
+            top as it climbs out, writing --out, which the stylesheet
+            turns back into blur, lift and fade. Two mechanisms on one
+            element on purpose: an arrival should happen once and be
+            over, a departure should track the scroll, because you can
+            scroll back up into it. */}
+        <header
+          className="dr-voices-head"
+          data-sp
+          data-sp-from="0.34"
+          data-sp-to="-0.28"
+          data-sp-var="--out"
+          data-sp-lerp="0.1"
+        >
           <span className="t-label dr-voices-kicker" data-wipe>
             In their words
           </span>

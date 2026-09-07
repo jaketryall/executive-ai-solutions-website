@@ -1556,21 +1556,47 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   padding-block: clamp(150px, 24svh, 300px) clamp(20px, 4svh, 60px);
 }
 
-.dr-voices-head { text-align: center; margin-bottom: clamp(60px, 11svh, 150px); }
+/* ISOLATED. The claim used to sit 64px above 56px quotes and read as one
+   more quote (Jake, 2026-09-07: "the title section is now a miss because
+   it looks same as the content in it"). Two things separate them now: the
+   claim owns a SCREEN of its own before the first quote arrives, and it
+   is a whole tier larger and heavier. Same voice, obviously different
+   kind of object. */
+.dr-voices-head {
+  text-align: center;
+  min-height: min(78svh, 720px);
+  display: grid; align-content: center; justify-items: center;
+  margin-bottom: clamp(40px, 7svh, 96px);
+}
 .dr-voices-kicker { display: block; color: var(--ink-4); margin-bottom: var(--fib-3); }
 .dr-voices-lead {
   /* the measure in EM of its OWN size, like §04's lead — `ch` on a
      wrapper resolves against the wrapper's 16px and has nothing to do
      with this type */
-  max-width: 16em; margin-inline: auto; margin-block: 0;
+  /* a TIGHTER measure at a bigger size: fewer words per line is what
+     makes a claim read as a headline rather than a paragraph */
+  max-width: 13em; margin-inline: auto; margin-block: 0;
   color: var(--ink);
   font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wdth" 100, "wght" 620;
-  /* the back half's largest type — this is the peak, and a peak the same
-     size as the section headers around it is not a peak */
-  font-size: clamp(1.9rem, 1.1rem + 3.4vw, 4rem);
-  line-height: 1.06; letter-spacing: -0.03em;
+  /* heavier than the quotes' 580 as well as larger — the two cues
+     together are what stop it reading as another quote */
+  font-variation-settings: "wdth" 100, "wght" 700;
+  /* 88px against the quotes' 56px: a clear tier, not a nudge */
+  font-size: clamp(2.3rem, 1.2rem + 5.2vw, 5.5rem);
+  line-height: 1.02; letter-spacing: -0.035em;
   text-wrap: balance;
+
+  /* THE EXIT, mirroring the entrance. The claim pulls INTO focus when it
+     arrives (the one-shot on its spans, below) and pulls back OUT of it
+     as it leaves — scrubbed off its own declared window, so unlike the
+     entrance it runs backwards exactly and is never "spent". Together
+     they make the title a moment with two ends instead of a thing that
+     appears and then is merely scrolled past. */
+  opacity: calc(1 - var(--out, 0) * .88);
+  filter: blur(calc(var(--out, 0) * 7px));
+  translate: 0 calc(var(--out, 0) * -70px);
+  scale: calc(1 - var(--out, 0) * .045);
+  transform-origin: 50% 30%;
 }
 /* the two sentences are two beats. Blocks, so each owns its own lines and
    the balance still happens per sentence. */
@@ -1597,6 +1623,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   /* the rest state is already the finished frame, so removing the
      animation is the whole of the reduced-motion story */
   .dr-voices-lead.is-in span { animation: none; }
+  /* and the leaving is motion too */
+  .dr-voices-lead { opacity: 1; filter: none; translate: 0 0; scale: 1; }
 }
 
 .dr-voices-list {
@@ -1605,7 +1633,10 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   /* the quotes are far enough apart that one at a time is what fills the
      screen — the column is the composition, the gaps are what make it one
      at a time rather than a list */
-  gap: clamp(72px, 13svh, 168px);
+  /* trimmed as the type grew: bigger quotes fill more of the screen on
+     their own, so the same "one at a time" reading needs less air than it
+     did at 40px — and the column was already the tallest section here */
+  gap: clamp(60px, 10svh, 132px);
 }
 
 /* THE LENS, in the engine's own vocabulary. --sp runs 0 → 1 across a
@@ -1617,27 +1648,61 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    The default is .5, not 1 or 0: with no JS every quote resolves to
    --lit 1 and the column reads whole and still. */
 .dr-voice {
-  --lit: clamp(0, min(var(--sp, .5) * 2, (1 - var(--sp, .5)) * 2), 1);
-  /* the outer pair lean in from alternating sides, the middle sits
-     square — the column breathes without becoming a zig-zag */
-  --lean: 0px;
-  max-width: 22em; margin-inline: auto;
-  opacity: calc(.3 + .7 * var(--lit));
-  translate: var(--lean) calc((1 - var(--lit)) * 14px);
+  /* the tent: 0 at both ends of the pass, 1 in the middle */
+  --t: clamp(0, min(var(--sp, .5) * 2, (1 - var(--sp, .5)) * 2), 1);
+  /* SQUARED, which is the whole difference between a light and a fade.
+     The bare tent left both neighbours near half strength at the middle
+     quote's peak (.51 and .57 measured) — three quotes all half-lit is
+     not one at a time, it is a dimmer switch. Squaring keeps 1 at the
+     peak and 0 at the ends but pulls the shoulders down hard, so the
+     quote being read is alone in the light. It got worse, not better,
+     when the gap shrank with the bigger type — same cause, and this is
+     the fix that does not cost the height back. */
+  --lit: calc(var(--t) * var(--t));
+  /* the quote takes the whole column: this section is called IN THEIR
+     WORDS, so their words are the largest thing in it and the measure is
+     guarded on the paragraph itself, in EM of its own size (2026-09-07,
+     Jake: "the quotes themselves should get something bigger maybe,
+     maybe something full width"). */
+  margin-inline: auto;
+  /* THE FLOOR IS .5, and the number was arrived at by measuring rather
+     than by taste. A resting quote is still TEXT somebody might stop on,
+     and opacity composites it against the ground: what matters is the
+     BLENDED colour, not the declared one. At the original .3 floor the
+     text measured 1.51:1 against the black — a first attempt at .42 was
+     built on reading the colour alone (6.95:1) and forgetting the
+     ancestor opacity, and only reached 1.97:1. It takes white at .5 to
+     land 5.32:1, which clears AA outright.
+
+     That is also why the colour-mix came off the paragraph below: it
+     dimmed the ink toward --ink-3 while the opacity was already dimming
+     it toward the ground, so the two compounded and the rest state paid
+     twice. One dimmer, not two. */
+  opacity: calc(.5 + .5 * var(--lit));
+  /* the rise grew with the type — 14px under a 40px quote read as a
+     nudge; under a 56px one it needs the same proportion */
+  translate: 0 calc((1 - var(--lit)) * 18px);
   will-change: transform;
 }
 .dr-voice figure { margin: 0; text-align: center; }
 .dr-voice blockquote { margin: 0; }
 .dr-voice blockquote p {
   margin: 0;
-  /* colour rides the light too, so a quote gains INK as it arrives rather
-     than only opacity — the same two-things-on-one-value the rows use */
-  color: color-mix(in oklab, var(--ink) calc(var(--lit) * 100%), var(--ink-3));
+  /* full ink, always — the LIGHT is what changes, not the pigment. See
+     the floor above: mixing toward --ink-3 as well meant the resting
+     quote was dimmed twice over and could not reach a legible contrast
+     without giving up the effect entirely. */
+  color: var(--ink);
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 580;
-  /* big, but never the lead's size — the claim stays the peak */
-  font-size: clamp(1.35rem, 0.95rem + 1.7vw, 2.5rem);
-  line-height: 1.16; letter-spacing: -0.026em;
+  /* the measure, in EM of this paragraph's OWN size — 22em is ~1230px
+     against the wrap's 1400 at 1440, so a quote reads full width and
+     still breaks at a readable line */
+  max-width: 22em; margin-inline: auto;
+  /* just under the lead's 4rem: their words are the biggest voice in the
+     section, our claim above it stays the peak by a hair */
+  font-size: clamp(1.55rem, 1rem + 2.9vw, 3.5rem);
+  line-height: 1.1; letter-spacing: -0.028em;
   text-wrap: balance;
 }
 /* the attribution gets the room's ONE surface, so the eye has something
@@ -1666,7 +1731,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   /* the light is the section's only effect; without it the column is
      simply whole */
   .dr-voice { opacity: 1; translate: 0 0; }
-  .dr-voice blockquote p { color: var(--ink); }
 }
 
 

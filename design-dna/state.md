@@ -52,6 +52,40 @@ row *while it was still on screen*. The travel now runs 1.5 row-heights
 further at the same rate. A full 20px sweep of the section shows zero
 reversals at any threshold, on screen or off.
 
+**IN THEIR WORDS is in** (2026-09-07), between §03 and §04: a centred
+claim that pulls into focus, then the client quotes as full-width
+statements that light one at a time. Jake on the direction: "i really like
+the direction we are heading with this." It CANNOT SHIP until real
+permissioned quotes replace `lib/quotes.ts`'s placeholders — see
+`decisions.md`.
+
+**Asked for, not built yet:** §04 (HOW IT RUNS) "definitely needs a big
+background change" — Jake, 2026-09-07, explicitly deferred ("that's a
+problem for later"). The engine already does this with two attributes
+(`data-bg-from` / `data-bg-to`, as §05 uses). The hard constraint is on
+record: a LIGHT room mid-page was rejected on sight, so any ground here
+stays dark — a raised or tinted dark, not a light plate.
+
+**THE REMAINING HOMEPAGE, in Jake's own words (2026-09-07).** He laid the
+whole rest of the page out in one message; this is the running order and
+nothing here is built yet except where noted:
+
+1. IN THEIR WORDS — built. The title is isolated on its own screen and a
+   tier larger/heavier than the quotes (it read as one more quote at 64px
+   over 56px), and it now has an exit as well as an entrance. Still
+   blocked on real quotes.
+2. §04 HOW IT RUNS — "we need a big card I'm thinking for the background
+   change or something … it needs a cool scroll reveal entrance and some
+   sort of background change." The engine already does grounds with two
+   attributes (`data-bg-from`/`data-bg-to`). HARD CONSTRAINT on record: a
+   light room mid-page was rejected on sight, so any ground here stays
+   dark — raised or tinted, not a light plate.
+3. FAQs — a new section, after the process section.
+4. The off-brand ending (§05/§06) — "make it feel better".
+5. Footer, and a footer reveal.
+
+"and that's the whole home page."
+
 **Next step:** Jake's own top-to-bottom pass of /dark (he has seen nothing
 past seam #1 in the flesh). After that: dial whatever he flags, using a
 builder step per fix — each fix graduates into `checks.md` so it never
