@@ -144,12 +144,29 @@ export default function ServicesSection() {
          rides the light's progress down it, 5% of the list's height by
          the time the line reaches its bottom, the quote after it with it
          — continuous, all of them, the same direction as the scroll and
-         a little faster, like the list is flowing through the light. */
+         a little faster, like the list is flowing through the light.
+
+         WHY THE TRAVEL RUNS PAST THE LIST'S BOTTOM (2026-09-07). "Nothing
+         ever moves down" was a claim, not a guarantee: the RIDE's second
+         term is the live growth of the rows below, and that growth is a
+         raised cosine, so it is given back as the light leaves them. The
+         lift is what covers the give-back — and it was clamped the moment
+         the line cleared the last row, which is exactly when the last
+         row's spot begins to decay with no row after it to replace what
+         it returns. Measured: the middle row crept 6.5px DOWN over 160px
+         of scroll while its tail was still on screen.
+
+         So the travel keeps going for the light's own reach past the list
+         (1.5 row-heights, THE LENS's number), at the SAME rate — the
+         documented 5%-by-the-list's-bottom is untouched, the clamp simply
+         lands 1.5 rows later, and there is lift still accruing while the
+         tail decays. Pure f(scroll) either way: no ratchet, no memory of
+         where the scroll has been, so it still runs backwards exactly. */
       const listTop = tops[0];
       const listBottom = bottoms[rows.length - 1];
       const listH = listBottom - listTop;
-      const through = Math.max(0, Math.min(1, (line - listTop) / listH));
-      const lift = through * listH * 0.05;
+      const spent = listH + hs[rows.length - 1] * 1.5;
+      const lift = Math.max(0, Math.min(spent, line - listTop)) * 0.05;
       for (let i = 0; i < rows.length; i++) {
         let dy = -lift;
         for (let j = i + 1; j < rows.length; j++) dy -= hs[j] * 0.045 * shown[j];

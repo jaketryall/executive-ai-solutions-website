@@ -44,13 +44,13 @@ to be amended for them: it now rides every part of the row except the
 picture, which dims by a dark veil instead — see `decisions.md`. Making
 the images is documented end to end in `design-dna/higgsfield/`.
 
-**Known, not fixed:** the `--dy` monotonicity line in `checks.md` fails
-for rows 0 and 1 once the last row's `--spot` has decayed with no row
-below it to replace the lift (`dy = -lift - Σ h·.045·shown`). It predates
-the photographs and is invisible — those rows are 700–1000px above the
-viewport when it happens. A ratchet on `shown` in the ride term would
-make the check true; it is a behaviour change to a section Jake likes, so
-it waits for his word.
+**The `--dy` check is green again** (2026-09-07): it was failing because
+the ride's lift clamped the moment the reading line cleared the last row,
+while that row's spot was still decaying and handing back the growth the
+rows above were riding — measured at 6.5px of downward creep on the middle
+row *while it was still on screen*. The travel now runs 1.5 row-heights
+further at the same rate. A full 20px sweep of the section shows zero
+reversals at any threshold, on screen or off.
 
 **Next step:** Jake's own top-to-bottom pass of /dark (he has seen nothing
 past seam #1 in the flesh). After that: dial whatever he flags, using a

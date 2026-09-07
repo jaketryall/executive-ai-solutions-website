@@ -14,7 +14,7 @@ bug; never delete a line.
 - `prefers-reduced-motion: reduce`: every `[data-sp]` element's transform/opacity matches its resting (non-scrolled) value regardless of scroll position; nothing is left `visibility:hidden` or `opacity:0` with no reduced-motion path to reveal it.
 
 ## §02 · Services rows
-- `--dy` per `<li>` is monotonic non-increasing in the upward direction as scroll progresses (rows never translate downward) at 3+ scroll positions.
+- `--dy` per `<li>` is monotonic non-increasing as scroll progresses (rows never translate downward) — sweep the whole section in 20px steps, settling the 0.1 chase before each read, and assert NO step increases `--dy`, on screen or off. It held only off-screen until 2026-09-07: the lift that covers the rows' give-back used to clamp the moment the line cleared the last row, which is exactly when that row's spot starts decaying with nothing after it to replace what it returns.
 - The currently-lit row's `--spot` reaches 1 (±.02) when its vertical centre crosses the 60vh reading line; neighbouring rows read <1 at the same moment.
 - Lit row `scale` = `1 + .045 × --spot` (±.002) at 1440.
 - `.dr-svc-in::before`'s `inset` is unchanged across every sampled scroll position — only `scale` changes (confirms the constant-box-scaled-on-X construction, not a clip/inset grow).
