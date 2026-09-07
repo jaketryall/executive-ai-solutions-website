@@ -37,7 +37,12 @@ bug; never delete a line.
 
 ## §05 / §06 · Object + close
 - `.dr-obj`'s ground colour transitions exactly once across a full scroll-through (void → `#171719`) and does not revert on scroll-up-then-down-again.
-- `.dr-close-rig`, `.dr-close-glow`, `.dr-close-mark` carry no `data-sp` attribute and show no scroll-driven translate at any sampled scroll position (rigid, per decisions.md).
+- `.dr-close-rig`, `.dr-close-glow`, `.dr-close-mark` carry no `data-sp` attribute and show no scroll-driven translate at any sampled scroll position (rigid, per decisions.md) — RETIRED 2026-09-06, elements removed.
+- `.dr-obj-card` computed `scale` resolves to `1 - .06 * --exit` at every sampled scroll position (mid-window ≈0.97, fully exited 0.94 ±0.005 at 1440/390) and `border-radius` is IDENTICAL between the mid and end samples (constant, never animated).
+- At page maxScroll, `.dr-obj-card`'s bottom edge sits between 0.10 and 0.45 of viewport height at 1440 (the reveal must be visible — §06 must not be tall enough to push the card fully off-screen).
+- `.dr-close-h` renders exactly 4 line boxes (each `.dr-close-line`'s own height equals one line-height, no internal wrap) at 1440 and 2560, and ≤5 at 390.
+- `.dr-close-nav` and `.dr-close-side` have zero horizontal overflow (`scrollWidth <= clientWidth`) at 1440.
+- `prefers-reduced-motion: reduce`: `.dr-obj-card` computed `scale` is `none` or `1` (the reduced-motion override must be declared AFTER `.dr-obj-card`'s own base rule in source order, or the base rule's equal-specificity `@media` wins and the card stays visually shrunk).
 
 ## Headings · the one triggered vocabulary
 - Every `[data-wipe]` heading gains `is-wiped` once its top crosses <0.9vh of the viewport (read the "fired" state with the wait INSIDE the same `evaluate_script` call — a wipe restores its plain text ~1-1.4s after firing, so a second round-trip can land too late).

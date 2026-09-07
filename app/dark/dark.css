@@ -1754,108 +1754,95 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 
-/* ══ §06 · THE CLOSE — the bookend ══════════════════════════════
-   The page's one action, and the thing that earns it. The hero's black
-   room comes back as an OBJECT: one rigid panel on the lifted ground,
-   the hero's light rig held still inside it, the mark on its crest.
-   Centred and narrow inside — every other section is wide, so the close
-   narrowing is what says the browsing is over.
+/* ══ §06 · THE CLOSE — CTA + footer, one room on the lifted ground ═
+   The page's one action, and the last thing to look at. §05's white card
+   recedes to reveal this ground (see .dr-obj-card in objections-section);
+   §06 does nothing to earn its own reveal — it just sits here, at rest,
+   in the room the card uncovered. THE OLD BOOKEND — the hero's
+   rig/glow/dome/mark returning as a rigid black object — is retired
+   (decisions.md, 2026-09-06 supersede): no second ground paint here, no
+   dome cut, no mark on a crest. Off+brand's footer/CTA is ALSO one
+   section, not two (design-dna/decodes/offbrand.md §1) — the same read,
+   arrived at from a different direction.
 
-   No scroll input anywhere in this section. The ground flip it used to
-   declare moved up to §05 (law 2); the panel arrives 1:1 with its
-   children at constant offsets (law 12), and the only motion left is a
-   response to the visitor — the report developing, the hover on the ask. */
+   No scroll input anywhere below. Everything here answers the visitor,
+   not the scrollbar: the report developing, the hover on the ask, the
+   clock ticking in Reach. */
 .dr-close { position: relative; z-index: 4;
-  /* blank ground before the crest, then the object, then the page stops */
-  --cap: clamp(48px, 7.5vw, 120px);
-  padding: clamp(96px, 18svh, 220px) var(--fib-5) var(--fib-4); }
+  padding: clamp(48px, 7svh, 80px) 0 clamp(20px, 3svh, 34px);
+  background: none;
+}
 
-/* THE PANEL is a positioning box; its black is painted by the rig below
-   so that the dome, the black and the lights are ONE layer. */
-.dr-close-panel { position: relative;
-  /* the same column as the §02 card and the proof frame */
-  max-width: calc(1400px - 2 * var(--fib-5)); margin: var(--cap) auto 0; }
+.dr-close-in {
+  display: grid; grid-template-columns: 1fr;
+}
+@media (min-width: 1100px) {
+  .dr-close-in {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: clamp(24px, 4vw, 64px);
+    align-items: start;
+  }
+}
 
-/* THE GLOW BEFORE THE CUT. White light pooled on the ground with its
-   core at the crest, painted UNDER the panel (negative z inside the
-   section's own stacking context) so the dome cuts it: it shows above
-   the crest and down both shoulders, and is gone at the sides. */
-.dr-close-glow { position: absolute; z-index: -1; left: 50%; pointer-events: none;
-  bottom: calc(100% + var(--cap) * .45); translate: -50% 0;
-  width: min(100%, 980px); height: clamp(150px, 26svh, 300px);
-  background: radial-gradient(ellipse 50% 72% at 50% 78%,
-    rgba(255, 255, 255, .13), rgba(255, 255, 255, .04) 52%, transparent 74%); }
-
-/* THE RIG + THE CAP. The panel's black and the hero's two lights, held
-   still, in one element that reaches --cap above the panel; a two-layer
-   mask (layers union by default) cuts it to a dome up top — an ellipse
-   full-width at its base, cresting on the centre axis — over the panel's
-   own rectangle. A horizon, not a lid: the light over the crest is the
-   same light as the glow outside, seen through the cut. */
-.dr-close-rig { position: absolute; left: 0; right: 0; bottom: 0;
-  top: calc(-1 * var(--cap)); pointer-events: none;
-  border-radius: 0 0 var(--radius-panel) var(--radius-panel);
-  background:
-    radial-gradient(44% 30% at 50% 0%, rgba(255, 255, 255, .12), transparent 70%),
-    radial-gradient(30% 20% at 50% 100%, var(--fill), transparent 74%),
-    var(--void);
-  -webkit-mask:
-    radial-gradient(60% var(--cap) at 50% var(--cap), #000 99.4%, transparent 100%),
-    linear-gradient(#000, #000) 0 var(--cap) / 100% calc(100% - var(--cap)) no-repeat;
-          mask:
-    radial-gradient(60% var(--cap) at 50% var(--cap), #000 99.4%, transparent 100%),
-    linear-gradient(#000, #000) 0 var(--cap) / 100% calc(100% - var(--cap)) no-repeat; }
-
-/* THE MARK, on the crest — the one object that breaches the cut. 42%
-   of it over the glow, the rest over the black, so it belongs to both. */
-.dr-close-mark { position: absolute; left: 50%; top: calc(-1 * var(--cap));
-  width: clamp(60px, 7.6vw, 112px); aspect-ratio: 1;
-  translate: -50% -42%; pointer-events: none; z-index: 1;
-  background: var(--ink);
-  -webkit-mask: url("/brand/eas-mark.svg") center / contain no-repeat;
-          mask: url("/brand/eas-mark.svg") center / contain no-repeat; }
-
-.dr-close-in { position: relative; max-width: 760px; margin-inline: auto;
-  display: flex; flex-direction: column; align-items: center; text-align: center;
-  /* clears the mark's lower half with room to spare */
-  padding: clamp(96px, 14svh, 168px) clamp(20px, 4vw, 64px) clamp(56px, 8svh, 96px); }
-
+/* ── column 1 — the ask ──────────────────────────────────────── */
+/* container for the h2's font-size (cqw), so it's sized to ITS OWN
+   column, not the viewport — never on this element's own padding, per
+   the codebase's cqw gotcha (that resolves to the viewport instead) */
+.dr-close-say { min-width: 0; container-type: inline-size; }
 .dr-close-kicker { color: var(--ink-4); margin-bottom: var(--fib-3); }
+
 .dr-close-h {
   margin: 0; color: var(--ink);
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 640;
-  font-size: clamp(1.7rem, 1rem + 2.6vw, 3rem);
-  line-height: 1.06; letter-spacing: -0.032em;
-  max-width: 15em; text-wrap: balance;
+  font-size: clamp(2rem, min(1rem + 5.4vw, 12.6cqw), 6.4rem);
+  line-height: 1.0; letter-spacing: -0.035em;
+  max-width: none; text-wrap: wrap;
+}
+.dr-close-line { display: block; }
+/* the pill's row — "for you," plus the desktop CTA, one line, never wraps */
+.dr-close-line:nth-child(3) {
+  display: flex; align-items: center; gap: .3em; flex-wrap: nowrap;
 }
 
-/* the ask comes FIRST and never depends on the tool — anyone who just
-   wants to book is one click away without running anything */
-.dr-close-act { margin-top: clamp(26px, 4.5svh, 46px);
-  display: flex; flex-direction: column; align-items: center; gap: var(--fib-3); }
-.dr-close-cta {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-height: 54px; padding: 0 var(--fib-5); border-radius: 999px;
-  background: var(--ink); color: #000; text-decoration: none;
-  transition: transform var(--t-micro) var(--ease-ui),
-              opacity var(--t-micro) var(--ease-ui);
-}
-.dr-close-cta:hover { transform: translateY(-1px); opacity: .9; }
-.dr-close-cta:focus-visible { outline: 2px solid var(--ink);
-  outline-offset: 4px; }
-.dr-close-note { color: var(--ink-4);
+.dr-close-note { color: var(--ink-4); margin-top: var(--fib-3);
   font-family: var(--font-instrument), sans-serif; font-size: 14px; }
 
+/* THE PILL. Font is set EXPLICITLY to .t-cta's own size rather than
+   inherited — it sits inside an h2 whose font-size is enormous, and
+   inheriting that would make the button itself six rem tall. */
+.dr-close-cta {
+  display: inline-flex; align-items: center; gap: .5em;
+  border-radius: 999px; background: var(--ink); color: #000;
+  text-decoration: none;
+  font-size: 14px; letter-spacing: .1em;
+}
+.dr-close-cta.is-desk { height: .7em; padding: 0 .55em; }
+.dr-close-cta.is-mob {
+  display: none; height: 52px; padding: 0 26px;
+  margin-top: clamp(26px, 4.5svh, 46px);
+}
+.dr-close-cta i { font-style: normal;
+  transition: transform .6s var(--ease-ui); }
+.dr-close-cta:hover i { transform: translateX(8px); }
+.dr-close-cta:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+
+@media (max-width: 720px) {
+  .dr-close-cta.is-desk { display: none; }
+  .dr-close-cta.is-mob { display: inline-flex; }
+}
+
 /* ── the check ───────────────────────────────────────────────── */
-.dr-check { width: 100%; margin-top: clamp(38px, 7svh, 74px);
+.dr-check { width: 100%; margin-top: clamp(40px, 6svh, 64px);
   padding-top: clamp(30px, 5svh, 54px);
   border-top: 1px solid var(--edge);
-  display: flex; flex-direction: column; align-items: center; gap: var(--fib-3); }
+  display: flex; flex-direction: column; align-items: flex-start; gap: var(--fib-3);
+  text-align: left;
+}
 .dr-check-label { color: var(--ink-3);
   font-family: var(--font-instrument), sans-serif; font-size: 15px; }
 .dr-check-row { display: flex; gap: var(--fib-2); width: min(100%, 520px);
-                flex-wrap: wrap; justify-content: center; }
+                flex-wrap: wrap; justify-content: flex-start; }
 .dr-check-input {
   flex: 1 1 240px; min-width: 0; min-height: 50px;
   padding: 0 var(--fib-4); border-radius: 999px;
@@ -1940,31 +1927,55 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-report-link:focus-visible { outline: 2px solid var(--edge-strong);
   outline-offset: 4px; border-radius: 6px; }
 
-/* ── the utility row ─────────────────────────────────────────────
-   On the object, under the ONE edge. Legal left, links centre, the
-   address right — the hero's rail grammar at the foot of the page. */
-.dr-close-util { position: relative;
-  margin-inline: clamp(20px, 4vw, 64px);
-  padding: var(--fib-3) 0 var(--fib-4);
-  border-top: 1px solid var(--edge);
-  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
-  gap: var(--fib-3);
-  color: var(--ink-4);
-  font-family: var(--font-instrument), sans-serif; font-size: 13.5px; }
-.dr-close-copy i { font-style: normal; margin-inline: .5em; }
-.dr-close-links { display: flex; gap: var(--fib-3); justify-content: center; }
-.dr-close-links a, .dr-close-mail { color: var(--ink-3); text-decoration: none;
+/* ── column 2 — the footer nav, then the check underneath it ─── */
+.dr-close-side { min-width: 0; }
+@media (max-width: 1099px) {
+  .dr-close-side { margin-top: clamp(40px, 6svh, 64px); }
+}
+.dr-close-nav {
+  display: grid; grid-template-columns: repeat(3, auto);
+  column-gap: clamp(28px, 3vw, 56px); justify-content: start;
+}
+@media (max-width: 720px) {
+  .dr-close-nav { grid-template-columns: repeat(2, auto); }
+}
+.dr-close-colh { color: var(--ink-4); }
+.dr-close-col ul { list-style: none; margin: var(--fib-3) 0 0; padding: 0;
+  display: flex; flex-direction: column; gap: 10px; }
+.dr-close-col li { color: var(--ink-2);
+  font-family: var(--font-instrument), sans-serif; font-size: 15px; }
+.dr-close-col a { color: inherit; text-decoration: none;
   transition: color var(--t-micro) var(--ease-ui); }
-.dr-close-links a:hover, .dr-close-mail:hover { color: var(--ink); }
-.dr-close-links a:focus-visible, .dr-close-mail:focus-visible {
-  outline: 2px solid var(--edge-strong); outline-offset: 3px; border-radius: 4px; }
-.dr-close-mail { justify-self: end; }
+.dr-close-col a:hover { color: var(--ink); }
+.dr-close-col a:focus-visible { outline: 2px solid var(--edge-strong);
+  outline-offset: 3px; border-radius: 4px; }
+.dr-close-time { font-variant-numeric: tabular-nums; }
+
+/* ── row 2 — the wordmark + legal line ───────────────────────── */
+.dr-close-foot { grid-column: 1 / -1; margin-top: clamp(40px, 6svh, 72px); }
+.dr-close-lockup {
+  display: flex; align-items: center; gap: .22em; margin: 0; width: 100%;
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 640;
+  font-size: clamp(1.5rem, 7.1vw, 8.6rem);
+  line-height: .95; letter-spacing: -0.04em; color: var(--ink);
+  white-space: nowrap;
+}
+.dr-close-mk { width: .78em; aspect-ratio: 1; background: var(--ink);
+  -webkit-mask: url("/brand/eas-mark.svg") center / contain no-repeat;
+          mask: url("/brand/eas-mark.svg") center / contain no-repeat; }
+
+.dr-close-util { display: flex; justify-content: space-between;
+  margin-top: var(--fib-3); color: var(--ink-4);
+  font-family: var(--font-instrument), sans-serif; font-size: 13.5px; }
+.dr-close-priv { color: var(--ink-3); text-decoration: none;
+  transition: color var(--t-micro) var(--ease-ui); }
+.dr-close-priv:hover { color: var(--ink); }
+.dr-close-priv:focus-visible { outline: 2px solid var(--edge-strong);
+  outline-offset: 3px; border-radius: 4px; }
+
 @media (max-width: 720px) {
   .dr-close { padding-inline: var(--fib-2); }
-  .dr-close-util { grid-template-columns: 1fr; text-align: center;
-    row-gap: var(--fib-2); }
-  .dr-close-links { flex-wrap: wrap; }
-  .dr-close-mail { justify-self: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1979,8 +1990,32 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    asks. Narrower than the sections above it and wider than the close, so
    the page keeps funnelling. */
 .dr-obj { position: relative; z-index: 4;
-          padding-block: clamp(72px, 12svh, 150px) clamp(64px, 11svh, 132px); }
-.dr-obj-in { max-width: 880px; display: flex; flex-direction: column;
+          padding-block: clamp(72px, 12svh, 150px) 0; }
+
+/* THE CARD RECEDES on exit (design-dna/decodes/offbrand.md; the mechanism
+   itself is declared in objections-section.tsx via data-sp). CONSTANT
+   radius, scale-only, no overflow/will-change/transition — the engine's
+   own lerp is the only damping. The §02 light tokens are repeated here,
+   scoped to the card rather than shared with .dr-svc, so retuning one
+   surface's contrast never touches the other's. */
+.dr-obj-card {
+  --ink:   #0a0a0b;
+  --ink-2: #35353a;
+  --ink-3: #5c5c63;
+  --ink-4: #6e6e75;
+  --edge: rgba(10, 10, 11, .14);
+  --edge-strong: rgba(10, 10, 11, .34);
+  --exit: 0;
+  background: #ffffff;
+  border-radius: clamp(22px, 2.2vw, 32px);
+  padding: clamp(48px, 7svh, 88px) clamp(20px, 4vw, 64px);
+  color: var(--ink-2);
+  scale: calc(1 - .06 * var(--exit));
+  transform-origin: 50% 50%;
+}
+
+.dr-obj-in { max-width: 880px; margin-inline: auto;
+             display: flex; flex-direction: column;
              align-items: center; text-align: center; }
 /* the same lag hierarchy as §02: each block trails the one above it, so
    the section settles top-first and in reading order. Converging, so it
@@ -2006,7 +2041,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-chip {
   cursor: pointer; border-radius: 999px;
   padding: 11px var(--fib-4); min-height: 44px;   /* a real touch target */
-  background: rgba(255, 255, 255, .05);
+  background: transparent;
   border: 1px solid var(--edge);
   color: var(--ink-2);
   font-family: var(--font-instrument), sans-serif; font-size: 14.5px;
@@ -2014,9 +2049,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
               border-color var(--t-micro) var(--ease-ui),
               color var(--t-micro) var(--ease-ui);
 }
-.dr-chip:hover { background: rgba(255, 255, 255, .09); color: var(--ink); }
+.dr-chip:hover { background: rgba(10, 10, 11, .05); color: var(--ink); }
 .dr-chip[aria-pressed="true"] {
-  background: var(--ink); border-color: var(--ink); color: #000;
+  background: var(--ink); border-color: var(--ink); color: #fff;
 }
 .dr-chip:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 
@@ -2046,7 +2081,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-obj-input {
   flex: 1 1 240px; min-width: 0; min-height: 50px;
   padding: 0 var(--fib-4); border-radius: 999px;
-  background: rgba(255, 255, 255, .05);
+  background: rgba(10, 10, 11, .04);
   border: 1px solid var(--edge); color: var(--ink);
   font-family: var(--font-instrument), sans-serif; font-size: 15px;
   transition: border-color var(--t-micro) var(--ease-ui),
@@ -2054,15 +2089,22 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 .dr-obj-input::placeholder { color: var(--ink-4); }
 .dr-obj-input:focus { outline: none; border-color: var(--edge-strong);
-                      background: rgba(255, 255, 255, .08); }
+                      background: rgba(10, 10, 11, .07); }
 .dr-obj-go {
   flex: 0 0 auto; min-height: 50px; padding: 0 var(--fib-4);
-  border-radius: 999px; border: 1px solid var(--edge-strong);
-  background: transparent; color: var(--ink); cursor: pointer;
+  border-radius: 999px; border: 1px solid var(--edge); color: var(--ink-2);
+  background: transparent; cursor: pointer;
   font-family: var(--font-instrument), sans-serif; font-size: 15px;
   transition: background var(--t-micro) var(--ease-ui),
               opacity var(--t-micro) var(--ease-ui);
 }
-.dr-obj-go:hover:not(:disabled) { background: rgba(255, 255, 255, .08); }
+.dr-obj-go:hover:not(:disabled) { background: rgba(10, 10, 11, .05); }
 .dr-obj-go:disabled { opacity: .45; cursor: default; }
 .dr-obj-go:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
+
+/* placed AFTER .dr-obj-card's own rule on purpose — same specificity as
+   the base scale: calc(...) declaration, and source order is the
+   tie-break under an equally-specific @media block */
+@media (prefers-reduced-motion: reduce) {
+  .dr-obj-card { scale: none; }
+}

@@ -83,8 +83,9 @@ export default function ObjectionsSection() {
        the SECTION, on a later window than the content's own arrival
        (--ap on .dr-obj-in), so the copy is already resolved when the room
        around it brightens — the lift is the seam's event, not the text's.
-       §06 then paints its own black over the lifted ground, which is what
-       lets it read as an object rather than as more page. */
+       §06 now sits directly on that same lifted ground as one continuous
+       room; it is the white card below, not §06, that has to read as an
+       object — see .dr-obj-card. */
     <section
       className="dr-obj"
       aria-labelledby="dr-obj-h"
@@ -95,98 +96,122 @@ export default function ObjectionsSection() {
       data-bg-from="void"
       data-bg-to="surface-2"
     >
-      {/* declares its arrival; the three blocks inside read --ap at three
-          rates, the same lag hierarchy §02 uses. The window is spent by
-          the time the panel's top is 62% of the way up — it used to run
-          to 40%, which left the form still settling inside the reading
-          zone, and the back half is meant to be still (laws 6/7) */}
-      <div
-        className="wrap dr-obj-in"
-        data-sp
-        data-sp-from="1"
-        data-sp-to="0.62"
-        data-sp-var="--ap"
-        data-sp-lerp="0.1"
-      >
-        <span className="t-label dr-obj-kicker" data-wipe>
-          Before you ask
-        </span>
-        <h2 className="dr-obj-h" id="dr-obj-h" data-wipe data-wipe-delay="150">
-          The four questions everyone asks, answered without the call.
-        </h2>
-
-        <ul className="dr-obj-chips">
-          {asked.map((f, i) => {
-            const on = answer?.q === f.q;
-            return (
-              <li key={f.q}>
-                <button
-                  type="button"
-                  className="dr-chip"
-                  aria-pressed={on}
-                  style={{ "--i": i } as React.CSSProperties}
-                  onClick={() =>
-                    setAnswer(on ? null : { q: f.q, a: f.a, source: "written" })
-                  }
-                >
-                  {f.q}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-
-        {/* one panel for both sources — a chip and a typed question land in
-            the same place, so the section never grows a second column */}
+      <div className="wrap">
+        {/* THE CARD RECEDES (decoded off itsoffbrand.com, see
+            design-dna/decodes/offbrand.md). It never leaves normal flow —
+            no fixed/sticky, no clip-path/inset growth, just scale() from a
+            CONSTANT radius, tracked off the card's own BOTTOM edge so the
+            shrink is keyed to when this object is finishing, not to a
+            global scroll fraction. Because it shrinks around its centre
+            while its layout footprint stays put, a gap opens under it and
+            the lifted ground (already void → surface-2 by here) shows
+            through — read as the room being revealed, not a footer rising
+            to meet it. Touch-safe by construction: data-sp reads
+            scrollY/rect directly, so it runs identically on wheel and
+            native touch scroll with no Lenis dependency. */}
         <div
-          className="dr-obj-panel"
-          ref={panel}
-          role="status"
-          aria-live="polite"
-          data-open={answer ? "true" : undefined}
+          className="dr-obj-card"
+          data-sp
+          data-sp-edge="bottom"
+          data-sp-from="0.6"
+          data-sp-to="0.3"
+          data-sp-var="--exit"
+          data-sp-lerp="0.12"
         >
-          {answer && (
-            <>
-              <p className="dr-obj-q">{answer.q}</p>
-              <p className="dr-obj-a">
-                {answer.a || (busy ? "Thinking…" : "")}
-              </p>
-              {answer.source === "assistant" && answer.a && !busy && (
-                /* say where it came from. A written answer is approved copy;
-                   this one is generated, and pretending otherwise on a page
-                   about money would be the wrong kind of confident. */
-                <p className="dr-obj-src">
-                  Answered by the site&rsquo;s assistant.{" "}
-                  <Link href="/contact">Book the call</Link> for anything it
-                  gets wrong.
-                </p>
-              )}
-            </>
-          )}
-        </div>
+          {/* declares its arrival; the three blocks inside read --ap at three
+              rates, the same lag hierarchy §02 uses. The window is spent by
+              the time the panel's top is 62% of the way up — it used to run
+              to 40%, which left the form still settling inside the reading
+              zone, and the back half is meant to be still (laws 6/7) */}
+          <div
+            className="dr-obj-in"
+            data-sp
+            data-sp-from="1"
+            data-sp-to="0.62"
+            data-sp-var="--ap"
+            data-sp-lerp="0.1"
+          >
+            <span className="t-label dr-obj-kicker" data-wipe>
+              Before you ask
+            </span>
+            <h2 className="dr-obj-h" id="dr-obj-h" data-wipe data-wipe-delay="150">
+              The four questions everyone asks, answered without the call.
+            </h2>
 
-        <form className="dr-obj-form" onSubmit={ask}>
-          <label className="dr-obj-label" htmlFor="dr-obj-q">
-            Something else on your mind?
-          </label>
-          <div className="dr-obj-row">
-            <input
-              id="dr-obj-q"
-              className="dr-obj-input"
-              type="text"
-              placeholder="Ask anything about the work"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-            />
-            <button
-              type="submit"
-              className="dr-obj-go"
-              disabled={busy || !input.trim()}
+            <ul className="dr-obj-chips">
+              {asked.map((f, i) => {
+                const on = answer?.q === f.q;
+                return (
+                  <li key={f.q}>
+                    <button
+                      type="button"
+                      className="dr-chip"
+                      aria-pressed={on}
+                      style={{ "--i": i } as React.CSSProperties}
+                      onClick={() =>
+                        setAnswer(on ? null : { q: f.q, a: f.a, source: "written" })
+                      }
+                    >
+                      {f.q}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {/* one panel for both sources — a chip and a typed question land in
+                the same place, so the section never grows a second column */}
+            <div
+              className="dr-obj-panel"
+              ref={panel}
+              role="status"
+              aria-live="polite"
+              data-open={answer ? "true" : undefined}
             >
-              {busy ? "Asking…" : "Ask"}
-            </button>
+              {answer && (
+                <>
+                  <p className="dr-obj-q">{answer.q}</p>
+                  <p className="dr-obj-a">
+                    {answer.a || (busy ? "Thinking…" : "")}
+                  </p>
+                  {answer.source === "assistant" && answer.a && !busy && (
+                    /* say where it came from. A written answer is approved copy;
+                       this one is generated, and pretending otherwise on a page
+                       about money would be the wrong kind of confident. */
+                    <p className="dr-obj-src">
+                      Answered by the site&rsquo;s assistant.{" "}
+                      <Link href="/contact">Book the call</Link> for anything it
+                      gets wrong.
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+
+            <form className="dr-obj-form" onSubmit={ask}>
+              <label className="dr-obj-label" htmlFor="dr-obj-q">
+                Something else on your mind?
+              </label>
+              <div className="dr-obj-row">
+                <input
+                  id="dr-obj-q"
+                  className="dr-obj-input"
+                  type="text"
+                  placeholder="Ask anything about the work"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="dr-obj-go"
+                  disabled={busy || !input.trim()}
+                >
+                  {busy ? "Asking…" : "Ask"}
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </section>
   );
