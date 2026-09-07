@@ -24,8 +24,10 @@ here forward.
   Awaiting Jake's re-check of the flash fix and the parallax.
 - §04 how it runs — back-half stillness (`2392de6`). Awaiting Jake's
   review.
-- §05/§06 — the one body-ground flip + bookend (`2a9bb7a`). Jake
-  self-graded 8+ on two frames; awaiting Jake's own look.
+- §05/§06 — rebuilt to the Off+Brand ending: §05 is a white card that
+  recedes to reveal the lifted ground, §06 is CTA + footer as one room on
+  it (`a5bd975`). Shipped and verified at 390/1440/2560; awaiting Jake's
+  review.
 - The one triggered vocabulary (heading wipes, `f01453c`) and the
   whitespace-only §03→§04 seam (`7d8f466`) — awaiting Jake's review, not
   yet seen past seam #1.
