@@ -125,16 +125,21 @@ export default function RunsSection() {
         <header className="dr-runs-head">
           {/* the one triggered vocabulary (law 11): kicker, then the
               lead, then the reassurance — each a declaration, all the
-              same gesture, fired once by the engine at top 90% */}
+              same gesture. data-wipe-at="0.86" (not the engine's default
+              top-90%): the header's own top sits at ~.9vh under the
+              curtain-lift padding, clearing the hem at p≈.1 — .45 left
+              it uncovered but blank until p≈.76 (graded 2026-09-06); .86
+              fires the instant it clears (p≈.16, ~26px of daylight),
+              never under the sheet, never a blank beat on the plate. */}
           <div className="dr-runs-band">
-            <span className="t-label dr-runs-kicker" data-wipe data-wipe-at="0.45">
+            <span className="t-label dr-runs-kicker" data-wipe data-wipe-at="0.86">
               How it runs
             </span>
-            <p className="dr-runs-sub" data-wipe data-wipe-delay="450" data-wipe-at="0.45">
+            <p className="dr-runs-sub" data-wipe data-wipe-delay="450" data-wipe-at="0.86">
               Fixed quote up front, no surprises after.
             </p>
           </div>
-          <h2 className="dr-runs-lead" id="dr-runs-h" data-wipe data-wipe-delay="150" data-wipe-at="0.45">
+          <h2 className="dr-runs-lead" id="dr-runs-h" data-wipe data-wipe-delay="150" data-wipe-at="0.86">
             Four steps from the first call to a site that earns.
           </h2>
         </header>
