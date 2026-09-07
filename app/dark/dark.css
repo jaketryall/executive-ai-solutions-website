@@ -1697,9 +1697,22 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      it toward the ground, so the two compounded and the rest state paid
      twice. One dimmer, not two. */
   opacity: calc(.5 + .5 * var(--lit));
-  /* the rise grew with the type — 14px under a 40px quote read as a
-     nudge; under a 56px one it needs the same proportion */
-  translate: 0 calc((1 - var(--lit)) * 18px);
+  /* THE TRAVEL RIDES --sp, NOT --lit, and the difference is the whole of
+     a bug worth remembering. --lit is a TENT: 0 at both ends of the pass,
+     1 in the middle. Keyed to it, a quote rose into place and then sank
+     back DOWN by the same 18px on its way out — against the scroll —
+     while the next one rose to meet it (Jake, 2026-09-07: "the quotes
+     move down now … it feels like they hit each other invisibly"). Two
+     objects closing on each other with nothing between them.
+
+     --sp is monotonic across the pass, so keying the travel to it means
+     the quote starts 24px low, is true as it is read, and keeps climbing
+     as it leaves. It only ever moves up — the same law §02's rows are
+     held to. The LIGHT still rides the tent, because light is allowed to
+     come and go; position is not.
+
+     Default .5 → 0, so with no JS every quote sits exactly on its mark. */
+  translate: 0 calc((.5 - var(--sp, .5)) * 48px);
   will-change: transform;
 }
 .dr-voice figure { margin: 0; text-align: center; }
