@@ -12,7 +12,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("photo"); ap.add_argument("screen"); ap.add_argument("out")
 ap.add_argument("--mode", default="dark"); ap.add_argument("--top", default="t")
 ap.add_argument("--bezel", type=float, default=0.035); ap.add_argument("--radius", type=float, default=0.12)
-ap.add_argument("--corners", default=None); ap.add_argument("--glare", type=float, default=None); ap.add_argument("--island", type=int, default=1)
+ap.add_argument("--corners", default=None); ap.add_argument("--glare", type=float, default=None); ap.add_argument("--island", type=int, default=1); ap.add_argument("--statusbar", default=None, help="dark|light: draw an iOS status bar (9:41, signal, wifi, battery) in the screen's top strip")
 a = ap.parse_args()
 
 photo = cv2.imread(a.photo, cv2.IMREAD_COLOR); H, W = photo.shape[:2]
@@ -72,6 +72,25 @@ else:
 # orientation: rotate the screen so its top lands on the requested edge
 sh, sw = screen.shape[:2]
 rot = {"t": None, "r": cv2.ROTATE_90_CLOCKWISE, "b": cv2.ROTATE_180, "l": cv2.ROTATE_90_COUNTERCLOCKWISE}[a.top]
+if a.statusbar:  # iOS status bar in screen space; colour by --statusbar dark|light (ink colour)
+    from PIL import Image, ImageDraw, ImageFont
+    ink = (245, 245, 247) if a.statusbar == "light" else (10, 10, 11)
+    im = Image.fromarray(cv2.cvtColor(screen, cv2.COLOR_BGR2RGB)); d = ImageDraw.Draw(im)
+    fs = int(sw * 0.048); font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", fs)
+    cy = int(sh * 0.0215); d.text((int(sw * 0.115), cy - fs // 2 - int(fs * 0.08)), "9:41", fill=ink, font=font)
+    # signal bars, wifi, battery on the right
+    x = int(sw * 0.70); bw, gap = int(sw * 0.012), int(sw * 0.006)
+    for i in range(4):
+        h = int(sh * 0.006) + i * int(sh * 0.003); d.rounded_rectangle((x + i * (bw + gap), cy + int(sh * 0.006) - h, x + i * (bw + gap) + bw, cy + int(sh * 0.006)), radius=1, fill=ink)
+    wx = x + 4 * (bw + gap) + int(sw * 0.02); r0 = int(sw * 0.026)
+    for k, rr in enumerate([r0, int(r0 * 0.66), int(r0 * 0.33)]):
+        d.arc((wx - rr, cy - rr + int(sh*0.004), wx + rr, cy + rr + int(sh*0.004)), start=225, end=315, fill=ink, width=max(2, int(sw * 0.006)))
+    d.ellipse((wx - int(sw*0.004), cy + int(sh*0.002), wx + int(sw*0.004), cy + int(sh*0.006)), fill=ink)
+    bx = wx + int(sw * 0.045); bwid, bh = int(sw * 0.066), int(sh * 0.0115)
+    d.rounded_rectangle((bx, cy - bh // 2, bx + bwid, cy + bh // 2), radius=int(bh * 0.3), outline=ink, width=max(2, int(sw * 0.004)))
+    d.rounded_rectangle((bx + int(sw*0.006), cy - bh // 2 + int(sw*0.006), bx + int(bwid * 0.88), cy + bh // 2 - int(sw*0.006)), radius=int(bh * 0.2), fill=ink)
+    d.rounded_rectangle((bx + bwid + int(sw*0.003), cy - bh // 5, bx + bwid + int(sw*0.008), cy + bh // 5), radius=1, fill=ink)
+    screen = cv2.cvtColor(np.array(im), cv2.COLOR_RGB2BGR)
 if a.island:  # dynamic island at the top of the screen, in the screen's own orientation
     iw, ih = int(sw * 0.31), int(sh * 0.0195); ix, iy = (sw - iw) // 2, int(sh * 0.012)
     cv2.rectangle(screen, (ix + ih // 2, iy), (ix + iw - ih // 2, iy + ih), (8, 8, 10), -1)

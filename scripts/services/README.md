@@ -16,3 +16,11 @@
 
 Why not let the model draw the screen: generated UI text is never right. The photo supplies light,
 surface and perspective; the real UI supplies the truth.
+
+## Studio variant (the Apple-page look)
+Prompt the phone "perfectly straight on, centred, on a smooth dark charcoal gradient, one soft top light,
+screen a plain pure green rectangle filling the entire display including the status-bar area". ONE render
+carries every screen. Add `--statusbar dark|light` (ink colour for the 9:41 / signal / wifi / battery strip).
+The model usually tilts the phone 3–5°: measure the top edge of the printed quad and level the composite
+(cv2.getRotationMatrix2D about the quad centre, BORDER_REPLICATE — the gradient hides it), then crop:
+"top" framing = phone ≈55% of frame width, phone top ≈19% down, 4:3.
