@@ -30,8 +30,9 @@ here forward.
   review.
 - The one triggered vocabulary (heading wipes, `f01453c`) still stands.
   The §03→§04 seam is now a curtain lift, uncovering §04 as a light room
-  (`aacb872`) — retired the whitespace-only seam (`7d8f466`); awaiting
-  Jake's review, not yet seen past seam #1.
+  (`aacb872` → `a1f006f` header/slab/card fixups) — retired the
+  whitespace-only seam (`7d8f466`); awaiting Jake's review, not yet seen
+  past seam #1.
 
 **Next step:** Jake's own top-to-bottom pass of /dark (he has seen nothing
 past seam #1 in the flesh). After that: dial whatever he flags, using a
