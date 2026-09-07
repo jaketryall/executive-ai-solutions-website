@@ -35,6 +35,23 @@ here forward.
   the void, whitespace-only seam (`7d8f466`) stands. What he rejected was a
   light room mid-page; a future dramatic seam here stays on black.
 
+**§02 now carries PHOTOGRAPHS** (2026-09-07, `6ae94ea`): three generated
+studio shots of the real screens — the ad on a phone, the landing as a
+laptop+phone duo, the follow-up on a phone — in 4:3 wells on the shots'
+own dark ground. The CSS phone mocks are gone from /dark (the shared
+skins stay in globals.css for the shipped site). The spotlight's dim had
+to be amended for them: it now rides every part of the row except the
+picture, which dims by a dark veil instead — see `decisions.md`. Making
+the images is documented end to end in `design-dna/higgsfield/`.
+
+**Known, not fixed:** the `--dy` monotonicity line in `checks.md` fails
+for rows 0 and 1 once the last row's `--spot` has decayed with no row
+below it to replace the lift (`dy = -lift - Σ h·.045·shown`). It predates
+the photographs and is invisible — those rows are 700–1000px above the
+viewport when it happens. A ratchet on `shown` in the ride term would
+make the check true; it is a behaviour change to a section Jake likes, so
+it waits for his word.
+
 **Next step:** Jake's own top-to-bottom pass of /dark (he has seen nothing
 past seam #1 in the flesh). After that: dial whatever he flags, using a
 builder step per fix — each fix graduates into `checks.md` so it never
