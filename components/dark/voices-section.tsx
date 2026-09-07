@@ -38,22 +38,7 @@ export default function VoicesSection() {
             overall (§02's statement is the other). The kicker speaks the
             room's standard vocabulary; the line beneath it is the single
             exception, and the comment on it says why. */}
-        {/* THE HEADER DECLARES ITS OWN LEAVING. The entrance is a
-            one-shot (the focus pull on the spans below); this is the
-            other end of it — a scrubbed window measured off the header's
-            top as it climbs out, writing --out, which the stylesheet
-            turns back into blur, lift and fade. Two mechanisms on one
-            element on purpose: an arrival should happen once and be
-            over, a departure should track the scroll, because you can
-            scroll back up into it. */}
-        <header
-          className="dr-voices-head"
-          data-sp
-          data-sp-from="0.34"
-          data-sp-to="-0.28"
-          data-sp-var="--out"
-          data-sp-lerp="0.1"
-        >
+        <header className="dr-voices-head">
           <span className="t-label dr-voices-kicker" data-wipe>
             In their words
           </span>
@@ -81,7 +66,30 @@ export default function VoicesSection() {
               Rest state is FINISHED (the room's law for one-shots): with
               no JS the line is simply whole and sharp, and `is-in` only
               ever replays the journey to a frame that is already right. */}
-          <h2 className="dr-voices-lead" id="dr-voices-h" data-once data-once-at="0.86">
+          {/* BOTH ENDS, ON THE TITLE ITSELF. The entrance is the one-shot
+              above; the exit is a scrubbed window declared right here —
+              the engine collects scrubs and one-shots separately, so one
+              element can carry both, and an arrival that happens once
+              sits happily beside a departure that tracks the scroll,
+              because you can scroll back up into a departure.
+
+              MEASURED ON THE TITLE, not on the header around it. The
+              window first sat on the <header>, whose min-height makes it
+              702px tall — so by the time the title was centred on screen
+              it was already 37% faded, defocusing while it was still the
+              thing being read. The h2's own rect is the only box whose
+              position means what this effect needs it to mean. */}
+          <h2
+            className="dr-voices-lead"
+            id="dr-voices-h"
+            data-once
+            data-once-at="0.86"
+            data-sp
+            data-sp-from="0.24"
+            data-sp-to="-0.35"
+            data-sp-var="--out"
+            data-sp-lerp="0.1"
+          >
             <span style={{ "--l": 0 } as React.CSSProperties}>
               They didn&rsquo;t want a website.
             </span>{" "}
