@@ -119,3 +119,62 @@ Kept: `half-won`, `half-dw`, `half-booked` (dark ground), `half-won-light`
 (#ededf0 ground, the drop-in for §02's white card), `duo-full`, `duo-half`.
 The 4800×3584 PNGs are in the Higgsfield account — `show_generations` finds
 them if the scratch copies are gone.
+
+## Two failures that only a measurement catches (2026-09-07)
+
+### The phone tapers
+
+Jake's word for the first chat shot was "warped", and it is measurable:
+sample the screen's width at several heights and divide the spread by the
+mean. The good frames sit near **1%**; the rejected one was **8%**, wider
+at the top than at the bottom like a wide-angle lens had been near it.
+
+Naming the lens does not fix it. This clause does:
+
+> the phone's left and right edges are perfectly straight, vertical and
+> exactly parallel, and the body is **exactly the same width at every
+> height — it must not taper, narrow, widen or bulge**
+
+Adding it took the same subject from 6% to under 2%. `flat orthographic
+look`, `100mm lens, flat field` and `no barrel or pincushion` are the
+supporting cast; the width sentence is the one that works. Measure every
+frame before accepting it — the eye catches an 8% taper but not a 3% one,
+and a 3% one still looks subtly wrong beside a straight sibling.
+
+```python
+# taper %: sample the bright screen's width down the frame
+ws = [np.where(row > bg+55)[0].ptp() for row in g[h0:h1:80]]
+taper = 100 * (max(ws) - min(ws)) / np.mean(ws)     # want < 2
+```
+
+### A single letter can still flip
+
+4k preserves the screenshot — but not with certainty. One generation
+rendered the SERP headline as "Desert Wings **Fiight** School": one glyph,
+in the largest, bluest, most-read line on the screen. Everything else in
+that frame was perfect.
+
+So: **zoom every generation's headline before shipping it**, and name the
+exact string in the prompt when a line matters —
+
+> Reproduce every word LETTER BY LETTER exactly as it appears in the
+> reference — in particular the words 'Desert Wings Flight School | Learn
+> to Fly at Falcon Field' must be spelled exactly that way, with a
+> lowercase L in 'Flight'.
+
+A reroll with that clause came back correct. Small chrome (a 30px favicon)
+does get re-drawn loosely — it is invisible at tray size, and not worth a
+reroll; body copy and headlines are.
+
+## Matching a SET: crop, don't prompt
+
+The generated phone scale swings wildly for the same prompt — screen widths
+of 1557, 2072 and 2813px across three frames of one set. Do not try to
+prompt them into agreement. Generate loose, then crop in post to a fixed
+geometry: find the screen's bounds, and cut a 4:3 window where the screen
+is a **fixed fraction of the crop width (0.62 works, and fits the widest
+frame)** with its top at a **fixed 10% down the crop**. Three frames then
+land at the same scale and the same height, and read as one shoot.
+
+`scripts/services/` has the capture; the crop pass is a dozen lines of PIL
+against the same screen-bounds detection the taper metric uses.
