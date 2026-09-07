@@ -1304,7 +1304,16 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   --edge: rgba(10, 10, 11, .10); --edge-strong: rgba(0, 0, 0, .55);
   background: #f5f5f7; color: var(--ink-2);
   margin-top: calc(-1 * var(--seam-lift));
-  padding-block: clamp(96px, 16svh, 160px) calc(clamp(80px, 14svh, 168px) + var(--exit-lap)); }
+  /* THE HEADER'S OWN OFFSET, keyed to the same --seam-lift the curtain
+     uses: 0.9 of it sits the header just under the hem at p=0 (the
+     curtain still fully covers it), so it is the FIRST thing the
+     curtain uncovers — it emerges around p≈.1, and the air above it
+     keeps opening as the curtain departs. At the lock frame (p=1) the
+     header sits at ~29% of the viewport, not pinned to the plate's own
+     top edge (a fixed clamp() left the room a blank wall through the
+     first half of the lift, graded 2026-09-06). */
+  padding-top: calc(var(--seam-lift) * 0.9);
+  padding-bottom: calc(clamp(80px, 14svh, 168px) + var(--exit-lap)); }
 
 .dr-runs-head { margin-bottom: clamp(26px, 4.4svh, 52px); }
 /* kicker left, reassurance right, one baseline */
@@ -1328,19 +1337,16 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 .dr-runs-grid { list-style: none; margin: 0; padding: 0;
   --pad: clamp(18px, 1.7vw, 26px);
-  /* the slab's own arrival: whole by four tenths of the window, so the
-     cells' stagger (--cp, below) plays on a surface that is already
-     there. The window itself is unchanged in SHAPE, just moved: it now
-     opens once the curtain has uncovered the room (grid-top .7vh →
-     .35vh) — see the <ol> in runs-section.tsx. */
-  --ap: clamp(0, var(--sp, 1) * 2.5, 1);
+  /* THE SLAB SITS STILL. It used to arrive with its own fade+rise, but
+     the curtain lifting off it IS the reveal now — a second animation on
+     top of that read as the room re-entering after it was already
+     uncovered (graded 2026-09-06). No --ap, no translate, no opacity:
+     what's under the curtain is exactly what's there once it's gone. */
   position: relative;
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0;
   border-radius: clamp(12px, 1.3vw, 18px);
   background: #fff;
   border: 1px solid rgba(10, 10, 11, .08);
-  translate: 0 calc((1 - var(--ap)) * 18px);
-  opacity: var(--ap);
 }
 
 /* ── ONE RULED SLAB ──────────────────────────────────────────────
@@ -1358,8 +1364,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      apart and each resolves in four tenths, so the last one is whole
      while the slab is still in the bottom half of the screen. Past
      --cp = 1 nothing here answers the scroll. */
+  /* --cp still drives the rail's lit line below (and nothing else —
+     the cell itself no longer fades in, see .dr-runs-grid above) */
   --cp: clamp(0, (var(--sp, 1) - var(--i) * 0.1) * 2.5, 1);
-  opacity: var(--cp);
   position: relative;
   display: flex; flex-direction: column;
   padding: var(--pad);
@@ -1537,9 +1544,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   /* placed after .dr-runs's own rule: resting the lift means plain flow,
      so the pull-up overlap goes too */
   .dr-runs { margin-top: 0; }
-  /* the slab is LAYOUT and stays; the arrival is two numbers, so
-     resting it is two lines — slab in place, every line lit */
-  .dr-runs-grid { --ap: 1; }
+  /* the slab has no arrival of its own to rest — the arrival is one
+     number now, so resting it is one line: every line lit */
   .dr-run { --cp: 1; }
   .dr-run.is-in .dr-demo-call i,
   .dr-run.is-in .dr-demo-design i,
@@ -1975,10 +1981,16 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    asks. Narrower than the sections above it and wider than the close, so
    the page keeps funnelling. */
 .dr-obj { position: relative; z-index: 4;
-          /* the white card straddles the plate's bottom edge — let the
-             exit overlap, the soft out after the hard curtain */
-          margin-top: calc(-1 * var(--exit-lap, 0px));
-          padding-block: clamp(72px, 12svh, 150px) 0; }
+          /* THE CARD BLEEDS ACROSS the plate's bottom edge into the
+             flipped ground below — the soft out after the hard curtain.
+             padding-top has to be 0: nothing sits above .dr-obj-card in
+             this section (.wrap adds none of its own), so any top padding
+             here just pushes the card back down off the plate — which is
+             exactly what was happening before this fix (graded
+             2026-09-06: the card's top sat 18px BELOW the plate, not on
+             it). margin-top alone does the pull. */
+          padding-top: 0;
+          margin-top: calc(-1 * var(--exit-lap)); }
 
 /* THE CARD RECEDES on exit (design-dna/decodes/offbrand.md; the mechanism
    itself is declared in objections-section.tsx via data-sp). CONSTANT
