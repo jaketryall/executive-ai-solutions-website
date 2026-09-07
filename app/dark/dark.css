@@ -63,14 +63,6 @@
   --t-stagger: 800ms;
   --t-atmos: 1800ms; /* the vignette, and nothing else */
 
-  /* ── seam geometry: shared across two different seams so their numbers
-        cancel exactly at the lock frame, in any viewport unit.
-        --seam-lift: the §03→§04 curtain's extra travel AND the light
-        room's pull-up under it (same value, both ends).
-        --exit-lap: how far §05's white card rides up onto §04's tail. */
-  --seam-lift: 32vh;
-  --exit-lap: clamp(64px, 10svh, 120px);
-
   background: var(--void);
   color: var(--ink-2);
 }
@@ -1097,21 +1089,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    offsets, 2:1 — pre-rolled from the viewport's bottom edge and flush
    by the time the grid's top is 62% up (law 4), then dead still (law 7).
    No opacity: the room arrives with its contents resolved (law 3). */
-.dr-proof-lift { position: relative; z-index: 5; }
-/* above §04 (z-index 4), under grain/vignette/nav (.dr-atmos is 3, .dr-nav
-   is 30) — 5 is the minimal value that paints §03 over §04 in their
-   shared overlap; nothing else in the room sits between 4 and 30. */
 .dr-proof {
-  position: relative;
-  /* THE CURTAIN. Opaque on purpose: it is what uncovers §04. --lift is the
-     wrapper's bottom-edge progress (1vh → .32vh); the extra travel equals
-     the plate's overlap below, so at --lift = 1 this edge sits exactly on
-     the viewport top and the light room is whole beneath it. A straight,
-     pixel-sharp hem — no dome, no hardware (Jake: "make sure it isn't
-     tacky"). */
-  background: var(--void);
-  translate: 0 calc(var(--lift, 0) * var(--seam-lift) * -1);
-  padding-block: clamp(72px, 12svh, 150px) clamp(96px, 16svh, 180px);
+  position: relative; z-index: 4;
+  /* no bottom padding, on purpose: the §03→§04 seam is whitespace-only
+     and §04 owns the whole of that blank on one value (see .dr-runs) */
+  padding-block: clamp(72px, 12svh, 150px) 0;
 }
 .dr-proof-head { text-align: center; }
 .dr-proof-kicker { display: block; color: var(--ink-4); margin-bottom: var(--fib-3); }
@@ -1285,9 +1267,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-pf { translate: none; }
   .dr-pf-well img { translate: none; }
   .dr-pf-card, .dr-pf-veil, .dr-pf-demo, .dr-pf-well img { transition: none; }
-  /* placed after .dr-proof's own rule: with --lift forced to 1 the
-     curtain would sit permanently 32vh high */
-  .dr-proof { translate: none; }
 }
 
 /* ══ §04 · HOW IT RUNS ═══════════════════════════════════════════
@@ -1295,25 +1274,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    lands in a single glance and nothing here is scroll-jacked: a visitor
    deciding whether to call wants reassurance, not a ride. */
 .dr-runs { position: relative; z-index: 4;
-  /* THE LIGHT ROOM, uncovered by the curtain above. Foreground plate, not
-     a body flip (the ONE flip stays on .dr-obj). §02's light tokens,
-     scoped here so retuning one surface never touches another. --exit-lap
-     is shared with .dr-obj's margin-top (root tokens) so the overlap at
-     the OTHER end cancels the same way. */
-  --ink:   #0a0a0b; --ink-2: #35353a; --ink-3: #5c5c63; --ink-4: #6e6e75;
-  --edge: rgba(10, 10, 11, .10); --edge-strong: rgba(0, 0, 0, .55);
-  background: #f5f5f7; color: var(--ink-2);
-  margin-top: calc(-1 * var(--seam-lift));
-  /* THE HEADER'S OWN OFFSET, keyed to the same --seam-lift the curtain
-     uses: 0.9 of it sits the header just under the hem at p=0 (the
-     curtain still fully covers it), so it is the FIRST thing the
-     curtain uncovers — it emerges around p≈.1, and the air above it
-     keeps opening as the curtain departs. At the lock frame (p=1) the
-     header sits at ~29% of the viewport, not pinned to the plate's own
-     top edge (a fixed clamp() left the room a blank wall through the
-     first half of the lift, graded 2026-09-06). */
-  padding-top: calc(var(--seam-lift) * 0.9);
-  padding-bottom: calc(clamp(80px, 14svh, 168px) + var(--exit-lap)); }
+  /* THE THIRD SEAM is nothing at all. §03 ends and §04 begins on the same
+     black with no paint change, and the whole blank lives HERE, on one
+     value, so it can be measured: ≥0.55vh of silence before the repeated
+     opener. A silent gap before a still beat, which is what §04 is. */
+  --seam: clamp(220px, 55svh, 520px);
+  padding-block: var(--seam) clamp(80px, 14svh, 168px); }
 
 .dr-runs-head { margin-bottom: clamp(26px, 4.4svh, 52px); }
 /* kicker left, reassurance right, one baseline */
@@ -1337,16 +1303,18 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 .dr-runs-grid { list-style: none; margin: 0; padding: 0;
   --pad: clamp(18px, 1.7vw, 26px);
-  /* THE SLAB SITS STILL. It used to arrive with its own fade+rise, but
-     the curtain lifting off it IS the reveal now — a second animation on
-     top of that read as the room re-entering after it was already
-     uncovered (graded 2026-09-06). No --ap, no translate, no opacity:
-     what's under the curtain is exactly what's there once it's gone. */
+  /* the slab's own arrival: whole by four tenths of the window, so the
+     cells' stagger (--cp, below) plays on a surface that is already
+     there. The window itself is unchanged (an ENTRANCE, grid-top 1vh →
+     .62vh) — see the <ol> in runs-section.tsx. */
+  --ap: clamp(0, var(--sp, 1) * 2.5, 1);
   position: relative;
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0;
   border-radius: clamp(12px, 1.3vw, 18px);
-  background: #fff;
-  border: 1px solid rgba(10, 10, 11, .08);
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .08);
+  translate: 0 calc((1 - var(--ap)) * 18px);
+  opacity: var(--ap);
 }
 
 /* ── ONE RULED SLAB ──────────────────────────────────────────────
@@ -1364,9 +1332,8 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      apart and each resolves in four tenths, so the last one is whole
      while the slab is still in the bottom half of the screen. Past
      --cp = 1 nothing here answers the scroll. */
-  /* --cp still drives the rail's lit line below (and nothing else —
-     the cell itself no longer fades in, see .dr-runs-grid above) */
   --cp: clamp(0, (var(--sp, 1) - var(--i) * 0.1) * 2.5, 1);
+  opacity: var(--cp);
   position: relative;
   display: flex; flex-direction: column;
   padding: var(--pad);
@@ -1376,7 +1343,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    ruled sheet rather than four boxes */
 .dr-run + .dr-run::before {
   content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
-  background: rgba(10, 10, 11, .10);
+  background: rgba(255, 255, 255, .10);
 }
 /* the ruled line, under the station row. Full-bleed within its cell —
    the negative inline margins run it out across the padding — so it
@@ -1386,11 +1353,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-run-rail {
   display: block; position: relative; pointer-events: none;
   margin: var(--fib-3) calc(-1 * var(--pad)) 0;
-  height: 1px; background: rgba(10, 10, 11, .10);
+  height: 1px; background: rgba(255, 255, 255, .10);
 }
 .dr-run-rail::after {
   content: ""; position: absolute; inset: 0;
-  background: rgba(10, 10, 11, .62);
+  background: rgba(255, 255, 255, .58);
   transform-origin: left center; transform: scaleX(var(--cp, 1));
 }
 
@@ -1498,17 +1465,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 @keyframes dr-climb { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 
-/* THE DEMOS, re-inked for the light room. --d-1/--d-2 are the shared
-   dimming pair every demo derives from; overriding them scoped to
-   .dr-runs keeps the pair's OWN definition (and any other room that
-   reuses .dr-demo) untouched. Growth's stroke and design's own --d-1 /
-   accent block are hard-coded whites rather than the pair, so each gets
-   its own dark twin at the same alpha. */
-.dr-runs .dr-demo { --d-1: rgba(10, 10, 11, .26); --d-2: rgba(10, 10, 11, .58); }
-.dr-runs .dr-demo-design { --d-1: rgba(10, 10, 11, .13); }
-.dr-runs .dr-demo-design i:nth-child(1) { background: rgba(10, 10, 11, .19); }
-.dr-runs .dr-demo-growth path { stroke: rgba(10, 10, 11, .72); }
-
 @media (max-width: 1100px) {
   .dr-runs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   /* two per row: a vertical divider only between a side-by-side pair,
@@ -1516,7 +1472,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-run:nth-child(odd)::before { display: none; }
   .dr-run:nth-child(n+3)::after {
     content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
-    background: rgba(10, 10, 11, .10);
+    background: rgba(255, 255, 255, .10);
   }
 }
 @media (max-width: 640px) {
@@ -1527,12 +1483,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-run + .dr-run::before { display: none; }
   .dr-run + .dr-run::after {
     content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
-    background: rgba(10, 10, 11, .10);
+    background: rgba(255, 255, 255, .10);
   }
   /* the band unstacks. `display: contents` dissolves the wrapper so the
      kicker and the note become siblings of the lead and can be ordered
      around it — the note belongs UNDER the statement at this width, not
      jammed onto the kicker's line. */
+  .dr-runs { --seam: clamp(160px, 34svh, 300px); }
   .dr-runs-head { display: flex; flex-direction: column; }
   .dr-runs-band { display: contents; }
   .dr-runs-kicker { order: 1; margin-bottom: var(--fib-3); }
@@ -1541,11 +1498,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* placed after .dr-runs's own rule: resting the lift means plain flow,
-     so the pull-up overlap goes too */
-  .dr-runs { margin-top: 0; }
-  /* the slab has no arrival of its own to rest — the arrival is one
-     number now, so resting it is one line: every line lit */
+  /* the slab is LAYOUT and stays; the arrival is two numbers, so
+     resting it is two lines — slab in place, every line lit */
+  .dr-runs-grid { --ap: 1; }
   .dr-run { --cp: 1; }
   .dr-run.is-in .dr-demo-call i,
   .dr-run.is-in .dr-demo-design i,
@@ -1981,16 +1936,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    asks. Narrower than the sections above it and wider than the close, so
    the page keeps funnelling. */
 .dr-obj { position: relative; z-index: 4;
-          /* THE CARD BLEEDS ACROSS the plate's bottom edge into the
-             flipped ground below — the soft out after the hard curtain.
-             padding-top has to be 0: nothing sits above .dr-obj-card in
-             this section (.wrap adds none of its own), so any top padding
-             here just pushes the card back down off the plate — which is
-             exactly what was happening before this fix (graded
-             2026-09-06: the card's top sat 18px BELOW the plate, not on
-             it). margin-top alone does the pull. */
-          padding-top: 0;
-          margin-top: calc(-1 * var(--exit-lap)); }
+          padding-block: clamp(72px, 12svh, 150px) 0; }
 
 /* THE CARD RECEDES on exit (design-dna/decodes/offbrand.md; the mechanism
    itself is declared in objections-section.tsx via data-sp). CONSTANT

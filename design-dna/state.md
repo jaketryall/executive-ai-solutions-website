@@ -29,10 +29,11 @@ here forward.
   it (`a5bd975`). Shipped and verified at 390/1440/2560; awaiting Jake's
   review.
 - The one triggered vocabulary (heading wipes, `f01453c`) still stands.
-  The §03→§04 seam is now a curtain lift, uncovering §04 as a light room
-  (`aacb872` → `a1f006f` header/slab/card fixups) — retired the
-  whitespace-only seam (`7d8f466`); awaiting Jake's review, not yet seen
-  past seam #1.
+  The §03→§04 CURTAIN LIFT + light §04 room (`aacb872` → `b58a76e`) was
+  REVERTED on Jake's call 2026-09-06 ("i really dont like the site
+  changes") after he saw its three frames — code back at `40aec08`: §04 on
+  the void, whitespace-only seam (`7d8f466`) stands. What he rejected was a
+  light room mid-page; a future dramatic seam here stays on black.
 
 **Next step:** Jake's own top-to-bottom pass of /dark (he has seen nothing
 past seam #1 in the flesh). After that: dial whatever he flags, using a
