@@ -1711,8 +1711,19 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      held to. The LIGHT still rides the tent, because light is allowed to
      come and go; position is not.
 
-     Default .5 → 0, so with no JS every quote sits exactly on its mark. */
-  translate: 0 calc((.5 - var(--sp, .5)) * 48px);
+     Default .5 → 0, so with no JS every quote sits exactly on its mark.
+
+     120px, not 48. Making the travel monotonic accidentally made it
+     nearly invisible: the tent it replaced reversed direction, and a
+     reversal is legible at 18px where a steady drift is not. Over a pass
+     of roughly a thousand pixels, 48px is a 5% differential — arithmetic,
+     not motion. 120px is ~12%, which reads as the column running a little
+     ahead of the scroll, and it is still only ever upward. */
+  translate: 0 calc((.5 - var(--sp, .5)) * 120px);
+  /* and the read quote is fractionally larger — the same "one value moves
+     several things" the rows use, so the light, the lift and the size all
+     resolve together instead of the light doing all the work alone */
+  scale: calc(1 + var(--lit) * .022);
   will-change: transform;
 }
 .dr-voice figure { margin: 0; text-align: center; }
