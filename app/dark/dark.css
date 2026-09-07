@@ -1054,21 +1054,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* ── THE OPENER, REPEATED ────────────────────────────────────────
    §03 and §04 are kin: one black ground and no paint change between
    them — the grammar's whitespace-only seam. What seams them instead is
-   a REPEATED opener, the same three beats in both: the mark, --fib-3,
-   the label, --fib-3, the headline. The glyph is the page's through-line
-   (the nav's monogram, the crest of §06), used here as a chapter mark.
-   Drawn as ::before so the shared gallery component stays untouched and
-   the live site's own gallery never sees it. Still, on purpose: this is
-   the silent seam, and the headings get their one vocabulary later. */
-.dr-proof-kicker::before,
-.dr-runs-kicker::before {
-  content: ""; display: block;
-  width: clamp(22px, 1.9vw, 28px); aspect-ratio: 1;
-  margin: 0 auto var(--fib-3);
-  background: var(--ink-2);
-  -webkit-mask: url("/brand/eas-mark.svg") center / contain no-repeat;
-          mask: url("/brand/eas-mark.svg") center / contain no-repeat;
-}
+   a REPEATED opener, the same two beats in both: the label, --fib-3,
+   the headline. A small mark used to sit above the label as a chapter
+   glyph; retired 2026-09-06 — Jake: "the little logos above the section
+   titles don't make sense" — the monogram belongs to the nav and to the
+   lockup that closes the page, not to every chapter head. */
 
 /* ══ §03 · THE PROOF ═════════════════════════════════════════════
    Three cards in one row, and the site itself is the evidence.
@@ -1296,7 +1286,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-runs-band { display: flex; align-items: baseline; justify-content: space-between;
                 gap: var(--fib-5); margin-bottom: var(--fib-3); }
 .dr-runs-kicker { display: block; color: var(--ink-4); }
-.dr-runs-kicker::before { margin-inline: 0; }   /* §04 opens on its own left edge */
 .dr-runs-lead {
   /* the measure travels in EM, not ch. `ch` on the wrapper resolved
      against the wrapper's 16px and had nothing to do with this type;
@@ -1818,7 +1807,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   text-decoration: none;
   font-size: 14px; letter-spacing: .1em;
 }
-.dr-close-cta.is-desk { height: .7em; padding: 0 .55em; }
+.dr-close-cta.is-desk {
+  /* sized to the statement's column, like the h2 (12.6cqw) — an em here
+     would resolve against the pill's own 14px and collapse it to a sliver */
+  height: clamp(44px, 8cqw, 60px); padding: 0 clamp(18px, 3.2cqw, 30px);
+}
 .dr-close-cta.is-mob {
   display: none; height: 52px; padding: 0 26px;
   margin-top: clamp(26px, 4.5svh, 46px);
@@ -1938,7 +1931,10 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   column-gap: clamp(28px, 3vw, 56px); justify-content: start;
 }
 @media (max-width: 720px) {
-  .dr-close-nav { grid-template-columns: repeat(2, auto); }
+  /* two equal columns: Site | Office up top, and Reach — whose e-mail
+     line is wider than either column — alone across the second row */
+  .dr-close-nav { grid-template-columns: 1fr 1fr; row-gap: clamp(28px, 6vw, 40px); }
+  .dr-close-col:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
 }
 .dr-close-colh { color: var(--ink-4); }
 .dr-close-col ul { list-style: none; margin: var(--fib-3) 0 0; padding: 0;
@@ -1958,7 +1954,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   display: flex; align-items: center; gap: .22em; margin: 0; width: 100%;
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 640;
-  font-size: clamp(1.5rem, 7.1vw, 8.6rem);
+  /* mark + name run ~10.6em; 8vw fills the column, capped where the
+     column itself stops growing (1290px at the 1400px wrap) */
+  font-size: clamp(1.5rem, 8vw, 7.4rem);
   line-height: .95; letter-spacing: -0.04em; color: var(--ink);
   white-space: nowrap;
 }
