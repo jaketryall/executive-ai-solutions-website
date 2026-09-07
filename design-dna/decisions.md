@@ -1,0 +1,21 @@
+# Decisions — /dark (append-only)
+
+This file is APPEND-ONLY law. Never edit or delete a line below — if a new
+step would require reversing one, that is a CONFLICT: stop, do nothing,
+and surface it (to the main loop, and to Jake if needed) rather than
+silently overriding a prior call.
+
+- 2026-09-06 · seams · five seams get five distinct devices, never the same mechanism twice in a row (law 1) — hero→§02 sticky-cover climb, §02→§03 fade+whitespace, §03→§04 whitespace-only seam + repeated opener, §04→§05 the page's one ground flip, §05→§06 bookend dome mask (ffd1ec9, 7d8f466, 2a9bb7a)
+- 2026-09-06 · §02 · surface stays WHITE (#f5f5f7 + original inks) — light gray and true mid gray were both tried and rejected ("the original whiter is better"); do NOT re-propose gray for §02 (bb2627b)
+- 2026-09-06 · §02 · service-shot clip-open + parallax removed, shots rest STILL (saturate .25, colour only on hover) — "the animation on the images… drags my eyes to it"; a whole ROW may still grow as one unit under the spotlight and carry its still image along (cdc6f4c, amended 6b886f2)
+- 2026-09-06 · §02 · lens+ride: --spot is a raised cosine of the row-centre's distance from the 60vh reading line (reach 1.5× row height, no plateau), chased 0.1/frame; row scales 4.5% from its BOTTOM edge; --dy per row rides the list's lift plus the growth of every row below it — nothing ever moves down (0a2c6a4)
+- 2026-09-06 · §02 · row hover removed entirely; the arrow-slide and colour state now ride --spot/is-now instead of :hover (eaf00a2, 0a2c6a4)
+- 2026-09-06 · §02 · never grow a large surface via clip-path/inset/radius on scroll — the room-fill light is a CONSTANT box scaled on X only, radius pre-stretched (fb13710)
+- 2026-09-06 · §03 · nothing composited at rest inside a translating card — no backdrop-filter or live clip-path'd video while a card is still moving through its entrance; blur is a `filter` on the cover image, hover-only; the demo panel is `visibility:hidden` until hovered (efc50c6)
+- 2026-09-06 · §03 · the picture covers only the VISIBLE part of its well, and is NOT chased — well is 3:2, img top -19%/height 126%, translate driven directly off --pp with no lerp of its own; a 0.1 chase's lag exceeded the well's margin at wheel speed (cf7ad97 → 140678b)
+- 2026-09-06 · hero · the hero roster keeps its small hover-clips as the through-line motif alongside §03's cards, unless Jake feels it read as a repeat once he reviews (0050b34)
+- 2026-09-06 · global · Lenis IS mounted on /dark, via the root layout's SmoothScroll — desktop wheel only, lerp 0.1; no section's scroll math should assume it is unsmoothed or that a local chase is standing in for it (correction noted at eaf00a2)
+- 2026-09-06 · §04 · the walking light and the never-settling drift are REMOVED — the grid's window is a one-time ARRIVAL (data-sp-from 1 → 0.62), every panel whole by grid-top ≤.73vh, nothing answers scroll after that point; §04 is the back-half's still beat (2392de6)
+- 2026-09-06 · §04→§05 · the page's ONE body-ground flip is declared on `.dr-obj`: void → surface-2 (#171719); the ground holds to the page end and never flips again (2a9bb7a)
+- 2026-09-06 · §06 · `.dr-close-rig` has no `data-sp` and no lag translates — §06 is rigid, deliberately (law 12) (2a9bb7a)
+- 2026-09-06 · headings · one triggered vocabulary only — `data-wipe` line-wipe on every heading across §03–§06; no second triggered vocabulary gets added without retiring this one first (f01453c)
