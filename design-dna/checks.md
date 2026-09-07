@@ -28,6 +28,7 @@ bug; never delete a line.
 - `.dr-pf-well img` covers the visible part of its well at scroll fractions F ∈ {.95, .75, .55, .35, .15, −.05, −.25} on 1440 / 390 / 2560 — measured top and bottom margins ≥ −0.5px (no exposed well edge) at every fraction and every width.
 - `.dr-pf-well img`'s `translate` is driven directly by `--pp` with no `data-sp-lerp` on that node (not chased).
 - Entrance settle: `.dr-pf` `translate` resolves to `0` by the time `.dr-proof-grid`'s top edge reaches 62% of viewport height (±2%).
+- `.dr-pf-demo` clip-path at rest and open both contain `round 8px`; mid-transition (250ms after hover) it is an inset with round, never a polygon.
 
 ## §04 · How it runs
 - Every `.dr-run`'s `--cp` reaches `1` (±.02) by the time `.dr-runs-grid`'s top edge reaches .73× viewport height.
