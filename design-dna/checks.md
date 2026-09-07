@@ -15,6 +15,13 @@ bug; never delete a line.
 
 - The seam above the title: `.dr-voices`'s top padding plus the header's centring must not push the claim more than ~300px below the end of §03. The isolation is the header's `min-height` doing its job; the padding is only the seam.
 
+## Type scale (page-wide)
+- Every `font-size` in `app/dark/dark.css` resolves to a `--fs-*` token. The only permitted raw values are the nav lockup's responsive steps (10/11px), `.dr-svc-arrow` (17px), `--hero-fs` and `.dr-close-lockup`. A new raw size is a change to the scale, not an exception to it.
+- The page's three peaks agree: `.dr-say-h`, `.dr-voices-lead` and `.dr-close-h` all compute the same font-size (88px at 1440). So do the section headers: `.dr-proof-h`, `.dr-runs-lead`, `.dr-obj-h`, `.dr-svc-title` (43.2px at 1440).
+- No element with its own text node computes an inherited-fallback size. Walk the page and assert nothing but `.dr-svc-arrow` sits at 17px — a custom property that loses a name collision does not error, it silently becomes the inherited value.
+- `--fs-*` is declared on `:root`, never on `.dr-root`: `.t-meta` is used outside the room's wrapper. Assert every `.t-meta` on the page computes 12px, except `.dr-wk .t-meta`, which deliberately overrides to `--fs-body-s`.
+- `--t-micro` still resolves to `300ms`, and elements using it report a `transition-duration` of 0.3s — the type scale must never shadow the duration ladder again.
+
 ## §02 · Services rows
 - `--dy` per `<li>` is monotonic non-increasing as scroll progresses (rows never translate downward) — sweep the whole section in 20px steps, settling the 0.1 chase before each read, and assert NO step increases `--dy`, on screen or off. It held only off-screen until 2026-09-07: the lift that covers the rows' give-back used to clamp the moment the line cleared the last row, which is exactly when that row's spot starts decaying with nothing after it to replace what it returns.
 - The currently-lit row's `--spot` reaches 1 (±.02) when its vertical centre crosses the 60vh reading line; neighbouring rows read <1 at the same moment.
