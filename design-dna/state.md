@@ -22,8 +22,8 @@ here forward.
 - §03 proof cards — itsjay card port (`0050b34`), flash fix (`efc50c6`),
   cover parallax (`6331d3f` → `cf7ad97`), lerp removed (`140678b`).
   Awaiting Jake's re-check of the flash fix and the parallax.
-- §04 how it runs — back-half stillness (`2392de6`). Awaiting Jake's
-  review.
+- §04 how it runs — ruled slab (`ba6ad74`), staircase retired on Jake's
+  call — awaiting his review.
 - §05/§06 — rebuilt to the Off+Brand ending: §05 is a white card that
   recedes to reveal the lifted ground, §06 is CTA + footer as one room on
   it (`a5bd975`). Shipped and verified at 390/1440/2560; awaiting Jake's

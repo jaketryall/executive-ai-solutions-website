@@ -35,6 +35,10 @@ bug; never delete a line.
 - Past that arrival point, `--cp` is identical across 3+ further scroll positions — no walking light, no continuing drift.
 - `prefers-reduced-motion: reduce`: `.dr-run { --cp: 1 }` — the reduced frame equals the fully-settled frame.
 - Each panel's demo fires once at its `data-once-at` threshold and does not retrigger on scroll back up past that threshold.
+- ONE RULED SLAB (2026-09-06, ba6ad74): all four `li.dr-run` rects share `top` and `height` (±1px) at 1440 — one flat surface, not a staircase; `.dr-run-riser` and `.dr-run-tread` do not exist in the DOM; computed `backdrop-filter` on `.dr-run` and `.dr-runs-grid` is `none`; computed `translate` on every `.dr-run` is `none`.
+- Every `.dr-run-rail` rect spans its own cell's full width (`left`/`right` match the cell's, ±1px) and all four rails share the same `top` at 1440 — the ruled line is continuous across the slab.
+- 2×2 at 1000px: cells 1–2 share `top`, cells 3–4 share `top`; `getComputedStyle(cell3, '::after').height === '1px'` (row rule over the second row); odd cells' `::before` (vertical divider) is `display: none`.
+- One column at 390px: each cell's rail spans the cell (`left`/`right` ±1px); `.dr-run + .dr-run::before` (vertical divider) is `display: none`; `.dr-run + .dr-run::after` (row rule) is `1px` tall; `.dr-runs-head` has no left padding.
 
 ## §05 / §06 · Object + close
 - `.dr-obj`'s ground colour transitions exactly once across a full scroll-through (void → `#171719`) and does not revert on scroll-up-then-down-again.
