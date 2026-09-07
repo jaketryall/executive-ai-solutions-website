@@ -1302,95 +1302,64 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   font-family: var(--font-instrument), sans-serif; font-size: 15px; }
 
 .dr-runs-grid { list-style: none; margin: 0; padding: 0;
-  --col-gap: clamp(10px, 1.2vw, 18px);
-  --rise: clamp(22px, 2.9vw, 46px);
-  --rail-off: 14px;
-  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--col-gap);
-  /* the lift is a TRANSLATE, so it costs no layout space and the top
-     panel would otherwise climb straight into the header. The grid buys
-     back exactly what the staircase spends. */
-  margin-top: calc(var(--rise) * 3);
+  --pad: clamp(18px, 1.7vw, 26px);
+  /* the slab's own arrival: whole by four tenths of the window, so the
+     cells' stagger (--cp, below) plays on a surface that is already
+     there. The window itself is unchanged (an ENTRANCE, grid-top 1vh →
+     .62vh) — see the <ol> in runs-section.tsx. */
+  --ap: clamp(0, var(--sp, 1) * 2.5, 1);
+  position: relative;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0;
+  border-radius: clamp(12px, 1.3vw, 18px);
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .08);
+  translate: 0 calc((1 - var(--ap)) * 18px);
+  opacity: var(--ap);
 }
 
-/* ── FOUR STEPS, ON FOUR STEPS ───────────────────────────────────
-   The old row was four equal panels side by side, which is the shape of
-   a MENU — four peers, pick one. A process is not a menu, it is an
-   ORDER, and equal boxes were flattening the one thing this section is
-   actually about. So the panels climb: each stands one tread higher
-   than the one before it, on a rail that runs under all four.
-
-   The rail is the connective. It used to carry a light that walked the
-   flight left to right as you scrolled — §02's light turned on its
-   side — and that light is gone on purpose (grammar laws 6 + 7): the
-   back half of the page is where the sell lands, and it lands on a calm
-   reader. Every animated section hands to a stiller one, and this is
-   the still one. So the flight ARRIVES — each panel rises into place
-   and its tread lights under it, left to right, resolved while the
-   whole thing is still in the bottom half of the viewport — and then
-   nothing here answers the scroll again. The staircase stays as
-   composition; it just stops performing.
-
-   The whole path still lands in a single glance. The settled position
-   here (2026-07-06) is that a visitor deciding whether to call wants
-   reassurance rather than a ride — and a staircase you can see all of
-   at once is MORE reassuring than a grid, because it says how far it
-   is as well as what happens. */
+/* ── ONE RULED SLAB ──────────────────────────────────────────────
+   The four steps sit in one surface, like a schedule: four cells,
+   hairlines between them, and one ruled line under the station row
+   that runs the whole width and lights 01→04 as the slab arrives.
+   The order is carried by the numbers, the dates and the line — not
+   by geometry. (The staircase this replaces — each panel a tread
+   higher, risers drawn between — was retired on Jake's call,
+   2026-09-06: it read as an infographic.) No blur: a flat fill on the
+   black is the still beat this section is (grammar laws 6/7). */
 .dr-run {
-  /* --step is the tread this panel stands on. It tracks --i at four
-     columns and gets rewritten per row when the grid wraps, so the
-     stairs stay two-high in a pair rather than climbing off the top. */
-  --step: var(--i);
-  /* THE ARRIVAL, per panel — one number, and everything below derives
-     from it. Pure f(--sp) inside the grid's window, which is now an
-     ENTRANCE (the grid's top from 1vh to .62vh) rather than the whole
-     viewport's travel: the panels stagger left to right a tenth of the
-     window apart and each resolves in four tenths, so the last one is
-     whole while the flight is still in the bottom half of the screen.
-     Past --cp = 1 there is nothing left for the scroll to move. */
+  /* THE ARRIVAL, per cell — one number. Pure f(--sp) inside the
+     grid's window: cells stagger left to right a tenth of the window
+     apart and each resolves in four tenths, so the last one is whole
+     while the slab is still in the bottom half of the screen. Past
+     --cp = 1 nothing here answers the scroll. */
   --cp: clamp(0, (var(--sp, 1) - var(--i) * 0.1) * 2.5, 1);
-  /* the stairs, plus the rise into place */
-  translate: 0 calc(var(--step) * var(--rise) * -1 + (1 - var(--cp)) * 18px);
   opacity: var(--cp);
   position: relative;
   display: flex; flex-direction: column;
-  border-radius: clamp(12px, 1.3vw, 18px);
-  background: rgba(255, 255, 255, .064);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  padding: clamp(18px, 1.7vw, 26px);
-  /* only the demo inside is a one-shot (data-once → .is-in), and that
-     is the graphic's own beat, not the surface's */
+  padding: var(--pad);
 }
-
-/* ── the rail ────────────────────────────────────────────────────
-   One tread per panel plus one riser into the next, which makes the
-   line continuous without anything having to MEASURE anything: the
-   tread spans its panel AND the gap after it, and the riser climbs
-   exactly the height the next panel was lifted by. Pure geometry, so it
-   stays correct at any column width, and it costs no JS. */
+/* the dividers: a hairline on every cell but the first, full cell
+   height, so the ruled line crosses them and the slab reads as one
+   ruled sheet rather than four boxes */
+.dr-run + .dr-run::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
+  background: rgba(255, 255, 255, .10);
+}
+/* the ruled line, under the station row. Full-bleed within its cell —
+   the negative inline margins run it out across the padding — so it
+   meets its neighbours' at the dividers: ONE line across the slab,
+   with no measurement. The lit length rides ON the dim line and lights
+   with the cell's own --cp, so the light walks 01→04 and holds. */
 .dr-run-rail {
-  position: absolute; left: 0; bottom: calc(-1 * var(--rail-off));
-  width: calc(100% + var(--col-gap)); height: var(--rise);
-  pointer-events: none;
+  display: block; position: relative; pointer-events: none;
+  margin: var(--fib-3) calc(-1 * var(--pad)) 0;
+  height: 1px; background: rgba(255, 255, 255, .10);
 }
-.dr-run:last-child .dr-run-rail  { width: 100%; }
-.dr-run:last-child .dr-run-riser { display: none; }
-
-.dr-run-tread, .dr-run-riser { position: absolute;
-                               background: rgba(255, 255, 255, .10); }
-.dr-run-tread { left: 0; right: 0; bottom: 0; height: 1px; }
-.dr-run-riser { right: 0; bottom: 0; width: 1px; height: 100%; }
-
-/* the lit length rides ON the dim rail rather than replacing it, so the
-   path is always fully drawn. It lights with the panel that stands on
-   it — the same --cp — and then holds. */
-.dr-run-tread::after, .dr-run-riser::after {
+.dr-run-rail::after {
   content: ""; position: absolute; inset: 0;
   background: rgba(255, 255, 255, .58);
+  transform-origin: left center; transform: scaleX(var(--cp, 1));
 }
-.dr-run-tread::after { transform-origin: left center;   transform: scaleX(var(--cp, 1)); }
-.dr-run-riser::after { transform-origin: center bottom; transform: scaleY(var(--cp, 1)); }
 
 .dr-run-top { display: flex; align-items: baseline; justify-content: space-between;
               gap: var(--fib-2); }
@@ -1497,54 +1466,31 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 @keyframes dr-climb { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 
 @media (max-width: 1100px) {
-  .dr-runs-grid { grid-template-columns: repeat(2, minmax(0, 1fr));
-                  --col-gap: clamp(10px, 1.6vw, 16px);
-                  margin-top: var(--rise); }
-  /* two per row means the flight is two treads tall, twice. The light
-     still walks 1→2→3→4 in reading order, but a riser only ever
-     connects a pair that is genuinely side by side — a riser into the
-     next ROW would be drawing a step that is not there. */
-  .dr-run:nth-child(odd)  { --step: 0; }
-  .dr-run:nth-child(even) { --step: 1; }
-  .dr-run:nth-child(even) .dr-run-rail  { width: 100%; }
-  .dr-run:nth-child(even) .dr-run-riser { display: none; }
+  .dr-runs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* two per row: a vertical divider only between a side-by-side pair,
+     and one row rule over the second row */
+  .dr-run:nth-child(odd)::before { display: none; }
+  .dr-run:nth-child(n+3)::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
+    background: rgba(255, 255, 255, .10);
+  }
 }
 @media (max-width: 640px) {
-  .dr-runs-grid { grid-template-columns: minmax(0, 1fr);
-                  --col-gap: clamp(10px, 1.6vw, 16px);
-                  /* the panels step IN so the rail has gutter to live in.
-                     Hung off the wrap's 21px alone it sat 7px off the
-                     screen edge and read as a scroll artifact. */
-                  padding-left: clamp(20px, 6vw, 28px);
-                  margin-top: 0; }
+  .dr-runs-grid { grid-template-columns: minmax(0, 1fr); }
   .dr-demo { height: 40px; }
-  /* ONE COLUMN: the path turns and runs down the left edge. Same rail,
-     same arrival — scaleY instead of scaleX. A staircase
-     needs width it does not have here, so the stairs flatten and the
-     line does the sequencing on its own. */
-  /* .dr-runs-grid .dr-run, not .dr-run: the two-column rule above sets
-     --step on :nth-child(even), and a bare class loses to that on
-     specificity — which had the even panels riding 22px up into the
-     one above them on every phone */
-  .dr-runs-grid .dr-run { --step: 0; }
-  .dr-run-rail {
-    left: calc(-1 * var(--rail-off)); bottom: auto; top: 0;
-    width: 1px; height: calc(100% + var(--col-gap));
+  /* one column: rows, ruled between — the line under each station row
+     does the sequencing on its own */
+  .dr-run + .dr-run::before { display: none; }
+  .dr-run + .dr-run::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
+    background: rgba(255, 255, 255, .10);
   }
-  .dr-run:last-child .dr-run-rail { width: 1px; height: 100%; }
-  .dr-run-riser { display: none; }
-  .dr-run-tread { left: 0; right: auto; top: 0; bottom: auto;
-                  width: 1px; height: 100%; }
-  .dr-run-tread::after { transform-origin: center top;
-                         transform: scaleY(var(--cp, 1)); }
-
   /* the band unstacks. `display: contents` dissolves the wrapper so the
      kicker and the note become siblings of the lead and can be ordered
      around it — the note belongs UNDER the statement at this width, not
      jammed onto the kicker's line. */
   .dr-runs { --seam: clamp(160px, 34svh, 300px); }
-  .dr-runs-head { display: flex; flex-direction: column;
-                  padding-left: clamp(20px, 6vw, 28px); }
+  .dr-runs-head { display: flex; flex-direction: column; }
   .dr-runs-band { display: contents; }
   .dr-runs-kicker { order: 1; margin-bottom: var(--fib-3); }
   .dr-runs-lead   { order: 2; max-width: none; }
@@ -1552,8 +1498,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* the staircase is LAYOUT and stays; the arrival is one number, so
-     resting it is one line — panel in place, tread lit */
+  /* the slab is LAYOUT and stays; the arrival is two numbers, so
+     resting it is two lines — slab in place, every line lit */
+  .dr-runs-grid { --ap: 1; }
   .dr-run { --cp: 1; }
   .dr-run.is-in .dr-demo-call i,
   .dr-run.is-in .dr-demo-design i,

@@ -9,13 +9,13 @@
    Copy is the shipped site's, verbatim, because it is real and already
    approved. Only the expression is new.
 
-   THE LAYOUT: four steps standing on four steps. Equal panels in a row
-   are the shape of a MENU — four peers, pick one — and a process is an
-   order, not a menu. So the panels climb a tread each, on one rail.
-   Still one glance, still no scroll-jack — and, since the 2026-09-06
-   lando pass, still in the literal sense: the flight arrives once and
-   then nothing here moves with the scroll (grammar laws 6/7 — the
-   back half is quiet so the sell lands on a calm reader).
+   THE LAYOUT: one ruled slab, four cells. Equal panels in a row used
+   to read as a MENU — four peers, pick one — until the order was moved
+   off the geometry and onto the numbers, the dates and one ruled line
+   that lights 01→04 as the slab arrives (the staircase this replaced,
+   each panel a tread higher, was retired on Jake's call, 2026-09-06:
+   "the staircase thing is ugly"). Still one glance, still no
+   scroll-jack: the slab arrives once, then nothing moves with scroll.
 
    THE SIGNATURE: four artifacts, not one stage. Each step owns a small
    working demo and runs it once, on its own arrival — a shared morphing
@@ -116,10 +116,8 @@ export default function RunsSection() {
   return (
     <section className="dr-runs" aria-labelledby="dr-runs-h">
       <div className="wrap">
-        {/* the header SPANS. Kicker hard left, the reassurance hard
-            right, on one baseline — the staircase climbs into the top
-            right of this section, and a header hugging the left corner
-            left that whole quadrant empty. */}
+        {/* the header SPANS: kicker hard left, the reassurance hard
+            right, on one baseline, so the right quadrant is not empty. */}
         <header className="dr-runs-head">
           {/* the one triggered vocabulary (law 11): kicker, then the
               lead, then the reassurance — each a declaration, all the
@@ -165,24 +163,17 @@ export default function RunsSection() {
                    because a demo that replays on the way back up turns
                    the section into a flicker */
                 data-once
-                /* later panels stand higher on the flight and arrive
-                   later in the window, so each fires a little deeper —
-                   the demo should run on a panel that is already there */
+                /* cells arrive later left→right, so each fires a
+                   little deeper — the demo should run on a cell that is
+                   already there */
                 data-once-at={(0.86 - i * 0.08).toFixed(2)}
               >
-                {/* the tread this step stands on, and the riser up to
-                    the next. Two spans and no measurement: the geometry
-                    is all in the stylesheet, and the last step's riser
-                    is dropped by :last-child rather than by a flag. */}
-                <span className="dr-run-rail" aria-hidden>
-                  <i className="dr-run-tread" />
-                  <i className="dr-run-riser" />
-                </span>
-
                 <span className="dr-run-top">
                   <span className="dr-run-n">{s.n}</span>
                   <span className="t-label dr-run-meta">{s.meta}</span>
                 </span>
+                {/* the ruled line under the station row — geometry lives in the stylesheet */}
+                <i className="dr-run-rail" aria-hidden />
                 <Demo />
                 <h3 className="dr-run-title">{s.title}</h3>
                 <p className="dr-run-copy">{s.copy}</p>
