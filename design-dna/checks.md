@@ -24,7 +24,15 @@ bug; never delete a line.
 - `.dr-svc-well::after` opacity = `(1 − --spot) × .45` (±.02) — an unlit well must render DARKER than a lit one, never paler. Sample a bare-background patch inside a lit and an unlit well: the unlit one reads near rgb(26,25,28), not a mid grey.
 - `/services/ad.jpg`, `/services/websites.jpg` and `/services/follow-up.jpg` (or their `/_next/image` forms) all return 200.
 
+## IN THEIR WORDS (between §03 and §04)
+- Each `li.dr-voice`'s light peaks in the middle of its pass: sweep its window and assert computed opacity reaches ≥.98 and returns to ~.30 at both ends, and that opacity equals `.3 + .7 × clamp(0, min(sp*2, (1-sp)*2), 1)` (±.02).
+- One at a time: at the middle quote's peak, the other two read materially lower (≤.45).
+- `ul.dr-voices-list` computed `flex-direction` is `column` and the three `li` share a left edge — it must never become a grid again; three cards in a row directly under §03's three cards in a row is the thing this section exists to avoid.
+- `h2.dr-voices-lead`'s spans are opacity 1 / filter none / scale 1 BEFORE `is-in` is added, and after the animation ends. An untriggered or settled headline is never invisible, blurred, or stuck.
+- The kicker above it still runs the room's standard wipe (gains `is-wiped`, ends at opacity 1) — the title is the only exception to law 11, and only the title.
+
 ## §03 · Proof cards
+- `li.dr-pf` `--ex` reaches 1 as the row's bottom clears the top of the screen, lifting the outer pair −26px and the centre −13px (the entrance's two rates, quartered). `--ex` must be 0 at every scroll position where `--sp` < 1 — the exit may never bleed into the entrance.
 - Rest (page settled, no hover, no focus): every `.dr-pf-veil` opacity `0`; every `.dr-pf-demo` `visibility: hidden`; every `video` inside `.dr-pf-demo` `.paused === true`.
 - During a card's scroll-entrance (still translating, `--sp` between 1 and 0.62): no `.dr-pf-veil`/`.dr-pf-demo` becomes visible/composited — a burst-frame capture across the entrance shows no unexpected appear/disappear.
 - Hover/focus-visible on `.dr-pf-card`: `.dr-pf-well img` `filter: blur(10px)`; `.dr-pf-veil` opacity `1`; `.dr-pf-demo` `visibility: visible` and `clip-path` resolves to the full rect; `video.paused === false`.

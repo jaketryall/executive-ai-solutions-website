@@ -5,6 +5,7 @@ import Link from "next/link";
 import WorksList from "@/components/dark/works-list";
 import ServicesSection from "@/components/dark/services-section";
 import ProofSection from "@/components/dark/proof-section";
+import VoicesSection from "@/components/dark/voices-section";
 import RunsSection from "@/components/dark/runs-section";
 import ObjectionsSection from "@/components/dark/objections-section";
 import CloseSection from "@/components/dark/close-section";
@@ -275,6 +276,7 @@ export default function DarkRoom() {
       </div>
 
       <ProofSection />
+      <VoicesSection />
       <RunsSection />
       <ObjectionsSection />
       <CloseSection />

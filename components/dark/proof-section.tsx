@@ -110,7 +110,29 @@ export default function ProofSection() {
         data-sp-lerp="0.1"
       >
         {cases.map((p) => (
-          <li key={p.slug} className="dr-pf">
+          /* THE EXIT, declared per card because the value belongs on the
+             card (Jake, 2026-09-07: "give the proof cards some movement
+             out similar to their movement in, something small when it's
+             almost out of viewport"). A SECOND window on a SECOND var —
+             the engine keeps one track per element, so the row's <ol>
+             owns the entrance and each <li> owns its own leaving.
+
+             Measured off the card's BOTTOM edge, so it is the row's last
+             moments that drive it: 0 while the bottom is still 55% down
+             the screen, 1 as it clears the top. The stylesheet turns it
+             into a lift of a quarter the entrance's drop, keeping the
+             same two rates — outer pair twice the centre — so the row
+             leaves in the shape it arrived in, quietly. */
+          <li
+            key={p.slug}
+            className="dr-pf"
+            data-sp
+            data-sp-edge="bottom"
+            data-sp-from="0.55"
+            data-sp-to="0.02"
+            data-sp-var="--ex"
+            data-sp-lerp="0.1"
+          >
             <Link href={`/work/${p.slug}`} className="dr-pf-card">
               {/* THE PICTURE LAGS ITS CARD. The well declares its own
                   window — its top from the fold to 36vh above the top,

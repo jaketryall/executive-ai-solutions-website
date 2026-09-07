@@ -1127,9 +1127,23 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--gap);
 }
-/* two rates: the outer pair (odd) at 2×, the centre (even) at 1× */
-.dr-pf { --drop: 96px; translate: 0 calc((1 - var(--sp, 1)) * var(--drop)); }
-.dr-pf:nth-child(even) { --drop: 48px; }
+/* two rates: the outer pair (odd) at 2×, the centre (even) at 1× — and
+   ONE MORE on the way out. The row used to arrive and then simply be
+   scrolled away, which made it the only structure in the room that got a
+   composed entrance and no leaving at all. --ex is the card's own second
+   window (declared on the <li>, see proof-section.tsx), measured off its
+   bottom edge, so this only ever plays in the row's last moments.
+
+   A QUARTER of the drop, in the same two rates: the cards lift a little
+   faster than the scroll as they clear the top, so the row gathers itself
+   up rather than sliding flatly off. Small on purpose — the entrance is
+   the composed beat, this is only its echo, and a big exit would fight
+   §04's headline arriving underneath it. */
+.dr-pf {
+  --drop: 96px; --rise: 26px;
+  translate: 0 calc((1 - var(--sp, 1)) * var(--drop) - var(--ex, 0) * var(--rise));
+}
+.dr-pf:nth-child(even) { --drop: 48px; --rise: 13px; }
 
 .dr-pf-card {
   display: flex; flex-direction: column; height: 100%;
@@ -1516,6 +1530,143 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-run.is-in .dr-demo-design i,
   .dr-run.is-in .dr-demo-build i,
   .dr-run.is-in .dr-demo-growth path { animation: none; }
+}
+
+
+/* ══ IN THEIR WORDS · between §03 and §04 ═══════════════════════
+   The one emotional beat, between the work (§03) and the method (§04).
+
+   THE AXIS TURNS. §03 immediately above is three cards in one full-bleed
+   row. The first cut of this section was three cards in a row again, and
+   it read as the same section played twice (Jake, 2026-09-07: "it might
+   just be the three cards being repeated again too, back to back
+   essentially"). A repeated SHAPE cannot be rescued by giving it drift or
+   a different ground — so this is a single centred COLUMN, and the quotes
+   are statements at display scale rather than cards. Horizontal, then
+   vertical: the page changes gear.
+
+   CENTRED — and centring is rationed in this room, so this spends the
+   second of two (§02's statement is the first). It earns it: this is the
+   only place on the page where somebody other than us is talking.
+
+   BUILT FOR FEW. Three quotes as three cards look like a grid missing its
+   fourth. Three quotes as three full-width statements look deliberate,
+   and a fourth just makes the column longer. */
+.dr-voices {
+  padding-block: clamp(150px, 24svh, 300px) clamp(20px, 4svh, 60px);
+}
+
+.dr-voices-head { text-align: center; margin-bottom: clamp(60px, 11svh, 150px); }
+.dr-voices-kicker { display: block; color: var(--ink-4); margin-bottom: var(--fib-3); }
+.dr-voices-lead {
+  /* the measure in EM of its OWN size, like §04's lead — `ch` on a
+     wrapper resolves against the wrapper's 16px and has nothing to do
+     with this type */
+  max-width: 16em; margin-inline: auto; margin-block: 0;
+  color: var(--ink);
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 620;
+  /* the back half's largest type — this is the peak, and a peak the same
+     size as the section headers around it is not a peak */
+  font-size: clamp(1.9rem, 1.1rem + 3.4vw, 4rem);
+  line-height: 1.06; letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+/* the two sentences are two beats. Blocks, so each owns its own lines and
+   the balance still happens per sentence. */
+.dr-voices-lead span { display: block; }
+
+/* THE ENTRANCE — the room's one exception, see voices-section.tsx.
+   Out of focus and a little too large, resolving to sharp and true: the
+   claim coming INTO focus. Numbers off the Apple decode (blur 12→0,
+   scale down, ~800ms, ~200ms between siblings), on this room's structure
+   curve so it still belongs to the page.
+
+   `backwards` fill is what makes the stagger work: the second sentence
+   holds its blurred, oversized first frame through its delay instead of
+   sitting sharp for 220ms and then jumping back out of focus. */
+.dr-voices-lead.is-in span {
+  animation: dr-voices-focus 850ms var(--ease-structure) backwards;
+  animation-delay: calc(var(--l, 0) * 220ms);
+}
+@keyframes dr-voices-focus {
+  from { opacity: 0; filter: blur(12px); scale: 1.05; translate: 0 18px; }
+  to   { opacity: 1; filter: blur(0);    scale: 1;    translate: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* the rest state is already the finished frame, so removing the
+     animation is the whole of the reduced-motion story */
+  .dr-voices-lead.is-in span { animation: none; }
+}
+
+.dr-voices-list {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column;
+  /* the quotes are far enough apart that one at a time is what fills the
+     screen — the column is the composition, the gaps are what make it one
+     at a time rather than a list */
+  gap: clamp(72px, 13svh, 168px);
+}
+
+/* THE LENS, in the engine's own vocabulary. --sp runs 0 → 1 across a
+   quote's whole pass up the screen; folding it to a PEAK at the middle
+   gives the same shape §02 hand-rolls in JS — brightest while it is the
+   thing being read, receding on the way in and on the way out. No
+   classes, no thresholds, and it scrubs backwards exactly.
+
+   The default is .5, not 1 or 0: with no JS every quote resolves to
+   --lit 1 and the column reads whole and still. */
+.dr-voice {
+  --lit: clamp(0, min(var(--sp, .5) * 2, (1 - var(--sp, .5)) * 2), 1);
+  /* the outer pair lean in from alternating sides, the middle sits
+     square — the column breathes without becoming a zig-zag */
+  --lean: 0px;
+  max-width: 22em; margin-inline: auto;
+  opacity: calc(.3 + .7 * var(--lit));
+  translate: var(--lean) calc((1 - var(--lit)) * 14px);
+  will-change: transform;
+}
+.dr-voice figure { margin: 0; text-align: center; }
+.dr-voice blockquote { margin: 0; }
+.dr-voice blockquote p {
+  margin: 0;
+  /* colour rides the light too, so a quote gains INK as it arrives rather
+     than only opacity — the same two-things-on-one-value the rows use */
+  color: color-mix(in oklab, var(--ink) calc(var(--lit) * 100%), var(--ink-3));
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 580;
+  /* big, but never the lead's size — the claim stays the peak */
+  font-size: clamp(1.35rem, 0.95rem + 1.7vw, 2.5rem);
+  line-height: 1.16; letter-spacing: -0.026em;
+  text-wrap: balance;
+}
+/* the attribution gets the room's ONE surface, so the eye has something
+   to land on under a bare statement: a chip, not a card */
+.dr-voice figcaption {
+  margin-top: clamp(18px, 2.4svh, 30px);
+  display: flex; justify-content: center;
+}
+.dr-voice figcaption span {
+  display: inline-block;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .08);
+  color: var(--ink-4);
+  font-family: var(--font-instrument), sans-serif;
+  font-size: 13px; line-height: 1.2;
+}
+
+@media (max-width: 900px) {
+  .dr-voice { --lean: 0px !important; max-width: none; }
+  .dr-voices-list { gap: clamp(56px, 9svh, 96px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* the light is the section's only effect; without it the column is
+     simply whole */
+  .dr-voice { opacity: 1; translate: 0 0; }
+  .dr-voice blockquote p { color: var(--ink); }
 }
 
 
