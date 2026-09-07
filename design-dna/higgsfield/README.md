@@ -178,3 +178,46 @@ land at the same scale and the same height, and read as one shoot.
 
 `scripts/services/` has the capture; the crop pass is a dozen lines of PIL
 against the same screen-bounds detection the taper metric uses.
+
+## The empty band backfires — fill it with a status bar (2026-09-07)
+
+The notch-safe band above solved the island covering content, and created a
+worse problem. Jake, on the ad shot: *"the area around the notch is white
+and then the main content has like some gray in it which is creating a
+colour mismatch."* He was right, and it measures: the band came back at
+**255** while the page below sat at **244–247**, with a hard horizontal
+seam at the search field. Two whites stacked on one screen.
+
+The cause is what the band IS. A featureless white strip does not read to
+the model as page — it reads as part of the phone, so it gets lit as its
+own surface. Prompting around it does not hold: *"the display is a self-lit
+emissive panel, one single even white"* did flatten the step (10 levels →
+under 3), but the lighting language crowded out the geometry clause and the
+taper went from 3% back to 7–22%.
+
+**The fix is structural: draw a real iOS status bar into the band** —
+`scripts/services/statusbar.py`, 9:41 on the left, signal/wifi/battery on
+the right, the island's gap between them. Now the band is unmistakably
+screen content, the model has detail to anchor on, the seam is gone, and
+the shot is more convincing than it was before: a real screenshot has a
+status bar. Say so in the prompt too —
+
+> The reference already includes the phone's status bar at the top (9:41 on
+> the left, signal, wifi and battery on the right) — keep it exactly as
+> given and place the dynamic island in the empty gap between the time and
+> the indicators, covering no content.
+
+`scripts/services/flatten-screen.py` remains as the fallback for a frame
+that still comes back shaded: it divides out the vertical illumination
+using **one value per row** (a high percentile of that row inside the
+screen). Do not use a 2D tile grid — a tile landing wholly inside a grey
+chat bubble reads the bubble as page white and lifts it to paper, washing
+it out of the design.
+
+### The set, settled
+
+Desert Wings' own phone is **dropped** — the duo already shows that site on
+both screens, so a third frame of it was a repeat (Jake, 2026-09-07: "we
+don't really need the desert wings middle one because we are doing the
+duo"). Three frames stand: the ad (Google), the duo (laptop + phone), the
+follow-up (chat).
