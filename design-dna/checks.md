@@ -18,7 +18,11 @@ bug; never delete a line.
 - The currently-lit row's `--spot` reaches 1 (±.02) when its vertical centre crosses the 60vh reading line; neighbouring rows read <1 at the same moment.
 - Lit row `scale` = `1 + .045 × --spot` (±.002) at 1440.
 - `.dr-svc-in::before`'s `inset` is unchanged across every sampled scroll position — only `scale` changes (confirms the constant-box-scaled-on-X construction, not a clip/inset grow).
-- `.dr-svc-well img` / the phone mock (`.dvc`) never changes `transform`/`translate` on scroll or on hover — the phone is still per the imagery-is-still law.
+- `.dr-svc-well img` (`.dr-svc-shot`) never changes `transform`/`translate` on scroll or on hover — the picture is still per the imagery-is-still law.
+- Every `.dr-svc-well` measures 4:3 (rect width / height = 1.333 ±0.01) at 390 / 1440 / 2560, and no width overflows horizontally (`scrollWidth === innerWidth`).
+- The spot dim is OFF the picture: `.dr-svc-row`'s computed opacity equals its `--rv` (not `--rv × (.5 + .5·spot)`), and `.dr-svc-row > :not(.dr-svc-well)` carries `.5 + .5·spot`.
+- `.dr-svc-well::after` opacity = `(1 − --spot) × .45` (±.02) — an unlit well must render DARKER than a lit one, never paler. Sample a bare-background patch inside a lit and an unlit well: the unlit one reads near rgb(26,25,28), not a mid grey.
+- `/services/ad.jpg`, `/services/websites.jpg` and `/services/follow-up.jpg` (or their `/_next/image` forms) all return 200.
 
 ## §03 · Proof cards
 - Rest (page settled, no hover, no focus): every `.dr-pf-veil` opacity `0`; every `.dr-pf-demo` `visibility: hidden`; every `video` inside `.dr-pf-demo` `.paused === true`.

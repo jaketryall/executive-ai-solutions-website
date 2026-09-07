@@ -5,7 +5,7 @@ import Link from "next/link";
 import { SERVICES } from "@/lib/services";
 import { QUOTES } from "@/lib/quotes";
 import { PersonIcon } from "@/components/ui/person-icon";
-import { PHONES } from "@/components/dark/service-phones";
+import { SHOTS } from "@/components/dark/service-shots";
 
 /* §02 · THE FUNNEL
    THE LIGHTS COME ON. The one light section in a black room, and the only
@@ -25,11 +25,12 @@ import { PHONES } from "@/components/dark/service-phones";
 
 const SAY = "The click, the page it lands on, and the follow-up after.";
 
-/* the phones — one per stage, keyed by slug — live in service-phones.tsx:
-   the click's won search, the landing on a phone, the follow-up thread.
-   ONE client across all three (Desert Wings), on purpose: the list is
-   the funnel, and the funnel is a story — their search won, their page,
-   their booking. The roster is the hero's job; this is the demonstration. */
+/* the shots — one per stage, keyed by slug — live in service-shots.tsx:
+   the click's won search on a phone, the landing on a laptop AND a phone
+   together, the follow-up thread on a phone. ONE client across all three
+   (Desert Wings), on purpose: the list is the funnel, and the funnel is a
+   story — their search won, their pages, their booking. The roster is the
+   hero's job; this is the demonstration. */
 
 /* five columns of marks at the grid's own positions. The x/y each one
    travels FROM is its own, so the field converges from a scatter rather
@@ -276,19 +277,19 @@ export default function ServicesSection() {
                   →
                 </i>
 
-                {/* THE PHONE. What this stage looks like in a customer's
-                    hand — the shipped site's win frame, standing in a tray
-                    the row crops it by. Still of its own accord: nothing on
-                    it moves with the scroll or on hover (2026-09-06, "it
-                    drags my eyes to it"); it only rides the row's own
-                    spotlight growth. Decoration to a screen reader: the
-                    row's text is the row's name. */}
-                {/* a service added to lib/services.ts without a phone here
+                {/* THE SHOT. What this stage looks like in a customer's
+                    hand, photographed rather than drawn — the real screen
+                    in real hardware, on the studio's dark ground. Still of
+                    its own accord: nothing in it moves with the scroll or
+                    on hover (2026-09-06, "it drags my eyes to it"); it only
+                    rides the row's own spotlight growth. Decoration to a
+                    screen reader: the row's text is the row's name. */}
+                {/* a service added to lib/services.ts without a shot here
                     must render a row, not crash the page — the picture is
                     evidence, and evidence is allowed to be missing */}
-                {PHONES[s.slug] && (
+                {SHOTS[s.slug] && (
                   <div className="dr-svc-well" aria-hidden>
-                    {PHONES[s.slug]}
+                    {SHOTS[s.slug]}
                   </div>
                 )}
               </Link>

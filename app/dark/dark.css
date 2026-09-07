@@ -891,8 +891,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    is resolved before it is read, and runs backwards exactly — a later
    window (92 → 66) was tried on 2026-09-06 and read as late. The figure
    gets the fill only — its 50px --ap lag already carries the motion. */
-.dr-svc-row { opacity: calc(var(--rv, 1) * (.5 + .5 * var(--spot, 1)));
+.dr-svc-row { opacity: var(--rv, 1);
               translate: 0 calc((1 - var(--rv, 1)) * 14px + var(--dy, 0px)); }
+/* the LIGHT (below) is an opacity on everything EXCEPT the picture — see
+   the well's veil at the bottom of this file for why a dark photograph
+   cannot be dimmed by fading it out over a near-white room */
+.dr-svc-row > :not(.dr-svc-well) { opacity: calc(.5 + .5 * var(--spot, 1)); }
 .dr-vouch   { opacity: var(--rv, 1); }
 
 /* THE LENS (2026-09-06, Jake: "sections grow and shrink where you
@@ -908,10 +912,16 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
    SIZE     scale 1 + .045·spot from the row's bottom edge, the lines
             growing with the row, so the entry lifts toward you AND up.
-   LIGHT    opacity .5 + .5·spot, phones included — the rows outside the
-            light sit at half strength and come up as the line reaches
-            them. That is what makes it a spotlight rather than a row
-            that swells. Multiplied into the row's arrival opacity.
+   LIGHT    opacity .5 + .5·spot on every part of the row EXCEPT its
+            picture, which takes the same curve as a dark veil instead
+            (2026-09-07, when the picture became a photograph shot on a
+            dark ground: fading a dark object out over a near-white room
+            makes it PALER, and the unlit stages came out as grey slabs.
+            A veil dims it the way the metaphor already claims — a screen
+            out of the light). The rows outside the light sit at half
+            strength and come up as the line reaches them. That is what
+            makes it a spotlight rather than a row that swells.
+            Multiplied into the row's arrival opacity.
    INK      every colour on the row is a color-mix between its resting
             and its lit shade at spot (below) — the title takes ink at
             exactly the rate the row grows, not on a class with its own
@@ -1509,64 +1519,69 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 
-/* ── §02 · the stages get a PHONE ────────────────────────────────
+/* ── §02 · the stages get a PHOTOGRAPH ───────────────────────────
    The list stays a list. Every word of it is still readable at rest —
    the picture is EVIDENCE, and nothing that was ever information is
    hidden behind it.
 
    WHAT YOU ARE BUYING, in the hand it will be bought on. The 16:10
    thumbnails (2026-09-06) were desktop crops the size of a stamp — a
-   tradesperson off an ad could not tell what they were looking at. Each
-   row now stands a phone in a shallow tray and crops it by the tray, the
-   shipped site's win-frame move (the .dvc chrome and the Google / chat
-   skins are the shared ones in globals.css — ONE phone on this site):
-   the click shows the search WON, the landing shows the site on a phone,
-   the follow-up shows the thread ending in a booking. Three of them,
-   deliberately — a visitor should see all three stages at once
-   (reassurance, not a ride), and the same object three times says "one
-   system" without a word.
+   tradesperson off an ad could not tell what they were looking at. The
+   CSS phone in a gray tray that replaced them was legible but drawn, and
+   a drawn phone asks to be believed. Each row now carries a PHOTOGRAPH
+   of the real screen in real hardware (2026-09-07): the click on a
+   phone, the landing on a laptop with a phone in front of it, the
+   follow-up on a phone. Three of them, deliberately — a visitor should
+   see all three stages at once (reassurance, not a ride).
 
-   STILL, of its own accord. Nothing on a phone moves with the scroll or
-   on hover: the tray rides the row's --rv arrival and the row's --spot
+   THE WELL IS A WINDOW, not a tray. The photographs are shot on a dark
+   charcoal ground, so this is the one dark rectangle in the light room —
+   which is the point: it reads as a lit screen in a studio rather than
+   an illustration on a card. The box holds the shot's own 4:3, so
+   nothing is cropped twice; the background beneath it is the shot's own
+   ground, so a slow decode shows a dark frame rather than a white flash.
+
+   STILL, of its own accord. Nothing in a shot moves with the scroll or
+   on hover: the well rides the row's --rv arrival and the row's --spot
    growth (both above) and has no motion of its own. The spotlight is
-   the ROW's — the phone is the proof, the title is the thing being
-   proved, and they lift together. Every screen is composed to live at
-   the TOP of its mock, so the crop costs nothing the visitor needed. */
+   the ROW's — the picture is the proof, the title is the thing being
+   proved, and they lift together. */
 .dr-svc-well {
   grid-column: 3; grid-row: 1;
-  display: flex; justify-content: center; align-items: flex-start;
   width: clamp(280px, 32vw, 440px);
-  height: clamp(230px, 21vw, 300px);
+  /* the photographs' own ratio — a box of a different shape would crop a
+     frame that was already composed and cropped once */
+  aspect-ratio: 4 / 3;
   overflow: clip;
   border-radius: var(--radius-frame);
-  /* the shipped site's panel gray — a tray, not a tint: at #f5f5f7 it
-     vanished against the white card and the phone read as cut off */
-  background: #ededf0;
+  /* the shot's own ground, sampled off the corners of all three, so the
+     frame is never a bright hole while the JPEG decodes */
+  background: #1c1a20;
 }
-/* the phone: wide enough that the SERP's type clears ~13px */
-.dr-svc-well .dvc { width: min(74%, 300px); flex-shrink: 0; margin-top: 22px; }
-/* the tour phone's screenshot fills its screen. Scoped to the ONE image
-   that is a screen — a bare `img` rule here also caught the Google
-   skin's favicon and blew it up to the width of the phone */
-.dr-svc-well .dr-svc-tour {
+.dr-svc-well .dr-svc-shot {
   display: block; width: 100%; height: 100%;
-  /* LEFT-anchored: the asset is a little wider than the screen (the nav
-     was cut off its top, so its ratio is not a phone's), and cover trims
-     the sides — centred it took a letter off "WHERE PILOTS". The
-     headline and the button are left-aligned; the plane can lose a
-     wingtip on the right. */
-  object-fit: cover; object-position: left top;
+  /* cover for the rounding only: the box and the file share a ratio, so
+     this trims a pixel, never a composition */
+  object-fit: cover;
 }
-/* the chat's booked chip is revealed by a loop on the shipped hero; here
-   the thread rests in its FINISHED state */
-.dr-svc-well .chat-booked { opacity: 1; }
-.dr-svc-well .dr-chat { padding: 7% 7% 0; }
+/* THE VEIL — the row's half-strength LIGHT, for an object that is dark.
+   Opacity fades a thing toward the PAGE, and this page is near-white, so
+   the shots (charcoal ground, unlit screen) went pale under the row's
+   dim instead of quiet: three grey slabs, one lit. A dark veil on the
+   same curve does what the spotlight says it does. It is also the cheap
+   way to do it — a solid layer changing opacity stays on the compositor,
+   where a brightness filter on a 440px photo re-rasters every frame. */
+.dr-svc-well { position: relative; }
+.dr-svc-well::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: #0b0b0d;
+  opacity: calc((1 - var(--spot, 1)) * .45);
+}
 
 @media (max-width: 900px) {
-  /* on a phone the row stacks: the tray takes the whole second line,
-     shallower (the win frame lives at the top of every mock) */
-  .dr-svc-well { grid-column: 1 / -1; grid-row: 2; width: auto; height: 220px; }
-  .dr-svc-well .dvc { width: min(62%, 240px); margin-top: 18px; }
+  /* on a phone the row stacks and the shot takes the whole second line,
+     at the same ratio — it is the reason to keep scrolling */
+  .dr-svc-well { grid-column: 1 / -1; grid-row: 2; width: auto; }
 }
 
 
