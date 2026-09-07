@@ -1088,8 +1088,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
    THE HOVER is itsjay's, ported from the live site's .work-card: a
    blurred veil drops over the cover and the clip rises out of a
-   horizontal centre slit (clip-path polygon, 30%→70% at the midline,
-   opening to full while the panel climbs 8% of its height), 0.7s on
+   horizontal centre slit (inset clip with round 8px, so the corners stay
+   rounded while it opens, 30%→70% at the midline, opening to full while
+   the panel climbs 8% of its height), 0.7s on
    the structure curve. Focus opens it too. Touch and reduced motion
    never see it — the cover stays, the tap goes to the case.
 
@@ -1197,7 +1198,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   border-radius: 8px; overflow: hidden; background: #17171b;
   box-shadow: 0 24px 60px -20px rgba(0, 0, 0, .7);
   translate: -50% -42%;
-  clip-path: polygon(30% 50%, 70% 50%, 70% 50%, 30% 50%);
+  clip-path: inset(50% 30% 50% 30% round 8px);
   visibility: hidden;
   transition: clip-path .7s var(--ease-structure), translate .7s var(--ease-structure),
               visibility 0s .7s;
@@ -1210,7 +1211,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-pf-card:focus-visible .dr-pf-veil { opacity: 1; }
 .dr-pf-card:hover .dr-pf-demo,
 .dr-pf-card:focus-visible .dr-pf-demo {
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  clip-path: inset(0 round 8px);
   translate: -50% -50%;
   visibility: visible;
   transition: clip-path .7s var(--ease-structure), translate .7s var(--ease-structure),
