@@ -17,7 +17,8 @@ bug; never delete a line.
 
 ## Type scale (page-wide)
 - Every `font-size` in `app/dark/dark.css` resolves to a `--fs-*` token. The only permitted raw values are the nav lockup's responsive steps (10/11px), `.dr-svc-arrow` (17px), `--hero-fs` and `.dr-close-lockup`. A new raw size is a change to the scale, not an exception to it.
-- The page's three peaks agree: `.dr-say-h`, `.dr-voices-lead` and `.dr-close-h` all compute the same font-size (88px at 1440). So do the section headers: `.dr-proof-h`, `.dr-runs-lead`, `.dr-obj-h`, `.dr-svc-title` (43.2px at 1440).
+- The page has TWO peaks and they agree: `.dr-voices-lead` and `.dr-close-h` both compute 88px at 1440. `.dr-say-h` is NOT one of them — it sits a rung down on `--fs-feature` (56px) with nothing else, because a section's statement is not the page's closing line. The four section headers agree at 38.4px: `.dr-proof-h`, `.dr-runs-lead`, `.dr-obj-h`, `.dr-svc-title`.
+- `.dr-voice blockquote p` is 38.4px — the same rung as the section headers, and roughly 2.3× smaller than the title above it at 1440. At 390 that ratio compresses to 1.65× because `--fs-section` reaches its floor while `--fs-display` is still fluid; that is the clamps doing their job on a small screen, not a regression.
 - No element with its own text node computes an inherited-fallback size. Walk the page and assert nothing but `.dr-svc-arrow` sits at 17px — a custom property that loses a name collision does not error, it silently becomes the inherited value.
 - `--fs-*` is declared on `:root`, never on `.dr-root`: `.t-meta` is used outside the room's wrapper. Assert every `.t-meta` on the page computes 12px, except `.dr-wk .t-meta`, which deliberately overrides to `--fs-body-s`.
 - `--t-micro` still resolves to `300ms`, and elements using it report a `transition-duration` of 0.3s — the type scale must never shadow the duration ladder again.

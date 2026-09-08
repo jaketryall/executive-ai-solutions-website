@@ -1834,13 +1834,17 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   color: var(--ink);
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 580;
-  /* the measure, in EM of this paragraph's OWN size — 22em is ~1230px
-     against the wrap's 1400 at 1440, so a quote reads full width and
-     still breaks at a readable line */
-  max-width: 22em; margin-inline: auto;
-  /* just under the lead's 4rem: their words are the biggest voice in the
-     section, our claim above it stays the peak by a hair */
-  font-size: var(--fs-feature);
+  /* the measure grows as the size comes down, so the column keeps the
+     width it was given: 24em of 38px is ~912px, against 22em of 56px at
+     ~1232px. Narrower, but still a wide block rather than a paragraph —
+     and the line length lands around 65 characters instead of 90. */
+  max-width: 24em; margin-inline: auto;
+  /* 38px, not 56 (Jake, 2026-09-07: "testimonial text is still huge").
+     A rung DOWN, onto --fs-section: the claim above is the page's peak
+     at 88 and these are what it is evidence for, so a 2.3× gap between
+     them is the hierarchy the section is actually making. At 56 the two
+     were within 1.6× and the quotes were arguing with the title. */
+  font-size: var(--fs-section);
   line-height: 1.1; letter-spacing: -0.028em;
   text-wrap: balance;
 }
