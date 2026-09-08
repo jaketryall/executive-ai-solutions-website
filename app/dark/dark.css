@@ -1471,6 +1471,19 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-flip .dr-run {
   background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-1) 70%);
 }
+/* THE CARD NEEDS A SHADOW ONCE THE ROOM IS WHITE. On the void, a surface
+   two steps lighter than the ground IS the lift — 0 → #171719 is the
+   whole of this room's depth rule. Inverted, the same two steps are
+   #f2f2f4 → #fdfdfe, a difference of about 7 in luminance: the four cards
+   measured as pale rectangles with a hairline, which is what "I just
+   don't like those cards" was looking at. Light rooms carry depth in
+   SHADOW, not in lightness, so the card is given one — and it costs
+   nothing at rest because it never changes. */
+.dr-flip .dr-run {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, calc(.05 * var(--flip, 0))),
+    0 12px 32px -8px rgba(0, 0, 0, calc(.13 * var(--flip, 0)));
+}
 
 /* REDUCED MOTION DOES NOT FLIP. The engine resolves every scrub to its
    FINISHED frame under `prefers-reduced-motion`, which for a page-ground
@@ -1593,11 +1606,15 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-run-rail {
   display: block; position: relative; pointer-events: none;
   margin: var(--fib-3) calc(-1 * var(--pad)) 0;
-  height: 1px; background: rgba(255, 255, 255, .10);
+  /* derived from the ink, like the demos above it. Hand-written white at
+     10% is invisible on a white room, and the rail is the card's only
+     piece of structure between the station row and the well — without it
+     the header floats over a gap and the card reads as unfinished. */
+  height: 1px; background: color-mix(in oklab, transparent 90%, var(--ink));
 }
 .dr-run-rail::after {
   content: ""; position: absolute; inset: 0;
-  background: rgba(255, 255, 255, .58);
+  background: color-mix(in oklab, transparent 42%, var(--ink));
   transform-origin: left center; transform: scaleX(var(--cp, 1));
 }
 
@@ -1635,10 +1652,41 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* the demos are drawn in WHITE, which is invisible the moment the room
    turns. Their two inks cross with --flip like everything else — same
    alphas, opposite pigment. */
-.dr-demo { --d-1: color-mix(in oklab, rgb(255 255 255 / .30) calc((1 - var(--flip, 0)) * 100%), rgb(0 0 0 / .30));
-           --d-2: color-mix(in oklab, rgb(255 255 255 / .55) calc((1 - var(--flip, 0)) * 100%), rgb(0 0 0 / .55));
-           display: block; margin-top: clamp(16px, 2svh, 24px);
-           height: 46px; position: relative; }
+.dr-demo {
+  /* DERIVED FROM --ink, not mixed against --flip a second time. Three
+     rules below used to hand-write their own rgba(255,255,255,…) — the
+     design blocks and the growth stroke — which sailed straight past the
+     token crossing and turned invisible the moment the room went white
+     (the "design" card measured as an empty panel, the growth line as
+     nothing at all). Derive from the ink and a demo cannot get left
+     behind by a flip again: one source, three weights. */
+  --d-0: color-mix(in oklab, transparent 88%, var(--ink));
+  --d-1: color-mix(in oklab, transparent 70%, var(--ink));
+  --d-2: color-mix(in oklab, transparent 42%, var(--ink));
+  display: block; height: 100%; position: relative;
+}
+
+/* ── THE WELL ────────────────────────────────────────────────────
+   A little screen recessed into the card. Before it, each artifact was
+   drawn straight onto the card face and read as decoration — a graphic
+   the card happened to have on it. In a frame it reads as something being
+   SHOWN, and the frame is the same on all four, so the row is one idea
+   with four contents rather than four unrelated doodles.
+
+   The well is filled with --void, the room's OWN ground: on the black
+   room it is a black inset in a dark card, on the white room a grey inset
+   in a white one. Either way it reads as a screen, and it needs no token
+   of its own to cross with the flip. */
+.dr-run-well {
+  display: block; position: relative;
+  margin-top: clamp(16px, 2.2svh, 26px);
+  height: clamp(96px, 20svh, 168px);
+  padding: clamp(11px, 1.2vw, 16px);
+  border-radius: clamp(8px, .8vw, 12px);
+  background: var(--void);
+  border: 1px solid color-mix(in oklab, transparent 92%, var(--ink));
+  overflow: hidden;
+}
 
 /* 01 · twenty minutes of voice. The RESTING heights are already a
    waveform — equal bars read as a barcode, and the demo has to say
@@ -1646,16 +1694,30 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    only while it is moving. The animation just makes that waveform talk. */
 .dr-demo-call { display: flex; align-items: center; justify-content: space-between;
                 gap: 3px; }
-.dr-demo-call i { flex: 0 0 3px; border-radius: 2px;
+.dr-demo-call i { flex: 0 1 3px; min-width: 2px; border-radius: 2px;
   background: var(--d-1); transform-origin: 50% 50%; }
-.dr-demo-call i:nth-child(6n+1) { height: 34%; }
-.dr-demo-call i:nth-child(6n+2) { height: 62%; }
-.dr-demo-call i:nth-child(6n+3) { height: 96%; background: var(--d-2); }
-.dr-demo-call i:nth-child(6n+4) { height: 48%; }
-.dr-demo-call i:nth-child(6n+5) { height: 78%; }
-.dr-demo-call i:nth-child(6n+6) { height: 26%; }
+/* A 13-STEP CYCLE over 41 bars, so it never tiles. A 6-step cycle read as
+   one sawtooth repeated seven times across the well — mechanical, the
+   giveaway that a waveform is drawn rather than recorded. 13 into 41 goes
+   three and a bit, and the remainder shifts the phase each time round. */
+.dr-demo-call i:nth-child(13n+1)  { height: 34%; }
+.dr-demo-call i:nth-child(13n+2)  { height: 62%; }
+.dr-demo-call i:nth-child(13n+3)  { height: 96%; background: var(--d-2); }
+.dr-demo-call i:nth-child(13n+4)  { height: 48%; }
+.dr-demo-call i:nth-child(13n+5)  { height: 78%; }
+.dr-demo-call i:nth-child(13n+6)  { height: 26%; }
+.dr-demo-call i:nth-child(13n+7)  { height: 55%; }
+.dr-demo-call i:nth-child(13n+8)  { height: 88%; background: var(--d-2); }
+.dr-demo-call i:nth-child(13n+9)  { height: 31%; }
+.dr-demo-call i:nth-child(13n+10) { height: 69%; }
+.dr-demo-call i:nth-child(13n+11) { height: 42%; }
+.dr-demo-call i:nth-child(13n+12) { height: 84%; }
+.dr-demo-call i:nth-child(13n+13) { height: 22%; }
 .dr-run.is-in .dr-demo-call i {
-  animation: dr-voice 1.6s var(--ease-ui) calc(300ms + var(--i) * 48ms) 2;
+  /* 18ms a bar, not 48: at 41 bars the old step took 1.9s to reach the
+     last one and the pulse had crossed the well twice before it got
+     there. 18ms puts the sweep at ~0.7s, which is one pass. */
+  animation: dr-voice 1.6s var(--ease-ui) calc(300ms + var(--i) * 18ms) 2;
 }
 /* scaleY, not height — it multiplies each bar's own resting height, so the
    pulse travels THROUGH the waveform instead of flattening it to one shape */
@@ -1665,12 +1727,37 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 /* 02 · blocks arriving out of true, settling onto the grid */
-.dr-demo-design { display: grid; grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr; gap: 5px; }
-.dr-demo-design { --d-1: rgba(255, 255, 255, .13); }
+/* a PAGE, not four equal bars: a hero band across the top, a headline and
+   a CTA on the row under it, one line of body at the bottom. The rows are
+   proportioned like a page is (the hero takes two-thirds), which is the
+   whole difference between "a layout" and "a wireframe" at this size. */
+.dr-demo-design { display: grid; grid-template-columns: 1.9fr 1fr;
+  grid-template-rows: 1.85fr .58fr .3fr; gap: clamp(4px, .45vw, 7px); }
 .dr-demo-design i { border-radius: 3px; background: var(--d-1); }
-.dr-demo-design i:nth-child(1) { background: rgba(255, 255, 255, .19); }
-.dr-demo-design i:nth-child(1) { grid-column: 1 / -1; }
+/* THE HERO BAND HAS SOMETHING IN IT. A solid slab at the top of a page
+   outline is exactly the wireframe this step's copy promises you will not
+   get, however well it is proportioned — the fix is not a better grey
+   box, it is putting a headline and a button inside the box, in the ink
+   that reads AGAINST it. Two pseudos, no markup: a headline bar over a
+   pill, laid out from the band's own bottom-left the way a hero is. */
+.dr-demo-design i:nth-child(1) { grid-column: 1 / -1; background: var(--d-2);
+  position: relative; overflow: hidden; }
+.dr-demo-design i:nth-child(1)::before,
+.dr-demo-design i:nth-child(1)::after {
+  content: ""; position: absolute; left: 9%; border-radius: 999px;
+  /* the room's ground, which is the colour that contrasts with the band
+     in EITHER room: white type on a dark hero, dark type on a light one */
+  background: color-mix(in oklab, transparent 22%, var(--void));
+}
+/* the headline */
+.dr-demo-design i:nth-child(1)::before { bottom: 46%; width: 44%; height: 15%; }
+/* the button under it, short and rounded */
+.dr-demo-design i:nth-child(1)::after  { bottom: 20%; width: 17%; height: 13%;
+  background: color-mix(in oklab, transparent 52%, var(--void)); }
+/* the headline, then the CTA beside it */
+.dr-demo-design i:nth-child(3) { border-radius: 999px; }
+/* the body line, short of the full width the way a last line is */
+.dr-demo-design i:nth-child(4) { grid-column: 1 / -1; width: 62%; background: var(--d-0); }
 .dr-run.is-in .dr-demo-design i {
   animation: dr-settle .8s var(--ease-structure) calc(340ms + var(--i) * 110ms) both;
 }
@@ -1680,24 +1767,48 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 /* 03 · the build log, row after row */
+/* EACH ROW CARRIES ITS OWN MARKER, drawn in the row's background rather
+   than in the DOM: a short bright dash, a gap, then the line. Five grey
+   bars of ragged width with nothing in front of them are a LOADING
+   SKELETON — the universal "this failed to render" shape — which is a
+   ruinous thing to put on the card whose copy says hand-coded and fast.
+   A marker in front of every row makes the same five bars read as a log
+   with entries in it. */
 .dr-demo-build { display: flex; flex-direction: column; justify-content: center;
-                 gap: 6px; }
-.dr-demo-build i { height: 3px; border-radius: 2px; background: var(--d-1);
-                   transform-origin: 0 50%; }
+                 gap: clamp(6px, .9svh, 10px); }
+.dr-demo-build i { height: 4px; border-radius: 2px;
+  background:
+    linear-gradient(90deg,
+      var(--d-2) 0 9px,
+      transparent 9px 15px,
+      var(--d-1) 15px);
+  transform-origin: 0 50%; }
 .dr-demo-build i:nth-child(1) { width: 100%; }
 .dr-demo-build i:nth-child(2) { width: 78%; }
 .dr-demo-build i:nth-child(3) { width: 92%; }
 .dr-demo-build i:nth-child(4) { width: 61%; }
-.dr-demo-build i:nth-child(5) { width: 84%; background: var(--d-2); }
+/* the last entry stays lit: the build finished */
+.dr-demo-build i:nth-child(5) { width: 84%;
+  background: linear-gradient(90deg, var(--d-2) 0 9px, transparent 9px 15px, var(--d-2) 15px); }
 .dr-run.is-in .dr-demo-build i {
   animation: dr-compile .5s var(--ease-structure) calc(340ms + var(--i) * 90ms) both;
 }
 @keyframes dr-compile { from { transform: scaleX(0); } to { transform: none; } }
 
 /* 04 · launch is the start, so the line keeps going after it */
+/* a CHART, so it needs the thing that makes a line a chart: rules behind
+   it to read the climb against. Four of them, drawn in the background —
+   no extra markup, and they cross with the room because --d-0 is derived
+   from the ink. */
+.dr-demo-growth {
+  background: repeating-linear-gradient(180deg,
+    var(--d-0) 0 1px, transparent 1px 25%);
+}
 .dr-demo-growth svg { width: 100%; height: 100%; display: block; overflow: visible; }
 .dr-demo-growth path {
-  fill: none; stroke: rgba(255, 255, 255, .72); stroke-width: 2.4;
+  /* was a hand-written rgba WHITE, which is an invisible line on a white
+     room — see the note on --d-* above */
+  fill: none; stroke: var(--d-2); stroke-width: 2.4;
   stroke-linecap: round; stroke-linejoin: round;
   /* the path carries pathLength=1 in the markup, so one unit IS the whole
      line and the draw-on needs no measured magic number */
@@ -1723,7 +1834,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-run { flex: initial; }
 }
 @media (max-width: 640px) {
-  .dr-demo { height: 40px; }
+  .dr-run-well { height: clamp(84px, 15svh, 112px); }
   /* the band unstacks. `display: contents` dissolves the wrapper so the
      kicker and the note become siblings of the lead and can be ordered
      around it — the note belongs UNDER the statement at this width, not
@@ -1871,8 +1982,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      at a time rather than a list */
   /* trimmed as the type grew: bigger quotes fill more of the screen on
      their own, so the same "one at a time" reading needs less air than it
-     did at 40px — and the column was already the tallest section here */
-  gap: clamp(60px, 10svh, 132px);
+     did at 40px — and the column was already the tallest section here.
+     Trimmed AGAIN when the quotes went onto cards: the card's own padding
+     is now ~110px of the separation, so the same distance between one
+     quote and the next needs a much smaller gap between the boxes. Edge
+     to edge 62px, text to text ~170px — a shade more air than the 132 it
+     replaces, with the column no taller. */
+  gap: clamp(30px, 4.6svh, 62px);
 }
 
 /* THE LENS, in the engine's own vocabulary. --sp runs 0 → 1 across a
@@ -1944,7 +2060,61 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   scale: calc(1 + var(--lit) * .022);
   will-change: transform;
 }
+/* THE CARD MATERIALISES AROUND THE QUOTE YOU ARE READING (Jake,
+   2026-09-08: "having each quote in a card and having micro animations
+   inside of them"). It is not a box the quote was dropped into — it
+   ARRIVES with the light, in three beats, all read off the same --lit the
+   lens above already computes, all scrubbed, none of them triggered
+   (law 11 — the room has one triggered gesture and it is the wipe):
+
+     1 · the surface fades up under the quote      (::before opacity)
+     2 · a rule opens from its centre              (scaleX)
+     3 · the attribution rises into place, later   (its own ramp)
+
+   So the column is never three static boxes: the card you are reading is
+   a solid panel and its neighbours are barely there, which is the same
+   "one at a time" the bare statements had — now with something under the
+   words to land on.
+
+   NOTHING HERE PAINTS. The surface and its border live on a pseudo whose
+   OPACITY moves, and the rule is a transform; a background-color mixed
+   per frame would repaint a ~1080px box three times over every frame
+   (design-dna: rounded grows and per-frame fills re-raster, opacity and
+   transform do not). */
 .dr-voice figure { margin: 0; text-align: center; }
+.dr-voice-card {
+  position: relative;
+  max-width: min(1080px, 100%);
+  margin-inline: auto;
+  padding: clamp(40px, 5.4svh, 68px) clamp(26px, 3.6vw, 68px)
+           clamp(28px, 3.8svh, 44px);
+}
+.dr-voice-card::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  border-radius: clamp(18px, 1.7vw, 28px);
+  /* a LIFTED panel, not a flat fill: surface-2 at the top falling to
+     surface-1 is the same light §04's card is built from, so the two
+     objects in the back half are made of the same material. A single
+     var(--surface-1) fill measured ~#0e0e10 against the void once the
+     opacity had composited it — an outline with nothing inside it. */
+  background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-1) 72%);
+  border: 1px solid var(--edge);
+  /* A FLOOR, NOT ZERO. At 0 the unlit quotes are bare text again and the
+     column reads as one card between two paragraphs; at .14 they are
+     objects you can see the edges of, without competing with the one in
+     the light. (The li's own .5 opacity floor multiplies this, so an
+     unlit card's surface lands at ~.07 over the void — present, not lit.)
+     With no JS --lit resolves to 1 and every card is simply whole. */
+  opacity: calc(.14 + .86 * var(--lit, 1));
+}
+/* beat 2 — the rule, from the centre out */
+.dr-voice-rule {
+  display: block; width: clamp(48px, 5vw, 76px); height: 1px;
+  margin: clamp(24px, 3.2svh, 38px) auto 0;
+  background: var(--edge-strong);
+  transform-origin: 50% 50%;
+  transform: scaleX(var(--lit, 1));
+}
 .dr-voice blockquote { margin: 0; }
 .dr-voice blockquote p {
   margin: 0;
@@ -1972,8 +2142,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* the attribution gets the room's ONE surface, so the eye has something
    to land on under a bare statement: a chip, not a card */
 .dr-voice figcaption {
-  margin-top: clamp(18px, 2.4svh, 30px);
+  /* beat 3 — the attribution arrives AFTER the quote is properly in the
+     light (--lit past .34), so the card resolves as two events rather
+     than one: the words, then who said them. */
+  --c: clamp(0, (var(--lit, 1) - .34) * 2.4, 1);
+  margin-top: clamp(16px, 2.2svh, 26px);
   display: flex; justify-content: center;
+  opacity: var(--c);
+  translate: 0 calc((1 - var(--c)) * 14px);
 }
 .dr-voice figcaption span {
   display: inline-block;
@@ -1993,8 +2169,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 @media (prefers-reduced-motion: reduce) {
   /* the light is the section's only effect; without it the column is
-     simply whole */
+     simply whole — every one of the card's three beats resolves to its
+     finished frame, which is the frame that was always correct */
   .dr-voice { opacity: 1; translate: 0 0; }
+  .dr-voice-card::before { opacity: 1; }
+  .dr-voice-rule { transform: none; }
+  .dr-voice figcaption { opacity: 1; translate: 0 0; }
 }
 
 

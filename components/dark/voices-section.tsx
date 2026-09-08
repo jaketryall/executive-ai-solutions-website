@@ -15,15 +15,27 @@ import { QUOTES } from "@/lib/quotes";
    evidence for, in the company's voice, putting no words in any client's
    mouth.
 
-   NOT A GRID — and this is the whole point of the section (Jake,
+   NOT A GRID — and this is still the whole point of the section (Jake,
    2026-09-07, on the first cut: "it might just be the three cards being
    repeated again too, back to back essentially"). §03 immediately above
    is three cards in a row. Three cards in a row again here read as the
    same section twice, and no amount of drift or ground colour fixes a
-   repeated SHAPE. So the axis turns: one centred column, the quotes at
-   display scale as statements rather than cards, arriving one under the
-   other. Horizontal row, then vertical column — the page changes gear
-   instead of clearing its throat.
+   repeated SHAPE. So the axis turns: one centred column, arriving one
+   under the other. Horizontal row, then vertical column — the page
+   changes gear instead of clearing its throat.
+
+   THE QUOTES ARE ON CARDS AGAIN (Jake, 2026-09-08: "having each quote in
+   a card and having micro animations inside of them"), and that does not
+   reopen what he rejected: the repeat was the SHAPE — three cards side by
+   side under three cards side by side. The column is untouched. One card
+   at a time, full width, vertical, still one thing to read per screen.
+   What the card adds is a SURFACE, which is his own standing law (content
+   lives on panels, never bare on the canvas) and the one thing the bare
+   statements were breaking.
+
+   And it does not sit there as a box: it MATERIALISES with the light —
+   see the stylesheet, where the card's three beats all read off the same
+   --lit the lens already computes.
 
    BUILT FOR FEW. Three quotes as three cards look like a grid missing its
    fourth. Three quotes as three full-width statements look deliberate,
@@ -127,10 +139,15 @@ export default function VoicesSection() {
               data-sp-to="0"
               data-sp-lerp="0.1"
             >
-              <figure>
+              <figure className="dr-voice-card">
                 <blockquote>
                   <p>{q.text}</p>
                 </blockquote>
+                {/* the second of the card's three beats — a rule that
+                    opens from its centre as the quote reaches the reading
+                    line, and closes again as it leaves. Geometry and the
+                    value it rides both live in the stylesheet. */}
+                <i className="dr-voice-rule" aria-hidden />
                 {/* role and sector only, until real names land — see the
                     warning at the top of this file */}
                 <figcaption>

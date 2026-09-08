@@ -56,19 +56,29 @@ const STEPS = [
 ] as const;
 
 /* 01 · twenty minutes of voice. The bars carry a fixed per-bar delay so the
-   pulse reads as speech travelling left to right, not as a row blinking. */
+   pulse reads as speech travelling left to right, not as a row blinking.
+
+   41 BARS, NOT 13. The well is ~540px wide on a desktop card, and 13 bars
+   spread across it by `space-between` sat ~30px apart — a barcode, not a
+   waveform. 41 puts the gaps at roughly twice the bar width, which is
+   what an audio meter actually looks like. Prime, so the 13-step height
+   cycle in the stylesheet never lands in phase with the ends and the
+   pattern does not read as tiled. */
 function DemoCall() {
   return (
     <span className="dr-demo dr-demo-call" aria-hidden>
-      {Array.from({ length: 13 }, (_, i) => (
+      {Array.from({ length: 41 }, (_, i) => (
         <i key={i} style={{ "--i": i } as React.CSSProperties} />
       ))}
     </span>
   );
 }
 
-/* 02 · real pages, not wireframes: the blocks arrive out of true and settle
-   onto the grid. */
+/* 02 · real pages, not wireframes — so the blocks have to compose a PAGE.
+   Four of them: a hero band across the top, a headline and a CTA under it,
+   one line of body. Laid out as four equal bars they read as a WIREFRAME,
+   which is the one thing this step's copy promises you will not get. They
+   still arrive out of true and settle onto the grid. */
 function DemoDesign() {
   return (
     <span className="dr-demo dr-demo-design" aria-hidden>
@@ -79,7 +89,11 @@ function DemoDesign() {
   );
 }
 
-/* 03 · the build log: rows land one after another and the last one stays lit. */
+/* 03 · the build log: rows land one after another and the last one stays
+   lit. Each row carries its own leading marker (drawn in the row's own
+   background, not in the DOM) — without it, five grey bars of ragged
+   width are a LOADING SKELETON, which reads as "this card failed to
+   render" rather than as a build running. */
 function DemoBuild() {
   return (
     <span className="dr-demo dr-demo-build" aria-hidden>
@@ -214,7 +228,14 @@ export default function RunsSection() {
                 </span>
                 {/* the ruled line under the station row — geometry lives in the stylesheet */}
                 <i className="dr-run-rail" aria-hidden />
-                <Demo />
+                {/* THE WELL — a little screen recessed into the card, so
+                    the artifact reads as something being SHOWN rather than
+                    as decoration floating on a panel. The frame is the
+                    constant across all four; only what is inside it
+                    changes. Geometry in the stylesheet. */}
+                <span className="dr-run-well">
+                  <Demo />
+                </span>
                 <h3 className="dr-run-title">{s.title}</h3>
                 <p className="dr-run-copy">{s.copy}</p>
               </li>

@@ -89,3 +89,13 @@ bug; never delete a line.
 ## Headings · the one triggered vocabulary
 - Every `[data-wipe]` heading gains `is-wiped` once its top crosses <0.9vh of the viewport (read the "fired" state with the wait INSIDE the same `evaluate_script` call — a wipe restores its plain text ~1-1.4s after firing, so a second round-trip can land too late).
 - After the wipe's transition completes, the heading's text content is byte-identical to its authored source (the split-into-lines markup is fully restored, not left mid-wipe).
+
+## The flip · nothing may be hand-written white
+- `grep -n "255, 255, 255\|255 255 255" app/dark/dark.css` inside the back half (`.dr-flip`'s subtree: `.dr-run*`, `.dr-demo*`, `.dr-runs-*`, `.dr-obj*`, `.dr-close*`) returns only declarations that are ALSO crossed by a `.dr-flip …` override or a `color-mix(… var(--flip) …)`. A bare white is invisible on the white room; this has now shipped broken twice (2026-09-07 the demo inks, 2026-09-08 the design blocks, the growth stroke and both halves of the rail).
+- With `--flip: 1` forced on `.dr-root`, every §04 element carries visible ink against the card: `.dr-run-rail` and its `::after`, all four `.dr-demo-*`, and `.dr-run-well`'s border each measure a non-zero contrast against their own backdrop.
+- With `--flip: 0` forced on `.dr-root`, the same holds against the dark card — §04 must read in EITHER room, because where the flip lives is not settled.
+
+## IN THEIR WORDS · the card's three beats
+- The lit quote's `.dr-voice-card::before` computed opacity is > .7 while its neighbours' are < .3 (one card in the light at a time).
+- `.dr-voice figcaption` opacity is 0 for a quote whose `--lit` is below .34 (the attribution is the last beat, never the first).
+- `.dr-voice-rule` computed transform is a scaleX, never a width change (a width would relayout the figure every frame).
