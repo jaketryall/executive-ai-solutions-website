@@ -99,3 +99,9 @@ bug; never delete a line.
 - The lit quote's `.dr-voice-card::before` computed opacity is > .7 while its neighbours' are < .3 (one card in the light at a time).
 - `.dr-voice figcaption` opacity is 0 for a quote whose `--lit` is below .34 (the attribution is the last beat, never the first).
 - `.dr-voice-rule` computed transform is a scaleX, never a width change (a width would relayout the figure every frame).
+
+## The flip · frame budget
+- Scrolling 5px/frame through the flip window at 1440 and at 2560, no frame exceeds 33ms and fewer than 10 exceed 20ms. (Harness: rAF loop recording deltas while stepping `window.scrollTo`; the regression to catch is a new per-frame `color-mix` or a large blurred shadow whose colour rides `--flip`.)
+- `--flip` computed on `.dr-root` reaches exactly `0` and exactly `1` at the ends of its window — the step must divide 1 evenly or the room never finishes inverting.
+- The page ground (`.dr-root` background-color) is CONTINUOUS through the flip: sampling it at 50px intervals gives a strictly monotonic ramp with no repeated value.
+- Every `[data-sp]` track still publishes a non-empty value at every scroll position (the skip-identical-write guard must never leave a var unset — 15 tracks, checked top to bottom).

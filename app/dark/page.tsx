@@ -311,6 +311,17 @@ export default function DarkRoom() {
            read it too — a var only inherits downward */
         data-sp-target=".dr-root"
         data-sp-lerp="0.1"
+        /* THE COLOURS STEP; THE GROUND DOES NOT. Twelve color-mix tokens
+           resolving a new value every frame re-rasterise every glyph,
+           border and surface on screen — measured 2026-09-08 at mean
+           13.6ms a frame through this window with 28 frames over 20ms,
+           against 8.6ms with --flip frozen and 9.1ms with --flip still
+           moving but nothing reading it. Paint-bound, not style-bound.
+           At 1/32 most frames publish the value they published last, the
+           engine skips the write, and nothing repaints; the ramp is
+           identical, sampled where the eye cannot separate the samples.
+           The ground keeps the unstepped value — see the engine. */
+        data-sp-step="0.03125"
         data-bg-from="void"
         data-bg-to="#f2f2f4"
       >

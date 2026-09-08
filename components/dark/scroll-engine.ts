@@ -80,6 +80,24 @@ type Track = {
   varEl: HTMLElement;
   /** 0 = write the target directly. >0 = chase it at this rate per frame. */
   lerp: number;
+  /** QUANTISE the published value to this step. 0 = publish it exactly.
+
+      For a track whose consumers are TRANSFORMS this must stay 0: a
+      stepped translate is visible stuttering. It exists for tracks whose
+      consumers are COLOURS. A colour track is paint-bound in a way a
+      transform track is not — the room flip crosses twelve `color-mix`
+      tokens, so a new value re-rasterises every glyph, border and surface
+      on screen, measured at ~+5ms a frame across the whole document with
+      28 frames over 20ms in a single pass (2026-09-08). Stepping the
+      value means most frames publish a byte-identical string, the write
+      is skipped, and nothing repaints — the ramp is the same ramp, just
+      resolved at a resolution the eye cannot separate. */
+  step: number;
+  /** the last string actually written, so an unchanged frame writes
+      nothing at all. A repeated setProperty of the same value still
+      dirties the element, so this is a real saving on every resting
+      track, not only the stepped ones. */
+  written: string;
   /** the damped value, carried between frames */
   current: number;
   /** ground colour ramp, resolved from named tokens. null = not declared. */
@@ -247,6 +265,8 @@ function read(el: HTMLElement): Track {
       el,
     bg: readBg(el),
     lerp: Math.max(0, Math.min(1, num(el.getAttribute("data-sp-lerp"), 0))),
+    step: Math.max(0, Math.min(1, num(el.getAttribute("data-sp-step"), 0))),
+    written: "",
     current: NaN, // first frame snaps, so nothing eases in from zero on load
   };
 }
@@ -336,9 +356,27 @@ export function useScrollEngine(deps: unknown[] = []) {
           value = t.current;
         }
 
-        t.varEl.style.setProperty(t.varName, String(value));
-        t.el.style.setProperty(`${t.varName}x`, `${value * vh}px`);
+        /* PUBLISH. The damping above still runs at full resolution —
+           only what leaves the engine is stepped, so the chase is as
+           smooth as it ever was and the ramp lands on exactly the same
+           endpoints. The viewport height is part of the key because the
+           px twin below is derived from it: an unchanged value after a
+           resize still owes a new pixel figure. */
+        const published =
+          t.step > 0 ? Math.round(value / t.step) * t.step : value;
+        const key = `${published}|${vh}`;
+        if (key !== t.written) {
+          t.written = key;
+          t.varEl.style.setProperty(t.varName, String(published));
+          t.el.style.setProperty(`${t.varName}x`, `${published * vh}px`);
+        }
 
+        /* the ground is deliberately OUTSIDE that guard and reads the
+           unstepped value: it is one composited background-color on one
+           element, which measured free (freezing it changed the frame
+           time by 0.6ms), and it is the one surface where stepping WOULD
+           show — #000 → #f2f2f4 in 32 steps is ~8 levels a step across a
+           full screen of flat colour, which is textbook banding. */
         if (t.bg) {
           // ease-out quadratic, measured off the reference rather than
           // assumed — a straight lerp reads noticeably more mechanical
