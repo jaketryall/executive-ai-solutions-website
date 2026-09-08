@@ -301,30 +301,41 @@ export default function DarkRoom() {
           the inversion is one number and nothing can flip out of step
           with anything else. Its subtree is the back half, which is why
           the wrapper starts here and not at the top of the page. */}
-      <div
-        className="dr-flip"
-        data-sp
-        data-sp-from="0.86"
-        data-sp-to="0.3"
-        data-sp-var="--flip"
-        /* onto the ROOT, so the fixed light rig above this wrapper can
-           read it too — a var only inherits downward */
-        data-sp-target=".dr-root"
-        data-sp-lerp="0.1"
-        /* THE COLOURS STEP; THE GROUND DOES NOT. Twelve color-mix tokens
-           resolving a new value every frame re-rasterise every glyph,
-           border and surface on screen — measured 2026-09-08 at mean
-           13.6ms a frame through this window with 28 frames over 20ms,
-           against 8.6ms with --flip frozen and 9.1ms with --flip still
-           moving but nothing reading it. Paint-bound, not style-bound.
-           At 1/32 most frames publish the value they published last, the
-           engine skips the write, and nothing repaints; the ramp is
-           identical, sampled where the eye cannot separate the samples.
-           The ground keeps the unstepped value — see the engine. */
-        data-sp-step="0.03125"
-        data-bg-from="void"
-        data-bg-to="#f2f2f4"
-      >
+      {/* ⚠ THE FLIP IS PARKED (Jake, 2026-09-08: "can we kill the
+          background transition for now"). Nothing about it has been
+          deleted — the wrapper, the token block on .dr-root, the crossed
+          surfaces in the back half and the atmos/vignette factors are all
+          still here and all still correct. What is gone is the TRACK: with
+          no data-sp on this div the engine never writes --flip, every
+          token falls through to its `var(--flip, 0)` default, and the room
+          simply stays dark, which is exactly the page as it read before
+          the flip was built.
+
+          TO BRING IT BACK, put these eight attributes back on this div and
+          change nothing else:
+
+            data-sp data-sp-from="0.86" data-sp-to="0.3"
+            data-sp-var="--flip" data-sp-target=".dr-root"
+            data-sp-lerp="0.1" data-sp-step="0.03125"
+            data-bg-from="void" data-bg-to="#f2f2f4"
+
+          data-sp-target puts the value on the ROOT so the fixed light rig
+          ABOVE this wrapper can read it — a var only inherits downward.
+          data-sp-step is a measured perf requirement, not a preference:
+          twelve color-mix tokens resolving a new colour every frame
+          re-rasterise every glyph and surface on screen (2026-09-08 —
+          mean 13.6ms a frame and 14 dropped, against 8.6 with --flip
+          held still). Publishing at 1/32 costs nothing visible and buys
+          all of it back. The GROUND deliberately does not step.
+
+          ONE ELEMENT OWNS THE GROUND still holds, and matters more now
+          than it did: §04 and §05 both gave up their own bg tracks so
+          this one could have the page, so with this track gone the back
+          half has NO ground ramp at all and sits on the void end to end.
+          If the ending needs its lifted ground back before the flip is
+          re-sited, that is §05's track to re-declare — not a second one
+          here. */}
+      <div className="dr-flip">
         <RunsSection />
         <ObjectionsSection />
         <CloseSection />
