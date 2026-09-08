@@ -114,7 +114,37 @@ const DEMOS = {
 
 export default function RunsSection() {
   return (
+    /* the ground is not this section's job — see .dr-flip in page.tsx,
+       which owns it for the whole back half */
     <section className="dr-runs" aria-labelledby="dr-runs-h">
+      {/* THE STAGE is tall; the panel inside it is stuck to the viewport
+          and the four steps slide sideways across it as you scroll down.
+
+          ⚠ THIS SUPERSEDES a decision Jake made himself (2026-07-06,
+          decisions.md): §04 showed the whole path in ONE GLANCE with no
+          scroll-jack, because "a visitor deciding whether to call wants
+          reassurance, not a ride". A horizontal pin is exactly the ride
+          that was rejected — you can no longer see step 4 while reading
+          step 1, and the section now takes ~3 screens of scroll instead
+          of one. It is here because he asked to SEE it
+          ("turn the process section in to a horizontal scroll like the
+          lando site"); if it does not earn the cost, the previous state
+          is one revert away. */}
+      {/* THE WINDOW LIVES ON THE STAGE, not on the track. The track is
+          inside the sticky panel, so its own rect stops travelling the
+          moment the pin engages — measured there, --sp pegged to 1 the
+          instant the section arrived and the four steps were already
+          slid off. The stage is the only box in here that actually moves
+          through the viewport, so it is the only honest ruler; --sp
+          inherits down to the track from here. */}
+      <div
+        className="dr-runs-stage"
+        data-sp
+        data-sp-from="0"
+        data-sp-to="-2"
+        data-sp-lerp="0.1"
+      >
+      <div className="dr-runs-pin">
       <div className="wrap">
         {/* THE CARD IS THE BACKGROUND CHANGE (Jake, 2026-09-07: "we need a
             big card … for the background change or something … it needs a
@@ -132,13 +162,7 @@ export default function RunsSection() {
             card's rise, the grid's settle and the four cells' stagger are
             all the same number. The card cannot arrive out of step with
             what is written on it, because there is only one clock. */}
-        <div
-          className="dr-runs-card"
-          data-sp
-          data-sp-from="1"
-          data-sp-to="0.55"
-          data-sp-lerp="0.1"
-        >
+        <div className="dr-runs-card">
         {/* the header SPANS: kicker hard left, the reassurance hard
             right, on one baseline, so the right quadrant is not empty. */}
         <header className="dr-runs-head">
@@ -165,7 +189,7 @@ export default function RunsSection() {
             spent by the time its top is 62% of the way up, so the flight
             is whole while it is still low on the screen and the scroll
             has nothing left to move (laws 6/7 — the still beat). */}
-        {/* no window of its own any more — it reads the card's --sp */}
+        {/* reads the stage's --sp; one translate, no pin library */}
         <ol className="dr-runs-grid">
           {STEPS.map((s, i) => {
             const Demo = DEMOS[s.demo];
@@ -198,6 +222,8 @@ export default function RunsSection() {
           })}
         </ol>
         </div>
+      </div>
+      </div>
       </div>
     </section>
   );

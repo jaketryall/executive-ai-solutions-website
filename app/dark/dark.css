@@ -73,6 +73,10 @@
   --surface-1: #121214;
   --surface-2: #171719;
   --surface-3: #202024;
+  /* §04's room. Cooler and a touch lighter than the void — the brand's
+     steel blue at almost no luminance — so the flip READS as a different
+     room without ever becoming a light one. */
+  --room-steel: #0d1418;
 
   /* ── ink. Contrast measured on #000; --ink-4 is the TEXT FLOOR. */
   --ink: #ffffff;        /* 21:1   — rationed: CTA, titles, one numeral/band */
@@ -155,7 +159,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    it does not dim the lamps. Held under .dr-stage (4) so it never touches
    content, and over .dr-vignette (2) so both orbs keep the brightness they
    have on the first painted frame. */
-.dr-atmos { position: fixed; inset: 0; z-index: 3; pointer-events: none; }
+/* THE RIG GOES OUT WITH THE DARK. Two white radial lights, fixed to the
+   viewport, which is right while the room is black and absurd once it is
+   off-white: they wash into a pale blob with grey corners and follow you
+   down the page doing it. It rides --flip like everything else — the
+   whole reason the flip writes onto .dr-root. */
+.dr-atmos { position: fixed; inset: 0; z-index: 3; pointer-events: none;
+            opacity: calc(1 - var(--flip, 0)); }
 .dr-key {
   position: absolute; inset: -25%;
   background:
@@ -185,13 +195,29 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   to   { transform: translate3d(2.5%, 2%, 0) scale(1.06); }
 }
 
-/* 20-point ramp = a spotlight. A soft one reads as a dirty lens. */
+/* 20-point ramp = a spotlight. A soft one reads as a dirty lens.
+
+   IT GOES OUT WITH THE DARK, and it has to: this is BLACK in the corners,
+   which is invisible against a black room and, against an off-white one,
+   is a bright centre ringed by shadow — Jake, 2026-09-07: "it looks like
+   i am looking at the sun". Fading `.dr-atmos` was not enough; that is the
+   white lights, this is the dark surround, and they are two layers.
+
+   THE GRADIENT MOVED TO A CHILD so two opacities can multiply: the
+   element keeps its entrance animation (0 → .8, fill forwards) and the
+   child carries `1 - --flip`. Putting the flip on the element itself
+   would need !important to beat the animation's fill, and that would
+   throw the entrance away to win an argument. */
 .dr-vignette {
   position: fixed; inset: 0; z-index: 2; pointer-events: none;
+  opacity: 0;
+}
+.dr-vignette::before {
+  content: ""; position: absolute; inset: 0;
   background: radial-gradient(circle at center,
     transparent 0%, transparent 46%,
     rgba(0,0,0,.5) 66%, rgba(0,0,0,.92) 88%, rgba(0,0,0,.96) 100%);
-  opacity: 0;
+  opacity: calc(1 - var(--flip, 0));
 }
 .dr-lit .dr-vignette {
   animation: dr-fade var(--t-atmos) var(--ease-structure) 300ms forwards;
@@ -1393,20 +1419,103 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    agree. */
 .dr-runs .wrap { max-width: min(1760px, 94vw); }
 
+/* ══ THE FLIP · the room turns inside out ════════════════════════
+   Between the testimonials and the process the whole room inverts: black
+   ground to white, and every white thing on it to black. Not a tint over
+   the top — the ROOM's own tokens are re-mixed, so ink, surfaces, edges
+   and hairlines all cross at once and nothing can be left behind on the
+   wrong side of the change.
+
+   ONE NUMBER. --flip is written by the wrapper's own scroll window (see
+   page.tsx) and every colour below is a color-mix against it, in oklab so
+   the midpoints stay neutral instead of going muddy through grey. At
+   --flip 0 each token computes to exactly its dark value and at 1 to its
+   light one, so the dark room is untouched by the existence of this
+   block.
+
+   THE LIGHT END IS OFF-WHITE (#f2f2f4), not paper (Jake, 2026-09-07:
+   "maybe be off white as opposed to bright white") — and the elevation
+   ladder inverts with it: surfaces lift TOWARD white above an off-white
+   ground, exactly as they lift toward grey above black. Elevation stays
+   lightness, which is this room's one rule about depth.
+
+   The PAGE GROUND is the engine's own data-bg ramp on the same element,
+   so the backdrop and the tokens are driven by one track and cannot
+   disagree. */
+.dr-root {
+  --void:        color-mix(in oklab, #000000 calc((1 - var(--flip, 0)) * 100%), #f2f2f4);
+  --surface-1:   color-mix(in oklab, #121214 calc((1 - var(--flip, 0)) * 100%), #f9f9fb);
+  --surface-2:   color-mix(in oklab, #171719 calc((1 - var(--flip, 0)) * 100%), #fdfdfe);
+  --surface-3:   color-mix(in oklab, #202024 calc((1 - var(--flip, 0)) * 100%), #ffffff);
+  --ink:         color-mix(in oklab, #ffffff calc((1 - var(--flip, 0)) * 100%), #0a0a0b);
+  --ink-2:       color-mix(in oklab, #d4d4d8 calc((1 - var(--flip, 0)) * 100%), #35353a);
+  --ink-3:       color-mix(in oklab, #949498 calc((1 - var(--flip, 0)) * 100%), #5c5c63);
+  --ink-4:       color-mix(in oklab, #8a8a8e calc((1 - var(--flip, 0)) * 100%), #6b6b72);
+  --edge:        color-mix(in oklab, #565759 calc((1 - var(--flip, 0)) * 100%), #c9c9cf);
+  --edge-strong: color-mix(in oklab, #6e7075 calc((1 - var(--flip, 0)) * 100%), #9a9aa2);
+  --hairline:    color-mix(in oklab, rgb(156 163 175 / .30) calc((1 - var(--flip, 0)) * 100%), rgb(90 92 102 / .30));
+  /* the two rig values are rgba WHITE at rest — on a white ground they
+     have to become rgba BLACK or every raised surface disappears */
+  --key:  rgba(0, 0, 0, calc(0.10 * var(--flip, 0) + 0.10 * (1 - var(--flip, 0))));
+  --fill: rgba(0, 0, 0, calc(0.02 * var(--flip, 0) + 0.02 * (1 - var(--flip, 0))));
+}
+
+/* the hand-written rgba(255,255,255,…) in this file do NOT ride the
+   tokens, so anything built out of them would stay a white veil on a
+   white ground. These are the surfaces and edges in the back half that
+   were authored that way; they cross with everything else. */
+.dr-flip .dr-run,
+.dr-flip .dr-runs-card {
+  border-color: color-mix(in oklab, rgb(255 255 255 / .07) calc((1 - var(--flip, 0)) * 100%), rgb(0 0 0 / .10));
+}
+.dr-flip .dr-run {
+  background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-1) 70%);
+}
+
+/* REDUCED MOTION DOES NOT FLIP. The engine resolves every scrub to its
+   FINISHED frame under `prefers-reduced-motion`, which for a page-ground
+   ramp means painting the END colour over the whole document — an
+   off-white backdrop under the dark room's own sections, top to bottom.
+   A resting frame has to be a coherent page, not the last frame of one
+   effect, so here the room simply stays dark. `!important` because the
+   engine writes both of these as inline styles. */
+@media (prefers-reduced-motion: reduce) {
+  .dr-flip { --flip: 0 !important; }
+  .dr-root { background-color: var(--void) !important; }
+}
+
+/* ── THE PINNED STAGE · §04 goes sideways ───────────────────────
+   ⚠ SUPERSEDES the one-glance rule Jake set in July ("reassurance, not a
+   ride"). This IS the ride: three screens of scroll, and you can no
+   longer see step 04 while reading step 01. Built because he asked to see
+   it; one revert away if it does not earn the cost.
+
+   NO PIN LIBRARY. The stage is tall, the panel inside it is `sticky`, and
+   the track's own declared window is the stage's whole travel — the
+   stage's top runs 0 → two viewports above the fold, hence to="-2". One
+   value, one translate, and it still scrubs backwards exactly. */
+.dr-runs-stage { position: relative; height: 300svh; }
+.dr-runs-pin {
+  position: sticky; top: 0; height: 100svh;
+  /* a COLUMN centred on its own axis: `align-items: center` on a row put
+     the content against the top of the panel with a screen of dead space
+     under it, because the single child is full-width and stretches. And
+     the nav is fixed, so the panel owes it clearance or the header reads
+     through the pill. */
+  display: flex; flex-direction: column; justify-content: center;
+  padding-top: clamp(64px, 11svh, 118px);
+  /* the track runs past both edges of the screen and is clipped here */
+  overflow: hidden;
+}
+.dr-runs-pin > .wrap { width: 100%; }
+
 .dr-runs-card {
   /* ONE number for the whole section: the header's arrival, the grid's
      settle and each cell's stagger are all read off this, inherited. */
   --ap: clamp(0, var(--sp, 1) * 1.7, 1);
+  /* no surface of its own any more: the ROOM changed instead, and a
+     panel on a panel is one surface too many */
   position: relative;
-  padding: clamp(30px, 4.4vw, 76px) clamp(20px, 2.6vw, 48px) clamp(26px, 3.4vw, 60px);
-  border-radius: clamp(18px, 2vw, 32px);
-  background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-1) 62%);
-  border: 1px solid rgba(255, 255, 255, .07);
-  transform-origin: 50% 100%;
-  scale: calc(.945 + .055 * var(--ap));
-  translate: 0 calc((1 - var(--ap)) * 54px);
-  opacity: var(--ap);
-  will-change: transform;
 }
 
 .dr-runs-head { margin-bottom: clamp(26px, 4.4svh, 52px); }
@@ -1429,18 +1538,17 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-runs-sub { margin: 0; color: var(--ink-3); text-align: right;
   font-family: var(--font-instrument), sans-serif; font-size: var(--fs-body); }
 
+/* THE TRACK. `width: max-content` is load-bearing: it makes 100% mean the
+   track's OWN width rather than the column's, so the translate below can
+   be written as "slide until your right edge meets the screen's" with no
+   measurement in JS and no magic number per breakpoint. */
 .dr-runs-grid { list-style: none; margin: 0; padding: 0;
   --pad: clamp(18px, 1.7vw, 26px);
   position: relative;
-  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0;
-  border-radius: clamp(12px, 1.3vw, 18px);
-  /* a lighter inlay ON the card, not a slab on the void — the card is
-     the surface now, so this only has to separate the steps from the
-     header above them */
-  background: rgba(255, 255, 255, .035);
-  border: 1px solid rgba(255, 255, 255, .07);
-  /* NO arrival of its own: it would double the card's, and it used to
-     own the window the card now carries */
+  display: flex; width: max-content;
+  gap: clamp(14px, 1.6vw, 28px);
+  translate: calc(var(--sp, 0) * (100vw - 100% - 2 * clamp(16px, 4vw, 80px)));
+  will-change: transform;
 }
 
 /* ── ONE RULED SLAB ──────────────────────────────────────────────
@@ -1453,17 +1561,21 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    2026-09-06: it read as an infographic.) No blur: a flat fill on the
    black is the still beat this section is (grammar laws 6/7). */
 .dr-run {
-  /* THE ARRIVAL, per cell — one number. Pure f(--sp) inside the
-     grid's window: cells stagger left to right a tenth of the window
-     apart and each resolves in four tenths, so the last one is whole
-     while the slab is still in the bottom half of the screen. Past
-     --cp = 1 nothing here answers the scroll. */
+  /* a CARD now, not a cell in a slab: the track slides them past the
+     screen one at a time, so each has to hold together on its own */
+  flex: 0 0 clamp(260px, 54vw, 620px);
+  border-radius: clamp(14px, 1.4vw, 22px);
+  background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-1) 70%);
+  border: 1px solid rgba(255, 255, 255, .07);
+  /* the horizontal travel IS the reveal, so nothing fades in any more */
+  --cp: 1;
+  /* the old per-cell arrival, kept for the reduced-motion/no-JS column:
+     see the media queries at the end of this section */
   /* the four cells span .18 → .62 of the window, which is where the CARD
      finishes (--ap saturates at .588). The first timing had them running
      to .84 — the panel landed, went still, and then kept fading its own
      contents in for another third of the section, which reads as two
      events instead of one arrival. */
-  --cp: clamp(0, (var(--sp, 1) - .18 - var(--i) * .06) * 3.85, 1);
   opacity: var(--cp);
   position: relative;
   display: flex; flex-direction: column;
@@ -1472,10 +1584,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* the dividers: a hairline on every cell but the first, full cell
    height, so the ruled line crosses them and the slab reads as one
    ruled sheet rather than four boxes */
-.dr-run + .dr-run::before {
-  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
-  background: rgba(255, 255, 255, .10);
-}
+/* no dividers between cards — they have their own edges now */
 /* the ruled line, under the station row. Full-bleed within its cell —
    the negative inline margins run it out across the padding — so it
    meets its neighbours' at the dividers: ONE line across the slab,
@@ -1523,8 +1632,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    is the point: the four sit in a row as peers, so a demo made of large
    filled blocks has to be far dimmer per pixel than one made of a single
    hairline, or the row reads as one loud step and three quiet ones. */
-.dr-demo { --d-1: rgba(255, 255, 255, .30);
-           --d-2: rgba(255, 255, 255, .55);
+/* the demos are drawn in WHITE, which is invisible the moment the room
+   turns. Their two inks cross with --flip like everything else — same
+   alphas, opposite pigment. */
+.dr-demo { --d-1: color-mix(in oklab, rgb(255 255 255 / .30) calc((1 - var(--flip, 0)) * 100%), rgb(0 0 0 / .30));
+           --d-2: color-mix(in oklab, rgb(255 255 255 / .55) calc((1 - var(--flip, 0)) * 100%), rgb(0 0 0 / .55));
            display: block; margin-top: clamp(16px, 2svh, 24px);
            height: 46px; position: relative; }
 
@@ -1596,26 +1708,22 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 @keyframes dr-climb { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 
-@media (max-width: 1100px) {
-  .dr-runs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  /* two per row: a vertical divider only between a side-by-side pair,
-     and one row rule over the second row */
-  .dr-run:nth-child(odd)::before { display: none; }
-  .dr-run:nth-child(n+3)::after {
-    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
-    background: rgba(255, 255, 255, .10);
-  }
+/* THE PIN COMES OFF ON TOUCH. A sticky stage that eats three screens of
+   scroll is a bad trade on a phone: it fights native momentum, and a
+   horizontal track inside a vertical gesture is the one thing small
+   screens handle worst. Below 900 the stage collapses and the four steps
+   are simply a column — which is what they were before any of this, and
+   the layout the copy was written for. */
+@media (max-width: 900px) {
+  .dr-runs-stage { height: auto; }
+  .dr-runs-pin { position: static; height: auto; overflow: visible;
+                 display: block; }
+  .dr-runs-grid { display: grid; grid-template-columns: minmax(0, 1fr);
+                  width: auto; translate: none; will-change: auto; }
+  .dr-run { flex: initial; }
 }
 @media (max-width: 640px) {
-  .dr-runs-grid { grid-template-columns: minmax(0, 1fr); }
   .dr-demo { height: 40px; }
-  /* one column: rows, ruled between — the line under each station row
-     does the sequencing on its own */
-  .dr-run + .dr-run::before { display: none; }
-  .dr-run + .dr-run::after {
-    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
-    background: rgba(255, 255, 255, .10);
-  }
   /* the band unstacks. `display: contents` dissolves the wrapper so the
      kicker and the note become siblings of the lead and can be ordered
      around it — the note belongs UNDER the statement at this width, not
@@ -1629,10 +1737,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* the slab is LAYOUT and stays; the arrival is two numbers, so
-     resting it is two lines — slab in place, every line lit */
-  .dr-runs-grid { --ap: 1; }
-  .dr-run { --cp: 1; }
+  /* no pin and no sideways travel: the four steps rest as a column, the
+     way they read before the stage existed */
+  .dr-runs-stage { height: auto; }
+  .dr-runs-pin { position: static; height: auto; overflow: visible; display: block; }
+  .dr-runs-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+                  width: auto; translate: none; --ap: 1; }
+  .dr-run { flex: initial; --cp: 1; }
   .dr-run.is-in .dr-demo-call i,
   .dr-run.is-in .dr-demo-design i,
   .dr-run.is-in .dr-demo-build i,

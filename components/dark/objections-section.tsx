@@ -93,8 +93,11 @@ export default function ObjectionsSection() {
       data-sp-from="0.72"
       data-sp-to="0.22"
       data-sp-var="--gp"
-      data-bg-from="void"
-      data-bg-to="surface-2"
+      /* NO GROUND HERE ANY MORE. Every bg track writes its target EVERY
+         frame, clamped — so a track sitting at progress 0 paints its
+         `from` colour over the whole page above it. Two of them is one
+         too many: pointing this one at steel turned the entire top of
+         the site steel. The flip below §03 is the single owner now. */
     >
       <div className="wrap">
         {/* THE CARD RECEDES (decoded off itsoffbrand.com, see

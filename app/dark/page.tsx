@@ -277,9 +277,47 @@ export default function DarkRoom() {
 
       <ProofSection />
       <VoicesSection />
-      <RunsSection />
-      <ObjectionsSection />
-      <CloseSection />
+
+      {/* ══ THE FLIP ══════════════════════════════════════════════════
+          The room turns inside out between the testimonials and the
+          process (Jake, 2026-09-07: "i want the whole background to go
+          from black to white and the white aspects to go to black like
+          completely flip").
+
+          ⚠ SUPERSEDES the standing "never a light room mid-page" call
+          (decisions.md, 2026-09-06) — that one was made against a light
+          §04 revealed by a curtain lift, and it was the whole treatment
+          he rejected on sight. This is the opposite instruction, given
+          knowingly, so it wins; the old entry stays on the record.
+
+          ONE ELEMENT OWNS THE GROUND. Every bg track writes its target
+          every frame, clamped — so a track resting at progress 0 paints
+          its `from` colour over everything above it, and two of them
+          means the lower one wins the whole page. §04 and §05 both gave
+          theirs up for this.
+
+          The same track writes --flip, and the token block below re-mixes
+          EVERY colour in the room against it — ink, surfaces, edges — so
+          the inversion is one number and nothing can flip out of step
+          with anything else. Its subtree is the back half, which is why
+          the wrapper starts here and not at the top of the page. */}
+      <div
+        className="dr-flip"
+        data-sp
+        data-sp-from="0.86"
+        data-sp-to="0.3"
+        data-sp-var="--flip"
+        /* onto the ROOT, so the fixed light rig above this wrapper can
+           read it too — a var only inherits downward */
+        data-sp-target=".dr-root"
+        data-sp-lerp="0.1"
+        data-bg-from="void"
+        data-bg-to="#f2f2f4"
+      >
+        <RunsSection />
+        <ObjectionsSection />
+        <CloseSection />
+      </div>
     </div>
   );
 }

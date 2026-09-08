@@ -71,6 +71,13 @@ type Track = {
   edge: "top" | "bottom";
   /** custom property to write the 0→1 value into */
   varName: string;
+  /** WHERE to write it. Defaults to the element itself; data-sp-target
+      names an ancestor instead, exactly as data-bg-target already does
+      for the ground. Custom properties only inherit DOWNWARD, so an
+      effect whose ruler is deep in the page but whose consumers are
+      above it — a page-wide light rig fading as the room inverts — has
+      nowhere to put its value without this. */
+  varEl: HTMLElement;
   /** 0 = write the target directly. >0 = chase it at this rate per frame. */
   lerp: number;
   /** the damped value, carried between frames */
@@ -235,6 +242,9 @@ function read(el: HTMLElement): Track {
     to: num(el.getAttribute("data-sp-to"), 0),
     edge: el.getAttribute("data-sp-edge") === "bottom" ? "bottom" : "top",
     varName: el.getAttribute("data-sp-var") || "--sp",
+    varEl:
+      (el.closest<HTMLElement>(el.getAttribute("data-sp-target") || ":scope")) ??
+      el,
     bg: readBg(el),
     lerp: Math.max(0, Math.min(1, num(el.getAttribute("data-sp-lerp"), 0))),
     current: NaN, // first frame snaps, so nothing eases in from zero on load
@@ -257,7 +267,7 @@ export function useScrollEngine(deps: unknown[] = []) {
     if (still) {
       // resolved, not mid-flight: reduced motion gets the finished frame
       tracks.forEach((t) => {
-        t.el.style.setProperty(t.varName, "1");
+        t.varEl.style.setProperty(t.varName, "1");
         if (t.bg) {
           const [r, g, b] = t.bg.to;
           t.bg.target.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
@@ -326,7 +336,7 @@ export function useScrollEngine(deps: unknown[] = []) {
           value = t.current;
         }
 
-        t.el.style.setProperty(t.varName, String(value));
+        t.varEl.style.setProperty(t.varName, String(value));
         t.el.style.setProperty(`${t.varName}x`, `${value * vh}px`);
 
         if (t.bg) {
