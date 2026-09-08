@@ -32,8 +32,13 @@
       loses a name collision does not error — it just quietly becomes
       something else.
 
-      THE PEAKS are 88px, and there are TWO of them: the voices title and
-      §06's close. §02's statement was levelled UP to join them and that
+      THE PEAKS are 67px, and there are TWO of them: the voices title and
+      §06's close. 88 was too loud for both — the rung came down twice on
+      the same note from Jake ("title text on 2 and 4 looks massive",
+      then "the title for testimonials is still huge"), which is the
+      scale learning where this page's ceiling actually is: about 67px,
+      near where §02's statement sat before any of this and never drew a
+      complaint. §02's statement was levelled UP to join them and that
       was a misjudgement (Jake, 2026-09-07: "title text on 2 and 4 looks
       massive") — a section's statement is not the page's closing line,
       and sizing it like one over-promises. It sits on --fs-feature with
@@ -43,7 +48,7 @@
       four users were already 38 before this scale existed, and 43 made
       §04's lead — a whole sentence, not a short header — shout. Level a
       rung TOWARD the value already carrying most of its weight. */
---fs-display: clamp(2.3rem, 1.2rem + 5.2vw, 5.5rem);  /* 88 · the peaks */
+--fs-display: clamp(1.9rem, 1.1rem + 3.6vw, 4.2rem);  /* 67 · the peaks */
 --fs-feature: clamp(1.55rem, 1rem + 2.9vw, 3.5rem);   /* 56 · a quote */
 --fs-section: clamp(1.5rem, 1rem + 2vw, 2.4rem);      /* 38 · headers */
 --fs-lead:    clamp(1.3rem, 1rem + 1.5vw, 1.9rem);    /* 30 · statements */
@@ -1351,11 +1356,16 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    lands in a single glance and nothing here is scroll-jacked: a visitor
    deciding whether to call wants reassurance, not a ride. */
 .dr-runs { position: relative; z-index: 4;
-  /* THE THIRD SEAM is nothing at all. §03 ends and §04 begins on the same
-     black with no paint change, and the whole blank lives HERE, on one
-     value, so it can be measured: ≥0.55vh of silence before the repeated
-     opener. A silent gap before a still beat, which is what §04 is. */
-  --seam: clamp(220px, 55svh, 520px);
+  /* THE THIRD SEAM. It was 55svh — most of a screen of black — and that
+     was the right number when §04 was a bare ruled slab on the void: with
+     no paint change at the boundary, silence was the only thing marking
+     it. §04 brings its own surface now, and a lit card rising out of the
+     dark separates itself; the old gap on top of that read as a hole
+     (Jake, 2026-09-07: "the gap between the testimonial section and the
+     next is huge"). 22svh is a section break, not a chapter of nothing.
+
+     The blank still lives HERE, on one value, so it stays measurable. */
+  --seam: clamp(120px, 22svh, 260px);
   padding-block: var(--seam) clamp(80px, 14svh, 168px); }
 
 /* ── THE CARD · §04's ground, and its entrance ──────────────────
@@ -1610,7 +1620,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      kicker and the note become siblings of the lead and can be ordered
      around it — the note belongs UNDER the statement at this width, not
      jammed onto the kicker's line. */
-  .dr-runs { --seam: clamp(160px, 34svh, 300px); }
+  .dr-runs { --seam: clamp(90px, 16svh, 170px); }
   .dr-runs-head { display: flex; flex-direction: column; }
   .dr-runs-band { display: contents; }
   .dr-runs-kicker { order: 1; margin-bottom: var(--fib-3); }
