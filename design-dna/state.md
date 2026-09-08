@@ -86,6 +86,26 @@ nothing here is built yet except where noted:
 
 "and that's the whole home page."
 
+**THE FLIP IS BUILT AND PARKED** (2026-09-07, `4c90b5b`). Jake: "i do
+like the effect im not sure where i want to put it yet and there's some
+other stuff i want to do before i decide where."
+
+MOVING IT IS ONE EDIT. It is a wrapper in `app/dark/page.tsx` — whatever
+sits inside `<div className="dr-flip">` is the light half, and everything
+above it stays dark. Change which sections are inside it and the flip
+moves; delete the wrapper and the page is dark end to end. Nothing else
+in the room knows where the boundary is, because every colour is a
+color-mix against the one `--flip` value written onto `.dr-root`.
+
+The `--flip` window itself (`data-sp-from="0.86" data-sp-to="0.3"`) is
+measured on the wrapper's own top edge, so it follows the wrapper
+wherever it goes without retuning.
+
+KNOWN, NOT FIXED: §05's FAQ card is authored as a LIGHT card for a dark
+room (it redefines `--ink` to near-black on itself). It survives the
+light room better than expected but is the first thing to look at if the
+flip stays where it is.
+
 **Next step:** Jake's own top-to-bottom pass of /dark (he has seen nothing
 past seam #1 in the flesh). After that: dial whatever he flags, using a
 builder step per fix — each fix graduates into `checks.md` so it never
