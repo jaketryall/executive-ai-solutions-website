@@ -116,6 +116,29 @@ export default function RunsSection() {
   return (
     <section className="dr-runs" aria-labelledby="dr-runs-h">
       <div className="wrap">
+        {/* THE CARD IS THE BACKGROUND CHANGE (Jake, 2026-09-07: "we need a
+            big card … for the background change or something … it needs a
+            cool scroll reveal entrance and some sort of background
+            change"). §05 below already flips the PAGE ground void →
+            surface-2, so doing that here would be the same trick twice in
+            a row (law 1). Instead an object arrives and takes the frame:
+            a big lit panel, header and all four steps inside it, so that
+            when it is centred you are looking at a different ground than
+            the void without the room itself ever changing. Still dark —
+            a light room mid-page was rejected on sight (decisions.md).
+
+            ONE WINDOW FOR THE WHOLE SECTION. The scrub used to live on
+            the <ol>; it lives here now and --sp INHERITS down, so the
+            card's rise, the grid's settle and the four cells' stagger are
+            all the same number. The card cannot arrive out of step with
+            what is written on it, because there is only one clock. */}
+        <div
+          className="dr-runs-card"
+          data-sp
+          data-sp-from="1"
+          data-sp-to="0.55"
+          data-sp-lerp="0.1"
+        >
         {/* the header SPANS: kicker hard left, the reassurance hard
             right, on one baseline, so the right quadrant is not empty. */}
         <header className="dr-runs-head">
@@ -142,15 +165,8 @@ export default function RunsSection() {
             spent by the time its top is 62% of the way up, so the flight
             is whole while it is still low on the screen and the scroll
             has nothing left to move (laws 6/7 — the still beat). */}
-        <ol
-          className="dr-runs-grid"
-          data-sp
-          data-sp-from="1"
-          data-sp-to="0.62"
-          /* chase the target rather than snapping to it — the second
-             smoothing layer, matching the reference's own lerp constant */
-          data-sp-lerp="0.1"
-        >
+        {/* no window of its own any more — it reads the card's --sp */}
+        <ol className="dr-runs-grid">
           {STEPS.map((s, i) => {
             const Demo = DEMOS[s.demo];
             return (
@@ -181,6 +197,7 @@ export default function RunsSection() {
             );
           })}
         </ol>
+        </div>
       </div>
     </section>
   );

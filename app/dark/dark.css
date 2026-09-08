@@ -32,12 +32,20 @@
       loses a name collision does not error — it just quietly becomes
       something else.
 
-      THE PEAKS were 66px (§02's statement), 88px (the voices title) and
-      102px (§06's close): the three moments the page raises its voice,
-      each at a different volume. One volume now. */
+      THE PEAKS are 88px, and there are TWO of them: the voices title and
+      §06's close. §02's statement was levelled UP to join them and that
+      was a misjudgement (Jake, 2026-09-07: "title text on 2 and 4 looks
+      massive") — a section's statement is not the page's closing line,
+      and sizing it like one over-promises. It sits on --fs-feature with
+      the quotes now, a rung below.
+
+      --fs-section came back down to 38px for the same reason: two of its
+      four users were already 38 before this scale existed, and 43 made
+      §04's lead — a whole sentence, not a short header — shout. Level a
+      rung TOWARD the value already carrying most of its weight. */
 --fs-display: clamp(2.3rem, 1.2rem + 5.2vw, 5.5rem);  /* 88 · the peaks */
 --fs-feature: clamp(1.55rem, 1rem + 2.9vw, 3.5rem);   /* 56 · a quote */
---fs-section: clamp(1.6rem, 1rem + 2.2vw, 2.7rem);    /* 43 · headers */
+--fs-section: clamp(1.5rem, 1rem + 2vw, 2.4rem);      /* 38 · headers */
 --fs-lead:    clamp(1.3rem, 1rem + 1.5vw, 1.9rem);    /* 30 · statements */
 --fs-item:    clamp(1.05rem, .92rem + .6vw, 1.4rem);  /* 22 · card titles */
 --fs-read:    clamp(1rem, .95rem + .3vw, 1.125rem);   /* 18 · long copy */
@@ -868,7 +876,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   margin: 0 auto; max-width: 17ch; text-align: center;
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 640;
-  font-size: var(--fs-display);
+  /* a rung BELOW the peaks: a section's statement is not the page's
+     closing line, and sizing it like one over-promised */
+  font-size: var(--fs-feature);
   line-height: .98; letter-spacing: -0.035em;
   text-wrap: balance;
 }
@@ -1348,6 +1358,47 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   --seam: clamp(220px, 55svh, 520px);
   padding-block: var(--seam) clamp(80px, 14svh, 168px); }
 
+/* ── THE CARD · §04's ground, and its entrance ──────────────────
+   An OBJECT arrives and takes the frame, rather than the room changing
+   colour underneath you: §05 below already flips the page ground
+   void → surface-2, and two ground flips back to back are one device
+   used twice (law 1). Lit from the top — surface-2 falling to surface-1
+   — so it reads as a panel under a light rather than a flat swatch, and
+   it is still unmistakably dark. A light room mid-page was rejected on
+   sight and that decision stands.
+
+   THE REVEAL is transform-only: scale from a CONSTANT radius plus a
+   lift, no clip-path, no inset growth, no radius animation. That is not
+   fussiness — a rounded clip or an inset+radius grow re-rasters this
+   whole panel every frame (measured at 50ms on 2560 elsewhere in this
+   room), where a scale rides the compositor for nothing.
+
+   It rises from its own BOTTOM edge, so the card grows UP into the space
+   the seam left rather than sliding into it — the same direction of
+   travel as everything else in the back half. */
+/* the card takes §03's measure, not the page column's. At 2560 the shared
+   .wrap caps at 1290px, which is half the viewport — a panel that is meant
+   to read as the ground cannot be a stripe down the middle of one. 1760 is
+   the proof row's own max-width, so the two widest objects on the page
+   agree. */
+.dr-runs .wrap { max-width: min(1760px, 94vw); }
+
+.dr-runs-card {
+  /* ONE number for the whole section: the header's arrival, the grid's
+     settle and each cell's stagger are all read off this, inherited. */
+  --ap: clamp(0, var(--sp, 1) * 1.7, 1);
+  position: relative;
+  padding: clamp(30px, 4.4vw, 76px) clamp(20px, 2.6vw, 48px) clamp(26px, 3.4vw, 60px);
+  border-radius: clamp(18px, 2vw, 32px);
+  background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-1) 62%);
+  border: 1px solid rgba(255, 255, 255, .07);
+  transform-origin: 50% 100%;
+  scale: calc(.945 + .055 * var(--ap));
+  translate: 0 calc((1 - var(--ap)) * 54px);
+  opacity: var(--ap);
+  will-change: transform;
+}
+
 .dr-runs-head { margin-bottom: clamp(26px, 4.4svh, 52px); }
 /* kicker left, reassurance right, one baseline */
 .dr-runs-band { display: flex; align-items: baseline; justify-content: space-between;
@@ -1370,18 +1421,16 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 .dr-runs-grid { list-style: none; margin: 0; padding: 0;
   --pad: clamp(18px, 1.7vw, 26px);
-  /* the slab's own arrival: whole by four tenths of the window, so the
-     cells' stagger (--cp, below) plays on a surface that is already
-     there. The window itself is unchanged (an ENTRANCE, grid-top 1vh →
-     .62vh) — see the <ol> in runs-section.tsx. */
-  --ap: clamp(0, var(--sp, 1) * 2.5, 1);
   position: relative;
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0;
   border-radius: clamp(12px, 1.3vw, 18px);
-  background: rgba(255, 255, 255, .05);
-  border: 1px solid rgba(255, 255, 255, .08);
-  translate: 0 calc((1 - var(--ap)) * 18px);
-  opacity: var(--ap);
+  /* a lighter inlay ON the card, not a slab on the void — the card is
+     the surface now, so this only has to separate the steps from the
+     header above them */
+  background: rgba(255, 255, 255, .035);
+  border: 1px solid rgba(255, 255, 255, .07);
+  /* NO arrival of its own: it would double the card's, and it used to
+     own the window the card now carries */
 }
 
 /* ── ONE RULED SLAB ──────────────────────────────────────────────
@@ -1399,7 +1448,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      apart and each resolves in four tenths, so the last one is whole
      while the slab is still in the bottom half of the screen. Past
      --cp = 1 nothing here answers the scroll. */
-  --cp: clamp(0, (var(--sp, 1) - var(--i) * 0.1) * 2.5, 1);
+  /* the four cells span .18 → .62 of the window, which is where the CARD
+     finishes (--ap saturates at .588). The first timing had them running
+     to .84 — the panel landed, went still, and then kept fading its own
+     contents in for another third of the section, which reads as two
+     events instead of one arrival. */
+  --cp: clamp(0, (var(--sp, 1) - .18 - var(--i) * .06) * 3.85, 1);
   opacity: var(--cp);
   position: relative;
   display: flex; flex-direction: column;
