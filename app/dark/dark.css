@@ -2000,8 +2000,23 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    The default is .5, not 1 or 0: with no JS every quote resolves to
    --lit 1 and the column reads whole and still. */
 .dr-voice {
-  /* the tent: 0 at both ends of the pass, 1 in the middle */
-  --t: clamp(0, min(var(--sp, .5) * 2, (1 - var(--sp, .5)) * 2), 1);
+  /* THE TENT IS ASYMMETRIC, and it has a FLAT TOP (Jake, 2026-09-08:
+     "each quote section leaves too fast"). At 2 and 2 it was a symmetric
+     triangle that touched 1 at exactly one instant — --sp .5 — so a quote
+     was fading either into or out of the light at every other moment of
+     its pass and never simply WAS lit. That is what reads as leaving too
+     fast: not the exit rate, the absence of a hold.
+
+     3.6 in, 2.2 out. --sp runs 0 at the bottom of the screen to 1 at the
+     top, so the first branch governs the ARRIVAL and the second the
+     DEPARTURE:
+       arrival ramp   --sp 0    → .278   (28% of the pass)
+       held at 1      --sp .278 → .545   (27%, the read)
+       departure ramp --sp .545 → 1      (45%)
+     The exit is now nearly twice the entry, which is the asymmetry a
+     quote wants: it should arrive briskly and linger on the way out,
+     because the way out is when you are still finishing the sentence. */
+  --t: clamp(0, min(var(--sp, .5) * 3.6, (1 - var(--sp, .5)) * 2.2), 1);
   /* SQUARED, which is the whole difference between a light and a fade.
      The bare tent left both neighbours near half strength at the middle
      quote's peak (.51 and .57 measured) — three quotes all half-lit is
@@ -2083,15 +2098,22 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    transform do not). */
 .dr-voice figure { margin: 0; text-align: center; }
 .dr-voice-card {
+  /* NAMED, because three other rules have to agree with them: the
+     surface's radius, the extension's radius, and the handoff face,
+     which is absolutely positioned and has to line its own edges up with
+     this padding. They were inline literals until the face needed them
+     (2026-09-08) and a copy would drift. */
+  --cx: clamp(26px, 3.6vw, 68px);
+  --ct: clamp(40px, 5.4svh, 68px);
+  --cr: clamp(18px, 1.7vw, 28px);
   position: relative;
   max-width: min(1080px, 100%);
   margin-inline: auto;
-  padding: clamp(40px, 5.4svh, 68px) clamp(26px, 3.6vw, 68px)
-           clamp(28px, 3.8svh, 44px);
+  padding: var(--ct) var(--cx) clamp(28px, 3.8svh, 44px);
 }
 .dr-voice-card::before {
   content: ""; position: absolute; inset: 0; z-index: -1;
-  border-radius: clamp(18px, 1.7vw, 28px);
+  border-radius: var(--cr);
   /* a LIFTED panel, not a flat fill: surface-2 at the top falling to
      surface-1 is the same light §04's card is built from, so the two
      objects in the back half are made of the same material. A single
@@ -2160,6 +2182,146 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   color: var(--ink-4);
   font-family: var(--font-instrument), sans-serif;
   font-size: var(--fs-small); line-height: 1.2;
+}
+
+/* ══ THE HANDOFF · the last quote becomes the first step card ═══
+   Jake, 2026-09-08: "i want the last testimonial card to grow downwards
+   as it moves up, text transforms or animates or something and becomes
+   the first card of the horizontal scroll".
+
+   ONE VALUE, --m, taken off the --sp the quote already has. --sp runs 0
+   at the bottom of the screen to 1 at the top, so the departure is the
+   back half of the pass; --m opens at .55 — the frame the light starts
+   to go — and completes at 1, when the card's top reaches the top of the
+   screen. So the light leaving and the card converting are the same
+   event rather than two, and the whole thing scrubs backwards exactly.
+
+   Default 0 with no JS (the tent above defaults --sp to .5 because it
+   wants the finished frame; this wants the UNstarted one, hence the
+   different fallback on the same var — deliberate, not a slip). */
+.dr-voice--hand {
+  /* .5 → .84, NOT .55 → 1. Completing at --sp 1 means completing at the
+     instant the card's TOP reaches the top of the screen — measured, the
+     card body was already 10px above the fold and the only thing left in
+     view was the face, so the growing never actually happened on screen.
+     Finishing at .84 leaves the card's top at .16vh (117px at 1440) with
+     the body and the opened room below it whole in frame, and the
+     converted card then rides the last 117px out fully lit. */
+  --m: clamp(0, (var(--sp, 0) - .5) / .34, 1);
+  /* how far the surface opens, in px. NOT a ratio of the card's height:
+     the card is as tall as its quote is long, and the face that has to
+     fit in the opened space is a fixed stack (station row + rail + well).
+     A ratio would make the room the face gets depend on how wordy the
+     last client was. */
+  --grow: clamp(96px, 17.5svh, 142px);
+  /* IT DOES NOT DIM ON THE WAY OUT — it converts. max() means the light
+     the tent is taking away is handed straight to the morph, so the card
+     stays lit while it becomes a step card instead of fading to the .5
+     floor with a step card's face on it, invisible. */
+  opacity: calc(.5 + .5 * max(var(--lit), var(--m)));
+}
+.dr-voice--hand .dr-voice-card::before {
+  opacity: calc(.14 + .86 * max(var(--lit), var(--m)));
+  /* the bottom edge dissolves as the extension below opens, or the card
+     keeps a rule and a pair of corners across its own middle */
+  border-bottom-color: color-mix(in oklab, transparent calc(min(var(--m) * 1.7, 1) * 100%), var(--edge));
+  border-bottom-left-radius: calc(var(--cr) * (1 - var(--m)));
+  border-bottom-right-radius: calc(var(--cr) * (1 - var(--m)));
+}
+/* THE EXTENSION. A CONSTANT box of --grow, revealed by a scaleY from its
+   own top edge — so the surface opens downward on a pure transform and
+   never re-rasterises. Growing the ::before's `bottom` instead would
+   repaint a 1025px rounded box every frame, which is the exact cost the
+   flip was just taken off the page for. The bottom corners scale with
+   the reveal — flat early, exactly --cr at the end, which is the only
+   frame anyone reads them in. */
+.dr-voice--hand .dr-voice-card::after {
+  content: ""; position: absolute; z-index: -1;
+  /* OVERLAPPED BY A PIXEL. Flush at `top: 100%` the two layers left a
+     subpixel hairline of the void between them at fractional scroll
+     positions — a faint rule straight across the converted card, exactly
+     where its old bottom edge used to be, which reads as the seam the
+     border fade above exists to remove. */
+  top: calc(100% - 1px); left: 0; right: 0; height: calc(var(--grow) + 1px);
+  background: var(--surface-1);
+  border: 1px solid var(--edge); border-top: 0;
+  border-radius: 0 0 var(--cr) var(--cr);
+  opacity: calc(.14 + .86 * max(var(--lit), var(--m)));
+  transform-origin: 50% 0;
+  transform: scaleY(var(--m));
+}
+/* the quote lifts out of the card it was in — front-loaded so the words
+   are gone by the time the face underneath is legible, and the two never
+   overlap as two things being read at once (out by --m .5, in from .44) */
+.dr-voice--hand { --qout: clamp(0, var(--m) * 2, 1); }
+.dr-voice--hand blockquote {
+  opacity: calc(1 - var(--qout));
+  translate: 0 calc(var(--qout) * -24px);
+}
+.dr-voice--hand .dr-voice-rule { opacity: calc(1 - var(--qout)); }
+.dr-voice--hand figcaption {
+  opacity: calc(var(--c) * (1 - var(--qout)));
+}
+/* THE FACE FILLS THE CARD — it does not sit under it. The first cut put
+   it in the opened room at `top: 100%`, and the result was a tall empty
+   card with a small step card stuck to its bottom: the quote had gone but
+   the space it occupied had not, so the conversion read as a card
+   emptying out rather than as a card becoming something else. The face
+   starts where the quote started, and --grow exists only because a step
+   card is taller than a two-line quote, not because the face lives below.
+
+   Absolutely positioned, so it costs the card no layout at any point:
+   the column's height is identical whether the handoff has run or not,
+   and §04 never moves under it. */
+.dr-voice-hand {
+  /* .dr-run-rail runs itself out across this, exactly as it does in §04 */
+  --pad: clamp(18px, 1.7vw, 26px);
+  --f: clamp(0, (var(--m, 0) - .44) * 2.8, 1);
+  position: absolute;
+  top: var(--ct); left: var(--cx); right: var(--cx);
+  display: block;
+  /* LEFT, where the quote was centred. §04's cards are left-set and the
+     realignment is half of what makes this read as a conversion rather
+     than a swap — the type changes its mind about where it lives. */
+  text-align: left;
+  /* the surface opens first, the face arrives into it: one event, two
+     beats */
+  opacity: var(--f);
+  translate: 0 calc((1 - var(--f)) * 16px);
+}
+/* THE WELL KEEPS §04's SIZE. Left to span this card it stretched to
+   ~1280px against §04's 570 — the same waveform, but a strip rather than
+   a screen, and the artifact is the most recognisable thing carrying the
+   seam. Capped, it is literally the object §04 opens with; the header,
+   rail, title and copy still span the wider card, which is what a single
+   step card gets to do when it is not one of four in a row. */
+.dr-voice-hand .dr-run-well {
+  max-width: clamp(260px, 54vw, 620px);
+  height: clamp(96px, 15svh, 130px);
+  margin-top: clamp(12px, 1.6svh, 18px);
+}
+/* §04's own title and copy rules are scoped to .dr-run, so the face
+   restates them rather than reaching for them — same tokens, same
+   weights, same measure */
+.dr-voice-hand-h {
+  display: block; margin-top: clamp(14px, 2svh, 22px); color: var(--ink);
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 620;
+  font-size: var(--fs-item); line-height: 1.1; letter-spacing: -0.022em;
+}
+.dr-voice-hand-p {
+  display: block; margin-top: var(--fib-2); color: var(--ink-3);
+  max-width: 46em;
+  font-family: var(--font-instrument), sans-serif;
+  font-size: var(--fs-body-s); line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* the handoff is motion over a frame that is already correct, and the
+     correct resting frame is the QUOTE — so the conversion simply does
+     not run and the face is not there at all */
+  .dr-voice--hand { --m: 0; }
+  .dr-voice-hand { display: none; }
 }
 
 @media (max-width: 900px) {

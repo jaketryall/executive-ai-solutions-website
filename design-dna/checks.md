@@ -105,3 +105,11 @@ bug; never delete a line.
 - `--flip` computed on `.dr-root` reaches exactly `0` and exactly `1` at the ends of its window — the step must divide 1 evenly or the room never finishes inverting.
 - The page ground (`.dr-root` background-color) is CONTINUOUS through the flip: sampling it at 50px intervals gives a strictly monotonic ramp with no repeated value.
 - Every `[data-sp]` track still publishes a non-empty value at every scroll position (the skip-identical-write guard must never leave a var unset — 15 tracks, checked top to bottom).
+
+## The voices→§04 seam
+- `.dr-voice--hand`'s computed opacity never drops below 1 once `--m` passes 1 — the converting card must not dim on its way out (the `max(--lit, --m)` is what guarantees it; keying either surface to `--lit` alone puts a step card's face on a half-faded card).
+- The `.dr-voice-card::after` extension's computed transform is a `scaleY`, never a height or `bottom` change — a rounded box whose geometry moves re-rasters every frame.
+- At `--m` 1 there is no horizontal rule across the converted card: `::before`'s `border-bottom-color` has reached full transparency and its bottom corner radii are 0, and the two layers overlap by 1px.
+- Scrolling 5px/frame through the whole voices column including the conversion, no frame exceeds 20ms.
+- The handoff face renders `STEPS[0]` and the imported `DemoCall` — never a local copy. If §04's first step is renamed or its demo changed, this face changes with it or the seam is a lie.
+- `prefers-reduced-motion: reduce`: `--m` is 0 and `.dr-voice-hand` is `display: none` — the correct resting frame here is the QUOTE, not the converted card.

@@ -1,4 +1,5 @@
 import { QUOTES } from "@/lib/quotes";
+import { STEPS, DemoCall } from "./runs-section";
 
 /* IN THEIR WORDS — the section between §03 and §04
    Between the proof and the process: §03 shows the work, §04 shows the
@@ -39,7 +40,26 @@ import { QUOTES } from "@/lib/quotes";
 
    BUILT FOR FEW. Three quotes as three cards look like a grid missing its
    fourth. Three quotes as three full-width statements look deliberate,
-   and a fourth simply makes the column longer. */
+   and a fourth simply makes the column longer.
+
+   THE LAST ONE HANDS OVER TO §04 (Jake, 2026-09-08: "i want the last
+   testimonial card to grow downwards as it moves up, text transforms or
+   animates or something and becomes the first card of the horizontal
+   scroll"). It does not dim on its way out the way the other two do — it
+   CONVERTS: the surface opens downward, the quote lifts out of it, and
+   the first step card's face fades into the room the surface just made.
+   By the time it leaves the screen it is a process card, and §04 opens
+   on the same card a screen later.
+
+   ⚠ WHAT THIS IS NOT: a pixel-continuous morph into §04's own card 01.
+   That card lives inside a sticky pinned panel whose own overflow clips
+   it, and it is 476px of scroll below the point where this quote has
+   already left the top of the screen (measured at 1440) — so a literally
+   continuous handoff needs a fixed-position element flown to the pinned
+   card's measured rect, re-measured on resize. This carries the seam on
+   IDENTITY OF FORM instead: the same header row, the same rail, the same
+   waveform in the same well, arriving in the same shape. It survives
+   resize, back-scroll and touch, and it costs two transforms. */
 
 export default function VoicesSection() {
   return (
@@ -118,7 +138,11 @@ export default function VoicesSection() {
         </header>
 
         <ul className="dr-voices-list">
-          {QUOTES.map((q, i) => (
+          {QUOTES.map((q, i) => {
+            /* THE LAST ONE HANDS OVER. See the block comment below the
+               list and the stylesheet's .dr-voice--hand. */
+            const isLast = i === QUOTES.length - 1;
+            return (
             /* EACH QUOTE OWNS ITS OWN LIGHT. It declares the window of its
                whole pass across the screen and the engine writes --sp;
                the stylesheet folds that into a peak at the middle of the
@@ -132,7 +156,7 @@ export default function VoicesSection() {
                triggered, and it scrubs backwards exactly. */
             <li
               key={q.text}
-              className="dr-voice"
+              className={isLast ? "dr-voice dr-voice--hand" : "dr-voice"}
               style={{ "--i": i } as React.CSSProperties}
               data-sp
               data-sp-from="1"
@@ -153,9 +177,45 @@ export default function VoicesSection() {
                 <figcaption>
                   <span>{q.name}</span>
                 </figcaption>
+
+                {/* THE HANDOFF FACE. It is the FIRST STEP CARD's face,
+                    built from the same STEPS entry and the same demo
+                    component §04 renders — imported, not copied, because
+                    two hand-kept copies of "01 · Day 1 · the waveform"
+                    would drift the first time either is edited and the
+                    whole point of this seam is that the two are the same
+                    object.
+
+                    It lives in the space the card's surface opens up
+                    below the quote (see .dr-voice--hand in the
+                    stylesheet), and it is aria-hidden: §04 says all of
+                    this again, properly, a screen later — to a screen
+                    reader this is a decorative preview of a heading that
+                    is about to arrive, not a second copy of it. */}
+                {isLast && (
+                  <span className="dr-voice-hand" aria-hidden>
+                    <span className="dr-run-top">
+                      <span className="dr-run-n">{STEPS[0].n}</span>
+                      <span className="t-label dr-run-meta">
+                        {STEPS[0].meta}
+                      </span>
+                    </span>
+                    <i className="dr-run-rail" />
+                    <span className="dr-run-well">
+                      <DemoCall />
+                    </span>
+                    {/* the whole face, not a stub of one: a step card is
+                        a title and a sentence under its artifact, and
+                        without them the conversion lands on something
+                        that is recognisably not what §04 opens with */}
+                    <span className="dr-voice-hand-h">{STEPS[0].title}</span>
+                    <span className="dr-voice-hand-p">{STEPS[0].copy}</span>
+                  </span>
+                )}
               </figure>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </div>
     </section>

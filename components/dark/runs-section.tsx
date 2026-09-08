@@ -24,7 +24,7 @@
    FINISHED state, so no-JS and reduced-motion read the completed story
    rather than an empty box. */
 
-const STEPS = [
+export const STEPS = [
   {
     n: "01",
     title: "The call",
@@ -64,7 +64,7 @@ const STEPS = [
    what an audio meter actually looks like. Prime, so the 13-step height
    cycle in the stylesheet never lands in phase with the ends and the
    pattern does not read as tiled. */
-function DemoCall() {
+export function DemoCall() {
   return (
     <span className="dr-demo dr-demo-call" aria-hidden>
       {Array.from({ length: 41 }, (_, i) => (
