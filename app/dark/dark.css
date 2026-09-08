@@ -2118,10 +2118,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    on a layer this big is a mask Chrome re-rasterises every frame: 50ms
    frames measured at 2560 against 33 without it. Growing a solid box by
    its inset and radius was tried second and re-rastered just the same.
-   So the surface is a CONSTANT box — laid out 6% wider than the card so
-   that at full its corners sit past the edges and the card's own
-   overflow squares them, with a fixed radius — and the only thing that
-   ever changes on it is its transform: scaled down on X to today's
+   So the surface is a CONSTANT box — laid out 6% wider than the card,
+   with a fixed radius — and the only thing that ever changes on it is
+   its transform: scaled down on X to today's
    column at the fold, back up to full at the top. Rastered once, then a
    quad. The text above it is never repainted, and nothing that is
    measured ever moves. Below 900px there is no pin, so there is no
@@ -2140,6 +2139,16 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
     --cf: tan(atan2(1400px - 2 * var(--fib-5), 100vw));
     --s0: min(var(--cf), .84);
     --R: clamp(16px, 2vw, 30px);
+    /* IT STOPS SHORT OF THE EDGES (Jake, 2026-09-07: "i want it to be a
+       card that is almost full screen but has small gaps on the edges").
+       It used to grow to the full 106% box, whose sides sit past the
+       viewport — full bleed, corners squared off by the overflow. Now the
+       grown end is a real card: 100vw less a gutter either side, so the
+       shape keeps its edges and its radius the whole way and never stops
+       being an object. Same triangle trick as --cf above, because calc()
+       still cannot divide two lengths. */
+    --gapx: clamp(12px, 1.6vw, 28px);
+    --full: tan(atan2(100vw - 2 * var(--gapx), 106vw));
     /* the exit, on the last 85% of the fade's window so that on any
        card at least .85vh tall it cannot begin before the grow has
        finished; whichever of the two is larger holds the shape, so the
@@ -2151,8 +2160,10 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
     --xf: .5;
     --kx: calc((var(--xf) * .5 * (1 - var(--s0)) + .03) / (.5 * (1 - var(--s0)) + .03));
     --k: max(1 - var(--hero-p, 0), var(--kx) * var(--xp));
-    /* 1 = the full 106% box; at k = 1 the box is exactly today's column */
-    --sx: calc(1 - (1 - var(--s0) / 1.06) * var(--k));
+    /* --full = the grown card (100vw less its gutters); at k = 1 the box
+       is exactly today's column. Only the top of the ramp moved — every
+       other number in this block still means what it meant. */
+    --sx: calc(var(--full) - (var(--full) - var(--s0) / 1.06) * var(--k));
   }
   .dr-svc-in::before {
     content: ""; position: absolute; z-index: -1;
