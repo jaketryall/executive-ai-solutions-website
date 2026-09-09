@@ -1224,9 +1224,9 @@ section[id] {
      bar just rides the viewport, nothing amplifies it. Matched. */
   bottom: 16px;
   z-index: 45;
-  display: flex;
-  align-items: center;
-  gap: 13px;
+  /* a COLUMN now, not a row: the sheet unfolds above the bar inside this
+     same pill (see .mnav-sheet) and the bar itself is .mnav-row */
+  display: block;
   padding: 8px;
   border-radius: var(--radius-capsule);
   /* SOLID, no backdrop-filter (2026-08-13, Jake: the bar "stutters, not
@@ -1250,6 +1250,104 @@ section[id] {
     transform 0.45s var(--ease-structure),
     opacity 0.3s var(--ease-ui);
 }
+.mnav-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+/* ── THE SHEET ── decoded off itsjay.us on a 420px viewport, 2026-09-08:
+   the menu is not an overlay, it is part of the bar. Measured there, the
+   pill runs 78px → 323px in ~410ms while its BOTTOM EDGE stays at 844 in
+   both states — the bar holds its place and the panel unfolds upward out
+   of it. Ours matches that: the bar is anchored by `bottom`, so growing
+   this wrapper can only push the pill's top edge up.
+
+   `grid-template-rows: 0fr → 1fr` animates an auto height with no JS
+   measurement; the inner div carries its own overflow:hidden, without
+   which the links spill out of the pill for the length of the run.
+
+   The curve is --ease-ui (0.26, 1, 0.42, 1) — his measured about 74% of
+   the travel in the first quarter, which is this family, not the slow
+   symmetric structural curve. A panel answering a tap should be gone-fast
+   and settle long. */
+.mnav-sheet {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.41s var(--ease-ui);
+}
+.mnav.is-open .mnav-sheet {
+  grid-template-rows: 1fr;
+}
+.mnav-sheet-in {
+  overflow: hidden;
+}
+.mnav-sheet-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 8px 4px;
+  border-bottom: 1px solid rgba(239, 240, 238, 0.1);
+  margin-bottom: 8px;
+}
+.mnav-sheet-link {
+  padding: 13px 5px;
+  color: var(--color-paper);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  /* each link fades in behind the unfold so they do not arrive full-strength
+     while the panel is still a slot */
+  opacity: 0;
+  transition: opacity 0.2s var(--ease-ui);
+}
+.mnav.is-open .mnav-sheet-link {
+  opacity: 1;
+  transition-delay: 0.12s;
+}
+.mnav-sheet-mail {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: rgba(239, 240, 238, 0.62);
+}
+
+/* the mark's old slot — two rules that cross into an X */
+.mnav-burger {
+  border: 0;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+}
+.mnav-burger > span {
+  display: block;
+  width: 17px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: rgba(239, 240, 238, 0.9);
+  transition:
+    transform 0.28s var(--ease-ui),
+    opacity 0.2s var(--ease-ui);
+}
+.mnav.is-open .mnav-burger > span:first-child {
+  transform: translateY(3.25px) rotate(45deg);
+}
+.mnav.is-open .mnav-burger > span:last-child {
+  transform: translateY(-3.25px) rotate(-45deg);
+}
+
+/* ONE menu toggle on a phone. The top capsule's hamburger opens the
+   full-screen overlay, which the sheet now replaces below the bar's own
+   breakpoint — two hamburgers opening two different menus is the kind of
+   thing that reads as a bug. */
+@media (max-width: 820px) {
+  .hamb { display: none !important; }
+  /* AND the overlay it opened. Both are driven by the same `open` state, so
+     hiding only the trigger left the full-screen overlay still mounting on
+     top of the sheet — the bar grew correctly underneath a black sheet of
+     nothing. The sheet IS the mobile menu now. */
+  .ov { display: none !important; }
+}
+
 .mnav.is-away {
   transform: translateY(180%);
   opacity: 0;
@@ -1315,6 +1413,9 @@ section[id] {
   .mnav {
     transition: opacity 0.2s linear;
   }
+  .mnav-sheet { transition: none; }
+  .mnav-sheet-link { transition: none; }
+  .mnav-burger > span { transition: none; }
 }
 
 /* ── the risk-reversal bento tile (Apple surface law — flat white on the
