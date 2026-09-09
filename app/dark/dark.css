@@ -1402,7 +1402,17 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      own bottom padding, and 60 more from the quote's exit lift, which is
      motion this section does not get to charge for). */
   --seam: clamp(24px, 4svh, 64px);
-  padding-block: var(--seam) clamp(80px, 14svh, 168px); }
+  padding-block: var(--seam) clamp(80px, 14svh, 168px);
+  /* THE RAIL OVERLAPS THE HOLD (Jake: "can we get the steps after to start
+     coming in now"). Measured, the title card holds for ~300px of scroll and
+     the first step card did not cross the fold until 322px in — so the steps
+     arrived just AFTER the title let go, and the hold was a card sitting
+     alone on a black screen. Pulled up by roughly a third of a viewport, the
+     rail is at the fold as the hold begins and climbs through it: by the time
+     the title releases there is real content under it. The negative margin
+     does not shorten the hold — that is bounded by the list's content box,
+     which this does not touch. */
+  margin-top: calc(-1 * clamp(180px, 33svh, 320px)); }
 
 /* ── THE CARD · §04's ground, and its entrance ──────────────────
    An OBJECT arrives and takes the frame, rather than the room changing
@@ -1536,6 +1546,19 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   /* ONE number for the whole section: the header's arrival, the grid's
      settle and each cell's stagger are all read off this, inherited. */
   --ap: clamp(0, var(--sp, 1) * 1.7, 1);
+  /* THE LEAD CARD'S WIDTH, named here so the card itself and the centring
+     offset below cannot disagree. It opens at quote width and closes to a
+     rail card's — the whole conversion is this one number and a crossfade. */
+  --rail-w: clamp(260px, 54vw, 620px);
+  --quote-w: min(1080px, 92vw);
+  --lead-w: calc(
+    var(--rail-w) + (var(--quote-w) - var(--rail-w)) * (1 - var(--lead, 1))
+  );
+  /* CENTRE THE LEAD WHILE IT IS WIDE. The track starts at the column's left
+     edge, so a quote-width first card would otherwise arrive hard left. The
+     shift goes HERE and not on the track, because `50%` has to mean the
+     column's width — inside the track it would resolve against max-content. */
+  translate: calc((1 - var(--lead, 1)) * (50% - var(--lead-w) / 2));
   /* no surface of its own any more: the ROOM changed instead, and a
      panel on a panel is one surface too many */
   position: relative;
@@ -1579,7 +1602,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   position: relative;
   display: flex; width: max-content;
   gap: clamp(14px, 1.6vw, 28px);
-  translate: calc(var(--sp, 0) * (100vw - 100% - 2 * clamp(16px, 4vw, 80px)));
+  /* THE RAIL WAITS FOR THE LEAD. The first quarter of the stage belongs to
+     the conversion — the lead card is still a quote there, and sliding the
+     track under it would have step 02 arriving beside a testimonial. */
+  translate: calc(
+    clamp(0, (var(--sp, 0) - .25) / .75, 1)
+    * (100vw - 100% - 2 * clamp(16px, 4vw, 80px))
+  );
   will-change: transform;
 }
 
@@ -1851,6 +1880,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-runs-grid { display: grid; grid-template-columns: minmax(0, 1fr);
                   width: auto; translate: none; will-change: auto; }
   .dr-run { flex: initial; }
+
 }
 @media (max-width: 640px) {
   .dr-run-well { height: clamp(84px, 15svh, 112px); }
@@ -2298,198 +2328,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   font-size: var(--fs-small); line-height: 1.2;
 }
 
-/* THE HOLD — see the note in voices-section.tsx. Height only; the gap above
-   it is the list's own, absorbed. */
-/* 35svh, NOT 96. At a full screen the card held alone with nothing arriving
-   and §04's own header 837px further down — a screen of dead scroll between
-   the payoff and the section that explains it (Jake: "the other cards never
-   appear"). They always did render; they were just a screen late. */
-.dr-voices-hold { display: block; height: 35svh; pointer-events: none; }
-
-/* ══ THE HANDOFF · the last quote becomes the first step card ═══
-   Jake, 2026-09-08: "i want the last testimonial card to grow downwards
-   as it moves up, text transforms or animates or something and becomes
-   the first card of the horizontal scroll".
-
-   ONE VALUE, --m, taken off the --sp the quote already has. --sp runs 0
-   at the bottom of the screen to 1 at the top, so the departure is the
-   back half of the pass; --m opens at .55 — the frame the light starts
-   to go — and completes at 1, when the card's top reaches the top of the
-   screen. So the light leaving and the card converting are the same
-   event rather than two, and the whole thing scrubs backwards exactly.
-
-   Default 0 with no JS (the tent above defaults --sp to .5 because it
-   wants the finished frame; this wants the UNstarted one, hence the
-   different fallback on the same var — deliberate, not a slip). */
-.dr-voice--hand {
-  /* IT STICKS AT THE FRAME IT FINISHES TRANSFORMING, and that is the
-     mechanism rather than a coincidence. `--m` is driven by `--sp`, which the
-     engine computes from this card's OWN rect — so the moment sticky pins the
-     rect, `--sp` stops changing and the conversion freezes at exactly the
-     value it had. The stick point IS the end of the morph: --m reaches 1 at
-     --sp .84, which is this card's top at .16vh, so that is the offset it
-     holds at, less the 41px the lens's own travel has already lifted it by
-     at that point. How LONG it holds is `.dr-voices-hold` above. */
-  position: sticky;
-  /* SOLVED, not guessed — the resting offset and the lens's own travel depend
-     on each other. The card holds at .155vh, at which point --sp reads .845
-     and the lens has already lifted it by (.5 - .845) x 120 = 41px, so the
-     sticky offset has to ADD that back. The first attempt subtracted it and
-     the card came to rest 50px from the top of the screen, underneath the
-     fixed nav. The 41 is viewport-independent (the lens travel is a fixed
-     120px), so this holds at every height: 114px at 734, 140px at 900. */
-  /* CENTRED, re-solved (Jake: "i dont like where this sits when its sticky
-     needs to feel centered"). Same simultaneous equation as before — the
-     resting offset and the lens's own travel depend on each other — just
-     aimed lower: the card rests at .28vh, where --sp reads .72 and the lens
-     has lifted it (.5 - .72) x 120 = 26px, so the offset adds that back. A
-     250-370px card resting at .28vh leaves roughly equal air above and below
-     at both 734 and 900. */
-  top: calc(28svh + 26px);
-  /* .5 → .84, NOT .55 → 1. Completing at --sp 1 means completing at the
-     instant the card's TOP reaches the top of the screen — measured, the
-     card body was already 10px above the fold and the only thing left in
-     view was the face, so the growing never actually happened on screen.
-     Finishing at .84 leaves the card's top at .16vh (117px at 1440) with
-     the body and the opened room below it whole in frame, and the
-     converted card then rides the last 117px out fully lit. */
-  /* ⚠ THIS WINDOW AND THE STICKY OFFSET ARE ONE MECHANISM — changing either
-     alone breaks the other, and doing exactly that is how this shipped
-     broken. --sp is computed from the card's own rect, so it FREEZES at
-     whatever value the stick point gives it; the morph therefore has to
-     complete at precisely that value. At the old .155vh offset --sp froze at
-     .845 and .5/.34 reached 1. Centring the card moved the offset to .28vh,
-     --sp now freezes at .72, and .5/.34 froze the morph two-thirds done — the
-     card held on screen at 48% effective opacity with a half-converted face.
-     .42/.30 lands 1 exactly at .72. If the sticky `top` moves again, this
-     moves with it. */
-  --m: clamp(0, (var(--sp, 0) - .42) / .30, 1);
-  /* how far the surface opens, in px. NOT a ratio of the card's height:
-     the card is as tall as its quote is long, and the face that has to
-     fit in the opened space is a fixed stack (station row + rail + well).
-     A ratio would make the room the face gets depend on how wordy the
-     last client was. */
-  /* retuned for the TITLE face, which is shorter than the step-card face it
-     replaced (166px against ~250): at 142 the card grew to 391 with the
-     title finishing at 215, leaving 176px of empty card under it. */
-  --grow: clamp(80px, 13svh, 118px);
-  /* IT DOES NOT DIM ON THE WAY OUT — it converts. max() means the light
-     the tent is taking away is handed straight to the morph, so the card
-     stays lit while it becomes a step card instead of fading to the .5
-     floor with a step card's face on it, invisible. */
-  opacity: calc(.5 + .5 * max(var(--lit), var(--m)));
-}
-.dr-voice--hand .dr-voice-card::before {
-  opacity: calc(.14 + .86 * max(var(--lit), var(--m)));
-  /* the bottom edge dissolves as the extension below opens, or the card
-     keeps a rule and a pair of corners across its own middle */
-  border-bottom-color: color-mix(in oklab, transparent calc(min(var(--m) * 1.7, 1) * 100%), var(--edge));
-  border-bottom-left-radius: calc(var(--cr) * (1 - var(--m)));
-  border-bottom-right-radius: calc(var(--cr) * (1 - var(--m)));
-}
-/* THE EXTENSION. A CONSTANT box of --grow, revealed by a scaleY from its
-   own top edge — so the surface opens downward on a pure transform and
-   never re-rasterises. Growing the ::before's `bottom` instead would
-   repaint a 1025px rounded box every frame, which is the exact cost the
-   flip was just taken off the page for. The bottom corners scale with
-   the reveal — flat early, exactly --cr at the end, which is the only
-   frame anyone reads them in. */
-.dr-voice--hand .dr-voice-card::after {
-  content: ""; position: absolute; z-index: -1;
-  /* OVERLAPPED BY A PIXEL. Flush at `top: 100%` the two layers left a
-     subpixel hairline of the void between them at fractional scroll
-     positions — a faint rule straight across the converted card, exactly
-     where its old bottom edge used to be, which reads as the seam the
-     border fade above exists to remove. */
-  top: calc(100% - 1px); left: 0; right: 0; height: calc(var(--grow) + 1px);
-  background: var(--surface-1);
-  border: 1px solid var(--edge); border-top: 0;
-  border-radius: 0 0 var(--cr) var(--cr);
-  opacity: calc(.14 + .86 * max(var(--lit), var(--m)));
-  transform-origin: 50% 0;
-  transform: scaleY(var(--m));
-}
-/* the quote lifts out of the card it was in — front-loaded so the words
-   are gone by the time the face underneath is legible, and the two never
-   overlap as two things being read at once (out by --m .5, in from .44) */
-.dr-voice--hand { --qout: clamp(0, var(--m) * 2, 1); }
-.dr-voice--hand blockquote {
-  opacity: calc(1 - var(--qout));
-  translate: 0 calc(var(--qout) * -24px);
-}
-.dr-voice--hand .dr-voice-rule { opacity: calc(1 - var(--qout)); }
-.dr-voice--hand figcaption {
-  opacity: calc(var(--c) * (1 - var(--qout)));
-}
-/* THE FACE FILLS THE CARD — it does not sit under it. The first cut put
-   it in the opened room at `top: 100%`, and the result was a tall empty
-   card with a small step card stuck to its bottom: the quote had gone but
-   the space it occupied had not, so the conversion read as a card
-   emptying out rather than as a card becoming something else. The face
-   starts where the quote started, and --grow exists only because a step
-   card is taller than a two-line quote, not because the face lives below.
-
-   Absolutely positioned, so it costs the card no layout at any point:
-   the column's height is identical whether the handoff has run or not,
-   and §04 never moves under it. */
-.dr-voice-hand {
-  --f: clamp(0, (var(--m, 0) - .44) * 2.8, 1);
-  position: absolute;
-  /* CENTRED IN THE GROWN BOX, not pinned to the card's top padding. The
-     surface opens downward PAST the card's own height, so 50% of the card is
-     not 50% of what you see — half the grow has to be added back. Top-aligned
-     it left every pixel of the opened room as dead space under the title. */
-  top: calc(50% + var(--grow) / 2);
-  left: var(--cx); right: var(--cx);
-  display: block;
-  /* LEFT, where the quote was centred. §04's cards are left-set and the
-     realignment is half of what makes this read as a conversion rather
-     than a swap — the type changes its mind about where it lives. */
-  text-align: left;
-  /* the surface opens first, the face arrives into it: one event, two
-     beats */
-  opacity: var(--f);
-  /* -50% centres it on that point; the 16px is its own arrival */
-  translate: 0 calc(-50% + (1 - var(--f)) * 16px);
-}
-/* THE FACE IS §04's TITLE NOW, not a step card — so the well, the rail and
-   the station row are gone from it (they were duplicating the rail's own
-   card 01 two hundred pixels above it). What is left is the kicker, the
-   line, and the reassurance: the section's header, set in the section's own
-   type, arriving on the card that used to hold a quote. */
-.dr-voice-hand-k {
-  display: block; color: var(--ink-4);
-  margin-bottom: clamp(14px, 2.2svh, 24px);
-}
-.dr-voice-hand-h {
-  display: block; color: var(--ink);
-  font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wdth" 100, "wght" 620;
-  /* the SECTION scale, not the card scale — this IS §04's title, and it has
-     to arrive at the size §04's title would have arrived at */
-  font-size: var(--fs-section);
-  max-width: 17em;
-  line-height: 1.1; letter-spacing: -0.026em;
-}
-.dr-voice-hand-p {
-  display: block; margin-top: clamp(14px, 2.2svh, 22px); color: var(--ink-3);
-  max-width: 46em;
-  font-family: var(--font-instrument), sans-serif;
-  font-size: var(--fs-body); line-height: 1.5;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  /* the handoff is motion over a frame that is already correct, and the
-     correct resting frame is the QUOTE — so the conversion simply does
-     not run and the face is not there at all */
-  /* the card stays a quote and §04 keeps its own header above */
-  .dr-voice--hand { --m: 0; position: static; }
-  .dr-voice-hand { display: none; }
-  /* no conversion means nothing to hold on screen — a quote pinned for a
-     screen of scroll is just a quote you cannot scroll past */
-  .dr-voices-hold { height: 0; }
-}
-
 @media (max-width: 900px) {
   .dr-voice { --lean: 0px !important; max-width: none; }
   .dr-voices-list { gap: clamp(56px, 9svh, 96px); }
@@ -2703,6 +2541,96 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-svc-in { opacity: 1; --xp: 0; }
 }
 
+
+
+/* ── THE LEAD CARD · the last quote IS step 01 ───────────────────
+   Jake, 2026-09-08: "i want the title card to become full size and stick
+   and horizontal scroll it should be the first card in the horizontal
+   scroll it shouldnt travel down."
+
+   Every earlier attempt at this seam failed the same way: the card lived in
+   the testimonials column, so it could only ever hand OFF to §04 — a flight
+   across the gap (built, landed within .5px, rejected on sight), then a
+   sticky hold that released and scrolled away. A sticky element's range is
+   bounded by its own flex container, so a card in that column can NEVER
+   hold through this section. It has to be IN the rail. So it is: the first
+   <li> of the track, carrying the quote and step 01 at once. Nothing travels
+   down and nothing hands over, because being the first card IS the handoff.
+
+   The conversion runs on --lead (a marker on the stage's top edge, see
+   runs-section.tsx) and is finished before the pin engages; from there the
+   card is simply the first thing the horizontal scrub carries. */
+.dr-lead-mark { display: block; height: 0; }
+
+.dr-run--lead { flex: none; width: var(--lead-w); position: relative; }
+
+/* the two faces cross at the middle of the conversion — the quote is gone by
+   --lead .55 and the step face is in from .5, so they overlap by a hair
+   rather than dissolving through each other the whole way */
+.dr-lead-quote {
+  position: absolute; inset: var(--pad);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  gap: clamp(14px, 2.2svh, 24px);
+  opacity: clamp(0, (.55 - var(--lead, 1)) * 3, 1);
+  pointer-events: none;
+}
+.dr-lead-quote-t {
+  display: block; color: var(--ink); max-width: 22em;
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 580;
+  font-size: var(--fs-section);
+  line-height: 1.1; letter-spacing: -0.028em; text-wrap: balance;
+}
+.dr-lead-quote-n {
+  display: inline-block; padding: 7px 14px; border-radius: 999px;
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .08);
+  color: var(--ink-4);
+  font-family: var(--font-instrument), sans-serif;
+  font-size: var(--fs-small); line-height: 1.2;
+}
+.dr-lead-face {
+  display: flex; flex-direction: column;
+  opacity: clamp(0, (var(--lead, 1) - .5) * 3, 1);
+}
+/* THE REST OF THE RAIL WAITS FOR THE LEAD TO CONVERT. Left alone, step 02
+   sat fully readable beside an unconverted testimonial — the answer visible
+   before the transformation that is supposed to introduce it. They come up
+   as the lead becomes a step card, so the rail assembles behind its own
+   first card rather than around a quote. */
+.dr-runs-grid .dr-run:not(.dr-run--lead) {
+  opacity: clamp(0, (var(--lead, 1) - .55) * 2.6, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dr-runs-grid .dr-run:not(.dr-run--lead) { opacity: 1; }
+}
+
+/* ⚠ BOTH FALLBACKS HAVE TO BE DECLARED AFTER THE RULES THEY OVERRIDE. They
+   tie on specificity with the block above, so source order decides — written
+   up in §04's own media query (where they belong topically) they lost, and
+   the lead card rendered 260px wide on a phone with the quote still on it. */
+@media (max-width: 900px) {
+  /* NO CONVERSION ON TOUCH. The pin comes off below 900 and the rail becomes
+     a column, so there is no horizontal scroll for the lead to be the first
+     card OF — it is just step 01, and the quote it carries on desktop would
+     be a second testimonial stranded at the top of the process. */
+  .dr-runs-card { --lead: 1; translate: none; }
+  .dr-run--lead { width: auto; flex: initial; }
+  .dr-lead-quote { display: none; }
+  .dr-lead-face { opacity: 1; }
+  .dr-runs-grid .dr-run:not(.dr-run--lead) { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* no conversion: the card is simply the rail's first step, and the quote
+     it used to carry is not shown at all rather than shown on top of one */
+  .dr-runs-card { --lead: 1; translate: none; }
+  .dr-run--lead { width: auto; }
+  .dr-lead-quote { display: none; }
+  .dr-lead-face { opacity: 1; }
+  .dr-runs-grid .dr-run:not(.dr-run--lead) { opacity: 1; }
+}
 
 /* ══ §06 · THE CLOSE — CTA + footer, one room on the lifted ground ═
    The page's one action, and the last thing to look at. §05's white card

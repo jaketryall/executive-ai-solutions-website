@@ -133,3 +133,10 @@ bug; never delete a line.
 - `--m`'s window and `.dr-voice--hand`'s sticky `top` are ONE mechanism: `--sp` freezes when the card sticks, so `--m` must reach exactly 1 at the frozen `--sp`. Assert the held card's `--m` computes to 1 — if the sticky offset is ever retuned and this is not, the card holds visibly half-converted.
 - "01" appears exactly once in the viewport at every scroll position through the seam (the held card must not duplicate the rail's first step).
 - `.dr-runs-head` is `display: none` under `prefers-reduced-motion: no-preference` and VISIBLE otherwise — it is §04's title fallback for when the card cannot convert, so the section is never untitled.
+
+## §04 · the lead card
+- The testimonials column renders `QUOTES.length - 1` quotes; the last one appears exactly once, on `.dr-run--lead`.
+- Through the conversion the lead card's viewport `top` only ever decreases and then holds — it must never travel back DOWN, and once pinned it must not move vertically at all.
+- At `--lead` 1 the lead card's width and left edge equal a normal rail card's (620 / the track's left), so it is indistinguishable from step 02's geometry.
+- The non-lead cards are at opacity 0 until `--lead` passes .55 — step 02 must never be readable beside an unconverted quote.
+- Below 900px and under reduced motion: `--lead` is 1, the quote is `display: none`, the lead card is full column width, and the four steps read 01–04 top to bottom.

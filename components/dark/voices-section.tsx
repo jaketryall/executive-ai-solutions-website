@@ -41,23 +41,14 @@ import { QUOTES } from "@/lib/quotes";
    fourth. Three quotes as three full-width statements look deliberate,
    and a fourth simply makes the column longer.
 
-   THE LAST ONE BECOMES §04's OPENER. It does not dim on its way out the
-   way the other two do — it CONVERTS: the surface opens downward, the
-   quote lifts out of it, and the process section's own title fades into
-   the room the surface just made. Then it holds, centred, and releases
-   into the rail.
-
-   ⚠ IT USED TO CONVERT INTO STEP 01, and that was wrong in a way no
-   amount of timing fixed: §04's rail ALSO opens with step 01, so the same
-   card rendered twice about 200px apart — the held one, then the rail's.
-   That is what "the other cards never appear" was describing (the first
-   card in the rail was the one you had just been staring at) and what
-   "theres no introduction to the process section" was describing (a
-   numbered step arriving before anything had said what the steps were).
-   Converting into the TITLE fixes both at once: nothing duplicates, the
-   section is introduced by the card, and all four steps stay in the rail
-   where they belong. It is also the better idea — a client's words
-   becoming our claim, rather than a client's words becoming our step one.
+   THE LAST QUOTE IS NOT IN THIS COLUMN. It is rendered as the FIRST CARD
+   of §04's horizontal rail (runs-section.tsx) — Jake, 2026-09-08: "i want
+   the title card to become full size and stick and horizontal scroll it
+   should be the first card in the horizontal scroll it shouldnt travel
+   down". A sticky element's range is bounded by its own flex container, so
+   a card living here can never hold through §04; it has to be inside the
+   pinned panel to be part of the rail at all. Everything about the seam now
+   lives with the rail, and this column is just the quotes again.
    */
 
 export default function VoicesSection() {
@@ -137,10 +128,7 @@ export default function VoicesSection() {
         </header>
 
         <ul className="dr-voices-list">
-          {QUOTES.map((q, i) => {
-            /* THE LAST ONE HANDS OVER. See the block comment below the
-               list and the stylesheet's .dr-voice--hand. */
-            const isLast = i === QUOTES.length - 1;
+          {QUOTES.slice(0, -1).map((q, i) => {
             return (
             /* EACH QUOTE OWNS ITS OWN LIGHT. It declares the window of its
                whole pass across the screen and the engine writes --sp;
@@ -155,7 +143,7 @@ export default function VoicesSection() {
                triggered, and it scrubs backwards exactly. */
             <li
               key={q.text}
-              className={isLast ? "dr-voice dr-voice--hand" : "dr-voice"}
+              className="dr-voice"
               style={{ "--i": i } as React.CSSProperties}
               data-sp
               data-sp-from="1"
@@ -177,42 +165,11 @@ export default function VoicesSection() {
                   <span>{q.name}</span>
                 </figcaption>
 
-                {/* THE HANDOFF FACE. It is the FIRST STEP CARD's face,
-                    built from the same STEPS entry and the same demo
-                    component §04 renders — imported, not copied, because
-                    two hand-kept copies of "01 · Day 1 · the waveform"
-                    would drift the first time either is edited and the
-                    whole point of this seam is that the two are the same
-                    object.
 
-                    It lives in the space the card's surface opens up
-                    below the quote (see .dr-voice--hand in the
-                    stylesheet), and it is aria-hidden: §04 says all of
-                    this again, properly, a screen later — to a screen
-                    reader this is a decorative preview of a heading that
-                    is about to arrive, not a second copy of it. */}
-                {isLast && (
-                  <span className="dr-voice-hand">
-                    <span className="t-label dr-voice-hand-k">How it runs</span>
-                    <span className="dr-voice-hand-h">
-                      Four steps from the first call to a site that earns.
-                    </span>
-                    <span className="dr-voice-hand-p">
-                      Fixed quote up front, no surprises after.
-                    </span>
-                  </span>
-                )}
               </figure>
             </li>
             );
           })}
-          {/* THE HOLD. The converting card is a flex item, so how long it can
-              STAY stuck is bounded by this list's own content box — padding or
-              margin on the <ul> would not extend it, and without something
-              after the card its sticky range is zero and it never holds at
-              all. This is that something: an empty item whose only job is to
-              give the card a screen's worth of room to stick through. */}
-          <li className="dr-voices-hold" aria-hidden />
         </ul>
       </div>
     </section>

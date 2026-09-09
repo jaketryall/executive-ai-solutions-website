@@ -1,5 +1,7 @@
 "use client";
 
+import { QUOTES } from "@/lib/quotes";
+
 /* §04 · HOW IT RUNS
    The whole path is visible at once and NOTHING here is scroll-jacked.
    That is the settled position on this section (2026-07-06): a visitor
@@ -119,6 +121,9 @@ function DemoGrowth() {
   );
 }
 
+/* the quote the column above no longer carries — it lives on the lead card */
+const LAST_QUOTE = QUOTES[QUOTES.length - 1];
+
 const DEMOS = {
   call: DemoCall,
   design: DemoDesign,
@@ -151,6 +156,30 @@ export default function RunsSection() {
           slid off. The stage is the only box in here that actually moves
           through the viewport, so it is the only honest ruler; --sp
           inherits down to the track from here. */}
+      {/* THE LEAD CARD'S CLOCK. The stage's own --sp is 0 until the pin
+          engages, so it cannot drive anything that has to happen on the way
+          IN. This marker sits on the stage's top edge and runs --lead 0 → 1
+          as that edge climbs from 1.35vh to 0.1vh — the quote converts and
+          the card resizes into its slot in the rail, finishing just before
+          the pin takes over and the horizontal scroll begins. Written onto
+          .dr-root because a custom property only inherits downward and the
+          floor's centring offset reads it too. */}
+      <i
+        className="dr-lead-mark"
+        aria-hidden
+        data-sp
+        /* MEASURED, not guessed. The lead card lives inside the pinned
+           panel, so before the pin its top is always stageTop + 309 — it is
+           only in a readable position as that edge reaches 0. At 1.35 → 0.1
+           the quote had finished fading before the card was even on screen.
+           .35 → -0.5 arrives it from the bottom of the frame with the quote
+           whole, holds it still at the pin, and converts it THERE. */
+        data-sp-from="0.35"
+        data-sp-to="-0.5"
+        data-sp-var="--lead"
+        data-sp-target=".dr-root"
+        data-sp-lerp="0.1"
+      />
       <div
         className="dr-runs-stage"
         data-sp
@@ -212,7 +241,32 @@ export default function RunsSection() {
             has nothing left to move (laws 6/7 — the still beat). */}
         {/* reads the stage's --sp; one translate, no pin library */}
         <ol className="dr-runs-grid">
-          {STEPS.map((s, i) => {
+          {/* THE LEAD CARD. It is the last client quote and step 01 at once:
+              it arrives at quote size, centred, carrying the quote; converts
+              as the section comes up; and by the time the pin engages it is
+              simply the first card of the rail, which then scrolls
+              horizontally with it in place. It does NOT travel down and hand
+              off to anything — being the first card IS the handoff. */}
+          <li className="dr-run dr-run--lead" data-once data-once-at="0.98">
+            <span className="dr-lead-quote">
+              <span className="dr-lead-quote-t">{LAST_QUOTE.text}</span>
+              <span className="dr-lead-quote-n">{LAST_QUOTE.name}</span>
+            </span>
+            <span className="dr-lead-face">
+              <span className="dr-run-top">
+                <span className="dr-run-n">{STEPS[0].n}</span>
+                <span className="t-label dr-run-meta">{STEPS[0].meta}</span>
+              </span>
+              <i className="dr-run-rail" aria-hidden />
+              <span className="dr-run-well">
+                <DemoCall />
+              </span>
+              <h3 className="dr-run-title">{STEPS[0].title}</h3>
+              <p className="dr-run-copy">{STEPS[0].copy}</p>
+            </span>
+          </li>
+          {STEPS.slice(1).map((s, i0) => {
+            const i = i0 + 1;
             const Demo = DEMOS[s.demo];
             return (
               <li
