@@ -253,6 +253,44 @@ export function ViewTransitions() {
     };
     document.addEventListener("click", onClick, true);
 
+    /* WARM ON TOUCH-DOWN. Next prefetches <Link>s on hover and in viewport —
+       but a phone has no hover, so on touch a route is routinely still cold
+       when the click lands. That is exactly the case the 250ms budget above
+       now skips: correct, but it costs the choreography on the heaviest and
+       most deliberate navigations (a work card into its case study).
+
+       pointerdown fires roughly 80-120ms before the click on a tap, and more
+       if the finger rests. Prefetching there is usually enough to bring a
+       cold route INSIDE the budget, so it keeps its transition instead of
+       falling back to a plain nav. Cheap either way: router.prefetch is a
+       no-op once a route is in the cache, and the Set stops us re-asking on
+       every re-tap of the same link.
+
+       Deliberately looser than onClick's rules — hash links and modified
+       clicks never transition, but warming their route costs nothing and
+       they often lead somewhere real anyway. */
+    const warmed = new Set<string>();
+    const onWarm = (e: Event) => {
+      const a = (e.target as HTMLElement).closest?.("a");
+      if (!a || a.target || a.hasAttribute("download")) return;
+      let url: URL;
+      try {
+        url = new URL(a.href, location.href);
+      } catch {
+        return;
+      }
+      if (url.origin !== location.origin) return;
+      if (url.pathname === location.pathname) return;
+      const href = url.pathname + url.search;
+      if (warmed.has(href)) return;
+      warmed.add(href);
+      router.prefetch(href);
+    };
+    document.addEventListener("pointerdown", onWarm, {
+      capture: true,
+      passive: true,
+    });
+
     /* back/forward: the same stack, popped. Where the Navigation API
        exists, the traverse is WRAPPED, not intercepted: the capture starts
        HERE, synchronously in the navigate event — before the entry commits
@@ -283,6 +321,7 @@ export function ViewTransitions() {
 
     return () => {
       document.removeEventListener("click", onClick, true);
+      document.removeEventListener("pointerdown", onWarm, true);
       nav?.removeEventListener("navigate", onNavigate);
     };
   }, [router]);
