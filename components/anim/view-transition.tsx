@@ -158,9 +158,34 @@ export function ViewTransitions() {
             resolve();
           };
           pending.current = release;
-          // traversals get a short leash (they should be instant; when they
-          // aren't, responsiveness beats choreography); clicks keep the
-          // longer route-error failsafe
+          /* ⚠ THIS IS A RESPONSIVENESS BUDGET, NOT AN ERROR FAILSAFE, and
+             confusing the two is what made mobile navigation feel broken
+             (Jake, 2026-09-08: "view transitions api works fine on mobile in
+             itsjay site, ours is kinda glitchy"). startViewTransition
+             captures a snapshot the instant it is called and then holds it
+             frozen until this promise resolves — so the leash IS how long
+             the user can be made to stare at a still image of the page they
+             just tapped away from.
+
+             Measured on PRODUCTION at 420px (dev is not representative — it
+             fetches nothing over the wire):
+               → /work          (prefetched)          ready  74ms, worst frame  76ms
+               → /work/desert-wings (cold, heavy)     ready 488ms, worst frame 493ms
+             At 2500 the guard below never fired for either: the second one
+             simply froze for half a second and then lurched into the slide.
+             That inconsistency — fine on some taps, broken on others — is
+             exactly what reads as "glitchy".
+
+             250ms is roughly the threshold where a delay stops feeling like
+             a response and starts feeling like a fault. Past it we resolve
+             un-landed, `vt.ready` sees !landed and calls skipTransition(),
+             and the visitor gets an instant plain navigation instead. Losing
+             the choreography on a slow route is a far smaller cost than
+             freezing the screen on a fast tap.
+
+             The 1200 for traversals stays: a back gesture that has already
+             committed elsewhere is a different failure and wants the longer
+             rope. */
           setTimeout(
             () => {
               if (pending.current === release) {
@@ -168,7 +193,7 @@ export function ViewTransitions() {
                 resolve();
               }
             },
-            dest ? 1200 : 2500
+            dest ? 1200 : 250
           );
         });
       });
