@@ -198,10 +198,10 @@ export function ContactPage() {
             <p data-anim="h-sub" className="t-meta mt-fib-4 text-ink/60">
               Prefer your own inbox?{" "}
               <a
-                href="mailto:hello@executiveaisolutions.com"
+                href="mailto:jaker@executiveaisolutions.com"
                 className="u-link text-ink/80"
               >
-                hello@executiveaisolutions.com
+                jaker@executiveaisolutions.com
               </a>
             </p>
           </div>
@@ -273,7 +273,7 @@ export function ContactPage() {
                     {status === "error" && (
                       <p className="t-meta text-[#d8a08a]" role="alert">
                         That didn&apos;t send. Try again, or email
-                        hello@executiveaisolutions.com directly.
+                        jaker@executiveaisolutions.com directly.
                       </p>
                     )}
                   </form>

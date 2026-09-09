@@ -28,7 +28,7 @@ const jsonLd = {
     "@type": "Organization",
     name: "Executive AI Solutions",
     url: SITE_URL,
-    email: "hello@executiveaisolutions.com",
+    email: "jaker@executiveaisolutions.com",
   },
 };
 

@@ -147,7 +147,7 @@ export function SiteChat() {
         {
           role: "assistant",
           content:
-            "That one didn't go through — try again, or email hello@executiveaisolutions.com.",
+            "That one didn't go through — try again, or email jaker@executiveaisolutions.com.",
         },
       ]);
     } finally {

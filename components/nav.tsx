@@ -226,14 +226,12 @@ function LinksCapsule() {
    old color-adaptive theme resolver is gone by construction: nothing under
    the nav can ever collide with it or wash it out. Constant at all scroll
    positions (the Lesse grammar). */
-/* the mobile identity bar's marquee line — real facts on loop */
-const MARQUEE = [
-  "Sites from $2.5k",
-  "Ads managed from $500/mo",
-  "Mesa, AZ",
-  "Fixed quote in 2 days",
-  "Replies within a day",
-].join("  ·  ");
+/* ⚠ NO MARQUEE IN THE MOBILE BAR (Jake, 2026-09-08: "we cant have the cool
+   cta scrolling thing"). It was a looping line of real facts under the name;
+   a perpetual horizontal crawl in the one piece of chrome that is always on
+   screen is movement the visitor cannot get away from, and on a phone the
+   bottom bar is where the ACTION lives, not where the copy performs. The
+   facts it carried are all said elsewhere on the page. */
 
 export function Nav() {
   const root = useRef<HTMLElement>(null!);
@@ -467,16 +465,10 @@ export function Nav() {
             <Monogram className="h-[21px] w-[21px]" />
           </Link>
           <span className="mnav-mid">
-            {/* short form: with the Ask tile aboard, the full name needs
-                ~176px the 390px bar no longer has — the mark and marquee
-                carry the rest */}
+            {/* the full name fits again now the marquee under it is gone —
+                but the Ask tile still owns the width it needed, so the short
+                form stays and the mark carries the rest */}
             <span className="mnav-name text-trim">Executive AI</span>
-            <span className="mnav-marquee" aria-hidden>
-              <span className="mnav-track">
-                <span>{MARQUEE}</span>
-                <span>{MARQUEE}</span>
-              </span>
-            </span>
           </span>
           {/* Ask lives IN the bar on mobile — a second floating pill above
               it cost 130px of stacked bottom chrome (mobile audit 2026-07-16).
@@ -601,10 +593,10 @@ export function Nav() {
             </span>
             <div className="flex flex-wrap items-center justify-between gap-fib-2">
               <a
-                href="mailto:hello@executiveaisolutions.com"
+                href="mailto:jaker@executiveaisolutions.com"
                 className="u-link t-meta"
               >
-                hello@executiveaisolutions.com
+                jaker@executiveaisolutions.com
               </a>
               <span className="t-meta text-paper/50">
                 Mesa, AZ · <LocalTime />
