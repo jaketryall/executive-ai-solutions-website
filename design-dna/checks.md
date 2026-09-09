@@ -113,3 +113,9 @@ bug; never delete a line.
 - Scrolling 5px/frame through the whole voices column including the conversion, no frame exceeds 20ms.
 - The handoff face renders `STEPS[0]` and the imported `DemoCall` — never a local copy. If §04's first step is renamed or its demo changed, this face changes with it or the seam is a lie.
 - `prefers-reduced-motion: reduce`: `--m` is 0 and `.dr-voice-hand` is `display: none` — the correct resting frame here is the QUOTE, not the converted card.
+
+## The converting card holds
+- `.dr-voice--hand` computed `position` is `sticky`, and `.dr-voices-hold` has real height — a flex item's sticky range comes from the flex container's content box, so removing the hold silently reduces the range to zero and the card simply never sticks.
+- Once held, the card's viewport `top` stops changing AND `--sp` stops changing with it (the frozen rect is what freezes the conversion at `--m` 1).
+- The held card's top clears the fixed nav's bottom edge at 734 and at 900 viewport heights.
+- `prefers-reduced-motion`: `position` is `static` and the hold is 0 height — with no conversion there is nothing to hold on screen.

@@ -216,6 +216,13 @@ export default function VoicesSection() {
             </li>
             );
           })}
+          {/* THE HOLD. The converting card is a flex item, so how long it can
+              STAY stuck is bounded by this list's own content box — padding or
+              margin on the <ul> would not extend it, and without something
+              after the card its sticky range is zero and it never holds at
+              all. This is that something: an empty item whose only job is to
+              give the card a screen's worth of room to stick through. */}
+          <li className="dr-voices-hold" aria-hidden />
         </ul>
       </div>
     </section>

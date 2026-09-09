@@ -2194,6 +2194,10 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   font-size: var(--fs-small); line-height: 1.2;
 }
 
+/* THE HOLD — see the note in voices-section.tsx. Height only; the gap above
+   it is the list's own, absorbed. */
+.dr-voices-hold { display: block; height: 96svh; pointer-events: none; }
+
 /* ══ THE HANDOFF · the last quote becomes the first step card ═══
    Jake, 2026-09-08: "i want the last testimonial card to grow downwards
    as it moves up, text transforms or animates or something and becomes
@@ -2210,6 +2214,23 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    wants the finished frame; this wants the UNstarted one, hence the
    different fallback on the same var — deliberate, not a slip). */
 .dr-voice--hand {
+  /* IT STICKS AT THE FRAME IT FINISHES TRANSFORMING, and that is the
+     mechanism rather than a coincidence. `--m` is driven by `--sp`, which the
+     engine computes from this card's OWN rect — so the moment sticky pins the
+     rect, `--sp` stops changing and the conversion freezes at exactly the
+     value it had. The stick point IS the end of the morph: --m reaches 1 at
+     --sp .84, which is this card's top at .16vh, so that is the offset it
+     holds at, less the 41px the lens's own travel has already lifted it by
+     at that point. How LONG it holds is `.dr-voices-hold` above. */
+  position: sticky;
+  /* SOLVED, not guessed — the resting offset and the lens's own travel depend
+     on each other. The card holds at .155vh, at which point --sp reads .845
+     and the lens has already lifted it by (.5 - .845) x 120 = 41px, so the
+     sticky offset has to ADD that back. The first attempt subtracted it and
+     the card came to rest 50px from the top of the screen, underneath the
+     fixed nav. The 41 is viewport-independent (the lens travel is a fixed
+     120px), so this holds at every height: 114px at 734, 140px at 900. */
+  top: calc(15.5svh + 41px);
   /* .5 → .84, NOT .55 → 1. Completing at --sp 1 means completing at the
      instant the card's TOP reaches the top of the screen — measured, the
      card body was already 10px above the fold and the only thing left in
@@ -2330,8 +2351,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   /* the handoff is motion over a frame that is already correct, and the
      correct resting frame is the QUOTE — so the conversion simply does
      not run and the face is not there at all */
-  .dr-voice--hand { --m: 0; }
+  .dr-voice--hand { --m: 0; position: static; }
   .dr-voice-hand { display: none; }
+  /* no conversion means nothing to hold on screen — a quote pinned for a
+     screen of scroll is just a quote you cannot scroll past */
+  .dr-voices-hold { height: 0; }
 }
 
 @media (max-width: 900px) {
