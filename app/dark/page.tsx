@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import WorksList from "@/components/dark/works-list";
 import ServicesSection from "@/components/dark/services-section";
+import AboutSection from "@/components/dark/about-section";
 import ProofSection from "@/components/dark/proof-section";
 import VoicesSection from "@/components/dark/voices-section";
 import RunsSection from "@/components/dark/runs-section";
@@ -274,6 +275,10 @@ export default function DarkRoom() {
         {/* second child of the wrapper on purpose: this is what climbs */}
         <ServicesSection />
       </div>
+
+      {/* the split about beat sits between the services and the proof:
+          who does it, then what it produced */}
+      <AboutSection />
 
       <ProofSection />
       <VoicesSection />

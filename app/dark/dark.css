@@ -1872,6 +1872,96 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 
 
+/* ══ WHO BUILDS IT · the split about beat, §02 → §03 ═════════════
+   Copy left, one big picture right. The shape is itsjay's (12 columns, 7
+   and 5, one display paragraph rather than a stack) — the EFFECTS are not:
+   his media is `sticky` and his words slide in horizontally on four lanes.
+   Ours parallaxes on §03's already-measured rate, and the ink resolves as
+   the copy crosses the reading line. */
+.dr-about { position: relative; z-index: 3;
+  padding-block: clamp(88px, 15svh, 190px); }
+.dr-about-grid {
+  display: grid; grid-template-columns: 7fr 5fr;
+  gap: clamp(28px, 4.4vw, 76px); align-items: start;
+}
+.dr-about-kicker { display: block; color: var(--ink-4);
+  margin-bottom: clamp(20px, 3.4svh, 40px); }
+
+.dr-about-lead {
+  margin: 0;
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: var(--fs-feature);
+  line-height: 1.08; letter-spacing: -0.028em;
+  /* the words are inline-blocks, so the spaces between them are the
+     paragraph's own — they do not move with the words and never collapse */
+  word-spacing: .04em;
+}
+/* THE INK RESOLVES ACROSS THE READING LINE. One value for the paragraph;
+   each word takes a slice of it off its index, which in a single block of
+   copy stands in for vertical position almost exactly and costs nothing.
+
+   NO OVERSHOOT, and that is a correction rather than a simplification. The
+   first cut had the resolving word go briefly BRIGHTER than its settled
+   state so a bright edge travelled the paragraph — but --ink is white on
+   this room, so there is no headroom above the settled colour and the only
+   way to fake one is to hold the settled words under full white, which
+   makes a display paragraph permanently dim to buy an effect. So the edge
+   is the effect: the per-word span is deliberately TIGHT (.16 against a
+   .011 stagger), which puts about fifteen words in transition at once —
+   a crisp travelling boundary rather than the whole paragraph mushing up
+   together, which is what a loose span gives you and is the version of
+   this effect everyone has seen.
+
+   Compositing only — colour, no reflow. A weight or a letter-spacing march
+   would relayout 47 words every frame. */
+.dr-about-lead span {
+  display: inline-block;
+  /* this word's own progress, 0 → 1 */
+  --w: clamp(0, (var(--rp, 1) - var(--i) * .011) / .16, 1);
+  /* OPACITY, NOT color-mix — measured. Mixing a colour per word per frame
+     re-rasterises 27 runs of 56px glyphs every frame: 13.8ms mean through
+     the section with 27 frames over 20ms, which is the same paint-bound
+     failure the room flip had. Opacity composites instead, and the visual
+     result on a black ground is identical.
+     The floor is .55, not 0 — an unresolved word is still TEXT somebody may
+     stop on, and .55 white on this ground measures 6.2:1, over the room's
+     readable floor. (The voices lens needed the same correction: what
+     matters is the BLENDED pixel, not the declared colour.) */
+  color: var(--ink);
+  opacity: calc(.55 + .45 * var(--w));
+}
+
+.dr-about-media { position: relative; }
+.dr-about-well {
+  display: block; position: relative; overflow: hidden;
+  /* PORTRAIT — Jake asked for a big image, and 4:5 against a 5-column track
+     is the biggest this can be without out-weighing the copy beside it */
+  aspect-ratio: 4 / 5;
+  border-radius: clamp(10px, 1vw, 16px);
+  background: var(--surface-1);
+}
+/* §03's rate, not a second invented one — see .dr-pf-well for the decode */
+.dr-about-well img {
+  position: absolute; left: 0; width: 100%;
+  top: -19%;
+  max-width: none; height: 126%;
+  object-fit: cover; object-position: center;
+  translate: 0 calc(var(--pp, .367) * 35.71% - 13.1%);
+}
+
+@media (max-width: 900px) {
+  .dr-about-grid { grid-template-columns: minmax(0, 1fr);
+                   gap: clamp(28px, 5svh, 48px); }
+  .dr-about-well { aspect-ratio: 3 / 2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* both effects are decoration over a frame that is already correct */
+  .dr-about-lead span { opacity: 1; }
+  .dr-about-well img { translate: 0 calc(.367 * 35.71% - 13.1%); }
+}
+
 /* ══ IN THEIR WORDS · between §03 and §04 ═══════════════════════
    The one emotional beat, between the work (§03) and the method (§04).
 

@@ -119,3 +119,11 @@ bug; never delete a line.
 - Once held, the card's viewport `top` stops changing AND `--sp` stops changing with it (the frozen rect is what freezes the conversion at `--m` 1).
 - The held card's top clears the fixed nav's bottom edge at 734 and at 900 viewport heights.
 - `prefers-reduced-motion`: `position` is `static` and the hold is 0 height — with no conversion there is nothing to hold on screen.
+
+## Who builds it · the about beat
+- The paragraph's words are separated by real spaces in `textContent` (React strips JSX whitespace inside a map — the failure is silent and runs the sentence together).
+- Mid-resolve, word opacity decreases monotonically down the paragraph (a travelling edge, not a uniform fade), and the least-resolved word is never below .55.
+- The words animate `opacity`, never `color` — a per-word colour change re-rasterises the glyph runs every frame.
+- The well's picture uses §03's parallax constants (top -19%, height 126%, translate `pp × 35.71% − 13.1%`) — this site has ONE parallax rate.
+- Scrolling 5px/frame through the section, fewer than 3 frames exceed 20ms.
+- Below 900px the grid is one column and the well is 3/2 rather than 4/5; no horizontal overflow at 420 or 1440.
