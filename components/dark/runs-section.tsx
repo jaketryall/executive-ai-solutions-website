@@ -119,6 +119,32 @@ function DemoGrowth() {
   );
 }
 
+/* ONE CARD BODY, TWO PLACEMENTS. 01 is rendered against the floor and
+   02-04 inside the track, so the markup has to come from one place or the
+   anchor and the rail will drift the first time either is edited. */
+function StepFace({ s }: { s: (typeof STEPS)[number] }) {
+  const Demo = DEMOS[s.demo];
+  return (
+    <>
+      <span className="dr-run-top">
+        <span className="dr-run-n">{s.n}</span>
+        <span className="t-label dr-run-meta">{s.meta}</span>
+      </span>
+      {/* the ruled line under the station row — geometry lives in the stylesheet */}
+      <i className="dr-run-rail" aria-hidden />
+      {/* THE WELL — a little screen recessed into the card, so the artifact
+          reads as something being SHOWN rather than as decoration floating
+          on a panel. The frame is the constant across all four; only what
+          is inside it changes. Geometry in the stylesheet. */}
+      <span className="dr-run-well">
+        <Demo />
+      </span>
+      <h3 className="dr-run-title">{s.title}</h3>
+      <p className="dr-run-copy">{s.copy}</p>
+    </>
+  );
+}
+
 const DEMOS = {
   call: DemoCall,
   design: DemoDesign,
@@ -203,10 +229,15 @@ export default function RunsSection() {
             spent by the time its top is 62% of the way up, so the flight
             is whole while it is still low on the screen and the scroll
             has nothing left to move (laws 6/7 — the still beat). */}
-        {/* reads the stage's --sp; one translate, no pin library */}
+        {/* ── THE FLOOR ── the anchor and the rail share it. 01 is NOT in
+            the track: it is placed against the floor's left edge and stays
+            there for the whole section, and 02→04 travel across and pass
+            BEHIND it. The track carries a left pad the width of the anchor
+            plus a gap, so 02 begins beside 01 rather than under it. */}
+        <div className="dr-runs-floor">
         <ol className="dr-runs-grid">
-          {STEPS.map((s, i) => {
-            const Demo = DEMOS[s.demo];
+          {STEPS.slice(1).map((s, j) => {
+            const i = j + 1;
             return (
               <li
                 key={s.n}
@@ -217,31 +248,24 @@ export default function RunsSection() {
                    because a demo that replays on the way back up turns
                    the section into a flicker */
                 data-once
-                /* cells arrive later left→right, so each fires a
-                   little deeper — the demo should run on a cell that is
-                   already there */
+                /* each fires as it reaches the slot beside the anchor,
+                   so a demo never runs on a card that is still off-screen
+                   or already sliding behind 01 */
                 data-once-at={(0.86 - i * 0.08).toFixed(2)}
               >
-                <span className="dr-run-top">
-                  <span className="dr-run-n">{s.n}</span>
-                  <span className="t-label dr-run-meta">{s.meta}</span>
-                </span>
-                {/* the ruled line under the station row — geometry lives in the stylesheet */}
-                <i className="dr-run-rail" aria-hidden />
-                {/* THE WELL — a little screen recessed into the card, so
-                    the artifact reads as something being SHOWN rather than
-                    as decoration floating on a panel. The frame is the
-                    constant across all four; only what is inside it
-                    changes. Geometry in the stylesheet. */}
-                <span className="dr-run-well">
-                  <Demo />
-                </span>
-                <h3 className="dr-run-title">{s.title}</h3>
-                <p className="dr-run-copy">{s.copy}</p>
+                <StepFace s={s} />
               </li>
             );
           })}
         </ol>
+        {/* THE ANCHOR — step 01, held against the floor's left edge for the
+            whole section. It is last in the DOM so it paints over the rail
+            without needing a stacking context of its own; the cards that
+            pass behind it are opaque, so the overlap reads as dealing. */}
+        <div className="dr-run dr-run--anchor" data-once data-once-at="0.98">
+          <StepFace s={STEPS[0]} />
+        </div>
+        </div>
         </div>
       </div>
       </div>

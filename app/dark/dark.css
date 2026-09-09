@@ -1565,14 +1565,47 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    track's OWN width rather than the column's, so the translate below can
    be written as "slide until your right edge meets the screen's" with no
    measurement in JS and no magic number per breakpoint. */
-.dr-runs-grid { list-style: none; margin: 0; padding: 0;
+/* ── THE FLOOR ── the anchor and the rail share it (Jake, 2026-09-08:
+   "once the card grows i want it to become sticky horizontally … it should
+   become the how it runs section"). 01 does not travel: it holds the left
+   of the frame for the whole section while 02→04 cross behind it, so the
+   step the process STARTS at is never off screen. That partly repays the
+   one-glance rule the horizontal pin overrode (2026-07-06, "reassurance,
+   not a ride") — you always have the anchor to read the rail against. */
+.dr-runs-floor {
+  position: relative;
+  /* the anchor's own width, named once: the track's left pad and the
+     anchor's box both read it, so they cannot disagree */
+  --anchor-w: clamp(260px, 54vw, 620px);
+  --lane: clamp(14px, 1.6vw, 28px);
+  /* THE CARD PADDING LIVES HERE, not on the track. It used to be declared
+     on `.dr-runs-grid`, which the anchor is a SIBLING of — so `.dr-run`'s
+     `padding: var(--pad)` resolved to nothing on the anchor alone and its
+     well sat flush against the card's edge while every other card had 24px.
+     Anything both the anchor and the rail read has to be declared on their
+     common parent. */
   --pad: clamp(18px, 1.7vw, 26px);
+}
+.dr-runs-grid { list-style: none; margin: 0; padding: 0;
   position: relative;
   display: flex; width: max-content;
-  gap: clamp(14px, 1.6vw, 28px);
-  translate: calc(var(--sp, 0) * (100vw - 100% - 2 * clamp(16px, 4vw, 80px)));
+  gap: var(--lane);
+  /* THE TRACK STARTS BESIDE THE ANCHOR, not under it — a left pad the
+     width of 01 plus one lane, so 02 is the first thing you see arrive. */
+  padding-left: calc(var(--anchor-w) + var(--lane));
+  /* THE TRACK MOVES IN LANES, not by its own length. Scrubbed by total
+     width, each card crossed the slot beside the anchor without ever
+     RESTING in it — measured, 02 spent its legible time at the far right
+     and was already behind 01 by --sp .35, so you never got a step sitting
+     next to the step it follows. One lane = the anchor's width + a gap, and
+     the whole travel is exactly three of them: 02 starts one lane right of
+     the slot, and 02 / 03 / 04 land in it at --sp 1/3, 2/3 and 1. The rail
+     becomes a conveyor delivering each step beside the anchor rather than a
+     strip being dragged past. */
+  translate: calc((1 - var(--sp, 0) * 3) * (var(--anchor-w) + var(--lane)));
   will-change: transform;
 }
+
 
 /* ── ONE RULED SLAB ──────────────────────────────────────────────
    The four steps sit in one surface, like a schedule: four cells,
@@ -1613,6 +1646,25 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    meets its neighbours' at the dividers: ONE line across the slab,
    with no measurement. The lit length rides ON the dim line and lights
    with the cell's own --cp, so the light walks 01→04 and holds. */
+/* THE ANCHOR. Absolutely placed, so the track's translate cannot reach it
+   — the alternative (leaving 01 in the flex row and counter-translating it)
+   needs the track's own travel expressed on a child, where `100%` resolves
+   against the CHILD's width and quietly means something else.
+
+   ⚠ IT HAS TO BE DECLARED AFTER `.dr-run`. Both selectors are one class, so
+   they tie on specificity and SOURCE ORDER decides — sitting above `.dr-run`
+   it lost `position` to that rule's `relative`, dropped into normal flow
+   under the track, and took the pinned panel 68px past its own height so the
+   header clipped off the top of the screen. */
+.dr-run--anchor {
+  position: absolute; left: 0; top: 0;
+  width: var(--anchor-w);
+  /* the track's cards stretch to the tallest of them; the anchor is out of
+     that flow and would otherwise shrink to its own content */
+  height: 100%;
+  flex: none;
+}
+
 .dr-run-rail {
   display: block; position: relative; pointer-events: none;
   margin: var(--fib-3) calc(-1 * var(--pad)) 0;
@@ -1840,8 +1892,17 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-runs-pin { position: static; height: auto; overflow: visible;
                  display: block; }
   .dr-runs-grid { display: grid; grid-template-columns: minmax(0, 1fr);
-                  width: auto; translate: none; will-change: auto; }
+                  width: auto; translate: none; will-change: auto;
+                  padding-left: 0; }
   .dr-run { flex: initial; }
+  /* THE ANCHOR REJOINS THE COLUMN — and has to be put back in ORDER. It is
+     last in the DOM (so it paints over the rail without a stacking context
+     of its own), which on a column means 02, 03, 04, then 01. The floor
+     becomes the column and `order: -1` hands step one back its place. */
+  .dr-runs-floor { display: flex; flex-direction: column;
+                   gap: clamp(14px, 2.2svh, 24px); }
+  .dr-run--anchor { position: static; order: -1;
+                    width: auto; height: auto; }
 }
 @media (max-width: 640px) {
   .dr-run-well { height: clamp(84px, 15svh, 112px); }
@@ -1863,8 +1924,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   .dr-runs-stage { height: auto; }
   .dr-runs-pin { position: static; height: auto; overflow: visible; display: block; }
   .dr-runs-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-                  width: auto; translate: none; --ap: 1; }
+                  width: auto; translate: none; --ap: 1; padding-left: 0; }
   .dr-run { flex: initial; --cp: 1; }
+  /* same reason as the touch fallback above: with no rail to anchor, step
+     one is just the first card again */
+  .dr-runs-floor { display: grid; gap: clamp(14px, 2.2svh, 24px); }
+  .dr-run--anchor { position: static; order: -1;
+                    width: auto; height: auto; }
   .dr-run.is-in .dr-demo-call i,
   .dr-run.is-in .dr-demo-design i,
   .dr-run.is-in .dr-demo-build i,
