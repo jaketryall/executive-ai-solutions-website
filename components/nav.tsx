@@ -226,14 +226,12 @@ function LinksCapsule() {
    old color-adaptive theme resolver is gone by construction: nothing under
    the nav can ever collide with it or wash it out. Constant at all scroll
    positions (the Lesse grammar). */
-/* the mobile identity bar's marquee line — real facts on loop */
-const MARQUEE = [
-  "Sites from $2.5k",
-  "Ads managed from $500/mo",
-  "Mesa, AZ",
-  "Fixed quote in 2 days",
-  "Replies within a day",
-].join("  ·  ");
+/* ⚠ NO MARQUEE IN THE MOBILE BAR (Jake, 2026-09-08: "we cant have the cool
+   cta scrolling thing"). It was a looping line of real facts under the name;
+   a perpetual horizontal crawl in the one piece of chrome that is always on
+   screen is movement the visitor cannot get away from, and on a phone the
+   bottom bar is where the ACTION lives, not where the copy performs. The
+   facts it carried are all said elsewhere on the page. */
 
 export function Nav() {
   const root = useRef<HTMLElement>(null!);
@@ -458,52 +456,88 @@ export function Nav() {
           OF the phone — an OS-native pill, not a desktop nav squeezed down):
           the mark, the name over a fact marquee, and the one action */}
       {!onCasePage && (
-        <div ref={barRef} className="mnav">
-          <Link
-            href="/"
-            className="mnav-tile"
-            aria-label="Executive AI Solutions, home"
-          >
-            <Monogram className="h-[21px] w-[21px]" />
-          </Link>
-          <span className="mnav-mid">
-            {/* short form: with the Ask tile aboard, the full name needs
-                ~176px the 390px bar no longer has — the mark and marquee
-                carry the rest */}
-            <span className="mnav-name text-trim">Executive AI</span>
-            <span className="mnav-marquee" aria-hidden>
-              <span className="mnav-track">
-                <span>{MARQUEE}</span>
-                <span>{MARQUEE}</span>
-              </span>
+        <div ref={barRef} className={`mnav ${open ? "is-open" : ""}`}>
+          {/* THE SHEET RISES OUT OF THE BAR (Jake, 2026-09-08, pointing at
+              itsjay). Decoded live on a 420px viewport: his menu is not an
+              overlay — it lives INSIDE the same pill, above the bar row, in
+              an overflow-hidden wrapper whose height runs 0 → auto. Measured,
+              the pill goes 78px → 323px in ~410ms and its BOTTOM EDGE never
+              moves (844px in both states): the bar stays put and the panel
+              unfolds upward out of it. That is the whole trick, and it is
+              why it feels like part of the phone rather than a screen thrown
+              over the page.
+
+              `grid-template-rows: 0fr → 1fr` is what animates an auto height
+              without measuring it in JS — the child needs its own
+              overflow:hidden or the links spill during the run. */}
+          <div className="mnav-sheet" aria-hidden={!open}>
+            <div className="mnav-sheet-in">
+              <nav className="mnav-sheet-nav" aria-label="Menu">
+                {LINKS.map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className="mnav-sheet-link"
+                    tabIndex={open ? 0 : -1}
+                    onClick={() => setOpen(false)}
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+                <a
+                  href="mailto:jaker@executiveaisolutions.com"
+                  className="mnav-sheet-link mnav-sheet-mail"
+                  tabIndex={open ? 0 : -1}
+                  onClick={() => setOpen(false)}
+                >
+                  jaker@executiveaisolutions.com
+                </a>
+              </nav>
+            </div>
+          </div>
+
+          <div className="mnav-row">
+            {/* THE HAMBURGER TAKES THE MARK'S SLOT (Jake's call). The mark
+                still opens home from the top capsule; this bar's left tile is
+                now the only menu toggle on a phone — the top hamburger is
+                hidden below 820 in the stylesheet so there are not two. */}
+            <button
+              type="button"
+              className="mnav-tile mnav-burger"
+              aria-expanded={open}
+              aria-label={open ? "Close menu" : "Open menu"}
+              onClick={() => setOpen((v) => !v)}
+            >
+              <span />
+              <span />
+            </button>
+            <span className="mnav-mid">
+              <span className="mnav-name text-trim">Executive AI</span>
             </span>
-          </span>
-          {/* Ask lives IN the bar on mobile — a second floating pill above
-              it cost 130px of stacked bottom chrome (mobile audit 2026-07-16).
-              One quiet tile; Estimate keeps the loud slot. */}
-          <button
-            type="button"
-            className="mnav-tile mnav-ask"
-            aria-label="Ask this site a question"
-            onClick={() =>
-              window.dispatchEvent(new CustomEvent("eas:chat-open"))
-            }
-          >
-            <svg viewBox="0 0 20 20" fill="none" aria-hidden>
-              <path
-                d="M4 4.5h12A1.5 1.5 0 0 1 17.5 6v6a1.5 1.5 0 0 1-1.5 1.5H9l-3.5 3v-3H4A1.5 1.5 0 0 1 2.5 12V6A1.5 1.5 0 0 1 4 4.5Z"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <Link
-            href="/pricing#estimate"
-            className="mnav-cta t-num"
-          >
-            {total !== null ? `$${total.toLocaleString()}` : "Estimate"}
-          </Link>
+            {/* Ask lives IN the bar on mobile — a second floating pill above
+                it cost 130px of stacked bottom chrome (mobile audit
+                2026-07-16). One quiet tile; Estimate keeps the loud slot. */}
+            <button
+              type="button"
+              className="mnav-tile mnav-ask"
+              aria-label="Ask this site a question"
+              onClick={() =>
+                window.dispatchEvent(new CustomEvent("eas:chat-open"))
+              }
+            >
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden>
+                <path
+                  d="M4 4.5h12A1.5 1.5 0 0 1 17.5 6v6a1.5 1.5 0 0 1-1.5 1.5H9l-3.5 3v-3H4A1.5 1.5 0 0 1 2.5 12V6A1.5 1.5 0 0 1 4 4.5Z"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+            <Link href="/pricing#estimate" className="mnav-cta t-num">
+              {total !== null ? `$${total.toLocaleString()}` : "Estimate"}
+            </Link>
+          </div>
         </div>
       )}
 
@@ -601,10 +635,10 @@ export function Nav() {
             </span>
             <div className="flex flex-wrap items-center justify-between gap-fib-2">
               <a
-                href="mailto:hello@executiveaisolutions.com"
+                href="mailto:jaker@executiveaisolutions.com"
                 className="u-link t-meta"
               >
-                hello@executiveaisolutions.com
+                jaker@executiveaisolutions.com
               </a>
               <span className="t-meta text-paper/50">
                 Mesa, AZ · <LocalTime />

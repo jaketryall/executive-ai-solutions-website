@@ -46,11 +46,18 @@ export function Footer() {
       // main carries a CSS-default reveal gap (see globals) so the footer is
       // reachable even without JS; measurement refines it, and refresh is
       // rAF-debounced so raw resize events don't thrash ScrollTrigger
+      /* ⚠ THE RISE IS DESKTOP-ONLY (Jake, 2026-09-08). Below 820 the
+         stylesheet puts this footer back in flow, so the measured gap under
+         `main` must not be written either — a screen-and-a-half of margin
+         under an in-flow footer is a screen-and-a-half of nothing at the
+         bottom of every page. Same breakpoint as the mobile bar. */
+      const narrow = () => window.innerWidth <= 820;
+
       let raf = 0;
       const setH = () => {
         if (!root.current) return; // resize can race an unmount
         fit(); // the lockup sets the footer's height — fit before measuring
-        if (main) main.style.marginBottom = `${root.current.offsetHeight}px`;
+        if (main) main.style.marginBottom = narrow() ? "" : `${root.current.offsetHeight}px`;
         cancelAnimationFrame(raf);
         raf = requestAnimationFrame(() => ScrollTrigger.refresh());
       };
@@ -87,8 +94,8 @@ export function Footer() {
          the reveal, and it was tuned to taste (Jake). The shadow/veil/wake
          physics exist for pages whose last section is light-on-light. */
       const plain = pathname === "/";
-      if (main) main.style.boxShadow = plain ? "" : "0 34px 89px -21px rgba(19, 20, 19, 0.35)";
-      if (!reducedMotion() && main && lines.length && !plain) {
+      if (main) main.style.boxShadow = plain || narrow() ? "" : "0 34px 89px -21px rgba(19, 20, 19, 0.35)";
+      if (!narrow() && !reducedMotion() && main && lines.length && !plain) {
         // the whole footer wakes as the page lifts away: it starts a shade
         // in SHADOW (the veil — it really is UNDER the page), the upper
         // blocks rise in first, the lockup settles last, and the scrub runs
@@ -126,7 +133,7 @@ export function Footer() {
             });
           },
         });
-      } else if (!reducedMotion() && main && lines.length && plain) {
+      } else if (!narrow() && !reducedMotion() && main && lines.length && plain) {
         // the ORIGINAL homepage reveal, untouched: lockup rise only
         gsap.set(blocks, { autoAlpha: 1, y: 0 });
         if (veil) gsap.set(veil, { opacity: 0 });
@@ -180,7 +187,7 @@ export function Footer() {
   // panel ground, not canvas: the sheet lifting away needs a color step
   // beneath it on pages that END light (canvas-on-canvas hid the seam)
   return (
-    <footer ref={root} className="fixed inset-x-0 bottom-0 z-0 overflow-hidden bg-panel text-ink">
+    <footer ref={root} className="site-footer fixed inset-x-0 bottom-0 z-0 overflow-hidden bg-panel text-ink">
       <div className="wrap pt-[89px] md:pt-[144px]">
         <div className="flex flex-col justify-between gap-[55px] md:flex-row md:items-start">
           {/* contact block — the diagonal counterweight */}
@@ -192,10 +199,10 @@ export function Footer() {
             <div className="mt-[34px] flex flex-wrap items-center gap-[21px]">
               <CTA href={estimateHref} label="Price my project" tone="ink" />
               <a
-                href="mailto:hello@executiveaisolutions.com"
+                href="mailto:jaker@executiveaisolutions.com"
                 className="u-link t-meta py-fib-2 text-ink/70"
               >
-                hello@executiveaisolutions.com
+                jaker@executiveaisolutions.com
               </a>
             </div>
           </div>

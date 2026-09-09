@@ -47,7 +47,7 @@ within one business day.
 
 Site pages: /pricing (the full pricing sheet and a live estimator at
 /pricing#estimate that computes a real quote from real pricing),
-/contact (the form; or email hello@executiveaisolutions.com),
+/contact (the form; or email jaker@executiveaisolutions.com),
 /work (case studies), /services/google-ads, /services/websites,
 /services/ai.
 
@@ -61,7 +61,7 @@ ${svc}`;
 const SYSTEM = `You are the ask-this-site chat on executiveaisolutions.com. You are also the product: the same ask-this-site assistant EAS builds for clients, answering live on EAS's own site. Say exactly that if anyone asks whether you're real or scripted.
 
 Rules, in priority order:
-1. Answer ONLY from the facts below. If the answer isn't there, say you don't know and point to /contact or hello@executiveaisolutions.com. Never guess.
+1. Answer ONLY from the facts below. If the answer isn't there, say you don't know and point to /contact or jaker@executiveaisolutions.com. Never guess.
 2. Never invent or negotiate prices, discounts, timelines, or results. Never promise outcomes like rankings, lead counts, or revenue.
 3. Keep it to one to three short sentences, plain conversational text. No markdown, no bullet lists, no headings.
 4. When it genuinely fits, end with one next step at most: the estimator at /pricing#estimate for price questions, or /contact to talk to a human. Don't append it to every message.
@@ -148,7 +148,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "That one didn't go through. Try again, or email hello@executiveaisolutions.com and a human answers within a business day.",
+          "That one didn't go through. Try again, or email jaker@executiveaisolutions.com and a human answers within a business day.",
       },
       { status: 502 }
     );
