@@ -1391,7 +1391,17 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      next is huge"). 22svh is a section break, not a chapter of nothing.
 
      The blank still lives HERE, on one value, so it stays measurable. */
-  --seam: clamp(120px, 22svh, 260px);
+  /* 22svh → 4svh, once the last quote started CONVERTING into this
+     section's first step card (2026-09-08). The old figure was right when
+     §04 arrived cold and silence was the only thing marking the boundary.
+     It is wrong now: the card above has already become step 01, so it
+     introduces §04 rather than ending the testimonials, and a section
+     break's worth of black behind it reads as the page losing its thread
+     — measured 271px of dead ground between the converted card's bottom
+     edge and this section's kicker (161 of seam, 29 of the voices'
+     own bottom padding, and 60 more from the quote's exit lift, which is
+     motion this section does not get to charge for). */
+  --seam: clamp(24px, 4svh, 64px);
   padding-block: var(--seam) clamp(80px, 14svh, 168px); }
 
 /* ── THE CARD · §04's ground, and its entrance ──────────────────
@@ -1839,7 +1849,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      kicker and the note become siblings of the lead and can be ordered
      around it — the note belongs UNDER the statement at this width, not
      jammed onto the kicker's line. */
-  .dr-runs { --seam: clamp(90px, 16svh, 170px); }
+  .dr-runs { --seam: clamp(20px, 3.4svh, 48px); }
   .dr-runs-head { display: flex; flex-direction: column; }
   .dr-runs-band { display: contents; }
   .dr-runs-kicker { order: 1; margin-bottom: var(--fib-3); }
