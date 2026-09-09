@@ -130,7 +130,7 @@ export default function RunsSection() {
   return (
     /* the ground is not this section's job — see .dr-flip in page.tsx,
        which owns it for the whole back half */
-    <section className="dr-runs" aria-labelledby="dr-runs-h">
+    <section className="dr-runs" aria-label="How it runs">
       {/* THE STAGE is tall; the panel inside it is stuck to the viewport
           and the four steps slide sideways across it as you scroll down.
 
@@ -179,19 +179,26 @@ export default function RunsSection() {
         <div className="dr-runs-card">
         {/* the header SPANS: kicker hard left, the reassurance hard
             right, on one baseline, so the right quadrant is not empty. */}
+        {/* ⚠ THE HEADER IS THE FALLBACK, NOT THE DEFAULT. The last quote card
+            converts into this section's title and holds it centred on screen
+            just before the rail arrives (voices-section.tsx), so rendering a
+            header here as well printed the same kicker and the same line
+            twice a screen apart — which is exactly what "the other cards
+            never appear" and "there's no introduction" were both describing.
+
+            But it cannot simply be deleted: with JS off or reduced motion on,
+            that conversion never runs, and the section would have no title at
+            all. So it stays in the DOM and the stylesheet hides it only when
+            motion is available to carry it (see `.dr-runs-head` — the
+            `no-preference` query, deliberately inverted). */}
         <header className="dr-runs-head">
-          {/* the one triggered vocabulary (law 11): kicker, then the
-              lead, then the reassurance — each a declaration, all the
-              same gesture, fired once by the engine at top 90% */}
           <div className="dr-runs-band">
-            <span className="t-label dr-runs-kicker" data-wipe>
-              How it runs
-            </span>
-            <p className="dr-runs-sub" data-wipe data-wipe-delay="450">
+            <span className="t-label dr-runs-kicker">How it runs</span>
+            <p className="dr-runs-sub">
               Fixed quote up front, no surprises after.
             </p>
           </div>
-          <h2 className="dr-runs-lead" id="dr-runs-h" data-wipe data-wipe-delay="150">
+          <h2 className="dr-runs-lead">
             Four steps from the first call to a site that earns.
           </h2>
         </header>

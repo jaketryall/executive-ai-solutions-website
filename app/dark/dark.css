@@ -1541,7 +1541,16 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   position: relative;
 }
 
+/* THE HEADER IS A FALLBACK. The converting quote card carries this section's
+   title now; printing it here too rendered the same two lines a screen apart.
+   The query is INVERTED on purpose — the header is the default, and it is
+   removed only when motion is available to do the job instead. So no-JS,
+   no-CSS-animation and reduced-motion users all still get a titled section,
+   and nobody sees it twice. */
 .dr-runs-head { margin-bottom: clamp(26px, 4.4svh, 52px); }
+@media (prefers-reduced-motion: no-preference) {
+  .dr-runs-head { display: none; }
+}
 /* kicker left, reassurance right, one baseline */
 .dr-runs-band { display: flex; align-items: baseline; justify-content: space-between;
                 gap: var(--fib-5); margin-bottom: var(--fib-3); }
@@ -2344,13 +2353,26 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      Finishing at .84 leaves the card's top at .16vh (117px at 1440) with
      the body and the opened room below it whole in frame, and the
      converted card then rides the last 117px out fully lit. */
-  --m: clamp(0, (var(--sp, 0) - .5) / .34, 1);
+  /* ⚠ THIS WINDOW AND THE STICKY OFFSET ARE ONE MECHANISM — changing either
+     alone breaks the other, and doing exactly that is how this shipped
+     broken. --sp is computed from the card's own rect, so it FREEZES at
+     whatever value the stick point gives it; the morph therefore has to
+     complete at precisely that value. At the old .155vh offset --sp froze at
+     .845 and .5/.34 reached 1. Centring the card moved the offset to .28vh,
+     --sp now freezes at .72, and .5/.34 froze the morph two-thirds done — the
+     card held on screen at 48% effective opacity with a half-converted face.
+     .42/.30 lands 1 exactly at .72. If the sticky `top` moves again, this
+     moves with it. */
+  --m: clamp(0, (var(--sp, 0) - .42) / .30, 1);
   /* how far the surface opens, in px. NOT a ratio of the card's height:
      the card is as tall as its quote is long, and the face that has to
      fit in the opened space is a fixed stack (station row + rail + well).
      A ratio would make the room the face gets depend on how wordy the
      last client was. */
-  --grow: clamp(96px, 17.5svh, 142px);
+  /* retuned for the TITLE face, which is shorter than the step-card face it
+     replaced (166px against ~250): at 142 the card grew to 391 with the
+     title finishing at 215, leaving 176px of empty card under it. */
+  --grow: clamp(80px, 13svh, 118px);
   /* IT DOES NOT DIM ON THE WAY OUT — it converts. max() means the light
      the tent is taking away is handed straight to the morph, so the card
      stays lit while it becomes a step card instead of fading to the .5
@@ -2411,11 +2433,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    the column's height is identical whether the handoff has run or not,
    and §04 never moves under it. */
 .dr-voice-hand {
-  /* .dr-run-rail runs itself out across this, exactly as it does in §04 */
-  --pad: clamp(18px, 1.7vw, 26px);
   --f: clamp(0, (var(--m, 0) - .44) * 2.8, 1);
   position: absolute;
-  top: var(--ct); left: var(--cx); right: var(--cx);
+  /* CENTRED IN THE GROWN BOX, not pinned to the card's top padding. The
+     surface opens downward PAST the card's own height, so 50% of the card is
+     not 50% of what you see — half the grow has to be added back. Top-aligned
+     it left every pixel of the opened room as dead space under the title. */
+  top: calc(50% + var(--grow) / 2);
+  left: var(--cx); right: var(--cx);
   display: block;
   /* LEFT, where the quote was centred. §04's cards are left-set and the
      realignment is half of what makes this read as a conversion rather
@@ -2424,39 +2449,40 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   /* the surface opens first, the face arrives into it: one event, two
      beats */
   opacity: var(--f);
-  translate: 0 calc((1 - var(--f)) * 16px);
+  /* -50% centres it on that point; the 16px is its own arrival */
+  translate: 0 calc(-50% + (1 - var(--f)) * 16px);
 }
-/* THE WELL KEEPS §04's SIZE. Left to span this card it stretched to
-   ~1280px against §04's 570 — the same waveform, but a strip rather than
-   a screen, and the artifact is the most recognisable thing carrying the
-   seam. Capped, it is literally the object §04 opens with; the header,
-   rail, title and copy still span the wider card, which is what a single
-   step card gets to do when it is not one of four in a row. */
-.dr-voice-hand .dr-run-well {
-  max-width: clamp(260px, 54vw, 620px);
-  height: clamp(96px, 15svh, 130px);
-  margin-top: clamp(12px, 1.6svh, 18px);
+/* THE FACE IS §04's TITLE NOW, not a step card — so the well, the rail and
+   the station row are gone from it (they were duplicating the rail's own
+   card 01 two hundred pixels above it). What is left is the kicker, the
+   line, and the reassurance: the section's header, set in the section's own
+   type, arriving on the card that used to hold a quote. */
+.dr-voice-hand-k {
+  display: block; color: var(--ink-4);
+  margin-bottom: clamp(14px, 2.2svh, 24px);
 }
-/* §04's own title and copy rules are scoped to .dr-run, so the face
-   restates them rather than reaching for them — same tokens, same
-   weights, same measure */
 .dr-voice-hand-h {
-  display: block; margin-top: clamp(14px, 2svh, 22px); color: var(--ink);
+  display: block; color: var(--ink);
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 620;
-  font-size: var(--fs-item); line-height: 1.1; letter-spacing: -0.022em;
+  /* the SECTION scale, not the card scale — this IS §04's title, and it has
+     to arrive at the size §04's title would have arrived at */
+  font-size: var(--fs-section);
+  max-width: 17em;
+  line-height: 1.1; letter-spacing: -0.026em;
 }
 .dr-voice-hand-p {
-  display: block; margin-top: var(--fib-2); color: var(--ink-3);
+  display: block; margin-top: clamp(14px, 2.2svh, 22px); color: var(--ink-3);
   max-width: 46em;
   font-family: var(--font-instrument), sans-serif;
-  font-size: var(--fs-body-s); line-height: 1.5;
+  font-size: var(--fs-body); line-height: 1.5;
 }
 
 @media (prefers-reduced-motion: reduce) {
   /* the handoff is motion over a frame that is already correct, and the
      correct resting frame is the QUOTE — so the conversion simply does
      not run and the face is not there at all */
+  /* the card stays a quote and §04 keeps its own header above */
   .dr-voice--hand { --m: 0; position: static; }
   .dr-voice-hand { display: none; }
   /* no conversion means nothing to hold on screen — a quote pinned for a

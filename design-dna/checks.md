@@ -128,3 +128,8 @@ bug; never delete a line.
 - Scrolling 5px/frame through the section, fewer than 3 frames exceed 20ms.
 - Below 900px the grid is one column and the well is 3/2 rather than 4/5; no horizontal overflow at 420 or 1440.
 - The about paragraph is still resolving while it is READABLE: with its top between .7vh and .2vh there are always words at the floor AND words at full ink (an effect that completes below .55vh is invisible in practice, however correct the numbers are).
+
+## The seam's two coupled values
+- `--m`'s window and `.dr-voice--hand`'s sticky `top` are ONE mechanism: `--sp` freezes when the card sticks, so `--m` must reach exactly 1 at the frozen `--sp`. Assert the held card's `--m` computes to 1 — if the sticky offset is ever retuned and this is not, the card holds visibly half-converted.
+- "01" appears exactly once in the viewport at every scroll position through the seam (the held card must not duplicate the rail's first step).
+- `.dr-runs-head` is `display: none` under `prefers-reduced-motion: no-preference` and VISIBLE otherwise — it is §04's title fallback for when the card cannot convert, so the section is never untitled.

@@ -1,5 +1,4 @@
 import { QUOTES } from "@/lib/quotes";
-import { STEPS, DemoCall } from "./runs-section";
 
 /* IN THEIR WORDS — the section between §03 and §04
    Between the proof and the process: §03 shows the work, §04 shows the
@@ -42,24 +41,24 @@ import { STEPS, DemoCall } from "./runs-section";
    fourth. Three quotes as three full-width statements look deliberate,
    and a fourth simply makes the column longer.
 
-   THE LAST ONE HANDS OVER TO §04 (Jake, 2026-09-08: "i want the last
-   testimonial card to grow downwards as it moves up, text transforms or
-   animates or something and becomes the first card of the horizontal
-   scroll"). It does not dim on its way out the way the other two do — it
-   CONVERTS: the surface opens downward, the quote lifts out of it, and
-   the first step card's face fades into the room the surface just made.
-   By the time it leaves the screen it is a process card, and §04 opens
-   on the same card a screen later.
+   THE LAST ONE BECOMES §04's OPENER. It does not dim on its way out the
+   way the other two do — it CONVERTS: the surface opens downward, the
+   quote lifts out of it, and the process section's own title fades into
+   the room the surface just made. Then it holds, centred, and releases
+   into the rail.
 
-   ⚠ WHAT THIS IS NOT: a pixel-continuous morph into §04's own card 01.
-   That card lives inside a sticky pinned panel whose own overflow clips
-   it, and it is 476px of scroll below the point where this quote has
-   already left the top of the screen (measured at 1440) — so a literally
-   continuous handoff needs a fixed-position element flown to the pinned
-   card's measured rect, re-measured on resize. This carries the seam on
-   IDENTITY OF FORM instead: the same header row, the same rail, the same
-   waveform in the same well, arriving in the same shape. It survives
-   resize, back-scroll and touch, and it costs two transforms. */
+   ⚠ IT USED TO CONVERT INTO STEP 01, and that was wrong in a way no
+   amount of timing fixed: §04's rail ALSO opens with step 01, so the same
+   card rendered twice about 200px apart — the held one, then the rail's.
+   That is what "the other cards never appear" was describing (the first
+   card in the rail was the one you had just been staring at) and what
+   "theres no introduction to the process section" was describing (a
+   numbered step arriving before anything had said what the steps were).
+   Converting into the TITLE fixes both at once: nothing duplicates, the
+   section is introduced by the card, and all four steps stay in the rail
+   where they belong. It is also the better idea — a client's words
+   becoming our claim, rather than a client's words becoming our step one.
+   */
 
 export default function VoicesSection() {
   return (
@@ -193,23 +192,14 @@ export default function VoicesSection() {
                     reader this is a decorative preview of a heading that
                     is about to arrive, not a second copy of it. */}
                 {isLast && (
-                  <span className="dr-voice-hand" aria-hidden>
-                    <span className="dr-run-top">
-                      <span className="dr-run-n">{STEPS[0].n}</span>
-                      <span className="t-label dr-run-meta">
-                        {STEPS[0].meta}
-                      </span>
+                  <span className="dr-voice-hand">
+                    <span className="t-label dr-voice-hand-k">How it runs</span>
+                    <span className="dr-voice-hand-h">
+                      Four steps from the first call to a site that earns.
                     </span>
-                    <i className="dr-run-rail" />
-                    <span className="dr-run-well">
-                      <DemoCall />
+                    <span className="dr-voice-hand-p">
+                      Fixed quote up front, no surprises after.
                     </span>
-                    {/* the whole face, not a stub of one: a step card is
-                        a title and a sentence under its artifact, and
-                        without them the conversion lands on something
-                        that is recognisably not what §04 opens with */}
-                    <span className="dr-voice-hand-h">{STEPS[0].title}</span>
-                    <span className="dr-voice-hand-p">{STEPS[0].copy}</span>
                   </span>
                 )}
               </figure>
