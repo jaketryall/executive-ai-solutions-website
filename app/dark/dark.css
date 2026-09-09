@@ -1918,18 +1918,23 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-about-lead span {
   display: inline-block;
   /* this word's own progress, 0 → 1 */
-  --w: clamp(0, (var(--rp, 1) - var(--i) * .011) / .16, 1);
+  /* THE STAGGER SPENDS THE WHOLE WINDOW. At .011 the last of 28 words was
+     done by --rp .46, so the back half of the scroll had nothing left to
+     move — the effect finished before the copy was in a reading position.
+     .028 x 27 + a .22 span lands the final word at --rp .98: the paragraph
+     is still resolving the entire time it is being read. */
+  --w: clamp(0, (var(--rp, 1) - var(--i) * .028) / .22, 1);
   /* OPACITY, NOT color-mix — measured. Mixing a colour per word per frame
      re-rasterises 27 runs of 56px glyphs every frame: 13.8ms mean through
      the section with 27 frames over 20ms, which is the same paint-bound
      failure the room flip had. Opacity composites instead, and the visual
      result on a black ground is identical.
-     The floor is .55, not 0 — an unresolved word is still TEXT somebody may
-     stop on, and .55 white on this ground measures 6.2:1, over the room's
-     readable floor. (The voices lens needed the same correction: what
+     The floor is .5, not 0 — an unresolved word is still TEXT somebody may
+     stop on, and .5 white on this ground measures 5.3:1, the same floor the
+     voices lens was corrected to. (The voices lens needed the same correction: what
      matters is the BLENDED pixel, not the declared colour.) */
   color: var(--ink);
-  opacity: calc(.55 + .45 * var(--w));
+  opacity: calc(.5 + .5 * var(--w));
 }
 
 .dr-about-media { position: relative; }

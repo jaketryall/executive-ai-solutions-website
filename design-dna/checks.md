@@ -127,3 +127,4 @@ bug; never delete a line.
 - The well's picture uses §03's parallax constants (top -19%, height 126%, translate `pp × 35.71% − 13.1%`) — this site has ONE parallax rate.
 - Scrolling 5px/frame through the section, fewer than 3 frames exceed 20ms.
 - Below 900px the grid is one column and the well is 3/2 rather than 4/5; no horizontal overflow at 420 or 1440.
+- The about paragraph is still resolving while it is READABLE: with its top between .7vh and .2vh there are always words at the floor AND words at full ink (an effect that completes below .55vh is invisible in practice, however correct the numbers are).

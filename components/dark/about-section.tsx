@@ -60,8 +60,16 @@ export default function AboutSection() {
           <p
             className="dr-about-lead"
             data-sp
-            data-sp-from="0.95"
-            data-sp-to="0.15"
+            /* THE WINDOW SITS IN THE READING ZONE. At .95 → .15 the resolve
+               was measured complete by the time the paragraph's top reached
+               .55vh — the whole effect happened while the copy was still in
+               the bottom half of the screen, and by the time you could read
+               it every word was already at full ink. Which is to say it ran
+               perfectly and was invisible. It now starts as the paragraph
+               enters at .85 and is still resolving as its top approaches the
+               top of the screen. */
+            data-sp-from="0.85"
+            data-sp-to="0.05"
             data-sp-var="--rp"
             data-sp-lerp="0.1"
             /* NO data-sp-step here, and that is a measured decision rather
