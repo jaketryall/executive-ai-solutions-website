@@ -2291,7 +2291,11 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 /* THE HOLD — see the note in voices-section.tsx. Height only; the gap above
    it is the list's own, absorbed. */
-.dr-voices-hold { display: block; height: 96svh; pointer-events: none; }
+/* 35svh, NOT 96. At a full screen the card held alone with nothing arriving
+   and §04's own header 837px further down — a screen of dead scroll between
+   the payoff and the section that explains it (Jake: "the other cards never
+   appear"). They always did render; they were just a screen late. */
+.dr-voices-hold { display: block; height: 35svh; pointer-events: none; }
 
 /* ══ THE HANDOFF · the last quote becomes the first step card ═══
    Jake, 2026-09-08: "i want the last testimonial card to grow downwards
@@ -2325,7 +2329,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      the card came to rest 50px from the top of the screen, underneath the
      fixed nav. The 41 is viewport-independent (the lens travel is a fixed
      120px), so this holds at every height: 114px at 734, 140px at 900. */
-  top: calc(15.5svh + 41px);
+  /* CENTRED, re-solved (Jake: "i dont like where this sits when its sticky
+     needs to feel centered"). Same simultaneous equation as before — the
+     resting offset and the lens's own travel depend on each other — just
+     aimed lower: the card rests at .28vh, where --sp reads .72 and the lens
+     has lifted it (.5 - .72) x 120 = 26px, so the offset adds that back. A
+     250-370px card resting at .28vh leaves roughly equal air above and below
+     at both 734 and 900. */
+  top: calc(28svh + 26px);
   /* .5 → .84, NOT .55 → 1. Completing at --sp 1 means completing at the
      instant the card's TOP reaches the top of the screen — measured, the
      card body was already 10px above the fold and the only thing left in
