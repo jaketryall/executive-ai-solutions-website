@@ -76,6 +76,7 @@ const PROOF_DIR =
   "/private/tmp/claude-501/-Users-jakeryall-Documents-cursor-projects-Executive-AI-Solutions-Website/ce239744-2956-4844-a879-02a81eb2b402/scratchpad/reel/proof2";
 const FRAMES_DIR = path.join(PROOF_DIR, "frames");
 const SCREEN_DIR = path.join(PROOF_DIR, "screen");
+const PAGES_DIR = path.join(PROOF_DIR, "pages");
 const OUT_NAME = `${path.basename(PROOF_DIR)}.mp4`;
 
 const DW_URL = "https://www.desertwingsflightschool.com";
@@ -86,6 +87,7 @@ const DW_URL = "https://www.desertwingsflightschool.com";
    same total device-point height a full-screen 390x844 capture used to
    be, just split between "site content" (this capture) and "OS chrome"
    (the stage). */
+const SCREEN_DSF = Number(process.env.REEL_SCREEN_DSF ?? "3");
 const CAPTURE_W = 390;
 const CAPTURE_H = 790;
 
@@ -159,11 +161,48 @@ function parseArgs(argv) {
   return args;
 }
 
+/* `--prefix dw --site https://host --pages home,programs` becomes the
+   slugs dw-home / dw-programs on disk and in the stage URL. The prefix is
+   what keeps one client's "home" from overwriting another's. */
+function cascadeSlugs(args) {
+  if (!args.pages) return undefined;
+  const prefix = args.prefix ? `${args.prefix}-` : "";
+  return args.pages
+    .split(",")
+    .map((x) => x.trim())
+    .filter(Boolean)
+    .map((x) => `${prefix}${x}`)
+    .join(",");
+}
+
+function cascadeSpecs(args) {
+  if (!args.pages || !args.site) return [];
+  const base = args.site.replace(/\/$/, "");
+  const prefix = args.prefix ? `${args.prefix}-` : "";
+  return args.pages
+    .split(",")
+    .map((x) => x.trim())
+    .filter(Boolean)
+    .map((x) => ({ slug: `${prefix}${x}`, url: x === "home" ? base : `${base}/${x}` }));
+}
+
 function buildSegments(args) {
   if (args.scene) {
     const from = Number.parseInt(args.from ?? "0", 10);
     const to = Number.parseInt(args.to ?? String(from), 10);
-    return [{ scene: args.scene, from, to }];
+    // --text overrides the title card's line; --pages/--ground drive the
+    // cascade deck. Each is ignored by every scene that does not read it.
+    return [
+      {
+        scene: args.scene,
+        from,
+        to,
+        text: args.text,
+        pages: cascadeSlugs(args),
+        ground: args.ground,
+        zoom: args.zoom === "1" || args.zoom === true,
+      },
+    ];
   }
   // Proof scene: shots 1 + 4 of design-dna/reel-board.md — the Apple wipe
   // title into Desert Wings scrolling live on a phone.
@@ -181,6 +220,71 @@ function screenFilePath(f) {
 }
 function screenUrlPath(f) {
   return `/reel-screen/f${String(f).padStart(4, "0")}.png`;
+}
+function pageFilePath(slug) {
+  return path.join(PAGES_DIR, `${slug}.png`);
+}
+
+/* ── Pass 1 for the cascade: one still per page ───────────────────────
+   The cascade deck is real pages, and the client sites send
+   `x-frame-options: SAMEORIGIN` exactly like Desert Wings does, so these
+   have to be shot top-level here and composited on the stage later.
+   Unlike the phone-dw capture this needs no virtual clock: a cascade card
+   is a STILL, so the only requirement is that the page has finished
+   arriving before the shutter. Hence networkidle plus a settle wait long
+   enough to outlast a scroll-triggered entrance, then a full-viewport
+   shot at the card's own aspect ratio so nothing is cropped on the stage. */
+
+const PAGE_W = 1440;
+const PAGE_H = 900;
+const PAGE_SETTLE_MS = 2600;
+
+async function capturePages(browser, specs) {
+  if (specs.length === 0) return;
+
+  const context = await browser.newContext({
+    viewport: { width: PAGE_W, height: PAGE_H },
+    deviceScaleFactor: 2,
+  });
+  const page = await context.newPage();
+
+  for (const { slug, url } of specs) {
+    await page.goto(url, { waitUntil: "networkidle", timeout: 60_000 });
+
+    /* Consent banners are the one thing guaranteed to be on every page of
+       a real client site and never wanted in a reel. Decline rather than
+       accept — a render has no business opting anyone into tracking — and
+       fall back to hiding the banner outright if no Decline control is
+       found, because an un-dismissed banner ruins all four cards at once
+       and is easy to miss at cascade scale. */
+    const declined = await page
+      .getByRole("button", { name: /decline|reject/i })
+      .first()
+      .click({ timeout: 4000 })
+      .then(() => true)
+      .catch(() => false);
+    if (!declined) {
+      await page.evaluate(() => {
+        for (const el of document.querySelectorAll("body *")) {
+          const cs = getComputedStyle(el);
+          if (cs.position !== "fixed" && cs.position !== "sticky") continue;
+          if (!/cookie|consent/i.test(el.textContent ?? "")) continue;
+          if ((el.textContent ?? "").length > 600) continue;
+          el.remove();
+        }
+      });
+    }
+    console.log(`[reel]   ${slug}: consent ${declined ? "declined" : "banner removed"}`);
+
+    await page.waitForTimeout(PAGE_SETTLE_MS);
+    await page.screenshot({
+      path: pageFilePath(slug),
+      clip: { x: 0, y: 0, width: PAGE_W, height: PAGE_H },
+    });
+    console.log(`[reel] [pass1] page ${slug} <- ${url}`);
+  }
+
+  await context.close();
 }
 
 /** Steps the page's virtual clock from `fromMs` to `toMs` in exact
@@ -246,7 +350,13 @@ async function captureDwScreens(browser, timewebSource, frames) {
 
   const context = await browser.newContext({
     viewport: { width: CAPTURE_W, height: CAPTURE_H },
-    deviceScaleFactor: 3,
+    /* DSF is the zoom-through's whole ballgame. At rest the phone screen is
+       ~420 CSS px wide, so 3x is already oversampled — but the zoom pushes
+       that screen out to ~1990 CSS px (≈3980 device px in the 2x stage
+       render), and 3x only supplies 1170. The picture therefore goes soft
+       exactly when the viewer is looking hardest at it. Raise it for any
+       render that zooms. */
+    deviceScaleFactor: SCREEN_DSF,
     isMobile: true,
     hasTouch: false, // hasTouch contexts can suppress :hover — this beat needs real hover
   });
@@ -385,6 +495,22 @@ async function renderStage(browser, allFrames) {
 
   // Serves Pass 1's screenshots to the stage's <img> — intercepted before
   // it ever reaches the network, so no real Next.js route is needed.
+  // Serves Pass 1's page stills to the cascade deck's <img>s, same
+  // interception trick as /reel-screen/ below.
+  await context.route("**/reel-page/**", async (route) => {
+    try {
+      const url = new URL(route.request().url());
+      const match = url.pathname.match(/\/reel-page\/([a-z0-9-]+)\.png$/i);
+      if (!match) {
+        await route.abort();
+        return;
+      }
+      await route.fulfill({ path: pageFilePath(match[1]), contentType: "image/png" });
+    } catch {
+      await route.abort().catch(() => {});
+    }
+  });
+
   await context.route("**/reel-screen/**", async (route) => {
     try {
       const url = new URL(route.request().url());
@@ -407,9 +533,13 @@ async function renderStage(browser, allFrames) {
   const t0 = Date.now();
 
   for (let i = 0; i < allFrames.length; i++) {
-    const { scene, f } = allFrames[i];
+    const { scene, f, text, pages, ground, zoom } = allFrames[i];
     const params = new URLSearchParams({ scene, f: String(f) });
     if (scene === "phone-dw") params.set("screen", screenUrlPath(f));
+    if (text) params.set("text", text);
+    if (pages) params.set("pages", pages);
+    if (ground) params.set("ground", ground);
+    if (zoom) params.set("zoom", "1");
     const url = `${BASE_URL}/reel/stage?${params.toString()}`;
 
     if (scene !== currentScene) {
@@ -503,19 +633,29 @@ async function main() {
 
   await mkdir(FRAMES_DIR, { recursive: true });
   await mkdir(SCREEN_DIR, { recursive: true });
+  await mkdir(PAGES_DIR, { recursive: true });
 
   const timewebPath = path.join(REPO_ROOT, "node_modules", "timeweb", "dist", "timeweb.js");
   const timewebSource = await readFile(timewebPath, "utf8");
 
   const allFrames = [];
   for (const seg of segments) {
-    for (let f = seg.from; f <= seg.to; f++) allFrames.push({ scene: seg.scene, f });
+    for (let f = seg.from; f <= seg.to; f++)
+      allFrames.push({
+        scene: seg.scene,
+        f,
+        text: seg.text,
+        pages: seg.pages,
+        ground: seg.ground,
+        zoom: seg.zoom,
+      });
   }
   const startNumber = allFrames[0]?.f ?? 0;
   const dwFrameNumbers = allFrames.filter((x) => x.scene === "phone-dw").map((x) => x.f);
 
   const browser = await chromium.launch({ headless: true });
 
+  await capturePages(browser, cascadeSpecs(args));
   const { titleOk } = await captureDwScreens(browser, timewebSource, dwFrameNumbers);
   await renderStage(browser, allFrames);
 

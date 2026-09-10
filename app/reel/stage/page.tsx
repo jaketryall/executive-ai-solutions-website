@@ -57,11 +57,23 @@ function clampPct(n: number) {
 /* ── scene: title ──────────────────────────────────────────────────── */
 
 const TITLE_TEXT = "A website that books";
-const WIPE_FRAMES = 23; // 400ms at 60fps
+/* 30 frames = 500ms: the TOP of the keynote's measured 300-500ms band,
+   not the bottom. At 23 (383ms) the card read as hurried next to the live
+   footage — Apple's title cards look expensive because the wipe takes its
+   time and then the line is allowed to SIT. The hold is the render range's
+   job (see scripts/reel/render.mjs --to), and wants ~1s minimum after this
+   finishes; the exit stays a hard cut. */
+const WIPE_FRAMES = 30;
 
-function TitleScene({ f }: { f: number }) {
+/* The line is a PARAMETER, not a constant: the reel needs several title
+   cards cut against each other, and they only read as one system if every
+   one of them is the same wipe on the same ground in the same face. Passing
+   the words in keeps that guaranteed by construction — there is exactly one
+   TitleScene, so there is exactly one way a title card can behave. Omit the
+   param and it falls back to the board's opening line. */
+function TitleScene({ f, text = TITLE_TEXT }: { f: number; text?: string }) {
   const u = Math.max(0, Math.min(1, f / WIPE_FRAMES));
-  const p = f <= WIPE_FRAMES ? wipeEase(u) : 1; // frames 24-53 hold fully revealed
+  const p = f <= WIPE_FRAMES ? wipeEase(u) : 1; // every frame past 30 holds fully revealed
   const rightInset = clampPct((1 - p) * 100);
   const edgeInset = clampPct((1 - p) * 100 - 2.5); // ~48px leading edge at 1920 wide
 
@@ -72,14 +84,92 @@ function TitleScene({ f }: { f: number }) {
         style={{ clipPath: `inset(0 ${edgeInset}% 0 0)` }}
         aria-hidden
       >
-        {TITLE_TEXT}
+        {text}
       </span>
       <span
         className="stage-title__main"
         style={{ clipPath: `inset(0 ${rightInset}% 0 0)` }}
       >
-        {TITLE_TEXT}
+        {text}
       </span>
+    </div>
+  );
+}
+
+/* ── scene: cascade ────────────────────────────────────────────────────
+   itsjay's reel does this over and over: several real page screenshots
+   fanned into a deck, held for about a second, hard cut away. It is the
+   one move that says "there is a whole site here" without ever asking the
+   viewer to read a page — the pages are TEXTURE at this size, and the
+   shape of the deck is the message.
+
+   Same two-pass trick as phone-dw, and for the same reason: the live
+   client sites refuse to be framed, so Pass 1 of the render script shoots
+   each page top-level and Pass 2 composites the results here as plain
+   <img>s fed through /reel-page/<slug>.png — a URL the render script
+   intercepts, never a real Next.js route.
+
+   The deck is a pure function of `f` like everything else on this stage.
+   Cards do not fade: they start nearly stacked and are REVEALED by the
+   spread, which is what makes it read as paper rather than as a slideshow.
+   The front card leads and the ones behind it follow on a stagger, so the
+   deck opens from the front instead of all of it sliding at once. */
+
+const CASCADE_FRAMES = 54; // 0.9s at 60fps
+const CASCADE_STAGGER = 5; // frames between one card and the next
+const CARD_W = 740;
+const CARD_H = 463; // 1440x900 capture, same 1.6 aspect — so the page is never cropped
+const FAN_DX = 330;
+const FAN_DY = -78;
+const FAN_ANGLE = -2.6;
+const START_TIGHTEN = 0.16; // how compressed the deck is on frame 0
+
+function CascadeScene({
+  f,
+  pages,
+  ground,
+}: {
+  f: number;
+  pages: string[];
+  ground: string;
+}) {
+  const n = pages.length;
+  const travel = Math.max(1, CASCADE_FRAMES - (n - 1) * CASCADE_STAGGER);
+
+  return (
+    <div className="stage-cascade" style={{ background: ground }}>
+      <div className="stage-cascade__deck">
+        {pages.map((slug, i) => {
+          const k = i - (n - 1) / 2;
+          // the LAST card is the front of the deck, so it is the one that
+          // moves first — the others are uncovered in its wake
+          const delay = (n - 1 - i) * CASCADE_STAGGER;
+          const u = Math.max(0, Math.min(1, (f - delay) / travel));
+          const p = wipeEase(u);
+          const spread = START_TIGHTEN + (1 - START_TIGHTEN) * p;
+
+          return (
+            <div
+              key={slug}
+              className="stage-cascade__card"
+              style={
+                {
+                  "--cw": `${CARD_W}px`,
+                  "--ch": `${CARD_H}px`,
+                  zIndex: i,
+                  transform:
+                    `translate(${k * FAN_DX * spread}px, ${k * FAN_DY * spread}px) ` +
+                    `rotate(${k * FAN_ANGLE * spread}deg) scale(${0.94 + 0.06 * p})`,
+                } as React.CSSProperties
+              }
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element -- a
+                  render-script-fed page capture, not an optimizable asset */}
+              <img src={`/reel-page/${slug}.png`} alt="" />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -97,37 +187,79 @@ function TitleScene({ f }: { f: number }) {
    a real Next.js route. */
 
 const PHONE_H = 950;
-const PHONE_W = (PHONE_H * 9) / 19.5;
-const OUTER_RADIUS = 62;
-const RIM = 3; // titanium rim ring
-const HILITE = 1; // inner highlight ring
-const BEZEL = 5; // matte black ring — thinned from 12
-const SCREEN_INSET = RIM + HILITE + BEZEL;
-const SCREEN_W = PHONE_W - SCREEN_INSET * 2;
-const SCREEN_H = PHONE_H - SCREEN_INSET * 2;
-// proportional to a real 6.1" iPhone screen (~12.3% of its own width),
-// not a fixed px value independent of how big this phone mockup is drawn
-const SCREEN_RADIUS = SCREEN_W * 0.123;
+const PHONE_RATIO = 9 / 19.5;
 
-// The capture (scripts/reel/render.mjs) shoots 390x790 of site content —
-// the status bar is NOT baked into those pixels. 54 + 790 = 844, the full
-// device-point height of the phone this mockup represents, split between
-// real OS chrome (drawn here, in CSS) and the captured page. Everything
-// in the status bar is sized off DEVICE_SCALE so it scales with the phone.
-const STATUS_BAR_H = SCREEN_H * (54 / 844);
-const CONTENT_H = SCREEN_H - STATUS_BAR_H;
-const DEVICE_SCALE = STATUS_BAR_H / 54; // px-per-device-point at this mockup's size
+/* ── phone geometry, derived from a HEIGHT ─────────────────────────────
+   Every dimension of the mockup is a ratio of its own height, so the whole
+   device can be drawn at any size by changing one number. That exists for
+   the zoom-through: see the note on ZOOM_TARGET for why the zoom changes
+   this height rather than applying a transform. */
+function phoneGeom(h: number) {
+  const k = h / 950; // vs the resting phone, so the trims scale with it
+  const w = h * PHONE_RATIO;
+  const rim = 3 * k;
+  const hilite = 1 * k;
+  const bezel = 5 * k;
+  const inset = rim + hilite + bezel;
+  const sw = w - inset * 2;
+  const sh = h - inset * 2;
+  // The capture is 390x790 of page content — the status bar is NOT baked
+  // into those pixels. 54 + 790 = 844, the device-point height this mockup
+  // represents, split between OS chrome drawn here in CSS and the page.
+  const statusH = sh * (54 / 844);
+  return {
+    w,
+    h,
+    rim,
+    hilite,
+    bezel,
+    inset,
+    sw,
+    sh,
+    outerR: 62 * k,
+    // proportional to a real 6.1" iPhone screen (~12.3% of its own width)
+    screenR: sw * 0.123,
+    statusH,
+    contentH: sh - statusH,
+    deviceScale: statusH / 54, // px per device point at this drawn size
+  };
+}
 
 const PHONE_SCENE_FRAMES = 95; // (149 - 54): 1.6s at 60fps — the whole-phone
 // 2% push (cosmetic zoom). Unrelated to the site's own scroll timing, which
 // scripts/reel/render.mjs owns exclusively (see SCROLL_START_FRAME there).
 
-function StatusBar({ status }: { status: "light" | "dark" }) {
+/* ── the zoom-through ──────────────────────────────────────────────────
+   The board's hardest transition: the phone's SCREEN grows until it is the
+   frame, and the reel hard-cuts out of it into the same content laid out
+   for desktop. It only works as a MATCH cut — by the time the zoom lands,
+   the phone is parked showing the stacked panels, and the shot it cuts to
+   is those same panels side by side on desktop.
+
+   THIS RESIZES THE PHONE INSTEAD OF SCALING IT, and that is the whole
+   difference between the move working and not. A `transform: scale()`
+   rasterises a layer at roughly its layout size and then stretches that
+   texture, so pushing a 420px-wide phone out to ~1990px goes soft no
+   matter how much resolution the capture supplies — measured: raising the
+   screen capture from 3x to 8x moved sharpness only +17% and it still sat
+   below every other shot in the reel. Driving the layout HEIGHT makes
+   Chrome lay out and re-rasterise every frame at full size instead. That
+   is expensive per frame, which would matter in a browser and does not
+   matter at all in an offline render.
+
+   Two other things make or break it. It must OVERFILL — stop at exactly
+   frame-width and the screen's own rounded corners show in the corners of
+   the shot — and it must still be MOVING at the cut, or it reads as two
+   shots rather than one gesture. Both are why this ends mid-curve. */
+const ZOOM_START = 150;
+const ZOOM_FRAMES = 66; // the curve's full length — the shot ends before this
+const ZOOM_TARGET = 5.4; // multiple of the phone's resting size
+
+function StatusBar({ status, pt }: { status: "light" | "dark"; pt: (n: number) => number }) {
   const glyph = status === "dark" ? "#15151a" : "#ffffff";
-  const pt = (n: number) => n * DEVICE_SCALE;
 
   return (
-    <div className="stage-phone__statusbar" style={{ height: STATUS_BAR_H }}>
+    <div className="stage-phone__statusbar" style={{ height: pt(54) }}>
       <span
         className="stage-phone__statustime"
         style={{ fontSize: pt(15), left: pt(28), color: glyph }}
@@ -179,39 +311,41 @@ function PhoneDwScene({
   f,
   screenSrc,
   status,
+  zoom,
 }: {
   f: number;
   screenSrc: string;
   status: "light" | "dark";
+  zoom: boolean;
 }) {
   const u = Math.max(0, Math.min(1, (f - 54) / PHONE_SCENE_FRAMES));
-  const scale = 1 + 0.02 * u;
+  const z =
+    zoom && f > ZOOM_START
+      ? wipeEase(Math.max(0, Math.min(1, (f - ZOOM_START) / ZOOM_FRAMES)))
+      : 0;
+  const g = phoneGeom(PHONE_H * (1 + (ZOOM_TARGET - 1) * z));
+  const pt = (n: number) => n * g.deviceScale;
 
   return (
-    <div className="stage-phone-wrap" style={{ transform: `scale(${scale})` }}>
-      <div
-        className="stage-phone"
-        style={{ width: PHONE_W, height: PHONE_H, borderRadius: OUTER_RADIUS }}
-      >
-        <div className="stage-phone__rim" style={{ borderRadius: OUTER_RADIUS }} />
+    // only the 2% cosmetic push is a transform; the zoom is real layout
+    <div className="stage-phone-wrap" style={{ transform: `scale(${1 + 0.02 * u})` }}>
+      <div className="stage-phone" style={{ width: g.w, height: g.h, borderRadius: g.outerR }}>
+        <div className="stage-phone__rim" style={{ borderRadius: g.outerR }} />
         <div className="stage-phone__specular" aria-hidden />
         <div
           className="stage-phone__highlight"
-          style={{ inset: RIM, borderRadius: OUTER_RADIUS - RIM }}
+          style={{ inset: g.rim, borderRadius: g.outerR - g.rim }}
         />
         <div
           className="stage-phone__bezel"
-          style={{
-            inset: RIM + HILITE,
-            borderRadius: OUTER_RADIUS - RIM - HILITE,
-          }}
+          style={{ inset: g.rim + g.hilite, borderRadius: g.outerR - g.rim - g.hilite }}
         />
         <div
           className="stage-phone__screen"
-          style={{ inset: SCREEN_INSET, borderRadius: SCREEN_RADIUS }}
+          style={{ inset: g.inset, borderRadius: g.screenR }}
         >
-          <StatusBar status={status} />
-          <div className="stage-phone__content" style={{ height: CONTENT_H }}>
+          <StatusBar status={status} pt={pt} />
+          <div className="stage-phone__content" style={{ height: g.contentH }}>
             {screenSrc ? (
               // eslint-disable-next-line @next/next/no-img-element -- a
               // render-script-fed frame capture, not an optimizable asset
@@ -250,14 +384,22 @@ function Stage() {
   const fParam = Number.parseInt(searchParams.get("f") ?? "0", 10);
   const f = Number.isFinite(fParam) ? Math.max(0, fParam) : 0;
   const screenSrc = searchParams.get("screen") ?? "";
+  const titleText = searchParams.get("text") ?? undefined;
+  const pages = (searchParams.get("pages") ?? "").split(",").filter(Boolean);
+  const ground = searchParams.get("ground") ?? "#000000";
+  const zoomOn = searchParams.get("zoom") === "1";
   const status = searchParams.get("status") === "dark" ? "dark" : "light";
 
   let content: React.ReactNode;
 
   if (scene === "title") {
-    content = <TitleScene f={f} />;
+    content = <TitleScene f={f} text={titleText} />;
+  } else if (scene === "cascade") {
+    content = <CascadeScene f={f} pages={pages} ground={ground} />;
   } else if (scene === "phone-dw") {
-    content = <PhoneDwScene f={f} screenSrc={screenSrc} status={status} />;
+    content = (
+      <PhoneDwScene f={f} screenSrc={screenSrc} status={status} zoom={zoomOn} />
+    );
   } else {
     content = <div className="stage-unknown">unknown scene</div>;
   }

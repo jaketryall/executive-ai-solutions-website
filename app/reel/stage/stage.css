@@ -265,3 +265,52 @@
   width: 4px;
   height: 70px;
 }
+
+/* ── scene: cascade — a deck of real pages, fanned ────────────────────
+   The deck is a zero-size anchor at the centre of the stage and every
+   card is absolutely positioned against it with a negative half-size
+   margin, so a card's transform origin is its own centre and `translate`
+   values read as "offset from the middle of the frame" rather than as
+   layout. That is what lets the fan geometry live entirely in the TSX as
+   plain numbers.
+
+   Cards carry a hairline ring as well as a shadow: on a dark client
+   ground a shadow alone leaves two overlapping dark pages with no visible
+   seam between them. */
+
+.stage-cascade {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.stage-cascade__deck {
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+.stage-cascade__card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--cw);
+  height: var(--ch);
+  margin-left: calc(var(--cw) / -2);
+  margin-top: calc(var(--ch) / -2);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.stage-cascade__card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
