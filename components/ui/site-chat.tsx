@@ -34,6 +34,10 @@ export function SiteChat() {
   // true): mirror state into refs so the leave-page beacon reads fresh
   const msgsRef = useRef<Msg[]>([]);
   const sentRef = useRef(0);
+  /* Handed out by /api/chat, handed back with the transcript so the
+     server can tell a real conversation from an invented one. Stays null
+     until CHAT_SIGNING_SECRET is set, which the server tolerates. */
+  const tokenRef = useRef<string | null>(null);
 
   const flush = () => {
     const m = msgsRef.current;
@@ -53,6 +57,7 @@ export function SiteChat() {
             JSON.stringify({
               messages: m.slice(-20),
               page: window.location.pathname,
+              token: tokenRef.current,
             }),
           ],
           { type: "application/json" }
@@ -135,7 +140,10 @@ export function SiteChat() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ messages: next.slice(-12) }),
       });
-      const data = (await res.json()) as { reply?: string; error?: string };
+      const data = (await res.json()) as {
+        reply?: string; error?: string; token?: string | null;
+      };
+      if (data.token) tokenRef.current = data.token;
       const reply =
         data.reply ??
         data.error ??

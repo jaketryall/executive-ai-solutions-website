@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SERVICES } from "@/lib/services";
+import { clientIp, hit } from "@/lib/rate-limit";
+import { issue } from "@/lib/chat-token";
 
 /* The ask-this-site chat — the product, demoing itself (Jake, 2026-07-15:
    "since we are advertising an ai chat i think we need our own"). The same
@@ -10,16 +12,12 @@ import { SERVICES } from "@/lib/services";
 
 export const runtime = "nodejs";
 
-/* ── rate limit: 10 messages/min per IP ── */
-const hits = new Map<string, number[]>();
-function limited(ip: string) {
-  const now = Date.now();
-  const w = (hits.get(ip) ?? []).filter((t) => now - t < 60_000);
-  w.push(now);
-  hits.set(ip, w);
-  if (hits.size > 2000) hits.clear();
-  return w.length > 10;
-}
+/* ── rate limit: 10 messages/min per IP ──
+   Now from lib/rate-limit, which is honest about what this is: a brake
+   that holds per instance, not a ceiling that holds across them. The
+   real spend protection is the cache below — it makes each call cheap
+   enough that the brake slipping is no longer expensive. */
+const LIMIT = { limit: 10, windowMs: 60_000 };
 
 /* ── the knowledge: serialized from the same data the pages render ── */
 function knowledge() {
@@ -82,9 +80,7 @@ export async function POST(req: NextRequest) {
       { status: 503 }
     );
 
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
-  if (limited(ip))
+  if (hit("chat", clientIp(req), LIMIT))
     return NextResponse.json(
       { error: "Easy — a few questions a minute is plenty. Try again shortly." },
       { status: 429 }
@@ -127,7 +123,16 @@ export async function POST(req: NextRequest) {
         // factual QA over a fixed knowledge base — low temperature keeps
         // the phrasing of prices and terms boringly exact
         temperature: 0.3,
-        system: SYSTEM,
+        /* CACHED. The system block is ~3,000-3,500 tokens of knowledge()
+           and it was re-sent, and re-billed at full input rate, on every
+           single message. It never changes between deploys, so it is the
+           textbook case for a cache breakpoint: a read costs a tenth of
+           a fresh write. This is the single biggest lever on what an
+           abusive loop can cost, and it makes the ordinary case cheaper
+           too. */
+        system: [
+          { type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } },
+        ],
         // keep the tail of long conversations; the system carries the facts
         messages: messages.slice(-12),
       }),
@@ -143,8 +148,12 @@ export async function POST(req: NextRequest) {
       .join("")
       .trim();
     if (!reply) throw new Error("empty");
-    return NextResponse.json({ reply });
-  } catch {
+    /* `token` proves to the transcript route that this conversation
+       actually happened here. Null until CHAT_SIGNING_SECRET is set, and
+       the client simply passes back whatever it is given. */
+    return NextResponse.json({ reply, token: issue() });
+  } catch (err) {
+    console.error("[chat] upstream failed —", err);
     return NextResponse.json(
       {
         error:

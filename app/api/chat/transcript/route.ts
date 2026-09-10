@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { clientIp, hit } from "@/lib/rate-limit";
+import { verify } from "@/lib/chat-token";
+import { esc } from "@/lib/validate";
 
 /* Chat transcripts → Jake's inbox. This is what makes the widget's
    greeting TRUE ("a human reads every conversation") — and every
@@ -10,15 +13,8 @@ import { Resend } from "resend";
 
 export const runtime = "nodejs";
 
-const hits = new Map<string, number[]>();
-function limited(ip: string) {
-  const now = Date.now();
-  const w = (hits.get(ip) ?? []).filter((t) => now - t < 60_000);
-  w.push(now);
-  hits.set(ip, w);
-  if (hits.size > 2000) hits.clear();
-  return w.length > 4;
-}
+/* Nobody legitimately closes four chat panels a minute. */
+const LIMIT = { limit: 4, windowMs: 60_000 };
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -27,15 +23,21 @@ export async function POST(req: NextRequest) {
   if (!process.env.RESEND_API_KEY || !to)
     return NextResponse.json({ ok: false }, { status: 503 });
 
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
-  if (limited(ip)) return NextResponse.json({ ok: false }, { status: 429 });
+  if (hit("transcript", clientIp(req), LIMIT))
+    return NextResponse.json({ ok: false }, { status: 429 });
 
   let messages: Msg[];
   let page = "";
   try {
     // sendBeacon posts a Blob — same JSON, parsed the same way
-    const body = (await req.json()) as { messages?: Msg[]; page?: string };
+    const body = (await req.json()) as {
+      messages?: Msg[]; page?: string; token?: string;
+    };
+    /* Did this conversation happen HERE? Without a signing secret this
+       passes and we are back to rate limiting alone; with one, an
+       invented transcript can no longer be mailed in as a lead. */
+    if (!verify(body.token))
+      return NextResponse.json({ ok: false }, { status: 403 });
     messages = body.messages ?? [];
     page = typeof body.page === "string" ? body.page.slice(0, 120) : "";
   } catch {
@@ -55,10 +57,6 @@ export async function POST(req: NextRequest) {
     messages.some((m) => m.role === "assistant");
   if (!valid) return NextResponse.json({ ok: false }, { status: 400 });
 
-  const esc = (s: string) =>
-    s.replace(/[&<>"']/g, (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!
-    );
   const thread = messages
     .map(
       (m) =>
@@ -74,7 +72,8 @@ export async function POST(req: NextRequest) {
       html: `<h2>Ask-this-site conversation</h2>${page ? `<p><em>Started on ${esc(page)}</em></p>` : ""}${thread}`,
     });
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (err) {
+    console.error("[transcript] send failed —", err);
     return NextResponse.json({ ok: false }, { status: 502 });
   }
 }
