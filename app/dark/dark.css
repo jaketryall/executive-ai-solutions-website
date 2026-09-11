@@ -566,6 +566,29 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      copy and the reel are in a race, and a race is only fair if both
      runners start and stop together. */
   --lead: clamp(0, calc(var(--hero-p, 0) / .32), 1);
+
+  /* ── THE RACE, AS ONE NUMBER AND ONE RATIO ─────────────────────
+     --open is how far the reel's top edge rises. It used to live on the
+     reel, where the copy could not read it, which is exactly how the two
+     drifted 4.7x apart without anything complaining. Up here both read
+     it, so the relationship is structural instead of two constants that
+     happen to agree today.
+
+     --chase is the copy's travel AS A MULTIPLE of the reel's. That makes
+     the floor exact rather than felt: at 1.0 the copy and the reel's top
+     move in perfect lockstep and the gap between them is CONSTANT — it
+     never opens, but it can never close either. Below 1.0 the reel gains
+     on the copy and eventually runs it over. So 1.0 is not a preference,
+     it is the edge of correctness, and any value at or above it is safe
+     at every viewport without re-measuring.
+
+     1.1 (Jake: "text above is moving up too fast now"). Down from the
+     1.42 that matching Cosmos's 0.67-against-0.48 produced — their text
+     is an SVG wordmark that is meant to fly out of frame, ours is a
+     sentence somebody is still reading. 0.51px/px against their 0.67,
+     and the gap still opens by 10% of the reel's rise. */
+  --open: clamp(90px, 25svh, 260px);
+  --chase: 1.1;
 }
 
 /* A BAND, THEN THE REEL. The top row is the statement and its support
@@ -642,7 +665,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
        reel top  225px / 490 = 0.46px/px   (Cosmos: 0.48)
    Same relationship, same slack, same direction. */
 .dr-chip, .dr-left, .dr-aside {
-  translate: 0 calc(var(--lead, 0) * -320px);
+  translate: 0 calc(var(--lead, 0) * var(--open) * var(--chase) * -1);
   /* squared, so the copy holds nearly full strength while you are still
      reading it and the fade only bites once it is genuinely leaving */
   opacity: calc(1 - .92 * var(--lead, 0) * var(--lead, 0));
@@ -993,13 +1016,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      and §02's top does not touch the reel until 0.43, so the reel
      finishes opening with clear room before anything climbs over it. */
   --g: clamp(0, calc(var(--hero-p, 0) / 0.32), 1);
-  /* ⚠ CAPPED SO THE TOP EDGE CLEARS THE CHIP. At 30svh the open ended
-     with the reel's top at 178 and the chip's box running 155-203, so the
-     reel cut the chip in half — and a half-covered object reads as broken
-     in a way a fully covered one never does. The rule: the top edge lands
-     ABOVE the chip or BELOW it, never inside it. Below is the one that
-     keeps the proof on screen. */
-  --open: clamp(90px, 25svh, 260px);
+  /* ⚠ --open IS CAPPED AT 25svh, and the cap is why. At 30svh the open
+     ended with the reel's top at 178 and the chip's box running 155-203,
+     so the reel cut the chip in half — and a half-covered object reads
+     as broken in a way a fully covered one never does. The rule: the top
+     edge lands ABOVE the chip or BELOW it, never inside it. Below is the
+     one that keeps the proof on screen. (The declaration itself is on
+     .dr-main; see THE RACE there.) */
+  /* --open is declared on .dr-main now, so the copy can race it */
   margin-top: calc(var(--g) * var(--open) * -1);
   z-index: 2;
   border-radius: var(--fib-4);
