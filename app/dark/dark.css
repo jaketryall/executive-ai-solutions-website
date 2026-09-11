@@ -843,6 +843,45 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-vouch figcaption { margin-top: 4px; color: var(--ink-4);
   font-family: var(--font-instrument), sans-serif; font-size: var(--fs-micro); }
 
+/* ══ §01b · THE REEL ══════════════════════════════════════════════
+   What the hero climbs into. An OPAQUE plate of the room's own ground —
+   it has to be, because it slides over a sticky hero that is still
+   painted underneath it; a transparent section would show the headline
+   through the footage.
+
+   One object, centred, nothing else in the frame. The room's rule that
+   content lives on surfaces is satisfied by the well itself. */
+.dr-reel {
+  position: relative;
+  z-index: 10;
+  background: var(--void);
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding-block: clamp(64px, 12svh, 150px);
+}
+
+.dr-reel-well {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--fib-4);
+  overflow: hidden;
+  /* a hair lighter than the void so the well reads as an object even
+     while the footage is dark */
+  background: var(--surface-1);
+}
+.dr-reel-well video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 900px) {
+  .dr-reel { min-height: auto; padding-block: clamp(48px, 9svh, 96px); }
+  .dr-reel-well { aspect-ratio: 4 / 3; border-radius: var(--fib-3); }
+}
+
 /* ══ §02 · THE FUNNEL ════════════════════════════════════════════
    THE LIGHTS COME ON. The one light section in a black room, and the only
    place the page inverts. The tokens are redefined here rather than the
