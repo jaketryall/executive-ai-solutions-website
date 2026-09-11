@@ -232,12 +232,19 @@ export default function DarkRoom() {
           --hero-p lives on the WRAPPER, not the stage: a pinned element's
           rect does not move, so measured on the stage the progress would
           freeze at 0 the moment the pin engaged and the dim would never
-          fire. The wrapper's top travels 1:1, and the value inherits down. */}
+          fire. The wrapper's top travels 1:1, and the value inherits down.
+
+          THE WINDOW IS 1.7 VIEWPORTS, not 1, because §02 now starts 70svh
+          lower (see THE HOLD in dark.css — the reel was opening entirely
+          underneath it). The number's MEANING is unchanged and every
+          consumer still reads it the same way: 0 with §02's top at the
+          fold, 1 with it at the top of the viewport. Only the distance
+          between those two moments grew. */}
       <div
         className="dr-hero-wrap"
         data-sp
         data-sp-from="0"
-        data-sp-to="-1"
+        data-sp-to="-1.7"
         data-sp-var="--hero-p"
       >
         {/* the rail watches this, not a scroll number — and it sits OUTSIDE

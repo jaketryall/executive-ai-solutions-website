@@ -324,7 +324,21 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-hero-wrap { position: relative; }
 @media (min-width: 901px) {
   .dr-stage { position: sticky; top: 0; }
-  .dr-hero-wrap > .dr-svc { z-index: 10; }
+  .dr-hero-wrap > .dr-svc {
+    z-index: 10;
+    /* ⚠ THE HOLD. §02's top used to enter at the fold on the very first
+       pixel of scroll, which meant it was eating the reel the entire time
+       the reel was opening — measured at 1440x900, the reel reached full
+       bleed at exactly the scroll where §02 had covered all 365px of it.
+       The grow happened entirely underneath the thing it was meant to be
+       seen through. So §02 now starts 70svh lower: the reel opens, holds
+       at full bleed for ~280px of clean scroll, and only then is it
+       climbed over. The wrapper's --hero-p window is stretched to match
+       (-1.7 in page.tsx), so the number still means exactly what its
+       comment says — 0 with §02's top at the fold, 1 with it at the top
+       of the viewport — and §02's own surface grow is untouched. */
+    margin-top: 70svh;
+  }
 }
 .wrap { max-width: 1400px; margin-inline: auto; width: 100%;
         padding-inline: var(--fib-3); }
@@ -497,7 +511,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      started the instant the chrome ended. The nav and the headline are
      STRANGERS in the spacing system and strangers take the largest gap,
      not none; a heading owes at least its own height of air above it. */
-           padding-block: clamp(56px, 8svh, 104px) clamp(16px, 3.8svh, 34px);
+           padding-block: clamp(56px, 8svh, 104px) var(--floor);
+  /* named, because the reel has to be able to cancel it — see THE FLOOR */
+  --floor: clamp(16px, 3.8svh, 34px);
   /* THE RECEDE. See the note in page.tsx: the next section rising is a
      depth cue bought up here, not motion down there.
 
@@ -508,11 +524,20 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      like it arrived too fast because the hero was running away from it.
 
      What survives is the DIM, which was the honest half all along:
-     something moving away from the light gets darker. Squared, so the
-     first half of the hero holds nearly full strength and the fade only
-     bites once it is genuinely leaving. */
-  opacity: calc(1 - .92 * var(--hero-p, 0) * var(--hero-p, 0));
-  will-change: opacity;
+     something moving away from the light gets darker.
+
+     ⚠ IT IS NO LONGER ON THIS ELEMENT. The dim used to sit here, on the
+     whole hero — which meant the reel faded out across the very stretch
+     where it is opening to full bleed. A thing arriving must not be
+     leaving. So the copy dims (below) and the reel does not: the reel is
+     covered instead, and being covered is a truer depth cue than fading
+     anyway — it is the climb doing the work, not an opacity. */
+
+  /* THE HERO'S OWN LEAVING, as a fraction of the climb. The copy is done
+     going at .42 — the point where §02's top edge first touches the
+     reel's bottom — so the words are gone before the cover starts and
+     the two beats never overlap. */
+  --lead: clamp(0, calc(var(--hero-p, 0) / .42), 1);
 }
 
 /* THE NESTED GRID — not a split. The statement keeps its full width, and
@@ -546,7 +571,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    `translate` on the columns; the lines inside own `transform` for the
    entrance and the cards own it for the focal shift. Three properties,
    three owners, no collision. */
-.dr-left  { translate: 0 calc(var(--hero-p, 0) * -40px); }
+.dr-left  {
+  translate: 0 calc(var(--lead, 0) * -48px);
+  /* squared, so the copy holds nearly full strength while you are still
+     reading it and the fade only bites once it is genuinely leaving */
+  opacity: calc(1 - .92 * var(--lead, 0) * var(--lead, 0));
+  will-change: opacity;
+}
 
 .dr-left  { grid-column: 1; grid-row: 1; display: flex; flex-direction: column;
             justify-content: flex-end; align-self: stretch;
@@ -881,11 +912,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      gets corners, a full-bleed composition does not. So the corners
      resolve to 0 exactly as it stops being an object. */
   /* ⚠ THE WINDOW IS COMPRESSED, and it has to be. --hero-p runs across
-     the hero's whole travel, but §02 climbs over this reel long before
-     that travel ends — measured, at --hero-p 0.67 the well was 1390px
-     wide and entirely hidden behind §02. So the grow finishes at 0.45
-     and the rest of the travel is spent under the climb. */
-  --g: clamp(0, calc(var(--hero-p, 0) / 0.45), 1);
+     the hero's whole travel, but §02 climbs over this reel before that
+     travel ends. §02's top now touches the reel's bottom at --hero-p
+     .43 (see THE HOLD), so the grow finishes at .25 — the reel arrives
+     at full bleed with the whole run to .43 left to be looked at, and
+     the rest of the travel is spent under the climb. */
+  --g: clamp(0, calc(var(--hero-p, 0) / 0.25), 1);
 
   /* AND IT STARTS GENUINELY INSET. Growing 1290 → 1440 is 150px across a
      whole viewport of scroll — arithmetically a grow, perceptually
@@ -893,6 +925,14 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      object opening. */
   margin-inline: calc(9% + var(--g) * ((50% - 50vw) - 9%));
   border-radius: calc(var(--fib-4) * (1 - var(--g)));
+
+  /* THE FLOOR. Full bleed means all four edges, not two. The hero's
+     bottom padding is right for an inset object — it is the air the
+     object stands on — but once the reel reaches the side edges that
+     same strip reads as a letterbox seam along the bottom of the
+     screen. So the reel cancels exactly that padding, at exactly the
+     rate it opens: air while it is an object, none once it is not. */
+  margin-bottom: calc(var(--g) * var(--floor, 0px) * -1);
 }
 .dr-hero-reel video {
   display: block;
@@ -902,7 +942,21 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 }
 @media (max-width: 900px) {
   .dr-hero { grid-template-rows: auto auto; }
-  .dr-hero-reel { aspect-ratio: 4 / 3; border-radius: var(--fib-3); }
+  /* NO GROW ON THE PHONE. The grow only makes sense against the pin and
+     the hold, and neither exists below 901px — there the hero simply
+     scrolls away, so an opening reel would just be a width twitch on the
+     way past. It stays a contained object at the measure, and the 9%
+     inset the grow starts from would only make it narrow. */
+  .dr-hero-reel { aspect-ratio: 4 / 3; border-radius: var(--fib-3);
+                  margin-inline: 0; margin-bottom: 0;
+    /* ⚠ align-self, and it is load-bearing. .dr-hero stretches its items,
+       and a stretched box with an aspect-ratio resolves its WIDTH from
+       the height it was stretched to — measured at 390, that made the
+       reel 408px wide inside a 348px column and cut its right edge off
+       the screen. Starting it instead lets the width come from the
+       column and the height from the ratio, which is the way round a
+       ratio is meant to be read. */
+                  align-self: start; }
 }
 
 /* ══ §02 · THE FUNNEL ════════════════════════════════════════════
