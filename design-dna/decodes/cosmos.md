@@ -124,6 +124,38 @@ A `position: fixed` band (`.progressive-blur_wrap`, z-index 30, full 1440px widt
 
 ### 5d. Hero showreel
 
+> **⚠ CORRECTION, 2026-09-10.** The pass below recorded the hero video's
+> box and its lightbox and stopped there, which read as "no scroll effect
+> on the hero video" — and that reading was wrong. It was never probed
+> across scroll. Re-measured live at 1440×900, `.home-header_video`:
+>
+> | scrollY | width | radius | top | height | bottom |
+> |---|---|---|---|---|---|
+> | 0 | 1416 | 32px | 527.6 | 360.2 | **887.8** |
+> | 150 | 1416 | 32px | 449.6 | 438.1 | **887.7** |
+> | 300 | 1416 | 32px | 371.7 | 516.0 | **887.7** |
+> | 450 | 1416 | 32px | 293.7 | 594.0 | **887.7** |
+> | 600 | 1416 | 32px | 239.7 | 647.9 | **887.6** |
+>
+> **The width and the radius never change and it never goes full bleed.**
+> The BOTTOM EDGE IS PINNED to the viewport — constant to a tenth of a
+> pixel across the whole run — and the video opens **upward**: 360 → 648,
+> **1.80× in height**, at **0.52px of height per px of scroll**, finishing
+> around scrollY 554 (≈0.6 viewport). `transform` is the identity matrix
+> on the wrapper, its parent, and the video throughout — this is a real
+> height change, not a scale. After it tops out, the element scrolls away
+> normally.
+>
+> It reads as a shutter opening rather than a zoom, and the restraint is
+> the point: because the frame's width and corners hold still, the only
+> thing your eye is given to read is *more picture*.
+>
+> Ported to the dark room's hero reel (commit 031b72e) — pinned bottom via
+> the stage's existing sticky, opened with a negative top margin so the
+> grid row keeps holding the bottom. Ours measures 1.54× at 0.55px/px,
+> bottom drift 0.0px.
+
+
 `.home-header_video` is a single autoplaying, looping, muted `<video>` (`showreel-v1_mp4.mp4`, mp4+webm sources) inside a Webflow lightbox trigger (`aria-haspopup="dialog"` — click opens the full reel). Wrapper radius 32px, `overflow:hidden`. The color/shape variety seen in the video (neon-green crocodile scene, purple "nobip" scene) is **video content, not a DOM/CSS effect** — there is no separate colored-panel element flanking it; don't mistake footage content for a live effect.
 
 ### 5e. Nav niche-label cycler
