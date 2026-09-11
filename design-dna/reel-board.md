@@ -1,4 +1,23 @@
-# Showreel board v2 · "what we build, cut to music"
+# Showreel board v3 · "design that sells, cut to music"
+
+> **v3, 2026-09-11.** v2's grammar (below, unchanged — it is measured) survives; its
+> shot list does not. Three things moved under it since 2026-09-07: the positioning
+> ("design and crms, not ads" — the old opener "A website that books" and the "Found."
+> ads beat are gone), the room went LIGHT (the film is now the page's one dark object,
+> so a white ground in the reel is a 1440×796 white flash on the page — every light
+> ground here is gone), and the slot got a spec (`reel-spec.md`: 2:1 safe zone, ≤15s
+> or loop, first frame = poster, ≤4MB). Type trimmed from 35% toward itsjay's 15%.
+>
+> **THE SENTENCE** — what someone must understand after watching: *these sites are
+> real, they were designed to sell, and the system behind them books the call.*
+> Every shot either shows a real site or shows the follow-up landing. Nothing else.
+>
+> **MUSIC: none supplied yet.** Per the motion-design skill the beat grid is the
+> skeleton, not a finish — so this board is cut against a **placeholder 120 BPM grid
+> (1 beat = 30f @ 60fps)** and every boundary below sits on a half-beat. When Jake
+> supplies the licensed track, `pr_detect_beats` (or ffmpeg onset detection) gives the
+> real grid and the boundaries re-quantise to it. Until then the timing is a stated
+> assumption, not a decision.
 
 Reel v1 (2026-09-07, Seedance device shots + static phone screenshots + fading type cards)
 was rejected on sight: "thats so bad lol" — a slideshow. Jake's brief after it: Apple's TEXT
@@ -40,35 +59,55 @@ the clients' own colours.
   file (his licence); a click placeholder until then. Not Suno/Higgsfield for a paid ad.
 - Seedance: demoted to ONE optional beat (the night dashboard N-32 is on disk); no more spend.
 
-## Shot list (≈19–20s, 60fps, all cuts hard unless noted)
+## Shot list v3 (14.0s = 840f @ 60fps, LOOPS, all cuts hard)
 
-| # | t | len | Beat | Layer / ground |
-|---|---|---|---|---|
-| 1 | 0.0 | 0.9 | TYPE wipe: "A website that books" | black |
-| 2 | 0.9 | 0.9 | Flat UI: Desert Wings hero, tight crop, 2% push, grain | DW blue ground |
-| 3 | 1.8 | 0.8 | TYPE wipe: "while you're on the job." | black |
-| 4 | 2.6 | 1.6 | PHONE: DW mobile scrolling live in a real bezel (the "on the phone" beat) | black |
-| 5 | 4.2 | 0.8 | CASCADE: 4 DW pages fan out | DW blue |
-| 6 | 5.0 | 0.7 | TYPE cropped by the frame edge: "Found." + won-search crop under it | black |
-| 7 | 5.7 | 0.9 | Flat UI: AAHG hero crop | AAHG palette |
-| 8 | 6.6 | 0.8 | CASCADE: AAHG pages | AAHG palette |
-| 9 | 7.4 | 0.3 | STROBE sting: 4×60ms white/mark flicker | — |
-| 10 | 7.7 | 0.9 | Flat UI: Riled Up hero crop | RU palette |
-| 11 | 8.6 | 0.8 | CASCADE: Riled Up pages | RU palette |
-| 12 | 9.4 | 0.8 | TYPE wipe: "Booked." | black |
-| 13 | 10.2 | 1.8 | PHONE: the chat — message types, reply, "Booked · Sat 9:00 AM" lands (live DOM) | black |
-| 14 | 12.0 | 0.8 | NUMERAL card (scale 3.5→1 + blur 12→0): "2 days" / "fixed quote" | #eef0f1 |
-| 15 | 12.8 | 0.8 | Flat UI: pricing / estimate crop | black |
-| 16 | 13.6 | 0.8 | TYPE wipe: "Fixed quote up front." | black |
-| 17 | 14.4 | 0.9 | Flat UI: /work stepper crop | black |
-| 18 | 15.3 | 0.8 | CASCADE: all three clients' heroes stacked | black |
-| 19 | 16.1 | 0.9 | TYPE wipe: "Executive AI Solutions" | black |
-| 20 | 17.0 | 2.2 | Closing real UI: the EAS hero, phone cycling; fade out mid-momentum | black |
+**Loop, not play-once.** The hero `<video>` loops, and since every cut in the reel is a
+hard cut, the loop seam (shot 16 → shot 1) is just one more hard cut — UI mid-motion to a
+type wipe, the same cut the reel makes six other times. No seam to hide.
 
-Type ratio ≈ 35% (Jake asked for Apple text; trim toward itsjay's 15% if it drags).
-No fabricated numbers: every stat on screen is a real promise or a verified client figure.
+**Safe zone: the vertical middle 60% of the frame.** The band hero at rest is a 3.09:1
+letterbox (reel-spec.md) — the top and bottom 20% are never seen there. Type, screens,
+cursors live in the middle; grounds run to the edges.
 
-## Proof scene first (before the full build)
-Shots 1 + 4 only: one Apple wipe title into the Desert Wings site scrolling live on a real
-bezel, rendered through the stage → 2.5s at 1080p60. Pass = the phone reads as a real phone,
-the scroll is smooth by construction, the wipe matches the keynote numbers. Then the rest.
+**Hold ≠ freeze.** Every held shot carries residual life: a 1–2% push across its whole
+length, or a drifting secondary element. Checked by frame-diff on the finished cut — no
+run of near-zero change longer than 10 frames.
+
+**Motion blur is synthesised.** The stage is frame-stepped, so every frame has zero
+exposure and fast moves strobe. The render samples two sub-frames per output frame
+(f and f+0.5) and averages them — a 180° shutter equivalent — as the finishing pass,
+never while timing.
+
+| # | f | len | s | beat | ground | move |
+|---|---|---|---|---|---|---|
+| 1 | 0 | 120 | 2.0 | TYPE wipe L→R: "Design that sells," — ~120px Archivo 660, cropped by the frame's left edge | black | wipe f0–24 `cubic-bezier(.6,0,.25,1)`, hold to 120 (18 chars ÷ 12 = 1.5s floor ✓), 1% push |
+| 2 | 120 | 42 | 0.7 | FLAT UI: Desert Wings hero, tight crop on the headline + CTA | DW blue | push 1.00→1.05 whole shot, ease 22/75 |
+| 3 | 162 | 36 | 0.6 | FLAT UI: DW fleet grid | black | pan L 40px, decel (flick, not constant) |
+| 4 | 198 | 48 | 0.8 | CASCADE: 4 DW pages fan out from a stack | DW blue | fan, stagger 6f, ease 22/75, no overshoot |
+| 5 | 246 | 42 | 0.7 | FLAT UI: Riled Up hero (lime type on black — its own drama, no ground needed) | black | push 1.00→1.04 |
+| 6 | 288 | 36 | 0.6 | FLAT UI: AAHG hero crop | AAHG navy | pan R 30px, decel |
+| 7–11 | 324 | 30 | 0.5 | STROBE STING, 5 shots 6/6/5/6/7f: DW mobile · AAHG programs · RU mobile · DW journey · AAHG numbers. **Content strobes, never white.** | — | hard |
+| 12 | 354 | 138 | 2.3 | TYPE wipe: "systems that follow up." — the breath | steel #4C6B7C | wipe f354–378, hold (23 chars ÷ 12 = 1.9s floor ✓ at 1.9s), 1% push |
+| 13 | 492 | 108 | 1.8 | PHONE, photoreal bezel (the device IS the point — the follow-up is a text): "Are you open this weekend?" → reply → "Booked · Sat 9:00 AM" lands | black | messages rise 24px + fade, stagger 10f, ease 22/75; the "Booked" pill lands LAST on a beat |
+| 14 | 600 | 48 | 0.8 | FLAT UI: DW mobile, booking CTA in frame | DW blue | scroll flick 120px + decel — impulsive, never constant |
+| 15 | 648 | 48 | 0.8 | CASCADE: the three clients' heroes stack | black | stack in, stagger 6f |
+| 16 | 696 | 144 | 2.4 | CLOSING, real UI mid-momentum: the EAS estimator, cursor moving, a value ticking — **cuts hard to shot 1: the loop seam** | black | push 1.00→1.03, cursor path, no fade |
+
+**Totals:** 16 shots · median 0.75s · two breathers (2.0, 2.3) + a 2.4 close · one sting
+at f324 (39% in; reference 33%) · type 2/16 shots = 12.5% (31% of runtime) · zero
+dissolves · zero white frames · ends on real UI, no logo card.
+
+**Grounds** (the colour rhythm): black · DW blue · AAHG navy · EAS steel #4C6B7C. All
+under ~35% luminance — nothing here can flash the light page.
+
+**No fabricated numbers.** "Booked · Sat 9:00 AM" is the exact string in
+`components/dark/service-shots.tsx`. Nothing on screen says a figure that is not a
+real promise.
+
+## Proof scene v3, before the full build
+Shots 1–4 (0–198f, 3.3s): the new type wipe, a flat-UI push, a flick-pan, a cascade —
+the four moves the body is made of, none of which the v2 proof (wipe + phone) covered.
+Pass = the push and pan read as intended rather than mechanical (contact sheet, not
+playback), the cascade stagger measures 6f ±1, motion blur is provably present
+(sharpness drops through the pan), and no frame-pair in a hold is under the residual
+floor. Then shots 5–16.
