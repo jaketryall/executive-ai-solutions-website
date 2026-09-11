@@ -109,7 +109,6 @@
   --nav-h: 62px;
   --nav-space: calc(var(--nav-h) + var(--nav-pad));
   --floor: clamp(20px, 5.5svh, 58px);       /* the action's floor */
-  --copy-floor: clamp(44px, 13svh, 138px);  /* the copy rides higher */
   --hero-lh: 1.06;
 
   /* ── exactly two curves. */
@@ -590,7 +589,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 
 .dr-left  { grid-column: 1; grid-row: 1; align-self: end; }
-/* ⚠ --copy-floor is GONE from here. It existed to lift the copy off a
+/* ⚠ --copy-floor is GONE, token and all. It existed to lift the copy off a
    floor the two columns used to share; the band is auto-height now, so
    all it did was open a 44-138px hole between the headline and the reel
    that the row-gap already owns. */
@@ -629,29 +628,6 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-door:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 4px; }
 .dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 760ms forwards; }
 .dr-lit .dr-door    { animation: dr-fadein var(--t-enter) var(--ease-structure) 860ms forwards; }
-/* the stack spans BOTH rows: as its own row it added the foot's height on
-   top of itself and pushed the action off the fold */
-/* top-aligned like the reference: it puts the first case in the strongest
-   corner of the frame instead of floating it mid-column. Capped and faded at
-   the bottom so a long roster reads as continuing, not as clipped. The side
-   padding is what lets the focal card's 12px shift live INSIDE the clip. */
-.dr-works { grid-column: 2; grid-row: 1; align-self: stretch; min-height: 0;
-            /* dropped off the nav so the rail and the roster read as two
-               separate objects, not one stack */
-            margin-top: clamp(20px, 3.9svh, 38px);
-            /* the SAME floor the copy stands on, so the action's bottom edge
-               lands on the last line of the paragraph */
-            padding-bottom: var(--floor);
-            display: flex; flex-direction: column; gap: 8px; }
-/* the roster takes whatever is left after the action has its space, then
-   clips and fades. The side padding is what lets the focal card's 12px shift
-   live INSIDE the clip instead of being cut off by it. */
-.dr-works-roll { flex: 1 1 auto; min-height: 0; overflow: hidden;
-                 display: flex; flex-direction: column; gap: 8px;
-                 padding-left: 16px; margin-left: -16px;
-                 -webkit-mask-image: linear-gradient(to bottom, #000 0 72%, transparent 99%);
-                         mask-image: linear-gradient(to bottom, #000 0 72%, transparent 99%); }
-.dr-works > .dr-wk { flex: 0 0 auto; }
 
 /* h1 lines mask-rise, 800ms outQuart, 140ms stagger */
 .dr-line { overflow: hidden; transform: skewX(-4deg);
@@ -666,90 +642,6 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-sub { opacity: 0; margin: 0; }
 .dr-lit .dr-sub { animation: dr-fadein var(--t-enter) var(--ease-structure) 620ms forwards; }
 
-/* ══ THE WORK CHAIN ══════════════════════════════════════════════
-   A thumbnail, a name, one line of what we did. The thumbnail plays a real
-   scroll-through of that client's live site when the card takes focus. */
-.dr-works { display: flex; flex-direction: column; gap: 8px; }
-
-.dr-wk {
-  display: flex; align-items: stretch; gap: 14px;
-  /* the thumbnail keeps the reference's 10px inset; the arrow needs more
-     room than that or it sits on the card's edge */
-  padding: 10px 18px 10px 10px;
-  border-radius: 13px; text-decoration: none;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  /* 24, not 14 — the rise has to be legible as a RISE next to the
-     headline's, which climbs a full line height out of its clip */
-  opacity: 0; transform: translateY(24px);
-  --glint-t: 16s; --glint-peak: rgba(255,255,255,.5);
-  /* padding is the REFLOW channel; `translate` carries the focal shift so it
-     cannot collide with the entrance animation's hold on `transform` */
-  transition: padding-block .45s var(--ease-structure),
-              translate .5s var(--ease-structure),
-              background .4s var(--ease-ui),
-              filter .4s var(--ease-ui),
-              opacity .4s var(--ease-ui);
-}
-.dr-wk:nth-of-type(1) { --glint-delay: -2s; }
-.dr-wk:nth-of-type(2) { --glint-delay: -6s; }
-.dr-wk:nth-of-type(3) { --glint-delay: -10s; }
-.dr-wk:nth-of-type(4) { --glint-delay: -14s; }
-.dr-wk.is-focal { background: rgba(255,255,255,.135); translate: -12px 0; }
-.dr-works:has(.is-focal) .dr-wk:not(.is-focal) { filter: brightness(.6); }
-.dr-wk:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
-
-.dr-wk-thumb {
-  position: relative; flex: 0 0 auto; overflow: hidden;
-  width: clamp(70px, 9.2svh, 85px); aspect-ratio: 1;
-  border-radius: 8px; background: #17171b;
-  transition: width .45s var(--ease-structure);
-}
-.dr-wk.is-focal .dr-wk-thumb { width: clamp(98px, 12.8svh, 124px); }
-.dr-wk-thumb video { width: 100%; height: 100%; object-fit: cover;
-                     object-position: top center; display: block; }
-/* the open slot has no site to show yet, so it shows the mark instead */
-.dr-wk-thumb-open::after {
-  content: ""; position: absolute; inset: 24%;
-  background: var(--ink-4);
-  -webkit-mask: url("/brand/eas-mark.svg") center / contain no-repeat;
-          mask: url("/brand/eas-mark.svg") center / contain no-repeat;
-}
-
-.dr-wk-body { flex: 1 1 auto; min-width: 0;
-              display: flex; flex-direction: column;
-              justify-content: space-between; gap: 4px; }
-.dr-wk-top { display: flex; align-items: center; justify-content: space-between;
-             gap: 10px; }
-.dr-wk-top b { color: #fff; font-family: var(--font-instrument), sans-serif;
-               font-size: var(--fs-body); font-weight: 500; letter-spacing: -0.012em;
-               line-height: 1.3; }
-.dr-wk .t-meta { color: #fff; font-size: var(--fs-body-s); line-height: 1.2;
-                 letter-spacing: -0.004em; }
-.dr-wk-arrow { font-style: normal; flex: 0 0 auto; color: var(--ink-4);
-               font-size: var(--fs-body); line-height: 1;
-               transition: color var(--t-micro) var(--ease-ui),
-                           transform var(--t-micro) var(--ease-ui); }
-.dr-wk.is-focal .dr-wk-arrow { color: var(--ink); transform: translateX(3px); }
-
-/* THE LIST ASSEMBLES UPWARD. Everything else entering this screen rises —
-   the headline's lines climb out of their own clip — and the roster used
-   to fill downward against that, so the two halves of the hero were
-   moving in opposite directions at the same moment.
-
-   Counted with nth-LAST-of-type, so the sequence is the mirror of the
-   old one and stays correct if the roster's length ever changes. Nothing
-   here knows how many cards there are. */
-.dr-lit .dr-wk { animation: dr-cardin 620ms var(--ease-structure) forwards;
-                 animation-delay: 900ms; }
-.dr-lit .dr-wk:nth-last-of-type(2) { animation-delay: 1010ms; }
-.dr-lit .dr-wk:nth-last-of-type(3) { animation-delay: 1120ms; }
-.dr-lit .dr-wk:nth-last-of-type(4) { animation-delay: 1230ms; }
-.dr-lit .dr-wk:nth-last-of-type(5) { animation-delay: 1340ms; }
-.dr-lit .dr-wk:nth-last-of-type(6) { animation-delay: 1450ms; }
-.dr-lit .dr-wk:nth-last-of-type(n+7) { animation-delay: 1560ms; }
-@keyframes dr-cardin { to { opacity: 1; transform: translateY(0); } }
 
 /* ══ THE MARK, CENTRE STAGE ══════════════════════════════════════
    Lit from the upper left and falling to black — an object standing in the
@@ -864,9 +756,6 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   /* the body reads much heavier on a small screen, where the wall takes a
      far bigger share of the frame */
   .dr-figure { left: -30vw; height: min(88vh, 720px); opacity: .42; }
-  /* the stagger is a desktop luxury: at 390px an indented card just looks
-     broken, so the cascade squares up and the stack stays full-bleed */
-  .dr-works { margin-top: var(--fib-5); }
   .dr-main { padding-bottom: var(--fib-4); }
   .dr-vignette { display: none; }          /* dropped below 820px */
   /* the rail keeps the lockup and the one action; the link set needs a
@@ -901,13 +790,19 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dr-main { opacity: 1; }
-  .dr-left, .dr-works { translate: none; }
+  /* ⚠ THE ENGINE RESOLVES, IT DOES NOT SKIP. Under reduced motion every
+     scroll var is published as 1, not 0 — the finished frame. So --lead
+     is 1 here, and without these resets the hero's copy would sit at 8%
+     opacity, lifted 48px, from the moment the page loaded. This block
+     named .dr-main and the retired roster; the copy lives on .dr-left
+     and .dr-aside now. */
+  .dr-left, .dr-aside { translate: none; opacity: 1; }
   .dr-key, .dr-key::after,
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
   .dr-lit .dr-sub,
-  .dr-lit .dr-wk { opacity: 1; transform: none; animation: none; }
+  .dr-lit .dr-herocta,
+  .dr-lit .dr-door { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
   .dr-lit .dr-vignette { animation: none; opacity: .8; }
 }
