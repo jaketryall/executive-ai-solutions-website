@@ -2860,7 +2860,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      single light section reads as a beat between two dark ones. */
   padding-block: clamp(36px, 6svh, 80px) clamp(32px, 5svh, 64px);
   opacity: calc(1 - .92 * var(--ep, 0) * var(--ep, 0) * var(--ep, 0));
-  will-change: opacity;
+  /* the climb (desktop only — see --rise). `translate` and not
+     `transform`: the ::before under this card owns `scale`, and two
+     rules fighting for one `transform` is how the grow and the climb
+     would silently cancel each other. */
+  translate: 0 calc(var(--rise, 0) * -1 * var(--rise-d, 0px));
+  will-change: opacity, translate;
 }
 
 /* ── THE CARD GROWS INTO THE ROOM (desktop, with the pin) ─────────
@@ -2901,6 +2906,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-svc { padding-top: 0; padding-inline: 0; }
   .dr-svc-in {
     position: relative;
+    /* how far the card outruns the page across its arrival */
+    --rise-d: clamp(110px, 26svh, 300px);
     max-width: none; border-radius: 0; background: none;
     /* today's contained column as a FRACTION of the screen. Lengths
        cannot be divided in calc(), so the ratio comes out of a triangle:
@@ -2928,6 +2935,35 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
        wider than the card, so "half the scale" is NOT half the gutter —
        at 1440 it would have been 36px against the 57 meant. */
     --xp: clamp(0, (var(--ep, 0) - .15) / .85, 1);
+
+    /* ── THE CLIMB, WITHOUT A PIN ──────────────────────────────
+       Jake: "services section is not moving up."
+
+       And it was not. The previous pass verified it "rises" by checking
+       that its top decreases as you scroll — which is true of every
+       element on every page and proves nothing. RISING means moving up
+       FASTER THAN THE PAGE, so that the card climbs over what is above
+       it. With the pin gone it was travelling at exactly 1:1 and the
+       climb was simply absent.
+
+       So the card carries its own: --climb drives a translate on top of
+       the scroll, which is the same relationship the pin produced (card
+       moving, floor still) expressed from the other side (floor moving,
+       card moving faster). No sticky anywhere.
+
+       ⚠ AND IT RETURNS. --rise is --climb DAMPED BY THE EXIT, so the
+       card is back at its laid-out position by the time the section
+       leaves. A one-way translate would have left the card permanently
+       T pixels above its own box and opened a T-pixel hole above the
+       next section — the layout would have been lying about where its
+       content is. Up on arrival, back on exit, net zero at both ends.
+
+       ⚠ AND IT IS ON THE CARD, NEVER ON .dr-svc. The section's rect is
+       what BOTH its rulers are measured from (--ep on itself, --climb on
+       its wrapper), and this file already carries the note: a transformed
+       element cannot be its own ruler. Transform the card; measure the
+       section. */
+    --rise: calc(var(--climb, 0) * (1 - var(--xp, 0)));
     --xf: .5;
     --kx: calc((var(--xf) * .5 * (1 - var(--s0)) + .03) / (.5 * (1 - var(--s0)) + .03));
     --k: max(1 - var(--climb, 0), var(--kx) * var(--xp));
@@ -2963,7 +2999,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 @media (prefers-reduced-motion: reduce) {
   /* the finished frame: the engine resolves every window to 1, which
      would also resolve the EXIT — so the surface is pinned open */
-  .dr-svc-in { opacity: 1; --xp: 0; }
+  .dr-svc-in { opacity: 1; --xp: 0; --rise-d: 0px; }
 }
 
 
