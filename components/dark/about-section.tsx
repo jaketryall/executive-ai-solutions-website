@@ -63,12 +63,6 @@ export default function AboutSection() {
   const words = COPY.split(" ");
   return (
     <section className="dr-about" aria-labelledby="dr-about-h">
-      {/* ⚠ THE HOLD IS AN INNER BOX, not the section. The section is
-          1034px at 1440x900 — taller than the viewport — so sticking IT
-          would pin a box whose bottom you could never reach. Its CONTENT
-          (the grid plus the terms band) is ~750px and fits, so that is
-          what holds while §02 rises over it. See .dr-about-hold. */}
-      <div className="dr-about-hold">
       <div className="wrap dr-about-grid">
         <div className="dr-about-text">
           {/* the room's one triggered gesture (law 11) — everything else in
@@ -162,7 +156,6 @@ export default function AboutSection() {
             ))}
           </ul>
         </div>
-      </div>
       </div>
     </section>
   );

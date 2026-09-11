@@ -2267,82 +2267,21 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-about { position: relative; z-index: 3;
   padding-block: clamp(88px, 15svh, 190px); }
 
-/* ── THE GROW GETS ITS STILL BACKDROP BACK ───────────────────────
-   Jake: "the rising part of the services section has been lost, i miss
-   it, the grow thing it did."
+/* ── §02 RISES, NOTHING STICKS (Jake: "it still needs to rise, just not
+   sticky") ───────────────────────────────────────────────────────
+   The card climbs the page on ordinary scroll and grows as it arrives.
+   What is gone is the PIN that used to sit under it: About's hold, its
+   tall box, and §02's pull into About's tail. Those existed only to stop
+   the floor moving while the grow happened, and About is a normal
+   section again.
 
-   The grow never stopped — measured, §02's card still scales 0.79 → 0.91.
-   What it lost was the STILLNESS behind it. It used to rise over a pinned
-   hero, so the card's climb was the only thing moving and the widening
-   read against something that held. Out on its own the whole section
-   travels at 1:1 with the page while it grows, and a 15% widening on a
-   box that is already sliding past you is a change nobody can see. The
-   pin was never decoration: it was the fixed reference the grow was
-   measured against by eye.
-
-   §02 already paints over About (z 4 against 3), so nothing about the
-   cover had to be rebuilt — only the floor had to stop moving.
-
-   ⚠ AND THE PIN GOES ON THE CONTENT, NOT THE SECTION. .dr-about is
-   1034px at 1440x900, taller than the viewport, so sticking it would pin
-   a box whose bottom you could never scroll to. Its content is ~750px
-   and fits, so the section grows a taller box and the content holds
-   inside it. min-height, not padding — a sticky child is constrained by
-   its parent's CONTENT box, and padding is not in it (the same trap the
-   hero's hold hit two commits ago). */
-@media (min-width: 901px) {
-  /* ⚠ PX, NOT svh — see the pull below for why the whole relationship is
-     in pixels.
-
-     AND IT IS SOLVED, NOT CHOSEN. 1650 was picked to be "tall enough",
-     and tall enough turned out to mean 870px of About sitting pinned
-     before §02 so much as entered the fold — measured identically at
-     900, 720 and 1400, which is how you know it was arithmetic and not a
-     rendering quirk. That is the gap Jake felt: not DEAD scroll (nothing
-     is ever frozen — a signature scan of every element in the viewport
-     found no stretch where anything stopped moving) but HELD scroll,
-     where the picture holds and nothing new arrives.
-
-         height = pull + viewport - hold offset + beat
-
-     `beat` is the only taste in it: 250px, a quarter-screen to take
-     About in before the next thing climbs over it. The rest is forced. */
-  .dr-about { min-height: calc(100svh + 1090px); }
-  .dr-about-hold {
-    position: sticky;
-    /* under the fixed rail, with the same air the hero gives its first
-       object rather than a number picked for this one element */
-    top: calc(var(--nav-space) + clamp(16px, 3svh, 40px));
-  }
-  /* ⚠ §02 STARTS INSIDE ABOUT'S TAIL, and it has to. A sticky element
-     releases when its own parent's box runs out — and §02 begins exactly
-     where About's box ends, so the hold could never outlast the thing it
-     was meant to hold FOR. Measured on the first attempt: About released
-     at scroll 2128 and §02 did not finish rising until 2988, so the last
-     860px of the climb happened against a floor moving at 1:1, which is
-     the whole problem again.
-
-     The pull is not a fudge, it is the hold's own length: §02 must begin
-     rising at least (hold height + hold offset) before About's box ends.
-
-     ⚠ AND THAT QUANTITY IS IN PIXELS, WHICH IS THE BUG THE FIRST VERSION
-     HAD. Written as -96svh it worked at 1440x900 and drifted 220px at
-     1280x720, because the hold's height is set by its CONTENT — a
-     paragraph, a picture and a band — and does not shrink when the
-     viewport does. Expressed as a viewport fraction, the pull shrinks
-     with the screen while the thing it has to clear does not, so it runs
-     out exactly where the screen is shortest. In px it tracks every size.
-
-     ⚠ 840, UP FROM 780. At 780 the hold released 15px BEFORE the climb
-     finished at 2560x1400 — the estimate of the hold's own height was
-     just short, and a margin that is "about right" is a margin that
-     fails at one viewport out of five. 840 clears it by ~140px at the
-     worst measured size. The clamp is the hold's own offset, written
-     here and above rather than as a number that means nothing. */
-  .dr-svc {
-    margin-top: calc(-1 * (var(--nav-space) + clamp(16px, 3svh, 40px) + 840px));
-  }
-}
+   ⚠ THE COST IS ON THE RECORD, because it is the thing that was measured
+   two commits ago: the card widens 184px at 1440 while travelling ~900px
+   up the screen. Against a still floor that read clearly; against a
+   moving one it is a fifth of the movement and much quieter. The grow is
+   unchanged and it is legible — it is not as loud as it was with the pin
+   under it, and the dial if it wants to be louder is --s0's cap below
+   (the card starting narrower), not the pin coming back. */
 .dr-about-grid {
   display: grid; grid-template-columns: 7fr 5fr;
   gap: clamp(28px, 4.4vw, 76px); align-items: start;
