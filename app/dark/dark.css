@@ -2292,9 +2292,22 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    hero's hold hit two commits ago). */
 @media (min-width: 901px) {
   /* ⚠ PX, NOT svh — see the pull below for why the whole relationship is
-     in pixels. Tall enough to hold §02's pull plus a viewport for it to
-     rise through. */
-  .dr-about { min-height: calc(100svh + 1650px); }
+     in pixels.
+
+     AND IT IS SOLVED, NOT CHOSEN. 1650 was picked to be "tall enough",
+     and tall enough turned out to mean 870px of About sitting pinned
+     before §02 so much as entered the fold — measured identically at
+     900, 720 and 1400, which is how you know it was arithmetic and not a
+     rendering quirk. That is the gap Jake felt: not DEAD scroll (nothing
+     is ever frozen — a signature scan of every element in the viewport
+     found no stretch where anything stopped moving) but HELD scroll,
+     where the picture holds and nothing new arrives.
+
+         height = pull + viewport - hold offset + beat
+
+     `beat` is the only taste in it: 250px, a quarter-screen to take
+     About in before the next thing climbs over it. The rest is forced. */
+  .dr-about { min-height: calc(100svh + 1090px); }
   .dr-about-hold {
     position: sticky;
     /* under the fixed rail, with the same air the hero gives its first
@@ -2318,12 +2331,16 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      paragraph, a picture and a band — and does not shrink when the
      viewport does. Expressed as a viewport fraction, the pull shrinks
      with the screen while the thing it has to clear does not, so it runs
-     out exactly where the screen is shortest. In px it tracks: 890 at
-     900 tall against 860 needed, 885 at 720 against 790, 903 at 1400
-     against 820. The clamp is the hold's own offset, written once here
-     and once above rather than as a number that means nothing. */
+     out exactly where the screen is shortest. In px it tracks every size.
+
+     ⚠ 840, UP FROM 780. At 780 the hold released 15px BEFORE the climb
+     finished at 2560x1400 — the estimate of the hold's own height was
+     just short, and a margin that is "about right" is a margin that
+     fails at one viewport out of five. 840 clears it by ~140px at the
+     worst measured size. The clamp is the hold's own offset, written
+     here and above rather than as a number that means nothing. */
   .dr-svc {
-    margin-top: calc(-1 * (var(--nav-space) + clamp(16px, 3svh, 40px) + 780px));
+    margin-top: calc(-1 * (var(--nav-space) + clamp(16px, 3svh, 40px) + 840px));
   }
 }
 .dr-about-grid {
