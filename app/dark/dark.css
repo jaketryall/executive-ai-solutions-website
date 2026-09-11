@@ -339,8 +339,17 @@ body:has(.dr-root.dr-light) .bg-canvas { background: #e7e7ea !important; }
 .dr-hero-wrap { position: relative; }
 @media (min-width: 901px) {
   .dr-stage { position: sticky; top: 0; }
-  .dr-hero-wrap > .dr-svc {
+  .dr-hero-wrap > .dr-about {
     z-index: 10;
+    /* ⚠ IT NEEDS ITS OWN GROUND. §02 could climb because it IS a
+       contrasting surface; About was transparent, so rising over the
+       pinned hero it covered nothing — you would have watched the hero's
+       copy vanish behind an invisible edge. surface-1 against the void
+       is the room's own raised-panel step (1.124:1 light, 1.122 dark),
+       so the panel reads as arriving in both palettes without a second
+       colour being invented for it. */
+    background: var(--surface-1);
+    border-top: 1px solid var(--edge);
     /* ⚠ THE HOLD. §02's top used to enter at the fold on the very first
        pixel of scroll, which meant it was eating the reel the entire time
        the reel was opening — measured at 1440x900, the reel reached full
@@ -2772,8 +2781,10 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    its top is the section's top, which is what climbs — and the LIGHT
    SURFACE is a separate solid layer under the copy (the ::before) that
    starts at today's contained shape and spreads to the edges on
-   --hero-p, the number the climb already writes on the wrapper (0 with
-   the card's top at the fold, 1 with it at the top of the viewport). By
+   --climb, the number this section now measures on ITSELF (0 with the
+   card's top at the fold, 1 with it at the top of the viewport — see the
+   wrapper in page.tsx). It used to read --hero-p, which meant the same
+   thing only because §02 happened to be nested in the hero's wrapper. By
    the time the card reaches the top it IS the viewport: edge to edge,
    corners square, the hero under it covered and dimmed. On the way out
    it contracts again on --ep, the number its fade already reads — but
@@ -2828,7 +2839,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
     --xp: clamp(0, (var(--ep, 0) - .15) / .85, 1);
     --xf: .5;
     --kx: calc((var(--xf) * .5 * (1 - var(--s0)) + .03) / (.5 * (1 - var(--s0)) + .03));
-    --k: max(1 - var(--hero-p, 0), var(--kx) * var(--xp));
+    --k: max(1 - var(--climb, 0), var(--kx) * var(--xp));
     /* --full = the grown card (100vw less its gutters); at k = 1 the box
        is exactly today's column. Only the top of the ramp moved — every
        other number in this block still means what it meant. */

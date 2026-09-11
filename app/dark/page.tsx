@@ -354,13 +354,26 @@ export default function DarkRoom() {
         </main>
       </div>
 
-        {/* second child of the wrapper on purpose: this is what climbs */}
-        <ServicesSection />
+        {/* ⚠ THE CLIMBING CHILD IS **ABOUT** NOW (Jake: "i think about
+            should be after the video"). It is the second child of the
+            wrapper on purpose — that position, plus the z-index in
+            dark.css, is what makes a section rise over the pinned hero.
+            The SEAM did not change; only which section owns it did. */}
+        <AboutSection />
       </div>
 
-      {/* the split about beat sits between the services and the proof:
-          who does it, then what it produced */}
-      <AboutSection />
+      {/* §02 comes out of the wrapper and brings its own ruler. Inside it,
+          it read --hero-p — the hero's progress — and its
+          grow-into-the-room was tied to the hero's geometry by accident
+          of nesting rather than on purpose. Measured on ITSELF the number
+          finally means what §02's own comment always claimed: 0 with the
+          card's top at the fold, 1 with it at the top of the viewport.
+          Renamed --climb, because a variable that means two different
+          things in two subtrees is a trap waiting for whoever reads it
+          next. */}
+      <div data-sp data-sp-from="1" data-sp-to="0" data-sp-var="--climb">
+        <ServicesSection />
+      </div>
 
       <ProofSection />
       <VoicesSection />
