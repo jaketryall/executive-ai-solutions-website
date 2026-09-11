@@ -339,30 +339,29 @@ body:has(.dr-root.dr-light) .bg-canvas { background: #e7e7ea !important; }
 .dr-hero-wrap { position: relative; }
 @media (min-width: 901px) {
   .dr-stage { position: sticky; top: 0; }
-  .dr-hero-wrap > .dr-about {
-    z-index: 10;
-    /* ⚠ IT NEEDS ITS OWN GROUND. §02 could climb because it IS a
-       contrasting surface; About was transparent, so rising over the
-       pinned hero it covered nothing — you would have watched the hero's
-       copy vanish behind an invisible edge. surface-1 against the void
-       is the room's own raised-panel step (1.124:1 light, 1.122 dark),
-       so the panel reads as arriving in both palettes without a second
-       colour being invented for it. */
-    background: var(--surface-1);
-    border-top: 1px solid var(--edge);
-    /* ⚠ THE HOLD. §02's top used to enter at the fold on the very first
-       pixel of scroll, which meant it was eating the reel the entire time
-       the reel was opening — measured at 1440x900, the reel reached full
-       bleed at exactly the scroll where §02 had covered all 365px of it.
-       The grow happened entirely underneath the thing it was meant to be
-       seen through. So §02 now starts 70svh lower: the reel opens, holds
-       at full bleed for ~280px of clean scroll, and only then is it
-       climbed over. The wrapper's --hero-p window is stretched to match
-       (-1.7 in page.tsx), so the number still means exactly what its
-       comment says — 0 with §02's top at the fold, 1 with it at the top
-       of the viewport — and §02's own surface grow is untouched. */
-    margin-top: 70svh;
-  }
+  /* ⚠ THE HOLD — the wrapper's own height, not a margin on a child.
+     It used to be `margin-top: 70svh` on whichever section climbed,
+     which meant the hero's pin length was a property of the NEXT
+     section. Nothing climbs now, so the hold belongs where it always
+     should have: on the thing being held.
+
+     0.62svh, and the number is derived rather than picked. The reel
+     needs 490px of scroll at 900 to finish opening (that rate is the one
+     Jake signed off on), and the pin should release as soon as it does —
+     a pin that outlasts its payoff is the "I scrolled and nothing
+     arrived" bounce. 490 plus a short beat is 558px, which is 0.62 of
+     the viewport, and page.tsx's window matches it exactly so --hero-p
+     hits 1 at the release and not before or after.
+
+     ⚠ MIN-HEIGHT, NOT PADDING-BOTTOM. Written as padding first, and the
+     pin stopped working entirely — measured, the stage tracked scroll
+     1:1 (top 0 → -150 → -300) while still computing `position: sticky;
+     top: 0`. A sticky child is constrained by its containing block,
+     which is the parent's CONTENT box, and padding is not in the content
+     box. So 558px of padding gave the stage exactly zero room to stick
+     in. min-height grows the content box, which is the thing the
+     constraint is actually measured against. */
+  .dr-hero-wrap { min-height: calc(100svh + 62svh); }
 }
 .wrap { max-width: 1400px; margin-inline: auto; width: 100%;
         padding-inline: var(--fib-3); }
@@ -574,7 +573,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      its own .42. See the note on .dr-chip/.dr-left/.dr-aside below: the
      copy and the reel are in a race, and a race is only fair if both
      runners start and stop together. */
-  --lead: clamp(0, calc(var(--hero-p, 0) / .32), 1);
+  --lead: clamp(0, calc(var(--hero-p, 0) / .88), 1);
 
   /* ── THE RACE, AS ONE NUMBER AND ONE RATIO ─────────────────────
      --open is how far the reel's top edge rises. It used to live on the
@@ -1020,11 +1019,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      is the right thing to be covered: the copy is fading out on --lead
      across the same stretch.
 
-     RATE: --open / (0.32 x 1.7vh) = 270 / 490 = 0.55px per px at
-     1440x900, against Cosmos's 0.52. The window ends at --hero-p 0.32,
-     and §02's top does not touch the reel until 0.43, so the reel
-     finishes opening with clear room before anything climbs over it. */
-  --g: clamp(0, calc(var(--hero-p, 0) / 0.32), 1);
+     RATE: --open / (0.88 x 0.62vh) = 225 / 491 = 0.46px per px at
+     1440x900, against Cosmos's 0.52. The fractions changed with the
+     window (see page.tsx) and the DISTANCE did not — 491px of scroll
+     then and now — because the point of re-deriving them was to keep the
+     feel Jake signed off on while the structure under it moved. */
+  --g: clamp(0, calc(var(--hero-p, 0) / 0.88), 1);
   /* ⚠ --open IS CAPPED AT 25svh, and the cap is why. At 30svh the open
      ended with the reel's top at 178 and the chip's box running 155-203,
      so the reel cut the chip in half — and a half-covered object reads

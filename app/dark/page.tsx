@@ -257,17 +257,20 @@ export default function DarkRoom() {
           freeze at 0 the moment the pin engaged and the dim would never
           fire. The wrapper's top travels 1:1, and the value inherits down.
 
-          THE WINDOW IS 1.7 VIEWPORTS, not 1, because §02 now starts 70svh
-          lower (see THE HOLD in dark.css — the reel was opening entirely
-          underneath it). The number's MEANING is unchanged and every
-          consumer still reads it the same way: 0 with §02's top at the
-          fold, 1 with it at the top of the viewport. Only the distance
-          between those two moments grew. */}
+          ⚠ THE WINDOW IS 0.62 VIEWPORTS, and its MEANING CHANGED when the
+          climb was retired. It used to be 1.7 and mean "0 with §02's top
+          at the fold, 1 with it at the top of the viewport" — an anchor
+          that no longer exists, because no section arrives over this one
+          any more. It now means: 0 where the hero pins, 1 where it
+          releases. The two consumers were re-derived against the new
+          window rather than left pointing at the old one, so the reel and
+          the copy still travel the same distance at the same rate they
+          did when Jake signed off on the feel. */}
       <div
         className="dr-hero-wrap"
         data-sp
         data-sp-from="0"
-        data-sp-to="-1.7"
+        data-sp-to="-0.62"
         data-sp-var="--hero-p"
       >
         {/* the rail watches this, not a scroll number — and it sits OUTSIDE
@@ -354,13 +357,20 @@ export default function DarkRoom() {
         </main>
       </div>
 
-        {/* ⚠ THE CLIMBING CHILD IS **ABOUT** NOW (Jake: "i think about
-            should be after the video"). It is the second child of the
-            wrapper on purpose — that position, plus the z-index in
-            dark.css, is what makes a section rise over the pinned hero.
-            The SEAM did not change; only which section owns it did. */}
-        <AboutSection />
       </div>
+
+      {/* ⚠ NOTHING CLIMBS ANY MORE (Jake: "i dont want that rise thing for
+          the about section"). About is a plain sibling after the wrapper
+          and the first seam — a section rising over the pinned hero — is
+          retired with it.
+
+          THE PIN STAYS, SHORTER. It is not there for the climb: it is what
+          holds the reel's BOTTOM edge still while the reel opens upward,
+          which is the whole Cosmos mechanic. So the wrapper keeps exactly
+          as much extra height as the open needs and releases the moment it
+          finishes — see THE HOLD in dark.css. A pin that outlasts its own
+          payoff is the "I scrolled and nothing arrived" bounce. */}
+      <AboutSection />
 
       {/* §02 comes out of the wrapper and brings its own ruler. Inside it,
           it read --hero-p — the hero's progress — and its
