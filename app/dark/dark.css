@@ -492,7 +492,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 /* main: flex-1 + justify-end + items-end does ALL the corner composition.
    Zero absolute positioning. */
 .dr-main { flex: 1; min-height: 0; display: flex; flex-direction: column;
-           padding-block: 0 clamp(16px, 3.8svh, 34px);
+  /* ⚠ CLEARANCE UNDER THE NAV. This was 0 — measured, the h1's top edge
+     sat exactly on the nav's bottom edge, both at y=83, so the headline
+     started the instant the chrome ended. The nav and the headline are
+     STRANGERS in the spacing system and strangers take the largest gap,
+     not none; a heading owes at least its own height of air above it. */
+           padding-block: clamp(56px, 8svh, 104px) clamp(16px, 3.8svh, 34px);
   /* THE RECEDE. See the note in page.tsx: the next section rising is a
      depth cue bought up here, not motion down there.
 
