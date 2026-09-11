@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
     // genuinely different paths.
     return [
       { source: "/faqs", destination: "/faq", permanent: true },
+      // the room was built at /dark and is the homepage now; open tabs
+      // and bookmarks land where it went. Query strings carry over, so
+      // /dark?film and /dark?dark keep working as /?film and /?dark.
+      { source: "/dark", destination: "/", permanent: false },
       // the three stages have their own pages; the bare index is the
       // homepage funnel overview
       { source: "/services", destination: "/#services", permanent: false },

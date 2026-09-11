@@ -6,7 +6,7 @@ import { notFound, useSearchParams } from "next/navigation";
 import { Archivo } from "next/font/google";
 import "./stage.css";
 
-/* Archivo is requested WITH the wdth axis on purpose — see app/dark/page.tsx
+/* Archivo is requested WITH the wdth axis on purpose — see app/page.tsx
    for why: pulled without it, Google silently serves default-width Archivo,
    a different, worse face, with no error visible in a screenshot review. */
 const archivo = Archivo({
