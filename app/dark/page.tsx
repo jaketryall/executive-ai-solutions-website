@@ -264,12 +264,32 @@ export default function DarkRoom() {
                   <span className="sweep">while you&rsquo;re on the job.</span>
                 </span>
               </h1>
+            </div>
 
+            {/* THE SUPPORT COLUMN, beside the statement rather than under
+                it. Stacked, it left the whole top-right quadrant empty and
+                pushed the reel down to ~40% of the screen; beside it, the
+                band collapses to the height of the headline and the reel
+                takes the bottom half. It also gives §01 the two doors its
+                own brief asks for and it did not have: the room's one pill
+                for the people who are ready, and a quiet link for the ones
+                who want to look first. */}
+            <div className="dr-aside">
               <p className="t-body dr-sub">
                 We build your site and wire up the system behind it, so every
                 call, form and text gets answered in seconds instead of days.
               </p>
 
+              <div className="dr-doors">
+                <Link href="/contact" className="dr-herocta dr-edge t-cta">
+                  Book the call
+                </Link>
+                {/* the roll is decoration and is aria-hidden, so the
+                    link carries its own name or it has none at all */}
+                <Link href="/work" className="dr-door" aria-label="See the work">
+                  <Roll label="See the work" />
+                </Link>
+              </div>
             </div>
 
             {/* THE REEL, wide, beneath the copy (Jake's call: "type above,

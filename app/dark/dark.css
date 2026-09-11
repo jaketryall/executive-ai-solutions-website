@@ -471,14 +471,20 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   transition: color var(--t-micro) var(--ease-ui);
 }
 .dr-links a:hover, .dr-links a:focus-visible { color: var(--ink); }
-.dr-roll { display: inline-block; }
+/* ⚠ THE CLIP BELONGS TO THE ROLL, not to the nav. It used to live on
+   `.dr-links a`, which meant a <Roll> used anywhere else rendered BOTH
+   copies of every letter, stacked, and never rolled — exactly what the
+   hero's second door did the first time it was built. The roll is
+   supposed to be one component used everywhere; now it actually is. */
+.dr-roll { display: inline-block; overflow: hidden;
+           height: 1.15em; line-height: 1.15; vertical-align: bottom; }
 /* the cascade lives in the per-letter delay */
 .dr-char { position: relative; display: inline-block; white-space: pre;
   transition: transform .55s var(--ease-ui);
   transition-delay: calc(var(--i) * .025s); }
 .dr-char::after { content: attr(data-char); position: absolute; left: 0; top: 100%; }
-.dr-links a:hover .dr-char,
-.dr-links a:focus-visible .dr-char { transform: translateY(-100%); }
+a:hover > .dr-roll .dr-char,
+a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-links a:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 5px; border-radius: 3px; }
 
 /* the nav CTA is a LIT EDGE, not a second white fill — the hero pill
@@ -540,20 +546,24 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   --lead: clamp(0, calc(var(--hero-p, 0) / .42), 1);
 }
 
-/* THE NESTED GRID — not a split. The statement keeps its full width, and
-   because its last two lines are SHORT it carves a stepped void on the
-   right. The lead system nests into that void: it lives in the same grid
-   row as the headline, pushed down by exactly one headline line, so it can
-   never collide with the long first line no matter how the clamp resolves. */
-/* THE HERO IS NOW A COLUMN, not a split. The copy sits at the top and
-   the reel takes everything left over — Cosmos's arrangement, in this
-   room. The works roster it replaced is retired: its job was showing
-   client work, and a reel does that better than three hover-clips that
-   only play if you find them. */
+/* A BAND, THEN THE REEL. The top row is the statement and its support
+   side by side; the bottom row is the reel, spanning both columns.
+
+   The support used to be stacked UNDER the statement, which cost twice:
+   it left the entire top-right quadrant of the frame empty, and the
+   height it took came straight out of the reel — measured at 1440x900,
+   the reel got 365px of a 900px screen. Beside the statement, the band
+   is only as tall as the headline and the reel takes the bottom half.
+
+   The support column is capped in CH, not fr: it is a paragraph, and a
+   measure is what makes a paragraph readable. The statement takes
+   whatever is left, which is what a statement should do. */
 .dr-hero {
   position: relative;
   display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 38ch);
   grid-template-rows: auto minmax(0, 1fr);
+  column-gap: var(--fib-6);
   row-gap: var(--fib-4);
   align-items: stretch;
   flex: 1; min-height: 0;
@@ -571,7 +581,7 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    `translate` on the columns; the lines inside own `transform` for the
    entrance and the cards own it for the focal shift. Three properties,
    three owners, no collision. */
-.dr-left  {
+.dr-left, .dr-aside {
   translate: 0 calc(var(--lead, 0) * -48px);
   /* squared, so the copy holds nearly full strength while you are still
      reading it and the fade only bites once it is genuinely leaving */
@@ -579,11 +589,46 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   will-change: opacity;
 }
 
-.dr-left  { grid-column: 1; grid-row: 1; display: flex; flex-direction: column;
-            justify-content: flex-end; align-self: stretch;
-            /* the copy sits higher than the action does; they used to
-               share one floor, which moved both together */
-            padding-bottom: var(--copy-floor); }
+.dr-left  { grid-column: 1; grid-row: 1; align-self: end; }
+/* ⚠ --copy-floor is GONE from here. It existed to lift the copy off a
+   floor the two columns used to share; the band is auto-height now, so
+   all it did was open a 44-138px hole between the headline and the reel
+   that the row-gap already owns. */
+
+.dr-aside { grid-column: 2; grid-row: 1; align-self: end;
+            display: flex; flex-direction: column; gap: var(--fib-4);
+            /* the support's last line lands on the headline's last line:
+               one shared floor across the band, which is the relationship
+               that makes two columns read as one object rather than two */
+            padding-bottom: .18em; }
+
+/* THE REEL SPANS THE BAND. Explicit, not auto-placed — with a second
+   column now, auto-placement would drop it into column 1 and it would
+   take half the screen. */
+.dr-hero-reel { grid-column: 1 / -1; grid-row: 2; }
+
+/* ── THE TWO DOORS ────────────────────────────────────────────────
+   Different commitment levels, and they must not read as a pair of
+   buttons: one is the room's pill, the other is the same rolling link
+   the nav uses, so the second door costs the eye nothing. */
+.dr-doors { display: flex; align-items: center; gap: var(--fib-4);
+            flex-wrap: wrap; }
+.dr-herocta {
+  display: inline-flex; align-items: center; border-radius: 999px;
+  padding: 13px 24px; text-decoration: none; white-space: nowrap;
+  color: var(--ink); background: var(--surface-2);
+  --glint-t: 4.5s;
+  opacity: 0;
+  transition: background var(--t-micro) var(--ease-ui);
+}
+.dr-herocta:hover { background: var(--surface-3); }
+.dr-herocta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
+.dr-door { color: var(--ink-3); text-decoration: none; font-size: var(--fs-body-s);
+           opacity: 0; transition: color var(--t-micro) var(--ease-ui); }
+.dr-door:hover { color: var(--ink); }
+.dr-door:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 4px; }
+.dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 760ms forwards; }
+.dr-lit .dr-door    { animation: dr-fadein var(--t-enter) var(--ease-structure) 860ms forwards; }
 /* the stack spans BOTH rows: as its own row it added the foot's height on
    top of itself and pushed the action off the fold */
 /* top-aligned like the reference: it puts the first case in the strongest
@@ -616,7 +661,9 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 470ms forwards; }
 @keyframes dr-rise { to { transform: translateY(0); } }
 
-.dr-sub { opacity: 0; margin-top: var(--fib-4); max-width: 46ch; }
+/* the measure is the COLUMN's job now (38ch on .dr-hero) and the space
+   before the doors is the flex gap, not a margin */
+.dr-sub { opacity: 0; margin: 0; }
 .dr-lit .dr-sub { animation: dr-fadein var(--t-enter) var(--ease-structure) 620ms forwards; }
 
 /* ══ THE WORK CHAIN ══════════════════════════════════════════════
@@ -804,13 +851,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   /* the desktop row is pinned to the viewport so the roster can clip. Stacked,
      the page is meant to SCROLL instead, so the row goes back to auto and the
      roster shows every card rather than fading them away. */
-  .dr-hero { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; }
-  .dr-works { align-self: auto; padding-bottom: 0; }
-  .dr-works-roll { overflow: visible; padding-left: 0; margin-left: 0;
-    -webkit-mask-image: none; mask-image: none; }
-  .dr-left, .dr-works { grid-column: 1; grid-row: auto; }
-  .dr-left { order: 1; }
-  .dr-works { order: 2; }
+  .dr-hero { grid-template-columns: minmax(0, 1fr);
+             grid-template-rows: auto auto auto; }
+  .dr-left      { grid-column: 1; grid-row: 1; align-self: auto; }
+  .dr-aside     { grid-column: 1; grid-row: 2; align-self: auto;
+                  padding-bottom: 0; }
+  .dr-hero-reel { grid-column: 1; grid-row: 3; }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
   /* on a phone the same idea, scaled: bled off the left, reaching past
@@ -919,11 +965,15 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
      the rest of the travel is spent under the climb. */
   --g: clamp(0, calc(var(--hero-p, 0) / 0.25), 1);
 
-  /* AND IT STARTS GENUINELY INSET. Growing 1290 → 1440 is 150px across a
-     whole viewport of scroll — arithmetically a grow, perceptually
-     nothing. From a 9% inset it travels far enough to read as the
-     object opening. */
-  margin-inline: calc(9% + var(--g) * ((50% - 50vw) - 9%));
+  /* ⚠ IT STARTS ON THE MEASURE. It used to start at a 9% inset, which
+     bought a bigger number but broke the only alignment in the frame:
+     the headline began at x=75 and the reel at x=191, and a video that
+     does not line up with the words above it reads as a mistake, not as
+     a composition. On the measure it grows 1290 → 1440 — less travel
+     than the inset had, but the travel was never what sold this. The
+     corners resolving to 0 and the bottom edge reaching the floor are,
+     and both still happen. */
+  margin-inline: calc(var(--g) * (50% - 50vw));
   border-radius: calc(var(--fib-4) * (1 - var(--g)));
 
   /* THE FLOOR. Full bleed means all four edges, not two. The hero's
@@ -941,7 +991,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
   object-fit: cover;
 }
 @media (max-width: 900px) {
-  .dr-hero { grid-template-rows: auto auto; }
   /* NO GROW ON THE PHONE. The grow only makes sense against the pin and
      the hold, and neither exists below 901px — there the hero simply
      scrolls away, so an opening reel would just be a width twitch on the
