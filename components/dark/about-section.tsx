@@ -38,6 +38,27 @@ import Image from "next/image";
 const COPY =
   "Every site here is built by the person who quoted it. No account managers, no handoffs — which is why the price is fixed and the date holds.";
 
+/* THE TERMS. Jake: "i'm feeling a marquee under about text."
+
+   A marquee that says nothing is decoration, and this paragraph makes a
+   PROMISE — "the price is fixed and the date holds" — so the band under
+   it carries the terms that back the promise rather than a restatement of
+   it or a row of logos. Every line here is already stated elsewhere on
+   the page in the same words (§02's rows carry "From $2.5k · fixed quote
+   in 2 days" and "Quoted per project · no retainer"); nothing is invented
+   for the band, which is the only reason a claim belongs in a thing that
+   repeats forever.
+
+   FIVE, and odd on purpose: with an even count the two halves of the
+   track line up and the loop reads as a loop. */
+const TERMS = [
+  "Fixed quote in two days",
+  "No retainers",
+  "One builder, start to finish",
+  "Sites from $2,500",
+  "The date holds",
+];
+
 export default function AboutSection() {
   const words = COPY.split(" ");
   return (
@@ -113,6 +134,27 @@ export default function AboutSection() {
               sizes="(max-width: 900px) 92vw, 40vw"
             />
           </span>
+        </div>
+      </div>
+
+      {/* ⚠ TWO COPIES OF THE TRACK, and the second is aria-hidden. The
+          animation translates -50%, so the seam only disappears if the
+          second half is identical to the first — but a screen reader
+          would otherwise read the terms twice, and a keyboard user would
+          tab through them twice. The duplicate is decoration; the first
+          copy is the content. */}
+      <div className="dr-marq" aria-label="Terms">
+        <div className="dr-marq-track">
+          <ul className="dr-marq-set">
+            {TERMS.map((t) => (
+              <li key={t}>{t}<i aria-hidden /></li>
+            ))}
+          </ul>
+          <ul className="dr-marq-set" aria-hidden>
+            {TERMS.map((t) => (
+              <li key={t}>{t}<i /></li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

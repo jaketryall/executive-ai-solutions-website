@@ -2308,6 +2308,66 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   opacity: calc(.5 + .5 * var(--w));
 }
 
+/* ── THE TERMS MARQUEE ────────────────────────────────────────────
+   A ruled band, not a surface. The room's rule is that content lives on
+   surfaces — and this is not content in that sense, it is a RULE with
+   words in it, the same object as the hairlines already separating §02's
+   rows. Giving it a panel would have made it a second About section
+   sitting under the first.
+
+   FULL BLEED, because a marquee that starts and stops inside the measure
+   is a list that happens to move. The whole point of the form is that it
+   runs off both edges and you are seeing a window onto something longer.
+
+   IT MOVES ON transform ONLY — one keyframe, -50% of a track that holds
+   two identical copies, so the wrap is seamless and nothing is measured
+   or re-laid-out per frame. `will-change` is deliberately NOT set: this
+   animates forever, and a permanent compositor layer for a band of text
+   is a cost with no frame budget behind it. */
+.dr-marq {
+  margin-top: clamp(44px, 7svh, 96px);
+  border-block: 1px solid var(--edge);
+  padding-block: clamp(14px, 2.2svh, 22px);
+  overflow: hidden;
+  /* the ends fade into the ground instead of being chopped by the
+     viewport — the band reads as continuing rather than as clipped */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+.dr-marq-track {
+  display: flex; width: max-content;
+  animation: dr-marq 38s linear infinite;
+}
+.dr-marq:hover .dr-marq-track { animation-play-state: paused; }
+.dr-marq-set {
+  display: flex; align-items: center;
+  list-style: none; margin: 0; padding: 0;
+  /* flex-shrink 0 or the two copies compress to fit and the -50% lands
+     somewhere that is not the seam */
+  flex: 0 0 auto;
+}
+.dr-marq-set li {
+  display: flex; align-items: center;
+  white-space: nowrap;
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: var(--fs-body-s); letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+/* the separator is the room's geometry, not a bullet: a square on its
+   corner, the same shape the section numerals sit in */
+.dr-marq-set i {
+  display: block; width: 5px; height: 5px;
+  margin-inline: clamp(28px, 4vw, 64px);
+  background: var(--ink-4);
+  rotate: 45deg;
+}
+@keyframes dr-marq { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .dr-marq-track { animation: none; }
+}
+
 .dr-about-media { position: relative; }
 .dr-about-well {
   display: block; position: relative; overflow: hidden;
