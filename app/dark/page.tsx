@@ -70,28 +70,27 @@ function Roll({ label }: { label: string }) {
 export default function DarkRoom() {
   const [lit, setLit] = useState(false);
 
-  /* ── THE LIGHT-ROOM EXPERIMENT (?light) ────────────────────────
-     Jake: "i'm wondering if it being dark is the only thing i don't like
-     about it." The only way that question gets a real answer is if
-     exactly ONE thing changes, so this flips the palette and nothing
-     else — same layout, same type, same spacing, same mechanics, same
-     copy. Rebuilding the room somewhere else would have changed the
-     type system and the components at the same time and could not have
-     told him anything.
+  /* ── THE ROOM IS LIGHT (Jake, 2026-09-10: "i like this a lot, i
+     think the light is a lot better") ────────────────────────────────
+     The experiment is over and it won, so light is the DEFAULT and the
+     dark palette is what you have to ask for: `?dark` still renders the
+     room exactly as it was, because a comparison you can still run is
+     worth keeping and costs one boolean.
 
-     It costs almost nothing because the room already contains its own
-     inversion: --flip cross-mixes every token dark→light, including the
-     hand-written rgba whites in the back half. It was written for the
-     §03→§04 curtain lift, which Jake rejected on sight — a light room
-     MID-PAGE. A whole light room is a different question, and this is
-     the machinery to ask it with.
+     It is still expressed as --flip rather than rewritten into the
+     stylesheet, and that is deliberate rather than lazy. --flip is the
+     room's OWN inversion — it already crosses every token including the
+     hand-written rgba whites in the back half, it was reviewed once when
+     it was built for the §03→§04 curtain, and re-authoring 3,200 lines
+     to move the default is churn with no pixel behind it. What it costs
+     is that the stylesheet still reads dark-first; the block in dark.css
+     says so at the top so nobody has to work it out.
 
-     Read in an effect rather than at render, so the server and the first
-     client pass agree. The cost is one dark frame before it flips, which
-     for an A/B toggle is not a bug — it shows you both. */
+     Read in an effect rather than at render so the server and the first
+     client pass agree. */
   const [light, setLight] = useState(false);
   useEffect(() => {
-    setLight(new URLSearchParams(window.location.search).has("light"));
+    setLight(!new URLSearchParams(window.location.search).has("dark"));
   }, []);
 
   /* Theming is NOT done here any more. Adding the class in an effect meant

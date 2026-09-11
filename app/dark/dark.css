@@ -139,7 +139,7 @@
 body:has(.dr-root) { background: #000; }
 /* the experiment's ground. Same selector shape, so it wins on order. */
 :root:has(.dr-root.dr-light),
-body:has(.dr-root.dr-light) { background: #f2f2f4; }
+body:has(.dr-root.dr-light) { background: #e7e7ea; }
 
 /* the legacy chrome does not exist in this room (iteration route only) */
 body:has(.dr-root) .site-nav,
@@ -155,7 +155,7 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
 body:has(.dr-root) .page-sheet,
 body:has(.dr-root) .bg-canvas { background: #000 !important; }
 body:has(.dr-root.dr-light) .page-sheet,
-body:has(.dr-root.dr-light) .bg-canvas { background: #f2f2f4 !important; }
+body:has(.dr-root.dr-light) .bg-canvas { background: #e7e7ea !important; }
 
 /* ══ atmosphere ══════════════════════════════════════════════════ */
 
@@ -1621,15 +1621,15 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    so the backdrop and the tokens are driven by one track and cannot
    disagree. */
 .dr-root {
-  --void:        color-mix(in oklab, #000000 calc((1 - var(--flip, 0)) * 100%), #f2f2f4);
-  --surface-1:   color-mix(in oklab, #121214 calc((1 - var(--flip, 0)) * 100%), #f9f9fb);
-  --surface-2:   color-mix(in oklab, #171719 calc((1 - var(--flip, 0)) * 100%), #fdfdfe);
+  --void:        color-mix(in oklab, #000000 calc((1 - var(--flip, 0)) * 100%), #e7e7ea);
+  --surface-1:   color-mix(in oklab, #121214 calc((1 - var(--flip, 0)) * 100%), #f4f4f7);
+  --surface-2:   color-mix(in oklab, #171719 calc((1 - var(--flip, 0)) * 100%), #f8f8fb);
   --surface-3:   color-mix(in oklab, #202024 calc((1 - var(--flip, 0)) * 100%), #ffffff);
   --ink:         color-mix(in oklab, #ffffff calc((1 - var(--flip, 0)) * 100%), #0a0a0b);
   --ink-2:       color-mix(in oklab, #d4d4d8 calc((1 - var(--flip, 0)) * 100%), #35353a);
   --ink-3:       color-mix(in oklab, #949498 calc((1 - var(--flip, 0)) * 100%), #5c5c63);
-  --ink-4:       color-mix(in oklab, #8a8a8e calc((1 - var(--flip, 0)) * 100%), #6b6b72);
-  --edge:        color-mix(in oklab, #565759 calc((1 - var(--flip, 0)) * 100%), #c9c9cf);
+  --ink-4:       color-mix(in oklab, #8a8a8e calc((1 - var(--flip, 0)) * 100%), #67676e);
+  --edge:        color-mix(in oklab, #565759 calc((1 - var(--flip, 0)) * 100%), #c4c4ca);
   --edge-strong: color-mix(in oklab, #6e7075 calc((1 - var(--flip, 0)) * 100%), #9a9aa2);
   --hairline:    color-mix(in oklab, rgb(156 163 175 / .30) calc((1 - var(--flip, 0)) * 100%), rgb(90 92 102 / .30));
   /* the two rig values are rgba WHITE at rest — on a white ground they
@@ -1638,10 +1638,35 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   --fill: rgba(0, 0, 0, calc(0.02 * var(--flip, 0) + 0.02 * (1 - var(--flip, 0))));
 }
 
-/* ── THE LIGHT ROOM ───────────────────────────────────────────────
-   The whole room at the light end of the flip it already knows how to
-   make. One class, one variable — every token above crosses with it, and
-   so do the .dr-flip rules that carry the hand-written whites.
+/* ── THE LIGHT ROOM — AND IT IS NOW THE ROOM ─────────────────────
+   Jake, 2026-09-10: "i like this a lot, i think the light is a lot
+   better." So this class is on by DEFAULT (see page.tsx) and `?dark`
+   is what you ask for. ⚠ THE STYLESHEET ABOVE STILL READS DARK-FIRST —
+   the dark values are the base and light is the far end of --flip. That
+   is deliberate: --flip is the room's own inversion, already written and
+   already reviewed, and re-authoring 3,200 lines to move the default
+   would be churn with no pixel behind it.
+
+   ── THE SURFACE LADDER WAS WIDENED, and this is the one real thing the
+   experiment exposed. The room's depth rule is "elevation is LIGHTNESS
+   ONLY — zero box-shadows". On black that works: ground → surface-1 is
+   1.122:1 and a raised card is visibly nearer. The light end had been
+   set at #f2f2f4 → #f9f9fb, which is 1.063 — HALF the separation — so
+   §04's cards sat on the page instead of above it. Flattened, and the
+   cause was never the colour, it was that the rungs had nowhere to go
+   once the ground was already almost white.
+
+   The ground moves DOWN to make room: #e7e7ea → #f4f4f7 → #f8f8fb →
+   #ffffff, whose step ratios are 1.124 / 1.036 / 1.060 against the dark
+   end's 1.122 / 1.045 / 1.103. The same ladder, not a similar one.
+
+   ⚠ AND THE GROUND IS WHAT EVERYTHING ELSE IS MEASURED AGAINST, so two
+   tokens moved with it or they would have quietly failed: --ink-4, the
+   TEXT FLOOR, fell to 4.28:1 and goes to #67676e (4.55); --edge-strong,
+   which the file reserves for anything carrying meaning, fell to 2.78
+   and goes to #84848c (3.01, over WCAG 1.4.11's 3:1). --edge follows
+   for consistency; it is decorative and owes no ratio. Unchanged and
+   still clear: ink 16.04 · ink-2 9.88 · ink-3 5.37.
 
    ⚠ ONE TOKEN THE INVERSION GETS WRONG, found by measuring rather than
    by looking. --edge-strong lands on #9a9aa2, which is 2.50:1 against
@@ -1655,7 +1680,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    ink-4 4.73. The whole text ladder clears AA unchanged. */
 .dr-root.dr-light {
   --flip: 1;
-  --edge-strong: #8a8a92;
+  --edge-strong: #84848c;
 }
 
 /* ⚠ THE HEADLINE DOES NOT RIDE THE TOKENS, and it is the one object in
