@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
 import "./globals.css";
-import { Nav } from "@/components/nav";
+import "./room.css";
 import { PersonaCapture } from "@/components/persona-capture";
-import { PersistentCta } from "@/components/ui/persistent-cta";
 import { SiteChat } from "@/components/ui/site-chat";
-import { Footer } from "@/components/footer";
+import { RoomShell } from "@/components/room/shell";
 import { SmoothScroll } from "@/components/anim/smooth-scroll";
 import { ViewTransitions } from "@/components/anim/view-transition";
 
@@ -99,14 +98,19 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <PersonaCapture />
-        <Nav />
-        <PersistentCta />
+        {/* ⚠ still mounted, and hidden on every page by room.css's
+            `.schat-pill { display: none }`. The chat is a tool Jake
+            asked to keep; it has no place in the room's design yet, and
+            in production it 502s on an invalid ANTHROPIC_API_KEY. Kept
+            rather than deleted so re-siting it is a CSS change. */}
         <SiteChat />
-        {/* .page-sheet: the page is a SHEET lifting off the footer — rounded
-            bottom corners + clip so every page's last section rounds with it
-            (Jake, 2026-07-30: the straight seam "feels a little odd") */}
-        <main className="page-sheet bg-canvas relative z-10">{children}</main>
-        <Footer />
+        {/* THE ROOM IS THE FRAME. The old Nav, PersistentCta and Footer
+            are gone — the room's nav and its ending wrap every page, so
+            the interior pages sit in the new frame before any of them
+            has been redesigned inside it. */}
+        <RoomShell>
+          <main className="relative z-10">{children}</main>
+        </RoomShell>
         <SmoothScroll />
         <ViewTransitions />
       </body>

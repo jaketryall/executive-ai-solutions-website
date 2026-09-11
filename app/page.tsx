@@ -1,34 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
+import { Roll } from "@/components/room/nav";
 import ServicesSection from "@/components/dark/services-section";
 import AboutSection from "@/components/dark/about-section";
 import ProofSection from "@/components/dark/proof-section";
 import VoicesSection from "@/components/dark/voices-section";
 import RunsSection from "@/components/dark/runs-section";
 import ObjectionsSection from "@/components/dark/objections-section";
-import CloseSection from "@/components/dark/close-section";
-import { useScrollEngine } from "@/components/dark/scroll-engine";
-import { Archivo, Instrument_Sans } from "next/font/google";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
-import "./room.css";
-
-/* Archivo is requested WITH the wdth axis on purpose: pulled without it,
-   Google silently serves default-width Archivo — a different, much worse
-   face, with no error and nothing visible in a screenshot review. */
-const archivo = Archivo({
-  subsets: ["latin"],
-  axes: ["wdth"],
-  display: "swap",
-  variable: "--font-archivo",
-});
-const instrument = Instrument_Sans({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-instrument",
-});
 
 /* The room runs its own two curves — the same two the stylesheet declares,
    registered here so JS and CSS can never drift apart. Nothing in this room
@@ -46,97 +28,10 @@ CustomEase.create(U, "M0,0 C0.16,1 0.3,1 1,1"); //   --ease-ui
    prove craft with one lit object; hand off two doors at different
    commitment levels. ~78% untouched black, six text objects. */
 
-/* Per-character roll. Each letter is its own cell with a duplicate one line
-   below and a delay keyed to its index, so the swap cascades across the word
-   instead of the whole label flipping at once. The link keeps a real label
-   for screen readers; the split is decoration. */
-function Roll({ label }: { label: string }) {
-  return (
-    <span className="dr-roll" aria-hidden>
-      {label.split("").map((ch, i) => (
-        <span
-          key={i}
-          className="dr-char"
-          data-char={ch}
-          style={{ "--i": i } as React.CSSProperties}
-        >
-          {ch}
-        </span>
-      ))}
-    </span>
-  );
-}
-
 export default function DarkRoom() {
-  const [lit, setLit] = useState(false);
-
-  /* ── THE ROOM IS LIGHT (Jake, 2026-09-10: "i like this a lot, i
-     think the light is a lot better") ────────────────────────────────
-     The experiment is over and it won, so light is the DEFAULT and the
-     dark palette is what you have to ask for: `?dark` still renders the
-     room exactly as it was, because a comparison you can still run is
-     worth keeping and costs one boolean.
-
-     It is still expressed as --flip rather than rewritten into the
-     stylesheet, and that is deliberate rather than lazy. --flip is the
-     room's OWN inversion — it already crosses every token including the
-     hand-written rgba whites in the back half, it was reviewed once when
-     it was built for the §03→§04 curtain, and re-authoring 3,200 lines
-     to move the default is churn with no pixel behind it. What it costs
-     is that the stylesheet still reads dark-first; the block in dark.css
-     says so at the top so nobody has to work it out.
-
-     Read in an effect rather than at render so the server and the first
-     client pass agree. */
-  const [light, setLight] = useState(false);
-  /* ── THE FILM HERO (?film) — an experiment, like ?light was ─────
-     Jake, with apple.com/iphone-18-pro: "i want to do something dramatic
-     like this." Measured, their drama is not a layout: it is a
-     full-viewport, single-shot product film that plays once, with two
-     words UNDER it. The layout is film first, statement second.
-
-     So this flips ours the same way: the reel takes the whole first
-     screen, edge to edge, and the band — chip, statement, support, doors
-     — becomes the second beat. The Cosmos open and the copy's lift are
-     off in this mode; there is nothing for the reel to open into when it
-     already has the screen. A toggle rather than a rewrite, so the two
-     heroes can be compared on the same page without losing either. */
-  const [film, setFilm] = useState(false);
-  useEffect(() => {
-    const q = new URLSearchParams(window.location.search);
-    setLight(!q.has("dark"));
-    setFilm(q.has("film"));
-  }, []);
-
-  /* Theming is NOT done here any more. Adding the class in an effect meant
-     the browser painted the root layout's light sheet first and the reload
-     flashed white. The room's ground and its fonts now ride on the
-     server-rendered wrapper below, so the first frame is already black.
-     This effect only arms the entrance. */
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setLit(true));
-    return () => cancelAnimationFrame(id);
-  }, []);
-
-  /* The rail transforms on SCROLL, not on load. A sentinel at the very top
-     of the stage says the moment the page has left the top — cheaper and
-     more honest than guessing a scroll offset. */
-  /* one loop for every [data-sp] on the page. Mounted here rather than
-     per-section so the whole page costs a single measurement pass. */
-  useScrollEngine();
-
-  const topRef = useRef<HTMLDivElement>(null);
-  const [stuck, setStuck] = useState(false);
-  useEffect(() => {
-    const top = topRef.current;
-    if (!top) return;
-    const io = new IntersectionObserver(([e]) => setStuck(!e.isIntersecting), {
-      threshold: 0,
-    });
-    io.observe(top);
-    return () => io.disconnect();
-  }, []);
-
+  /* The frame — tokens, ground, nav, ending, the scroll engine, the
+     entrance arm and the ?dark / ?film switches — is the layout's
+     RoomShell now. This page is the room's own atmosphere and sections. */
   /* PARALLAX — the LIGHT only. The mark holds still: it is the object in the
      room, and an object that slides with your cursor stops reading as one.
      Pointer only; on touch there is nothing to answer and the ambient drift
@@ -197,11 +92,7 @@ export default function DarkRoom() {
   }, []);
 
   return (
-    <div
-      className={`dr-root ${archivo.variable} ${instrument.variable}${
-        lit ? " dr-lit" : ""
-      }${light ? " dr-light" : ""}${film ? " dr-film" : ""}`}
-    >
+    <>
       <div className="dr-atmos" aria-hidden>
         <div className="dr-key" />
       </div>
@@ -214,50 +105,6 @@ export default function DarkRoom() {
       </div>
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
-
-      {/* THE NAV LIVES OUTSIDE .dr-stage. It is position:fixed at
-          z-index 30, but .dr-stage is position:relative z-index:4 — a
-          stacking context — so that 30 was only ever ranked INSIDE the
-          stage, never against the stage's siblings. Section 02 is a later
-          sibling at the same z-index 4, so it painted over the entire
-          stage subtree, nav included: past the hero the header and its CTA
-          were invisible AND unclickable (elementFromPoint at the nav's
-          centre returned .dr-svc-title). Out here the 30 competes where it
-          was always meant to. */}
-      <header className="dr-nav wrap">
-        <div className="dr-rail dr-edge" data-stuck={stuck ? "true" : undefined}>
-          <nav className="dr-links" aria-label="Main">
-            <Link href="/work" aria-label="Work">
-              <Roll label="Work" />
-            </Link>
-            <Link href="/services/websites" aria-label="Services">
-              <Roll label="Services" />
-            </Link>
-            <Link href="/pricing" aria-label="Pricing">
-              <Roll label="Pricing" />
-            </Link>
-          </nav>
-
-          <div className="dr-rail-in">
-            <Link className="dr-lockup" href="/">
-              <span className="dr-mono" aria-hidden />
-              <b>Executive AI Solutions</b>
-            </Link>
-
-
-              {/* collapsed at the top of the page, so it must not be
-                  reachable by keyboard or read out until it is really there */}
-              <Link
-                href="/contact"
-                className="dr-navcta dr-edge t-cta"
-                tabIndex={stuck ? undefined : -1}
-                aria-hidden={!stuck}
-              >
-                Book the call
-              </Link>
-          </div>
-        </div>
-      </header>
 
       {/* THE FIRST SEAM — a sticky-cover climb (grammar laws 5 + 9).
           The stage PINS for one viewport and §02 climbs over it from the
@@ -291,7 +138,8 @@ export default function DarkRoom() {
         {/* the rail watches this, not a scroll number — and it sits OUTSIDE
             the sticky stage, because a sentinel that pins with the hero
             never leaves the viewport and the CTA would never arrive */}
-        <div className="dr-top" ref={topRef} aria-hidden />
+        {/* the nav (components/room/nav) watches this by selector */}
+        <div className="dr-top" aria-hidden />
 
       <div className="dr-stage">
         <main className="dr-main wrap">
@@ -481,8 +329,7 @@ export default function DarkRoom() {
       <div className="dr-flip">
         <RunsSection />
         <ObjectionsSection />
-        <CloseSection />
       </div>
-    </div>
+    </>
   );
 }

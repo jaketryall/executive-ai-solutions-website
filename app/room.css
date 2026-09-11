@@ -141,21 +141,11 @@ body:has(.dr-root) { background: #000; }
 :root:has(.dr-root.dr-light),
 body:has(.dr-root.dr-light) { background: #e7e7ea; }
 
-/* the legacy chrome does not exist in this room (iteration route only) */
-body:has(.dr-root) .site-nav,
-body:has(.dr-root) .mnav,
-body:has(.dr-root) .pcta,
-body:has(.dr-root) .schat-pill,
-body:has(.dr-root) > footer,
-body:has(.dr-root) footer { display: none !important; }
+/* the legacy chrome is gone from the layout (the room's nav and ending
+   are the site's now). The one survivor is the chat pill, which is still
+   mounted and has no place in this design yet — see app/layout.tsx. */
+body:has(.dr-root) .schat-pill { display: none !important; }
 body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !important; }
-/* the root layout paints every page on a light sheet (.page-sheet.bg-canvas,
-   #f5f5f7 at z-10) — it sits ON TOP of the black body and has to be
-   neutralised here or the whole room is lit grey. */
-body:has(.dr-root) .page-sheet,
-body:has(.dr-root) .bg-canvas { background: #000 !important; }
-body:has(.dr-root.dr-light) .page-sheet,
-body:has(.dr-root.dr-light) .bg-canvas { background: #e7e7ea !important; }
 
 /* ══ atmosphere ══════════════════════════════════════════════════ */
 
