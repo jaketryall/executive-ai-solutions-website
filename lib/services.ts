@@ -49,114 +49,34 @@ export type ServiceDef = {
   schemaName: string;
 };
 
+/* ⚠ ORDER IS POSITIONING, NOT TASTE. Jake, 2026-09-10: "im shifting more
+   towards design and crms than ads right now." This list ran Google Ads
+   first, which made ads the page's lead offer — the first numeral, the
+   first story, the first thing anyone reads under the services header.
+
+   It now runs websites → automation → ads. The section's own note called
+   the old sequence "the funnel, and the funnel is a story — their search
+   won, their pages, their booking", and that CAUSAL order is what is
+   being given up: the arc is no longer the customer's click travelling
+   through it. What replaces it is what EAS actually leads with — the
+   thing we design, the system that runs behind it, and the traffic we
+   can also buy for it. Still one client across all three shots.
+
+   stageIndex is a literal on each entry, not derived from the array, so
+   reordering alone would have printed 02 · 03 · 01 down the page. The
+   numerals are renumbered with the order. */
 export const SERVICES: ServiceDef[] = [
-  {
-    slug: "google-ads",
-    stage: "The click",
-    stageIndex: "01",
-    nav: "Google Ads",
-    label: "Google Ads management",
-    title: ["Every click,", "accounted for"],
-    support:
-      "Google Ads, managed. Campaigns built on what your customers actually search, conversion tracking you can read, and a monthly number that says what a lead cost.",
-    heroPrice: "$500/mo + your ad spend · no lock-in",
-    price: {
-      lead: "Management is",
-      big: "$500/mo",
-      accent: "$500/mo",
-      note: "plus whatever you spend on the ads themselves. You approve the budget.",
-      chips: ["No minimum term", "Tracking included", "One monthly report"],
-    },
-    deliverables: [
-      {
-        name: "Campaigns built on real searches",
-        body: "We build around what your customers actually type, not what a keyword tool guesses. Negative lists keep the budget off the wrong clicks.",
-        /* the demo-fiction plumber universe (shared with the LSA mocks) */
-        receipt: {
-          kind: "checks",
-          items: [
-            { text: "emergency plumber mesa" },
-            { text: "water heater replacement" },
-            { text: "free plumbing advice", no: true },
-            { text: "diy drain cleaning", no: true },
-          ],
-        },
-      },
-      {
-        name: "Tracking you can read",
-        body: "Calls, forms and bookings wired up as conversions. You see which ad produced which lead, in a report that fits on one screen.",
-        /* PLACEHOLDER numbers — same swap list as lib/work.ts results */
-        receipt: {
-          kind: "rows",
-          rows: [
-            ["Calls", "18"],
-            ["Form leads", "8"],
-            ["Cost per lead", "$38"],
-          ],
-        },
-      },
-      {
-        name: "A monthly number that means something",
-        body: "Every month: what you spent, what a lead cost, and what we are changing next. If a campaign isn't earning, we say so.",
-        /* PLACEHOLDER — the same $38 the highlights and homepage quote */
-        receipt: { kind: "stat", value: "$38", label: "per lead · last 30 days" },
-      },
-      {
-        name: "The landing page, tuned with it",
-        body: "If we built your site, the ads and the page get tuned from the same data. One team, accountable for the whole click.",
-        receipt: {
-          kind: "rows",
-          rows: [
-            ["The ad promises", "Learn to fly at Falcon Field"],
-            ["The page delivers", "Learn to fly at Falcon Field"],
-          ],
-        },
-      },
-    ],
-    process: [
-      {
-        name: "The call",
-        body: "Twenty minutes on your business: what a customer is worth, what people search, where the clicks should land.",
-      },
-      {
-        name: "The build",
-        body: "Campaigns around real searches, negative lists against the wrong ones, and every call and form wired as a conversion.",
-      },
-      {
-        name: "The launch",
-        body: "You approve the budget before anything spends. The ads go live, and the tracking starts telling the truth from day one.",
-      },
-      {
-        name: "The number",
-        body: "Every month: spend, leads, cost per lead, and what we're changing next. Stay because it's working, not because of a contract.",
-      },
-    ],
-    faqs: [
-      {
-        q: "What does Google Ads management cost?",
-        a: "Management is $500/mo plus whatever you spend on the ads themselves. You approve the budget, the tracking shows what every lead cost, and there is no minimum term. If we also built your landing page, we tune both from the same data.",
-      },
-      {
-        q: "Can you run ads to my existing website?",
-        a: "Yes. Plenty of clients start with ads only. If your current page is losing the clicks we send it, the tracking will show it, and we will tell you what that is costing before we ever pitch a rebuild.",
-      },
-      {
-        q: "Do I need a monthly retainer?",
-        a: "Only for the management itself. There is no lock-in and no minimum term: the reporting makes the case to stay, or it doesn't.",
-      },
-    ],
-    metaTitle: "Google Ads Management | Executive AI Solutions",
-    metaDescription:
-      "Google Ads managed from $500/mo plus spend. Campaigns built on real searches, conversion tracking you can read, and a monthly number that says what a lead cost.",
-    schemaName: "Google Ads management and conversion tracking",
-  },
   {
     slug: "websites",
     stage: "The landing",
-    stageIndex: "02",
+    stageIndex: "01",
     nav: "Websites",
     label: "Custom websites",
-    title: ["The page the", "click deserves"],
+    /* ⚠ IT NO LONGER PRESUPPOSES A CLICK. "The page the click deserves"
+       was written when ads were 01 and this row was 02 — the click had
+       already happened one row above it. Leading the section, it opened
+       on a premise the page no longer makes. */
+    title: ["A site that", "earns the call"],
     support:
       "A custom website, designed from your business and built by hand. Fast enough that nobody leaves while it loads, and every line of it yours.",
     heroPrice: "From $2.5k · fixed quote in 2 days",
@@ -257,7 +177,7 @@ export const SERVICES: ServiceDef[] = [
   {
     slug: "ai",
     stage: "The follow-up",
-    stageIndex: "03",
+    stageIndex: "02",
     nav: "AI automation",
     label: "AI automation",
     title: ["No lead", "goes cold"],
@@ -354,6 +274,106 @@ export const SERVICES: ServiceDef[] = [
       "AI that answers and chases: chat answering from your own pages, follow-ups that send themselves, pages that adapt per visitor. Built and managed for you, quoted per project.",
     schemaName: "AI automation for business websites",
   },
+  {
+    slug: "google-ads",
+    stage: "The click",
+    stageIndex: "03",
+    nav: "Google Ads",
+    label: "Google Ads management",
+    title: ["Every click,", "accounted for"],
+    support:
+      "Google Ads, managed. Campaigns built on what your customers actually search, conversion tracking you can read, and a monthly number that says what a lead cost.",
+    heroPrice: "$500/mo + your ad spend · no lock-in",
+    price: {
+      lead: "Management is",
+      big: "$500/mo",
+      accent: "$500/mo",
+      note: "plus whatever you spend on the ads themselves. You approve the budget.",
+      chips: ["No minimum term", "Tracking included", "One monthly report"],
+    },
+    deliverables: [
+      {
+        name: "Campaigns built on real searches",
+        body: "We build around what your customers actually type, not what a keyword tool guesses. Negative lists keep the budget off the wrong clicks.",
+        /* the demo-fiction plumber universe (shared with the LSA mocks) */
+        receipt: {
+          kind: "checks",
+          items: [
+            { text: "emergency plumber mesa" },
+            { text: "water heater replacement" },
+            { text: "free plumbing advice", no: true },
+            { text: "diy drain cleaning", no: true },
+          ],
+        },
+      },
+      {
+        name: "Tracking you can read",
+        body: "Calls, forms and bookings wired up as conversions. You see which ad produced which lead, in a report that fits on one screen.",
+        /* PLACEHOLDER numbers — same swap list as lib/work.ts results */
+        receipt: {
+          kind: "rows",
+          rows: [
+            ["Calls", "18"],
+            ["Form leads", "8"],
+            ["Cost per lead", "$38"],
+          ],
+        },
+      },
+      {
+        name: "A monthly number that means something",
+        body: "Every month: what you spent, what a lead cost, and what we are changing next. If a campaign isn't earning, we say so.",
+        /* PLACEHOLDER — the same $38 the highlights and homepage quote */
+        receipt: { kind: "stat", value: "$38", label: "per lead · last 30 days" },
+      },
+      {
+        name: "The landing page, tuned with it",
+        body: "If we built your site, the ads and the page get tuned from the same data. One team, accountable for the whole click.",
+        receipt: {
+          kind: "rows",
+          rows: [
+            ["The ad promises", "Learn to fly at Falcon Field"],
+            ["The page delivers", "Learn to fly at Falcon Field"],
+          ],
+        },
+      },
+    ],
+    process: [
+      {
+        name: "The call",
+        body: "Twenty minutes on your business: what a customer is worth, what people search, where the clicks should land.",
+      },
+      {
+        name: "The build",
+        body: "Campaigns around real searches, negative lists against the wrong ones, and every call and form wired as a conversion.",
+      },
+      {
+        name: "The launch",
+        body: "You approve the budget before anything spends. The ads go live, and the tracking starts telling the truth from day one.",
+      },
+      {
+        name: "The number",
+        body: "Every month: spend, leads, cost per lead, and what we're changing next. Stay because it's working, not because of a contract.",
+      },
+    ],
+    faqs: [
+      {
+        q: "What does Google Ads management cost?",
+        a: "Management is $500/mo plus whatever you spend on the ads themselves. You approve the budget, the tracking shows what every lead cost, and there is no minimum term. If we also built your landing page, we tune both from the same data.",
+      },
+      {
+        q: "Can you run ads to my existing website?",
+        a: "Yes. Plenty of clients start with ads only. If your current page is losing the clicks we send it, the tracking will show it, and we will tell you what that is costing before we ever pitch a rebuild.",
+      },
+      {
+        q: "Do I need a monthly retainer?",
+        a: "Only for the management itself. There is no lock-in and no minimum term: the reporting makes the case to stay, or it doesn't.",
+      },
+    ],
+    metaTitle: "Google Ads Management | Executive AI Solutions",
+    metaDescription:
+      "Google Ads managed from $500/mo plus spend. Campaigns built on real searches, conversion tracking you can read, and a monthly number that says what a lead cost.",
+    schemaName: "Google Ads management and conversion tracking",
+  },
 ];
 
 export const getService = (slug: string) =>
@@ -365,6 +385,6 @@ export const siblingServices = (slug: string) =>
 /** the one-line pitch + price used wherever services cross-link */
 export const SERVICE_META: Record<string, { line: string; price: string }> = {
   "google-ads": { line: "Google Ads, managed, with tracking you can read", price: "$500/mo + spend" },
-  websites: { line: "A hand-built website that converts the click", price: "From $2.5k" },
+  websites: { line: "A hand-built website that earns the call", price: "From $2.5k" },
   ai: { line: "Chat and follow-ups that never let a lead go cold", price: "Quoted per project" },
 };

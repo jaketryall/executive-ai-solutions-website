@@ -257,11 +257,13 @@ body:has(.dr-root.dr-light) .bg-canvas { background: #e7e7ea !important; }
   font-variation-settings: "wdth" 100, "wght" 660;
   /* ⚠ THE LINES DO NOT WRAP (white-space: nowrap, below), so the size has
      to be capped by the COLUMN or a long line runs off the screen at the
-     widths where the band is tight. 9.3cqw is measured, not guessed: the
-     longest line renders at 10.0x the font size, so 10cqw exactly fills
-     the column and 9.3 leaves the slack. RE-MEASURE IT IF THE COPY
-     CHANGES — a longer line needs a smaller number. */
-  font-size: min(var(--hero-fs), 9.3cqw);
+     widths where the band is tight. 9.2cqw is measured, not guessed: the
+     longest line renders at 10.08x the font size, so ~9.9cqw exactly
+     fills the column and 9.2 leaves the slack. RE-MEASURE IT IF THE COPY
+     CHANGES — and this note has now earned itself, because the copy did
+     change: 9.3 was measured against "while you're on the job." (ratio
+     10.00) and 9.2 against "systems that follow up." (10.08). */
+  font-size: min(var(--hero-fs), 9.2cqw);
   letter-spacing: -0.028em; line-height: 1.04;
   text-transform: none; color: #d6d6da;
   margin: 0;

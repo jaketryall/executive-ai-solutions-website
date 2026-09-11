@@ -23,7 +23,12 @@ import { SHOTS } from "@/components/dark/service-shots";
    backwards exactly. Measured off the source: words ramp from 0.2 to 1
    left-to-right; the marks start ±300px out and settle to 0. */
 
-const SAY = "The click, the page it lands on, and the follow-up after.";
+/* ⚠ IT NAMES THE LIST, SO IT MOVES WITH THE LIST. This was "The click,
+   the page it lands on, and the follow-up after" — the ads funnel, said
+   in the section's loudest voice, with the click first. The list under it
+   now runs websites → automation → ads, and a thesis that walks the
+   reader through a different order than the rows is worse than no thesis. */
+const SAY = "The site, the system behind it, and the clicks that find it.";
 
 /* the shots — one per stage, keyed by slug — live in service-shots.tsx:
    the click's won search on a phone, the landing on a laptop AND a phone

@@ -299,11 +299,22 @@ export default function DarkRoom() {
 
             <div className="dr-left">
               <h1 className="t-hero">
+                {/* ⚠ THE POSITIONING LINE. "A website that books while
+                    you're on the job" was written for the ads era and
+                    speaks to a tradesman between jobs. Jake, 2026-09-10:
+                    "im shifting more towards design and crms than ads
+                    right now" — so the statement names the two things he
+                    now leads with, in that order, and ads are not in it.
+
+                    The second line is the longer one on purpose: the
+                    short-over-long step is the shape this hero has always
+                    had, and it is what keeps the block from reading as a
+                    centred slab. */}
                 <span className="dr-line">
-                  <span className="sweep">A website that books</span>
+                  <span className="sweep">Design that sells,</span>
                 </span>
                 <span className="dr-line">
-                  <span className="sweep">while you&rsquo;re on the job.</span>
+                  <span className="sweep">systems that follow up.</span>
                 </span>
               </h1>
             </div>
