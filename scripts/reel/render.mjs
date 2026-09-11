@@ -186,6 +186,29 @@ function cascadeSpecs(args) {
     .map((x) => ({ slug: `${prefix}${x}`, url: x === "home" ? base : `${base}/${x}` }));
 }
 
+/* `--plan <file.json>` — the whole cut as data. An array of segments:
+
+     { "scene": "title", "len": 120, "params": { "text": "…", "size": "fill" } }
+     { "scene": "flat",  "len": 42,  "params": { "page": "dw-home", "fx": .5, … } }
+     { "scene": "cascade", "len": 48, "params": { "pages": "dw-home,dw-fleet", "ground": "#0b2a4a" } }
+
+   `len` is the shot's length in frames; segments butt end to end on ONE
+   global frame counter, so the stage's `f` for a shot is local (0 at the
+   shot's first frame — every scene's maths assumes that) while the file
+   on disk is numbered globally. `params` is passed to the stage verbatim;
+   a scene ignores what it does not read. Pages to capture in Pass 1 are
+   declared once at the top level as `pages: [{slug, url}]`. */
+async function planSegments(file) {
+  const plan = JSON.parse(await readFile(file, "utf8"));
+  let cursor = 0;
+  const segments = plan.segments.map((seg) => {
+    const out = { scene: seg.scene, from: cursor, to: cursor + seg.len - 1, local0: cursor, params: seg.params ?? {} };
+    cursor += seg.len;
+    return out;
+  });
+  return { segments, pages: plan.pages ?? [] };
+}
+
 function buildSegments(args) {
   if (args.scene) {
     const from = Number.parseInt(args.from ?? "0", 10);
@@ -249,7 +272,11 @@ async function capturePages(browser, specs) {
   const page = await context.newPage();
 
   for (const { slug, url } of specs) {
-    await page.goto(url, { waitUntil: "networkidle", timeout: 60_000 });
+    /* `load`, not `networkidle`: the client sites carry analytics that
+       never go quiet, and /fleet sat at networkidle for the full 60s
+       timeout with the page long since painted. The settle wait below is
+       what outlasts a scroll-triggered entrance, not the idle signal. */
+    await page.goto(url, { waitUntil: "load", timeout: 60_000 });
 
     /* Consent banners are the one thing guaranteed to be on every page of
        a real client site and never wanted in a reel. Decline rather than
@@ -533,13 +560,15 @@ async function renderStage(browser, allFrames) {
   const t0 = Date.now();
 
   for (let i = 0; i < allFrames.length; i++) {
-    const { scene, f, text, pages, ground, zoom } = allFrames[i];
-    const params = new URLSearchParams({ scene, f: String(f) });
+    const { scene, f, stageF, text, pages, ground, zoom, params: extra, len } = allFrames[i];
+    const params = new URLSearchParams({ scene, f: String(stageF ?? f) });
     if (scene === "phone-dw") params.set("screen", screenUrlPath(f));
     if (text) params.set("text", text);
     if (pages) params.set("pages", pages);
     if (ground) params.set("ground", ground);
     if (zoom) params.set("zoom", "1");
+    if (len) params.set("len", String(len));
+    if (extra) for (const [k, v] of Object.entries(extra)) params.set(k, String(v));
     const url = `${BASE_URL}/reel/stage?${params.toString()}`;
 
     if (scene !== currentScene) {
@@ -554,7 +583,7 @@ async function renderStage(browser, allFrames) {
       }, url);
       await page.waitForTimeout(30);
       const observed = await page.$eval(".stage", (el) => el.getAttribute("data-frame")).catch(() => null);
-      const worked = observed === String(f);
+      const worked = observed === String(stageF ?? f);
       if (strategy === null) {
         strategy = worked ? "replace" : "goto";
         console.log(
@@ -568,7 +597,7 @@ async function renderStage(browser, allFrames) {
       await page.goto(url, { waitUntil: "load" });
     }
 
-    if (scene === "phone-dw") {
+    if (scene === "phone-dw" || scene === "flat" || scene === "cascade") {
       await page
         .waitForFunction(() => {
           const img = document.querySelector(".stage img");
@@ -629,7 +658,9 @@ async function renderStage(browser, allFrames) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  const segments = buildSegments(args);
+  let segments, planPages = [];
+  if (args.plan) ({ segments, pages: planPages } = await planSegments(args.plan));
+  else segments = buildSegments(args);
 
   await mkdir(FRAMES_DIR, { recursive: true });
   await mkdir(SCREEN_DIR, { recursive: true });
@@ -644,10 +675,15 @@ async function main() {
       allFrames.push({
         scene: seg.scene,
         f,
+        // a plan segment's stage frame is LOCAL to the shot; a CLI segment's
+        // is the global number, as it always was
+        stageF: seg.local0 !== undefined ? f - seg.local0 : f,
         text: seg.text,
         pages: seg.pages,
         ground: seg.ground,
         zoom: seg.zoom,
+        params: seg.params,
+        len: seg.local0 !== undefined ? seg.to - seg.from + 1 : undefined,
       });
   }
   const startNumber = allFrames[0]?.f ?? 0;
@@ -655,7 +691,7 @@ async function main() {
 
   const browser = await chromium.launch({ headless: true });
 
-  await capturePages(browser, cascadeSpecs(args));
+  await capturePages(browser, args.plan ? planPages : cascadeSpecs(args));
   const { titleOk } = await captureDwScreens(browser, timewebSource, dwFrameNumbers);
   await renderStage(browser, allFrames);
 

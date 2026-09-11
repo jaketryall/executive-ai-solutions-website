@@ -71,14 +71,37 @@ const WIPE_FRAMES = 30;
    the words in keeps that guaranteed by construction — there is exactly one
    TitleScene, so there is exactly one way a title card can behave. Omit the
    param and it falls back to the board's opening line. */
-function TitleScene({ f, text = TITLE_TEXT }: { f: number; text?: string }) {
+/* `fill` (board v3): the line is set at 220px and pinned to the LEFT edge
+   with its first glyph cropped by it — itsjay's "Creativ / Cont" move. The
+   motion-design skill's tell list is explicit that a title sitting small
+   and centred in a black field reads as a subtitle, and that the film's
+   own type has to be at least as strong as the type inside the work it is
+   showing. The 120px centred card stays available as `size=card`.
+
+   The 1% push is the hold's residual life: a held frame with zero change
+   reads as a stall, so the card breathes across its whole length. */
+function TitleScene({
+  f,
+  text = TITLE_TEXT,
+  size = "card",
+  len = 120,
+}: {
+  f: number;
+  text?: string;
+  size?: "card" | "fill";
+  len?: number;
+}) {
   const u = Math.max(0, Math.min(1, f / WIPE_FRAMES));
   const p = f <= WIPE_FRAMES ? wipeEase(u) : 1; // every frame past 30 holds fully revealed
   const rightInset = clampPct((1 - p) * 100);
   const edgeInset = clampPct((1 - p) * 100 - 2.5); // ~48px leading edge at 1920 wide
+  const push = 1 + 0.01 * Math.max(0, Math.min(1, f / Math.max(1, len)));
 
   return (
-    <div className="stage-title">
+    <div
+      className={`stage-title stage-title--${size}`}
+      style={{ transform: `scale(${push})`, transformOrigin: "50% 50%" }}
+    >
       <span
         className="stage-title__edge"
         style={{ clipPath: `inset(0 ${edgeInset}% 0 0)` }}
@@ -92,6 +115,79 @@ function TitleScene({ f, text = TITLE_TEXT }: { f: number; text?: string }) {
       >
         {text}
       </span>
+    </div>
+  );
+}
+
+/* ── scene: flat ───────────────────────────────────────────────────────
+   Board v3's body: a real page, cropped tight and FLAT to camera, on a
+   punctuation ground. The skill is blunt about why — an angled device
+   mockup puts a picture of a screen between the viewer and the work, and
+   the work is the point. This is the same Pass-1 page capture the cascade
+   uses, shown at 1.6-1.8x its layout size so a headline fills the frame,
+   centred on a focus point (fx, fy as fractions of the page) so each shot
+   names what it is looking at instead of defaulting to the top-left.
+
+   Two moves, both the house numbers rather than Easy Ease:
+     push — scale 1.00 → 1.04-1.06 across the whole shot. Slow, continuous,
+            ease 22/75: leaves fast, arrives soft. The shot's residual life.
+     pan  — translate by dx px, same curve, so it reads as a flick that
+            decelerates and stops — never a constant-velocity slide, which
+            is the "scroll" tell the skill names.
+   No overshoot: nothing here was flicked by a finger. */
+
+// AE influence 22 in / 75 out, as a bezier: settle-weighted
+const moveEase = cubicBezier(0.22, 0, 0.25, 1);
+
+function FlatScene({
+  f,
+  page,
+  fx,
+  fy,
+  zoom,
+  move,
+  dx,
+  amount,
+  ground,
+  len,
+}: {
+  f: number;
+  page: string;
+  fx: number;
+  fy: number;
+  zoom: number;
+  move: "push" | "pan";
+  dx: number;
+  amount: number;
+  ground: string;
+  len: number;
+}) {
+  const u = Math.max(0, Math.min(1, f / Math.max(1, len)));
+  const p = moveEase(u);
+  // the capture is 1440x900 laid out; shown at zoom x that
+  const w = 1440 * zoom;
+  const h = 900 * zoom;
+  // put the focus point at the frame's centre
+  const baseX = 960 - fx * w;
+  const baseY = 540 - fy * h;
+  const scale = move === "push" ? 1 + amount * p : 1;
+  const tx = move === "pan" ? dx * p : 0;
+
+  return (
+    <div className="stage-flat" style={{ background: ground }}>
+      <div
+        className="stage-flat__page"
+        style={{
+          width: w,
+          height: h,
+          transform: `translate(${baseX + tx}px, ${baseY}px) scale(${scale})`,
+          transformOrigin: `${fx * 100}% ${fy * 100}%`,
+        }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- a
+            render-script-fed page capture, not an optimizable asset */}
+        <img src={`/reel-page/${page}.png`} alt="" />
+      </div>
     </div>
   );
 }
@@ -381,10 +477,19 @@ function Stage() {
 
   const searchParams = useSearchParams();
   const scene = searchParams.get("scene") ?? "";
-  const fParam = Number.parseInt(searchParams.get("f") ?? "0", 10);
+  // parseFloat, not parseInt: the finishing pass renders two sub-frames per
+  // output frame (f and f+0.5) and averages them for a 180° shutter, and a
+  // stage that floors f would render the same frame twice and blur nothing
+  const fParam = Number.parseFloat(searchParams.get("f") ?? "0");
   const f = Number.isFinite(fParam) ? Math.max(0, fParam) : 0;
   const screenSrc = searchParams.get("screen") ?? "";
   const titleText = searchParams.get("text") ?? undefined;
+  const titleSize = searchParams.get("size") === "fill" ? "fill" : "card";
+  const len = Number.parseFloat(searchParams.get("len") ?? "0") || undefined;
+  const num = (k: string, d: number) => {
+    const v = Number.parseFloat(searchParams.get(k) ?? "");
+    return Number.isFinite(v) ? v : d;
+  };
   const pages = (searchParams.get("pages") ?? "").split(",").filter(Boolean);
   const ground = searchParams.get("ground") ?? "#000000";
   const zoomOn = searchParams.get("zoom") === "1";
@@ -393,7 +498,22 @@ function Stage() {
   let content: React.ReactNode;
 
   if (scene === "title") {
-    content = <TitleScene f={f} text={titleText} />;
+    content = <TitleScene f={f} text={titleText} size={titleSize} len={len} />;
+  } else if (scene === "flat") {
+    content = (
+      <FlatScene
+        f={f}
+        page={searchParams.get("page") ?? ""}
+        fx={num("fx", 0.5)}
+        fy={num("fy", 0.3)}
+        zoom={num("zoom", 1.7)}
+        move={searchParams.get("move") === "pan" ? "pan" : "push"}
+        dx={num("dx", -40)}
+        amount={num("amount", 0.05)}
+        ground={ground}
+        len={len ?? 42}
+      />
+    );
   } else if (scene === "cascade") {
     content = <CascadeScene f={f} pages={pages} ground={ground} />;
   } else if (scene === "phone-dw") {

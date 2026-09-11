@@ -1,0 +1,15 @@
+{
+  "_": "Board v3 proof — shots 1-4. 60fps. Grounds under 35% luminance (light-room rule).",
+  "pages": [
+    { "slug": "dw-home",     "url": "https://www.desertwingsflightschool.com" },
+    { "slug": "dw-fleet",    "url": "https://www.desertwingsflightschool.com/fleet" },
+    { "slug": "dw-team",     "url": "https://www.desertwingsflightschool.com/team" },
+    { "slug": "dw-pricing",  "url": "https://www.desertwingsflightschool.com/pricing" }
+  ],
+  "segments": [
+    { "scene": "title",   "len": 120, "params": { "text": "Design that sells,", "size": "fill" } },
+    { "scene": "flat",    "len": 42,  "params": { "page": "dw-home",  "fx": 0.5, "fy": 0.32, "zoom": 1.7, "move": "push", "amount": 0.05, "ground": "#0b2a4a" } },
+    { "scene": "flat",    "len": 36,  "params": { "page": "dw-fleet", "fx": 0.5, "fy": 0.36, "zoom": 1.6, "move": "pan",  "dx": -40,      "ground": "#000000" } },
+    { "scene": "cascade", "len": 54,  "params": { "pages": "dw-home,dw-fleet,dw-team,dw-pricing", "ground": "#0b2a4a" } }
+  ]
+}
