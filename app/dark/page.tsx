@@ -70,6 +70,30 @@ function Roll({ label }: { label: string }) {
 export default function DarkRoom() {
   const [lit, setLit] = useState(false);
 
+  /* ── THE LIGHT-ROOM EXPERIMENT (?light) ────────────────────────
+     Jake: "i'm wondering if it being dark is the only thing i don't like
+     about it." The only way that question gets a real answer is if
+     exactly ONE thing changes, so this flips the palette and nothing
+     else — same layout, same type, same spacing, same mechanics, same
+     copy. Rebuilding the room somewhere else would have changed the
+     type system and the components at the same time and could not have
+     told him anything.
+
+     It costs almost nothing because the room already contains its own
+     inversion: --flip cross-mixes every token dark→light, including the
+     hand-written rgba whites in the back half. It was written for the
+     §03→§04 curtain lift, which Jake rejected on sight — a light room
+     MID-PAGE. A whole light room is a different question, and this is
+     the machinery to ask it with.
+
+     Read in an effect rather than at render, so the server and the first
+     client pass agree. The cost is one dark frame before it flips, which
+     for an A/B toggle is not a bug — it shows you both. */
+  const [light, setLight] = useState(false);
+  useEffect(() => {
+    setLight(new URLSearchParams(window.location.search).has("light"));
+  }, []);
+
   /* Theming is NOT done here any more. Adding the class in an effect meant
      the browser painted the root layout's light sheet first and the reload
      flashed white. The room's ground and its fonts now ride on the
@@ -162,7 +186,7 @@ export default function DarkRoom() {
     <div
       className={`dr-root ${archivo.variable} ${instrument.variable}${
         lit ? " dr-lit" : ""
-      }`}
+      }${light ? " dr-light" : ""}`}
     >
       <div className="dr-atmos" aria-hidden>
         <div className="dr-key" />

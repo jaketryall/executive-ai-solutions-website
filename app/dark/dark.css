@@ -137,6 +137,9 @@
    matching and every other page is untouched. */
 :root:has(.dr-root),
 body:has(.dr-root) { background: #000; }
+/* the experiment's ground. Same selector shape, so it wins on order. */
+:root:has(.dr-root.dr-light),
+body:has(.dr-root.dr-light) { background: #f2f2f4; }
 
 /* the legacy chrome does not exist in this room (iteration route only) */
 body:has(.dr-root) .site-nav,
@@ -151,6 +154,8 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    neutralised here or the whole room is lit grey. */
 body:has(.dr-root) .page-sheet,
 body:has(.dr-root) .bg-canvas { background: #000 !important; }
+body:has(.dr-root.dr-light) .page-sheet,
+body:has(.dr-root.dr-light) .bg-canvas { background: #f2f2f4 !important; }
 
 /* ══ atmosphere ══════════════════════════════════════════════════ */
 
@@ -1632,6 +1637,95 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   --key:  rgba(0, 0, 0, calc(0.10 * var(--flip, 0) + 0.10 * (1 - var(--flip, 0))));
   --fill: rgba(0, 0, 0, calc(0.02 * var(--flip, 0) + 0.02 * (1 - var(--flip, 0))));
 }
+
+/* ── THE LIGHT ROOM ───────────────────────────────────────────────
+   The whole room at the light end of the flip it already knows how to
+   make. One class, one variable — every token above crosses with it, and
+   so do the .dr-flip rules that carry the hand-written whites.
+
+   ⚠ ONE TOKEN THE INVERSION GETS WRONG, found by measuring rather than
+   by looking. --edge-strong lands on #9a9aa2, which is 2.50:1 against
+   this ground — and this is the token the file's own comment reserves
+   for "anything that carries meaning (focus, fields, the only
+   affordance)". Focus indicators owe 3:1 under WCAG 1.4.11, so at the
+   light end it darkens to #8a8a92 (3.06:1). The decorative --edge is
+   left alone: it carries no meaning and owes no ratio.
+
+   Measured on #f2f2f4 — ink 17.70 · ink-2 10.91 · ink-3 5.93 ·
+   ink-4 4.73. The whole text ladder clears AA unchanged. */
+.dr-root.dr-light {
+  --flip: 1;
+  --edge-strong: #8a8a92;
+}
+
+/* ⚠ THE HEADLINE DOES NOT RIDE THE TOKENS, and it is the one object in
+   the room that does not. It is painted by a specular sweep — a
+   background gradient clipped to the glyphs with `color: transparent` —
+   and the gradient's three stops are literal light greys. Flipped, the
+   whole statement rendered light-on-light and simply was not there.
+
+   The sweep is not a colour, it is a LIGHT: a highlight travelling
+   across a dark surface. Inverted it has to become a SHADOW travelling
+   across a light one, so the stops invert with the room — the mid stop
+   goes darkest where it used to go brightest. Same motion, same 6s,
+   same 18% peak position; only what the peak means changes.
+
+   Measured on #f2f2f4: the base stop #35353a is 10.91:1 and the peak
+   #0a0a0b is 17.70:1, so the statement is never less legible than
+   running body copy at any point in the sweep. */
+@media (prefers-reduced-motion: no-preference) {
+  .dr-root.dr-light .t-hero .sweep {
+    background: linear-gradient(90deg, #35353a 0%, #0a0a0b 18%, #35353a 36%);
+    background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dr-root.dr-light .t-hero { color: #35353a; }
+}
+.dr-root.dr-light .t-hero { color: #35353a; }
+
+/* ── §02 INVERTS TOO, and it is the whole point ───────────────────
+   The room's grammar is "dark everywhere, ONE lit section" — §02 is the
+   lights coming on, and it is the only place the page changes register.
+   It does not ride --flip, because it declares its own ink ladder and
+   its own #f5f5f7 surface, sized for contrast on that surface.
+
+   Left alone in the light room it stayed light: a #f5f5f7 card on a
+   #f2f2f4 page, which is a 1.03:1 object — not a section, a smudge. The
+   page became one flat expanse and the seam that carries the whole first
+   half of the room stopped existing. Inverting the ROOT and not this
+   would have answered a different question than the one Jake asked.
+
+   So the one lit section becomes the one dark object. Same mechanic,
+   same climb, same spotlight — the register still changes exactly once
+   and in exactly the same place, which is the only way the comparison is
+   about the colour rather than about the composition. The card now reads
+   16.74:1 against the page, where it read 1.03:1 before this rule.
+
+   Ladder measured on #121214: ink 18.71 · ink-2 12.66 · ink-3 6.19 ·
+   ink-4 5.44 — every rung clears AA, and the floor clears it by MORE
+   than it did on #f5f5f7, where it was 4.8. */
+.dr-root.dr-light .dr-svc {
+  --ink:   #ffffff;
+  --ink-2: #d4d4d8;
+  --ink-3: #949498;
+  --ink-4: #8a8a8e;
+  --edge-strong: rgba(255, 255, 255, .62);
+}
+.dr-root.dr-light .dr-svc-in,
+.dr-root.dr-light .dr-svc-in::before { background: #121214; }
+/* the row rules were black at 9% on a light card; on a dark one they
+   have to be white at the same weight or the list loses its structure */
+.dr-root.dr-light .dr-svc-row,
+.dr-root.dr-light .dr-svc-list li:last-child .dr-svc-row {
+  border-color: rgba(255, 255, 255, .10);
+}
+.dr-root.dr-light .dr-svc-num::before,
+.dr-root.dr-light .dr-svc-dot { background: rgba(255, 255, 255, .62); }
+/* the phone trays were the light-grey ground the shots were cut on; on a
+   dark card they go back to the shots' own near-black */
+.dr-root.dr-light .dr-svc-well { background: #1c1a20; }
 
 /* the hand-written rgba(255,255,255,…) in this file do NOT ride the
    tokens, so anything built out of them would stay a white veil on a
