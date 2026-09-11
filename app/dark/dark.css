@@ -561,11 +561,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      covered instead, and being covered is a truer depth cue than fading
      anyway — it is the climb doing the work, not an opacity. */
 
-  /* THE HERO'S OWN LEAVING, as a fraction of the climb. The copy is done
-     going at .42 — the point where §02's top edge first touches the
-     reel's bottom — so the words are gone before the cover starts and
-     the two beats never overlap. */
-  --lead: clamp(0, calc(var(--hero-p, 0) / .42), 1);
+  /* THE HERO'S OWN LEAVING — and it runs on the REEL'S clock, .32, not
+     its own .42. See the note on .dr-chip/.dr-left/.dr-aside below: the
+     copy and the reel are in a race, and a race is only fair if both
+     runners start and stop together. */
+  --lead: clamp(0, calc(var(--hero-p, 0) / .32), 1);
 }
 
 /* A BAND, THEN THE REEL. The top row is the statement and its support
@@ -613,9 +613,36 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 /* ⚠ THE CHIP IS IN THIS GROUP. It left .dr-left when it took its own
    grid row, and went with it the only reason it was leaving — so it sat
    at full strength while the headline beside it faded to 8%. Everything
-   in the band leaves together or the band is not one object. */
+   in the band leaves together or the band is not one object.
+
+   ── 320px, UP FROM 48, AND IT IS THE WHOLE FIX ────────────────────
+   Jake: "the video goes over the text above it — how does cosmos get
+   around this." Measured on cosmos.studio at 1440x900, tracking their
+   wordmark's bottom edge against their video's top:
+
+       scrollY     text bottom     video top      gap
+             0             416           528      112
+           300             164           372      208
+           600              13           240      227
+
+   THE GAP NEVER CLOSES. It OPENS. Their header is pinned for ~600px and
+   inside it the text travels up at 0.67px per px of scroll while the
+   video's top rises at 0.48 — the text is leaving faster than the video
+   is growing, so the video cannot catch it. There is no clip, no mask,
+   no z-index trick and nothing pushing anything: it is two rates, and
+   the bigger one belongs to the thing in front.
+
+   Ours had it backwards. The copy moved 48px while the reel's top rose
+   225 — the reel travelled 4.7x further than the thing it was chasing,
+   so of course it ran it over.
+
+   Matched to their numbers rather than guessed. Over the shared window
+   (0.32 of a 1.7vh track = 490px of scroll at 900):
+       copy      320px / 490 = 0.65px/px   (Cosmos: 0.67)
+       reel top  225px / 490 = 0.46px/px   (Cosmos: 0.48)
+   Same relationship, same slack, same direction. */
 .dr-chip, .dr-left, .dr-aside {
-  translate: 0 calc(var(--lead, 0) * -48px);
+  translate: 0 calc(var(--lead, 0) * -320px);
   /* squared, so the copy holds nearly full strength while you are still
      reading it and the fade only bites once it is genuinely leaving */
   opacity: calc(1 - .92 * var(--lead, 0) * var(--lead, 0));
