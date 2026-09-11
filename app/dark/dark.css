@@ -3456,3 +3456,51 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 @media (prefers-reduced-motion: reduce) {
   .dr-obj-card { scale: none; }
 }
+
+
+/* ══ THE HEADERS LEAD ═════════════════════════════════════════════
+   Jake: "im trying to create this feel like the site is always moving,
+   the previous dark version was really good at that" — then, pointing at
+   where it still works: "services to proof does that constant motion
+   feel i was talking about."
+
+   MEASURED BEFORE CHANGING ANYTHING. A census of every visible element
+   across the page, sampled every 150px and scored on whether it moves at
+   a rate other than 1:1, put §02→§03 at 78-85% and the back half at
+   55-66%. Drilling into the weak zones named the same thing in every
+   one: the section HEADERS. proof's, voices' and §05's all travel at
+   exactly the page's rate while the content under them has rates of its
+   own — so each section opens flat and only starts moving once you are
+   already past its title.
+
+   That is one fault in five places, so it gets one rule.
+
+   ⚠ ON A view() TIMELINE, NOT A TRACK. Every other scrub in this room
+   goes through the engine, and this deliberately does not: the engine's
+   value has to be published to an element and read down, which means a
+   var per section and five more attributes in the markup for an effect
+   that is identical in all five. view() gives each element its own
+   progress across the viewport with no JS, no measurement and nothing to
+   keep in sync. It is the one case where the platform's version is
+   strictly less machinery than ours.
+
+   THE RATE IS SMALL ON PURPOSE. 60px across a full crossing is about
+   1.07x the page — enough that the title is never still, not so much
+   that it reads as an effect. The room's loud motion belongs to its
+   objects; a header should only ever be LEADING. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 901px) {
+    .dr-proof-head,
+    .dr-voices-head,
+    .dr-obj-in {
+      animation: dr-lead linear both;
+      animation-timeline: view();
+      /* it finishes as the block reaches the reading line rather than
+         running the whole crossing — past that point the section's own
+         content has taken over the motion */
+      animation-range: entry 0% cover 62%;
+      will-change: translate;
+    }
+  }
+}
+@keyframes dr-lead { from { translate: 0 42px; } to { translate: 0 -18px; } }
