@@ -2,9 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import WorksList from "@/components/dark/works-list";
 import ServicesSection from "@/components/dark/services-section";
-import ReelSection from "@/components/dark/reel-section";
 import AboutSection from "@/components/dark/about-section";
 import ProofSection from "@/components/dark/proof-section";
 import VoicesSection from "@/components/dark/voices-section";
@@ -267,20 +265,32 @@ export default function DarkRoom() {
 
             </div>
 
-            <WorksList />
+            {/* THE REEL, wide, beneath the copy (Jake's call: "type above,
+                reel wide beneath"). It replaces the works roster, which
+                is the through-line-motif decision his own note left open
+                to exactly this — retire it if it reads as a repeat of
+                §03's cards. */}
+            <div className="dr-hero-reel">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                poster="/dark/reel-poster.jpg"
+                preload="metadata"
+                aria-label="Recent Executive AI Solutions client work"
+              >
+                <source src="/dark/reel.mp4" type="video/mp4" />
+              </video>
+            </div>
 
           </div>
         </main>
       </div>
 
-        {/* second child of the wrapper on purpose: this is what climbs.
-            The REEL now holds that slot — the hero climbs into the work,
-            not into the services. §02 keeps its own grow as its entrance
-            and simply follows. */}
-        <ReelSection />
+        {/* second child of the wrapper on purpose: this is what climbs */}
+        <ServicesSection />
       </div>
-
-      <ServicesSection />
 
       {/* the split about beat sits between the services and the proof:
           who does it, then what it produced */}
