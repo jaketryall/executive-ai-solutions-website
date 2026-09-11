@@ -89,8 +89,23 @@ export default function DarkRoom() {
      Read in an effect rather than at render so the server and the first
      client pass agree. */
   const [light, setLight] = useState(false);
+  /* ── THE FILM HERO (?film) — an experiment, like ?light was ─────
+     Jake, with apple.com/iphone-18-pro: "i want to do something dramatic
+     like this." Measured, their drama is not a layout: it is a
+     full-viewport, single-shot product film that plays once, with two
+     words UNDER it. The layout is film first, statement second.
+
+     So this flips ours the same way: the reel takes the whole first
+     screen, edge to edge, and the band — chip, statement, support, doors
+     — becomes the second beat. The Cosmos open and the copy's lift are
+     off in this mode; there is nothing for the reel to open into when it
+     already has the screen. A toggle rather than a rewrite, so the two
+     heroes can be compared on the same page without losing either. */
+  const [film, setFilm] = useState(false);
   useEffect(() => {
-    setLight(!new URLSearchParams(window.location.search).has("dark"));
+    const q = new URLSearchParams(window.location.search);
+    setLight(!q.has("dark"));
+    setFilm(q.has("film"));
   }, []);
 
   /* Theming is NOT done here any more. Adding the class in an effect meant
@@ -185,7 +200,7 @@ export default function DarkRoom() {
     <div
       className={`dr-root ${archivo.variable} ${instrument.variable}${
         lit ? " dr-lit" : ""
-      }${light ? " dr-light" : ""}`}
+      }${light ? " dr-light" : ""}${film ? " dr-film" : ""}`}
     >
       <div className="dr-atmos" aria-hidden>
         <div className="dr-key" />
@@ -351,16 +366,23 @@ export default function DarkRoom() {
                 to exactly this — retire it if it reads as a repeat of
                 §03's cards. */}
             <div className="dr-hero-reel">
+              {/* ⚠ RE-CUT AT 1920, from the 1280 it was. The old cut was
+                  sized for a 1290px well; as a full-viewport film it was
+                  soft, and a soft film is not dramatic, it is cheap. Same
+                  six seconds (t=4.3-10.4, the dark half of the source),
+                  30fps, crf 23: 885KB against 251, which is a weight a
+                  hero film can justify. It serves both heroes now — the
+                  band hero is sharper for it too. */}
               <video
                 autoPlay
                 loop
                 muted
                 playsInline
-                poster="/dark/reel-poster.jpg"
+                poster="/dark/reel-film-poster.jpg"
                 preload="metadata"
                 aria-label="Recent Executive AI Solutions client work"
               >
-                <source src="/dark/reel.mp4" type="video/mp4" />
+                <source src="/dark/reel-film.mp4" type="video/mp4" />
               </video>
             </div>
 

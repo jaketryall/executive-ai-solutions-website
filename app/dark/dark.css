@@ -3506,3 +3506,52 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   }
 }
 @keyframes dr-lead { from { translate: 0 42px; } to { translate: 0 -18px; } }
+
+
+/* ══ THE FILM HERO (?film) ═════════════════════════════════════════
+   apple.com/iphone-18-pro, measured 2026-09-11: a 1440x856 video fills
+   the first screen under the nav (`play-initiated`, plays once, does not
+   loop), and the words — a 32px label, a 72px two-word statement, two
+   meta lines, a price pill — sit UNDER it. Body is #000. The video does
+   not move on scroll; nothing is pinned; the drama is the film.
+
+   Ported as: reel first at full bleed and full height, the band second.
+   No pin, no open, no lift — those belong to the hero where the reel has
+   something to open INTO. Here it already has the screen.
+
+   Desktop only, like everything else in the hero; below 901px the band
+   hero's stacked order is already film-then-words. */
+@media (min-width: 901px) {
+  .dr-root.dr-film .dr-stage { position: static; height: auto; min-height: 0; }
+  .dr-root.dr-film .dr-hero-wrap { min-height: 0; }
+  /* the stage already reserves --nav-space; adding it here too put the
+     film at y=166 and its bottom 62px past the fold */
+  .dr-root.dr-film .dr-main { padding-top: 0; }
+  .dr-root.dr-film .dr-hero {
+    grid-template-rows: auto auto auto;
+    row-gap: var(--fib-4);
+  }
+  /* the film: row 1, both columns, edge to edge, the rest of the screen */
+  .dr-root.dr-film .dr-hero-reel {
+    grid-row: 1; grid-column: 1 / -1;
+    /* full bleed — and full bleed means radius 0, the room's own law */
+    margin-inline: calc(50% - 50vw);
+    margin-top: 0; margin-bottom: 0;
+    border-radius: 0;
+    /* the whole screen under the nav, less the air the nav floats on */
+    height: calc(100svh - var(--nav-space) - var(--fib-3));
+    translate: none;
+  }
+  /* the band moves under it: chip on its own row, then statement and
+     support side by side exactly as they are in the band hero */
+  .dr-root.dr-film .dr-chip  { grid-row: 2; }
+  .dr-root.dr-film .dr-left  { grid-row: 3; }
+  .dr-root.dr-film .dr-aside { grid-row: 3; }
+  /* nothing leaves: the copy arrives after the film, it is not being
+     covered by it */
+  .dr-root.dr-film .dr-chip,
+  .dr-root.dr-film .dr-left,
+  .dr-root.dr-film .dr-aside { translate: none; opacity: 1; }
+  /* and some air under the band before About */
+  .dr-root.dr-film .dr-main { padding-bottom: clamp(56px, 9svh, 120px); }
+}
