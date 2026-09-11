@@ -255,6 +255,22 @@ export default function DarkRoom() {
       <div className="dr-stage">
         <main className="dr-main wrap">
           <div className="dr-hero">
+            {/* THE CHIP. The reference's news pill, with a true thing in
+                it: the room's own case study, linked. It is not an
+                announcement banner — nothing here is announced that has
+                not shipped — it is the shortest possible piece of proof
+                sitting above the claim it backs.
+
+                It is its OWN ROW, not the first thing inside the statement
+                column, so that the statement and its support start on the
+                same line (Jake). Nested, the chip pushed the headline down
+                and the paragraph beside it began a chip's height higher. */}
+            <Link href="/work/desert-wings" className="dr-chip dr-edge">
+              <span className="dr-chip-tag t-cta">Recent work</span>
+              <span className="dr-chip-txt">Desert Wings Flight School</span>
+              <span className="dr-chip-arrow" aria-hidden>&rarr;</span>
+            </Link>
+
             <div className="dr-left">
               <h1 className="t-hero">
                 <span className="dr-line">

@@ -101,10 +101,15 @@
 
   --radius-btn: 12px; --radius-frame: 18px; --radius-panel: 24px;
 
-  --hero-fs: clamp(1.75rem, min(3.6vw, 6.6svh), 3.1rem);
+  /* ⚠ RAISED to 4.5rem from 3.1. It was capped where it was because the
+     hero used to be a split and the statement had half a screen; with the
+     band it has a real column, and measured, the longest line needed only
+     496px of the 771 it was given. A statement that is only using 64% of
+     its own column is not making a statement. The cqw cap below is what
+     keeps the extra size honest at every width. */
+  --hero-fs: clamp(2rem, min(5vw, 8svh), 4.5rem);
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
-  --works-col: clamp(310px, 29vw, 418px);
   --nav-pad: clamp(13px, 2.4svh, 21px);
   --nav-h: 62px;
   --nav-space: calc(var(--nav-h) + var(--nav-pad));
@@ -245,7 +250,13 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .t-hero {
   font-family: var(--font-archivo), "Arial Black", "Helvetica Neue", sans-serif;
   font-variation-settings: "wdth" 100, "wght" 660;
-  font-size: var(--hero-fs);
+  /* ⚠ THE LINES DO NOT WRAP (white-space: nowrap, below), so the size has
+     to be capped by the COLUMN or a long line runs off the screen at the
+     widths where the band is tight. 9.3cqw is measured, not guessed: the
+     longest line renders at 10.0x the font size, so 10cqw exactly fills
+     the column and 9.3 leaves the slack. RE-MEASURE IT IF THE COPY
+     CHANGES — a longer line needs a smaller number. */
+  font-size: min(var(--hero-fs), 9.3cqw);
   letter-spacing: -0.028em; line-height: 1.04;
   text-transform: none; color: #d6d6da;
   margin: 0;
@@ -399,7 +410,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-lit .dr-rail { animation: dr-fadein 480ms var(--ease-ui) 140ms forwards; }
 .dr-rail::before { opacity: 0; transition: opacity .5s var(--ease-ui); }
 .dr-rail[data-stuck]::before { opacity: 1; }
-.dr-rail[data-stuck] .dr-links { left: 50%; }
 
 .dr-rail-in {
   position: relative; z-index: 2; height: 100%;
@@ -432,7 +442,12 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-lockup b { display: block; color: var(--ink); white-space: nowrap;
   overflow: hidden; max-width: 32ch;
   font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wght" 700; font-size: var(--fs-small); letter-spacing: .14em;
+  /* the name is the brand's only appearance at full length in the room,
+     and at 13px it was reading as a caption. Tracking comes DOWN as the
+     size goes up: .14em was doing the work of making 13px look
+     deliberate, and at 17 it would just look loose. */
+  font-variation-settings: "wght" 700;
+  font-size: clamp(14px, 1.15vw, 17px); letter-spacing: .11em;
   text-transform: uppercase;
   transition: max-width .55s var(--ease-structure),
               opacity .3s var(--ease-ui); }
@@ -447,19 +462,22 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 
 /* the label ROLLS one line-height and swaps to white. Nothing glows —
    in this room a hover is a change of light, not a change of colour. */
-/* centred on the MIDDLE of the card column, and measured against the RAIL
-   rather than its inner pill: the pill's padding changes between states and
-   would drag the links off centre with it */
+/* CENTRED ON THE RAIL, in both states. It used to sit at
+   `100% - --works-col / 2` — the middle of the roster column — and slide
+   to 50% only once the rail stuck. The roster is retired, so that anchor
+   pointed at nothing, and the slide was a 230px lurch paying for it.
+   Measured against the RAIL rather than its inner pill on purpose: the
+   pill's padding changes between states and would drag the links off
+   centre with it. */
 .dr-links {
   position: absolute; z-index: 3; top: 50%;
-  left: calc(100% - var(--works-col) / 2);
+  left: 50%;
   translate: -50% -50%;
-  /* an absolutely positioned box only gets the room to the RIGHT of `left`,
-     and this sits near the right edge — without max-content the row was
-     squeezed and each label lost its last letter */
+  /* an absolutely positioned box only gets the room to the RIGHT of
+     `left`, so without max-content the row is squeezed and each label
+     loses its last letter */
   width: max-content;
   display: flex; align-items: center; gap: var(--fib-4);
-  transition: left .55s var(--ease-structure);
 }
 .dr-links a {
   display: inline-block; overflow: hidden;
@@ -560,9 +578,16 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 38ch);
-  grid-template-rows: auto minmax(0, 1fr);
-  column-gap: var(--fib-6);
+  /* ⚠ THE SUPPORT COLUMN IS CAPPED TWICE. 38ch is the measure — what
+     makes a paragraph readable — but a fixed 38ch at 901px wide left the
+     statement 441px and the cqw cap dropped it to 25px, smaller than the
+     PHONE renders it. 33% keeps the two columns in proportion as the band
+     narrows, and the ch cap stops the measure running away when it is
+     wide. min() of the two, so whichever is tighter wins. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, min(38ch, 33%));
+  /* three rows: the chip, the band, the reel */
+  grid-template-rows: auto auto minmax(0, 1fr);
+  column-gap: clamp(var(--fib-4), 6.2vw, var(--fib-6));
   row-gap: var(--fib-4);
   align-items: stretch;
   flex: 1; min-height: 0;
@@ -580,7 +605,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    `translate` on the columns; the lines inside own `transform` for the
    entrance and the cards own it for the focal shift. Three properties,
    three owners, no collision. */
-.dr-left, .dr-aside {
+/* ⚠ THE CHIP IS IN THIS GROUP. It left .dr-left when it took its own
+   grid row, and went with it the only reason it was leaving — so it sat
+   at full strength while the headline beside it faded to 8%. Everything
+   in the band leaves together or the band is not one object. */
+.dr-chip, .dr-left, .dr-aside {
   translate: 0 calc(var(--lead, 0) * -48px);
   /* squared, so the copy holds nearly full strength while you are still
      reading it and the fade only bites once it is genuinely leaving */
@@ -588,23 +617,34 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   will-change: opacity;
 }
 
-.dr-left  { grid-column: 1; grid-row: 1; align-self: end; }
+/* the chip owns row 1 on its own, so the statement and the support both
+   begin on row 2 and their first lines start together */
+.dr-chip  { grid-column: 1; grid-row: 1; justify-self: start; }
+
+.dr-left  { grid-column: 1; grid-row: 2; align-self: start;
+            /* ⚠ the headline sizes off THIS box (see .t-hero's cqw cap),
+               so it has to be a container. Nothing may go on its own
+               padding in cqw — that resolves against the viewport. */
+            container-type: inline-size; }
 /* ⚠ --copy-floor is GONE, token and all. It existed to lift the copy off a
    floor the two columns used to share; the band is auto-height now, so
    all it did was open a 44-138px hole between the headline and the reel
    that the row-gap already owns. */
 
-.dr-aside { grid-column: 2; grid-row: 1; align-self: end;
+.dr-aside { grid-column: 2; grid-row: 2; align-self: start;
             display: flex; flex-direction: column; gap: var(--fib-4);
-            /* the support's last line lands on the headline's last line:
-               one shared floor across the band, which is the relationship
-               that makes two columns read as one object rather than two */
-            padding-bottom: .18em; }
+            /* ⚠ OPTICAL, not geometric. Box-tops that line up do not LOOK
+               lined up when one box is 72px type and the other is 15px:
+               the big line carries far more space above its cap than the
+               small one, so the paragraph reads as sitting high. The nudge
+               is a fraction of the headline's own size, so it tracks every
+               breakpoint instead of being a number that is right once. */
+            padding-top: calc(.17 * var(--hero-fs)); }
 
 /* THE REEL SPANS THE BAND. Explicit, not auto-placed — with a second
    column now, auto-placement would drop it into column 1 and it would
    take half the screen. */
-.dr-hero-reel { grid-column: 1 / -1; grid-row: 2; }
+.dr-hero-reel { grid-column: 1 / -1; grid-row: 3; }
 
 /* ── THE TWO DOORS ────────────────────────────────────────────────
    Different commitment levels, and they must not read as a pair of
@@ -628,6 +668,47 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-door:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 4px; }
 .dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 760ms forwards; }
 .dr-lit .dr-door    { animation: dr-fadein var(--t-enter) var(--ease-structure) 860ms forwards; }
+
+/* ── THE CHIP, above the statement ───────────────────────────────
+   A pill with a pill in it: the tag is the room's label type on a lighter
+   ground, the text is the thing itself, the arrow says it goes somewhere.
+   It arrives BEFORE the headline (220ms against the first line's 350ms) —
+   it is the smallest object in the frame and the eye should have finished
+   with it by the time the statement lands. */
+.dr-chip {
+  display: inline-flex; align-items: center; gap: var(--fib-2);
+  /* ⚠ it must never wrap. Left to itself it filled the statement column
+     and broke onto a second line at every width below ~1100 — a pill with
+     two lines in it has stopped being a pill. */
+  white-space: nowrap; max-width: 100%;
+  padding: 5px 16px 5px 5px; border-radius: 999px;
+  background: var(--surface-1); text-decoration: none;
+  color: var(--ink-3); font-size: var(--fs-body-s); line-height: 1.2;
+  --glint-t: 9s; --glint-delay: -3s;
+  opacity: 0;
+  transition: color var(--t-micro) var(--ease-ui),
+              background var(--t-micro) var(--ease-ui);
+}
+.dr-chip-tag { display: inline-flex; align-items: center;
+  padding: 5px 11px; border-radius: 999px;
+  background: var(--surface-3); color: var(--ink);
+  font-size: var(--fs-micro, 11px); }
+.dr-chip-txt { color: var(--ink); }
+.dr-chip-arrow { font-style: normal; color: var(--ink-4);
+  transition: transform var(--t-micro) var(--ease-ui),
+              color var(--t-micro) var(--ease-ui); }
+.dr-chip:hover { background: var(--surface-2); }
+.dr-chip:hover .dr-chip-arrow { transform: translateX(3px); color: var(--ink); }
+.dr-chip:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
+.dr-lit .dr-chip { animation: dr-fadein var(--t-enter) var(--ease-structure) 220ms forwards; }
+/* THE TAG IS THE FIRST THING TO GO. Below this the statement column is
+   too narrow for both halves, and between the two the CONTENT survives
+   and the LABEL does not — "Desert Wings Flight School →" still says
+   everything the pill is for; "Recent work →" says nothing. */
+@media (max-width: 1100px) {
+  .dr-chip-tag { display: none; }
+  .dr-chip { padding-left: 16px; }
+}
 
 /* h1 lines mask-rise, 800ms outQuart, 140ms stagger */
 .dr-line { overflow: hidden; transform: skewX(-4deg);
@@ -736,7 +817,17 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 /* 720p laptops. Everything above is fluid, but the stack still needs a
    final trim to hold one viewport at the shortest realistic desktop. */
 @media (min-width: 901px) and (max-height: 780px) {
-  .dr-main { padding-block: 12px 6px; }
+  /* ⚠ THIS WAS A HARD `padding-block: 12px 6px` and it broke two things.
+     It left the first object 25px under the nav on a 1024x768 laptop —
+     the clearance the tall layout exists to guarantee, thrown away at the
+     one size where the screen is already tight. And it desynced the
+     reel's floor cancel, which reads --floor: the reel was pulling down
+     29px of a padding that was only 6px, so at full bleed it overshot the
+     fold. Trimmed rather than deleted, and --floor stays the single
+     number both sides read. Measured at 1024x768: the band still holds
+     one viewport with the reel at 58% of it. */
+  .dr-main { --floor: 10px;
+             padding-block: clamp(34px, 5.5svh, 56px) var(--floor); }
 }
 
 @media (max-width: 900px) {
@@ -744,11 +835,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      the page is meant to SCROLL instead, so the row goes back to auto and the
      roster shows every card rather than fading them away. */
   .dr-hero { grid-template-columns: minmax(0, 1fr);
-             grid-template-rows: auto auto auto; }
-  .dr-left      { grid-column: 1; grid-row: 1; align-self: auto; }
-  .dr-aside     { grid-column: 1; grid-row: 2; align-self: auto;
-                  padding-bottom: 0; }
-  .dr-hero-reel { grid-column: 1; grid-row: 3; }
+             grid-template-rows: auto auto auto auto; }
+  .dr-chip      { grid-column: 1; grid-row: 1; }
+  .dr-left      { grid-column: 1; grid-row: 2; align-self: auto; }
+  .dr-aside     { grid-column: 1; grid-row: 3; align-self: auto;
+                  /* stacked there is no big line beside it to line up
+                     with, so the optical nudge would just be a gap */
+                  padding-top: 0; }
+  .dr-hero-reel { grid-column: 1; grid-row: 4; }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
   /* on a phone the same idea, scaled: bled off the left, reaching past
@@ -801,6 +895,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
   .dr-lit .dr-sub,
+  .dr-lit .dr-chip,
   .dr-lit .dr-herocta,
   .dr-lit .dr-door { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
@@ -832,52 +927,50 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   overflow: hidden;
   background: var(--surface-1);
 
-  /* ── THE GROW ──────────────────────────────────────────────────
-     It opens to FULL BLEED as the hero travels. Inset on the canvas at
-     rest, edge to edge by the time the hero has gone — the "media grows
-     to full-bleed on scrub" beat, which is also one of the sanctioned
-     ways to earn a change of register rather than cutting to one.
+  /* ── THE GROW — Cosmos's, measured rather than remembered ────────
+     Jake: "i want our video to have the same scroll effect as the cosmos
+     one." Probed live at 1440x900, cosmos.studio's `.home-header_video`:
 
-     IT RIDES --hero-p, the progress the wrapper ALREADY publishes and
-     that .dr-left already moves on. A second track measured on the reel
-     itself would freeze: the reel is inside a sticky stage, so its own
-     rect stops moving the moment the hero pins. One number drives the
-     whole hero.
+        scrollY    width   radius    top     height   bottom
+             0      1416     32px   527.6     360.2    887.8
+           300      1416     32px   371.7     516.0    887.7
+           600      1416     32px   239.7     647.9    887.6
 
-     `50% - 50vw` is the exact distance from a centred container's edge
-     to the viewport's, so at --hero-p 1 the well lands flush with both
-     edges and no further — it cannot overshoot into a horizontal
-     scrollbar.
+     ⚠ THE WIDTH AND THE RADIUS NEVER CHANGE. It never goes full bleed.
+     The BOTTOM EDGE IS PINNED to the viewport — constant to a tenth of a
+     pixel across the whole run — and the video opens UPWARD: 360 → 648,
+     1.80x in height, at 0.52px of height per px of scroll, finishing
+     around 554px in. It reads as a shutter opening, not as a zoom.
 
-     RADIUS GOES WITH IT. The law is radius or zero: a discrete object
-     gets corners, a full-bleed composition does not. So the corners
-     resolve to 0 exactly as it stops being an object. */
-  /* ⚠ THE WINDOW IS COMPRESSED, and it has to be. --hero-p runs across
-     the hero's whole travel, but §02 climbs over this reel before that
-     travel ends. §02's top now touches the reel's bottom at --hero-p
-     .43 (see THE HOLD), so the grow finishes at .25 — the reel arrives
-     at full bleed with the whole run to .43 left to be looked at, and
-     the rest of the travel is spent under the climb. */
-  --g: clamp(0, calc(var(--hero-p, 0) / 0.25), 1);
+     So the full-bleed version this replaces is gone: the margin-inline
+     ramp, the radius resolving to 0, and the floor cancel all existed to
+     serve an effect Jake has now pointed away from. The well keeps the
+     measure and keeps its corners, and the ONLY thing that moves is where
+     its top edge is.
 
-  /* ⚠ IT STARTS ON THE MEASURE. It used to start at a 9% inset, which
-     bought a bigger number but broke the only alignment in the frame:
-     the headline began at x=75 and the reel at x=191, and a video that
-     does not line up with the words above it reads as a mistake, not as
-     a composition. On the measure it grows 1290 → 1440 — less travel
-     than the inset had, but the travel was never what sold this. The
-     corners resolving to 0 and the bottom edge reaching the floor are,
-     and both still happen. */
-  margin-inline: calc(var(--g) * (50% - 50vw));
-  border-radius: calc(var(--fib-4) * (1 - var(--g)));
+     We get the pinned bottom for free: .dr-stage is already sticky, so
+     while the hero is held the reel's bottom is already fixed in the
+     viewport. A negative top margin is what opens it — the grid row's
+     bottom holds the box's bottom, so the margin adds its own length
+     straight onto the height and the box grows up over the copy. Which
+     is the right thing to be covered: the copy is fading out on --lead
+     across the same stretch.
 
-  /* THE FLOOR. Full bleed means all four edges, not two. The hero's
-     bottom padding is right for an inset object — it is the air the
-     object stands on — but once the reel reaches the side edges that
-     same strip reads as a letterbox seam along the bottom of the
-     screen. So the reel cancels exactly that padding, at exactly the
-     rate it opens: air while it is an object, none once it is not. */
-  margin-bottom: calc(var(--g) * var(--floor, 0px) * -1);
+     RATE: --open / (0.32 x 1.7vh) = 270 / 490 = 0.55px per px at
+     1440x900, against Cosmos's 0.52. The window ends at --hero-p 0.32,
+     and §02's top does not touch the reel until 0.43, so the reel
+     finishes opening with clear room before anything climbs over it. */
+  --g: clamp(0, calc(var(--hero-p, 0) / 0.32), 1);
+  /* ⚠ CAPPED SO THE TOP EDGE CLEARS THE CHIP. At 30svh the open ended
+     with the reel's top at 178 and the chip's box running 155-203, so the
+     reel cut the chip in half — and a half-covered object reads as broken
+     in a way a fully covered one never does. The rule: the top edge lands
+     ABOVE the chip or BELOW it, never inside it. Below is the one that
+     keeps the proof on screen. */
+  --open: clamp(90px, 25svh, 260px);
+  margin-top: calc(var(--g) * var(--open) * -1);
+  z-index: 2;
+  border-radius: var(--fib-4);
 }
 .dr-hero-reel video {
   display: block;
@@ -892,7 +985,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      way past. It stays a contained object at the measure, and the 9%
      inset the grow starts from would only make it narrow. */
   .dr-hero-reel { aspect-ratio: 4 / 3; border-radius: var(--fib-3);
-                  margin-inline: 0; margin-bottom: 0;
+                  margin-top: 0;
     /* ⚠ align-self, and it is load-bearing. .dr-hero stretches its items,
        and a stretched box with an aspect-ratio resolves its WIDTH from
        the height it was stretched to — measured at 390, that made the
