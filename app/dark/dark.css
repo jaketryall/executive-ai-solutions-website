@@ -547,7 +547,6 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
    entrance and the cards own it for the focal shift. Three properties,
    three owners, no collision. */
 .dr-left  { translate: 0 calc(var(--hero-p, 0) * -40px); }
-.dr-works { translate: 0 calc(var(--hero-p, 0) * -96px); }
 
 .dr-left  { grid-column: 1; grid-row: 1; display: flex; flex-direction: column;
             justify-content: flex-end; align-self: stretch;
@@ -858,9 +857,42 @@ body:has(.dr-root) .bg-canvas { background: #000 !important; }
 .dr-hero-reel {
   position: relative;
   min-height: 0;
-  border-radius: var(--fib-4);
   overflow: hidden;
   background: var(--surface-1);
+
+  /* ── THE GROW ──────────────────────────────────────────────────
+     It opens to FULL BLEED as the hero travels. Inset on the canvas at
+     rest, edge to edge by the time the hero has gone — the "media grows
+     to full-bleed on scrub" beat, which is also one of the sanctioned
+     ways to earn a change of register rather than cutting to one.
+
+     IT RIDES --hero-p, the progress the wrapper ALREADY publishes and
+     that .dr-left already moves on. A second track measured on the reel
+     itself would freeze: the reel is inside a sticky stage, so its own
+     rect stops moving the moment the hero pins. One number drives the
+     whole hero.
+
+     `50% - 50vw` is the exact distance from a centred container's edge
+     to the viewport's, so at --hero-p 1 the well lands flush with both
+     edges and no further — it cannot overshoot into a horizontal
+     scrollbar.
+
+     RADIUS GOES WITH IT. The law is radius or zero: a discrete object
+     gets corners, a full-bleed composition does not. So the corners
+     resolve to 0 exactly as it stops being an object. */
+  /* ⚠ THE WINDOW IS COMPRESSED, and it has to be. --hero-p runs across
+     the hero's whole travel, but §02 climbs over this reel long before
+     that travel ends — measured, at --hero-p 0.67 the well was 1390px
+     wide and entirely hidden behind §02. So the grow finishes at 0.45
+     and the rest of the travel is spent under the climb. */
+  --g: clamp(0, calc(var(--hero-p, 0) / 0.45), 1);
+
+  /* AND IT STARTS GENUINELY INSET. Growing 1290 → 1440 is 150px across a
+     whole viewport of scroll — arithmetically a grow, perceptually
+     nothing. From a 9% inset it travels far enough to read as the
+     object opening. */
+  margin-inline: calc(9% + var(--g) * ((50% - 50vw) - 9%));
+  border-radius: calc(var(--fib-4) * (1 - var(--g)));
 }
 .dr-hero-reel video {
   display: block;
