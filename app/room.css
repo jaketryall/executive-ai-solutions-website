@@ -101,12 +101,12 @@
 
   --radius-btn: 12px; --radius-frame: 18px; --radius-panel: 24px;
 
-  /* the statement is centred with the reel's card INSIDE its second
-     line, so the size is what "systems that [card] follow up." fits in
-     the measure on one line: ~86px at 1440 (measured: 1012px of type +
-     a 145px card + the gaps, against 1290). The cqw cap on .t-hero
-     still governs where the column is the limit. */
-  --hero-fs: clamp(2rem, min(6vw, 9.6svh), 5.4rem);
+  /* the statement is centred over the reel and shares the screen with
+     it: two lines at ~78px (1440x900) leave the reel the bottom 45% of
+     the screen. svh-led, because it is the HEIGHT the reel and the
+     words are dividing between them; the cqw cap on .t-hero still
+     governs where the column is the limit. */
+  --hero-fs: clamp(2rem, min(6vw, 8.6svh), 5.4rem);
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
   --nav-pad: clamp(13px, 2.4svh, 21px);
@@ -529,42 +529,51 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-navcta:hover { background: var(--surface-3); }
 .dr-navcta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 
-/* main: the whole first screen under the nav; the statement centred in
-   it, a breath above centre so the rating card has the lower right. */
+/* main: the whole first screen under the nav. The words stack from the
+   top, centred; the slot takes whatever is left, down to a gutter above
+   the fold — so the reel is as big as the screen allows after the words
+   have had their say, and its bottom edge is the fold's. */
 .dr-main {
   flex: 1; min-height: 0; display: flex; flex-direction: column;
-  padding-block: 0 clamp(56px, 9svh, 96px);
+  padding-block: clamp(10px, 1.8svh, 20px) clamp(12px, 1.6vw, 28px);
 }
 .dr-hero {
   position: relative;
   flex: 1; min-height: 0;
   display: flex; flex-direction: column; align-items: center;
-  justify-content: center; text-align: center;
-  gap: var(--fib-4);
+  justify-content: flex-start; text-align: center;
+  /* tight: every px the words do not take is the reel's */
+  gap: clamp(12px, 1.9svh, 20px);
 }
 .dr-hero > * { position: relative; z-index: 1; }
 .dr-h1 { margin: 0; }
-/* the lines are centred and may wrap; the slot sits in the second */
-.t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
+.t-hero .dr-line > span { white-space: nowrap; }
+/* the description: one sentence at a reading measure, muted a step */
+.dr-sub { max-width: 46ch; margin: 0; color: var(--ink-2);
+          font-size: var(--fs-body-s); }
 .dr-line { overflow: hidden; transform: skewX(-4deg); transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
 .dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
 .dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 540ms forwards; }
 @keyframes dr-rise { to { transform: translateY(0); } }
 
-/* THE SLOT — the reel's size in the line. 16:9, as tall as the line's
-   cap-ish height, on the baseline so it reads as a word. It carries a
-   faint surface of its own so the line has a card in it from the first
-   paint, before the reel has been measured onto it; the reel covers it
-   the moment it lands. The line's skew is undone on it so the card sits
-   square, the way the reference's does. */
+/* THE SLOT — the reel's rest position: a 16:9 card that takes the rest
+   of the first screen under the words, sized by its HEIGHT (flex: 1 in
+   the column) so its bottom lands on the gutter above the fold at every
+   viewport, and capped at the measure. It carries a faint surface of
+   its own so there is a card from the first paint, before the reel has
+   been measured onto it; the reel covers it the moment it lands. At
+   1440x900 it measures about 780 x 440 — half the screen wide, the
+   bottom 45% of it tall. */
 .dr-slot {
-  display: inline-block; vertical-align: -0.16em;
-  height: 0.94em; aspect-ratio: 16 / 9;
-  margin-inline: 0.06em;
-  border-radius: 0.22em; background: var(--surface-2);
-  transform: skewX(4deg);
+  flex: 1 1 auto; min-height: 0;
+  margin-top: clamp(8px, 1.4svh, 16px);
+  aspect-ratio: 16 / 9; width: auto; max-width: 100%;
+  border-radius: var(--radius-panel); background: var(--surface-2);
 }
+/* once the reel has been measured onto it the slot is layout only — its
+   surface would show the moment the reel leaves for its dock */
+.dr-hero-wrap[data-ready] .dr-slot { background: transparent; }
 
 /* THE WORDS LEAVE. No pin — the whole screen scrolls away at scroll's
    own rate — and the words fade across the first 60% of the reel's
@@ -704,12 +713,13 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 @keyframes dr-wall-wave { to { background-position: 100% 100%; } }
 
 @media (max-width: 900px) {
-  /* stacked, no grow: the statement, the meta, the door, the rating —
-     then the reel as the block after. The stage is only as tall as
-     they are; its 100svh minimum is a desktop number. */
+  /* stacked, no grow: the meta, the statement, the description, the
+     door, the rating — then the reel as the block after. The stage is
+     only as tall as they are; its 100svh minimum is a desktop number. */
   .dr-stage { min-height: 0; }
-  .dr-hero { justify-content: flex-start; padding-top: var(--fib-5); }
+  .dr-hero { padding-top: var(--fib-4); }
   .dr-main { padding-bottom: var(--fib-5); }
+  .t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
   /* on a phone the same idea, scaled: bled off the left, reaching past

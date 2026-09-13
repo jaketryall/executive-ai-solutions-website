@@ -107,6 +107,7 @@ export default function DarkRoom() {
     const measure = () => {
       if (!window.matchMedia("(min-width: 901px)").matches) {
         reel.removeAttribute("data-ready");
+        reel.closest(".dr-hero-wrap")?.removeAttribute("data-ready");
         return;
       }
       /* ⚠ BOTH boxes through the offset chain, never getBoundingClientRect:
@@ -127,6 +128,7 @@ export default function DarkRoom() {
       reel.style.setProperty("--dx", `${s.x + s.w / 2 - (r.x + r.w / 2)}px`);
       reel.style.setProperty("--dy", `${s.y + s.h / 2 - (r.y + r.h / 2)}px`);
       reel.setAttribute("data-ready", "");
+      reel.closest(".dr-hero-wrap")?.setAttribute("data-ready", "");
     };
     measure();
     document.fonts?.ready.then(measure);
@@ -161,16 +163,19 @@ export default function DarkRoom() {
           the video grow. i want a 5 star review thing somewhere too and
           we would be the white background version of course."
 
-          So: one big centred statement with the REEL sitting INSIDE it,
-          a small card between two words of the second line, the meta
-          line and the one door under it, and a rating card floating at
-          the lower right. On scroll, itsjay's grow (decodes/itsjay.md
+          Then, seeing it: "need to find a way to do the video bigger
+          and maybe a small description as well like acquisition.com."
+          So the reel stops being a word: one centred statement, one
+          small description under it the way acquisition.com does, the
+          one door, and the REEL as a big card beneath them with its
+          bottom on the fold — about half the screen wide — and a rating
+          card floating at the lower right beside it. On scroll, itsjay's grow (decodes/itsjay.md
           §5.3, measured): the reel's real home is a full-width block in
           the section right after the hero; at rest it is transformed UP
-          into the slot in the line (scale ~0.11, translated to the
-          slot's centre), and across the first 0.9 viewports of scroll
-          it scales and travels LINEARLY back to where it lives — so it
-          grows out of the sentence, takes the screen, and docks. No
+          onto the card's slot (scale ~0.56, translated to its centre),
+          and across the first 0.9 viewports of scroll it scales and
+          travels LINEARLY back to where it lives — so it grows out of
+          the hero, takes the screen, and docks. No
           pin: the words leave at scroll's own rate and fade as the reel
           takes over.
 
@@ -197,6 +202,9 @@ export default function DarkRoom() {
         <div className="dr-stage">
           <main className="dr-main wrap">
             <div className="dr-hero">
+              <p className="dr-cap-meta t-meta">
+                Websites &middot; Automation &middot; Google Ads
+              </p>
               <h1 className="t-hero dr-h1">
                 {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im
                     shifting more towards design and crms than ads
@@ -206,24 +214,26 @@ export default function DarkRoom() {
                   <span className="sweep">Design that sells,</span>
                 </span>
                 <span className="dr-line">
-                  <span className="sweep">
-                    systems that{" "}
-                    {/* THE SLOT: an empty card the reel's size in the
-                        line, so the words are laid out around it and the
-                        reel — which lives in the dock below — is
-                        transformed onto it. Decoration; the reel carries
-                        the label. */}
-                    <span className="dr-slot" aria-hidden />{" "}
-                    follow up.
-                  </span>
+                  <span className="sweep">systems that follow up.</span>
                 </span>
               </h1>
-              <p className="dr-cap-meta t-meta">
-                Websites &middot; Automation &middot; Google Ads
+              {/* THE DESCRIPTION — one sentence, the way acquisition.com
+                  puts one under its headline (Jake, 2026-09-13: "maybe a
+                  small description as well like acquisition.com"). The
+                  sub the band hero carried, kept: it says what the two
+                  things ARE. */}
+              <p className="t-body dr-sub">
+                We build your site and wire up the system behind it, so every
+                call, form and text gets answered in seconds instead of days.
               </p>
               <Link href="/contact" className="dr-herocta dr-edge t-cta">
                 Book the call
               </Link>
+              {/* THE SLOT: the reel's rest position — a big card under the
+                  words, its bottom on the fold — laid out here so the
+                  reel, which lives in the dock below, can be measured
+                  onto it. Decoration; the reel carries the label. */}
+              <div className="dr-slot" aria-hidden />
             </div>
           </main>
 
