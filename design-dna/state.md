@@ -14,8 +14,12 @@ plan as already locked; use `decisions.md` as the record of what was
 decided and why, and only reach for a builder/verifier/critic step from
 here forward.
 
-- §01 hero — sticky-cover climb into §02. Shipped, Jake: "this looks
-  great … it is perfect."
+- §01 hero — THE OPENING (2026-09-13): Cosmos's shutter, the reel low
+  and opening upward on the pin while the statement rises out; the
+  screening of 2026-09-12 superseded (decisions.md). The placeholder
+  reel (v1 cut, its own type baked in) stays until Jake has the real
+  reel cut — it drops into public/dark/reel-film.mp4 per reel-spec.md.
+  Awaiting Jake's look at the open.
 - §02 services rows — grow-into-the-room (`fb13710`), spotlight + lens/ride
   (`6b886f2` → `eaf00a2` → `0a2c6a4`), phone trays (`6afdeca`). Awaiting
   Jake's review — untested past the initial spotlight look.

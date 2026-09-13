@@ -306,33 +306,71 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
 @media (prefers-reduced-motion: reduce) {
   .t-hero { color: #d6d6da; }
 }
+/* THE STATEMENT IS ON THE GROUND AGAIN, not on the film (the opening
+   put the words back above the reel), so in the light room the sweep is
+   a SHADOW crossing a light surface — the light room's inversion, at
+   every width. Measured on #f2f2f4: base #35353a 10.91:1, peak #0a0a0b
+   17.70:1. The dark room keeps the light statement above. */
+.dr-root.dr-light .t-hero { color: #35353a; }
+@media (prefers-reduced-motion: no-preference) {
+  .dr-root.dr-light .t-hero .sweep {
+    background: linear-gradient(90deg, #35353a 0%, #0a0a0b 18%, #35353a 36%);
+    background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text;
+  }
+}
 
-/* ══ §01 THE SCREENING ═════════════════════════════════════════════
-   Jake, 2026-09-12: "a big cinematic entrance that is the video reel,
-   with minimal text — I want the site to feel like I'm showing you what
-   I do, you aren't reading." So the first screen IS the reel: full bleed
-   under the nav, the whole viewport, nothing on it. The one line and the
-   one door sit UNDER it, the way apple.com/iphone-18-pro puts its words
-   under its film (measured 2026-09-11) — you watch, then you read the
-   caption of what you just watched.
+/* ══ §01 THE OPENING ═══════════════════════════════════════════════
+   Cosmos's hero (design-dna/decodes/cosmos.md §5d, measured live at
+   1440x900): the words in the top of the screen, the reel LOW with its
+   bottom 12px above the fold; the header pinned while the words rise
+   out at ~0.67px/px and the reel opens upward at 0.52px/px — 360 → 648,
+   1.80x — with its width, corners and bottom edge held still. Then the
+   pin releases and it scrolls away. Jake, 2026-09-13: "i like how the
+   video is lower, on scroll the video becomes center screen. the text
+   moves up on scroll out of the way to make room for the video."
 
-   What this retires: the band hero (statement + support beside it, reel
-   beneath), the Cosmos open (reel bottom pinned, opening upward across a
-   0.62vh hold), the chip, the sub, the second door, and the copy's race
-   against the reel. All of it existed to fit a film into a page of type;
-   the film has the screen now. git has the band at cad15c6.
+   Retires the screening (the film full screen from the first frame,
+   the caption on it, the recede) — git has it at b7637cd. Kept from it:
+   the film is there from the first frame, no grow, no name tier (the
+   rail's wordmark is the name), the minimal caption.
 
-   NOTHING PINS. The screen leaves at scroll's rate and RECEDES as it
-   goes — see THE RECEDE on .dr-hero-reel — so the first scroll is
-   rewarded with movement into real content, not a hero holding you. */
+   This is the band hero of cad15c6 with the chip, the sub, the second
+   door and the copy-floor gone, the reel widened out of the column to
+   §02's gutter, and the open re-derived against Cosmos's numbers now
+   that nothing sits in its way (the 25svh cap existed to miss the chip). */
 
 .dr-top { position: absolute; top: 0; left: 0; width: 1px; height: 1px; }
-/* NO ROOM IS RESERVED FOR THE RAIL (Jake: "including nav"). The film
-   starts at the top of the viewport and the rail floats on it, the way
-   it floats on the ground everywhere else. */
 .dr-stage {
   position: relative; z-index: 4;
-  display: flex; flex-direction: column;
+  min-height: 100svh; display: flex; flex-direction: column;
+  /* the fixed rail is out of flow, so the hero reserves its height here */
+  padding-top: var(--nav-space);
+}
+/* On desktop the stage is a DEFINITE height, not just a minimum, so the
+   grid's fr row has something to resolve against and the reel's rest
+   height is a share of the screen rather than of its content. Mobile
+   keeps min-height, because there the page is meant to scroll. */
+@media (min-width: 901px) { .dr-stage { height: 100svh; } }
+
+/* THE PIN. Desktop only, like every pin on the reference — below 901px
+   the stage is taller than the viewport and a sticky hero would just
+   trap the copy. */
+.dr-hero-wrap { position: relative; }
+@media (min-width: 901px) {
+  .dr-stage { position: sticky; top: 0; }
+  /* ⚠ THE HOLD — the wrapper's own height, not a margin on a child, and
+     MIN-HEIGHT, NOT PADDING: a sticky child is constrained by its
+     containing block's CONTENT box, and padding is not in it (measured
+     at cad15c6: 558px of padding gave the stage zero room to stick in).
+
+     0.66svh, derived: Cosmos's open runs ~554px at 900 (0.52px/px over
+     288px), so the open here spans 0.94 of the window (558px at 900)
+     and the pin releases 36px later — a short beat after the payoff,
+     never before it. A pin that outlasts its payoff is the "I scrolled
+     and nothing arrived" bounce; one that releases mid-open is a cut.
+     page.tsx's window matches this exactly. */
+  .dr-hero-wrap { min-height: calc(100svh + 66svh); }
 }
 .wrap { max-width: 1400px; margin-inline: auto; width: 100%;
         padding-inline: var(--fib-3); }
@@ -392,14 +430,6 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   --glint-delay: -1.6s; opacity: 0;
 }
 .dr-lit .dr-rail { animation: dr-fadein 480ms var(--ease-ui) 140ms forwards; }
-/* ── THE RAIL ON THE FILM ────────────────────────────────────────
-   Unstuck, the rail only ever floats over §01's film — every interior
-   page is stuck from its first frame — and the film is black in either
-   room. So the unstuck rail's ink is pinned light (on #0a0a0b: ink
-   17.7:1, ink-3 10.4:1). */
-.dr-rail:not([data-stuck]) {
-  --ink: #f5f5f7; --ink-2: #d4d4d8; --ink-3: #b4b4ba; --ink-4: #a9a9ae;
-}
 .dr-rail::before { opacity: 0; transition: opacity .5s var(--ease-ui); }
 .dr-rail[data-stuck]::before { opacity: 1; }
 
@@ -518,95 +548,80 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-navcta:hover { background: var(--surface-3); }
 .dr-navcta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 
-/* main: flex-1 + justify-end + items-end does ALL the corner composition.
-   Zero absolute positioning. */
-/* main: no clearance above — the film sits against the nav's air — and a
-   breath below the caption before About. */
-.dr-main { flex: 1; min-height: 0; display: flex; flex-direction: column;
-           padding-block: 0 clamp(56px, 9svh, 120px); }
-/* ONE ROW: the screen, with the caption on it. The grid is kept for the
-   phone, where the caption steps out from under the film into a row of
-   its own. */
+/* main: the column, ending at §02's gutter above the fold so the reel's
+   bottom edge sits where Cosmos's does (888 of 900). */
+.dr-main {
+  flex: 1; min-height: 0; display: flex; flex-direction: column;
+  padding-block: 0 var(--gutter);
+  --gutter: clamp(12px, 1.6vw, 28px);   /* §02's grown gutter, one number */
+
+  /* ── THE RACE, AS ONE NUMBER AND ONE RATIO ─────────────────────
+     --lead is the hero's own leaving: 0 at rest, 1 when the open has
+     finished — the window's 0.94, see THE HOLD. Both the reel and the
+     copy read it, so their relationship is structural rather than two
+     constants that happen to agree today.
+
+     --open is how far the reel's top edge rises. Cosmos: 288px at 900
+     (0.32vh), 1.80x from a 360px rest. Ours is the same share of the
+     screen, capped where a 4K display would open it past the statement.
+
+     --chase is the copy's travel as a MULTIPLE of the reel's. At 1.0
+     they move in lockstep and the gap between the labels and the reel
+     is constant; below it the reel runs the copy over. Cosmos's text
+     leaves at 0.67 against the video's 0.52 = 1.29. Jake at 1.42:
+     "text above is moving up too fast now" — their text is a wordmark
+     meant to fly out of frame, ours is a sentence somebody is still
+     reading. 1.1: the gap opens by 10% of the rise and nothing is ever
+     caught. */
+  --lead: clamp(0, calc(var(--hero-p, 0) / .94), 1);
+  --open: clamp(160px, 32svh, 340px);
+  --chase: 1.1;
+}
+/* THREE ROWS: the statement, the label row, the reel. The reel's rest
+   height is a SHARE of the screen (Cosmos: 360 of 900 = 40%), which is
+   what puts the words in the top and the reel low; the statement floats
+   in the room above with the air split around it. */
 .dr-hero {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto;
+  grid-template-rows: 1fr auto auto minmax(0, 40svh);
   flex: 1; min-height: 0;
 }
 .dr-hero > * { position: relative; z-index: 1; }
+/* THE STATEMENT floats in the top of the screen: the empty 1fr row
+   above it and its own margin below split the air the way Cosmos splits
+   it around the wordmark (128 above, 112 below at 900). */
+.dr-left { grid-row: 2; align-self: end; margin: 0 0 clamp(28px, 6svh, 64px);
+           /* ⚠ the headline sizes off THIS box (see .t-hero's cqw cap),
+              so it has to be a container. Nothing may go on its own
+              padding in cqw — that resolves against the viewport. */
+           container-type: inline-size; }
+/* THE LABEL ROW sits on the reel's top edge with no gap — Cosmos's
+   service labels do exactly this — so the reel opening under it reads
+   as the words being lifted off a surface, not two objects drifting. */
+.dr-labels { grid-row: 3; display: flex; align-items: center;
+             justify-content: space-between; gap: var(--fib-5);
+             padding-bottom: var(--fib-3); }
+.dr-cap-meta { margin: 0; color: var(--ink-3); }
+/* THE REEL spans the row; its box is the fourth row and its top edge is
+   the only thing that moves — see THE OPEN below. */
+.dr-hero-reel { grid-row: 4; }
 
-/* ── THE SCREEN ──────────────────────────────────────────────────
-   Two boxes, on purpose. .dr-screen is the RULER: it holds the grid
-   cell, the full bleed and the height, and the engine measures its
-   bottom edge for --recede. .dr-hero-reel inside it is the thing that
-   moves. A transformed element cannot be its own ruler — its rect moves
-   with it — so the track sits on the wrapper and the scale on the child.
- */
-.dr-screen {
-  grid-column: 1; grid-row: 1; position: relative;
-  /* FULL SCREEN, COMPLETELY (Jake: "it needs to grow completely to fill
-     the page like apple" — "including nav"): the whole viewport, edge to
-     edge, top to fold, and SQUARE — apple.com's film has no corners, and
-     a corner is a seam between the film and the page. The rail floats
-     on it, in light ink; see THE RAIL ON THE FILM. The radius comes back
-     only as it recedes; see THE RECEDE. */
-  margin-inline: calc(50% - 50vw);
-  height: 100svh;
-  min-height: 0;
+/* THE COPY LEAVES. Everything in the band rises together at --chase
+   times the reel's rise and dims — squared, so it holds nearly full
+   strength while you are still reading it and the fade only bites once
+   it is genuinely leaving. `translate`, not transform: the lines inside
+   own `transform` for the entrance. */
+.dr-left, .dr-labels {
+  translate: 0 calc(var(--lead, 0) * var(--open) * var(--chase) * -1);
+  opacity: calc(1 - .92 * var(--lead, 0) * var(--lead, 0));
+  will-change: opacity;
 }
-/* ── NO ENTRANCE ON THE SCREEN ───────────────────────────────────
-   The film is simply there, full screen, from the first frame — the way
-   apple.com's is. It grew to fill the screen for one afternoon (78% →
-   100% about its centre, 1300ms, the corners squaring off as it went);
-   Jake, 2026-09-12: "i dont do the grow now, apple has their big
-   dramatic reveal inside the video which is probably better." The
-   drama is the reel's job, and the reel he is cutting opens with its
-   own reveal; a page that also zooms in on it would be two reveals
-   fighting for one moment. So the screen holds still and the words
-   land on it after a short beat. It also means the poster is the LCP
-   from the first paint, with nothing hiding it. */
-.dr-screen { transform-origin: 50% 50%; }
 
-/* ── THE CAPTION ─────────────────────────────────────────────────
-   Apple's placement (see page.tsx): the film's lower band, name over
-   statement over meta at the left, the one door at the right, both on
-   the meta's baseline. It sits in the SCREEN, not the reel, so it holds
-   its size while the picture recedes behind it — the words stay, the
-   picture goes, which is a depth cue the old copy-dims-and-leaves never
-   managed. Its ink is pinned light: the film is black whichever room
-   we are in. Measured on #0a0a0b — name 17.7:1, statement (sweep base
-   #d6d6da) 13.4:1, meta #a9a9ae 8.4:1. */
-.dr-caption {
-  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
-  padding: 0 clamp(var(--fib-4), 6.25vw, 90px) clamp(40px, 7svh, 64px);
-  display: flex; align-items: flex-end; justify-content: space-between;
-  gap: var(--fib-5);
-  --ink: #f5f5f7; --ink-2: #d4d4d8; --ink-3: #a9a9ae; --ink-4: #a9a9ae;
-  pointer-events: none;
-}
-.dr-caption a { pointer-events: auto; }
-/* the door on the film is pinned too: the room's pill reads --surface-2
-   and --ink, which on the film would be a dark pill in the dark room and
-   a white pill with WHITE type in the light one (measured: the label
-   vanished). White pill, ink type, in both rooms — the only pure-white
-   surface on the first screen, so the action wins. */
-.dr-caption .dr-herocta { background: #ffffff; color: #0a0a0b; }
-.dr-caption .dr-herocta:hover { background: #e7e7ea; }
-.dr-cap-l { min-width: 0; flex: 1 1 auto; container-type: inline-size; }
-.dr-cap-r { flex: 0 0 auto; }
-.dr-cap-name { margin: 0 0 .35em; color: var(--ink); }
-.dr-cap-meta { margin: .9em 0 0; color: var(--ink-3); }
-/* the name tier: Apple's 32px/600 label over the statement */
-.t-name {
-  font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wdth" 100, "wght" 600;
-  font-size: var(--fs-lead); letter-spacing: -0.012em; line-height: 1.15;
-}
-/* the caption's own entrance: name, lines, meta, door — a beat after
-   the film, 100-120ms apart, so the first frame is the film alone */
-.dr-cap-name, .dr-cap-meta { opacity: 0; }
-.dr-lit .dr-cap-name { animation: dr-fadein var(--t-enter) var(--ease-structure) 300ms forwards; }
+/* the caption's own entrance: lines, meta, door — a beat after the
+   film, 100-120ms apart, so the first frame is the film alone */
+.dr-cap-meta { opacity: 0; }
 .dr-lit .dr-cap-meta { animation: dr-fadein var(--t-enter) var(--ease-structure) 720ms forwards; }
 
 /* ── THE ONE DOOR ────────────────────────────────────────────────
@@ -624,9 +639,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-herocta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 .dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 800ms forwards; }
 
-/* h1 lines mask-rise, 800ms outQuart, 120ms stagger — after the name,
-   before the meta: the statement is the second beat of the entrance and
-   the biggest, so it gets the middle of the sequence. */
+/* h1 lines mask-rise, 800ms outQuart, 120ms stagger — the statement is
+   the first beat of the entrance and the biggest. */
 .dr-line { overflow: hidden; transform: skewX(-4deg);
            transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
@@ -724,27 +738,17 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 @keyframes dr-wall-wave { to { background-position: 100% 100%; } }
 
 @media (max-width: 900px) {
-  /* stacked: the film, then the caption under it — a 4:3 film at 366
-     wide has no lower band to write on */
-  .dr-caption { position: static; padding: var(--fib-4) var(--fib-3) 0;
-                /* stretch, not start: .dr-cap-l is a size container, and
-                   a size container has no intrinsic width to shrink to */
-                flex-direction: column; align-items: stretch;
-                gap: var(--fib-4);
-                --ink: #0a0a0b; --ink-2: #35353a; --ink-3: #67676e; --ink-4: #67676e; }
-  .dr-cap-meta { margin-top: .6em; }
-  /* the name is Apple's label-over-tagline ON the film; off it, 300px
-     under the wordmark on the same ground, it is just the wordmark twice */
-  .dr-cap-name { display: none; }
-  /* off the film, the sweep is a SHADOW crossing a light surface: the
-     light room's old inversion, kept for the one place it still applies.
-     Measured on #f2f2f4: base #35353a 10.91:1, peak #0a0a0b 17.70:1. */
-  .dr-root.dr-light .t-hero { color: #35353a; }
-  .dr-root.dr-light .t-hero .sweep {
-    background: linear-gradient(90deg, #35353a 0%, #0a0a0b 18%, #35353a 36%);
-    background-size: 300% 100%;
-    -webkit-background-clip: text; background-clip: text;
-  }
+  /* stacked, no pin: the statement, the label row, then the reel — and
+     the stage is only as tall as they are. Its 100svh minimum is a
+     desktop number (the reel's rest height is a share of it); on a
+     phone it would spread three auto rows across the screen and leave
+     the label row 145px tall with a screen of air under the reel. */
+  .dr-stage { min-height: 0; }
+  .dr-hero { grid-template-rows: auto auto auto; row-gap: var(--fib-4);
+             align-content: start; }
+  .dr-left { grid-row: 1; margin: var(--fib-4) 0 0; }
+  .dr-labels { grid-row: 2; flex-wrap: wrap; gap: var(--fib-3); padding-bottom: 0; }
+  .dr-hero-reel { grid-row: 3; }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
   /* on a phone the same idea, scaled: bled off the left, reaching past
@@ -752,7 +756,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   /* the body reads much heavier on a small screen, where the wall takes a
      far bigger share of the frame */
   .dr-figure { left: -30vw; height: min(88vh, 720px); opacity: .42; }
-  .dr-main { padding-bottom: var(--fib-4); }
+  .dr-main { padding-bottom: var(--fib-5); }
   .dr-vignette { display: none; }          /* dropped below 820px */
   /* the rail keeps the lockup and the one action; the link set needs a
      real overlay menu rather than a squeezed row (deferred, not shipped) */
@@ -786,16 +790,10 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* ⚠ THE ENGINE RESOLVES, IT DOES NOT SKIP. Under reduced motion every
-     scroll var is published as 1 — the finished frame. --recede would
-     read 1 from the first paint and the film would sit at 93%, folded
-     away before anyone had watched it. So the screen holds still — the
-     rule lives after the reel's own, below, or the cascade loses it. */
   .dr-key, .dr-key::after,
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
   .dr-lit .dr-herocta,
-  .dr-lit .dr-cap-name,
   .dr-lit .dr-cap-meta { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
   .dr-lit .dr-vignette { animation: none; opacity: .8; }
@@ -812,75 +810,65 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   font-size: var(--fs-body-s); line-height: 1.5; }
 .dr-vouch figcaption { margin-top: 4px; color: var(--ink-4);
   font-family: var(--font-instrument), sans-serif; font-size: var(--fs-micro); }
-/* ── THE RECEDE — the screen folds away as you leave it ──────────
-   itsoffbrand.com's footer rise, decoded 2026-09-06: the preceding card
-   recedes (scale 1 → .952, constant radius) across the last ~230px of
-   its scroll while the thing after it holds still. Here it runs at the
-   TOP of the page instead: across the first 0.7 viewports of scroll the
-   film scales to 93% about its bottom edge — the edge the caption hangs
-   from — so its top drops away from the nav a little slower than scroll
-   while the caption arrives at scroll's rate. Two rates in one view,
-   and nothing pins.
+/* ── THE OPEN — Cosmos's, measured rather than remembered ─────────
+   cosmos.studio `.home-header_video`, live at 1440x900:
 
-   ⚠ THE TRACK IS THE SCREEN'S TOP EDGE, NOT ITS BOTTOM. It was the
-   bottom (fold → 30%), which is the natural way to say "as it leaves" —
-   and on a phone, where the screen is 4:3 and its bottom sits at 42% of
-   the viewport before anyone has scrolled, that read 0.83 at rest and
-   the film loaded already folded to 94%. The top edge sits at 0 on
-   every device, so a window from 0 to -0.7 starts at 0 everywhere and
-   runs the same 0.7vh.
+      scrollY    width   radius    top     height   bottom
+           0      1416     32px   527.6     360.2    887.8
+         300      1416     32px   371.7     516.0    887.7
+         600      1416     32px   239.7     647.9    887.6
 
-   Inside it the FOOTAGE pushes IN by 5% over the same stretch. The
-   window closes and the picture keeps coming: the film is still playing
-   while it leaves, which is the "always moving" Jake asked for, and a
-   held shot that never stops is the reel skill's own law (hold ≠
-   freeze). Both are compositor-only.
+   ⚠ THE WIDTH AND THE RADIUS NEVER CHANGE and it never goes full bleed.
+   The BOTTOM EDGE IS PINNED to the viewport — constant to a tenth of a
+   pixel — and the video opens UPWARD, 1.80x in height at 0.52px per px
+   of scroll, finishing around 554px in. A shutter opening, not a zoom.
 
-   THE CORNERS COME BACK AS IT GOES: radius 0 at full screen, §05's
-   radius at the end of the recede, so the screen folds back into a
-   card. This is the one scroll-driven
-   radius in the room; a rounded CLIP grow re-rasters a whole surface
-   every frame (measured 2026-09-06, 50ms at 2560), but this is a
-   border-radius on an overflow:hidden box whose only child is a
-   composited video, which Chrome clips on the compositor. MEASURED in
-   real Chrome at 2048x1536 device px (rAF deltas, 12px steps through
-   the whole recede): 8.3ms mean / 8.7 p90 with it, 8.3 / 8.6 with the
-   radius pinned at 0, 8.4 / 9.1 with everything static. It costs
-   nothing. (Headless software raster said +7ms — that is software
-   raster, not this.)
+   We get the pinned bottom for free: .dr-stage is sticky, so while the
+   hero is held the reel's bottom is already fixed in the viewport. A
+   NEGATIVE TOP MARGIN is what opens it — the grid row's bottom holds
+   the box's bottom, so the margin adds its own length straight onto the
+   height and the box grows up into the room the copy is leaving. A real
+   height change, like theirs, not a scale: the footage inside is
+   `cover`, so more picture appears rather than the same picture bigger.
 
-   ⚠ scale stays off `transform` and the box never changes. A clip or a radius that grows re-rasters
-   every frame (measured 2026-09-06, 50ms at 2560), and the first thing
-   on the page is the one place a dropped frame cannot be afforded. */
+   RATE at 1440x900: 288px over 0.94 x 0.66 x 900 = 558px = 0.52px/px.
+   Theirs. The width is theirs too: out of the column to §02's gutter,
+   which is the one inset this room already has (12-28px; Cosmos 16). */
 .dr-hero-reel {
   position: relative;
-  height: 100%;
+  min-height: 0;
   overflow: hidden;
   background: var(--surface-1);
-  --r: clamp(22px, 2.2vw, 32px);
-  border-radius: calc(var(--recede, 0) * var(--r));
-  transform-origin: 50% 100%;
-  scale: calc(1 - .07 * var(--recede, 0));
-  will-change: scale;
+  margin-inline: calc(50% - 50vw + var(--gutter));
+  margin-top: calc(var(--lead, 0) * var(--open) * -1);
+  border-radius: clamp(22px, 2.2vw, 32px);
+  z-index: 2;
 }
 .dr-hero-reel video {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform-origin: 50% 50%;
-  scale: calc(1 + .05 * var(--recede, 0));
 }
 @media (max-width: 900px) {
-  /* the phone's screen: still edge to edge, 4:3 — a 16:9 strip at 390
-     wide is 219px of film and no kind of entrance; 4:3 is 292 */
-  .dr-screen { height: auto; }
-  .dr-hero-reel { height: auto; aspect-ratio: 4 / 3; }
+  /* NO OPEN ON THE PHONE. The open only makes sense against the pin and
+     the hold, and neither exists below 901px — there the hero simply
+     scrolls away. The reel stays a contained 4:3 object at the measure:
+     a 16:9 strip at 390 wide is 219px of film and no kind of opening. */
+  .dr-hero-reel { aspect-ratio: 4 / 3; margin-top: 0; margin-inline: 0;
+                  border-radius: var(--fib-3);
+                  /* start, not stretch: a stretched box with an
+                     aspect-ratio resolves its WIDTH from the height it
+                     was stretched to (measured at 390: 408px wide in a
+                     348px column) */
+                  align-self: start; }
 }
 @media (prefers-reduced-motion: reduce) {
-  /* see THE ENGINE RESOLVES above: --recede is 1 from the first paint */
-  .dr-hero-reel, .dr-hero-reel video { scale: none; }
-  .dr-hero-reel { border-radius: 0; }
+  /* ⚠ THE ENGINE RESOLVES, IT DOES NOT SKIP: every scroll var is
+     published as 1, the finished frame. So the reel is simply open and
+     the copy simply gone — which reads wrong. Hold both at rest. */
+  .dr-hero-reel { margin-top: 0; }
+  .dr-left, .dr-labels { translate: none; opacity: 1; }
 }
 /* ══ §02 · THE FUNNEL ════════════════════════════════════════════
    THE LIGHTS COME ON. The one light section in a black room, and the only

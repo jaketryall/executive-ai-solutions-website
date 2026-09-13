@@ -105,43 +105,91 @@ export default function DarkRoom() {
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
 
-      {/* §01 · THE SCREENING. The first screen is the reel, full screen
-          from the first frame, with the caption on its lower band where
-          Apple puts theirs. No entrance on the film: the reel carries its
-          own reveal. See the block of the same name in room.css for what
-          this retired and why.
+      {/* §01 · THE OPENING. Cosmos's hero, measured (design-dna/decodes/
+          cosmos.md §5d, live at 1440x900): the words sit in the top of
+          the screen and the reel sits LOW, its bottom edge 12px above the
+          fold. On scroll the header is pinned and two things happen at
+          two rates: the words rise out at ~0.67px per px of scroll, and
+          the reel opens UPWARD into the room they leave — height 360 →
+          648, 1.80x, at 0.52px per px — while its width, its corners and
+          its bottom edge never move. A shutter, not a zoom. Then the pin
+          releases and the open reel scrolls away like anything else.
 
-          .dr-screen carries the --recede track: its TOP edge, from the
-          top of the viewport (0) to 70% of a viewport above it (-0.7)
-          — 0.7vh of scroll. (Top, not bottom: see the ⚠ under
-          THE RECEDE in room.css.)
-          The track is on the wrapper because the reel inside it is the
-          thing that scales, and a transformed element cannot be its own
-          ruler. */}
-      <div className="dr-stage">
+          Jake, 2026-09-13: "i like how the video is lower, on scroll the
+          video becomes center screen. the text moves up on scroll out of
+          the way to make room for the video." This is that. It retires
+          last night's screening (the film full screen from the first
+          frame, the caption on it, the recede) — git has it at b7637cd.
+          What survives from it: the film is THERE from the first frame
+          (no grow — the reel carries its own reveal), and the caption is
+          the minimal set: the statement, the meta line, the one door.
+          The rail's wordmark is the name.
+
+          THE PIN is the wrapper: [sticky stage] held for exactly the
+          scroll the open needs, then released (THE HOLD in room.css).
+          --hero-p is measured on the WRAPPER's top edge, not the stage's:
+          a pinned element's rect does not move, so measured on the stage
+          it would freeze at 0 the moment the pin engaged. The window is
+          0.66 viewports: 0 where the hero pins, 1 where it releases, and
+          the open finishes at 0.94 of it so the release is a short beat
+          after the payoff, never before. */}
+      <div
+        className="dr-hero-wrap"
+        data-sp
+        data-sp-from="0"
+        data-sp-to="-0.66"
+        data-sp-var="--hero-p"
+      >
         {/* the rail (components/room/nav) watches this by selector: the
-            pill and the action are what the first scroll earns */}
+            pill and the action are what the first scroll earns. It sits
+            OUTSIDE the sticky stage — a sentinel that pins with the hero
+            never leaves the viewport and the action would never arrive */}
         <div className="dr-top" aria-hidden />
 
-        <main className="dr-main wrap">
-          <div className="dr-hero">
-            <div
-              className="dr-screen"
-              data-sp
-              data-sp-edge="top"
-              data-sp-from="0"
-              data-sp-to="-0.7"
-              data-sp-var="--recede"
-            >
+        <div className="dr-stage">
+          <main className="dr-main wrap">
+            <div className="dr-hero">
+              {/* THE STATEMENT, alone in the top of the screen where
+                  Cosmos puts its wordmark. */}
+              <h1 className="t-hero dr-left">
+                {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im
+                    shifting more towards design and crms than ads
+                    right now" — the statement names the two things he
+                    leads with, in that order; ads are not in it.
+                    Short over long on purpose: that step is what
+                    keeps the block from reading as a slab. */}
+                <span className="dr-line">
+                  <span className="sweep">Design that sells,</span>
+                </span>
+                <span className="dr-line">
+                  <span className="sweep">systems that follow up.</span>
+                </span>
+              </h1>
+
+              {/* THE LABEL ROW, directly above the reel with no gap —
+                  Cosmos's four service labels sit exactly here. Ours is
+                  the meta line at the left and the one door at the right,
+                  on one baseline, the way Apple's caption pairs them. */}
+              <div className="dr-labels">
+                <p className="dr-cap-meta t-meta">
+                  Websites &middot; Automation &middot; Google Ads
+                </p>
+                <Link href="/contact" className="dr-herocta dr-edge t-cta">
+                  Book the call
+                </Link>
+              </div>
+
+              {/* THE REEL, low and wide: out of the column to §02's own
+                  gutter, its bottom on the fold. It is the ruler for
+                  nothing — the wrapper above is — so it can move. */}
               <div className="dr-hero-reel">
-                {/* ⚠ 1920, not 1280: as a full-viewport film the old cut
-                    was soft, and a soft film is not dramatic, it is
-                    cheap. Six seconds (t=4.3-10.4, the dark half of the
-                    source), 30fps, crf 23, 885KB. Jake is cutting a
-                    longer reel ON BLACK to design-dna/reel-spec.md; it
-                    drops in here with its poster and nothing else
-                    changes. Until it lands, the v1 cut's own baked-in
-                    type sits under the caption at the lower left. */}
+                {/* ⚠ 1920, not 1280: opened, the well is 1416 x 648 and
+                    a 1280 source is soft in it. Six seconds (t=4.3-10.4,
+                    the dark half of the source), 30fps, crf 23, 885KB.
+                    Jake is having a longer reel cut ON BLACK to
+                    design-dna/reel-spec.md; it drops in here with its
+                    poster and nothing else changes. Until it lands, the
+                    v1 cut's own baked-in type is in the frame. */}
                 <video
                   autoPlay
                   loop
@@ -154,50 +202,15 @@ export default function DarkRoom() {
                   <source src="/dark/reel-film.mp4" type="video/mp4" />
                 </video>
               </div>
-
-              {/* THE CAPTION, where Apple puts it (apple.com/iphone-18-pro,
-                  measured 2026-09-12 at 1440x900): ON the film, in its
-                  lower band. Left: a 32px name, an 80px statement, a 14px
-                  meta line, inset 90px from the edge with the meta's
-                  baseline 64px above the film's bottom. Right, on the
-                  same baseline: the price and the one blue pill. Same
-                  four objects here, the room's own type and the room's
-                  own pill; below 901px it moves under the film. */}
-              <div className="dr-caption">
-                <div className="dr-cap-l">
-                  <p className="dr-cap-name t-name">Executive AI Solutions</p>
-                  <h1 className="t-hero">
-                    {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im
-                        shifting more towards design and crms than ads
-                        right now" — the statement names the two things
-                        he leads with, in that order; ads are not in it.
-                        Short over long on purpose: that step is what
-                        keeps the block from reading as a slab. */}
-                    <span className="dr-line">
-                      <span className="sweep">Design that sells,</span>
-                    </span>
-                    <span className="dr-line">
-                      <span className="sweep">systems that follow up.</span>
-                    </span>
-                  </h1>
-                  <p className="dr-cap-meta t-meta">
-                    Websites &middot; Automation &middot; Google Ads
-                  </p>
-                </div>
-                <div className="dr-cap-r">
-                  <Link href="/contact" className="dr-herocta dr-edge t-cta">
-                    Book the call
-                  </Link>
-                </div>
-              </div>
             </div>
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
 
       {/* About is a plain sibling (Jake: "i dont want that rise thing for
-          the about section"). Nothing climbs over the screen; the screen
-          recedes and About simply arrives. */}
+          the about section"). Nothing climbs over the hero: the pin
+          releases with the reel open, it scrolls away, and About simply
+          arrives after it. */}
       <AboutSection />
 
       {/* §02 comes out of the wrapper and brings its own ruler. Inside it,
