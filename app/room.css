@@ -101,22 +101,10 @@
 
   --radius-btn: 12px; --radius-frame: 18px; --radius-panel: 24px;
 
-  /* ⚠ RAISED to 4.5rem from 3.1. It was capped where it was because the
-     hero used to be a split and the statement had half a screen; with the
-     band it has a real column, and measured, the longest line needed only
-     496px of the 771 it was given. A statement that is only using 64% of
-     its own column is not making a statement. The cqw cap below is what
-     keeps the extra size honest at every width. */
-  /* ⚠ THE STATEMENT FILLS THE MEASURE (Jake, 2026-09-13: "i really like
-     the big text … i want nothing to feel empty", then, at 89px: "the
-     top half feels so empty"). 72 → 89 was a step; this is the size the
-     column allows — the cqw cap on .t-hero (9.2cqw, measured so the
-     longest line just fits) is now the number that governs, ~118px at
-     1440, and this clamp only stops it running past that on a tall
-     viewport. Two lines take ~245px of the ground's 457, which is
-     Cosmos's wordmark filling its measure rather than a sentence
-     floating in a field. */
-  --hero-fs: clamp(2rem, min(8.4vw, 13.2svh), 7.5rem);
+  /* the lines have a COLUMN each now, not the measure, so the size is
+     what two words fit in a third of the screen: ~58px at 1440, wrapping
+     to two lines each. The big type moved to the marquee. */
+  --hero-fs: clamp(1.75rem, min(4vw, 6.4svh), 3.75rem);
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
   --nav-pad: clamp(13px, 2.4svh, 21px);
@@ -267,7 +255,7 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   text-transform: none; color: #d6d6da;
   margin: 0;
 }
-.t-hero .dr-line > span { white-space: nowrap; }
+/* (the lines wrap; see .dr-line in §01) */
 .t-section {
   font-family: var(--font-archivo), "Arial Black", sans-serif;
   font-variation-settings: "wdth" 122, "wght" 800;
@@ -329,30 +317,22 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   }
 }
 
-/* ══ §01 THE LIFT ══════════════════════════════════════════════════
-   The film is full screen UNDER the first screen from the first frame.
-   The room's ground, carrying the big statement and the label row, sits
-   over it with its edge at 60% of the viewport, so the film shows in
-   the bottom band at rest. Scroll LIFTS the ground at its own rate: the
-   words ride the edge up and out, the film is revealed beneath them
-   edge to edge, holds for a beat, and then the pin releases and it
-   scrolls away. Lando's law — reveal the next room UNDER the current
-   one — at the top of the page.
+/* ══ §01 THE STAGE ═════════════════════════════════════════════════
+   Jake, 2026-09-13, with a portfolio hero (codebyhicham.com): "what if
+   we do something like this with the video in the middle, infinite
+   marquee at the bottom, video grows on scroll … and when you scroll
+   the texts should have a scroll driven exit." The reel is the OBJECT
+   in the middle of the first screen; the statement flanks it, one line
+   each side, the one door under the left one; a giant marquee runs
+   along the fold, cropped by it. On scroll the stage pins, the reel
+   grows about its own centre until it IS the screen, the two lines exit
+   outward at scroll's rate, the marquee runs on underneath until the
+   film covers it. Hold a beat, release, scroll away.
 
-   Jake, 2026-09-13, on the Cosmos shutter this replaces (da61f3c):
-   "i really like the big text, and i want to find a different mechanism
-   for the video reveal. i want nothing to feel empty." So the statement
-   goes a size up, the film goes full bleed, and every pixel of the
-   first screen is ground or film at every moment — nothing opens into
-   a hole, because there is no hole; the film was always there.
-
-   ⚠ WHAT MAKES THIS NOT THE SHUTTER, mechanically: the shutter grew a
-   box and let `cover` re-fit the footage every frame, so the picture
-   itself swelled as the box opened. Here the footage is a fixed
-   full-viewport layer anchored to the fold and only the box's top edge
-   moves — more picture is uncovered, none of it is scaled. Cosmos's
-   numbers no longer apply; the rate is scroll's own (1:1), which is
-   what a lifting surface reads as. */
+   Retires the lift (9cd34bc) and the shutter (da61f3c) of the same
+   morning; the screening (b7637cd) before them. Kept from all of them:
+   the film is there from the first frame, the minimal caption, the
+   rail's wordmark as the name. */
 
 .dr-top { position: absolute; top: 0; left: 0; width: 1px; height: 1px; }
 .dr-stage {
@@ -360,37 +340,29 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   min-height: 100svh; display: flex; flex-direction: column;
   /* the fixed rail is out of flow, so the hero reserves its height here */
   padding-top: var(--nav-space);
+  /* the grown film is bigger than the screen; the stage is its frame */
+  overflow: clip;
 
-  /* ── THE LIFT, AS ONE NUMBER ────────────────────────────────────
-     --band is the film's rest height — the bottom 40% of the screen,
-     Cosmos's share, kept because it is the right amount of film to
-     promise before the words have been read. --lift is how far the
-     ground has risen: 0 at rest, the whole 60svh above the band when
-     --lead is 1. The reel's box and the copy both read it, so the
-     edge and the words cannot drift apart — they are the same number.
-
-     --lead completes at 0.857 of the 0.7vh window = 0.6vh of scroll,
-     which is exactly the 60svh the ground has to travel: the lift is
-     1:1 with the scroll, a surface leaving at scroll's own rate, and
-     the remaining 0.1vh is the beat the film holds full screen before
-     the pin lets go. */
-  --band: 40svh;
+  /* ── THE GROW, AS ONE NUMBER ────────────────────────────────────
+     --lead is the hero's leaving: 0 at rest, 1 when the reel has
+     filled the screen — at 0.857 of the 0.7vh window = 0.6vh of
+     scroll, with 0.1vh of beat before the pin lets go. The reel's
+     scale, the lines' exit and the door all read it, so nothing can
+     drift out of step. */
   --lead: clamp(0, calc(var(--hero-p, 0) / .857), 1);
-  --lift: calc(var(--lead) * (100svh - var(--band)));
 }
 @media (min-width: 901px) { .dr-stage { height: 100svh; } }
 
 /* THE PIN. Desktop only, like every pin on the reference — below 901px
-   nothing lifts and the stage is only as tall as its rows. */
+   nothing grows and the stage is only as tall as its rows. */
 .dr-hero-wrap { position: relative; }
 @media (min-width: 901px) {
   .dr-stage { position: sticky; top: 0; }
   /* ⚠ THE HOLD — the wrapper's own height, MIN-HEIGHT NOT PADDING: a
      sticky child is constrained by its containing block's CONTENT box,
      and padding is not in it (measured at cad15c6: 558px of padding
-     gave the stage zero room to stick in). 0.7svh: 0.6 for the lift
-     itself and 0.1 for the beat, matching page.tsx's window exactly so
-     --hero-p reads 1 at the release. */
+     gave the stage zero room to stick in). 0.7svh: 0.6 for the grow
+     and 0.1 for the beat, matching page.tsx's window exactly. */
   .dr-hero-wrap { min-height: calc(100svh + 70svh); }
 }
 .wrap { max-width: 1400px; margin-inline: auto; width: 100%;
@@ -569,79 +541,118 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-navcta:hover { background: var(--surface-3); }
 .dr-navcta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 
-/* main: the column, exactly as tall as the ground's share of the screen
-   — everything under the nav down to the film's edge. */
+/* main: the field above the marquee — everything under the nav down to
+   the marquee's top. */
 .dr-main {
-  flex: 0 0 auto; min-height: 0; display: flex; flex-direction: column;
-  height: calc(100svh - var(--nav-space) - var(--band));
-  padding-block: 0;   /* the inline padding is .wrap's; only the block is ours */
+  flex: 1; min-height: 0; display: flex; flex-direction: column;
+  padding-block: clamp(12px, 2svh, 24px) clamp(16px, 3svh, 32px);
 }
-/* TWO ROWS on the ground: the statement, and the label row on the edge.
-   The empty 1fr above is the air the statement floats in — with the
-   statement a size up it is about a third of the ground, which is
-   Cosmos's proportion around its wordmark and reads as air, not as
-   emptiness. */
+/* THE FIELD: three columns — a line, the reel, a line — with the reel's
+   column a fixed share of the viewport so the film's rest size is the
+   same idea at every width, and the lines taking what is left. Two rows
+   only so the door can sit under the left line while the right line
+   and the reel span both and centre on the same axis. */
 .dr-hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: 1fr auto auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, var(--reel-w)) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: clamp(var(--fib-4), 3.8vw, var(--fib-6));
+  row-gap: var(--fib-4);
+  align-content: center; align-items: center;
   flex: 1; min-height: 0;
+  --reel-w: 36vw;
 }
 .dr-hero > * { position: relative; z-index: 1; }
-.dr-left { grid-row: 2; align-self: end; margin: 0 0 clamp(24px, 4.5svh, 48px);
-           /* ⚠ the headline sizes off THIS box (see .t-hero's cqw cap),
-              so it has to be a container. Nothing may go on its own
-              padding in cqw — that resolves against the viewport. */
-           container-type: inline-size; }
-/* THE LABEL ROW is the last thing on the ground before the film: it
-   sits on the edge, a breath above it. */
-.dr-labels { grid-row: 3; display: flex; align-items: center;
-             justify-content: space-between; gap: var(--fib-5);
-             padding-bottom: var(--fib-4); }
-.dr-cap-meta { margin: 0; color: var(--ink-3); }
+.dr-h1 { display: contents; }
+.dr-l1 { grid-column: 1; grid-row: 1; align-self: end; }
+.dr-herocta { grid-column: 1; grid-row: 2; align-self: start; justify-self: start; }
+.dr-l2 { grid-column: 3; grid-row: 1 / 3; align-self: center; }
+.dr-screen { grid-column: 2; grid-row: 1 / 3; align-self: center; z-index: 3; }
 
-/* THE COPY RIDES THE EDGE. Everything on the ground rises by exactly
-   the lift — the same number the film's edge rises by — so the words
-   leave with the surface they are printed on, and dim as they go:
-   squared, so they hold nearly full strength while you are still
-   reading and the fade only bites once they are genuinely leaving.
-   `translate`, not transform: the lines inside own `transform` for the
-   entrance. */
-.dr-left, .dr-labels {
-  translate: 0 calc(var(--lift) * -1);
+/* ── THE EXIT, scroll-driven (Jake) ───────────────────────────────
+   The lines leave OUTWARD — the left one left, the right one right —
+   by scroll's own measure, and dim as they go: squared, so they hold
+   nearly full strength while you are still reading and the fade only
+   bites once they are genuinely leaving. The film is growing into the
+   middle they vacate. `translate`, not transform: the lines' inner
+   spans own `transform` for the entrance. */
+.dr-l1, .dr-herocta { translate: calc(var(--lead, 0) * -18vw) 0; }
+.dr-l2 { translate: calc(var(--lead, 0) * 18vw) 0; }
+.dr-l1, .dr-l2, .dr-herocta {
   opacity: calc(1 - .92 * var(--lead, 0) * var(--lead, 0));
   will-change: opacity;
 }
 
-/* the caption's own entrance: lines, meta, door — a beat after the
-   film, 100-120ms apart, so the first frame is the film alone */
-.dr-cap-meta { opacity: 0; }
-.dr-lit .dr-cap-meta { animation: dr-fadein var(--t-enter) var(--ease-structure) 720ms forwards; }
-
 /* ── THE ONE DOOR ────────────────────────────────────────────────
-   The room's pill. There is no second door: the work is the film, and
-   the nav's Work link is the way into more of it. */
+   The room's pill, under the claim. There is no second door: the work
+   is the film, and the nav's Work link is the way into more of it. */
 .dr-herocta {
   display: inline-flex; align-items: center; border-radius: 999px;
   padding: 13px 24px; text-decoration: none; white-space: nowrap;
   color: var(--ink); background: var(--surface-2);
   --glint-t: 4.5s;
-  opacity: 0;
   transition: background var(--t-micro) var(--ease-ui);
 }
 .dr-herocta:hover { background: var(--surface-3); }
 .dr-herocta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
-.dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 800ms forwards; }
+/* the entrance owns opacity for its first second; the exit above owns
+   it after. Two owners of one property: the animation wins while it
+   runs (fill: forwards), and hands back to the calc when it ends. */
+.dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 800ms backwards; }
 
+/* the lines wrap here — they have a column each, not the measure */
+.t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
 /* h1 lines mask-rise, 800ms outQuart, 120ms stagger — the statement is
    the first beat of the entrance and the biggest. */
 .dr-line { overflow: hidden; transform: skewX(-4deg);
            transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
-.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
-.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 540ms forwards; }
+.dr-lit .dr-l1 > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
+.dr-lit .dr-l2 > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 540ms forwards; }
 @keyframes dr-rise { to { transform: translateY(0); } }
+
+/* ── THE MARQUEE, along the fold ─────────────────────────────────
+   The meta line as the biggest type on the page, running left, cropped
+   by the fold so the screen ends in type in motion. The band is a share
+   of the glyphs' height, so what shows is the top ~65% of the caps at
+   every width; the rest is under the fold, which is the point.
+
+   SEAMLESS: the track holds two identical sets and travels exactly one
+   set's width (50% of itself), then starts over on the frame the second
+   set has reached where the first began. Each item carries its own
+   trailing separator and spacing, so a set's width IS its content and
+   there is no gap to be off by. */
+.dr-marquee {
+  position: relative; z-index: 0;
+  flex: 0 0 auto;
+  height: clamp(64px, 9.4vw, 148px);
+  overflow: hidden;
+  /* the fold cuts it; a soft top keeps the caps from hitting the reel's
+     card — measured need at 1440: none, so this stays 0 */
+  --mq-fs: clamp(96px, 15vw, 232px);
+}
+.dr-marquee-track {
+  position: absolute; left: 0; top: 0;
+  display: flex; width: max-content;
+  animation: dr-marquee 38s linear infinite;
+  will-change: transform;
+}
+.dr-marquee-set { display: flex; flex: 0 0 auto; }
+.dr-marquee-set span {
+  display: block;
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-variation-settings: "wdth" 122, "wght" 800;
+  font-size: var(--mq-fs); line-height: 1; letter-spacing: -0.02em;
+  text-transform: uppercase; color: var(--ink);
+  white-space: nowrap;
+  padding-right: .28em;
+}
+.dr-marquee-set span::after { content: "·"; padding-left: .28em; color: var(--ink-4); }
+@keyframes dr-marquee { to { transform: translate3d(-50%, 0, 0); } }
+/* the marquee arrives last, under everything else */
+.dr-marquee { opacity: 0; }
+.dr-lit .dr-marquee { animation: dr-fadein var(--t-enter) var(--ease-structure) 900ms forwards; }
 /* ══ THE MARK, CENTRE STAGE ══════════════════════════════════════
    Lit from the upper left and falling to black — an object standing in the
    room, not a logo pasted onto it. It sits BEHIND the type: the reference
@@ -733,16 +744,21 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 @keyframes dr-wall-wave { to { background-position: 100% 100%; } }
 
 @media (max-width: 900px) {
-  /* stacked, no pin: the statement, the label row, then the film — and
-     the stage is only as tall as they are. Its 100svh minimum is a
-     desktop number (the band is a share of it); on a phone it would
-     spread the rows across the screen and leave air under the film. */
-  .dr-stage { min-height: 0; padding-bottom: var(--fib-4); }
-  .dr-hero { grid-template-rows: auto auto; row-gap: var(--fib-4);
-             align-content: start; }
-  .dr-left { grid-row: 1; margin: var(--fib-4) 0 0; }
-  .dr-labels { grid-row: 2; flex-wrap: wrap; gap: var(--fib-3);
-               padding-bottom: var(--fib-4); }
+  /* stacked, no pin: the claim, the reel, the promise, the door, the
+     marquee — and the stage is only as tall as they are. Its 100svh
+     minimum is a desktop number. */
+  .dr-stage { min-height: 0; }
+  .dr-hero { grid-template-columns: minmax(0, 1fr);
+             grid-template-rows: auto auto auto auto; row-gap: var(--fib-4);
+             align-content: start; --reel-w: 100%; }
+  .dr-l1 { grid-column: 1; grid-row: 1; margin-top: var(--fib-4); }
+  .dr-screen { grid-column: 1; grid-row: 2; }
+  .dr-l2 { grid-column: 1; grid-row: 3; }
+  .dr-herocta { grid-column: 1; grid-row: 4; }
+  .dr-l1, .dr-l2, .dr-herocta { translate: none; opacity: 1; }
+  .dr-lit .dr-herocta { animation: none; }
+  .dr-main { padding-bottom: var(--fib-5); }
+  .dr-marquee { height: clamp(40px, 11vw, 64px); --mq-fs: clamp(64px, 17vw, 100px); }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
   /* on a phone the same idea, scaled: bled off the left, reaching past
@@ -803,50 +819,55 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   font-size: var(--fs-body-s); line-height: 1.5; }
 .dr-vouch figcaption { margin-top: 4px; color: var(--ink-4);
   font-family: var(--font-instrument), sans-serif; font-size: var(--fs-micro); }
-/* ── THE FILM, UNDER THE GROUND ──────────────────────────────────
-   A box anchored to the fold, full bleed, whose HEIGHT is the band plus
-   the lift — its top edge is the ground's edge, and it is the one thing
-   here that moves. Inside it the footage is pinned to the same fold at
-   the full height of the viewport, so it never moves and never
-   re-fits: the box uncovers it. `overflow: hidden` on a box whose only
-   child is a composited video is a compositor clip — the shutter's
-   height changes measured free (2026-09-12) and this is the same
-   operation on a bigger box. No radius: it is the screen, not a card,
-   and a corner would be a seam between the film and the page. */
+/* ── THE REEL GROWS ──────────────────────────────────────────────
+   At rest a 16:9 card the width of its column, radius --radius-panel.
+   On scroll it scales about its own centre until it covers the screen:
+   --cover is the larger of the two ratios the viewport needs of it,
+   width and height — lengths divided by the tan(atan2()) trick, which
+   is the one way CSS divides two lengths — with 4% over so the last
+   corner clears the edge. Scale, not size: a box that changes size
+   re-lays-out and re-fits `cover` every frame; a scaled box is one
+   compositor transform. The RADIUS goes to 0 as it grows (full bleed
+   is radius 0, the room's law), and a border-radius on an
+   overflow:hidden box whose only child is a composited video is a
+   compositor clip — measured free on the screening's recede
+   (2026-09-12, 8.3ms mean at 2048x1536). */
+.dr-screen { position: relative; }
 .dr-hero-reel {
-  position: absolute; left: 0; right: 0; bottom: 0; z-index: 0;
-  height: calc(var(--band) + var(--lift));
+  position: relative;
+  width: 100%; aspect-ratio: 16 / 9;
   overflow: hidden;
   background: var(--surface-1);
+  --cover: max(tan(atan2(100vw, var(--reel-w))),
+               tan(atan2(100svh, calc(var(--reel-w) * 9 / 16))));
+  scale: calc(1 + (var(--cover) * 1.04 - 1) * var(--lead, 0));
+  border-radius: calc(var(--radius-panel) * (1 - var(--lead, 0)));
+  transform-origin: 50% 50%;
+  will-change: scale;
 }
 .dr-hero-reel video {
-  position: absolute; left: 0; right: 0; bottom: 0;
-  width: 100%; height: 100svh;
+  display: block;
+  width: 100%; height: 100%;
   object-fit: cover;
 }
 @media (max-width: 900px) {
-  /* NO LIFT ON THE PHONE. The lift only makes sense against the pin and
+  /* NO GROW ON THE PHONE. The grow only makes sense against the pin and
      the hold, and neither exists below 901px — there the hero simply
-     scrolls away. The film is a contained 4:3 object under the words
-     (a 16:9 strip at 390 wide is 219px of film and no kind of
-     opening), back in the stage's flow and AFTER the words, which the
-     DOM order — film first, so it can be under — would otherwise put
-     on top. */
-  .dr-hero-reel { position: relative; order: 2; height: auto;
-                  aspect-ratio: 4 / 3; margin: 0 var(--fib-3);
+     scrolls away. The reel is a contained 4:3 object between the two
+     lines. */
+  .dr-hero-reel { aspect-ratio: 4 / 3; scale: none;
                   border-radius: var(--fib-3); }
-  .dr-hero-reel video { position: static; height: 100%; }
-  .dr-main { height: auto; order: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   /* ⚠ THE ENGINE RESOLVES, IT DOES NOT SKIP: every scroll var is
-     published as 1, the finished frame — the ground lifted off and the
-     words gone before anyone scrolled. Hold everything at rest, and
-     drop the pin: a hold with nothing moving in it is just a stall. */
-  .dr-stage { --lift: 0px; }
-  .dr-left, .dr-labels { translate: none; opacity: 1; }
+     published as 1, the finished frame — the film full screen and the
+     words gone before anyone scrolled. Hold everything at rest, drop
+     the pin (a hold with nothing moving in it is a stall), and let the
+     marquee stand still. */
+  .dr-stage { --lead: 0; position: relative; }
   .dr-hero-wrap { min-height: 0; }
-  .dr-stage { position: relative; }
+  .dr-marquee-track { animation: none; }
+  .dr-lit .dr-marquee { animation: none; opacity: 1; }
 }
 /* ══ §02 · THE FUNNEL ════════════════════════════════════════════
    THE LIGHTS COME ON. The one light section in a black room, and the only

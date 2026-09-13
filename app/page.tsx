@@ -105,30 +105,26 @@ export default function DarkRoom() {
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
 
-      {/* §01 · THE LIFT. The film is full screen UNDER the first screen
-          from the first frame. Over it, the room's own ground carries the
-          big statement and the label row, and its bottom edge sits at
-          60% of the viewport — so at rest the film shows in the bottom
-          band like a stage under a curtain. Scroll lifts the ground:
-          the words ride its edge up and out of the way at scroll's own
-          rate, and the film is revealed beneath them edge to edge. It
-          holds full screen for a beat, then the pin releases and it
-          scrolls away like anything else. Lando's law — reveal the next
-          room UNDER the current one — run at the top of the page.
+      {/* §01 · THE STAGE. Jake, 2026-09-13, with a portfolio hero
+          (codebyhicham.com): "what if we do something like this with
+          the video in the middle, infinite marquee at the bottom, video
+          grows on scroll … and when you scroll the texts should have a
+          scroll driven exit." So: the reel is the OBJECT in the middle
+          of the first screen, the statement flanks it — one line at the
+          left with the one door under it, one line at the right — and
+          a giant marquee runs along the fold, cropped by it, so the
+          bottom of the screen is type in motion and nothing is empty.
+          On scroll the stage pins, the reel grows about its own centre
+          until it is the screen, and the two lines exit OUTWARD at
+          scroll's rate — the film takes the room they leave. Hold a
+          beat, release, scroll away.
 
-          Jake, 2026-09-13, on the Cosmos shutter this replaces: "i
-          really like the big text, and i want to find a different
-          mechanism for the video reveal. i want nothing to feel empty."
-          So: the statement a size up, the film full bleed rather than a
-          card, and every pixel of the first screen is either ground or
-          film at every moment of the scroll — nothing opens INTO a
-          hole, because there is no hole; the film was always there.
+          It retires the lift (9cd34bc) and the shutter (da61f3c) of the
+          same morning. Kept: the film there from the first frame, the
+          minimal caption, the rail's wordmark as the name.
 
-          THE PIN is the wrapper: [sticky stage] held for the lift plus
-          a beat (THE HOLD in room.css). --hero-p is measured on the
-          WRAPPER's top edge, not the stage's — a pinned element's rect
-          does not move, so measured on the stage it would freeze at 0
-          the moment the pin engaged. */}
+          --hero-p is measured on the WRAPPER's top edge, not the
+          stage's: a pinned element's rect does not move. */}
       <div
         className="dr-hero-wrap"
         data-sp
@@ -143,64 +139,76 @@ export default function DarkRoom() {
         <div className="dr-top" aria-hidden />
 
         <div className="dr-stage">
-          {/* THE FILM, under everything: a full-viewport box anchored to
-              the fold. Its HEIGHT is what the lift changes — the box is
-              clipped at its top edge — while the footage inside is
-              pinned to the same fold at full viewport height, so the
-              picture never moves or re-fits. More of it is uncovered;
-              none of it is scaled. */}
-          <div className="dr-hero-reel">
-            {/* ⚠ 1920, not 1280: revealed, the well is the whole screen
-                and a 1280 source is soft in it. Six seconds (t=4.3-10.4,
-                the dark half of the source), 30fps, crf 23, 885KB. Jake
-                is having a longer reel cut ON BLACK to
-                design-dna/reel-spec.md; it drops in here with its poster
-                and nothing else changes. Until it lands, the v1 cut's
-                own baked-in type is in the frame. */}
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              poster="/dark/reel-film-poster.jpg"
-              preload="metadata"
-              aria-label="Recent Executive AI Solutions client work"
-            >
-              <source src="/dark/reel-film.mp4" type="video/mp4" />
-            </video>
-          </div>
-
           <main className="dr-main wrap">
+            {/* THE FIELD: three columns, the reel in the middle one. The
+                h1 is `display: contents` so its two lines can take the
+                outer columns while it stays ONE heading for a reader. */}
             <div className="dr-hero">
-              {/* THE STATEMENT, big, in the top of the screen. */}
-              <h1 className="t-hero dr-left">
+              <h1 className="t-hero dr-h1">
                 {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im
                     shifting more towards design and crms than ads
                     right now" — the statement names the two things he
-                    leads with, in that order; ads are not in it.
-                    Short over long on purpose: that step is what
-                    keeps the block from reading as a slab. */}
-                <span className="dr-line">
+                    leads with, in that order; ads are not in it. Read
+                    left to right across the reel: the claim, the
+                    object, the promise. */}
+                <span className="dr-line dr-l1">
                   <span className="sweep">Design that sells,</span>
                 </span>
-                <span className="dr-line">
+                <span className="dr-line dr-l2">
                   <span className="sweep">systems that follow up.</span>
                 </span>
               </h1>
 
-              {/* THE LABEL ROW sits ON the edge — the last thing on the
-                  ground before the film — the meta line at the left and
-                  the one door at the right, on one baseline. */}
-              <div className="dr-labels">
-                <p className="dr-cap-meta t-meta">
-                  Websites &middot; Automation &middot; Google Ads
-                </p>
-                <Link href="/contact" className="dr-herocta dr-edge t-cta">
-                  Book the call
-                </Link>
+              <Link href="/contact" className="dr-herocta dr-edge t-cta">
+                Book the call
+              </Link>
+
+              {/* THE REEL, the object in the middle. .dr-screen holds the
+                  grid cell; the reel inside it is what scales — a scaled
+                  element cannot be its own ruler. */}
+              <div className="dr-screen">
+                <div className="dr-hero-reel">
+                  {/* ⚠ 1920, not 1280: grown, the well is the whole
+                      screen and a 1280 source is soft in it. Six seconds
+                      (t=4.3-10.4, the dark half of the source), 30fps,
+                      crf 23, 885KB. Jake is having a longer reel cut ON
+                      BLACK to design-dna/reel-spec.md; it drops in here
+                      with its poster and nothing else changes. Until it
+                      lands, the v1 cut's own baked-in type is in the
+                      frame. */}
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    poster="/dark/reel-film-poster.jpg"
+                    preload="metadata"
+                    aria-label="Recent Executive AI Solutions client work"
+                  >
+                    <source src="/dark/reel-film.mp4" type="video/mp4" />
+                  </video>
+                </div>
               </div>
             </div>
           </main>
+
+          {/* THE MARQUEE, along the fold and cropped by it. The meta line
+              — the three things sold — promoted from a 12px caption to
+              the biggest type on the page, in motion. Two identical
+              sets; the track travels exactly one set and starts over,
+              so the loop has no seam. The second set is decoration and
+              is hidden from readers. */}
+          <div className="dr-marquee" aria-label="Websites, automation, Google Ads">
+            <div className="dr-marquee-track">
+              {[0, 1].map((i) => (
+                <div className="dr-marquee-set" key={i} aria-hidden={i === 1}>
+                  <span>Websites</span>
+                  <span>Automation</span>
+                  <span>Google Ads</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
