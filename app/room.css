@@ -110,11 +110,9 @@
      ~9.8x the size, ~80% of the column at every desktop width. The
      9.4svh cap it replaces was sized for the layout where a reel card
      shared the screen with the words; that height is the words' now. */
-  /* re-sized for the drop cap: the row is chip (3.7em: two lines of
-     1.04 at 16:9) + gap (.3em) + the longest line (9.8em) = 13.8em, and
-     it has to fit the 1290 measure — 92px at 1440, 14svh still binding
-     on a short screen */
-  --hero-fs: clamp(2rem, min(6.4vw, 14svh), 5.75rem);
+  /* the statement over the card: 7.4vw fills the measure at 1440
+     (106px), 12svh keeps the card most of the screen on a short one */
+  --hero-fs: clamp(2rem, min(7.4vw, 12svh), 6.75rem);
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
   --nav-pad: clamp(13px, 2.4svh, 21px);
@@ -370,7 +368,9 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    reached the reel, and the reel scrolled off still the size of a word. */
 .dr-hero-wrap { position: relative; --p: clamp(0, var(--hero-p, 0), 1); }
 .dr-stage {
-  position: relative; z-index: 4;
+  /* 6, above the dock (5): the reel paints UNDER the words and the card's
+     copy, over the ground — the stage has no background of its own */
+  position: relative; z-index: 6;
   min-height: 100svh; display: flex; flex-direction: column;
   /* the fixed rail is out of flow, so the hero reserves its height here */
   padding-top: var(--nav-space);
@@ -554,33 +554,28 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-navcta:hover { background: var(--surface-3); }
 .dr-navcta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 
-/* main: the whole first screen under the nav; the statement centred in
-   it with the chip in its line, a breath above centre so the rating
-   card has the lower right. */
+/* main: the whole first screen under the nav. The headline sits high;
+   the card takes everything under it down to the gutter above the fold,
+   and the headline's second line runs across the card's top edge. */
 .dr-main {
   flex: 1; min-height: 0; display: flex; flex-direction: column;
-  padding-block: 0 clamp(56px, 9svh, 96px);
+  padding-block: clamp(16px, 3svh, 36px) clamp(12px, 1.6vw, 28px);
 }
 .dr-hero {
   position: relative;
   flex: 1; min-height: 0;
   display: flex; flex-direction: column; align-items: center;
-  justify-content: center; text-align: center;
-  /* the gaps are the objects' own (the lead's and the door's margins),
-     not one number between everything */
+  justify-content: flex-start; text-align: center;
   gap: 0;
 }
-.dr-hero > * { position: relative; z-index: 1; }
-/* the title is a ROW: the chip, then the two lines beside it, the lines
-   left-aligned against the chip and the whole row centred in the hero */
-.dr-h1 { margin: 0; display: flex; align-items: stretch; gap: .3em;
-         text-align: left; }
-.dr-lines { display: block; min-width: 0; }
+.dr-h1 { margin: 0; position: relative; z-index: 2; }
 .t-hero .dr-line > span { white-space: nowrap; }
-/* the description: one sentence at READING size (.t-body's own 18px,
-   1.62) under a 107px claim — three sizes in the column, not two small
-   grey things at one size — muted a step, a fib-3 off the claim */
-.dr-sub { max-width: 46ch; margin: var(--fib-3) 0 0; color: var(--ink-2); }
+/* ON THE CARD: the description lower left, the door lower right, the
+   rating a badge at the top right — the pizza shot's copy block, tag and
+   button on the picture. Ink on the veiled film; they fade as the veil
+   lifts (the exit rules below). */
+.dr-sub { position: absolute; left: var(--fib-5); bottom: var(--fib-5);
+          max-width: 38ch; margin: 0; text-align: left; color: var(--ink); }
 .dr-line { overflow: hidden; transform: skewX(-4deg); transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
 .dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
@@ -593,16 +588,21 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    It carries a faint surface of its own so the line has a card in it
    from the first paint, before the reel has been measured onto it; the
    reel covers it the moment it lands. */
+/* THE CARD — the reel's rest position, sized by its HEIGHT (flex: 1 in
+   the column) so its bottom lands on the gutter above the fold at every
+   viewport; 16:9, so ~972 x 547 at 1440x900, three quarters of the
+   screen wide. It rises under the headline by half a line, so the
+   second line crosses its top edge. It carries the description, the
+   door and the rating; the reel is transformed onto it underneath (the
+   dock is z 5, the stage 6). Its own faint surface is there from the
+   first paint and goes when the reel has been measured onto it. */
 .dr-slot {
-  /* as tall as both lines (the row stretches it), 16:9, so its width
-     follows the type: 340 x 191 at 92px. Square — it is an object beside
-     the type, not a letter in it, so the line's skew does not apply */
-  display: block; flex: 0 0 auto; align-self: stretch;
-  aspect-ratio: 16 / 9; width: auto;
-  border-radius: 10px; background: var(--surface-2);
+  position: relative; z-index: 1;
+  flex: 1 1 auto; min-height: 0;
+  aspect-ratio: 16 / 9; width: auto; max-width: 100%;
+  margin-top: calc(var(--hero-fs) * -0.55);
+  border-radius: var(--radius-panel); background: var(--surface-2);
 }
-/* once the reel has been measured onto it the slot is layout only — its
-   surface would show the moment the reel leaves for its dock */
 .dr-hero-wrap[data-ready] .dr-slot { background: transparent; }
 
 /* THE WORDS LEAVE. No pin — the whole screen scrolls away at scroll's
@@ -629,8 +629,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    chip: an ink pill with the ground as its label (16:1). One rule, both
    rooms: in ?dark it is the white pill with black type. */
 .dr-herocta {
+  position: absolute; right: var(--fib-5); bottom: var(--fib-5);
   display: inline-flex; align-items: center; border-radius: 999px;
-  padding: 13px 24px; margin-top: var(--fib-4);
+  padding: 13px 24px;
   text-decoration: none; white-space: nowrap;
   color: var(--void); background: var(--ink);
   --glint-t: 4.5s;
@@ -651,7 +652,10 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    until the count is real. A white card on the light ground; light
    rooms carry depth in shadow (decisions.md, 2026-09-08). */
 .dr-rating {
-  position: absolute; right: var(--fib-5); bottom: clamp(32px, 6svh, 64px);
+  /* below the headline's crossing (half a line into the card), so the
+     'p' of "follow up" never lands on the badge */
+  position: absolute; right: var(--fib-4);
+  top: calc(var(--hero-fs) * .55 + var(--fib-4));
   z-index: 2;
   display: flex; align-items: center; gap: var(--fib-3);
   padding: 14px 20px 14px 18px; border-radius: 18px;
@@ -763,7 +767,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-hero { justify-content: flex-start; padding-top: var(--fib-5); }
   .dr-main { padding-bottom: var(--fib-5); }
   .t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
-  .dr-h1 { display: block; text-align: center; }
+  /* the card is a plain block on the phone: the words flow in it, the
+     reel is the block after it */
+  .dr-slot { aspect-ratio: auto; margin-top: var(--fib-4); background: transparent;
+             display: flex; flex-direction: column; align-items: center; gap: var(--fib-3); }
+  .dr-sub, .dr-herocta, .dr-rating { position: static; text-align: center; }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
   /* on a phone the same idea, scaled: bled off the left, reaching past
@@ -889,19 +897,25 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   width: 100%; height: 100%;
   object-fit: cover;
 }
+/* THE VEIL — the film washed toward the ground at rest, so the ink on it
+   reads (in a light room "dimmed" is washed, not darkened), lifting with
+   the grow: .74 of the ground at rest, 0 when the reel is the screen.
+   One composited plane whose opacity moves; nothing repaints. */
+.dr-hero-reel::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: var(--void);
+  opacity: calc(.74 * (1 - var(--p, 0)));
+}
 @media (max-width: 900px) {
   /* NO GROW ON THE PHONE (itsjay's is desktop-only too): the line reads
      without its slot, and the reel is simply the block after the hero. */
-  .dr-slot { display: none; }
   .dr-hero-reel { translate: none; scale: none; border-radius: var(--fib-3);
                   opacity: 1; animation: none; }
+  .dr-hero-reel::after { opacity: 0; }
   .dr-dock { padding: 0 var(--fib-3); }
   .dr-hero-shade { display: none; }
   .dr-hero-reel { box-shadow: var(--lift); }
-  /* the card is a child of the stage, not of main, so main's padding is
-     not between it and the dock — it carries its own air below */
-  .dr-rating { position: static; align-self: center;
-               margin: var(--fib-3) auto var(--fib-5); }
+  .dr-rating { margin: 0 auto var(--fib-4); }
   .dr-h1, .dr-sub, .dr-herocta, .dr-rating { opacity: 1; }
   .dr-sub { font-size: var(--fs-body); }
 }
@@ -909,8 +923,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   /* the engine publishes --hero-p as 1: the reel sits in its dock and
      the slot would be an empty card in the line — hide it, and the
      page reads as the static version of itself */
-  .dr-slot { display: none; }
+  /* the reel is in its dock; the card keeps its own surface so the
+     words on it sit on something */
+  .dr-hero-wrap[data-ready] .dr-slot { background: var(--surface-2); }
   .dr-hero-reel { opacity: 1; animation: none; }
+  .dr-hero-reel::after { opacity: 0; }
   .dr-hero-shade { opacity: 1; animation: none; }
   /* the engine publishes --hero-p as 1: without these the claim and the
      card sit at 8% on the first screen with the reel docked below it */

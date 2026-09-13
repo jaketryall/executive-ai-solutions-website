@@ -166,15 +166,16 @@ export default function DarkRoom() {
           the video grow. i want a 5 star review thing somewhere too and
           we would be the white background version of course."
 
-          Then: "maybe a small description as well like acquisition.com"
-          — one sentence under the statement, theirs measured live —
-          and, after an afternoon with the reel as a big card under the
-          words instead: "i still want the chip in the title though, so
-          it being smaller." So: one centred statement with the REEL
-          sitting INSIDE it, a small card between two words of the
-          second line; the description, the one door under it; a rating
-          card floating at the lower right. The bigger reel is what the
-          scroll gives you. On scroll, itsjay's grow (decodes/itsjay.md
+          Then a day of it — the chip in the title, the big card, the
+          drop cap — and, with the Hyperactive pizza shot (dribbble
+          25319896: a headline across the top of a big picture, words
+          ON it): "im thinking the video could be dimmed so you get the
+          text on top of it and when you scroll it grows and undims."
+          So: the statement centred, its second line across the top of
+          a big VEILED film card that takes the rest of the screen; the
+          description and the one door ON the card, the rating a badge
+          on it; on scroll the reel grows out of the card into the dock
+          and the veil lifts with it. On scroll, itsjay's grow (decodes/itsjay.md
           §5.3, measured): the reel's real home is a full-width block in
           the section right after the hero; at rest it is transformed UP
           into the chip in the line (scale ~0.13, translated to its
@@ -209,64 +210,61 @@ export default function DarkRoom() {
           <main className="dr-main wrap">
             <div className="dr-hero">
               <h1 className="t-hero dr-h1">
-                {/* THE CHIP, AS A DROP CAP (Jake: "video is hard to see" —
-                    at a word's height the film was a 96px thumbnail). It
-                    is the FIRST object in the title, two lines tall, the
-                    statement set beside it: the reel is the title's
-                    initial, 2.3x the size it had inline, and the headline
-                    block runs the whole measure. Still the reel's rest
-                    position: it lives in the dock and is measured onto
-                    this. Decoration; the reel carries the label. */}
-                <span className="dr-slot" aria-hidden />
-                <span className="dr-lines">
-                  {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im
-                      shifting more towards design and crms than ads
-                      right now" — the statement names the two things he
-                      leads with, in that order; ads are not in it. No
-                      period: a display line ends on its last word. */}
-                  <span className="dr-line">
-                    <span className="sweep">Design that sells,</span>
-                  </span>
-                  <span className="dr-line">
-                    <span className="sweep">systems that follow up</span>
-                  </span>
+                {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im
+                    shifting more towards design and crms than ads
+                    right now" — the statement names the two things he
+                    leads with, in that order; ads are not in it. No
+                    period: a display line ends on its last word. Its
+                    second line sits ON the top of the veiled film. */}
+                <span className="dr-line">
+                  <span className="sweep">Design that sells,</span>
+                </span>
+                <span className="dr-line">
+                  <span className="sweep">systems that follow up</span>
                 </span>
               </h1>
-              {/* THE DESCRIPTION — one sentence, the way acquisition.com
-                  puts one under its headline (Jake, 2026-09-13: "maybe a
-                  small description as well like acquisition.com"). The
-                  sub the band hero carried, kept: it says what the two
-                  things ARE. */}
-              <p className="t-body dr-sub">
-                We build your site and wire up the system behind it, so every
-                call, form and text gets answered in seconds instead of days.
-              </p>
-              <Link href="/contact" className="dr-herocta dr-edge t-cta">
-                Book the call
-              </Link>
+
+              {/* THE CARD — the reel's rest position, and the surface the
+                  words sit on. It takes the rest of the first screen
+                  under the headline, which overlaps its top edge (the
+                  Hyperactive pizza shot, dribbble 25319896: the headline
+                  across the top of the picture). The reel lives in the
+                  dock and is measured onto this box; VEILED at rest so
+                  the ink on it reads, and the veil lifts as it grows —
+                  Jake: "the video could be dimmed so you get the text on
+                  top of it and when you scroll it grows and undims." */}
+              <div className="dr-slot">
+                <p className="t-body dr-sub">
+                  We build your site and wire up the system behind it, so every
+                  call, form and text gets answered in seconds instead of days.
+                </p>
+                <Link href="/contact" className="dr-herocta dr-edge t-cta">
+                  Book the call
+                </Link>
+
+                {/* THE RATING, as a badge on the card. ⚠ Renders only
+                    when lib/proof.ts carries the real count — the site
+                    does not show proof it cannot back. */}
+                {GOOGLE_REVIEWS.count > 0 && (
+                  <a
+                    className="dr-rating"
+                    href={GOOGLE_REVIEWS.url || undefined}
+                    target={GOOGLE_REVIEWS.url ? "_blank" : undefined}
+                    rel={GOOGLE_REVIEWS.url ? "noopener noreferrer" : undefined}
+                    aria-label={`Rated ${GOOGLE_REVIEWS.rating.toFixed(1)} on Google from ${GOOGLE_REVIEWS.count} reviews`}
+                  >
+                    <span className="dr-stars" aria-hidden>
+                      {"★★★★★"}
+                    </span>
+                    <span className="dr-rating-l">
+                      <b>{GOOGLE_REVIEWS.rating.toFixed(1)} on Google</b>
+                      <span>{GOOGLE_REVIEWS.count} client reviews</span>
+                    </span>
+                  </a>
+                )}
+              </div>
             </div>
           </main>
-
-          {/* THE RATING CARD, lower right, where the reference floats its
-              app card. ⚠ Renders only when lib/proof.ts carries the real
-              count — the site does not show proof it cannot back. */}
-          {GOOGLE_REVIEWS.count > 0 && (
-            <a
-              className="dr-rating"
-              href={GOOGLE_REVIEWS.url || undefined}
-              target={GOOGLE_REVIEWS.url ? "_blank" : undefined}
-              rel={GOOGLE_REVIEWS.url ? "noopener noreferrer" : undefined}
-              aria-label={`Rated ${GOOGLE_REVIEWS.rating.toFixed(1)} on Google from ${GOOGLE_REVIEWS.count} reviews`}
-            >
-              <span className="dr-stars" aria-hidden>
-                {"★★★★★"}
-              </span>
-              <span className="dr-rating-l">
-                <b>{GOOGLE_REVIEWS.rating.toFixed(1)} on Google</b>
-                <span>{GOOGLE_REVIEWS.count} client reviews</span>
-              </span>
-            </a>
-          )}
         </div>
 
         {/* THE DOCK — where the reel actually lives: a full-width block
