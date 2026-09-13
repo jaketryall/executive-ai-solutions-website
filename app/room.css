@@ -565,7 +565,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   display: inline-block; vertical-align: -0.2em;
   height: 1.08em; aspect-ratio: 16 / 9;
   margin-inline: 0.05em;
-  border-radius: 0.24em; background: var(--surface-2);
+  border-radius: 7px; background: var(--surface-2);
   transform: skewX(4deg);
 }
 /* once the reel has been measured onto it the slot is layout only — its
@@ -805,11 +805,17 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   width: 100%; aspect-ratio: 16 / 9;
   overflow: hidden;
   background: var(--surface-1);
-  --r: var(--radius-panel);
   --s: calc(var(--s0, 1) + (1 - var(--s0, 1)) * var(--p, 0));
   translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)));
   scale: var(--s);
-  border-radius: calc(var(--r) / var(--s));
+  /* THE CORNERS ARE SIZED TO THE OBJECT, not held at one number (Jake:
+     "the video has too much of rounded corners"): 24px divided by the
+     scale read as 24px on a 91px chip — a quarter of its height. The
+     VISUAL radius now runs from --r0 on the chip to --r1 at the dock,
+     and is divided by the scale so the element renders it at exactly
+     that size whatever its scale is. */
+  --r0: 7px; --r1: var(--radius-panel);
+  border-radius: calc((var(--r0) + (var(--r1) - var(--r0)) * var(--p, 0)) / var(--s));
   transform-origin: 50% 50%;
   will-change: transform;
   /* unseen until it has been measured onto the slot, then it arrives with
