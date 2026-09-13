@@ -163,16 +163,19 @@ export default function DarkRoom() {
           the video grow. i want a 5 star review thing somewhere too and
           we would be the white background version of course."
 
-          Then, seeing it: "need to find a way to do the video bigger
-          and maybe a small description as well like acquisition.com."
-          So the reel stops being a word: one centred statement, one
-          small description under it the way acquisition.com does, the
-          one door, and the REEL as a big card beneath them with its
-          bottom on the fold — about half the screen wide — and a rating
-          card floating at the lower right beside it. On scroll, itsjay's grow (decodes/itsjay.md
+          Then: "maybe a small description as well like acquisition.com"
+          — one sentence under the statement, theirs measured live —
+          and, after an afternoon with the reel as a big card under the
+          words instead: "i still want the chip in the title though, so
+          it being smaller." So: one centred statement with the REEL
+          sitting INSIDE it, a small card between two words of the
+          second line; the description, the one door under it; a rating
+          card floating at the lower right. The bigger reel is what the
+          scroll gives you. On scroll, itsjay's grow (decodes/itsjay.md
           §5.3, measured): the reel's real home is a full-width block in
           the section right after the hero; at rest it is transformed UP
-          onto the card's slot (scale ~0.56, translated to its centre),
+          into the chip in the line (scale ~0.13, translated to its
+          centre),
           and across the first 0.9 viewports of scroll it scales and
           travels LINEARLY back to where it lives — so it grows out of
           the hero, takes the screen, and docks. No
@@ -214,7 +217,17 @@ export default function DarkRoom() {
                   <span className="sweep">Design that sells,</span>
                 </span>
                 <span className="dr-line">
-                  <span className="sweep">systems that follow up.</span>
+                  <span className="sweep">
+                    systems that{" "}
+                    {/* THE CHIP (Jake: "i still want the chip in the
+                        title though, so it being smaller"): the reel's
+                        rest position is a card in the line, between two
+                        words, the way the HeartBloom reference puts its
+                        image. The reel lives in the dock and is measured
+                        onto this. Decoration; the reel carries the label. */}
+                    <span className="dr-slot" aria-hidden />{" "}
+                    follow up.
+                  </span>
                 </span>
               </h1>
               {/* THE DESCRIPTION — one sentence, the way acquisition.com
@@ -229,11 +242,6 @@ export default function DarkRoom() {
               <Link href="/contact" className="dr-herocta dr-edge t-cta">
                 Book the call
               </Link>
-              {/* THE SLOT: the reel's rest position — a big card under the
-                  words, its bottom on the fold — laid out here so the
-                  reel, which lives in the dock below, can be measured
-                  onto it. Decoration; the reel carries the label. */}
-              <div className="dr-slot" aria-hidden />
             </div>
           </main>
 
