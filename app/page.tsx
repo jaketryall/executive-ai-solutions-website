@@ -105,14 +105,15 @@ export default function DarkRoom() {
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
 
-      {/* §01 · THE SCREENING. The first screen is the reel and nothing
-          else; the one line and the one door sit under it. See the block
-          of the same name in room.css for what this retired and why.
+      {/* §01 · THE SCREENING. The first screen is the reel, grown to fill
+          it, with the caption on its lower band where Apple puts theirs.
+          See the block of the same name in room.css for what this
+          retired and why.
 
           .dr-screen carries the --recede track: its TOP edge, from where
           it rests under the nav (0.1) to 60% of a viewport above it
-          (-0.6) — 0.7vh of scroll, the stretch across which the caption
-          arrives. (Top, not bottom: see the ⚠ under THE RECEDE.)
+          (-0.6) — 0.7vh of scroll. (Top, not bottom: see the ⚠ under
+          THE RECEDE in room.css.)
           The track is on the wrapper because the reel inside it is the
           thing that scales, and a transformed element cannot be its own
           ruler. */}
@@ -136,8 +137,10 @@ export default function DarkRoom() {
                     was soft, and a soft film is not dramatic, it is
                     cheap. Six seconds (t=4.3-10.4, the dark half of the
                     source), 30fps, crf 23, 885KB. Jake is cutting a
-                    longer reel to design-dna/reel-spec.md; it drops in
-                    here with its poster and nothing else changes. */}
+                    longer reel ON BLACK to design-dna/reel-spec.md; it
+                    drops in here with its poster and nothing else
+                    changes. Until it lands, the v1 cut's own baked-in
+                    type sits under the caption at the lower left. */}
                 <video
                   autoPlay
                   loop
@@ -150,29 +153,42 @@ export default function DarkRoom() {
                   <source src="/dark/reel-film.mp4" type="video/mp4" />
                 </video>
               </div>
-            </div>
 
-            <div className="dr-left">
-              <h1 className="t-hero">
-                {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im shifting
-                    more towards design and crms than ads right now" — so
-                    the statement names the two things he now leads with,
-                    in that order, and ads are not in it. The second line
-                    is the longer one on purpose: short-over-long is the
-                    shape that keeps the block from reading as a slab. */}
-                <span className="dr-line">
-                  <span className="sweep">Design that sells,</span>
-                </span>
-                <span className="dr-line">
-                  <span className="sweep">systems that follow up.</span>
-                </span>
-              </h1>
-            </div>
-
-            <div className="dr-aside">
-              <Link href="/contact" className="dr-herocta dr-edge t-cta">
-                Book the call
-              </Link>
+              {/* THE CAPTION, where Apple puts it (apple.com/iphone-18-pro,
+                  measured 2026-09-12 at 1440x900): ON the film, in its
+                  lower band. Left: a 32px name, an 80px statement, a 14px
+                  meta line, inset 90px from the edge with the meta's
+                  baseline 64px above the film's bottom. Right, on the
+                  same baseline: the price and the one blue pill. Same
+                  four objects here, the room's own type and the room's
+                  own pill; below 901px it moves under the film. */}
+              <div className="dr-caption">
+                <div className="dr-cap-l">
+                  <p className="dr-cap-name t-name">Executive AI Solutions</p>
+                  <h1 className="t-hero">
+                    {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im
+                        shifting more towards design and crms than ads
+                        right now" — the statement names the two things
+                        he leads with, in that order; ads are not in it.
+                        Short over long on purpose: that step is what
+                        keeps the block from reading as a slab. */}
+                    <span className="dr-line">
+                      <span className="sweep">Design that sells,</span>
+                    </span>
+                    <span className="dr-line">
+                      <span className="sweep">systems that follow up.</span>
+                    </span>
+                  </h1>
+                  <p className="dr-cap-meta t-meta">
+                    Websites &middot; Automation &middot; Google Ads
+                  </p>
+                </div>
+                <div className="dr-cap-r">
+                  <Link href="/contact" className="dr-herocta dr-edge t-cta">
+                    Book the call
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </main>

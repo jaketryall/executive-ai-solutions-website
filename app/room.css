@@ -516,18 +516,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    breath below the caption before About. */
 .dr-main { flex: 1; min-height: 0; display: flex; flex-direction: column;
            padding-block: 0 clamp(56px, 9svh, 120px); }
-/* THE SCREEN, THEN THE CAPTION. Row 1 is the film, both columns, edge
-   to edge. Row 2 is the statement and, beside it, the one door — the
-   two-column band the room has always had, minus everything that was
-   only there to be read. */
+/* ONE ROW: the screen, with the caption on it. The grid is kept for the
+   phone, where the caption steps out from under the film into a row of
+   its own. */
 .dr-hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, min(38ch, 33%));
-  grid-template-rows: auto auto;
-  column-gap: clamp(var(--fib-4), 6.2vw, var(--fib-6));
-  row-gap: clamp(var(--fib-5), 7svh, var(--fib-7));
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
   flex: 1; min-height: 0;
 }
 .dr-hero > * { position: relative; z-index: 1; }
@@ -542,43 +538,75 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    edge, which is the edge being measured — so the ruler reads true even
    while it is still arriving.) */
 .dr-screen {
-  grid-column: 1 / -1; grid-row: 1;
-  /* ALMOST full screen, with small gaps at the edges — §02's rule, in
-     Jake's words (decisions.md 2026-09-08): a surface that keeps its
-     edges and its radius never stops being an object. Same gutter as
-     §02's grown end, same constant radius family as §05's card, so the
-     hero and the two big cards below it are one vocabulary. */
-  --gut: clamp(12px, 1.6vw, 28px);
-  margin-inline: calc(50% - 50vw + var(--gut));
-  /* the whole screen under the nav, less the air the nav floats on */
-  height: calc(100svh - var(--nav-space) - var(--fib-3));
+  grid-column: 1; grid-row: 1; position: relative;
+  /* FULL SCREEN (Jake: "have the video grow and fill full screen"):
+     edge to edge and down to the fold. The corners keep §05's constant
+     radius — a surface that keeps its radius never stops being an object
+     (Jake, decisions.md 2026-09-08), and the two cream triangles it
+     leaves at the fold are the same ones landonorris.com's hero leaves. */
+  margin-inline: calc(50% - 50vw);
+  height: calc(100svh - var(--nav-space));
   min-height: 0;
 }
-.dr-left  { grid-column: 1; grid-row: 2;
-            /* ⚠ the headline sizes off THIS box (see .t-hero's cqw cap),
-               so it has to be a container. Nothing may go on its own
-               padding in cqw — that resolves against the viewport. */
-            container-type: inline-size; }
-.dr-aside { grid-column: 2; grid-row: 2;
-            display: flex; justify-content: flex-end;
-            /* OPTICAL, not geometric: the pill's box sits on the
-               statement's cap line, not its box top. A fraction of the
-               type size, so it tracks every breakpoint. */
-            padding-top: calc(.17 * var(--hero-fs)); }
+/* ── THE ENTRANCE — the screen grows to fill the screen ──────────
+   Once, on load: the film comes up from 78% and nothing, about its own
+   CENTRE, and grows until it meets all four edges — 1300ms on the
+   structure curve, long, because it is the only thing moving and the
+   whole first screen is it. The caption lands on it after it has
+   settled (text after geometry). Hidden until the room is lit, like
+   every entrance here. scale, not width or clip — see THE RECEDE.
 
-/* ── THE ENTRANCE — the screen opens ─────────────────────────────
-   Once, on load: the film comes up from 88% and nothing, anchored on its
-   BOTTOM edge, so it rises into place under the nav rather than zooming
-   at you. 1100ms on the structure curve — long, because it is the only
-   thing moving and the whole first screen is it. Hidden until the room
-   is lit, like every entrance here. scale, not width or clip — see THE
-   RECEDE for why. */
-.dr-screen { opacity: 0; transform-origin: 50% 100%; }
-.dr-lit .dr-screen { animation: dr-screen-in 1100ms var(--ease-structure) 60ms both; }
+   ⚠ Centre origin here, bottom origin on the recede, and they do not
+   fight: the entrance is on the WRAPPER, the recede on the child. While
+   the wrapper is still growing its top edge sits low, so the ruler
+   reads below 0 and clamps — nothing recedes during the entrance. */
+.dr-screen { opacity: 0; transform-origin: 50% 50%; }
+.dr-lit .dr-screen { animation: dr-screen-in 1300ms var(--ease-structure) 60ms both; }
 @keyframes dr-screen-in {
-  from { opacity: 0; scale: .88; }
+  from { opacity: 0; scale: .78; }
   to   { opacity: 1; scale: 1; }
 }
+
+/* ── THE CAPTION ─────────────────────────────────────────────────
+   Apple's placement (see page.tsx): the film's lower band, name over
+   statement over meta at the left, the one door at the right, both on
+   the meta's baseline. It sits in the SCREEN, not the reel, so it holds
+   its size while the picture recedes behind it — the words stay, the
+   picture goes, which is a depth cue the old copy-dims-and-leaves never
+   managed. Its ink is pinned light: the film is black whichever room
+   we are in. Measured on #0a0a0b — name 17.7:1, statement (sweep base
+   #d6d6da) 13.4:1, meta #a9a9ae 8.4:1. */
+.dr-caption {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+  padding: 0 clamp(var(--fib-4), 6.25vw, 90px) clamp(40px, 7svh, 64px);
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: var(--fib-5);
+  --ink: #f5f5f7; --ink-2: #d4d4d8; --ink-3: #a9a9ae; --ink-4: #a9a9ae;
+  pointer-events: none;
+}
+.dr-caption a { pointer-events: auto; }
+/* the door on the film is pinned too: the room's pill reads --surface-2
+   and --ink, which on the film would be a dark pill in the dark room and
+   a white pill with WHITE type in the light one (measured: the label
+   vanished). White pill, ink type, in both rooms — the only pure-white
+   surface on the first screen, so the action wins. */
+.dr-caption .dr-herocta { background: #ffffff; color: #0a0a0b; }
+.dr-caption .dr-herocta:hover { background: #e7e7ea; }
+.dr-cap-l { min-width: 0; flex: 1 1 auto; container-type: inline-size; }
+.dr-cap-r { flex: 0 0 auto; }
+.dr-cap-name { margin: 0 0 .35em; color: var(--ink); }
+.dr-cap-meta { margin: .9em 0 0; color: var(--ink-3); }
+/* the name tier: Apple's 32px/600 label over the statement */
+.t-name {
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: var(--fs-lead); letter-spacing: -0.012em; line-height: 1.15;
+}
+/* the caption's own entrance: name, lines, meta, door — after the
+   screen has settled (1360ms), 100-120ms apart */
+.dr-cap-name, .dr-cap-meta { opacity: 0; }
+.dr-lit .dr-cap-name { animation: dr-fadein var(--t-enter) var(--ease-structure) 1200ms forwards; }
+.dr-lit .dr-cap-meta { animation: dr-fadein var(--t-enter) var(--ease-structure) 1620ms forwards; }
 
 /* ── THE ONE DOOR ────────────────────────────────────────────────
    The room's pill. There is no second door: the work is the film, and
@@ -593,18 +621,16 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 .dr-herocta:hover { background: var(--surface-3); }
 .dr-herocta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
-.dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 1500ms forwards; }
+.dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 1700ms forwards; }
 
-/* h1 lines mask-rise, 800ms outQuart, 120ms stagger — AFTER the screen
-   has opened (1160ms), text after geometry. On desktop the caption is
-   under the fold, so this plays unseen and the lines are simply up by
-   the time anyone scrolls to them; on the phone, where the film is
-   shorter, it is the second beat of the entrance. */
+/* h1 lines mask-rise, 800ms outQuart, 120ms stagger — after the name,
+   before the meta: the statement is the second beat of the entrance and
+   the biggest, so it gets the middle of the sequence. */
 .dr-line { overflow: hidden; transform: skewX(-4deg);
            transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
-.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1180ms forwards; }
-.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1300ms forwards; }
+.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1320ms forwards; }
+.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1440ms forwards; }
 @keyframes dr-rise { to { transform: translateY(0); } }
 /* ══ THE MARK, CENTRE STAGE ══════════════════════════════════════
    Lit from the upper left and falling to black — an object standing in the
@@ -697,15 +723,27 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 @keyframes dr-wall-wave { to { background-position: 100% 100%; } }
 
 @media (max-width: 900px) {
-  /* stacked: the screen, then the statement, then the door */
-  .dr-hero { grid-template-columns: minmax(0, 1fr);
-             grid-template-rows: auto auto auto;
-             row-gap: var(--fib-4); }
-  .dr-screen { grid-column: 1; grid-row: 1; }
-  .dr-left   { grid-column: 1; grid-row: 2; }
-  .dr-aside  { grid-column: 1; grid-row: 3; justify-content: flex-start;
-               /* stacked there is no big line beside it to sit on */
-               padding-top: 0; }
+  /* stacked: the film, then the caption under it — a 4:3 film at 366
+     wide has no lower band to write on */
+  .dr-caption { position: static; padding: var(--fib-4) var(--fib-3) 0;
+                /* stretch, not start: .dr-cap-l is a size container, and
+                   a size container has no intrinsic width to shrink to */
+                flex-direction: column; align-items: stretch;
+                gap: var(--fib-4);
+                --ink: #0a0a0b; --ink-2: #35353a; --ink-3: #67676e; --ink-4: #67676e; }
+  .dr-cap-meta { margin-top: .6em; }
+  /* the name is Apple's label-over-tagline ON the film; off it, 300px
+     under the wordmark on the same ground, it is just the wordmark twice */
+  .dr-cap-name { display: none; }
+  /* off the film, the sweep is a SHADOW crossing a light surface: the
+     light room's old inversion, kept for the one place it still applies.
+     Measured on #f2f2f4: base #35353a 10.91:1, peak #0a0a0b 17.70:1. */
+  .dr-root.dr-light .t-hero { color: #35353a; }
+  .dr-root.dr-light .t-hero .sweep {
+    background: linear-gradient(90deg, #35353a 0%, #0a0a0b 18%, #35353a 36%);
+    background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text;
+  }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
   /* on a phone the same idea, scaled: bled off the left, reaching past
@@ -756,7 +794,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
   .dr-lit .dr-screen { animation: none; opacity: 1; scale: none; }
-  .dr-lit .dr-herocta { opacity: 1; transform: none; animation: none; }
+  .dr-lit .dr-herocta,
+  .dr-lit .dr-cap-name,
+  .dr-lit .dr-cap-meta { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
   .dr-lit .dr-vignette { animation: none; opacity: .8; }
 }
@@ -821,7 +861,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 @media (max-width: 900px) {
   /* the phone's screen: still edge to edge, 4:3 — a 16:9 strip at 390
      wide is 219px of film and no kind of entrance; 4:3 is 292 */
-  .dr-screen { height: auto; aspect-ratio: 4 / 3; }
+  .dr-screen { height: auto; }
+  .dr-hero-reel { height: auto; aspect-ratio: 4 / 3; }
 }
 @media (prefers-reduced-motion: reduce) {
   /* see THE ENGINE RESOLVES above: --recede is 1 from the first paint */
@@ -1509,32 +1550,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   --edge-strong: #84848c;
 }
 
-/* ⚠ THE HEADLINE DOES NOT RIDE THE TOKENS, and it is the one object in
-   the room that does not. It is painted by a specular sweep — a
-   background gradient clipped to the glyphs with `color: transparent` —
-   and the gradient's three stops are literal light greys. Flipped, the
-   whole statement rendered light-on-light and simply was not there.
-
-   The sweep is not a colour, it is a LIGHT: a highlight travelling
-   across a dark surface. Inverted it has to become a SHADOW travelling
-   across a light one, so the stops invert with the room — the mid stop
-   goes darkest where it used to go brightest. Same motion, same 6s,
-   same 18% peak position; only what the peak means changes.
-
-   Measured on #f2f2f4: the base stop #35353a is 10.91:1 and the peak
-   #0a0a0b is 17.70:1, so the statement is never less legible than
-   running body copy at any point in the sweep. */
-@media (prefers-reduced-motion: no-preference) {
-  .dr-root.dr-light .t-hero .sweep {
-    background: linear-gradient(90deg, #35353a 0%, #0a0a0b 18%, #35353a 36%);
-    background-size: 300% 100%;
-    -webkit-background-clip: text; background-clip: text;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .dr-root.dr-light .t-hero { color: #35353a; }
-}
-.dr-root.dr-light .t-hero { color: #35353a; }
+/* THE HEADLINE DOES NOT RIDE THE TOKENS — and no longer needs to. It
+   used to invert with the room (a highlight sweeping a dark surface
+   became a shadow sweeping a light one). Now it sits on the film, which
+   is black in either room, so the sweep stays a light in both. On the
+   phone the caption steps off the film onto the ground and the
+   headline goes to ink there; see the mobile block in §01. */
 
 /* ── §02 INVERTS TOO, and it is the whole point ───────────────────
    The room's grammar is "dark everywhere, ONE lit section" — §02 is the
