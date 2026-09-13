@@ -307,53 +307,32 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   .t-hero { color: #d6d6da; }
 }
 
-/* ══ §01 COLD OPEN ═══════════════════════════════════════════════ */
+/* ══ §01 THE SCREENING ═════════════════════════════════════════════
+   Jake, 2026-09-12: "a big cinematic entrance that is the video reel,
+   with minimal text — I want the site to feel like I'm showing you what
+   I do, you aren't reading." So the first screen IS the reel: full bleed
+   under the nav, the whole viewport, nothing on it. The one line and the
+   one door sit UNDER it, the way apple.com/iphone-18-pro puts its words
+   under its film (measured 2026-09-11) — you watch, then you read the
+   caption of what you just watched.
+
+   What this retires: the band hero (statement + support beside it, reel
+   beneath), the Cosmos open (reel bottom pinned, opening upward across a
+   0.62vh hold), the chip, the sub, the second door, and the copy's race
+   against the reel. All of it existed to fit a film into a page of type;
+   the film has the screen now. git has the band at cad15c6.
+
+   NOTHING PINS. The screen leaves at scroll's rate and RECEDES as it
+   goes — see THE RECEDE on .dr-hero-reel — so the first scroll is
+   rewarded with movement into real content, not a hero holding you. */
 
 .dr-top { position: absolute; top: 0; left: 0; width: 1px; height: 1px; }
+/* the fixed rail is out of flow, so the stage reserves its height here;
+   nothing more — the film starts the moment the chrome's air ends */
 .dr-stage {
   position: relative; z-index: 4;
-  min-height: 100svh; display: flex; flex-direction: column;
-  /* the fixed rail is out of flow, so the hero reserves its height here */
+  display: flex; flex-direction: column;
   padding-top: var(--nav-space);
-}
-/* On desktop the stage is a DEFINITE height, not just a minimum. Without it
-   the grid's 1fr row has nothing to resolve against, so the long roster grew
-   the row, pushed the copy down and ran the page 69px past the fold. Mobile
-   keeps min-height, because there the page is meant to scroll. */
-@media (min-width: 901px) { .dr-stage { height: 100svh; } }
-
-/* THE PIN. Desktop only, like every pin on the reference — below 900px
-   the stage is taller than the viewport and a sticky hero would just
-   trap the copy. The wrapper is [stage + §02], so the stage stays put for
-   exactly as long as §02 takes to climb and pass, then unsticks and leaves
-   with it. z: §02 must rank ABOVE the stage inside the wrapper, or the
-   climb happens underneath the thing it is meant to cover. */
-.dr-hero-wrap { position: relative; }
-@media (min-width: 901px) {
-  .dr-stage { position: sticky; top: 0; }
-  /* ⚠ THE HOLD — the wrapper's own height, not a margin on a child.
-     It used to be `margin-top: 70svh` on whichever section climbed,
-     which meant the hero's pin length was a property of the NEXT
-     section. Nothing climbs now, so the hold belongs where it always
-     should have: on the thing being held.
-
-     0.62svh, and the number is derived rather than picked. The reel
-     needs 490px of scroll at 900 to finish opening (that rate is the one
-     Jake signed off on), and the pin should release as soon as it does —
-     a pin that outlasts its payoff is the "I scrolled and nothing
-     arrived" bounce. 490 plus a short beat is 558px, which is 0.62 of
-     the viewport, and page.tsx's window matches it exactly so --hero-p
-     hits 1 at the release and not before or after.
-
-     ⚠ MIN-HEIGHT, NOT PADDING-BOTTOM. Written as padding first, and the
-     pin stopped working entirely — measured, the stage tracked scroll
-     1:1 (top 0 → -150 → -300) while still computing `position: sticky;
-     top: 0`. A sticky child is constrained by its containing block,
-     which is the parent's CONTENT box, and padding is not in the content
-     box. So 558px of padding gave the stage exactly zero room to stick
-     in. min-height grows the content box, which is the thing the
-     constraint is actually measured against. */
-  .dr-hero-wrap { min-height: calc(100svh + 62svh); }
 }
 .wrap { max-width: 1400px; margin-inline: auto; width: 100%;
         padding-inline: var(--fib-3); }
@@ -533,180 +512,77 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 
 /* main: flex-1 + justify-end + items-end does ALL the corner composition.
    Zero absolute positioning. */
+/* main: no clearance above — the film sits against the nav's air — and a
+   breath below the caption before About. */
 .dr-main { flex: 1; min-height: 0; display: flex; flex-direction: column;
-  /* ⚠ CLEARANCE UNDER THE NAV. This was 0 — measured, the h1's top edge
-     sat exactly on the nav's bottom edge, both at y=83, so the headline
-     started the instant the chrome ended. The nav and the headline are
-     STRANGERS in the spacing system and strangers take the largest gap,
-     not none; a heading owes at least its own height of air above it. */
-           padding-block: clamp(56px, 8svh, 104px) var(--floor);
-  /* named, because the reel has to be able to cancel it — see THE FLOOR */
-  --floor: clamp(16px, 3.8svh, 34px);
-  /* THE RECEDE. See the note in page.tsx: the next section rising is a
-     depth cue bought up here, not motion down there.
-
-     The scale and the lag are both GONE. Copying the reference's recede
-     wholesale was the mistake: it works there on a photograph, and this
-     hero is mostly type — type that resizes and slides while you are
-     still reading it reads as a zoom, not as depth, and it made §02 feel
-     like it arrived too fast because the hero was running away from it.
-
-     What survives is the DIM, which was the honest half all along:
-     something moving away from the light gets darker.
-
-     ⚠ IT IS NO LONGER ON THIS ELEMENT. The dim used to sit here, on the
-     whole hero — which meant the reel faded out across the very stretch
-     where it is opening to full bleed. A thing arriving must not be
-     leaving. So the copy dims (below) and the reel does not: the reel is
-     covered instead, and being covered is a truer depth cue than fading
-     anyway — it is the climb doing the work, not an opacity. */
-
-  /* THE HERO'S OWN LEAVING — and it runs on the REEL'S clock, .32, not
-     its own .42. See the note on .dr-chip/.dr-left/.dr-aside below: the
-     copy and the reel are in a race, and a race is only fair if both
-     runners start and stop together. */
-  --lead: clamp(0, calc(var(--hero-p, 0) / .88), 1);
-
-  /* ── THE RACE, AS ONE NUMBER AND ONE RATIO ─────────────────────
-     --open is how far the reel's top edge rises. It used to live on the
-     reel, where the copy could not read it, which is exactly how the two
-     drifted 4.7x apart without anything complaining. Up here both read
-     it, so the relationship is structural instead of two constants that
-     happen to agree today.
-
-     --chase is the copy's travel AS A MULTIPLE of the reel's. That makes
-     the floor exact rather than felt: at 1.0 the copy and the reel's top
-     move in perfect lockstep and the gap between them is CONSTANT — it
-     never opens, but it can never close either. Below 1.0 the reel gains
-     on the copy and eventually runs it over. So 1.0 is not a preference,
-     it is the edge of correctness, and any value at or above it is safe
-     at every viewport without re-measuring.
-
-     1.1 (Jake: "text above is moving up too fast now"). Down from the
-     1.42 that matching Cosmos's 0.67-against-0.48 produced — their text
-     is an SVG wordmark that is meant to fly out of frame, ours is a
-     sentence somebody is still reading. 0.51px/px against their 0.67,
-     and the gap still opens by 10% of the reel's rise. */
-  --open: clamp(90px, 25svh, 260px);
-  --chase: 1.1;
-}
-
-/* A BAND, THEN THE REEL. The top row is the statement and its support
-   side by side; the bottom row is the reel, spanning both columns.
-
-   The support used to be stacked UNDER the statement, which cost twice:
-   it left the entire top-right quadrant of the frame empty, and the
-   height it took came straight out of the reel — measured at 1440x900,
-   the reel got 365px of a 900px screen. Beside the statement, the band
-   is only as tall as the headline and the reel takes the bottom half.
-
-   The support column is capped in CH, not fr: it is a paragraph, and a
-   measure is what makes a paragraph readable. The statement takes
-   whatever is left, which is what a statement should do. */
+           padding-block: 0 clamp(56px, 9svh, 120px); }
+/* THE SCREEN, THEN THE CAPTION. Row 1 is the film, both columns, edge
+   to edge. Row 2 is the statement and, beside it, the one door — the
+   two-column band the room has always had, minus everything that was
+   only there to be read. */
 .dr-hero {
   position: relative;
   display: grid;
-  /* ⚠ THE SUPPORT COLUMN IS CAPPED TWICE. 38ch is the measure — what
-     makes a paragraph readable — but a fixed 38ch at 901px wide left the
-     statement 441px and the cqw cap dropped it to 25px, smaller than the
-     PHONE renders it. 33% keeps the two columns in proportion as the band
-     narrows, and the ch cap stops the measure running away when it is
-     wide. min() of the two, so whichever is tighter wins. */
   grid-template-columns: minmax(0, 1fr) minmax(0, min(38ch, 33%));
-  /* three rows: the chip, the band, the reel */
-  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
   column-gap: clamp(var(--fib-4), 6.2vw, var(--fib-6));
-  row-gap: var(--fib-4);
-  align-items: stretch;
+  row-gap: clamp(var(--fib-5), 7svh, var(--fib-7));
+  align-items: start;
   flex: 1; min-height: 0;
 }
 .dr-hero > * { position: relative; z-index: 1; }
-/* TWO RATES IN ONE VIEW.
-   The hero was the flattest thing on the page: both columns left at
-   exactly the scroll's rate, so there was nothing for depth to be
-   measured against. The roster is the nearer object — cards stacked in
-   front of a wall — and nearer things move MORE. So it leaves faster than
-   the copy, and the gap between them opens as the hero goes.
 
-   40 and 96 against a wall already climbing at 0.1x gives three rates in
-   one viewport, which is what the reference sites have and we did not.
-   `translate` on the columns; the lines inside own `transform` for the
-   entrance and the cards own it for the focal shift. Three properties,
-   three owners, no collision. */
-/* ⚠ THE CHIP IS IN THIS GROUP. It left .dr-left when it took its own
-   grid row, and went with it the only reason it was leaving — so it sat
-   at full strength while the headline beside it faded to 8%. Everything
-   in the band leaves together or the band is not one object.
-
-   ── 320px, UP FROM 48, AND IT IS THE WHOLE FIX ────────────────────
-   Jake: "the video goes over the text above it — how does cosmos get
-   around this." Measured on cosmos.studio at 1440x900, tracking their
-   wordmark's bottom edge against their video's top:
-
-       scrollY     text bottom     video top      gap
-             0             416           528      112
-           300             164           372      208
-           600              13           240      227
-
-   THE GAP NEVER CLOSES. It OPENS. Their header is pinned for ~600px and
-   inside it the text travels up at 0.67px per px of scroll while the
-   video's top rises at 0.48 — the text is leaving faster than the video
-   is growing, so the video cannot catch it. There is no clip, no mask,
-   no z-index trick and nothing pushing anything: it is two rates, and
-   the bigger one belongs to the thing in front.
-
-   Ours had it backwards. The copy moved 48px while the reel's top rose
-   225 — the reel travelled 4.7x further than the thing it was chasing,
-   so of course it ran it over.
-
-   Matched to their numbers rather than guessed. Over the shared window
-   (0.32 of a 1.7vh track = 490px of scroll at 900):
-       copy      320px / 490 = 0.65px/px   (Cosmos: 0.67)
-       reel top  225px / 490 = 0.46px/px   (Cosmos: 0.48)
-   Same relationship, same slack, same direction. */
-.dr-chip, .dr-left, .dr-aside {
-  translate: 0 calc(var(--lead, 0) * var(--open) * var(--chase) * -1);
-  /* squared, so the copy holds nearly full strength while you are still
-     reading it and the fade only bites once it is genuinely leaving */
-  opacity: calc(1 - .92 * var(--lead, 0) * var(--lead, 0));
-  will-change: opacity;
+/* ── THE SCREEN ──────────────────────────────────────────────────
+   Two boxes, on purpose. .dr-screen is the RULER: it holds the grid
+   cell, the full bleed and the height, and the engine measures its
+   bottom edge for --recede. .dr-hero-reel inside it is the thing that
+   moves. A transformed element cannot be its own ruler — its rect moves
+   with it — so the track sits on the wrapper and the scale on the child.
+   (The entrance below also scales the wrapper, but about its BOTTOM
+   edge, which is the edge being measured — so the ruler reads true even
+   while it is still arriving.) */
+.dr-screen {
+  grid-column: 1 / -1; grid-row: 1;
+  /* ALMOST full screen, with small gaps at the edges — §02's rule, in
+     Jake's words (decisions.md 2026-09-08): a surface that keeps its
+     edges and its radius never stops being an object. Same gutter as
+     §02's grown end, same constant radius family as §05's card, so the
+     hero and the two big cards below it are one vocabulary. */
+  --gut: clamp(12px, 1.6vw, 28px);
+  margin-inline: calc(50% - 50vw + var(--gut));
+  /* the whole screen under the nav, less the air the nav floats on */
+  height: calc(100svh - var(--nav-space) - var(--fib-3));
+  min-height: 0;
 }
-
-/* the chip owns row 1 on its own, so the statement and the support both
-   begin on row 2 and their first lines start together */
-.dr-chip  { grid-column: 1; grid-row: 1; justify-self: start; }
-
-.dr-left  { grid-column: 1; grid-row: 2; align-self: start;
+.dr-left  { grid-column: 1; grid-row: 2;
             /* ⚠ the headline sizes off THIS box (see .t-hero's cqw cap),
                so it has to be a container. Nothing may go on its own
                padding in cqw — that resolves against the viewport. */
             container-type: inline-size; }
-/* ⚠ --copy-floor is GONE, token and all. It existed to lift the copy off a
-   floor the two columns used to share; the band is auto-height now, so
-   all it did was open a 44-138px hole between the headline and the reel
-   that the row-gap already owns. */
-
-.dr-aside { grid-column: 2; grid-row: 2; align-self: start;
-            display: flex; flex-direction: column; gap: var(--fib-4);
-            /* ⚠ OPTICAL, not geometric. Box-tops that line up do not LOOK
-               lined up when one box is 72px type and the other is 15px:
-               the big line carries far more space above its cap than the
-               small one, so the paragraph reads as sitting high. The nudge
-               is a fraction of the headline's own size, so it tracks every
-               breakpoint instead of being a number that is right once. */
+.dr-aside { grid-column: 2; grid-row: 2;
+            display: flex; justify-content: flex-end;
+            /* OPTICAL, not geometric: the pill's box sits on the
+               statement's cap line, not its box top. A fraction of the
+               type size, so it tracks every breakpoint. */
             padding-top: calc(.17 * var(--hero-fs)); }
 
-/* THE REEL SPANS THE BAND. Explicit, not auto-placed — with a second
-   column now, auto-placement would drop it into column 1 and it would
-   take half the screen. */
-.dr-hero-reel { grid-column: 1 / -1; grid-row: 3; }
+/* ── THE ENTRANCE — the screen opens ─────────────────────────────
+   Once, on load: the film comes up from 88% and nothing, anchored on its
+   BOTTOM edge, so it rises into place under the nav rather than zooming
+   at you. 1100ms on the structure curve — long, because it is the only
+   thing moving and the whole first screen is it. Hidden until the room
+   is lit, like every entrance here. scale, not width or clip — see THE
+   RECEDE for why. */
+.dr-screen { opacity: 0; transform-origin: 50% 100%; }
+.dr-lit .dr-screen { animation: dr-screen-in 1100ms var(--ease-structure) 60ms both; }
+@keyframes dr-screen-in {
+  from { opacity: 0; scale: .88; }
+  to   { opacity: 1; scale: 1; }
+}
 
-/* ── THE TWO DOORS ────────────────────────────────────────────────
-   Different commitment levels, and they must not read as a pair of
-   buttons: one is the room's pill, the other is the same rolling link
-   the nav uses, so the second door costs the eye nothing. */
-.dr-doors { display: flex; align-items: center; gap: var(--fib-4);
-            flex-wrap: wrap; }
+/* ── THE ONE DOOR ────────────────────────────────────────────────
+   The room's pill. There is no second door: the work is the film, and
+   the nav's Work link is the way into more of it. */
 .dr-herocta {
   display: inline-flex; align-items: center; border-radius: 999px;
   padding: 13px 24px; text-decoration: none; white-space: nowrap;
@@ -717,68 +593,19 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 .dr-herocta:hover { background: var(--surface-3); }
 .dr-herocta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
-.dr-door { color: var(--ink-3); text-decoration: none; font-size: var(--fs-body-s);
-           opacity: 0; transition: color var(--t-micro) var(--ease-ui); }
-.dr-door:hover { color: var(--ink); }
-.dr-door:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 4px; }
-.dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 760ms forwards; }
-.dr-lit .dr-door    { animation: dr-fadein var(--t-enter) var(--ease-structure) 860ms forwards; }
+.dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 1500ms forwards; }
 
-/* ── THE CHIP, above the statement ───────────────────────────────
-   A pill with a pill in it: the tag is the room's label type on a lighter
-   ground, the text is the thing itself, the arrow says it goes somewhere.
-   It arrives BEFORE the headline (220ms against the first line's 350ms) —
-   it is the smallest object in the frame and the eye should have finished
-   with it by the time the statement lands. */
-.dr-chip {
-  display: inline-flex; align-items: center; gap: var(--fib-2);
-  /* ⚠ it must never wrap. Left to itself it filled the statement column
-     and broke onto a second line at every width below ~1100 — a pill with
-     two lines in it has stopped being a pill. */
-  white-space: nowrap; max-width: 100%;
-  padding: 5px 16px 5px 5px; border-radius: 999px;
-  background: var(--surface-1); text-decoration: none;
-  color: var(--ink-3); font-size: var(--fs-body-s); line-height: 1.2;
-  --glint-t: 9s; --glint-delay: -3s;
-  opacity: 0;
-  transition: color var(--t-micro) var(--ease-ui),
-              background var(--t-micro) var(--ease-ui);
-}
-.dr-chip-tag { display: inline-flex; align-items: center;
-  padding: 5px 11px; border-radius: 999px;
-  background: var(--surface-3); color: var(--ink);
-  font-size: var(--fs-micro, 11px); }
-.dr-chip-txt { color: var(--ink); }
-.dr-chip-arrow { font-style: normal; color: var(--ink-4);
-  transition: transform var(--t-micro) var(--ease-ui),
-              color var(--t-micro) var(--ease-ui); }
-.dr-chip:hover { background: var(--surface-2); }
-.dr-chip:hover .dr-chip-arrow { transform: translateX(3px); color: var(--ink); }
-.dr-chip:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
-.dr-lit .dr-chip { animation: dr-fadein var(--t-enter) var(--ease-structure) 220ms forwards; }
-/* THE TAG IS THE FIRST THING TO GO. Below this the statement column is
-   too narrow for both halves, and between the two the CONTENT survives
-   and the LABEL does not — "Desert Wings Flight School →" still says
-   everything the pill is for; "Recent work →" says nothing. */
-@media (max-width: 1100px) {
-  .dr-chip-tag { display: none; }
-  .dr-chip { padding-left: 16px; }
-}
-
-/* h1 lines mask-rise, 800ms outQuart, 140ms stagger */
+/* h1 lines mask-rise, 800ms outQuart, 120ms stagger — AFTER the screen
+   has opened (1160ms), text after geometry. On desktop the caption is
+   under the fold, so this plays unseen and the lines are simply up by
+   the time anyone scrolls to them; on the phone, where the film is
+   shorter, it is the second beat of the entrance. */
 .dr-line { overflow: hidden; transform: skewX(-4deg);
            transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
-.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 350ms forwards; }
-.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 470ms forwards; }
+.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1180ms forwards; }
+.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1300ms forwards; }
 @keyframes dr-rise { to { transform: translateY(0); } }
-
-/* the measure is the COLUMN's job now (38ch on .dr-hero) and the space
-   before the doors is the flex gap, not a margin */
-.dr-sub { opacity: 0; margin: 0; }
-.dr-lit .dr-sub { animation: dr-fadein var(--t-enter) var(--ease-structure) 620ms forwards; }
-
-
 /* ══ THE MARK, CENTRE STAGE ══════════════════════════════════════
    Lit from the upper left and falling to black — an object standing in the
    room, not a logo pasted onto it. It sits BEHIND the type: the reference
@@ -869,35 +696,16 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 @keyframes dr-wall-wave { to { background-position: 100% 100%; } }
 
-/* 720p laptops. Everything above is fluid, but the stack still needs a
-   final trim to hold one viewport at the shortest realistic desktop. */
-@media (min-width: 901px) and (max-height: 780px) {
-  /* ⚠ THIS WAS A HARD `padding-block: 12px 6px` and it broke two things.
-     It left the first object 25px under the nav on a 1024x768 laptop —
-     the clearance the tall layout exists to guarantee, thrown away at the
-     one size where the screen is already tight. And it desynced the
-     reel's floor cancel, which reads --floor: the reel was pulling down
-     29px of a padding that was only 6px, so at full bleed it overshot the
-     fold. Trimmed rather than deleted, and --floor stays the single
-     number both sides read. Measured at 1024x768: the band still holds
-     one viewport with the reel at 58% of it. */
-  .dr-main { --floor: 10px;
-             padding-block: clamp(34px, 5.5svh, 56px) var(--floor); }
-}
-
 @media (max-width: 900px) {
-  /* the desktop row is pinned to the viewport so the roster can clip. Stacked,
-     the page is meant to SCROLL instead, so the row goes back to auto and the
-     roster shows every card rather than fading them away. */
+  /* stacked: the screen, then the statement, then the door */
   .dr-hero { grid-template-columns: minmax(0, 1fr);
-             grid-template-rows: auto auto auto auto; }
-  .dr-chip      { grid-column: 1; grid-row: 1; }
-  .dr-left      { grid-column: 1; grid-row: 2; align-self: auto; }
-  .dr-aside     { grid-column: 1; grid-row: 3; align-self: auto;
-                  /* stacked there is no big line beside it to line up
-                     with, so the optical nudge would just be a gap */
-                  padding-top: 0; }
-  .dr-hero-reel { grid-column: 1; grid-row: 4; }
+             grid-template-rows: auto auto auto;
+             row-gap: var(--fib-4); }
+  .dr-screen { grid-column: 1; grid-row: 1; }
+  .dr-left   { grid-column: 1; grid-row: 2; }
+  .dr-aside  { grid-column: 1; grid-row: 3; justify-content: flex-start;
+               /* stacked there is no big line beside it to sit on */
+               padding-top: 0; }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
   /* on a phone the same idea, scaled: bled off the left, reaching past
@@ -940,23 +748,18 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 
 @media (prefers-reduced-motion: reduce) {
   /* ⚠ THE ENGINE RESOLVES, IT DOES NOT SKIP. Under reduced motion every
-     scroll var is published as 1, not 0 — the finished frame. So --lead
-     is 1 here, and without these resets the hero's copy would sit at 8%
-     opacity, lifted 48px, from the moment the page loaded. This block
-     named .dr-main and the retired roster; the copy lives on .dr-left
-     and .dr-aside now. */
-  .dr-left, .dr-aside { translate: none; opacity: 1; }
+     scroll var is published as 1 — the finished frame. --recede would
+     read 1 from the first paint and the film would sit at 93%, folded
+     away before anyone had watched it. So the screen holds still — the
+     rule lives after the reel's own, below, or the cascade loses it. */
   .dr-key, .dr-key::after,
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
-  .dr-lit .dr-sub,
-  .dr-lit .dr-chip,
-  .dr-lit .dr-herocta,
-  .dr-lit .dr-door { opacity: 1; transform: none; animation: none; }
+  .dr-lit .dr-screen { animation: none; opacity: 1; scale: none; }
+  .dr-lit .dr-herocta { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
   .dr-lit .dr-vignette { animation: none; opacity: .8; }
 }
-
 /* the witness — small, dim, and after the promise it vouches for */
 .dr-vouch { display: flex; align-items: flex-start; gap: var(--fib-2);
   max-width: 46ch; padding: 0; }
@@ -969,90 +772,61 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   font-size: var(--fs-body-s); line-height: 1.5; }
 .dr-vouch figcaption { margin-top: 4px; color: var(--ink-4);
   font-family: var(--font-instrument), sans-serif; font-size: var(--fs-micro); }
+/* ── THE RECEDE — the screen folds away as you leave it ──────────
+   itsoffbrand.com's footer rise, decoded 2026-09-06: the preceding card
+   recedes (scale 1 → .952, constant radius) across the last ~230px of
+   its scroll while the thing after it holds still. Here it runs at the
+   TOP of the page instead: across the first 0.7 viewports of scroll the
+   film scales to 93% about its bottom edge — the edge the caption hangs
+   from — so its top drops away from the nav a little slower than scroll
+   while the caption arrives at scroll's rate. Two rates in one view,
+   and nothing pins.
 
-/* ── the hero's reel ─────────────────────────────────────────────
-   STILL. No parallax, no scrub, no clip-open — on record from §02,
-   "the animation on the images drags my eyes to it", and a playing reel
-   is already the most moving thing in the room. It is a dark object on
-   the void; the poster was chosen at 16/255 luminance so it sits in the
-   room rather than punching a hole in it. */
+   ⚠ THE TRACK IS THE SCREEN'S TOP EDGE, NOT ITS BOTTOM. It was the
+   bottom (fold → 30%), which is the natural way to say "as it leaves" —
+   and on a phone, where the screen is 4:3 and its bottom sits at 42% of
+   the viewport before anyone has scrolled, that read 0.83 at rest and
+   the film loaded already folded to 94%. The top edge sits at
+   --nav-space on every device (0.09-0.10 of the viewport), so a window
+   from 0.1 to -0.6 starts at ~0 everywhere and runs the same 0.7vh.
+
+   Inside it the FOOTAGE pushes IN by 5% over the same stretch. The
+   window closes and the picture keeps coming: the film is still playing
+   while it leaves, which is the "always moving" Jake asked for, and a
+   held shot that never stops is the reel skill's own law (hold ≠
+   freeze). Both are compositor-only.
+
+   ⚠ scale stays off `transform`, the box never changes and the radius is
+   CONSTANT, so nothing here re-rasters. A clip or a radius that grows re-rasters
+   every frame (measured 2026-09-06, 50ms at 2560), and the first thing
+   on the page is the one place a dropped frame cannot be afforded. */
 .dr-hero-reel {
   position: relative;
-  min-height: 0;
+  height: 100%;
   overflow: hidden;
   background: var(--surface-1);
-
-  /* ── THE GROW — Cosmos's, measured rather than remembered ────────
-     Jake: "i want our video to have the same scroll effect as the cosmos
-     one." Probed live at 1440x900, cosmos.studio's `.home-header_video`:
-
-        scrollY    width   radius    top     height   bottom
-             0      1416     32px   527.6     360.2    887.8
-           300      1416     32px   371.7     516.0    887.7
-           600      1416     32px   239.7     647.9    887.6
-
-     ⚠ THE WIDTH AND THE RADIUS NEVER CHANGE. It never goes full bleed.
-     The BOTTOM EDGE IS PINNED to the viewport — constant to a tenth of a
-     pixel across the whole run — and the video opens UPWARD: 360 → 648,
-     1.80x in height, at 0.52px of height per px of scroll, finishing
-     around 554px in. It reads as a shutter opening, not as a zoom.
-
-     So the full-bleed version this replaces is gone: the margin-inline
-     ramp, the radius resolving to 0, and the floor cancel all existed to
-     serve an effect Jake has now pointed away from. The well keeps the
-     measure and keeps its corners, and the ONLY thing that moves is where
-     its top edge is.
-
-     We get the pinned bottom for free: .dr-stage is already sticky, so
-     while the hero is held the reel's bottom is already fixed in the
-     viewport. A negative top margin is what opens it — the grid row's
-     bottom holds the box's bottom, so the margin adds its own length
-     straight onto the height and the box grows up over the copy. Which
-     is the right thing to be covered: the copy is fading out on --lead
-     across the same stretch.
-
-     RATE: --open / (0.88 x 0.62vh) = 225 / 491 = 0.46px per px at
-     1440x900, against Cosmos's 0.52. The fractions changed with the
-     window (see page.tsx) and the DISTANCE did not — 491px of scroll
-     then and now — because the point of re-deriving them was to keep the
-     feel Jake signed off on while the structure under it moved. */
-  --g: clamp(0, calc(var(--hero-p, 0) / 0.88), 1);
-  /* ⚠ --open IS CAPPED AT 25svh, and the cap is why. At 30svh the open
-     ended with the reel's top at 178 and the chip's box running 155-203,
-     so the reel cut the chip in half — and a half-covered object reads
-     as broken in a way a fully covered one never does. The rule: the top
-     edge lands ABOVE the chip or BELOW it, never inside it. Below is the
-     one that keeps the proof on screen. (The declaration itself is on
-     .dr-main; see THE RACE there.) */
-  /* --open is declared on .dr-main now, so the copy can race it */
-  margin-top: calc(var(--g) * var(--open) * -1);
-  z-index: 2;
-  border-radius: var(--fib-4);
+  border-radius: clamp(22px, 2.2vw, 32px);
+  transform-origin: 50% 100%;
+  scale: calc(1 - .07 * var(--recede, 0));
+  will-change: scale;
 }
 .dr-hero-reel video {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform-origin: 50% 50%;
+  scale: calc(1 + .05 * var(--recede, 0));
 }
 @media (max-width: 900px) {
-  /* NO GROW ON THE PHONE. The grow only makes sense against the pin and
-     the hold, and neither exists below 901px — there the hero simply
-     scrolls away, so an opening reel would just be a width twitch on the
-     way past. It stays a contained object at the measure, and the 9%
-     inset the grow starts from would only make it narrow. */
-  .dr-hero-reel { aspect-ratio: 4 / 3; border-radius: var(--fib-3);
-                  margin-top: 0;
-    /* ⚠ align-self, and it is load-bearing. .dr-hero stretches its items,
-       and a stretched box with an aspect-ratio resolves its WIDTH from
-       the height it was stretched to — measured at 390, that made the
-       reel 408px wide inside a 348px column and cut its right edge off
-       the screen. Starting it instead lets the width come from the
-       column and the height from the ratio, which is the way round a
-       ratio is meant to be read. */
-                  align-self: start; }
+  /* the phone's screen: still edge to edge, 4:3 — a 16:9 strip at 390
+     wide is 219px of film and no kind of entrance; 4:3 is 292 */
+  .dr-screen { height: auto; aspect-ratio: 4 / 3; }
 }
-
+@media (prefers-reduced-motion: reduce) {
+  /* see THE ENGINE RESOLVES above: --recede is 1 from the first paint */
+  .dr-hero-reel, .dr-hero-reel video { scale: none; }
+}
 /* ══ §02 · THE FUNNEL ════════════════════════════════════════════
    THE LIGHTS COME ON. The one light section in a black room, and the only
    place the page inverts. The tokens are redefined here rather than the
@@ -3496,52 +3270,3 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   }
 }
 @keyframes dr-lead { from { translate: 0 42px; } to { translate: 0 -18px; } }
-
-
-/* ══ THE FILM HERO (?film) ═════════════════════════════════════════
-   apple.com/iphone-18-pro, measured 2026-09-11: a 1440x856 video fills
-   the first screen under the nav (`play-initiated`, plays once, does not
-   loop), and the words — a 32px label, a 72px two-word statement, two
-   meta lines, a price pill — sit UNDER it. Body is #000. The video does
-   not move on scroll; nothing is pinned; the drama is the film.
-
-   Ported as: reel first at full bleed and full height, the band second.
-   No pin, no open, no lift — those belong to the hero where the reel has
-   something to open INTO. Here it already has the screen.
-
-   Desktop only, like everything else in the hero; below 901px the band
-   hero's stacked order is already film-then-words. */
-@media (min-width: 901px) {
-  .dr-root.dr-film .dr-stage { position: static; height: auto; min-height: 0; }
-  .dr-root.dr-film .dr-hero-wrap { min-height: 0; }
-  /* the stage already reserves --nav-space; adding it here too put the
-     film at y=166 and its bottom 62px past the fold */
-  .dr-root.dr-film .dr-main { padding-top: 0; }
-  .dr-root.dr-film .dr-hero {
-    grid-template-rows: auto auto auto;
-    row-gap: var(--fib-4);
-  }
-  /* the film: row 1, both columns, edge to edge, the rest of the screen */
-  .dr-root.dr-film .dr-hero-reel {
-    grid-row: 1; grid-column: 1 / -1;
-    /* full bleed — and full bleed means radius 0, the room's own law */
-    margin-inline: calc(50% - 50vw);
-    margin-top: 0; margin-bottom: 0;
-    border-radius: 0;
-    /* the whole screen under the nav, less the air the nav floats on */
-    height: calc(100svh - var(--nav-space) - var(--fib-3));
-    translate: none;
-  }
-  /* the band moves under it: chip on its own row, then statement and
-     support side by side exactly as they are in the band hero */
-  .dr-root.dr-film .dr-chip  { grid-row: 2; }
-  .dr-root.dr-film .dr-left  { grid-row: 3; }
-  .dr-root.dr-film .dr-aside { grid-row: 3; }
-  /* nothing leaves: the copy arrives after the film, it is not being
-     covered by it */
-  .dr-root.dr-film .dr-chip,
-  .dr-root.dr-film .dr-left,
-  .dr-root.dr-film .dr-aside { translate: none; opacity: 1; }
-  /* and some air under the band before About */
-  .dr-root.dr-film .dr-main { padding-bottom: clamp(56px, 9svh, 120px); }
-}

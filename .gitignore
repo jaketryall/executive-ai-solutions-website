@@ -56,3 +56,4 @@ public/builder/raw-*.png
 .claude/
 
 scroll-trace*.json.gz
+.scratch/

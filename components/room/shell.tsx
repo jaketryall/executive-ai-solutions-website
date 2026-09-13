@@ -56,22 +56,19 @@ export function RoomShell({ children }: { children: React.ReactNode }) {
      is churn with no pixel behind it. The stylesheet still READS
      dark-first; the block in room.css says so at the top.
 
-     `?film` is the Apple-style film hero (reel first, words second), an
-     experiment the homepage reads. Both read in an effect rather than at
-     render so the server and the first client pass agree. */
+     Read in an effect rather than at render so the server and the first
+     client pass agree. (`?film` is gone: the film hero is THE hero now.) */
   const [light, setLight] = useState(false);
-  const [film, setFilm] = useState(false);
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
     setLight(!q.has("dark"));
-    setFilm(q.has("film"));
   }, []);
 
   return (
     <div
       className={`dr-root ${archivo.variable} ${instrument.variable}${
         lit ? " dr-lit" : ""
-      }${light ? " dr-light" : ""}${film ? " dr-film" : ""}`}
+      }${light ? " dr-light" : ""}`}
     >
       <RoomNav />
       {children}

@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { Roll } from "@/components/room/nav";
 import ServicesSection from "@/components/dark/services-section";
 import AboutSection from "@/components/dark/about-section";
 import ProofSection from "@/components/dark/proof-section";
@@ -30,7 +29,7 @@ CustomEase.create(U, "M0,0 C0.16,1 0.3,1 1,1"); //   --ease-ui
 
 export default function DarkRoom() {
   /* The frame — tokens, ground, nav, ending, the scroll engine, the
-     entrance arm and the ?dark / ?film switches — is the layout's
+     entrance arm and the ?dark switch — is the layout's
      RoomShell now. This page is the room's own atmosphere and sections. */
   /* PARALLAX — the LIGHT only. The mark holds still: it is the object in the
      room, and an object that slides with your cursor stops reading as one.
@@ -106,73 +105,61 @@ export default function DarkRoom() {
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
 
-      {/* THE FIRST SEAM — a sticky-cover climb (grammar laws 5 + 9).
-          The stage PINS for one viewport and §02 climbs over it from the
-          fold: the wrapper holds [sticky stage][§02], so the section is a
-          plain sibling that rises across the pin for free — no JS, no
-          transform, native scroll. That is the "section rising up" feel
-          this page lost when the hero stopped receding: the hero now holds
-          still and DIMS while it is covered, instead of running away.
+      {/* §01 · THE SCREENING. The first screen is the reel and nothing
+          else; the one line and the one door sit under it. See the block
+          of the same name in room.css for what this retired and why.
 
-          --hero-p lives on the WRAPPER, not the stage: a pinned element's
-          rect does not move, so measured on the stage the progress would
-          freeze at 0 the moment the pin engaged and the dim would never
-          fire. The wrapper's top travels 1:1, and the value inherits down.
-
-          ⚠ THE WINDOW IS 0.62 VIEWPORTS, and its MEANING CHANGED when the
-          climb was retired. It used to be 1.7 and mean "0 with §02's top
-          at the fold, 1 with it at the top of the viewport" — an anchor
-          that no longer exists, because no section arrives over this one
-          any more. It now means: 0 where the hero pins, 1 where it
-          releases. The two consumers were re-derived against the new
-          window rather than left pointing at the old one, so the reel and
-          the copy still travel the same distance at the same rate they
-          did when Jake signed off on the feel. */}
-      <div
-        className="dr-hero-wrap"
-        data-sp
-        data-sp-from="0"
-        data-sp-to="-0.62"
-        data-sp-var="--hero-p"
-      >
-        {/* the rail watches this, not a scroll number — and it sits OUTSIDE
-            the sticky stage, because a sentinel that pins with the hero
-            never leaves the viewport and the CTA would never arrive */}
-        {/* the nav (components/room/nav) watches this by selector */}
+          .dr-screen carries the --recede track: its TOP edge, from where
+          it rests under the nav (0.1) to 60% of a viewport above it
+          (-0.6) — 0.7vh of scroll, the stretch across which the caption
+          arrives. (Top, not bottom: see the ⚠ under THE RECEDE.)
+          The track is on the wrapper because the reel inside it is the
+          thing that scales, and a transformed element cannot be its own
+          ruler. */}
+      <div className="dr-stage">
+        {/* the rail (components/room/nav) watches this by selector: the
+            pill and the action are what the first scroll earns */}
         <div className="dr-top" aria-hidden />
 
-      <div className="dr-stage">
         <main className="dr-main wrap">
           <div className="dr-hero">
-            {/* THE CHIP. The reference's news pill, with a true thing in
-                it: the room's own case study, linked. It is not an
-                announcement banner — nothing here is announced that has
-                not shipped — it is the shortest possible piece of proof
-                sitting above the claim it backs.
-
-                It is its OWN ROW, not the first thing inside the statement
-                column, so that the statement and its support start on the
-                same line (Jake). Nested, the chip pushed the headline down
-                and the paragraph beside it began a chip's height higher. */}
-            <Link href="/work/desert-wings" className="dr-chip dr-edge">
-              <span className="dr-chip-tag t-cta">Recent work</span>
-              <span className="dr-chip-txt">Desert Wings Flight School</span>
-              <span className="dr-chip-arrow" aria-hidden>&rarr;</span>
-            </Link>
+            <div
+              className="dr-screen"
+              data-sp
+              data-sp-edge="top"
+              data-sp-from="0.1"
+              data-sp-to="-0.6"
+              data-sp-var="--recede"
+            >
+              <div className="dr-hero-reel">
+                {/* ⚠ 1920, not 1280: as a full-viewport film the old cut
+                    was soft, and a soft film is not dramatic, it is
+                    cheap. Six seconds (t=4.3-10.4, the dark half of the
+                    source), 30fps, crf 23, 885KB. Jake is cutting a
+                    longer reel to design-dna/reel-spec.md; it drops in
+                    here with its poster and nothing else changes. */}
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  poster="/dark/reel-film-poster.jpg"
+                  preload="metadata"
+                  aria-label="Recent Executive AI Solutions client work"
+                >
+                  <source src="/dark/reel-film.mp4" type="video/mp4" />
+                </video>
+              </div>
+            </div>
 
             <div className="dr-left">
               <h1 className="t-hero">
-                {/* ⚠ THE POSITIONING LINE. "A website that books while
-                    you're on the job" was written for the ads era and
-                    speaks to a tradesman between jobs. Jake, 2026-09-10:
-                    "im shifting more towards design and crms than ads
-                    right now" — so the statement names the two things he
-                    now leads with, in that order, and ads are not in it.
-
-                    The second line is the longer one on purpose: the
-                    short-over-long step is the shape this hero has always
-                    had, and it is what keeps the block from reading as a
-                    centred slab. */}
+                {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im shifting
+                    more towards design and crms than ads right now" — so
+                    the statement names the two things he now leads with,
+                    in that order, and ads are not in it. The second line
+                    is the longer one on purpose: short-over-long is the
+                    shape that keeps the block from reading as a slab. */}
                 <span className="dr-line">
                   <span className="sweep">Design that sells,</span>
                 </span>
@@ -182,75 +169,18 @@ export default function DarkRoom() {
               </h1>
             </div>
 
-            {/* THE SUPPORT COLUMN, beside the statement rather than under
-                it. Stacked, it left the whole top-right quadrant empty and
-                pushed the reel down to ~40% of the screen; beside it, the
-                band collapses to the height of the headline and the reel
-                takes the bottom half. It also gives §01 the two doors its
-                own brief asks for and it did not have: the room's one pill
-                for the people who are ready, and a quiet link for the ones
-                who want to look first. */}
             <div className="dr-aside">
-              <p className="t-body dr-sub">
-                We build your site and wire up the system behind it, so every
-                call, form and text gets answered in seconds instead of days.
-              </p>
-
-              <div className="dr-doors">
-                <Link href="/contact" className="dr-herocta dr-edge t-cta">
-                  Book the call
-                </Link>
-                {/* the roll is decoration and is aria-hidden, so the
-                    link carries its own name or it has none at all */}
-                <Link href="/work" className="dr-door" aria-label="See the work">
-                  <Roll label="See the work" />
-                </Link>
-              </div>
+              <Link href="/contact" className="dr-herocta dr-edge t-cta">
+                Book the call
+              </Link>
             </div>
-
-            {/* THE REEL, wide, beneath the copy (Jake's call: "type above,
-                reel wide beneath"). It replaces the works roster, which
-                is the through-line-motif decision his own note left open
-                to exactly this — retire it if it reads as a repeat of
-                §03's cards. */}
-            <div className="dr-hero-reel">
-              {/* ⚠ RE-CUT AT 1920, from the 1280 it was. The old cut was
-                  sized for a 1290px well; as a full-viewport film it was
-                  soft, and a soft film is not dramatic, it is cheap. Same
-                  six seconds (t=4.3-10.4, the dark half of the source),
-                  30fps, crf 23: 885KB against 251, which is a weight a
-                  hero film can justify. It serves both heroes now — the
-                  band hero is sharper for it too. */}
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                poster="/dark/reel-film-poster.jpg"
-                preload="metadata"
-                aria-label="Recent Executive AI Solutions client work"
-              >
-                <source src="/dark/reel-film.mp4" type="video/mp4" />
-              </video>
-            </div>
-
           </div>
         </main>
       </div>
 
-      </div>
-
-      {/* ⚠ NOTHING CLIMBS ANY MORE (Jake: "i dont want that rise thing for
-          the about section"). About is a plain sibling after the wrapper
-          and the first seam — a section rising over the pinned hero — is
-          retired with it.
-
-          THE PIN STAYS, SHORTER. It is not there for the climb: it is what
-          holds the reel's BOTTOM edge still while the reel opens upward,
-          which is the whole Cosmos mechanic. So the wrapper keeps exactly
-          as much extra height as the open needs and releases the moment it
-          finishes — see THE HOLD in dark.css. A pin that outlasts its own
-          payoff is the "I scrolled and nothing arrived" bounce. */}
+      {/* About is a plain sibling (Jake: "i dont want that rise thing for
+          the about section"). Nothing climbs over the screen; the screen
+          recedes and About simply arrives. */}
       <AboutSection />
 
       {/* §02 comes out of the wrapper and brings its own ruler. Inside it,
