@@ -8,6 +8,7 @@ import ProofSection from "@/components/dark/proof-section";
 import VoicesSection from "@/components/dark/voices-section";
 import RunsSection from "@/components/dark/runs-section";
 import ObjectionsSection from "@/components/dark/objections-section";
+import NumbersSection from "@/components/dark/numbers-section";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
 import { GOOGLE_REVIEWS } from "@/lib/proof";
@@ -294,6 +295,10 @@ export default function DarkRoom() {
           </div>
         </section>
       </div>
+
+      {/* THE RECEIPTS, under the reel — acquisition.com's numbers row,
+          done as receipts (see components/dark/numbers-section). */}
+      <NumbersSection />
 
       {/* About is a plain sibling (Jake: "i dont want that rise thing for
           the about section"). Nothing climbs over the hero: the pin

@@ -842,6 +842,57 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-slot { display: none; }
   .dr-hero-reel { opacity: 1; animation: none; }
 }
+/* ══ THE RECEIPTS — the numbers band under the reel ═══════════════
+   Four figures on the ground, separated by space. The numeral is the
+   room's display face, upright (numbers do not take the skew — a
+   slanted 1,000 reads as an italic, not an object), tabular so the
+   wheels never shift the row; the label is body; the window and the
+   source are meta, the source a link. The figure is ~4x the label —
+   the value outranks everything under it. */
+.dr-numbers { position: relative; z-index: 3;
+  padding-block: clamp(72px, 12svh, 150px) clamp(48px, 8svh, 110px); }
+.dr-numbers-head { display: flex; align-items: baseline;
+  justify-content: space-between; gap: var(--fib-4);
+  margin-bottom: clamp(32px, 5.5svh, 64px); }
+.dr-numbers-kicker { display: block; color: var(--ink-4); margin: 0; }
+.dr-numbers-asof { margin: 0; }
+.dr-receipts { list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(28px, 4vw, 64px); }
+.dr-receipt { display: flex; flex-direction: column; gap: var(--fib-2); min-width: 0; }
+.dr-receipt-n { margin: 0; }
+.dr-receipt-fig {
+  display: inline-flex; align-items: baseline;
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-variation-settings: "wdth" 118, "wght" 800;
+  /* sized so "1,000+" — the widest figure, five tabular wheels — sits
+     inside a quarter of the measure with the column gap intact at 1440
+     (measured: 240px of wheels at 98px ran into the next column's "$") */
+  font-size: clamp(2.75rem, 1.4rem + 4.3vw, 5.6rem);
+  letter-spacing: -0.03em; line-height: 1; color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+/* the prefix and suffix are a step down and lighter, so the wheels are
+   what you read — "$", "+", "days" are the figure's grammar, not its size */
+.dr-receipt-fix { font-size: .5em; font-variation-settings: "wdth" 110, "wght" 700;
+  color: var(--ink-3); letter-spacing: -0.01em; }
+/* a word after the wheels ("days", "s") stands off them; a sign ("+", "$")
+   hugs — the leading space in the data is what tells them apart, and an
+   inline-flex box would otherwise swallow it */
+.dr-receipt-fix--word { margin-inline-start: .14em; }
+.dr-receipt-fig .od { height: 1em; }
+.dr-receipt-l { max-width: 24ch; font-size: var(--fs-body-s); line-height: 1.5;
+  color: var(--ink-2); }
+.dr-receipt-s { margin: 0; display: flex; flex-wrap: wrap; gap: 0 .35em; }
+.dr-receipt-s a { color: var(--ink-3); text-decoration: none;
+  border-bottom: 1px solid color-mix(in oklab, var(--ink-3) 40%, transparent);
+  transition: color var(--t-micro) var(--ease-ui), border-color var(--t-micro) var(--ease-ui); }
+.dr-receipt-s a:hover { color: var(--ink); border-color: var(--ink); }
+@media (max-width: 900px) {
+  .dr-receipts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--fib-5) var(--fib-4); }
+  .dr-numbers-head { flex-direction: column; gap: var(--fib-2); }
+}
+
 /* ══ §02 · THE FUNNEL ════════════════════════════════════════════
    THE LIGHTS COME ON. The one light section in a black room, and the only
    place the page inverts. The tokens are redefined here rather than the

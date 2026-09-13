@@ -20,7 +20,13 @@ here forward.
   full-width dock after the hero; a Google rating card lower right on
   PLACEHOLDER numbers (lib/proof.ts — needs Jake's real ones). Fourth
   hero of the day; the stage, the lift, the shutter and the screening
-  are all in git (decisions.md). Awaiting Jake's look. The placeholder
+  are all in git (decisions.md). Revised the same afternoon: the chip in
+  the title stays (1.08em), a one-line description under the statement
+  (acquisition.com's order, measured). Awaiting Jake's look.
+- THE RECEIPTS (2026-09-13, new, under the dock): four honest figures
+  with window + source link + as-of, rolling in on the odometer.
+  "1,000+" waits on the exact GA number; live GA4 is the next step if
+  Jake wants real analytics (needs his credentials). The placeholder
   reel (v1 cut, its own type baked in) stays until Jake has the real
   reel cut — it drops into public/dark/reel-film.mp4 per reel-spec.md.
   Awaiting Jake's look at the open.
