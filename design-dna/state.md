@@ -14,9 +14,11 @@ plan as already locked; use `decisions.md` as the record of what was
 decided and why, and only reach for a builder/verifier/critic step from
 here forward.
 
-- §01 hero — THE OPENING (2026-09-13): Cosmos's shutter, the reel low
-  and opening upward on the pin while the statement rises out; the
-  screening of 2026-09-12 superseded (decisions.md). The placeholder
+- §01 hero — THE LIFT (2026-09-13): the film full screen under the
+  first screen; the ground with the statement (118px, filling the
+  measure) and the label row lifts 1:1 with scroll to reveal it edge to
+  edge, holds a beat, releases. Supersedes the Cosmos shutter of the
+  same morning and the screening of 2026-09-12 (decisions.md). The placeholder
   reel (v1 cut, its own type baked in) stays until Jake has the real
   reel cut — it drops into public/dark/reel-film.mp4 per reel-spec.md.
   Awaiting Jake's look at the open.

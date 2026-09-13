@@ -105,39 +105,35 @@ export default function DarkRoom() {
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
 
-      {/* §01 · THE OPENING. Cosmos's hero, measured (design-dna/decodes/
-          cosmos.md §5d, live at 1440x900): the words sit in the top of
-          the screen and the reel sits LOW, its bottom edge 12px above the
-          fold. On scroll the header is pinned and two things happen at
-          two rates: the words rise out at ~0.67px per px of scroll, and
-          the reel opens UPWARD into the room they leave — height 360 →
-          648, 1.80x, at 0.52px per px — while its width, its corners and
-          its bottom edge never move. A shutter, not a zoom. Then the pin
-          releases and the open reel scrolls away like anything else.
+      {/* §01 · THE LIFT. The film is full screen UNDER the first screen
+          from the first frame. Over it, the room's own ground carries the
+          big statement and the label row, and its bottom edge sits at
+          60% of the viewport — so at rest the film shows in the bottom
+          band like a stage under a curtain. Scroll lifts the ground:
+          the words ride its edge up and out of the way at scroll's own
+          rate, and the film is revealed beneath them edge to edge. It
+          holds full screen for a beat, then the pin releases and it
+          scrolls away like anything else. Lando's law — reveal the next
+          room UNDER the current one — run at the top of the page.
 
-          Jake, 2026-09-13: "i like how the video is lower, on scroll the
-          video becomes center screen. the text moves up on scroll out of
-          the way to make room for the video." This is that. It retires
-          last night's screening (the film full screen from the first
-          frame, the caption on it, the recede) — git has it at b7637cd.
-          What survives from it: the film is THERE from the first frame
-          (no grow — the reel carries its own reveal), and the caption is
-          the minimal set: the statement, the meta line, the one door.
-          The rail's wordmark is the name.
+          Jake, 2026-09-13, on the Cosmos shutter this replaces: "i
+          really like the big text, and i want to find a different
+          mechanism for the video reveal. i want nothing to feel empty."
+          So: the statement a size up, the film full bleed rather than a
+          card, and every pixel of the first screen is either ground or
+          film at every moment of the scroll — nothing opens INTO a
+          hole, because there is no hole; the film was always there.
 
-          THE PIN is the wrapper: [sticky stage] held for exactly the
-          scroll the open needs, then released (THE HOLD in room.css).
-          --hero-p is measured on the WRAPPER's top edge, not the stage's:
-          a pinned element's rect does not move, so measured on the stage
-          it would freeze at 0 the moment the pin engaged. The window is
-          0.66 viewports: 0 where the hero pins, 1 where it releases, and
-          the open finishes at 0.94 of it so the release is a short beat
-          after the payoff, never before. */}
+          THE PIN is the wrapper: [sticky stage] held for the lift plus
+          a beat (THE HOLD in room.css). --hero-p is measured on the
+          WRAPPER's top edge, not the stage's — a pinned element's rect
+          does not move, so measured on the stage it would freeze at 0
+          the moment the pin engaged. */}
       <div
         className="dr-hero-wrap"
         data-sp
         data-sp-from="0"
-        data-sp-to="-0.66"
+        data-sp-to="-0.7"
         data-sp-var="--hero-p"
       >
         {/* the rail (components/room/nav) watches this by selector: the
@@ -147,10 +143,36 @@ export default function DarkRoom() {
         <div className="dr-top" aria-hidden />
 
         <div className="dr-stage">
+          {/* THE FILM, under everything: a full-viewport box anchored to
+              the fold. Its HEIGHT is what the lift changes — the box is
+              clipped at its top edge — while the footage inside is
+              pinned to the same fold at full viewport height, so the
+              picture never moves or re-fits. More of it is uncovered;
+              none of it is scaled. */}
+          <div className="dr-hero-reel">
+            {/* ⚠ 1920, not 1280: revealed, the well is the whole screen
+                and a 1280 source is soft in it. Six seconds (t=4.3-10.4,
+                the dark half of the source), 30fps, crf 23, 885KB. Jake
+                is having a longer reel cut ON BLACK to
+                design-dna/reel-spec.md; it drops in here with its poster
+                and nothing else changes. Until it lands, the v1 cut's
+                own baked-in type is in the frame. */}
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              poster="/dark/reel-film-poster.jpg"
+              preload="metadata"
+              aria-label="Recent Executive AI Solutions client work"
+            >
+              <source src="/dark/reel-film.mp4" type="video/mp4" />
+            </video>
+          </div>
+
           <main className="dr-main wrap">
             <div className="dr-hero">
-              {/* THE STATEMENT, alone in the top of the screen where
-                  Cosmos puts its wordmark. */}
+              {/* THE STATEMENT, big, in the top of the screen. */}
               <h1 className="t-hero dr-left">
                 {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im
                     shifting more towards design and crms than ads
@@ -166,10 +188,9 @@ export default function DarkRoom() {
                 </span>
               </h1>
 
-              {/* THE LABEL ROW, directly above the reel with no gap —
-                  Cosmos's four service labels sit exactly here. Ours is
-                  the meta line at the left and the one door at the right,
-                  on one baseline, the way Apple's caption pairs them. */}
+              {/* THE LABEL ROW sits ON the edge — the last thing on the
+                  ground before the film — the meta line at the left and
+                  the one door at the right, on one baseline. */}
               <div className="dr-labels">
                 <p className="dr-cap-meta t-meta">
                   Websites &middot; Automation &middot; Google Ads
@@ -177,30 +198,6 @@ export default function DarkRoom() {
                 <Link href="/contact" className="dr-herocta dr-edge t-cta">
                   Book the call
                 </Link>
-              </div>
-
-              {/* THE REEL, low and wide: out of the column to §02's own
-                  gutter, its bottom on the fold. It is the ruler for
-                  nothing — the wrapper above is — so it can move. */}
-              <div className="dr-hero-reel">
-                {/* ⚠ 1920, not 1280: opened, the well is 1416 x 648 and
-                    a 1280 source is soft in it. Six seconds (t=4.3-10.4,
-                    the dark half of the source), 30fps, crf 23, 885KB.
-                    Jake is having a longer reel cut ON BLACK to
-                    design-dna/reel-spec.md; it drops in here with its
-                    poster and nothing else changes. Until it lands, the
-                    v1 cut's own baked-in type is in the frame. */}
-                <video
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  poster="/dark/reel-film-poster.jpg"
-                  preload="metadata"
-                  aria-label="Recent Executive AI Solutions client work"
-                >
-                  <source src="/dark/reel-film.mp4" type="video/mp4" />
-                </video>
               </div>
             </div>
           </main>
