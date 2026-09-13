@@ -105,10 +105,11 @@ export default function DarkRoom() {
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
 
-      {/* §01 · THE SCREENING. The first screen is the reel, grown to fill
-          it, with the caption on its lower band where Apple puts theirs.
-          See the block of the same name in room.css for what this
-          retired and why.
+      {/* §01 · THE SCREENING. The first screen is the reel, full screen
+          from the first frame, with the caption on its lower band where
+          Apple puts theirs. No entrance on the film: the reel carries its
+          own reveal. See the block of the same name in room.css for what
+          this retired and why.
 
           .dr-screen carries the --recede track: its TOP edge, from the
           top of the viewport (0) to 70% of a viewport above it (-0.7)

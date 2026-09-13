@@ -396,14 +396,10 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    Unstuck, the rail only ever floats over §01's film — every interior
    page is stuck from its first frame — and the film is black in either
    room. So the unstuck rail's ink is pinned light (on #0a0a0b: ink
-   17.7:1, ink-3 10.4:1), and its entrance waits for the film: at 140ms
-   the film is still arriving and light type on the cream underneath it
-   would simply not be there. Text after geometry. Stuck rails (every
-   interior page) keep the 140ms. */
+   17.7:1, ink-3 10.4:1). */
 .dr-rail:not([data-stuck]) {
   --ink: #f5f5f7; --ink-2: #d4d4d8; --ink-3: #b4b4ba; --ink-4: #a9a9ae;
 }
-.dr-lit .dr-rail:not([data-stuck]) { animation-delay: 900ms; }
 .dr-rail::before { opacity: 0; transition: opacity .5s var(--ease-ui); }
 .dr-rail[data-stuck]::before { opacity: 1; }
 
@@ -546,9 +542,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    bottom edge for --recede. .dr-hero-reel inside it is the thing that
    moves. A transformed element cannot be its own ruler — its rect moves
    with it — so the track sits on the wrapper and the scale on the child.
-   (The entrance below also scales the wrapper, but about its BOTTOM
-   edge, which is the edge being measured — so the ruler reads true even
-   while it is still arriving.) */
+ */
 .dr-screen {
   grid-column: 1; grid-row: 1; position: relative;
   /* FULL SCREEN, COMPLETELY (Jake: "it needs to grow completely to fill
@@ -561,24 +555,18 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   height: 100svh;
   min-height: 0;
 }
-/* ── THE ENTRANCE — the screen grows to fill the screen ──────────
-   Once, on load: the film comes up from 78% and nothing, about its own
-   CENTRE, and grows until it meets all four edges — 1300ms on the
-   structure curve, long, because it is the only thing moving and the
-   whole first screen is it. The caption lands on it after it has
-   settled (text after geometry). Hidden until the room is lit, like
-   every entrance here. scale, not width or clip — see THE RECEDE.
-
-   ⚠ Centre origin here, bottom origin on the recede, and they do not
-   fight: the entrance is on the WRAPPER, the recede on the child. While
-   the wrapper is still growing its top edge sits low, so the ruler
-   reads below 0 and clamps — nothing recedes during the entrance. */
-.dr-screen { opacity: 0; transform-origin: 50% 50%; }
-.dr-lit .dr-screen { animation: dr-screen-in 1300ms var(--ease-structure) 60ms both; }
-@keyframes dr-screen-in {
-  from { opacity: 0; scale: .78; }
-  to   { opacity: 1; scale: 1; }
-}
+/* ── NO ENTRANCE ON THE SCREEN ───────────────────────────────────
+   The film is simply there, full screen, from the first frame — the way
+   apple.com's is. It grew to fill the screen for one afternoon (78% →
+   100% about its centre, 1300ms, the corners squaring off as it went);
+   Jake, 2026-09-12: "i dont do the grow now, apple has their big
+   dramatic reveal inside the video which is probably better." The
+   drama is the reel's job, and the reel he is cutting opens with its
+   own reveal; a page that also zooms in on it would be two reveals
+   fighting for one moment. So the screen holds still and the words
+   land on it after a short beat. It also means the poster is the LCP
+   from the first paint, with nothing hiding it. */
+.dr-screen { transform-origin: 50% 50%; }
 
 /* ── THE CAPTION ─────────────────────────────────────────────────
    Apple's placement (see page.tsx): the film's lower band, name over
@@ -615,11 +603,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   font-variation-settings: "wdth" 100, "wght" 600;
   font-size: var(--fs-lead); letter-spacing: -0.012em; line-height: 1.15;
 }
-/* the caption's own entrance: name, lines, meta, door — after the
-   screen has settled (1360ms), 100-120ms apart */
+/* the caption's own entrance: name, lines, meta, door — a beat after
+   the film, 100-120ms apart, so the first frame is the film alone */
 .dr-cap-name, .dr-cap-meta { opacity: 0; }
-.dr-lit .dr-cap-name { animation: dr-fadein var(--t-enter) var(--ease-structure) 1200ms forwards; }
-.dr-lit .dr-cap-meta { animation: dr-fadein var(--t-enter) var(--ease-structure) 1620ms forwards; }
+.dr-lit .dr-cap-name { animation: dr-fadein var(--t-enter) var(--ease-structure) 300ms forwards; }
+.dr-lit .dr-cap-meta { animation: dr-fadein var(--t-enter) var(--ease-structure) 720ms forwards; }
 
 /* ── THE ONE DOOR ────────────────────────────────────────────────
    The room's pill. There is no second door: the work is the film, and
@@ -634,7 +622,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 .dr-herocta:hover { background: var(--surface-3); }
 .dr-herocta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
-.dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 1700ms forwards; }
+.dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 800ms forwards; }
 
 /* h1 lines mask-rise, 800ms outQuart, 120ms stagger — after the name,
    before the meta: the statement is the second beat of the entrance and
@@ -642,8 +630,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-line { overflow: hidden; transform: skewX(-4deg);
            transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
-.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1320ms forwards; }
-.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 1440ms forwards; }
+.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
+.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 540ms forwards; }
 @keyframes dr-rise { to { transform: translateY(0); } }
 /* ══ THE MARK, CENTRE STAGE ══════════════════════════════════════
    Lit from the upper left and falling to black — an object standing in the
@@ -806,7 +794,6 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-key, .dr-key::after,
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
-  .dr-lit .dr-screen { animation: none; opacity: 1; scale: none; }
   .dr-lit .dr-herocta,
   .dr-lit .dr-cap-name,
   .dr-lit .dr-cap-meta { opacity: 1; transform: none; animation: none; }
@@ -851,7 +838,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 
    THE CORNERS COME BACK AS IT GOES: radius 0 at full screen, §05's
    radius at the end of the recede, so the screen folds back into a
-   card — the entrance run in reverse. This is the one scroll-driven
+   card. This is the one scroll-driven
    radius in the room; a rounded CLIP grow re-rasters a whole surface
    every frame (measured 2026-09-06, 50ms at 2560), but this is a
    border-radius on an overflow:hidden box whose only child is a
@@ -876,13 +863,6 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   scale: calc(1 - .07 * var(--recede, 0));
   will-change: scale;
 }
-/* the entrance squares the corners off as it grows (backwards fill only,
-   so the recede's own radius takes over the moment it ends) */
-.dr-lit .dr-hero-reel { animation: dr-screen-square 1300ms var(--ease-structure) 60ms backwards; }
-@keyframes dr-screen-square {
-  from { border-radius: var(--r); }
-  to   { border-radius: 0px; }
-}
 .dr-hero-reel video {
   display: block;
   width: 100%;
@@ -900,7 +880,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 @media (prefers-reduced-motion: reduce) {
   /* see THE ENGINE RESOLVES above: --recede is 1 from the first paint */
   .dr-hero-reel, .dr-hero-reel video { scale: none; }
-  .dr-hero-reel { border-radius: 0; animation: none; }
+  .dr-hero-reel { border-radius: 0; }
 }
 /* ══ §02 · THE FUNNEL ════════════════════════════════════════════
    THE LIGHTS COME ON. The one light section in a black room, and the only
