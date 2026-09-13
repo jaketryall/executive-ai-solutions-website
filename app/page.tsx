@@ -110,9 +110,9 @@ export default function DarkRoom() {
           See the block of the same name in room.css for what this
           retired and why.
 
-          .dr-screen carries the --recede track: its TOP edge, from where
-          it rests under the nav (0.1) to 60% of a viewport above it
-          (-0.6) — 0.7vh of scroll. (Top, not bottom: see the ⚠ under
+          .dr-screen carries the --recede track: its TOP edge, from the
+          top of the viewport (0) to 70% of a viewport above it (-0.7)
+          — 0.7vh of scroll. (Top, not bottom: see the ⚠ under
           THE RECEDE in room.css.)
           The track is on the wrapper because the reel inside it is the
           thing that scales, and a transformed element cannot be its own
@@ -128,8 +128,8 @@ export default function DarkRoom() {
               className="dr-screen"
               data-sp
               data-sp-edge="top"
-              data-sp-from="0.1"
-              data-sp-to="-0.6"
+              data-sp-from="0"
+              data-sp-to="-0.7"
               data-sp-var="--recede"
             >
               <div className="dr-hero-reel">

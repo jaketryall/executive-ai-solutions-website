@@ -327,12 +327,12 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    rewarded with movement into real content, not a hero holding you. */
 
 .dr-top { position: absolute; top: 0; left: 0; width: 1px; height: 1px; }
-/* the fixed rail is out of flow, so the stage reserves its height here;
-   nothing more — the film starts the moment the chrome's air ends */
+/* NO ROOM IS RESERVED FOR THE RAIL (Jake: "including nav"). The film
+   starts at the top of the viewport and the rail floats on it, the way
+   it floats on the ground everywhere else. */
 .dr-stage {
   position: relative; z-index: 4;
   display: flex; flex-direction: column;
-  padding-top: var(--nav-space);
 }
 .wrap { max-width: 1400px; margin-inline: auto; width: 100%;
         padding-inline: var(--fib-3); }
@@ -392,6 +392,18 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   --glint-delay: -1.6s; opacity: 0;
 }
 .dr-lit .dr-rail { animation: dr-fadein 480ms var(--ease-ui) 140ms forwards; }
+/* ── THE RAIL ON THE FILM ────────────────────────────────────────
+   Unstuck, the rail only ever floats over §01's film — every interior
+   page is stuck from its first frame — and the film is black in either
+   room. So the unstuck rail's ink is pinned light (on #0a0a0b: ink
+   17.7:1, ink-3 10.4:1), and its entrance waits for the film: at 140ms
+   the film is still arriving and light type on the cream underneath it
+   would simply not be there. Text after geometry. Stuck rails (every
+   interior page) keep the 140ms. */
+.dr-rail:not([data-stuck]) {
+  --ink: #f5f5f7; --ink-2: #d4d4d8; --ink-3: #b4b4ba; --ink-4: #a9a9ae;
+}
+.dr-lit .dr-rail:not([data-stuck]) { animation-delay: 900ms; }
 .dr-rail::before { opacity: 0; transition: opacity .5s var(--ease-ui); }
 .dr-rail[data-stuck]::before { opacity: 1; }
 
@@ -539,13 +551,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    while it is still arriving.) */
 .dr-screen {
   grid-column: 1; grid-row: 1; position: relative;
-  /* FULL SCREEN (Jake: "have the video grow and fill full screen"):
-     edge to edge and down to the fold. The corners keep §05's constant
-     radius — a surface that keeps its radius never stops being an object
-     (Jake, decisions.md 2026-09-08), and the two cream triangles it
-     leaves at the fold are the same ones landonorris.com's hero leaves. */
+  /* FULL SCREEN, COMPLETELY (Jake: "it needs to grow completely to fill
+     the page like apple" — "including nav"): the whole viewport, edge to
+     edge, top to fold, and SQUARE — apple.com's film has no corners, and
+     a corner is a seam between the film and the page. The rail floats
+     on it, in light ink; see THE RAIL ON THE FILM. The radius comes back
+     only as it recedes; see THE RECEDE. */
   margin-inline: calc(50% - 50vw);
-  height: calc(100svh - var(--nav-space));
+  height: 100svh;
   min-height: 0;
 }
 /* ── THE ENTRANCE — the screen grows to fill the screen ──────────
@@ -826,9 +839,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    bottom (fold → 30%), which is the natural way to say "as it leaves" —
    and on a phone, where the screen is 4:3 and its bottom sits at 42% of
    the viewport before anyone has scrolled, that read 0.83 at rest and
-   the film loaded already folded to 94%. The top edge sits at
-   --nav-space on every device (0.09-0.10 of the viewport), so a window
-   from 0.1 to -0.6 starts at ~0 everywhere and runs the same 0.7vh.
+   the film loaded already folded to 94%. The top edge sits at 0 on
+   every device, so a window from 0 to -0.7 starts at 0 everywhere and
+   runs the same 0.7vh.
 
    Inside it the FOOTAGE pushes IN by 5% over the same stretch. The
    window closes and the picture keeps coming: the film is still playing
@@ -836,8 +849,20 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    held shot that never stops is the reel skill's own law (hold ≠
    freeze). Both are compositor-only.
 
-   ⚠ scale stays off `transform`, the box never changes and the radius is
-   CONSTANT, so nothing here re-rasters. A clip or a radius that grows re-rasters
+   THE CORNERS COME BACK AS IT GOES: radius 0 at full screen, §05's
+   radius at the end of the recede, so the screen folds back into a
+   card — the entrance run in reverse. This is the one scroll-driven
+   radius in the room; a rounded CLIP grow re-rasters a whole surface
+   every frame (measured 2026-09-06, 50ms at 2560), but this is a
+   border-radius on an overflow:hidden box whose only child is a
+   composited video, which Chrome clips on the compositor. MEASURED in
+   real Chrome at 2048x1536 device px (rAF deltas, 12px steps through
+   the whole recede): 8.3ms mean / 8.7 p90 with it, 8.3 / 8.6 with the
+   radius pinned at 0, 8.4 / 9.1 with everything static. It costs
+   nothing. (Headless software raster said +7ms — that is software
+   raster, not this.)
+
+   ⚠ scale stays off `transform` and the box never changes. A clip or a radius that grows re-rasters
    every frame (measured 2026-09-06, 50ms at 2560), and the first thing
    on the page is the one place a dropped frame cannot be afforded. */
 .dr-hero-reel {
@@ -845,10 +870,18 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   height: 100%;
   overflow: hidden;
   background: var(--surface-1);
-  border-radius: clamp(22px, 2.2vw, 32px);
+  --r: clamp(22px, 2.2vw, 32px);
+  border-radius: calc(var(--recede, 0) * var(--r));
   transform-origin: 50% 100%;
   scale: calc(1 - .07 * var(--recede, 0));
   will-change: scale;
+}
+/* the entrance squares the corners off as it grows (backwards fill only,
+   so the recede's own radius takes over the moment it ends) */
+.dr-lit .dr-hero-reel { animation: dr-screen-square 1300ms var(--ease-structure) 60ms backwards; }
+@keyframes dr-screen-square {
+  from { border-radius: var(--r); }
+  to   { border-radius: 0px; }
 }
 .dr-hero-reel video {
   display: block;
@@ -867,6 +900,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 @media (prefers-reduced-motion: reduce) {
   /* see THE ENGINE RESOLVES above: --recede is 1 from the first paint */
   .dr-hero-reel, .dr-hero-reel video { scale: none; }
+  .dr-hero-reel { border-radius: 0; animation: none; }
 }
 /* ══ §02 · THE FUNNEL ════════════════════════════════════════════
    THE LIGHTS COME ON. The one light section in a black room, and the only
