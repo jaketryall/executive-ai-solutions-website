@@ -10,6 +10,7 @@ import RunsSection from "@/components/dark/runs-section";
 import ObjectionsSection from "@/components/dark/objections-section";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
+import { GOOGLE_REVIEWS } from "@/lib/proof";
 
 /* The room runs its own two curves — the same two the stylesheet declares,
    registered here so JS and CSS can never drift apart. Nothing in this room
@@ -90,6 +91,55 @@ export default function DarkRoom() {
     };
   }, []);
 
+  /* THE REEL'S REST TRANSFORM — measured, not guessed. The slot in the
+     line and the reel in the dock are both laid out by the browser; this
+     reads where each one IS and writes the three numbers that put the
+     reel onto the slot: the scale that makes it the slot's height, and
+     the x/y from its own centre to the slot's. The CSS does the rest
+     (see THE GROW in room.css). Re-read on resize and whenever the slot
+     changes size, which is whenever the headline reflows or its font
+     arrives. The reel's box is read through offsetLeft/Top — its rect
+     would include the very transform being computed. */
+  useEffect(() => {
+    const slot = document.querySelector<HTMLElement>(".dr-slot");
+    const reel = document.querySelector<HTMLElement>(".dr-hero-reel");
+    if (!slot || !reel) return;
+    const measure = () => {
+      if (!window.matchMedia("(min-width: 901px)").matches) {
+        reel.removeAttribute("data-ready");
+        return;
+      }
+      /* ⚠ BOTH boxes through the offset chain, never getBoundingClientRect:
+         the reel's rect includes the transform being computed, and the
+         slot's includes the line's ENTRANCE transform — measured at mount
+         the line is still 103% below its place, and the reel landed 93px
+         under the slot for exactly that reason. Offsets ignore transforms. */
+      const box = (el: HTMLElement) => {
+        let x = 0, y = 0;
+        for (let e: HTMLElement | null = el; e; e = e.offsetParent as HTMLElement | null) {
+          x += e.offsetLeft; y += e.offsetTop;
+        }
+        return { x, y, w: el.offsetWidth, h: el.offsetHeight };
+      };
+      const s = box(slot), r = box(reel);
+      if (!s.h || !r.h) return;
+      reel.style.setProperty("--s0", String(s.h / r.h));
+      reel.style.setProperty("--dx", `${s.x + s.w / 2 - (r.x + r.w / 2)}px`);
+      reel.style.setProperty("--dy", `${s.y + s.h / 2 - (r.y + r.h / 2)}px`);
+      reel.setAttribute("data-ready", "");
+    };
+    measure();
+    document.fonts?.ready.then(measure);
+    const ro = new ResizeObserver(measure);
+    ro.observe(slot);
+    ro.observe(reel);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
   return (
     <>
       <div className="dr-atmos" aria-hidden>
@@ -105,111 +155,126 @@ export default function DarkRoom() {
       <div className="dr-grain" aria-hidden />
       <div className="dr-vignette" aria-hidden />
 
-      {/* §01 · THE STAGE. Jake, 2026-09-13, with a portfolio hero
-          (codebyhicham.com): "what if we do something like this with
-          the video in the middle, infinite marquee at the bottom, video
-          grows on scroll … and when you scroll the texts should have a
-          scroll driven exit." So: the reel is the OBJECT in the middle
-          of the first screen, the statement flanks it — one line at the
-          left with the one door under it, one line at the right — and
-          a giant marquee runs along the fold, cropped by it, so the
-          bottom of the screen is type in motion and nothing is empty.
-          On scroll the stage pins, the reel grows about its own centre
-          until it is the screen, and the two lines exit OUTWARD at
-          scroll's rate — the film takes the room they leave. Hold a
-          beat, release, scroll away.
+      {/* §01 · THE LINE. Jake, 2026-09-13, with a HeartBloom landing
+          (dribbble 27394246): "can we try this but instead of that image
+          in the card its my showreel and we have the itsjay effect for
+          the video grow. i want a 5 star review thing somewhere too and
+          we would be the white background version of course."
 
-          It retires the lift (9cd34bc) and the shutter (da61f3c) of the
-          same morning. Kept: the film there from the first frame, the
-          minimal caption, the rail's wordmark as the name.
+          So: one big centred statement with the REEL sitting INSIDE it,
+          a small card between two words of the second line, the meta
+          line and the one door under it, and a rating card floating at
+          the lower right. On scroll, itsjay's grow (decodes/itsjay.md
+          §5.3, measured): the reel's real home is a full-width block in
+          the section right after the hero; at rest it is transformed UP
+          into the slot in the line (scale ~0.11, translated to the
+          slot's centre), and across the first 0.9 viewports of scroll
+          it scales and travels LINEARLY back to where it lives — so it
+          grows out of the sentence, takes the screen, and docks. No
+          pin: the words leave at scroll's own rate and fade as the reel
+          takes over.
 
-          --hero-p is measured on the WRAPPER's top edge, not the
-          stage's: a pinned element's rect does not move. */}
+          Retires the stage (d5daaf3), the lift (9cd34bc), the shutter
+          (da61f3c) and the screening (b7637cd) — all of today. Kept: the
+          film is there from the first frame, the minimal caption, the
+          rail's wordmark as the name.
+
+          --hero-p is measured on the WRAPPER's top edge: 0 at rest, 1
+          at 0.9vh of scroll, itsjay's domain exactly. The wrapper holds
+          the stage AND the dock so the reel inherits it in both. */}
       <div
         className="dr-hero-wrap"
         data-sp
+        data-sp-edge="top"
         data-sp-from="0"
-        data-sp-to="-0.7"
+        data-sp-to="-0.9"
         data-sp-var="--hero-p"
       >
         {/* the rail (components/room/nav) watches this by selector: the
-            pill and the action are what the first scroll earns. It sits
-            OUTSIDE the sticky stage — a sentinel that pins with the hero
-            never leaves the viewport and the action would never arrive */}
+            pill and the action are what the first scroll earns */}
         <div className="dr-top" aria-hidden />
 
         <div className="dr-stage">
           <main className="dr-main wrap">
-            {/* THE FIELD: three columns, the reel in the middle one. The
-                h1 is `display: contents` so its two lines can take the
-                outer columns while it stays ONE heading for a reader. */}
             <div className="dr-hero">
               <h1 className="t-hero dr-h1">
                 {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im
                     shifting more towards design and crms than ads
                     right now" — the statement names the two things he
-                    leads with, in that order; ads are not in it. Read
-                    left to right across the reel: the claim, the
-                    object, the promise. */}
-                <span className="dr-line dr-l1">
+                    leads with, in that order; ads are not in it. */}
+                <span className="dr-line">
                   <span className="sweep">Design that sells,</span>
                 </span>
-                <span className="dr-line dr-l2">
-                  <span className="sweep">systems that follow up.</span>
+                <span className="dr-line">
+                  <span className="sweep">
+                    systems that{" "}
+                    {/* THE SLOT: an empty card the reel's size in the
+                        line, so the words are laid out around it and the
+                        reel — which lives in the dock below — is
+                        transformed onto it. Decoration; the reel carries
+                        the label. */}
+                    <span className="dr-slot" aria-hidden />{" "}
+                    follow up.
+                  </span>
                 </span>
               </h1>
-
+              <p className="dr-cap-meta t-meta">
+                Websites &middot; Automation &middot; Google Ads
+              </p>
               <Link href="/contact" className="dr-herocta dr-edge t-cta">
                 Book the call
               </Link>
-
-              {/* THE REEL, the object in the middle. .dr-screen holds the
-                  grid cell; the reel inside it is what scales — a scaled
-                  element cannot be its own ruler. */}
-              <div className="dr-screen">
-                <div className="dr-hero-reel">
-                  {/* ⚠ 1920, not 1280: grown, the well is the whole
-                      screen and a 1280 source is soft in it. Six seconds
-                      (t=4.3-10.4, the dark half of the source), 30fps,
-                      crf 23, 885KB. Jake is having a longer reel cut ON
-                      BLACK to design-dna/reel-spec.md; it drops in here
-                      with its poster and nothing else changes. Until it
-                      lands, the v1 cut's own baked-in type is in the
-                      frame. */}
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    poster="/dark/reel-film-poster.jpg"
-                    preload="metadata"
-                    aria-label="Recent Executive AI Solutions client work"
-                  >
-                    <source src="/dark/reel-film.mp4" type="video/mp4" />
-                  </video>
-                </div>
-              </div>
             </div>
           </main>
 
-          {/* THE MARQUEE, along the fold and cropped by it. The meta line
-              — the three things sold — promoted from a 12px caption to
-              the biggest type on the page, in motion. Two identical
-              sets; the track travels exactly one set and starts over,
-              so the loop has no seam. The second set is decoration and
-              is hidden from readers. */}
-          <div className="dr-marquee" aria-label="Websites, automation, Google Ads">
-            <div className="dr-marquee-track">
-              {[0, 1].map((i) => (
-                <div className="dr-marquee-set" key={i} aria-hidden={i === 1}>
-                  <span>Websites</span>
-                  <span>Automation</span>
-                  <span>Google Ads</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* THE RATING CARD, lower right, where the reference floats its
+              app card. ⚠ Renders only when lib/proof.ts carries the real
+              count — the site does not show proof it cannot back. */}
+          {GOOGLE_REVIEWS.count > 0 && (
+            <a
+              className="dr-rating"
+              href={GOOGLE_REVIEWS.url || undefined}
+              target={GOOGLE_REVIEWS.url ? "_blank" : undefined}
+              rel={GOOGLE_REVIEWS.url ? "noopener noreferrer" : undefined}
+              aria-label={`Rated ${GOOGLE_REVIEWS.rating.toFixed(1)} on Google from ${GOOGLE_REVIEWS.count} reviews`}
+            >
+              <span className="dr-stars" aria-hidden>
+                {"★★★★★"}
+              </span>
+              <span className="dr-rating-l">
+                <b>{GOOGLE_REVIEWS.rating.toFixed(1)} on Google</b>
+                <span>{GOOGLE_REVIEWS.count} client reviews</span>
+              </span>
+            </a>
+          )}
         </div>
+
+        {/* THE DOCK — where the reel actually lives: a full-width block
+            right after the hero, 16:9 at the room's gutter, radius
+            --radius-panel. At rest it is transformed up into the slot;
+            by 0.9vh of scroll it is here, and the page carries on. */}
+        <section className="dr-dock" aria-label="Showreel">
+          <div className="dr-hero-reel">
+            {/* ⚠ 1920, not 1280: docked, the well is 1394 wide and a
+                1280 source is soft in it. Six seconds (t=4.3-10.4, the
+                dark half of the source), 30fps, crf 23, 885KB. Jake is
+                having a longer reel cut ON BLACK to
+                design-dna/reel-spec.md; it drops in here with its
+                poster and nothing else changes. Until it lands, the v1
+                cut's own baked-in type is in the frame. */}
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              poster="/dark/reel-film-poster.jpg"
+              preload="metadata"
+              aria-label="Recent Executive AI Solutions client work"
+            >
+              <source src="/dark/reel-film.mp4" type="video/mp4" />
+            </video>
+          </div>
+        </section>
       </div>
 
       {/* About is a plain sibling (Jake: "i dont want that rise thing for

@@ -14,11 +14,13 @@ plan as already locked; use `decisions.md` as the record of what was
 decided and why, and only reach for a builder/verifier/critic step from
 here forward.
 
-- §01 hero — THE LIFT (2026-09-13): the film full screen under the
-  first screen; the ground with the statement (118px, filling the
-  measure) and the label row lifts 1:1 with scroll to reveal it edge to
-  edge, holds a beat, releases. Supersedes the Cosmos shutter of the
-  same morning and the screening of 2026-09-12 (decisions.md). The placeholder
+- §01 hero — THE LINE (2026-09-13): one centred statement with the
+  reel as a card inside its second line; on scroll the reel grows out
+  of the sentence (itsjay's linear grow over 0.9vh) into its own
+  full-width dock after the hero; a Google rating card lower right on
+  PLACEHOLDER numbers (lib/proof.ts — needs Jake's real ones). Fourth
+  hero of the day; the stage, the lift, the shutter and the screening
+  are all in git (decisions.md). Awaiting Jake's look. The placeholder
   reel (v1 cut, its own type baked in) stays until Jake has the real
   reel cut — it drops into public/dark/reel-film.mp4 per reel-spec.md.
   Awaiting Jake's look at the open.

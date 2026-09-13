@@ -101,10 +101,12 @@
 
   --radius-btn: 12px; --radius-frame: 18px; --radius-panel: 24px;
 
-  /* the lines have a COLUMN each now, not the measure, so the size is
-     what two words fit in a third of the screen: ~58px at 1440, wrapping
-     to two lines each. The big type moved to the marquee. */
-  --hero-fs: clamp(1.75rem, min(4vw, 6.4svh), 3.75rem);
+  /* the statement is centred with the reel's card INSIDE its second
+     line, so the size is what "systems that [card] follow up." fits in
+     the measure on one line: ~86px at 1440 (measured: 1012px of type +
+     a 145px card + the gaps, against 1290). The cqw cap on .t-hero
+     still governs where the column is the limit. */
+  --hero-fs: clamp(2rem, min(6vw, 9.6svh), 5.4rem);
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
   --nav-pad: clamp(13px, 2.4svh, 21px);
@@ -317,54 +319,40 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   }
 }
 
-/* ══ §01 THE STAGE ═════════════════════════════════════════════════
-   Jake, 2026-09-13, with a portfolio hero (codebyhicham.com): "what if
-   we do something like this with the video in the middle, infinite
-   marquee at the bottom, video grows on scroll … and when you scroll
-   the texts should have a scroll driven exit." The reel is the OBJECT
-   in the middle of the first screen; the statement flanks it, one line
-   each side, the one door under the left one; a giant marquee runs
-   along the fold, cropped by it. On scroll the stage pins, the reel
-   grows about its own centre until it IS the screen, the two lines exit
-   outward at scroll's rate, the marquee runs on underneath until the
-   film covers it. Hold a beat, release, scroll away.
+/* ══ §01 THE LINE ══════════════════════════════════════════════════
+   Jake, 2026-09-13, with a HeartBloom landing (dribbble 27394246): "can
+   we try this but instead of that image in the card its my showreel and
+   we have the itsjay effect for the video grow. i want a 5 star review
+   thing somewhere too and we would be the white background version."
 
-   Retires the lift (9cd34bc) and the shutter (da61f3c) of the same
-   morning; the screening (b7637cd) before them. Kept from all of them:
-   the film is there from the first frame, the minimal caption, the
-   rail's wordmark as the name. */
+   One big centred statement with the REEL inside it — a small card
+   between two words of the second line — the meta line and the one door
+   under it, a rating card floating lower right. On scroll, itsjay's
+   grow (decodes/itsjay.md §5.3): the reel's real home is a full-width
+   block in the section after the hero; at rest it is transformed up
+   into the slot in the line, and across the first 0.9vh of scroll it
+   scales and travels LINEARLY back to where it lives — out of the
+   sentence, across the screen, into its dock. No pin. The words leave
+   at scroll's rate and fade as the reel takes over.
+
+   Retires the stage (d5daaf3), the lift (9cd34bc), the shutter
+   (da61f3c) and the screening (b7637cd), all of today. Kept: the film
+   from the first frame, the minimal caption, the rail's wordmark as the
+   name. */
 
 .dr-top { position: absolute; top: 0; left: 0; width: 1px; height: 1px; }
+/* the reel's progress, 0 at rest → 1 at 0.9vh, itsjay's domain. On the
+   WRAPPER, because the words (in the stage) and the reel (in the dock,
+   the stage's sibling) both read it — declared on the stage it never
+   reached the reel, and the reel scrolled off still the size of a word. */
+.dr-hero-wrap { position: relative; --p: clamp(0, var(--hero-p, 0), 1); }
 .dr-stage {
   position: relative; z-index: 4;
   min-height: 100svh; display: flex; flex-direction: column;
   /* the fixed rail is out of flow, so the hero reserves its height here */
   padding-top: var(--nav-space);
-  /* the grown film is bigger than the screen; the stage is its frame */
-  overflow: clip;
-
-  /* ── THE GROW, AS ONE NUMBER ────────────────────────────────────
-     --lead is the hero's leaving: 0 at rest, 1 when the reel has
-     filled the screen — at 0.857 of the 0.7vh window = 0.6vh of
-     scroll, with 0.1vh of beat before the pin lets go. The reel's
-     scale, the lines' exit and the door all read it, so nothing can
-     drift out of step. */
-  --lead: clamp(0, calc(var(--hero-p, 0) / .857), 1);
 }
 @media (min-width: 901px) { .dr-stage { height: 100svh; } }
-
-/* THE PIN. Desktop only, like every pin on the reference — below 901px
-   nothing grows and the stage is only as tall as its rows. */
-.dr-hero-wrap { position: relative; }
-@media (min-width: 901px) {
-  .dr-stage { position: sticky; top: 0; }
-  /* ⚠ THE HOLD — the wrapper's own height, MIN-HEIGHT NOT PADDING: a
-     sticky child is constrained by its containing block's CONTENT box,
-     and padding is not in it (measured at cad15c6: 558px of padding
-     gave the stage zero room to stick in). 0.7svh: 0.6 for the grow
-     and 0.1 for the beat, matching page.tsx's window exactly. */
-  .dr-hero-wrap { min-height: calc(100svh + 70svh); }
-}
 .wrap { max-width: 1400px; margin-inline: auto; width: 100%;
         padding-inline: var(--fib-3); }
 @media (min-width: 768px) { .wrap { padding-inline: var(--fib-5); } }
@@ -541,52 +529,55 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-navcta:hover { background: var(--surface-3); }
 .dr-navcta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 
-/* main: the field above the marquee — everything under the nav down to
-   the marquee's top. */
+/* main: the whole first screen under the nav; the statement centred in
+   it, a breath above centre so the rating card has the lower right. */
 .dr-main {
   flex: 1; min-height: 0; display: flex; flex-direction: column;
-  padding-block: clamp(12px, 2svh, 24px) clamp(16px, 3svh, 32px);
+  padding-block: 0 clamp(56px, 9svh, 96px);
 }
-/* THE FIELD: three columns — a line, the reel, a line — with the reel's
-   column a fixed share of the viewport so the film's rest size is the
-   same idea at every width, and the lines taking what is left. Two rows
-   only so the door can sit under the left line while the right line
-   and the reel span both and centre on the same axis. */
 .dr-hero {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, var(--reel-w)) minmax(0, 1fr);
-  grid-template-rows: auto auto;
-  column-gap: clamp(var(--fib-4), 3.8vw, var(--fib-6));
-  row-gap: var(--fib-4);
-  align-content: center; align-items: center;
   flex: 1; min-height: 0;
-  --reel-w: 36vw;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center;
+  gap: var(--fib-4);
 }
 .dr-hero > * { position: relative; z-index: 1; }
-.dr-h1 { display: contents; }
-.dr-l1 { grid-column: 1; grid-row: 1; align-self: end; }
-.dr-herocta { grid-column: 1; grid-row: 2; align-self: start; justify-self: start; }
-.dr-l2 { grid-column: 3; grid-row: 1 / 3; align-self: center; }
-.dr-screen { grid-column: 2; grid-row: 1 / 3; align-self: center; z-index: 3; }
+.dr-h1 { margin: 0; }
+/* the lines are centred and may wrap; the slot sits in the second */
+.t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
+.dr-line { overflow: hidden; transform: skewX(-4deg); transform-origin: left center; }
+.dr-line > span { display: block; transform: translateY(103%); }
+.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
+.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 540ms forwards; }
+@keyframes dr-rise { to { transform: translateY(0); } }
 
-/* ── THE EXIT, scroll-driven (Jake) ───────────────────────────────
-   The lines leave OUTWARD — the left one left, the right one right —
-   by scroll's own measure, and dim as they go: squared, so they hold
-   nearly full strength while you are still reading and the fade only
-   bites once they are genuinely leaving. The film is growing into the
-   middle they vacate. `translate`, not transform: the lines' inner
-   spans own `transform` for the entrance. */
-.dr-l1, .dr-herocta { translate: calc(var(--lead, 0) * -18vw) 0; }
-.dr-l2 { translate: calc(var(--lead, 0) * 18vw) 0; }
-.dr-l1, .dr-l2, .dr-herocta {
-  opacity: calc(1 - .92 * var(--lead, 0) * var(--lead, 0));
-  will-change: opacity;
+/* THE SLOT — the reel's size in the line. 16:9, as tall as the line's
+   cap-ish height, on the baseline so it reads as a word. It carries a
+   faint surface of its own so the line has a card in it from the first
+   paint, before the reel has been measured onto it; the reel covers it
+   the moment it lands. The line's skew is undone on it so the card sits
+   square, the way the reference's does. */
+.dr-slot {
+  display: inline-block; vertical-align: -0.16em;
+  height: 0.94em; aspect-ratio: 16 / 9;
+  margin-inline: 0.06em;
+  border-radius: 0.22em; background: var(--surface-2);
+  transform: skewX(4deg);
 }
 
+/* THE WORDS LEAVE. No pin — the whole screen scrolls away at scroll's
+   own rate — and the words fade across the first 60% of the reel's
+   grow, so by the time the reel is most of the screen the sentence it
+   came out of is gone. Squared, so the fade holds off while you are
+   still reading. */
+.dr-h1, .dr-cap-meta, .dr-herocta, .dr-rating {
+  opacity: calc(1 - .92 * min(1, var(--p, 0) / .6) * min(1, var(--p, 0) / .6));
+}
+.dr-cap-meta { margin: 0; color: var(--ink-3); }
+
 /* ── THE ONE DOOR ────────────────────────────────────────────────
-   The room's pill, under the claim. There is no second door: the work
-   is the film, and the nav's Work link is the way into more of it. */
+   The room's pill, centred under the claim. */
 .dr-herocta {
   display: inline-flex; align-items: center; border-radius: 999px;
   padding: 13px 24px; text-decoration: none; white-space: nowrap;
@@ -596,63 +587,32 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 .dr-herocta:hover { background: var(--surface-3); }
 .dr-herocta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
-/* the entrance owns opacity for its first second; the exit above owns
-   it after. Two owners of one property: the animation wins while it
-   runs (fill: forwards), and hands back to the calc when it ends. */
+/* the entrance: meta, then the door, a beat after the lines. `backwards`
+   so the calc above owns opacity once the animation ends. */
+.dr-lit .dr-cap-meta { animation: dr-fadein var(--t-enter) var(--ease-structure) 720ms backwards; }
 .dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 800ms backwards; }
 
-/* the lines wrap here — they have a column each, not the measure */
-.t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
-/* h1 lines mask-rise, 800ms outQuart, 120ms stagger — the statement is
-   the first beat of the entrance and the biggest. */
-.dr-line { overflow: hidden; transform: skewX(-4deg);
-           transform-origin: left center; }
-.dr-line > span { display: block; transform: translateY(103%); }
-.dr-lit .dr-l1 > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
-.dr-lit .dr-l2 > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 540ms forwards; }
-@keyframes dr-rise { to { transform: translateY(0); } }
-
-/* ── THE MARQUEE, along the fold ─────────────────────────────────
-   The meta line as the biggest type on the page, running left, cropped
-   by the fold so the screen ends in type in motion. The band is a share
-   of the glyphs' height, so what shows is the top ~65% of the caps at
-   every width; the rest is under the fold, which is the point.
-
-   SEAMLESS: the track holds two identical sets and travels exactly one
-   set's width (50% of itself), then starts over on the frame the second
-   set has reached where the first began. Each item carries its own
-   trailing separator and spacing, so a set's width IS its content and
-   there is no gap to be off by. */
-.dr-marquee {
-  position: relative; z-index: 0;
-  flex: 0 0 auto;
-  height: clamp(64px, 9.4vw, 148px);
-  overflow: hidden;
-  /* the fold cuts it; a soft top keeps the caps from hitting the reel's
-     card — measured need at 1440: none, so this stays 0 */
-  --mq-fs: clamp(96px, 15vw, 232px);
+/* ── THE RATING CARD ─────────────────────────────────────────────
+   Lower right, where the reference floats its app card: five stars, the
+   score, the count — all from lib/proof.ts, and the card does not exist
+   until the count is real. A white card on the light ground; light
+   rooms carry depth in shadow (decisions.md, 2026-09-08). */
+.dr-rating {
+  position: absolute; right: var(--fib-5); bottom: clamp(32px, 6svh, 64px);
+  z-index: 2;
+  display: flex; align-items: center; gap: var(--fib-3);
+  padding: 14px 20px 14px 18px; border-radius: 18px;
+  background: #fff; color: var(--ink); text-decoration: none;
+  box-shadow: 0 18px 44px rgba(10, 10, 11, .12), 0 2px 6px rgba(10, 10, 11, .06);
+  transition: transform var(--t-micro) var(--ease-ui);
 }
-.dr-marquee-track {
-  position: absolute; left: 0; top: 0;
-  display: flex; width: max-content;
-  animation: dr-marquee 38s linear infinite;
-  will-change: transform;
-}
-.dr-marquee-set { display: flex; flex: 0 0 auto; }
-.dr-marquee-set span {
-  display: block;
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
-  font-variation-settings: "wdth" 122, "wght" 800;
-  font-size: var(--mq-fs); line-height: 1; letter-spacing: -0.02em;
-  text-transform: uppercase; color: var(--ink);
-  white-space: nowrap;
-  padding-right: .28em;
-}
-.dr-marquee-set span::after { content: "·"; padding-left: .28em; color: var(--ink-4); }
-@keyframes dr-marquee { to { transform: translate3d(-50%, 0, 0); } }
-/* the marquee arrives last, under everything else */
-.dr-marquee { opacity: 0; }
-.dr-lit .dr-marquee { animation: dr-fadein var(--t-enter) var(--ease-structure) 900ms forwards; }
+.dr-rating:hover { transform: translateY(-2px); }
+.dr-stars { font-size: 18px; letter-spacing: .06em; line-height: 1; color: var(--ink); }
+.dr-rating-l { display: flex; flex-direction: column; gap: 3px;
+  font-family: var(--font-instrument), sans-serif; font-size: var(--fs-body-s); line-height: 1.2; }
+.dr-rating-l b { font-weight: 600; }
+.dr-rating-l span { color: var(--ink-3); font-size: var(--fs-micro); }
+.dr-lit .dr-rating { animation: dr-fadein var(--t-enter) var(--ease-structure) 1000ms backwards; }
 /* ══ THE MARK, CENTRE STAGE ══════════════════════════════════════
    Lit from the upper left and falling to black — an object standing in the
    room, not a logo pasted onto it. It sits BEHIND the type: the reference
@@ -744,21 +704,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 @keyframes dr-wall-wave { to { background-position: 100% 100%; } }
 
 @media (max-width: 900px) {
-  /* stacked, no pin: the claim, the reel, the promise, the door, the
-     marquee — and the stage is only as tall as they are. Its 100svh
-     minimum is a desktop number. */
+  /* stacked, no grow: the statement, the meta, the door, the rating —
+     then the reel as the block after. The stage is only as tall as
+     they are; its 100svh minimum is a desktop number. */
   .dr-stage { min-height: 0; }
-  .dr-hero { grid-template-columns: minmax(0, 1fr);
-             grid-template-rows: auto auto auto auto; row-gap: var(--fib-4);
-             align-content: start; --reel-w: 100%; }
-  .dr-l1 { grid-column: 1; grid-row: 1; margin-top: var(--fib-4); }
-  .dr-screen { grid-column: 1; grid-row: 2; }
-  .dr-l2 { grid-column: 1; grid-row: 3; }
-  .dr-herocta { grid-column: 1; grid-row: 4; }
-  .dr-l1, .dr-l2, .dr-herocta { translate: none; opacity: 1; }
-  .dr-lit .dr-herocta { animation: none; }
+  .dr-hero { justify-content: flex-start; padding-top: var(--fib-5); }
   .dr-main { padding-bottom: var(--fib-5); }
-  .dr-marquee { height: clamp(40px, 11vw, 64px); --mq-fs: clamp(64px, 17vw, 100px); }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
   /* on a phone the same idea, scaled: bled off the left, reaching past
@@ -819,55 +770,70 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   font-size: var(--fs-body-s); line-height: 1.5; }
 .dr-vouch figcaption { margin-top: 4px; color: var(--ink-4);
   font-family: var(--font-instrument), sans-serif; font-size: var(--fs-micro); }
-/* ── THE REEL GROWS ──────────────────────────────────────────────
-   At rest a 16:9 card the width of its column, radius --radius-panel.
-   On scroll it scales about its own centre until it covers the screen:
-   --cover is the larger of the two ratios the viewport needs of it,
-   width and height — lengths divided by the tan(atan2()) trick, which
-   is the one way CSS divides two lengths — with 4% over so the last
-   corner clears the edge. Scale, not size: a box that changes size
-   re-lays-out and re-fits `cover` every frame; a scaled box is one
-   compositor transform. The RADIUS goes to 0 as it grows (full bleed
-   is radius 0, the room's law), and a border-radius on an
-   overflow:hidden box whose only child is a composited video is a
-   compositor clip — measured free on the screening's recede
-   (2026-09-12, 8.3ms mean at 2048x1536). */
-.dr-screen { position: relative; }
+/* ── THE DOCK, AND THE GROW ──────────────────────────────────────
+   The reel LIVES here: a full-width block right after the hero, 16:9
+   at the room's gutter, radius --radius-panel — at 1440x900 that is
+   1394 x 784, and by 0.9vh of scroll its top is at 0.1vh, so it fills
+   the screen on the frame the grow ends, which is itsjay's geometry
+   exactly (their video is 1440 x 810 at 900 tall).
+
+   At rest it is transformed onto the slot: --s0/--dx/--dy are measured
+   by page.tsx (the slot's height over the reel's, and the vector from
+   the reel's centre to the slot's), and --p walks them out linearly —
+   translate to 0, scale to 1. itsjay's curve is linear to three
+   decimals; the eased look is the eye's, not a curve. Transform only:
+   one composited layer, no re-fit, no re-raster. The radius is DIVIDED
+   by the scale so it reads as the same 24px at every size — a
+   border-radius on an overflow:hidden box whose only child is a
+   composited video is a compositor clip (measured free 2026-09-12). */
+.dr-dock {
+  /* ABOVE the stage (4): the reel grows over the words, the way itsjay's
+     does — the door was painting on top of the film at a third of the
+     grow. The rail (30) stays over everything. */
+  position: relative; z-index: 5;
+  padding: 0 clamp(12px, 1.6vw, 28px);
+}
 .dr-hero-reel {
   position: relative;
   width: 100%; aspect-ratio: 16 / 9;
   overflow: hidden;
   background: var(--surface-1);
-  --cover: max(tan(atan2(100vw, var(--reel-w))),
-               tan(atan2(100svh, calc(var(--reel-w) * 9 / 16))));
-  scale: calc(1 + (var(--cover) * 1.04 - 1) * var(--lead, 0));
-  border-radius: calc(var(--radius-panel) * (1 - var(--lead, 0)));
+  --r: var(--radius-panel);
+  --s: calc(var(--s0, 1) + (1 - var(--s0, 1)) * var(--p, 0));
+  translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)));
+  scale: var(--s);
+  border-radius: calc(var(--r) / var(--s));
   transform-origin: 50% 50%;
-  will-change: scale;
+  will-change: transform;
+  /* unseen until it has been measured onto the slot, then it arrives with
+     the entrance; its natural place is below the fold, so nothing flashes */
+  opacity: 0;
 }
+.dr-hero-reel[data-ready] { animation: dr-fadein var(--t-enter) var(--ease-structure) 360ms forwards; }
 .dr-hero-reel video {
   display: block;
   width: 100%; height: 100%;
   object-fit: cover;
 }
 @media (max-width: 900px) {
-  /* NO GROW ON THE PHONE. The grow only makes sense against the pin and
-     the hold, and neither exists below 901px — there the hero simply
-     scrolls away. The reel is a contained 4:3 object between the two
-     lines. */
-  .dr-hero-reel { aspect-ratio: 4 / 3; scale: none;
-                  border-radius: var(--fib-3); }
+  /* NO GROW ON THE PHONE (itsjay's is desktop-only too): the line reads
+     without its slot, and the reel is simply the block after the hero. */
+  .dr-slot { display: none; }
+  .dr-hero-reel { translate: none; scale: none; border-radius: var(--fib-3);
+                  opacity: 1; animation: none; }
+  .dr-dock { padding: 0 var(--fib-3); }
+  /* the card is a child of the stage, not of main, so main's padding is
+     not between it and the dock — it carries its own air below */
+  .dr-rating { position: static; align-self: center;
+               margin: var(--fib-3) auto var(--fib-5); }
+  .dr-h1, .dr-cap-meta, .dr-herocta, .dr-rating { opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
-  /* ⚠ THE ENGINE RESOLVES, IT DOES NOT SKIP: every scroll var is
-     published as 1, the finished frame — the film full screen and the
-     words gone before anyone scrolled. Hold everything at rest, drop
-     the pin (a hold with nothing moving in it is a stall), and let the
-     marquee stand still. */
-  .dr-stage { --lead: 0; position: relative; }
-  .dr-hero-wrap { min-height: 0; }
-  .dr-marquee-track { animation: none; }
-  .dr-lit .dr-marquee { animation: none; opacity: 1; }
+  /* the engine publishes --hero-p as 1: the reel sits in its dock and
+     the slot would be an empty card in the line — hide it, and the
+     page reads as the static version of itself */
+  .dr-slot { display: none; }
+  .dr-hero-reel { opacity: 1; animation: none; }
 }
 /* ══ §02 · THE FUNNEL ════════════════════════════════════════════
    THE LIGHTS COME ON. The one light section in a black room, and the only
