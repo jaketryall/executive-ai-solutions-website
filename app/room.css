@@ -101,19 +101,30 @@
 
   --radius-btn: 12px; --radius-frame: 18px; --radius-panel: 24px;
 
-  /* the statement is centred with the reel's chip INSIDE its second
-     line, so the size is what "systems that [chip] follow up." fits in
-     the measure on one line: ~84px at 1440 (1012px of type + a 162px
-     chip + the gaps, against 1290). The cqw cap on .t-hero still
-     governs where the column is the limit. */
-  --hero-fs: clamp(2rem, min(5.85vw, 9.4svh), 5.25rem);
+  /* THE STATEMENT FILLS ITS MEASURE (the critic, 2026-09-13, on Jake's
+     "the top half feels so empty": 69–84px of statement in 736–900px of
+     height was under-sized type given generous room, not missing
+     content). 106.6px at 1440x900 (7.4vw binds), 103 at 1440x736
+     (14svh binds — Jake's own screen), 94.7 at 1280x800, capped 108
+     from 1920 up; the longest line, "Design that [chip] sells,", runs
+     ~9.8x the size, ~80% of the column at every desktop width. The
+     9.4svh cap it replaces was sized for the layout where a reel card
+     shared the screen with the words; that height is the words' now. */
+  --hero-fs: clamp(2rem, min(7.4vw, 14svh), 6.75rem);
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
   --nav-pad: clamp(13px, 2.4svh, 21px);
   --nav-h: 62px;
   --nav-space: calc(var(--nav-h) + var(--nav-pad));
   --floor: clamp(20px, 5.5svh, 58px);       /* the action's floor */
-  --hero-lh: 1.06;
+  /* ONE shadow for every floating object in the light room (light rooms
+     carry depth in shadow, decisions 2026-09-08): the rating card's
+     recipe, as the token */
+  --lift: 0 18px 44px rgba(10, 10, 11, .12), 0 2px 6px rgba(10, 10, 11, .06);
+  /* 1.04, NOT 1: Archivo's content area is 1.099em, and at 1 the
+     descenders of g/y and the chip's bottom edge fall outside the line
+     box and .dr-line's overflow:hidden clips them by 1.5–3.5px */
+  --hero-lh: 1.04;
 
   /* ── exactly two curves. */
   --ease-structure: cubic-bezier(0.25, 1, 0.5, 1);  /* every entrance/reveal */
@@ -252,8 +263,11 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
      CHANGES — and this note has now earned itself, because the copy did
      change: 9.3 was measured against "while you're on the job." (ratio
      10.00) and 9.2 against "systems that follow up." (10.08). */
+  /* ⚠ 9.2cqw resolves against 1vw — no ancestor declares
+     container-type since the chip moved into the h1 — so that cap
+     never binds above 901px; --hero-fs's own clamp is the governor */
   font-size: min(var(--hero-fs), 9.2cqw);
-  letter-spacing: -0.028em; line-height: 1.04;
+  letter-spacing: -0.034em; line-height: var(--hero-lh);
   text-transform: none; color: #d6d6da;
   margin: 0;
 }
@@ -340,7 +354,12 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    from the first frame, the minimal caption, the rail's wordmark as the
    name. */
 
-.dr-top { position: absolute; top: 0; left: 0; width: 1px; height: 1px; }
+/* the sentinel is 19.8svh TALL: the rail's observer (threshold 0)
+   reports it gone when its BOTTOM passes the top of the viewport, i.e.
+   at p .22 — the frame the words are gone and the hero's door is out —
+   so the pill, its lit edge and the nav's action close after them, and
+   there is one door on screen at any moment */
+.dr-top { position: absolute; top: 0; left: 0; width: 1px; height: 19.8svh; }
 /* the reel's progress, 0 at rest → 1 at 0.9vh, itsjay's domain. On the
    WRAPPER, because the words (in the stage) and the reel (in the dock,
    the stage's sibling) both read it — declared on the stage it never
@@ -357,7 +376,9 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
         padding-inline: var(--fib-3); }
 @media (min-width: 768px) { .wrap { padding-inline: var(--fib-5); } }
 
-@keyframes dr-fadein { to { opacity: 1; } }
+/* from 0, explicitly: with only a `to`, an element resting at opacity 1
+   fades from 1 to 1 — every caption fade was a no-op */
+@keyframes dr-fadein { from { opacity: 0; } to { opacity: 1; } }
 
 /* ══ THE LIT EDGE — one component, used everywhere ═══════════════
    The law says the 1px stroke is the same object in every section and
@@ -541,14 +562,17 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   flex: 1; min-height: 0;
   display: flex; flex-direction: column; align-items: center;
   justify-content: center; text-align: center;
-  gap: var(--fib-3);
+  /* the gaps are the objects' own (the lead's and the door's margins),
+     not one number between everything */
+  gap: 0;
 }
 .dr-hero > * { position: relative; z-index: 1; }
 .dr-h1 { margin: 0; }
 .t-hero .dr-line > span { white-space: nowrap; }
-/* the description: one sentence at a reading measure, muted a step */
-.dr-sub { max-width: 46ch; margin: 0; color: var(--ink-2);
-          font-size: var(--fs-body-s); }
+/* the description: one sentence at READING size (.t-body's own 18px,
+   1.62) under a 107px claim — three sizes in the column, not two small
+   grey things at one size — muted a step, a fib-3 off the claim */
+.dr-sub { max-width: 46ch; margin: var(--fib-3) 0 0; color: var(--ink-2); }
 .dr-line { overflow: hidden; transform: skewX(-4deg); transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
 .dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
@@ -562,10 +586,13 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    from the first paint, before the reel has been measured onto it; the
    reel covers it the moment it lands. */
 .dr-slot {
-  display: inline-block; vertical-align: -0.2em;
-  height: 1.08em; aspect-ratio: 16 / 9;
+  /* the line's own extents: top flush with the ascenders, bottom on the
+     descender line — at 1.08em it poked above the letters and grew its
+     line's box 6px taller than the other's */
+  display: inline-block; vertical-align: -0.18em;
+  height: 0.9em; aspect-ratio: 16 / 9;
   margin-inline: 0.05em;
-  border-radius: 7px; background: var(--surface-2);
+  border-radius: 6px; background: var(--surface-2);
   transform: skewX(4deg);
 }
 /* once the reel has been measured onto it the slot is layout only — its
@@ -577,26 +604,40 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    grow, so by the time the reel is most of the screen the sentence it
    came out of is gone. Squared, so the fade holds off while you are
    still reading. */
-.dr-h1, .dr-cap-meta, .dr-herocta, .dr-rating {
-  opacity: calc(1 - .92 * min(1, var(--p, 0) / .6) * min(1, var(--p, 0) / .6));
+/* the door and the lead go first — the reel covers them first */
+.dr-herocta, .dr-sub {
+  opacity: calc(1 - min(1, var(--p, 0) / .18) * min(1, var(--p, 0) / .18));
 }
-.dr-cap-meta { margin: 0; color: var(--ink-3); }
+/* the claim and the card are gone by p .22 (178px at 900), before the
+   claim's top reaches the rail's hem at p .20 — no ghost ever straddles
+   the pill (the ugliest frame of the day: the claim at .48 behind the
+   rail, a crisp description under a half-gone headline) */
+.dr-h1, .dr-rating {
+  opacity: calc(1 - min(1, var(--p, 0) / .22) * min(1, var(--p, 0) / .22));
+}
 
 /* ── THE ONE DOOR ────────────────────────────────────────────────
    The room's pill, centred under the claim. */
+/* the room's own law — the extreme value is the action — inverted for
+   the light room means the DARKEST object on the first screen after the
+   chip: an ink pill with the ground as its label (16:1). One rule, both
+   rooms: in ?dark it is the white pill with black type. */
 .dr-herocta {
   display: inline-flex; align-items: center; border-radius: 999px;
-  padding: 13px 24px; text-decoration: none; white-space: nowrap;
-  color: var(--ink); background: var(--surface-2);
+  padding: 13px 24px; margin-top: var(--fib-4);
+  text-decoration: none; white-space: nowrap;
+  color: var(--void); background: var(--ink);
   --glint-t: 4.5s;
   transition: background var(--t-micro) var(--ease-ui);
 }
-.dr-herocta:hover { background: var(--surface-3); }
+.dr-herocta:hover { background: var(--ink-2); }
 .dr-herocta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
-/* the entrance: meta, then the door, a beat after the lines. `backwards`
-   so the calc above owns opacity once the animation ends. */
-.dr-lit .dr-cap-meta { animation: dr-fadein var(--t-enter) var(--ease-structure) 720ms backwards; }
-.dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 800ms backwards; }
+/* the entrance: the lead, the card, then the door LAST — animate-last is
+   the highest in the hierarchy. `backwards`, never `forwards`, so the
+   calc above owns opacity once the fade ends. */
+.dr-lit .dr-sub     { animation: dr-fadein var(--t-enter) var(--ease-structure) 700ms backwards; }
+.dr-lit .dr-rating  { animation: dr-fadein var(--t-enter) var(--ease-structure) 760ms backwards; }
+.dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 900ms backwards; }
 
 /* ── THE RATING CARD ─────────────────────────────────────────────
    Lower right, where the reference floats its app card: five stars, the
@@ -609,7 +650,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   display: flex; align-items: center; gap: var(--fib-3);
   padding: 14px 20px 14px 18px; border-radius: 18px;
   background: #fff; color: var(--ink); text-decoration: none;
-  box-shadow: 0 18px 44px rgba(10, 10, 11, .12), 0 2px 6px rgba(10, 10, 11, .06);
+  box-shadow: var(--lift);
   transition: transform var(--t-micro) var(--ease-ui);
 }
 .dr-rating:hover { transform: translateY(-2px); }
@@ -618,7 +659,6 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   font-family: var(--font-instrument), sans-serif; font-size: var(--fs-body-s); line-height: 1.2; }
 .dr-rating-l b { font-weight: 600; }
 .dr-rating-l span { color: var(--ink-3); font-size: var(--fs-micro); }
-.dr-lit .dr-rating { animation: dr-fadein var(--t-enter) var(--ease-structure) 1000ms backwards; }
 /* ══ THE MARK, CENTRE STAGE ══════════════════════════════════════
    Lit from the upper left and falling to black — an object standing in the
    room, not a logo pasted onto it. It sits BEHIND the type: the reference
@@ -739,7 +779,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      let the statement wrap, and scale UP (a phone is narrow, not small) */
   .dr-line { transform: skewX(-3deg); }
   .t-hero { letter-spacing: -0.015em;
-            font-size: clamp(1.75rem, 7.2vw, 2.6rem); }
+            font-size: clamp(1.75rem, 8.4vw, 2.6rem); }
   /* left to itself the first phrase drops 'BOOKS' alone on a line;
      balance splits it evenly instead. Safari <17.5 just wraps normally. */
   .t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
@@ -760,8 +800,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-key, .dr-key::after,
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
-  .dr-lit .dr-herocta,
-  .dr-lit .dr-cap-meta { opacity: 1; transform: none; animation: none; }
+  .dr-lit .dr-herocta { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
   .dr-lit .dr-vignette { animation: none; opacity: .8; }
 }
@@ -799,13 +838,28 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      grow. The rail (30) stays over everything. */
   position: relative; z-index: 5;
   padding: 0 clamp(12px, 1.6vw, 28px);
+  /* the scale, on the dock, so the reel and its shade share one number */
+  --s: calc(var(--s0, 1) + (1 - var(--s0, 1)) * var(--p, 0));
 }
+/* THE SHADE — the reel's shadow on a sibling whose box and radius never
+   change, so it paints once and only transforms (see page.tsx). At chip
+   scale its corner sits inside a 4px blur; at the dock it is the rating
+   card's shadow under the film. */
+.dr-hero-shade {
+  position: absolute; top: 0;
+  left: clamp(12px, 1.6vw, 28px); right: clamp(12px, 1.6vw, 28px);
+  aspect-ratio: 16 / 9; border-radius: var(--radius-panel);
+  box-shadow: var(--lift);
+  translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)));
+  scale: var(--s); transform-origin: 50% 50%;
+  will-change: transform; pointer-events: none; opacity: 0;
+}
+.dr-hero-wrap[data-ready] .dr-hero-shade { animation: dr-fadein var(--t-enter) var(--ease-structure) 360ms forwards; }
 .dr-hero-reel {
-  position: relative;
+  position: relative; z-index: 1;
   width: 100%; aspect-ratio: 16 / 9;
   overflow: hidden;
   background: var(--surface-1);
-  --s: calc(var(--s0, 1) + (1 - var(--s0, 1)) * var(--p, 0));
   translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)));
   scale: var(--s);
   /* THE CORNERS ARE SIZED TO THE OBJECT, not held at one number (Jake:
@@ -814,7 +868,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      VISUAL radius now runs from --r0 on the chip to --r1 at the dock,
      and is divided by the scale so the element renders it at exactly
      that size whatever its scale is. */
-  --r0: 7px; --r1: var(--radius-panel);
+  --r0: 6px; --r1: var(--radius-panel);
   border-radius: calc((var(--r0) + (var(--r1) - var(--r0)) * var(--p, 0)) / var(--s));
   transform-origin: 50% 50%;
   will-change: transform;
@@ -835,11 +889,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-hero-reel { translate: none; scale: none; border-radius: var(--fib-3);
                   opacity: 1; animation: none; }
   .dr-dock { padding: 0 var(--fib-3); }
+  .dr-hero-shade { display: none; }
+  .dr-hero-reel { box-shadow: var(--lift); }
   /* the card is a child of the stage, not of main, so main's padding is
      not between it and the dock — it carries its own air below */
   .dr-rating { position: static; align-self: center;
                margin: var(--fib-3) auto var(--fib-5); }
-  .dr-h1, .dr-cap-meta, .dr-herocta, .dr-rating { opacity: 1; }
+  .dr-h1, .dr-sub, .dr-herocta, .dr-rating { opacity: 1; }
+  .dr-sub { font-size: var(--fs-body); }
 }
 @media (prefers-reduced-motion: reduce) {
   /* the engine publishes --hero-p as 1: the reel sits in its dock and
@@ -847,6 +904,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      page reads as the static version of itself */
   .dr-slot { display: none; }
   .dr-hero-reel { opacity: 1; animation: none; }
+  .dr-hero-shade { opacity: 1; animation: none; }
+  /* the engine publishes --hero-p as 1: without these the claim and the
+     card sit at 8% on the first screen with the reel docked below it */
+  .dr-h1, .dr-sub, .dr-herocta, .dr-rating { opacity: 1; }
+  .dr-lit .dr-sub, .dr-lit .dr-rating, .dr-lit .dr-herocta { animation: none; }
 }
 /* ══ THE RECEIPTS — the numbers band under the reel ═══════════════
    Four figures on the ground, separated by space. The numeral is the

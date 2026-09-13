@@ -125,9 +125,11 @@ export default function DarkRoom() {
       };
       const s = box(slot), r = box(reel);
       if (!s.h || !r.h) return;
-      reel.style.setProperty("--s0", String(s.h / r.h));
-      reel.style.setProperty("--dx", `${s.x + s.w / 2 - (r.x + r.w / 2)}px`);
-      reel.style.setProperty("--dy", `${s.y + s.h / 2 - (r.y + r.h / 2)}px`);
+      /* on the DOCK, so the reel and its shade both inherit the same three */
+      const dock = reel.closest<HTMLElement>(".dr-dock") ?? reel;
+      dock.style.setProperty("--s0", String(s.h / r.h));
+      dock.style.setProperty("--dx", `${s.x + s.w / 2 - (r.x + r.w / 2)}px`);
+      dock.style.setProperty("--dy", `${s.y + s.h / 2 - (r.y + r.h / 2)}px`);
       reel.setAttribute("data-ready", "");
       reel.closest(".dr-hero-wrap")?.setAttribute("data-ready", "");
     };
@@ -206,29 +208,32 @@ export default function DarkRoom() {
         <div className="dr-stage">
           <main className="dr-main wrap">
             <div className="dr-hero">
-              <p className="dr-cap-meta t-meta">
-                Websites &middot; Automation &middot; Google Ads
-              </p>
               <h1 className="t-hero dr-h1">
                 {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im
                     shifting more towards design and crms than ads
                     right now" — the statement names the two things he
                     leads with, in that order; ads are not in it. */}
                 <span className="dr-line">
-                  <span className="sweep">Design that sells,</span>
-                </span>
-                <span className="dr-line">
                   <span className="sweep">
-                    systems that{" "}
+                    Design that{" "}
                     {/* THE CHIP (Jake: "i still want the chip in the
                         title though, so it being smaller"): the reel's
                         rest position is a card in the line, between two
                         words, the way the HeartBloom reference puts its
-                        image. The reel lives in the dock and is measured
-                        onto this. Decoration; the reel carries the label. */}
+                        image. In LINE ONE, inside the word the film
+                        shows (a website), so the two lines measure the
+                        same and the eye enters at the chip and reads
+                        forward — in line two it left a short line perched
+                        on a long one. No period: a display line ends on
+                        its last word. The reel lives in the dock and is
+                        measured onto this. Decoration; the reel carries
+                        the label. */}
                     <span className="dr-slot" aria-hidden />{" "}
-                    follow up.
+                    sells,
                   </span>
+                </span>
+                <span className="dr-line">
+                  <span className="sweep">systems that follow up</span>
                 </span>
               </h1>
               {/* THE DESCRIPTION — one sentence, the way acquisition.com
@@ -273,6 +278,13 @@ export default function DarkRoom() {
             --radius-panel. At rest it is transformed up into the slot;
             by 0.9vh of scroll it is here, and the page carries on. */}
         <section className="dr-dock" aria-label="Showreel">
+          {/* THE SHADE: the reel's shadow, on a sibling. The reel's own
+              radius is recomputed every frame (divided by the scale), and
+              a shadow on a changing radius re-rasters the whole layer per
+              frame; this box and its 24px radius are constant, so it
+              paints once and only transforms — the same numbers, under
+              the reel. */}
+          <div className="dr-hero-shade" aria-hidden />
           <div className="dr-hero-reel">
             {/* ⚠ 1920, not 1280: docked, the well is 1394 wide and a
                 1280 source is soft in it. Six seconds (t=4.3-10.4, the
