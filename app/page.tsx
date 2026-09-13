@@ -209,31 +209,27 @@ export default function DarkRoom() {
           <main className="dr-main wrap">
             <div className="dr-hero">
               <h1 className="t-hero dr-h1">
-                {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im
-                    shifting more towards design and crms than ads
-                    right now" — the statement names the two things he
-                    leads with, in that order; ads are not in it. */}
-                <span className="dr-line">
-                  <span className="sweep">
-                    Design that{" "}
-                    {/* THE CHIP (Jake: "i still want the chip in the
-                        title though, so it being smaller"): the reel's
-                        rest position is a card in the line, between two
-                        words, the way the HeartBloom reference puts its
-                        image. In LINE ONE, inside the word the film
-                        shows (a website), so the two lines measure the
-                        same and the eye enters at the chip and reads
-                        forward — in line two it left a short line perched
-                        on a long one. No period: a display line ends on
-                        its last word. The reel lives in the dock and is
-                        measured onto this. Decoration; the reel carries
-                        the label. */}
-                    <span className="dr-slot" aria-hidden />{" "}
-                    sells,
+                {/* THE CHIP, AS A DROP CAP (Jake: "video is hard to see" —
+                    at a word's height the film was a 96px thumbnail). It
+                    is the FIRST object in the title, two lines tall, the
+                    statement set beside it: the reel is the title's
+                    initial, 2.3x the size it had inline, and the headline
+                    block runs the whole measure. Still the reel's rest
+                    position: it lives in the dock and is measured onto
+                    this. Decoration; the reel carries the label. */}
+                <span className="dr-slot" aria-hidden />
+                <span className="dr-lines">
+                  {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im
+                      shifting more towards design and crms than ads
+                      right now" — the statement names the two things he
+                      leads with, in that order; ads are not in it. No
+                      period: a display line ends on its last word. */}
+                  <span className="dr-line">
+                    <span className="sweep">Design that sells,</span>
                   </span>
-                </span>
-                <span className="dr-line">
-                  <span className="sweep">systems that follow up</span>
+                  <span className="dr-line">
+                    <span className="sweep">systems that follow up</span>
+                  </span>
                 </span>
               </h1>
               {/* THE DESCRIPTION — one sentence, the way acquisition.com

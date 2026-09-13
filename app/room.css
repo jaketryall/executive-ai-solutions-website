@@ -110,7 +110,11 @@
      ~9.8x the size, ~80% of the column at every desktop width. The
      9.4svh cap it replaces was sized for the layout where a reel card
      shared the screen with the words; that height is the words' now. */
-  --hero-fs: clamp(2rem, min(7.4vw, 14svh), 6.75rem);
+  /* re-sized for the drop cap: the row is chip (3.7em: two lines of
+     1.04 at 16:9) + gap (.3em) + the longest line (9.8em) = 13.8em, and
+     it has to fit the 1290 measure — 92px at 1440, 14svh still binding
+     on a short screen */
+  --hero-fs: clamp(2rem, min(6.4vw, 14svh), 5.75rem);
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
   --nav-pad: clamp(13px, 2.4svh, 21px);
@@ -567,7 +571,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   gap: 0;
 }
 .dr-hero > * { position: relative; z-index: 1; }
-.dr-h1 { margin: 0; }
+/* the title is a ROW: the chip, then the two lines beside it, the lines
+   left-aligned against the chip and the whole row centred in the hero */
+.dr-h1 { margin: 0; display: flex; align-items: stretch; gap: .3em;
+         text-align: left; }
+.dr-lines { display: block; min-width: 0; }
 .t-hero .dr-line > span { white-space: nowrap; }
 /* the description: one sentence at READING size (.t-body's own 18px,
    1.62) under a 107px claim — three sizes in the column, not two small
@@ -586,14 +594,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    from the first paint, before the reel has been measured onto it; the
    reel covers it the moment it lands. */
 .dr-slot {
-  /* the line's own extents: top flush with the ascenders, bottom on the
-     descender line — at 1.08em it poked above the letters and grew its
-     line's box 6px taller than the other's */
-  display: inline-block; vertical-align: -0.18em;
-  height: 0.9em; aspect-ratio: 16 / 9;
-  margin-inline: 0.05em;
-  border-radius: 6px; background: var(--surface-2);
-  transform: skewX(4deg);
+  /* as tall as both lines (the row stretches it), 16:9, so its width
+     follows the type: 340 x 191 at 92px. Square — it is an object beside
+     the type, not a letter in it, so the line's skew does not apply */
+  display: block; flex: 0 0 auto; align-self: stretch;
+  aspect-ratio: 16 / 9; width: auto;
+  border-radius: 10px; background: var(--surface-2);
 }
 /* once the reel has been measured onto it the slot is layout only — its
    surface would show the moment the reel leaves for its dock */
@@ -757,6 +763,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-hero { justify-content: flex-start; padding-top: var(--fib-5); }
   .dr-main { padding-bottom: var(--fib-5); }
   .t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
+  .dr-h1 { display: block; text-align: center; }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
   /* on a phone the same idea, scaled: bled off the left, reaching past
@@ -868,7 +875,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      VISUAL radius now runs from --r0 on the chip to --r1 at the dock,
      and is divided by the scale so the element renders it at exactly
      that size whatever its scale is. */
-  --r0: 6px; --r1: var(--radius-panel);
+  --r0: 10px; --r1: var(--radius-panel);
   border-radius: calc((var(--r0) + (var(--r1) - var(--r0)) * var(--p, 0)) / var(--s));
   transform-origin: 50% 50%;
   will-change: transform;
