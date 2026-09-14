@@ -140,3 +140,4 @@ bug; never delete a line.
 - At `--lead` 1 the lead card's width and left edge equal a normal rail card's (620 / the track's left), so it is indistinguishable from step 02's geometry.
 - The non-lead cards are at opacity 0 until `--lead` passes .55 — step 02 must never be readable beside an unconverted quote.
 - Below 900px and under reduced motion: `--lead` is 1, the quote is `display: none`, the lead card is full column width, and the four steps read 01–04 top to bottom.
+- §01 THE SHRINK: at 1.35vh of scroll and beyond (`--q` = 1 on `.dr-dock`) the reel's left/right edges equal the numbers card's (55 / 1385 at 1440) and the rail's; at every scroll the reel's bottom equals the dock's layout bottom (the settle holds the bottom edge — a gap opening under the film is the regression). Between 0.9 and 1.0vh the reel is still 108vw (the hold).

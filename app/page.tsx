@@ -326,7 +326,21 @@ export default function DarkRoom() {
             right after the hero, 16:9 at the room's gutter, radius
             --radius-panel. At rest it is transformed up into the slot;
             by 0.9vh of scroll it is here, and the page carries on. */}
-        <section className="dr-dock" aria-label="Showreel">
+        {/* --q is the SHRINK (Jake: "the video section has to grow to full
+            and then shrink"): measured on the dock's own top edge, which
+            sits at 0.1vh the frame the grow ends (the stage is one screen,
+            the grow is 0.9 of it). A 0.1vh hold at full, then 0.35vh of
+            scroll back down to the column — the film settles onto the
+            numbers card below, bottom edge held. */}
+        <section
+          className="dr-dock"
+          aria-label="Showreel"
+          data-sp
+          data-sp-edge="top"
+          data-sp-from="0"
+          data-sp-to="-0.35"
+          data-sp-var="--q"
+        >
           {/* THE SHADE: the reel's shadow, on a sibling. The reel's own
               radius is recomputed every frame (divided by the scale), and
               a shadow on a changing radius re-rasters the whole layer per

@@ -1062,8 +1062,20 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      ends (0.9vh of scroll) the reel is CENTRED in the viewport. */
   --dock-w: 108vw;
   padding: max(0px, calc(40svh - var(--dock-w) / 2.6 / 2)) 0 0;
+  /* THEN IT SHRINKS (Jake: "grow to full and then shrink"): after the
+     grow and a 0.1vh hold, --q runs 0→1 over 0.35vh of scroll and the
+     reel comes back from 108vw to THE COLUMN — the hero's edges, the
+     numbers card's edges — so the film ends where everything else is.
+     --s1 is that width over the dock's, a number (tan∘atan2 divides two
+     lengths). The two windows never overlap: --p is 1 before --q moves. */
+  --s1: tan(atan2(100vw - 2 * clamp(24px, 3.8vw, 64px), var(--dock-w)));
   /* the scale, on the dock, so the reel and its shade share one number */
-  --s: calc(var(--s0, 1) + (1 - var(--s0, 1)) * var(--p, 0));
+  --s: calc(var(--s0, 1) + (1 - var(--s0, 1)) * var(--p, 0) + (var(--s1) - 1) * var(--q, 0));
+  /* the shrink holds the BOTTOM edge: scaling about the centre would lift
+     it by (1 - s) · h / 2 and open a gap to the card, so the reel is
+     carried down by exactly that — the top edge drops, the sides come
+     in, the film settles onto what is under it */
+  --settle: calc((1 - var(--s1)) * var(--q, 0) * var(--dock-w) / 5.2);
 }
 /* THE SHADE — the reel's shadow on a sibling whose box and radius never
    change, so it paints once and only transforms (see page.tsx). At chip
@@ -1075,7 +1087,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   left: calc((100vw - var(--dock-w)) / 2); width: var(--dock-w);
   aspect-ratio: 2.6 / 1; border-radius: var(--radius-panel);
   box-shadow: var(--lift);
-  translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)));
+  translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)) + var(--settle, 0px));
   scale: var(--s); transform-origin: 50% 50%;
   will-change: transform; pointer-events: none; opacity: 0;
 }
@@ -1086,7 +1098,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   aspect-ratio: 2.6 / 1;
   overflow: hidden;
   background: var(--surface-1);
-  translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)));
+  translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)) + var(--settle, 0px));
   scale: var(--s);
   /* THE CORNERS ARE SIZED TO THE OBJECT, not held at one number (Jake:
      "the video has too much of rounded corners"): 24px divided by the
