@@ -125,6 +125,14 @@ export default function DarkRoom() {
       };
       const s = box(slot), r = box(reel);
       if (!s.h || !r.h) return;
+      /* the headline's white copy is clipped to the film's box */
+      const h1 = document.querySelector<HTMLElement>(".dr-h1");
+      if (h1) {
+        const hb = box(h1);
+        h1.style.setProperty("--cross-top", `${Math.max(0, s.y - hb.y)}px`);
+        h1.style.setProperty("--cross-left", `${Math.max(0, s.x - hb.x)}px`);
+        h1.style.setProperty("--cross-right", `${Math.max(0, hb.x + hb.w - (s.x + s.w))}px`);
+      }
       /* on the DOCK, so the reel and its shade both inherit the same three */
       const dock = reel.closest<HTMLElement>(".dr-dock") ?? reel;
       dock.style.setProperty("--s0", String(s.h / r.h));
@@ -171,11 +179,16 @@ export default function DarkRoom() {
           25319896: a headline across the top of a big picture, words
           ON it): "im thinking the video could be dimmed so you get the
           text on top of it and when you scroll it grows and undims."
-          So: the statement centred, its second line across the top of
-          a big VEILED film card that takes the rest of the screen; the
-          description and the one door ON the card, the rating a badge
-          on it; on scroll the reel grows out of the card into the dock
-          and the veil lifts with it. On scroll, itsjay's grow (decodes/itsjay.md
+          And, on the first cut of that (the film washed light, the
+          room's wide face): "it doesnt really look like the reference."
+          It did not: theirs is a dark picture with LIGHT writing on it,
+          a huge condensed one-line headline, and the picture's top edge
+          cutting through the letters. So: one condensed uppercase line
+          the width of the measure; the film DIMMED DARK with light copy
+          and the three service names written on it; the headline
+          white where it crosses the film (a clipped second copy of the
+          line, never a blend). On scroll the reel grows
+          out of the card into the dock and the scrim lifts with it. On scroll, itsjay's grow (decodes/itsjay.md
           §5.3, measured): the reel's real home is a full-width block in
           the section right after the hero; at rest it is transformed UP
           into the chip in the line (scale ~0.13, translated to its
@@ -209,35 +222,59 @@ export default function DarkRoom() {
         <div className="dr-stage">
           <main className="dr-main wrap">
             <div className="dr-hero">
+              {/* ONE LINE, condensed, uppercase, the width of the measure —
+                  the Hyperactive shot's DISCOVER THE TASTE. The second
+                  half of the statement moves onto the card as its
+                  heading (their PIZZA WITH URBAN FLAIR). ⚠ THE
+                  POSITIONING LINE still holds: design first, systems
+                  second, ads not in the statement. It crosses the film's
+                  top edge, and is white where it does — see the second
+                  copy below. */}
               <h1 className="t-hero dr-h1">
-                {/* ⚠ THE POSITIONING LINE. Jake, 2026-09-10: "im
-                    shifting more towards design and crms than ads
-                    right now" — the statement names the two things he
-                    leads with, in that order; ads are not in it. No
-                    period: a display line ends on its last word. Its
-                    second line sits ON the top of the veiled film. */}
                 <span className="dr-line">
-                  <span className="sweep">Design that sells,</span>
+                  <span className="sweep">Design that sells</span>
                 </span>
-                <span className="dr-line">
-                  <span className="sweep">systems that follow up</span>
+                {/* THE SAME LINE, WHITE, CLIPPED TO THE FILM. Where the
+                    headline crosses the film's box this copy shows and
+                    the ink one is under it; everywhere else it is
+                    clipped away. The clip is three measured numbers
+                    (page.tsx measure(): the film box against the
+                    headline box), static at rest, so nothing re-rasters.
+                    Not a blend mode: `difference` inverts on a bright
+                    frame of film, and the reference never inverts —
+                    the words are white on the picture, full stop. */}
+                <span className="dr-line dr-line--film" aria-hidden>
+                  <span>Design that sells</span>
                 </span>
               </h1>
 
-              {/* THE CARD — the reel's rest position, and the surface the
-                  words sit on. It takes the rest of the first screen
-                  under the headline, which overlaps its top edge (the
-                  Hyperactive pizza shot, dribbble 25319896: the headline
-                  across the top of the picture). The reel lives in the
-                  dock and is measured onto this box; VEILED at rest so
-                  the ink on it reads, and the veil lifts as it grows —
-                  Jake: "the video could be dimmed so you get the text on
-                  top of it and when you scroll it grows and undims." */}
+              {/* THE CARD — the reel's rest position, and the dark object
+                  the words sit on. It takes the rest of the first screen,
+                  the headline crossing its top edge; DIMMED at rest (a
+                  black scrim, so the light copy reads) and the scrim lifts
+                  as it grows — Jake: "the video could be dimmed so you
+                  get the text on top of it and when you scroll it grows
+                  and undims." The reel lives in the dock and is measured
+                  onto this box. */}
               <div className="dr-slot">
-                <p className="t-body dr-sub">
-                  We build your site and wire up the system behind it, so every
-                  call, form and text gets answered in seconds instead of days.
-                </p>
+                <div className="dr-card-copy">
+                  <p className="dr-card-h t-cta">Systems that follow up</p>
+                  <p className="dr-sub">
+                    We build your site and wire up the system behind it, so
+                    every call, form and text gets answered in seconds
+                    instead of days.
+                  </p>
+                </div>
+
+                {/* THE TAGS — the three things sold, written on the film
+                    the way the reference sprays JUICY / CRISPY / CHEESY
+                    across the picture: the room's own display face, not a
+                    graffiti font, placed by hand. */}
+                <span className="dr-tag dr-tag-1 t-section" aria-hidden>Websites</span>
+                <span className="dr-tag dr-tag-2 t-section" aria-hidden>Automation</span>
+                <span className="dr-tag dr-tag-3 t-section" aria-hidden>Google Ads</span>
+                <span className="sr-only">Websites, automation, Google Ads.</span>
+
                 <Link href="/contact" className="dr-herocta dr-edge t-cta">
                   Book the call
                 </Link>

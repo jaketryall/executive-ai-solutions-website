@@ -110,9 +110,11 @@
      ~9.8x the size, ~80% of the column at every desktop width. The
      9.4svh cap it replaces was sized for the layout where a reel card
      shared the screen with the words; that height is the words' now. */
-  /* the statement over the card: 7.4vw fills the measure at 1440
-     (106px), 12svh keeps the card most of the screen on a short one */
-  --hero-fs: clamp(2rem, min(7.4vw, 12svh), 6.75rem);
+  /* ONE LINE the width of the measure: "DESIGN THAT SELLS" in Archivo at
+     wdth 66 / 800 runs ~7.0x the size, so 12.8vw fills the 1290 measure
+     at 1440 (184px); 20svh keeps the card the bigger object on a short
+     screen; capped so it never outgrows the measure on a wide one. */
+  --hero-fs: clamp(3rem, min(12.8vw, 20svh), 12.5rem);
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
   --nav-pad: clamp(13px, 2.4svh, 21px);
@@ -265,10 +267,10 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
      CHANGES — and this note has now earned itself, because the copy did
      change: 9.3 was measured against "while you're on the job." (ratio
      10.00) and 9.2 against "systems that follow up." (10.08). */
-  /* ⚠ 9.2cqw resolves against 1vw — no ancestor declares
-     container-type since the chip moved into the h1 — so that cap
-     never binds above 901px; --hero-fs's own clamp is the governor */
-  font-size: min(var(--hero-fs), 9.2cqw);
+  /* --hero-fs's own clamp is the governor now: the old 9.2cqw cap was
+     sized for a two-line sentence-case statement and, resolving against
+     1vw, held the one condensed line at 132px when the measure fits 184 */
+  font-size: var(--hero-fs);
   letter-spacing: -0.034em; line-height: var(--hero-lh);
   text-transform: none; color: #d6d6da;
   margin: 0;
@@ -568,14 +570,42 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   justify-content: flex-start; text-align: center;
   gap: 0;
 }
+/* ONE CONDENSED LINE. Archivo at the narrow end of its width axis, 800,
+   uppercase, sized so "DESIGN THAT SELLS" is the width of the measure
+   (see --hero-fs). Ink on the ground; and where it crosses the film a
+   second, WHITE copy of the line sits over it, clipped to the film's
+   box — three numbers page.tsx measures — so the words are white on the
+   picture the way the reference's are, and never invert. */
 .dr-h1 { margin: 0; position: relative; z-index: 2; }
 .t-hero .dr-line > span { white-space: nowrap; }
-/* ON THE CARD: the description lower left, the door lower right, the
-   rating a badge at the top right — the pizza shot's copy block, tag and
-   button on the picture. Ink on the veiled film; they fade as the veil
-   lifts (the exit rules below). */
-.dr-sub { position: absolute; left: var(--fib-5); bottom: var(--fib-5);
-          max-width: 38ch; margin: 0; text-align: left; color: var(--ink); }
+.dr-h1.t-hero {
+  font-variation-settings: "wdth" 66, "wght" 800;
+  text-transform: uppercase; letter-spacing: -0.012em; line-height: .92;
+}
+.dr-line--film {
+  position: absolute; inset: 0;
+  clip-path: inset(var(--cross-top, 100%) var(--cross-right, 0px) 0 var(--cross-left, 0px));
+}
+.dr-line--film > span { color: #fff; }
+/* the entrance: both copies rise together, as the first line */
+.dr-lit .dr-line--film > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
+/* ON THE FILM: the copy block lower left (a small caps heading over a
+   short paragraph — their PIZZA WITH URBAN FLAIR), the door lower right,
+   the rating a badge top right under the headline's crossing, the three
+   tags across the picture. Light on the dimmed film; everything fades
+   as the scrim lifts (the exit rules below). */
+.dr-card-copy { position: absolute; left: var(--fib-5); bottom: var(--fib-5);
+                max-width: 34ch; text-align: left; }
+.dr-card-h { margin: 0 0 var(--fib-2); color: var(--ink); }
+.dr-sub { margin: 0; color: var(--ink-2);
+          font-family: var(--font-instrument), sans-serif;
+          font-size: var(--fs-body); line-height: 1.5; }
+.dr-tag { position: absolute; z-index: 1; color: var(--ink);
+          font-size: clamp(1.4rem, .8rem + 2.2vw, 2.9rem);
+          text-shadow: 0 2px 24px rgba(0, 0, 0, .35); }
+.dr-tag-1 { left: 6%; top: 18%; transform: skewX(-9deg) rotate(-6deg); }
+.dr-tag-2 { right: 5%; top: 34%; transform: skewX(-9deg) rotate(4deg); }
+.dr-tag-3 { left: 42%; bottom: 24%; transform: skewX(-9deg) rotate(-3deg); }
 .dr-line { overflow: hidden; transform: skewX(-4deg); transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
 .dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
@@ -597,11 +627,23 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    dock is z 5, the stage 6). Its own faint surface is there from the
    first paint and goes when the reel has been measured onto it. */
 .dr-slot {
+  /* THE REFERENCE'S PROPORTION (Jake: "i want the films proportions to
+     be closer to the reference"): their picture is a LETTERBOX, ~2.6:1,
+     nearly the frame's full width, under the headline with a small gap
+     — it is the pizza cut-out that climbs over the letters, not the
+     picture's rectangle. So: the full measure wide, 2.4:1 (1290 x 537
+     at 1440), pinned to the fold by margin-top: auto, the gap above it
+     whatever the headline leaves. The dock is the same proportion so
+     the grow stays one uniform scale. */
   position: relative; z-index: 1;
-  flex: 1 1 auto; min-height: 0;
-  aspect-ratio: 16 / 9; width: auto; max-width: 100%;
-  margin-top: calc(var(--hero-fs) * -0.55);
-  border-radius: var(--radius-panel); background: var(--surface-2);
+  flex: 0 0 auto; min-height: 0;
+  aspect-ratio: 2.4 / 1; width: 100%;
+  margin-top: auto;
+  border-radius: var(--radius-panel); background: var(--surface-1);
+  /* light ink for everything written on the film */
+  --ink: #f5f5f7; --ink-2: #d4d4d8; --ink-3: #b4b4ba; --ink-4: #a9a9ae;
+  --edge-strong: rgba(255, 255, 255, .6);
+  color: var(--ink);
 }
 .dr-hero-wrap[data-ready] .dr-slot { background: transparent; }
 
@@ -610,8 +652,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    grow, so by the time the reel is most of the screen the sentence it
    came out of is gone. Squared, so the fade holds off while you are
    still reading. */
-/* the door and the lead go first — the reel covers them first */
-.dr-herocta, .dr-sub {
+/* the door and everything written on the film go first — the film is
+   undimming under them */
+.dr-herocta, .dr-card-copy, .dr-tag {
   opacity: calc(1 - min(1, var(--p, 0) / .18) * min(1, var(--p, 0) / .18));
 }
 /* the claim and the card are gone by p .22 (178px at 900), before the
@@ -633,16 +676,18 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   display: inline-flex; align-items: center; border-radius: 999px;
   padding: 13px 24px;
   text-decoration: none; white-space: nowrap;
-  color: var(--void); background: var(--ink);
+  /* on the film: a white pill with ink type, the only pure white on the
+     first screen, so the action wins (the film is black in either room) */
+  color: #0a0a0b; background: #ffffff;
   --glint-t: 4.5s;
   transition: background var(--t-micro) var(--ease-ui);
 }
-.dr-herocta:hover { background: var(--ink-2); }
+.dr-herocta:hover { background: #e7e7ea; }
 .dr-herocta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 /* the entrance: the lead, the card, then the door LAST — animate-last is
    the highest in the hierarchy. `backwards`, never `forwards`, so the
    calc above owns opacity once the fade ends. */
-.dr-lit .dr-sub     { animation: dr-fadein var(--t-enter) var(--ease-structure) 700ms backwards; }
+.dr-lit .dr-card-copy, .dr-lit .dr-tag { animation: dr-fadein var(--t-enter) var(--ease-structure) 700ms backwards; }
 .dr-lit .dr-rating  { animation: dr-fadein var(--t-enter) var(--ease-structure) 760ms backwards; }
 .dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 900ms backwards; }
 
@@ -652,11 +697,10 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    until the count is real. A white card on the light ground; light
    rooms carry depth in shadow (decisions.md, 2026-09-08). */
 .dr-rating {
-  /* below the headline's crossing (half a line into the card), so the
-     'p' of "follow up" never lands on the badge */
-  position: absolute; right: var(--fib-4);
-  top: calc(var(--hero-fs) * .55 + var(--fib-4));
+  /* the top right of the film */
+  position: absolute; right: var(--fib-4); top: var(--fib-4);
   z-index: 2;
+  --ink: #0a0a0b; --ink-3: #67676e;
   display: flex; align-items: center; gap: var(--fib-3);
   padding: 14px 20px 14px 18px; border-radius: 18px;
   background: #fff; color: var(--ink); text-decoration: none;
@@ -767,11 +811,20 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-hero { justify-content: flex-start; padding-top: var(--fib-5); }
   .dr-main { padding-bottom: var(--fib-5); }
   .t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
-  /* the card is a plain block on the phone: the words flow in it, the
-     reel is the block after it */
-  .dr-slot { aspect-ratio: auto; margin-top: var(--fib-4); background: transparent;
-             display: flex; flex-direction: column; align-items: center; gap: var(--fib-3); }
-  .dr-sub, .dr-herocta, .dr-rating { position: static; text-align: center; }
+  /* the card is a dark block on the phone: the words flow in it in
+     their light ink, the tags become a row, the reel is the block after */
+  .dr-slot { aspect-ratio: auto; margin-top: var(--fib-4);
+             padding: var(--fib-4) var(--fib-3);
+             display: flex; flex-direction: column; align-items: center;
+             gap: var(--fib-3); text-align: center;
+             background: #0a0a0b; border-radius: var(--fib-3); }
+  .dr-hero-wrap[data-ready] .dr-slot { background: #0a0a0b; }
+  .dr-card-copy, .dr-herocta, .dr-rating { position: static; text-align: center; }
+  .dr-tag { position: static; transform: none; font-size: var(--fs-body-s);
+            text-shadow: none; }
+  .dr-line--film { display: none; }
+  .dr-h1, .dr-card-copy, .dr-tag, .dr-herocta, .dr-rating { opacity: 1; }
+  .dr-sub { font-size: var(--fs-body); }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
   /* on a phone the same idea, scaled: bled off the left, reaching past
@@ -832,11 +885,13 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-vouch figcaption { margin-top: 4px; color: var(--ink-4);
   font-family: var(--font-instrument), sans-serif; font-size: var(--fs-micro); }
 /* ── THE DOCK, AND THE GROW ──────────────────────────────────────
-   The reel LIVES here: a full-width block right after the hero, 16:9
-   at the room's gutter, radius --radius-panel — at 1440x900 that is
-   1394 x 784, and by 0.9vh of scroll its top is at 0.1vh, so it fills
-   the screen on the frame the grow ends, which is itsjay's geometry
-   exactly (their video is 1440 x 810 at 900 tall).
+   The reel LIVES here: a full-width block right after the hero, the
+   card's own 2.4:1 letterbox at the room's gutter, radius
+   --radius-panel — 1394 x 581 at 1440 — padded on top so that by 0.9vh
+   of scroll (the frame the grow ends, itsjay's domain) it sits CENTRED
+   in the viewport. (It was 16:9 and filled the screen there, itsjay's
+   geometry; the reference's proportion is the letterbox, so the dock
+   follows it — a uniform scale cannot change a box's aspect.)
 
    At rest it is transformed onto the slot: --s0/--dx/--dy are measured
    by page.tsx (the slot's height over the reel's, and the vector from
@@ -848,11 +903,15 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    border-radius on an overflow:hidden box whose only child is a
    composited video is a compositor clip (measured free 2026-09-12). */
 .dr-dock {
-  /* ABOVE the stage (4): the reel grows over the words, the way itsjay's
-     does — the door was painting on top of the film at a third of the
-     grow. The rail (30) stays over everything. */
+  /* under the stage (6), over the ground: the reel paints beneath the
+     words. The rail (30) stays over everything. */
   position: relative; z-index: 5;
-  padding: 0 clamp(12px, 1.6vw, 28px);
+  --gutter: clamp(12px, 1.6vw, 28px);
+  /* the reel's home is a 2.4:1 letterbox the width of the screen less
+     the gutters; padded on top so that on the frame the grow ends
+     (0.9vh of scroll) the reel is CENTRED in the viewport — its centre
+     at 50svh — rather than hanging from 0.1vh */
+  padding: max(0px, calc(40svh - (100vw - 2 * var(--gutter)) / 2.4 / 2)) var(--gutter) 0;
   /* the scale, on the dock, so the reel and its shade share one number */
   --s: calc(var(--s0, 1) + (1 - var(--s0, 1)) * var(--p, 0));
 }
@@ -861,9 +920,10 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    scale its corner sits inside a 4px blur; at the dock it is the rating
    card's shadow under the film. */
 .dr-hero-shade {
-  position: absolute; top: 0;
-  left: clamp(12px, 1.6vw, 28px); right: clamp(12px, 1.6vw, 28px);
-  aspect-ratio: 16 / 9; border-radius: var(--radius-panel);
+  position: absolute;
+  top: max(0px, calc(40svh - (100vw - 2 * var(--gutter)) / 2.4 / 2));
+  left: var(--gutter); right: var(--gutter);
+  aspect-ratio: 2.4 / 1; border-radius: var(--radius-panel);
   box-shadow: var(--lift);
   translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)));
   scale: var(--s); transform-origin: 50% 50%;
@@ -872,7 +932,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-hero-wrap[data-ready] .dr-hero-shade { animation: dr-fadein var(--t-enter) var(--ease-structure) 360ms forwards; }
 .dr-hero-reel {
   position: relative; z-index: 1;
-  width: 100%; aspect-ratio: 16 / 9;
+  width: 100%; aspect-ratio: 2.4 / 1;
   overflow: hidden;
   background: var(--surface-1);
   translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)));
@@ -897,27 +957,25 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   width: 100%; height: 100%;
   object-fit: cover;
 }
-/* THE VEIL — the film washed toward the ground at rest, so the ink on it
-   reads (in a light room "dimmed" is washed, not darkened), lifting with
-   the grow: .74 of the ground at rest, 0 when the reel is the screen.
-   One composited plane whose opacity moves; nothing repaints. */
+/* THE SCRIM — the film DIMMED at rest so the light copy on it reads,
+   lifting with the grow: .5 black at rest, 0 when the reel is the
+   screen. One composited plane whose opacity moves; nothing repaints. */
 .dr-hero-reel::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: var(--void);
-  opacity: calc(.74 * (1 - var(--p, 0)));
+  background: #000;
+  opacity: calc(.5 * (1 - var(--p, 0)));
 }
 @media (max-width: 900px) {
   /* NO GROW ON THE PHONE (itsjay's is desktop-only too): the line reads
      without its slot, and the reel is simply the block after the hero. */
   .dr-hero-reel { translate: none; scale: none; border-radius: var(--fib-3);
-                  opacity: 1; animation: none; }
+                  aspect-ratio: 16 / 9; opacity: 1; animation: none; }
+  .dr-dock { padding-top: 0; }
   .dr-hero-reel::after { opacity: 0; }
   .dr-dock { padding: 0 var(--fib-3); }
   .dr-hero-shade { display: none; }
   .dr-hero-reel { box-shadow: var(--lift); }
   .dr-rating { margin: 0 auto var(--fib-4); }
-  .dr-h1, .dr-sub, .dr-herocta, .dr-rating { opacity: 1; }
-  .dr-sub { font-size: var(--fs-body); }
 }
 @media (prefers-reduced-motion: reduce) {
   /* the engine publishes --hero-p as 1: the reel sits in its dock and
@@ -925,14 +983,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      page reads as the static version of itself */
   /* the reel is in its dock; the card keeps its own surface so the
      words on it sit on something */
-  .dr-hero-wrap[data-ready] .dr-slot { background: var(--surface-2); }
+  .dr-hero-wrap[data-ready] .dr-slot { background: #0a0a0b; }
   .dr-hero-reel { opacity: 1; animation: none; }
   .dr-hero-reel::after { opacity: 0; }
   .dr-hero-shade { opacity: 1; animation: none; }
   /* the engine publishes --hero-p as 1: without these the claim and the
      card sit at 8% on the first screen with the reel docked below it */
-  .dr-h1, .dr-sub, .dr-herocta, .dr-rating { opacity: 1; }
-  .dr-lit .dr-sub, .dr-lit .dr-rating, .dr-lit .dr-herocta { animation: none; }
+  .dr-h1, .dr-card-copy, .dr-tag, .dr-herocta, .dr-rating { opacity: 1; }
+  .dr-lit .dr-card-copy, .dr-lit .dr-rating, .dr-lit .dr-herocta { animation: none; }
 }
 /* ══ THE RECEIPTS — the numbers band under the reel ═══════════════
    Four figures on the ground, separated by space. The numeral is the
