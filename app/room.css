@@ -372,7 +372,9 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    WRAPPER, because the words (in the stage) and the reel (in the dock,
    the stage's sibling) both read it — declared on the stage it never
    reached the reel, and the reel scrolled off still the size of a word. */
-.dr-hero-wrap { position: relative; --p: clamp(0, var(--hero-p, 0), 1); }
+.dr-hero-wrap { position: relative; --p: clamp(0, var(--hero-p, 0), 1);
+                /* the docked reel bleeds past both edges; nothing scrolls */
+                overflow-x: clip; }
 .dr-stage {
   /* 6, above the dock (5): the reel paints UNDER the words and the card's
      copy, over the ground — the stage has no background of its own */
@@ -517,8 +519,11 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   display: inline-block; overflow: hidden;
   height: 1.15em; line-height: 1.15;
   text-decoration: none; color: var(--ink-3);
-  font-family: var(--font-instrument), sans-serif; font-weight: 400;
-  font-size: var(--fs-body); letter-spacing: -0.008em; text-transform: none;
+  /* caps, the site's register now (the hero set it; a sentence-case nav
+     over a caps hero read as two sites) */
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: var(--fs-small); letter-spacing: .1em; text-transform: uppercase;
   transition: color var(--t-micro) var(--ease-ui);
 }
 .dr-links a:hover, .dr-links a:focus-visible { color: var(--ink); }
@@ -563,8 +568,13 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 /* main: the whole first screen under the nav. The headline sits high;
    the card takes everything under it down to the gutter above the fold,
    and the headline's second line runs across the card's top edge. */
-.dr-main {
+.dr-main.wrap {
   flex: 1; min-height: 0; display: flex; flex-direction: column;
+  /* WIDER (Jake): the hero leaves the measure and runs to the room's
+     gutter — the reference's picture is ~94% of its frame — so the
+     title and the film can be 1394 of 1440. The rest of the page
+     keeps the measure. */
+  max-width: none; padding-inline: clamp(12px, 1.6vw, 28px);
   padding-block: clamp(16px, 3svh, 36px) clamp(12px, 1.6vw, 28px);
 }
 .dr-hero {
@@ -582,8 +592,13 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      measure, title 180px. 1440x736: 593 / .575 = 1031 → title 144px,
      card 1031 x 430, both the same width, both on screen. The headline
      is sized in cqw of THIS box, so the title follows automatically. */
-  width: min(100%, calc((100svh - var(--nav-space) - 60px) / .575));
-  margin-inline: auto;   /* centred when the height, not the measure, sets it */
+  /* /.5, not /.575 — on a short screen the card may run a little past
+     the fold (the door stays above it: it sits 55px up the card), which
+     buys width. 1440x736: 593 / .5 = 1186 (82%), title 166, card 494,
+     its bottom 30px under the fold, the door 25px above it. 1440x900:
+     1514 → the full 1394 (97%), title 195. */
+  width: min(100%, calc((100svh - var(--nav-space) - 60px) / .5));
+  margin-inline: auto;   /* centred when the height, not the width, sets it */
   container-type: inline-size;
 }
 /* ONE CONDENSED LINE. Archivo at the narrow end of its width axis, 800,
@@ -615,11 +630,23 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    tags across the picture. Light on the dimmed film; everything fades
    as the scrim lifts (the exit rules below). */
 .dr-card-copy { position: absolute; left: var(--fib-5); bottom: var(--fib-5);
-                max-width: 34ch; text-align: left; }
-.dr-card-h { margin: 0 0 var(--fib-2); color: var(--ink); }
+                max-width: 44ch; text-align: left; }
+/* CAPS, the reference's register (Jake: "their all caps reads more
+   creative than professional which is what im going for"): the card's
+   heading in the title's own condensed face, the copy in small tracked
+   caps, the way their PIZZA WITH URBAN FLAIR sits over its paragraph. */
+.dr-card-h {
+  margin: 0 0 var(--fib-2); color: var(--ink);
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-variation-settings: "wdth" 66, "wght" 800;
+  font-size: clamp(1.25rem, 1rem + 1.1vw, 2rem);
+  letter-spacing: .01em; line-height: 1; text-transform: uppercase;
+}
 .dr-sub { margin: 0; color: var(--ink-2);
-          font-family: var(--font-instrument), sans-serif;
-          font-size: var(--fs-body); line-height: 1.5; }
+          font-family: var(--font-archivo), sans-serif;
+          font-variation-settings: "wdth" 100, "wght" 600;
+          font-size: var(--fs-small); letter-spacing: .06em; line-height: 1.55;
+          text-transform: uppercase; max-width: 44ch; }
 
 .dr-line { overflow: hidden; transform: skewX(-4deg); transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
@@ -920,11 +947,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      words. The rail (30) stays over everything. */
   position: relative; z-index: 5;
   --gutter: clamp(12px, 1.6vw, 28px);
-  /* the reel's home is a 2.4:1 letterbox the width of the screen less
-     the gutters; padded on top so that on the frame the grow ends
-     (0.9vh of scroll) the reel is CENTRED in the viewport — its centre
-     at 50svh — rather than hanging from 0.1vh */
-  padding: max(0px, calc(40svh - (100vw - 2 * var(--gutter)) / 2.4 / 2)) var(--gutter) 0;
+  /* the reel's home is a 2.4:1 letterbox WIDER THAN THE SCREEN — 108vw,
+     bleeding 4vw off each edge (the wrapper clips it) — so the grow is
+     still a grow now that the card at rest is already 97% of the
+     width: 12% at 1440x900, 30% on a 736-tall screen where the height
+     holds the card to 83%. Padded on top so that on the frame the grow
+     ends (0.9vh of scroll) the reel is CENTRED in the viewport. */
+  --dock-w: 108vw;
+  padding: max(0px, calc(40svh - var(--dock-w) / 2.4 / 2)) 0 0;
   /* the scale, on the dock, so the reel and its shade share one number */
   --s: calc(var(--s0, 1) + (1 - var(--s0, 1)) * var(--p, 0));
 }
@@ -934,8 +964,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    card's shadow under the film. */
 .dr-hero-shade {
   position: absolute;
-  top: max(0px, calc(40svh - (100vw - 2 * var(--gutter)) / 2.4 / 2));
-  left: var(--gutter); right: var(--gutter);
+  top: max(0px, calc(40svh - var(--dock-w) / 2.4 / 2));
+  left: calc((100vw - var(--dock-w)) / 2); width: var(--dock-w);
   aspect-ratio: 2.4 / 1; border-radius: var(--radius-panel);
   box-shadow: var(--lift);
   translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)));
@@ -945,7 +975,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-hero-wrap[data-ready] .dr-hero-shade { animation: dr-fadein var(--t-enter) var(--ease-structure) 360ms forwards; }
 .dr-hero-reel {
   position: relative; z-index: 1;
-  width: 100%; aspect-ratio: 2.4 / 1;
+  width: var(--dock-w); margin-left: calc((100vw - var(--dock-w)) / 2);
+  aspect-ratio: 2.4 / 1;
   overflow: hidden;
   background: var(--surface-1);
   translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)));
@@ -982,8 +1013,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   /* NO GROW ON THE PHONE (itsjay's is desktop-only too): the line reads
      without its slot, and the reel is simply the block after the hero. */
   .dr-hero-reel { translate: none; scale: none; border-radius: var(--fib-3);
-                  aspect-ratio: 16 / 9; opacity: 1; animation: none; }
-  .dr-dock { padding-top: 0; }
+                  aspect-ratio: 16 / 9; opacity: 1; animation: none;
+                  width: 100%; margin-left: 0; }
+  .dr-dock { padding: 0 var(--fib-3); }
   .dr-hero-reel::after { opacity: 0; }
   .dr-dock { padding: 0 var(--fib-3); }
   .dr-hero-shade { display: none; }
