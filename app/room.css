@@ -681,8 +681,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-row { display: flex; align-items: flex-end; justify-content: space-between;
           gap: var(--fib-5); width: 100%; margin-top: clamp(16px, 2.6svh, 32px);
           padding: clamp(20px, 3.4svh, 34px) clamp(24px, 2.6vw, 40px);
-          border-radius: var(--radius-panel); background: #ffffff;
-          box-shadow: var(--lift);
+          border-radius: var(--radius-panel);
+          /* A PANEL, NOT A SPOTLIGHT (Jake, on the white card with the
+             badge's shadow: "it might be too strong, like all my attention
+             is there"): one step lighter than the ground — --surface-1,
+             #f4f4f7 on #e7e7ea — and no shadow, so it reads as a place
+             the copy sits rather than an object competing with the film.
+             The film stays the loudest thing on the screen. */
+          background: var(--surface-1);
           text-align: left; }
 .dr-card-copy { max-width: 46ch; }
 /* CAPS, the reference's register (Jake: "their all caps reads more
