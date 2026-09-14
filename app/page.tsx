@@ -185,7 +185,8 @@ export default function DarkRoom() {
           a huge condensed one-line headline, and the picture's top edge
           cutting through the letters. So: one condensed uppercase line
           the width of the measure; the film DIMMED DARK with light copy
-          and the three service names written on it; the headline
+(the sprayed tags were tried and cut — Jake:
+          "i dont like the tags"); the headline
           white where it crosses the film (a clipped second copy of the
           line, never a blend). On scroll the reel grows
           out of the card into the dock and the scrim lifts with it. On scroll, itsjay's grow (decodes/itsjay.md
@@ -265,15 +266,6 @@ export default function DarkRoom() {
                     instead of days.
                   </p>
                 </div>
-
-                {/* THE TAGS — the three things sold, written on the film
-                    the way the reference sprays JUICY / CRISPY / CHEESY
-                    across the picture: the room's own display face, not a
-                    graffiti font, placed by hand. */}
-                <span className="dr-tag dr-tag-1 t-section" aria-hidden>Websites</span>
-                <span className="dr-tag dr-tag-2 t-section" aria-hidden>Automation</span>
-                <span className="dr-tag dr-tag-3 t-section" aria-hidden>Google Ads</span>
-                <span className="sr-only">Websites, automation, Google Ads.</span>
 
                 <Link href="/contact" className="dr-herocta dr-edge t-cta">
                   Book the call

@@ -110,11 +110,13 @@
      ~9.8x the size, ~80% of the column at every desktop width. The
      9.4svh cap it replaces was sized for the layout where a reel card
      shared the screen with the words; that height is the words' now. */
-  /* ONE LINE the width of the measure: "DESIGN THAT SELLS" in Archivo at
-     wdth 66 / 800 runs ~7.0x the size, so 12.8vw fills the 1290 measure
-     at 1440 (184px); 20svh keeps the card the bigger object on a short
-     screen; capped so it never outgrows the measure on a wide one. */
-  --hero-fs: clamp(3rem, min(12.8vw, 20svh), 12.5rem);
+  /* ONE LINE EXACTLY the width of the film: "DESIGN THAT SELLS" in
+     Archivo at wdth 66 / 800 runs 7.146x its size (measured: 1286.3px
+     at 180), so the size that makes the line the measure's width is
+     14cqw of the hero's column (100 / 7.146). No svh cap — the width is
+     the law, the card takes what is left; the height only matters on a
+     very short screen, and 20svh keeps the card the bigger object there. */
+  --hero-fs: min(14cqw, 20svh);
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
   --nav-pad: clamp(13px, 2.4svh, 21px);
@@ -569,6 +571,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   display: flex; flex-direction: column; align-items: center;
   justify-content: flex-start; text-align: center;
   gap: 0;
+  /* the headline is sized in cqw of THIS box: its width is the film's */
+  container-type: inline-size;
 }
 /* ONE CONDENSED LINE. Archivo at the narrow end of its width axis, 800,
    uppercase, sized so "DESIGN THAT SELLS" is the width of the measure
@@ -576,7 +580,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    second, WHITE copy of the line sits over it, clipped to the film's
    box — three numbers page.tsx measures — so the words are white on the
    picture the way the reference's are, and never invert. */
-.dr-h1 { margin: 0; position: relative; z-index: 2; }
+/* THE TITLE IS THE FILM'S WIDTH (Jake: "in the reference the title is
+   the same width as video"): the h1 box is the measure, like the card,
+   and the line inside it is set to that width — one number governs
+   both, so they cannot drift. */
+.dr-h1 { margin: 0; position: relative; z-index: 2; width: 100%; }
 .t-hero .dr-line > span { white-space: nowrap; }
 .dr-h1.t-hero {
   font-variation-settings: "wdth" 66, "wght" 800;
@@ -600,12 +608,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-sub { margin: 0; color: var(--ink-2);
           font-family: var(--font-instrument), sans-serif;
           font-size: var(--fs-body); line-height: 1.5; }
-.dr-tag { position: absolute; z-index: 1; color: var(--ink);
-          font-size: clamp(1.4rem, .8rem + 2.2vw, 2.9rem);
-          text-shadow: 0 2px 24px rgba(0, 0, 0, .35); }
-.dr-tag-1 { left: 6%; top: 18%; transform: skewX(-9deg) rotate(-6deg); }
-.dr-tag-2 { right: 5%; top: 34%; transform: skewX(-9deg) rotate(4deg); }
-.dr-tag-3 { left: 42%; bottom: 24%; transform: skewX(-9deg) rotate(-3deg); }
+
 .dr-line { overflow: hidden; transform: skewX(-4deg); transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
 .dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
@@ -654,7 +657,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    still reading. */
 /* the door and everything written on the film go first — the film is
    undimming under them */
-.dr-herocta, .dr-card-copy, .dr-tag {
+.dr-herocta, .dr-card-copy {
   opacity: calc(1 - min(1, var(--p, 0) / .18) * min(1, var(--p, 0) / .18));
 }
 /* the claim and the card are gone by p .22 (178px at 900), before the
@@ -687,7 +690,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 /* the entrance: the lead, the card, then the door LAST — animate-last is
    the highest in the hierarchy. `backwards`, never `forwards`, so the
    calc above owns opacity once the fade ends. */
-.dr-lit .dr-card-copy, .dr-lit .dr-tag { animation: dr-fadein var(--t-enter) var(--ease-structure) 700ms backwards; }
+.dr-lit .dr-card-copy { animation: dr-fadein var(--t-enter) var(--ease-structure) 700ms backwards; }
 .dr-lit .dr-rating  { animation: dr-fadein var(--t-enter) var(--ease-structure) 760ms backwards; }
 .dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 900ms backwards; }
 
@@ -820,10 +823,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
              background: #0a0a0b; border-radius: var(--fib-3); }
   .dr-hero-wrap[data-ready] .dr-slot { background: #0a0a0b; }
   .dr-card-copy, .dr-herocta, .dr-rating { position: static; text-align: center; }
-  .dr-tag { position: static; transform: none; font-size: var(--fs-body-s);
-            text-shadow: none; }
   .dr-line--film { display: none; }
-  .dr-h1, .dr-card-copy, .dr-tag, .dr-herocta, .dr-rating { opacity: 1; }
+  .dr-h1, .dr-card-copy, .dr-herocta, .dr-rating { opacity: 1; }
   .dr-sub { font-size: var(--fs-body); }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
@@ -989,7 +990,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-hero-shade { opacity: 1; animation: none; }
   /* the engine publishes --hero-p as 1: without these the claim and the
      card sit at 8% on the first screen with the reel docked below it */
-  .dr-h1, .dr-card-copy, .dr-tag, .dr-herocta, .dr-rating { opacity: 1; }
+  .dr-h1, .dr-card-copy, .dr-herocta, .dr-rating { opacity: 1; }
   .dr-lit .dr-card-copy, .dr-lit .dr-rating, .dr-lit .dr-herocta { animation: none; }
 }
 /* ══ THE RECEIPTS — the numbers band under the reel ═══════════════
