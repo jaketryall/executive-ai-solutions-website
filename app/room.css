@@ -618,7 +618,15 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-h1.t-hero {
   font-variation-settings: "wdth" 66, "wght" 800;
   text-transform: uppercase; letter-spacing: -0.012em; line-height: .92;
+  /* SOLID INK, no sweep: seen in real Chrome at 180px the light room's
+     shadow-sweep (#35353a with a #0a0a0b band passing) read as
+     two-toned, washed letters against the reference's solid black.
+     The sweep stays on the other heading that carries it. */
+  color: var(--ink);
 }
+.dr-root.dr-light .dr-h1.t-hero { color: var(--ink); }
+.dr-h1.t-hero .sweep { background: none; -webkit-text-fill-color: currentColor;
+                       color: inherit; animation: none; }
 .dr-line--film {
   position: absolute; inset: 0;
   clip-path: inset(var(--cross-top, 100%) var(--cross-right, 0px) 0 var(--cross-left, 0px));
