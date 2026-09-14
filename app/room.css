@@ -112,11 +112,13 @@
      shared the screen with the words; that height is the words' now. */
   /* ONE LINE EXACTLY the width of the film: "DESIGN THAT SELLS" in
      Archivo at wdth 66 / 800 runs 7.146x its size (measured: 1286.3px
-     at 180), so the size that makes the line the measure's width is
-     14cqw of the hero's column (100 / 7.146). No svh cap — the width is
-     the law, the card takes what is left; the height only matters on a
-     very short screen, and 20svh keeps the card the bigger object there. */
-  --hero-fs: min(14cqw, 20svh);
+     at 180), so 14cqw of the hero column (100 / 7.146) makes the line
+     the column's width — and the card is the column's width too. NO
+     OTHER CAP: a 20svh cap here made the title 147px on a 736-tall
+     screen against a 1290 film (Jake: "it does not align with the
+     edges of the video"). The column's own width is what answers a
+     short screen — see .dr-hero. */
+  --hero-fs: 14cqw;
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
   --nav-pad: clamp(13px, 2.4svh, 21px);
@@ -571,7 +573,17 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   display: flex; flex-direction: column; align-items: center;
   justify-content: flex-start; text-align: center;
   gap: 0;
-  /* the headline is sized in cqw of THIS box: its width is the film's */
+  /* ONE WIDTH FOR THE TITLE AND THE FILM. The column is as wide as the
+     measure OR as wide as the height allows, whichever is less: at width
+     W the title stands .92 x W/7.146 = .129W tall and the 2.4:1 card
+     .417W, plus ~.03W between — .575W in all — so the W that fits the
+     space under the nav (less the gutter above the fold) is that space
+     divided by .575. 1440x900: 757 / .575 = 1316 → capped at the 1290
+     measure, title 180px. 1440x736: 593 / .575 = 1031 → title 144px,
+     card 1031 x 430, both the same width, both on screen. The headline
+     is sized in cqw of THIS box, so the title follows automatically. */
+  width: min(100%, calc((100svh - var(--nav-space) - 60px) / .575));
+  margin-inline: auto;   /* centred when the height, not the measure, sets it */
   container-type: inline-size;
 }
 /* ONE CONDENSED LINE. Archivo at the narrow end of its width axis, 800,
