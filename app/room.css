@@ -671,10 +671,18 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 /* top left, where the reference keeps its copy block (Jake: "can we
    move text to top left"); the door stays lower right, the badge top
    right, so the film's centre is picture */
-/* THE ROW: description left, the door right, on the ground, aligned to
-   the film's edges */
+/* THE ROW IS A WHITE CARD between the title and the film (Jake: "a
+   white card in between the title and video that houses the
+   description and such"): the heading and the copy at the left, the
+   door at the right, on the one white surface above the film — the
+   badge's own white and the badge's own shadow, so the two whites on
+   the first screen are one object twice. Content on a surface, never
+   bare on the canvas (design-laws). */
 .dr-row { display: flex; align-items: flex-end; justify-content: space-between;
           gap: var(--fib-5); width: 100%; margin-top: clamp(16px, 2.6svh, 32px);
+          padding: clamp(20px, 3.4svh, 34px) clamp(24px, 2.6vw, 40px);
+          border-radius: var(--radius-panel); background: #ffffff;
+          box-shadow: var(--lift);
           text-align: left; }
 .dr-card-copy { max-width: 46ch; }
 /* CAPS, the reference's register (Jake: "their all caps reads more
@@ -730,7 +738,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   position: relative; z-index: 1;
   flex: 0 0 auto; min-height: 0;
   aspect-ratio: 2.6 / 1; width: 100%;   /* the reference's proportion, measured */
-  margin-top: clamp(20px, 3.4svh, 40px);
+  margin-top: clamp(16px, 2.6svh, 32px);
   border-radius: var(--radius-panel); background: var(--surface-1);
 }
 .dr-hero-wrap[data-ready] .dr-slot { background: transparent; }
@@ -901,7 +909,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   /* the row stacks and centres; the slot is only the badge's frame on a
      phone (the reel is the block after the hero) */
   .dr-row { flex-direction: column; align-items: center; text-align: center;
-            gap: var(--fib-3); }
+            gap: var(--fib-3); padding: var(--fib-4) var(--fib-3); }
   .dr-card-copy { text-align: center; }
   .dr-slot { aspect-ratio: auto; margin-top: var(--fib-3); background: transparent;
              display: flex; justify-content: center; }
