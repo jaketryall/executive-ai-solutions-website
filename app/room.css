@@ -1145,24 +1145,51 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    the value outranks everything under it. */
 .dr-numbers { position: relative; z-index: 3;
   padding-block: clamp(72px, 12svh, 150px) clamp(48px, 8svh, 110px); }
+/* the receipts share the hero's column, edge for edge — the cards' outer
+   edges are the film's edges, not the measure's (one column to the pixel) */
+.dr-numbers .wrap { max-width: none; padding-inline: clamp(24px, 3.8vw, 64px); }
 .dr-numbers-head { display: flex; align-items: baseline;
   justify-content: space-between; gap: var(--fib-4);
-  margin-bottom: clamp(32px, 5.5svh, 64px); }
+  margin-bottom: clamp(20px, 3.2svh, 34px); }
 .dr-numbers-kicker { display: block; color: var(--ink-4); margin: 0; }
 .dr-numbers-asof { margin: 0; }
+/* ONE TRAY, FOUR WHITE CARDS (Jake: "each number should have its own
+   white card like the hero thing" · "additionally they should all be in
+   a big card"). The tray is a step lighter than the ground and carries
+   the --lift, so it is the one raised object in the band; the cards are
+   the strip's white on it with only the lift's near shadow, so they read
+   as tiles ON the tray rather than four more lifted objects. The head
+   lives inside the tray. Radii nest: panel outside, frame inside, the
+   card's inset equal to the difference so the corners are concentric.
+   Figure top-left, source pinned to the bottom, so every card has the
+   same silhouette whatever its label's length. */
+.dr-numbers-tray { --tray-pad: clamp(8px, .7vw, 10px);
+  padding: var(--tray-pad); border-radius: var(--radius-panel);
+  background: #f2f2f4; box-shadow: var(--lift); }
+/* the head sits in from the tray's edge by the card's own padding, so
+   the kicker aligns with the first figure below it */
+.dr-numbers-tray .dr-numbers-head {
+  padding: clamp(14px, 1.4vw, 20px) clamp(18px, 1.8vw, 28px) 0; }
 .dr-receipts { list-style: none; margin: 0; padding: 0;
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(28px, 4vw, 64px); }
-.dr-receipt { display: flex; flex-direction: column; gap: var(--fib-2); min-width: 0; }
+  gap: var(--tray-pad); }
+.dr-receipt { display: flex; flex-direction: column; gap: var(--fib-2); min-width: 0;
+  container-type: inline-size;
+  padding: clamp(18px, 1.8vw, 28px);
+  background: #ffffff; border-radius: calc(var(--radius-panel) - var(--tray-pad));
+  box-shadow: 0 2px 6px rgba(10, 10, 11, .05); }
 .dr-receipt-n { margin: 0; }
 .dr-receipt-fig {
   display: inline-flex; align-items: baseline;
   font-family: var(--font-archivo), "Arial Black", sans-serif;
   font-variation-settings: "wdth" 118, "wght" 800;
-  /* sized so "1,000+" — the widest figure, five tabular wheels — sits
-     inside a quarter of the measure with the column gap intact at 1440
-     (measured: 240px of wheels at 98px ran into the next column's "$") */
-  font-size: clamp(2.75rem, 1.4rem + 4.3vw, 5.6rem);
+  /* sized off the CARD, not the viewport: "1,000+" — the widest figure,
+     five tabular wheels and a sign — is 3.49em wide, and cqw resolves
+     against the card's CONTENT box (measured: 21.5cqw of a 315px card
+     came back 56.7px = 21.5% of 263), so 25.5cqw puts it 90% of the way
+     across the padding at every width (at 84px it ran 4px past the
+     card's edge). The card is the container; the figure is its child. */
+  font-size: clamp(2.2rem, 25.5cqw, 5.6rem);
   letter-spacing: -0.03em; line-height: 1; color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
@@ -1177,7 +1204,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-receipt-fig .od { height: 1em; }
 .dr-receipt-l { max-width: 24ch; font-size: var(--fs-body-s); line-height: 1.5;
   color: var(--ink-2); }
-.dr-receipt-s { margin: 0; display: flex; flex-wrap: wrap; gap: 0 .35em; }
+.dr-receipt-s { margin: auto 0 0; padding-top: var(--fib-2);
+  display: flex; flex-wrap: wrap; gap: 0 .35em; }
 .dr-receipt-s a { color: var(--ink-3); text-decoration: none;
   border-bottom: 1px solid color-mix(in oklab, var(--ink-3) 40%, transparent);
   transition: color var(--t-micro) var(--ease-ui), border-color var(--t-micro) var(--ease-ui); }

@@ -51,6 +51,9 @@ export default function NumbersSection() {
   return (
     <section className="dr-numbers" aria-labelledby="dr-numbers-h" ref={ref}>
       <div className="wrap">
+        {/* the tray: one big card holding the head and the four (Jake:
+            "additionally they should all be in a big card") */}
+        <div className="dr-numbers-tray">
         <div className="dr-numbers-head">
           <h2 className="t-label dr-numbers-kicker" id="dr-numbers-h" data-wipe>
             By the numbers
@@ -87,6 +90,7 @@ export default function NumbersSection() {
             </li>
           ))}
         </ul>
+        </div>
       </div>
     </section>
   );
