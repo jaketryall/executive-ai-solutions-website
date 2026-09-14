@@ -39,19 +39,28 @@ export const RECEIPTS: {
     window: "no email required", source: "the estimator", href: "/pricing" },
 ];
 
-/* THE FACES on the strip — real clients, initials only until their photos
-   are cleared (project_launched, 2026-08-08: "real client initials
-   RR/JJ/TB … real photos later"). Never padded: three is three. */
-export const REVIEWERS: { initials: string; name: string }[] = [
-  { initials: "RR", name: "Rick Ryall, Desert Wings Flight School" },
-  { initials: "JJ", name: "Jake Johnson, Desert Wings Flight School" },
-  { initials: "TB", name: "Tim Brown, Arizona Aviation Historical Group" },
+/* THE BUSINESSES in the strip's circles — the clients the rating comes
+   from, rotating (Jake, 2026-09-13: "rotate icons inside of the circle
+   things for businesses"). A mark file where one exists (only Desert
+   Wings', in public/work), the business's initials otherwise, until the
+   others are cleared. Never padded: three is three. */
+export const CLIENT_MARKS: { initials: string; name: string; src?: string }[] = [
+  { initials: "DW", name: "Desert Wings Flight School", src: "/work/desert-wings-logo.png" },
+  { initials: "AA", name: "Arizona Aviation Historical Group" },
+  { initials: "RP", name: "Riled Pickleball" },
 ];
 
-/* THE CLIENTS, for the strip's marquee — wordmarks until logo files are
-   cleared (only Desert Wings' exists in public/work). Real clients only. */
-export const CLIENTS = [
-  "Desert Wings Flight School",
-  "Arizona Aviation Historical Group",
-  "Riled Pickleball",
+/* THE TICKER in the strip — what is sold, as a running line (Jake: "have
+   the services in infinite marquee"): the three services and the real
+   things inside them, every one an item the estimator or a service page
+   already names. Nothing here is a promise the site does not make. */
+export const TICKER = [
+  "Websites",
+  "Google Ads",
+  "Automation",
+  "Booking forms",
+  "Follow-up texts",
+  "Live chat",
+  "Conversion tracking",
+  "Fixed quotes",
 ];

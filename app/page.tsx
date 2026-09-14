@@ -11,7 +11,7 @@ import ObjectionsSection from "@/components/dark/objections-section";
 import NumbersSection from "@/components/dark/numbers-section";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
-import { GOOGLE_REVIEWS, REVIEWERS, CLIENTS } from "@/lib/proof";
+import { GOOGLE_REVIEWS, CLIENT_MARKS, TICKER } from "@/lib/proof";
 
 /* The room runs its own two curves — the same two the stylesheet declares,
    registered here so JS and CSS can never drift apart. Nothing in this room
@@ -271,10 +271,13 @@ export default function DarkRoom() {
                     rel={GOOGLE_REVIEWS.url ? "noopener noreferrer" : undefined}
                     aria-label={`Rated ${GOOGLE_REVIEWS.rating.toFixed(1)} on Google from ${GOOGLE_REVIEWS.count} reviews`}
                   >
-                    {/* the faces: real clients, initials until photos */}
+                    {/* the businesses the rating comes from, rotating: a
+                        mark where the file exists, initials until then */}
                     <span className="dr-faces" aria-hidden>
-                      {REVIEWERS.map((p) => (
-                        <span className="dr-face" key={p.initials} title={p.name}>{p.initials}</span>
+                      {CLIENT_MARKS.map((c) => (
+                        <span className="dr-face" key={c.initials} title={c.name}>
+                          {c.src ? <img src={c.src} alt="" /> : c.initials}
+                        </span>
                       ))}
                     </span>
                     <span className="dr-strip-l">
@@ -284,16 +287,16 @@ export default function DarkRoom() {
                   </a>
                 )}
 
-                {/* THE LOGO MARQUEE, to the right of the faces (Jake: "an
-                    infinite logo marquee"): the clients, as wordmarks in
-                    the site's caps until their logo files are cleared
-                    (only Desert Wings' exists in public/work). Two sets,
-                    the track travels one; the second is decoration. */}
-                <div className="dr-logos" aria-label="Clients">
+                {/* THE TICKER, to the right of the marks (Jake: "instead
+                    of companies … the services in infinite marquee"):
+                    what is sold and the real things inside it, running.
+                    Two sets, the track travels one; the second is
+                    decoration. */}
+                <div className="dr-logos" aria-label="What we build">
                   <div className="dr-logos-track">
                     {[0, 1].map((i) => (
                       <div className="dr-logos-set" key={i} aria-hidden={i === 1}>
-                        {CLIENTS.map((c) => (
+                        {TICKER.map((c) => (
                           <span key={c}>{c}</span>
                         ))}
                       </div>
