@@ -249,30 +249,34 @@ export default function DarkRoom() {
                 </span>
               </h1>
 
-              {/* THE CARD — the reel's rest position, and the dark object
-                  the words sit on. It takes the rest of the first screen,
-                  the headline crossing its top edge; DIMMED at rest (a
-                  black scrim, so the light copy reads) and the scrim lifts
-                  as it grows — Jake: "the video could be dimmed so you
-                  get the text on top of it and when you scroll it grows
-                  and undims." The reel lives in the dock and is measured
-                  onto this box. */}
-              <div className="dr-slot">
+              {/* THE ROW under the title, on the ground, aligned to the
+                  film's edges: the description left, the one door right
+                  (Jake, 2026-09-13, choosing between copy on the film
+                  and copy above it: "yes" to above). Off the film, the
+                  copy is legible and the film needs no dim. */}
+              <div className="dr-row">
                 <div className="dr-card-copy">
-                  <p className="dr-card-h t-cta">Systems that follow up</p>
+                  <p className="dr-card-h">Systems that follow up</p>
                   <p className="dr-sub">
                     We build your site and wire up the system behind it, so
                     every call, form and text gets answered in seconds
                     instead of days.
                   </p>
                 </div>
-
                 <Link href="/contact" className="dr-herocta dr-edge t-cta">
                   Book the call
                 </Link>
+              </div>
 
-                {/* THE RATING, as a badge on the card. ⚠ Renders only
-                    when lib/proof.ts carries the real count — the site
+              {/* THE CARD — the reel's rest position: full width, its top
+                  in the first screen and its bottom past the fold, the way
+                  Cosmos's video sits low. Undimmed from the first frame —
+                  nothing is written on it but the rating badge — and the
+                  grow on scroll pulls it up to the centre. The reel lives
+                  in the dock and is measured onto this box. */}
+              <div className="dr-slot">
+                {/* THE RATING, the one thing floating on the film. ⚠ Renders
+                    only when lib/proof.ts carries the real count — the site
                     does not show proof it cannot back. */}
                 {GOOGLE_REVIEWS.count > 0 && (
                   <a

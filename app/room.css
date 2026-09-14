@@ -583,10 +583,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      title and the film can be 1394 of 1440. The rest of the page
      keeps the measure. */
   max-width: none; padding-inline: clamp(12px, 1.6vw, 28px);
-  /* FLOATING (Jake: "the bottom of the video has to come up so its like
-     in a box and we can see the white under it, like cosmos"): a real
-     band of ground under the card, 58px at 900 tall, 48 at 736 */
-  padding-block: clamp(10px, 1.9svh, 24px) clamp(28px, 4.8svh, 48px);
+  /* the film's bottom runs past the fold (Cosmos's low video), so the
+     stage's own bottom is where the film continues, not a band */
+  padding-block: clamp(10px, 1.9svh, 24px) 0;
 }
 .dr-hero {
   position: relative;
@@ -609,15 +608,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      over .534. 1440x900: 743 / .534 = 1391 → the measure, title 196,
      the card's bottom 58px above the fold. 1440x736: 579 / .534 = 1084
      (75%), title 153, the card 417 tall with 48px of ground under it. */
-  /* ⚠ "everything's too narrow now" (Jake, at 736 tall): every pad here
-     is as small as it can be — the title's line-height is .88, the top
-     pad 14, the band under the card 35 — and the column is still 1153
-     at 1440x736 (80%), because a full-measure title over a 2.6:1
-     letterbox with a band of ground under it needs ~830px of height at
-     1440 wide. The reference's own frame is 720 tall at 1090 wide; at
-     1440 it would need 950. The screen decides. */
-  width: min(100%, calc((100svh - var(--nav-space) - clamp(10px, 1.9svh, 24px) - clamp(28px, 4.8svh, 48px) - 4px) / .523));
-  margin-inline: auto;   /* centred when the height, not the width, sets it */
+  /* THE FULL WIDTH, on every screen. The height no longer sets the
+     column: with the copy off the film, the film needs no height of
+     its own in the first screen — its bottom runs past the fold — so
+     the title is the measure wide everywhere ("everything's too
+     narrow now" is answered by geometry, not by pads). */
+  width: 100%;
   container-type: inline-size;
 }
 /* ONE CONDENSED LINE. Archivo at the narrow end of its width axis, 800,
@@ -675,20 +671,24 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 /* top left, where the reference keeps its copy block (Jake: "can we
    move text to top left"); the door stays lower right, the badge top
    right, so the film's centre is picture */
-.dr-card-copy { position: absolute; left: var(--fib-5); top: var(--fib-5);
-                max-width: 44ch; text-align: left; }
+/* THE ROW: description left, the door right, on the ground, aligned to
+   the film's edges */
+.dr-row { display: flex; align-items: flex-end; justify-content: space-between;
+          gap: var(--fib-5); width: 100%; margin-top: clamp(16px, 2.6svh, 32px);
+          text-align: left; }
+.dr-card-copy { max-width: 46ch; }
 /* CAPS, the reference's register (Jake: "their all caps reads more
    creative than professional which is what im going for"): the card's
    heading in the title's own condensed face, the copy in small tracked
    caps, the way their PIZZA WITH URBAN FLAIR sits over its paragraph. */
 .dr-card-h {
-  margin: 0 0 var(--fib-2); color: var(--ink);
+  margin: 0 0 var(--fib-2); color: var(--ink);   /* the room's ink, on the ground */
   font-family: var(--font-archivo), "Arial Black", sans-serif;
   font-variation-settings: "wdth" 66, "wght" 800;
   font-size: clamp(1.25rem, 1rem + 1.1vw, 2rem);
   letter-spacing: .01em; line-height: 1; text-transform: uppercase;
 }
-.dr-sub { margin: 0; color: var(--ink-2);
+.dr-sub { margin: 0; color: var(--ink-3);
           font-family: var(--font-archivo), sans-serif;
           font-variation-settings: "wdth" 100, "wght" 600;
           font-size: var(--fs-small); letter-spacing: .06em; line-height: 1.55;
@@ -730,12 +730,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   position: relative; z-index: 1;
   flex: 0 0 auto; min-height: 0;
   aspect-ratio: 2.6 / 1; width: 100%;   /* the reference's proportion, measured */
-  margin-top: auto;
+  margin-top: clamp(20px, 3.4svh, 40px);
   border-radius: var(--radius-panel); background: var(--surface-1);
-  /* light ink for everything written on the film */
-  --ink: #f5f5f7; --ink-2: #d4d4d8; --ink-3: #b4b4ba; --ink-4: #a9a9ae;
-  --edge-strong: rgba(255, 255, 255, .6);
-  color: var(--ink);
 }
 .dr-hero-wrap[data-ready] .dr-slot { background: transparent; }
 
@@ -746,7 +742,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    still reading. */
 /* the door and everything written on the film go first — the film is
    undimming under them */
-.dr-herocta, .dr-card-copy {
+.dr-row {
   opacity: calc(1 - min(1, var(--p, 0) / .18) * min(1, var(--p, 0) / .18));
 }
 /* the claim and the card are gone by p .22 (178px at 900), before the
@@ -764,17 +760,16 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    chip: an ink pill with the ground as its label (16:1). One rule, both
    rooms: in ?dark it is the white pill with black type. */
 .dr-herocta {
-  position: absolute; right: var(--fib-5); bottom: var(--fib-5);
+  flex: 0 0 auto;
   display: inline-flex; align-items: center; border-radius: 999px;
   padding: 13px 24px;
   text-decoration: none; white-space: nowrap;
-  /* on the film: a white pill with ink type, the only pure white on the
-     first screen, so the action wins (the film is black in either room) */
-  color: #0a0a0b; background: #ffffff;
+  /* on the ground: the ink pill, the darkest object above the film */
+  color: var(--void); background: var(--ink);
   --glint-t: 4.5s;
   transition: background var(--t-micro) var(--ease-ui);
 }
-.dr-herocta:hover { background: #e7e7ea; }
+.dr-herocta:hover { background: var(--ink-2); }
 .dr-herocta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 /* the entrance: the lead, the card, then the door LAST — animate-last is
    the highest in the hierarchy. `backwards`, never `forwards`, so the
@@ -789,9 +784,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    until the count is real. A white card on the light ground; light
    rooms carry depth in shadow (decisions.md, 2026-09-08). */
 .dr-rating {
-  /* the top right of the film, on the copy block's line (Jake: "move
-     reviews down so its in line with that") — same inset as the copy */
-  position: absolute; right: var(--fib-5); top: var(--fib-5);
+  /* the one thing floating on the film: top right */
+  position: absolute; right: var(--fib-4); top: var(--fib-4);
   z-index: 2;
   --ink: #0a0a0b; --ink-3: #67676e;
   display: flex; align-items: center; gap: var(--fib-3);
@@ -904,17 +898,17 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-hero { justify-content: flex-start; padding-top: var(--fib-5); }
   .dr-main { padding-bottom: var(--fib-5); }
   .t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
-  /* the card is a dark block on the phone: the words flow in it in
-     their light ink, the tags become a row, the reel is the block after */
-  .dr-slot { aspect-ratio: auto; margin-top: var(--fib-4);
-             padding: var(--fib-4) var(--fib-3);
-             display: flex; flex-direction: column; align-items: center;
-             gap: var(--fib-3); text-align: center;
-             background: #0a0a0b; border-radius: var(--fib-3); }
-  .dr-hero-wrap[data-ready] .dr-slot { background: #0a0a0b; }
-  .dr-card-copy, .dr-herocta, .dr-rating { position: static; text-align: center; }
+  /* the row stacks and centres; the slot is only the badge's frame on a
+     phone (the reel is the block after the hero) */
+  .dr-row { flex-direction: column; align-items: center; text-align: center;
+            gap: var(--fib-3); }
+  .dr-card-copy { text-align: center; }
+  .dr-slot { aspect-ratio: auto; margin-top: var(--fib-3); background: transparent;
+             display: flex; justify-content: center; }
+  .dr-hero-wrap[data-ready] .dr-slot { background: transparent; }
+  .dr-rating { position: static; }
   .dr-line--film { display: none; }
-  .dr-h1, .dr-card-copy, .dr-herocta, .dr-rating { opacity: 1; }
+  .dr-h1, .dr-row, .dr-rating { opacity: 1; }
   .dr-sub { font-size: var(--fs-body); }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
@@ -1052,22 +1046,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   width: 100%; height: 100%;
   object-fit: cover;
 }
-/* THE SCRIM — the film DIMMED at rest so the light copy on it reads,
-   lifting with the grow: .5 black at rest, 0 when the reel is the
-   screen. One composited plane whose opacity moves; nothing repaints. */
-.dr-hero-reel::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: #000;
-  opacity: calc(.5 * (1 - var(--p, 0)));
-}
+/* NO SCRIM. Nothing is written on the film now but the badge, so it is
+   shown at full strength from the first frame. */
 @media (max-width: 900px) {
   /* NO GROW ON THE PHONE (itsjay's is desktop-only too): the line reads
      without its slot, and the reel is simply the block after the hero. */
   .dr-hero-reel { translate: none; scale: none; border-radius: var(--fib-3);
                   aspect-ratio: 16 / 9; opacity: 1; animation: none;
                   width: 100%; margin-left: 0; }
-  .dr-dock { padding: 0 var(--fib-3); }
-  .dr-hero-reel::after { opacity: 0; }
   .dr-dock { padding: 0 var(--fib-3); }
   .dr-hero-shade { display: none; }
   .dr-hero-reel { box-shadow: var(--lift); }
@@ -1077,15 +1063,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   /* the engine publishes --hero-p as 1: the reel sits in its dock and
      the slot would be an empty card in the line — hide it, and the
      page reads as the static version of itself */
-  /* the reel is in its dock; the card keeps its own surface so the
-     words on it sit on something */
-  .dr-hero-wrap[data-ready] .dr-slot { background: #0a0a0b; }
+  /* the reel is in its dock; the slot keeps a faint surface so the badge
+     sits on something */
+  .dr-hero-wrap[data-ready] .dr-slot { background: var(--surface-2); }
   .dr-hero-reel { opacity: 1; animation: none; }
-  .dr-hero-reel::after { opacity: 0; }
   .dr-hero-shade { opacity: 1; animation: none; }
   /* the engine publishes --hero-p as 1: without these the claim and the
-     card sit at 8% on the first screen with the reel docked below it */
-  .dr-h1, .dr-card-copy, .dr-herocta, .dr-rating { opacity: 1; }
+     row sit at 8% on the first screen with the reel docked below it */
+  .dr-h1, .dr-row, .dr-rating { opacity: 1; }
   .dr-lit .dr-card-copy, .dr-lit .dr-rating, .dr-lit .dr-herocta { animation: none; }
 }
 /* ══ THE RECEIPTS — the numbers band under the reel ═══════════════
