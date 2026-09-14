@@ -12,6 +12,7 @@ import NumbersSection from "@/components/dark/numbers-section";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
 import { GOOGLE_REVIEWS } from "@/lib/proof";
+import { SERVICE_META } from "@/lib/services";
 
 /* The room runs its own two curves — the same two the stylesheet declares,
    registered here so JS and CSS can never drift apart. Nothing in this room
@@ -263,6 +264,21 @@ export default function DarkRoom() {
                     instead of days.
                   </p>
                 </div>
+                {/* THE THREE THINGS SOLD, in the middle of the panel (Jake:
+                    "so much wasted space in the middle of it") — the meta
+                    line that used to sit above the title, given a line
+                    each from lib/services' own one-liners. Real content
+                    where there was air; each is the door to its page. */}
+                <ul className="dr-offer" aria-label="What we build">
+                  {(["websites", "ai", "google-ads"] as const).map((k) => (
+                    <li key={k}>
+                      <Link href={`/services/${k}`}>
+                        <b>{k === "ai" ? "Automation" : k === "google-ads" ? "Google Ads" : "Websites"}</b>
+                        <span>{SERVICE_META[k].line}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
                 <Link href="/contact" className="dr-herocta dr-edge t-cta">
                   Book the call
                 </Link>

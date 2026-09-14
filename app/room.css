@@ -678,8 +678,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    badge's own white and the badge's own shadow, so the two whites on
    the first screen are one object twice. Content on a surface, never
    bare on the canvas (design-laws). */
-.dr-row { display: flex; align-items: flex-end; justify-content: space-between;
-          gap: var(--fib-5); width: 100%; margin-top: clamp(16px, 2.6svh, 32px);
+.dr-row { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) auto;
+          align-items: end; column-gap: clamp(32px, 4vw, 72px);
+          width: 100%; margin-top: clamp(16px, 2.6svh, 32px);
           padding: clamp(20px, 3.4svh, 34px) clamp(24px, 2.6vw, 40px);
           border-radius: var(--radius-panel);
           /* A PANEL, NOT A SPOTLIGHT (Jake, on the white card with the
@@ -691,6 +692,19 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
           background: var(--surface-1);
           text-align: left; }
 .dr-card-copy { max-width: 46ch; }
+/* THE OFFER, the panel's middle column: three names, a line each, each a
+   link — set in the same small caps as the copy, the name in ink */
+.dr-offer { list-style: none; margin: 0; padding: 0;
+            display: flex; flex-direction: column; gap: clamp(8px, 1.3svh, 14px); }
+.dr-offer a { display: grid; grid-template-columns: 8.5em minmax(0, 1fr); column-gap: var(--fib-3);
+              align-items: baseline; text-decoration: none; color: var(--ink-3);
+              font-family: var(--font-archivo), sans-serif;
+              font-variation-settings: "wdth" 100, "wght" 600;
+              font-size: var(--fs-small); letter-spacing: .06em; line-height: 1.5;
+              text-transform: uppercase;
+              transition: color var(--t-micro) var(--ease-ui); }
+.dr-offer b { color: var(--ink); font-weight: inherit; white-space: nowrap; }
+.dr-offer a:hover { color: var(--ink); }
 /* CAPS, the reference's register (Jake: "their all caps reads more
    creative than professional which is what im going for"): the card's
    heading in the title's own condensed face, the copy in small tracked
@@ -914,8 +928,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
   /* the row stacks and centres; the slot is only the badge's frame on a
      phone (the reel is the block after the hero) */
-  .dr-row { flex-direction: column; align-items: center; text-align: center;
-            gap: var(--fib-3); padding: var(--fib-4) var(--fib-3); }
+  .dr-row { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center;
+            row-gap: var(--fib-4); padding: var(--fib-4) var(--fib-3); }
+  .dr-offer a { grid-template-columns: minmax(0, 1fr); text-align: center; }
   .dr-card-copy { text-align: center; }
   .dr-slot { aspect-ratio: auto; margin-top: var(--fib-3); background: transparent;
              display: flex; justify-content: center; }
