@@ -133,11 +133,26 @@ export default function DarkRoom() {
         h1.style.setProperty("--cross-left", `${Math.max(0, s.x - hb.x)}px`);
         h1.style.setProperty("--cross-right", `${Math.max(0, hb.x + hb.w - (s.x + s.w))}px`);
       }
-      /* on the DOCK, so the reel and its shade both inherit the same three */
+      /* on the DOCK, so the reel and its shade both inherit the same numbers.
+         Three frames (see THE GROW in room.css): the slot at p 0 — the reel
+         and the slot are the same column box now, so this is a translate
+         — the viewport at p 1, which is 0.9vh of scroll down, and home. */
       const dock = reel.closest<HTMLElement>(".dr-dock") ?? reel;
-      dock.style.setProperty("--s0", String(s.h / r.h));
-      dock.style.setProperty("--dx", `${s.x + s.w / 2 - (r.x + r.w / 2)}px`);
-      dock.style.setProperty("--dy", `${s.y + s.h / 2 - (r.y + r.h / 2)}px`);
+      const vw = document.documentElement.clientWidth;
+      dock.style.setProperty("--dx0", `${s.x + s.w / 2 - (r.x + r.w / 2)}px`);
+      /* THE BOX IS WRITTEN IN THE VIEWPORT'S FRAME (room.css, .dr-dock):
+         the slot's top and the letterbox's height give the two edges'
+         laws, the reel's flow centre is what the translate is measured
+         from, --sx1 is the mask's full width, --hr the letterbox over
+         the 16:9 picture so the picture's scale can be derived */
+      dock.style.setProperty("--t0", `${s.y}px`);
+      dock.style.setProperty("--h", `${r.h}px`);
+      dock.style.setProperty("--c0", `${r.y + r.h / 2}px`);
+      dock.style.setProperty("--sx1", String(vw / r.w));
+      dock.style.setProperty("--hr", String(r.h / (r.w * 9 / 16)));
+      /* the shade sits on the reel's box; `top` cannot read the padding's
+         width-based percentage, so it is handed the measured offset */
+      dock.style.setProperty("--reel-y", `${reel.offsetTop}px`);
       reel.setAttribute("data-ready", "");
       reel.closest(".dr-hero-wrap")?.setAttribute("data-ready", "");
     };
@@ -326,18 +341,18 @@ export default function DarkRoom() {
             right after the hero, 16:9 at the room's gutter, radius
             --radius-panel. At rest it is transformed up into the slot;
             by 0.9vh of scroll it is here, and the page carries on. */}
-        {/* --q is the SHRINK (Jake: "the video section has to grow to full
-            and then shrink"): measured on the dock's own top edge, which
-            sits at 0.1vh the frame the grow ends (the stage is one screen,
-            the grow is 0.9 of it). A 0.1vh hold at full, then 0.35vh of
-            scroll back down to the column — the film settles onto the
-            numbers card below, bottom edge held. */}
+        {/* --q is THE HOLD AND THE SHRINK (Jake: "grow to full and then
+            shrink"): measured on the dock's own top edge, which sits at
+            0.1vh the frame the grow ends (the stage is one screen, the grow
+            is 0.9 of it), so the window starts there: 0.1vh pinned full
+            screen, then 0.35vh shrinking in place to the column (see THE
+            PIN in room.css). */}
         <section
           className="dr-dock"
           aria-label="Showreel"
           data-sp
           data-sp-edge="top"
-          data-sp-from="0"
+          data-sp-from="0.1"
           data-sp-to="-0.35"
           data-sp-var="--q"
         >

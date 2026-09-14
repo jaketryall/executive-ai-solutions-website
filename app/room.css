@@ -1050,94 +1050,128 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-vouch figcaption { margin-top: 4px; color: var(--ink-4);
   font-family: var(--font-instrument), sans-serif; font-size: var(--fs-micro); }
 /* ── THE DOCK, AND THE GROW ──────────────────────────────────────
-   The reel LIVES here: a full-width block right after the hero, the
-   card's own 2.4:1 letterbox at the room's gutter, radius
-   --radius-panel — 1394 x 581 at 1440 — padded on top so that by 0.9vh
-   of scroll (the frame the grow ends, itsjay's domain) it sits CENTRED
-   in the viewport. (It was 16:9 and filled the screen there, itsjay's
-   geometry; the reference's proportion is the letterbox, so the dock
-   follows it — a uniform scale cannot change a box's aspect.)
+   The reel LIVES here: the block right after the hero, the column's own
+   2.6:1 letterbox — the same box as the slot in the hero. Three frames,
+   all measured by page.tsx and walked by --p and --q (the engine):
 
-   At rest it is transformed onto the slot: --s0/--dx/--dy are measured
-   by page.tsx (the slot's height over the reel's, and the vector from
-   the reel's centre to the slot's), and --p walks them out linearly —
-   translate to 0, scale to 1. itsjay's curve is linear to three
-   decimals; the eased look is the eye's, not a curve. Transform only:
-   one composited layer, no re-fit, no re-raster. The radius is DIVIDED
-   by the scale so it reads as the same 24px at every size — a
+     p 0   in the slot          translate only (same box)
+     p 1   THE WHOLE SCREEN     0.9vh of scroll, itsjay's domain
+     q 1   home, in the column  0.35vh later, under the rail's hem
+
+   "A uniform scale cannot change a box's aspect" — so the box is a
+   MASK scaled non-uniformly and the picture inside counter-scales to
+   stay uniform (see .dr-dock). itsjay's curve is linear to three
+   decimals; the eased look is the eye's, not a curve — the one eased
+   number is the vertical travel, and only so the film's top edge keeps
+   up with the words. Transform only: one composited layer for the mask,
+   one for the picture, no re-fit, no clip-path, no raster. A
    border-radius on an overflow:hidden box whose only child is a
    composited video is a compositor clip (measured free 2026-09-12). */
 .dr-dock {
   /* under the stage (6), over the ground: the reel paints beneath the
      words. The rail (30) stays over everything. */
   position: relative; z-index: 5;
-  --gutter: clamp(12px, 1.6vw, 28px);
-  /* the reel's home is a 2.4:1 letterbox WIDER THAN THE SCREEN — 108vw,
-     bleeding 4vw off each edge (the wrapper clips it) — so the grow is
-     still a grow now that the card at rest is already 97% of the
-     width: 12% at 1440x900, 30% on a 736-tall screen where the height
-     holds the card to 83%. Padded on top so that on the frame the grow
-     ends (0.9vh of scroll) the reel is CENTRED in the viewport. */
-  --dock-w: 108vw;
-  padding: max(0px, calc(40svh - var(--dock-w) / 2.6 / 2)) 0 0;
-  /* THEN IT SHRINKS (Jake: "grow to full and then shrink"): after the
-     grow and a 0.1vh hold, --q runs 0→1 over 0.35vh of scroll and the
-     reel comes back from 108vw to THE COLUMN — the hero's edges, the
-     numbers card's edges — so the film ends where everything else is.
-     --s1 is that width over the dock's, a number (tan∘atan2 divides two
-     lengths). The two windows never overlap: --p is 1 before --q moves. */
-  --s1: tan(atan2(100vw - 2 * clamp(24px, 3.8vw, 64px), var(--dock-w)));
-  /* the scale, on the dock, so the reel and its shade share one number */
-  --s: calc(var(--s0, 1) + (1 - var(--s0, 1)) * var(--p, 0) + (var(--s1) - 1) * var(--q, 0));
-  /* THE VERTICAL TRAVEL IS EASED IN — p², so the reel hangs at the slot's
-     height while it grows and drops to the centre only at the end. With
-     it linear, the reel's top edge climbed the viewport at 0.44px per px
-     of scroll while the words left at 1: a gap opened between the rail
-     and the film that was 245px by mid-grow. Squared, the top edge rises
-     at ~1.06px/px at first — with the strip — and the gap to the rail's
-     hem is under 30px from p .55 on (computed at 1440x736, then measured). */
-  --py: calc(var(--p, 0) * var(--p, 0));
-  /* the shrink holds the BOTTOM edge: scaling about the centre would lift
-     it by (1 - s) · h / 2 and open a gap to the card, so the reel is
-     carried down by exactly that — the top edge drops, the sides come
-     in, the film settles onto what is under it */
-  --settle: calc((1 - var(--s1)) * var(--q, 0) * var(--dock-w) / 5.2);
+  /* THE REEL'S HOME IS THE COLUMN — the hero's, the rail's, the numbers
+     card's edges — a 2.6:1 letterbox, the same box as the slot. Padded
+     on top so that at the END of the shrink (1.35vh of scroll) its top
+     edge sits 80px under the fold's top, the rail's hem: the dead space
+     is covered by the film while it is full-screen and is behind you by
+     the time the film has settled. */
+  --inset: clamp(24px, 3.8vw, 64px);
+  /* THE PIN, WITHOUT A PIN. The reel's home is placed so that at the end
+     of the shrink (1.35vh of scroll) its flow box is CENTRED in the
+     viewport — top at (vh − h)/2, h the letterbox's height, which is
+     (100% − 2·inset)/2.6 (padding percentages resolve against width).
+     Because the shrink's translate walks dy1·(1 − q) from the viewport's
+     centre to the flow box's, and the flow box arrives at the viewport's
+     centre at q 1, the film's centre never moves during the shrink: it
+     shrinks IN PLACE, full screen to column, then scrolls away in flow.
+     Pure f(scroll), and it runs backwards exactly. */
+  --dock-pad: calc(85vh - (100% - 2 * var(--inset)) / 5.2);
+  padding: var(--dock-pad) var(--inset) 0;
+
+  /* ── FULL SCREEN (Jake, 2026-09-14: "make the video go full screen as
+     part of the scroll effect"). The reel is a MASK the viewport's
+     shape and the film is a picture behind it, and both are only ever
+     transformed. The mask scales NON-UNIFORMLY from the letterbox to the
+     viewport; the picture — a 16:9 box centred in the mask, so the
+     letterbox shows its middle band — counter-scales (k/sx, k/sy) so on
+     screen it is always uniform, k the least that fills the mask. At
+     rest you see the band; at p 1
+     the mask is the screen and the frame has opened to (nearly) the
+     whole source; by q 1 it is the letterbox again, in the column. Every
+     number is a transform — no layout, no clip-path, no raster. */
+  /* the shrink's window is 0.45vh; the first 0.1vh of it is THE HOLD —
+     the mask stays the whole screen (--qs is 0) while the translate,
+     which reads the linear --q, keeps it pinned there — then 0.35vh of
+     shrinking, still pinned */
+  --qs: clamp(0, (var(--q, 0) - .222) / .778, 1);
+  --gs: calc(var(--p, 0) - var(--qs));               /* the grow's own progress: 0 → 1 → 0 */
+
+  /* ── THE BOX IS WRITTEN IN THE VIEWPORT'S FRAME. Not "scale from the
+     slot to the screen" — that moved every edge about the centre, and
+     whichever way it was eased one edge lagged: the top opened a gap
+     under the rail (245px), or the bottom opened one over the fold
+     (148px at 900). So the two edges are each given their own law, in
+     viewport px, and the scale and translate are DERIVED from them:
+
+       top     follows the strip up at scroll's rate (t0 − 90vh·p, the
+               slot's top leaving), holds at the rail's hem once it gets
+               there, and from p .5 walks the last 80px to the top edge;
+       bottom  runs from the slot's bottom to the fold, linearly — on a
+               736 screen that is below the fold the whole way, on 900 a
+               12px sliver at rest that closes.
+
+     --t0 (the slot's top), --h (the letterbox's height) and --c0 (the
+     reel's flow centre, page px) are measured by page.tsx. tan∘atan2 is
+     how two lengths divide into a number. */
+  --hem: calc(var(--nav-pad) + 62px);
+  --tt: max(var(--t0, 0px) - 90vh * var(--p, 0),
+            min(var(--hem), 2 * var(--hem) * (1 - var(--p, 0))));
+  --bb: calc(var(--t0, 0px) + var(--h, 1px) + (100vh - var(--t0, 0px) - var(--h, 1px)) * var(--p, 0));
+  --syg: tan(atan2(var(--bb) - var(--tt), var(--h, 1px)));
+  --sy: calc(1 + (var(--syg) - 1) * (1 - var(--qs)));
+  --sx: calc(1 + (var(--sx1, 1) - 1) * var(--gs));
+  /* the picture's uniform scale: the least that covers the mask on both
+     axes (--hr = letterbox height over 16:9 height, measured) */
+  --k: max(var(--sx), var(--sy) * var(--hr, .69));
+  /* the corners: the chip's 10px at rest, square at full screen, the
+     panel's 24px once it is a card in the column; each divided by the
+     axis's scale so the element renders it at exactly that size */
+  --rv: calc(10px * (1 - var(--p, 0)) + var(--radius-panel) * var(--qs));
+  /* the translate puts the box's centre where the two edges say it is:
+     (top + bottom)/2 in the viewport, minus the flow centre's place in
+     the viewport (c0 − scroll). Through the shrink the edges are the
+     screen's, so the centre is the screen's — pinned. */
+  --tx: calc(var(--dx0, 0px) * (1 - var(--p, 0)));
+  --ty: calc((var(--tt) + var(--bb)) / 2 - var(--c0, 0px) + 90vh * var(--p, 0) + 45vh * var(--q, 0));
 }
-/* THE SHADE — the reel's shadow on a sibling whose box and radius never
-   change, so it paints once and only transforms (see page.tsx). At chip
-   scale its corner sits inside a 4px blur; at the dock it is the rating
-   card's shadow under the film. */
+/* THE SHADE — the reel's shadow on a sibling whose box never changes,
+   so it paints once and only transforms (see page.tsx). Its radius is
+   the panel's; under the non-uniform scale it stretches, which only
+   happens while the shadow is off the screen behind a full-screen film. */
 .dr-hero-shade {
   position: absolute;
-  top: max(0px, calc(40svh - var(--dock-w) / 2.6 / 2));
-  left: calc((100vw - var(--dock-w)) / 2); width: var(--dock-w);
+  top: var(--reel-y, 0px); left: var(--inset); right: var(--inset); /* --reel-y: page.tsx */
   aspect-ratio: 2.6 / 1; border-radius: var(--radius-panel);
   box-shadow: var(--lift);
-  translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--py, 0)) + var(--settle, 0px));
-  scale: var(--s); transform-origin: 50% 50%;
+  translate: var(--tx) var(--ty);
+  scale: var(--sx) var(--sy); transform-origin: 50% 50%;
   will-change: transform; pointer-events: none; opacity: 0;
 }
 .dr-hero-wrap[data-ready] .dr-hero-shade { animation: dr-reel-in 900ms var(--ease-structure) 400ms both; }
 .dr-hero-reel {
   position: relative; z-index: 1;
-  width: var(--dock-w); margin-left: calc((100vw - var(--dock-w)) / 2);
-  aspect-ratio: 2.6 / 1;
+  width: 100%; aspect-ratio: 2.6 / 1;
   overflow: hidden;
-  background: #0a0a0b; /* the film's ground, in either room (see .dr-slot) */
-  translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--py, 0)) + var(--settle, 0px));
-  scale: var(--s);
-  /* THE CORNERS ARE SIZED TO THE OBJECT, not held at one number (Jake:
-     "the video has too much of rounded corners"): 24px divided by the
-     scale read as 24px on a 91px chip — a quarter of its height. The
-     VISUAL radius now runs from --r0 on the chip to --r1 at the dock,
-     and is divided by the scale so the element renders it at exactly
-     that size whatever its scale is. */
-  --r0: 10px; --r1: var(--radius-panel);
-  border-radius: calc((var(--r0) + (var(--r1) - var(--r0)) * var(--p, 0)) / var(--s));
+  background: #0a0a0b; /* the film's ground, in either room */
+  translate: var(--tx) var(--ty);
+  scale: var(--sx) var(--sy);
+  border-radius: calc(var(--rv) / var(--sx)) / calc(var(--rv) / var(--sy));
   transform-origin: 50% 50%;
   will-change: transform;
-  /* unseen until it has been measured onto the slot, then it arrives with
-     the entrance; its natural place is below the fold, so nothing flashes */
+  /* unseen until it has been measured onto the slot, then it rises in;
+     its natural place is below the fold, so nothing flashes */
   opacity: 0;
 }
 /* THE RISE AND GROW (Jake, 2026-09-14). Once measured onto the slot the
@@ -1153,10 +1187,16 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   45%  { opacity: 1; }
   to   { opacity: 1; transform: none; }
 }
+/* THE PICTURE: the whole 16:9 frame, centred in the mask — the letterbox
+   shows its middle band at rest, the same crop object-fit gave — and
+   counter-scaled so that on screen it is uniform whatever the mask is. */
 .dr-hero-reel video {
-  display: block;
-  width: 100%; height: 100%;
-  object-fit: cover;
+  display: block; position: absolute; left: 0; top: 50%;
+  width: 100%; height: auto; aspect-ratio: 16 / 9;
+  translate: 0 -50%;
+  scale: calc(var(--k) / var(--sx)) calc(var(--k) / var(--sy));
+  transform-origin: 50% 50%;
+  will-change: transform;
 }
 /* NO SCRIM. Nothing is written on the film now but the badge, so it is
    shown at full strength from the first frame. */
@@ -1166,6 +1206,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-hero-reel { translate: none; scale: none; border-radius: var(--fib-3);
                   aspect-ratio: 16 / 9; opacity: 1; animation: none;
                   width: 100%; margin-left: 0; }
+  .dr-hero-reel video { position: static; translate: none; scale: none; height: 100%; }
   .dr-dock { padding: 0 var(--fib-3); }
   .dr-hero-shade { display: none; }
   .dr-hero-reel { box-shadow: var(--lift); }
