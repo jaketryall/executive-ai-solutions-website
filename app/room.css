@@ -118,7 +118,7 @@
      screen against a 1290 film (Jake: "it does not align with the
      edges of the video"). The column's own width is what answers a
      short screen — see .dr-hero. */
-  --hero-fs: 14cqw;
+  --hero-fs: 14.12cqw;   /* the INK spans the column: see .dr-h1 .dr-line */
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
   --nav-pad: clamp(13px, 2.4svh, 21px);
@@ -453,9 +453,11 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
 
 .dr-rail-in {
   position: relative; z-index: 2; height: 100%;
-  display: flex; align-items: center; gap: var(--fib-4);
+  display: flex; align-items: center; gap: 0;
   /* no inset at rest: the wordmark's left edge IS the film's, the last
-     link's right edge the film's other one; the pill brings its own */
+     link's right edge the film's other one; the pill brings its own.
+     No row gap either — the collapsed action still took its gap and
+     left the links 34px short of the edge */
   padding: 0; border-radius: inherit;
   background: transparent;
   transition: background .5s var(--ease-ui),
@@ -514,7 +516,7 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
 /* in the row, pushed to the far side; the action follows them */
 .dr-links {
   position: static; z-index: 3;
-  margin-left: auto;
+  margin-left: auto; margin-right: -2px;   /* the G's bearing: ink on the edge */
   width: max-content;
   display: flex; align-items: center; gap: var(--fib-4);
 }
@@ -549,6 +551,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 /* the nav CTA is a LIT EDGE, not a second white fill — the hero pill
    keeps the room's only pure-white surface, so the action still wins. */
 .dr-navcta {
+  margin-left: 0;   /* the gap arrives with the pill, below */
   display: inline-flex; align-items: center; border-radius: 999px;
   text-decoration: none; color: var(--ink); white-space: nowrap;
   background: var(--surface-2);
@@ -561,7 +564,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 .dr-navcta::before { opacity: 0; transition: opacity .4s var(--ease-ui); }
 .dr-rail[data-stuck] .dr-navcta {
-  max-width: 260px; opacity: 1; padding: 12px 22px;
+  max-width: 260px; opacity: 1; padding: 12px 22px; margin-left: var(--fib-4);
 }
 .dr-rail[data-stuck] .dr-navcta::before { opacity: 1; }
 .dr-navcta:hover { background: var(--surface-3); }
@@ -614,6 +617,17 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    and the line inside it is set to that width — one number governs
    both, so they cannot drift. */
 .dr-h1 { margin: 0; position: relative; z-index: 2; width: 100%; }
+/* OPTICAL, not geometric (Jake: "the title isnt perfectly aligned on the
+   left side"): a letter's box carries a side bearing, so a line set to
+   the column's width has its ink ~4px inside each edge at 180px. The
+   size is 14.08cqw so the INK is the column's width, and the line is
+   pulled left by the D's bearing so the ink starts on the film's edge. */
+.dr-h1 .dr-line { margin-left: -0.041em;   /* the D's bearing, measured: 9px at 196 */
+                  /* UPRIGHT. .dr-line's -4° shear (the old statement's) put
+                     the D's cap 6px right of its foot at 196px — a slanted
+                     left edge can never align with the film's; and the
+                     reference is upright */
+                  transform: none; }
 .t-hero .dr-line > span { white-space: nowrap; }
 .dr-h1.t-hero {
   font-variation-settings: "wdth" 66, "wght" 800;
@@ -661,7 +675,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
           font-size: var(--fs-small); letter-spacing: .06em; line-height: 1.55;
           text-transform: uppercase; max-width: 44ch; }
 
-.dr-line { overflow: hidden; transform: skewX(-4deg); transform-origin: left center; }
+/* BLOCK, explicitly: a span with a block child splits into anonymous
+   line boxes, and each empty one carries a full line-height strut —
+   measured in Chrome as 181px of nothing above the line, the title 361
+   tall for one line of 180 */
+.dr-line { display: block; overflow: hidden; transform: skewX(-4deg); transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
 .dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
 .dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 540ms forwards; }
