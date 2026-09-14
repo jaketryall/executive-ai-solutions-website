@@ -51,16 +51,17 @@ export default function NumbersSection() {
   return (
     <section className="dr-numbers" aria-labelledby="dr-numbers-h" ref={ref}>
       <div className="wrap">
+        {/* the tray: one white card holding the head and the four bare
+            figures (Jake, third call: "by the numbers and the as of
+            september being in the card, but card is white and each number
+            does not get its own card") */}
+        <div className="dr-numbers-tray">
         <div className="dr-numbers-head">
           <h2 className="t-label dr-numbers-kicker" id="dr-numbers-h" data-wipe>
             By the numbers
           </h2>
           <p className="t-meta dr-numbers-asof">As of {RECEIPTS_AS_OF}</p>
         </div>
-        {/* the tray: one big black card holding the four (Jake:
-            "additionally they should all be in a big card" → "the card
-            being black and the title and as of september not being in it") */}
-        <div className="dr-numbers-tray">
         <ul className="dr-receipts">
           {RECEIPTS.map((r) => (
             <li className="dr-receipt" key={r.label}>
