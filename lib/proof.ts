@@ -38,3 +38,20 @@ export const RECEIPTS: {
   { value: 60, suffix: " s", label: "from six questions to a real price",
     window: "no email required", source: "the estimator", href: "/pricing" },
 ];
+
+/* THE FACES on the strip — real clients, initials only until their photos
+   are cleared (project_launched, 2026-08-08: "real client initials
+   RR/JJ/TB … real photos later"). Never padded: three is three. */
+export const REVIEWERS: { initials: string; name: string }[] = [
+  { initials: "RR", name: "Rick Ryall, Desert Wings Flight School" },
+  { initials: "JJ", name: "Jake Johnson, Desert Wings Flight School" },
+  { initials: "TB", name: "Tim Brown, Arizona Aviation Historical Group" },
+];
+
+/* THE CLIENTS, for the strip's marquee — wordmarks until logo files are
+   cleared (only Desert Wings' exists in public/work). Real clients only. */
+export const CLIENTS = [
+  "Desert Wings Flight School",
+  "Arizona Aviation Historical Group",
+  "Riled Pickleball",
+];

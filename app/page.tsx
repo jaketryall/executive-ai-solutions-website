@@ -11,8 +11,7 @@ import ObjectionsSection from "@/components/dark/objections-section";
 import NumbersSection from "@/components/dark/numbers-section";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
-import { GOOGLE_REVIEWS } from "@/lib/proof";
-import { SERVICE_META } from "@/lib/services";
+import { GOOGLE_REVIEWS, REVIEWERS, CLIENTS } from "@/lib/proof";
 
 /* The room runs its own two curves — the same two the stylesheet declares,
    registered here so JS and CSS can never drift apart. Nothing in this room
@@ -250,68 +249,73 @@ export default function DarkRoom() {
                 </span>
               </h1>
 
-              {/* THE ROW under the title, on the ground, aligned to the
-                  film's edges: the description left, the one door right
-                  (Jake, 2026-09-13, choosing between copy on the film
-                  and copy above it: "yes" to above). Off the film, the
-                  copy is legible and the film needs no dim. */}
-              <div className="dr-row">
-                <div className="dr-card-copy">
-                  <p className="dr-card-h">Systems that follow up</p>
-                  <p className="dr-sub">
-                    We build your site and wire up the system behind it, so
-                    every call, form and text gets answered in seconds
-                    instead of days.
-                  </p>
-                </div>
-                {/* THE THREE THINGS SOLD, in the middle of the panel (Jake:
-                    "so much wasted space in the middle of it") — the meta
-                    line that used to sit above the title, given a line
-                    each from lib/services' own one-liners. Real content
-                    where there was air; each is the door to its page. */}
-                <ul className="dr-offer" aria-label="What we build">
-                  {(["websites", "ai", "google-ads"] as const).map((k) => (
-                    <li key={k}>
-                      <Link href={`/services/${k}`}>
-                        <b>{k === "ai" ? "Automation" : k === "google-ads" ? "Google Ads" : "Websites"}</b>
-                        <span>{SERVICE_META[k].line}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/contact" className="dr-herocta dr-edge t-cta">
-                  Book the call
-                </Link>
-              </div>
-
-              {/* THE CARD — the reel's rest position: full width, its top
-                  in the first screen and its bottom past the fold, the way
-                  Cosmos's video sits low. Undimmed from the first frame —
-                  nothing is written on it but the rating badge — and the
-                  grow on scroll pulls it up to the centre. The reel lives
-                  in the dock and is measured onto this box. */}
-              <div className="dr-slot">
-                {/* THE RATING, the one thing floating on the film. ⚠ Renders
-                    only when lib/proof.ts carries the real count — the site
-                    does not show proof it cannot back. */}
+              {/* THE STRIP — thin, white, between the title and the film,
+                  for the small things (Jake, 2026-09-13: "a thin strip
+                  as white where some small things are there, like
+                  reviews with the little half circle things on far left,
+                  just stuff that doesn't take up much vertical space" …
+                  "the little avatar icons on left that rotate, that are
+                  images of real people, and to the right of that an
+                  infinite logo marquee"). Left: the faces, rotating, and
+                  the rating. Middle: the clients' marquee. Right: the one
+                  door. The panel that held the description is at def30b4
+                  if wanted back. ⚠ The faces are initials until Jake
+                  clears real photographs; the marquee is wordmarks until
+                  the logo files exist. */}
+              <div className="dr-strip">
                 {GOOGLE_REVIEWS.count > 0 && (
                   <a
-                    className="dr-rating"
+                    className="dr-strip-rating"
                     href={GOOGLE_REVIEWS.url || undefined}
                     target={GOOGLE_REVIEWS.url ? "_blank" : undefined}
                     rel={GOOGLE_REVIEWS.url ? "noopener noreferrer" : undefined}
                     aria-label={`Rated ${GOOGLE_REVIEWS.rating.toFixed(1)} on Google from ${GOOGLE_REVIEWS.count} reviews`}
                   >
-                    <span className="dr-stars" aria-hidden>
-                      {"★★★★★"}
+                    {/* the faces: real clients, initials until photos */}
+                    <span className="dr-faces" aria-hidden>
+                      {REVIEWERS.map((p) => (
+                        <span className="dr-face" key={p.initials} title={p.name}>{p.initials}</span>
+                      ))}
                     </span>
-                    <span className="dr-rating-l">
+                    <span className="dr-stars" aria-hidden>{"★★★★★"}</span>
+                    <span className="dr-strip-l">
                       <b>{GOOGLE_REVIEWS.rating.toFixed(1)} on Google</b>
                       <span>{GOOGLE_REVIEWS.count} client reviews</span>
                     </span>
                   </a>
                 )}
+
+                {/* THE LOGO MARQUEE, to the right of the faces (Jake: "an
+                    infinite logo marquee"): the clients, as wordmarks in
+                    the site's caps until their logo files are cleared
+                    (only Desert Wings' exists in public/work). Two sets,
+                    the track travels one; the second is decoration. */}
+                <div className="dr-logos" aria-label="Clients">
+                  <div className="dr-logos-track">
+                    {[0, 1].map((i) => (
+                      <div className="dr-logos-set" key={i} aria-hidden={i === 1}>
+                        {CLIENTS.map((c) => (
+                          <span key={c}>{c}</span>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
               </div>
+
+              {/* THE DOOR floats beneath the strip (Jake: "book the call
+                  floating beneath"), on the ground, at the column's left. */}
+              <Link href="/contact" className="dr-herocta dr-edge t-cta">
+                Book the call
+              </Link>
+
+              {/* THE CARD — the reel's rest position: full width, its top
+                  in the first screen and its bottom past the fold, the way
+                  Cosmos's video sits low. Undimmed from the first frame;
+                  nothing on it. The reel lives in the dock and is measured
+                  onto this box. */}
+              <div className="dr-slot" aria-hidden />
             </div>
           </main>
         </div>

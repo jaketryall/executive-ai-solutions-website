@@ -671,44 +671,71 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 /* top left, where the reference keeps its copy block (Jake: "can we
    move text to top left"); the door stays lower right, the badge top
    right, so the film's centre is picture */
-/* THE ROW IS A WHITE CARD between the title and the film (Jake: "a
-   white card in between the title and video that houses the
-   description and such"): the heading and the copy at the left, the
-   door at the right, on the one white surface above the film — the
-   badge's own white and the badge's own shadow, so the two whites on
-   the first screen are one object twice. Content on a surface, never
-   bare on the canvas (design-laws). */
-.dr-row { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) auto;
-          align-items: end; column-gap: clamp(32px, 4vw, 72px);
-          width: 100%; margin-top: clamp(16px, 2.6svh, 32px);
-          padding: clamp(20px, 3.4svh, 34px) clamp(24px, 2.6vw, 40px);
-          border-radius: var(--radius-panel);
-          /* A PANEL, NOT A SPOTLIGHT (Jake, on the white card with the
-             badge's shadow: "it might be too strong, like all my attention
-             is there"): one step lighter than the ground — --surface-1,
-             #f4f4f7 on #e7e7ea — and no shadow, so it reads as a place
-             the copy sits rather than an object competing with the film.
-             The film stays the loudest thing on the screen. */
-          background: var(--surface-1);
-          text-align: left; }
-.dr-card-copy { max-width: 46ch; }
-/* THE OFFER, the panel's middle column: three names, a line each, each a
-   link — set in the same small caps as the copy, the name in ink */
-.dr-offer { list-style: none; margin: 0; padding: 0;
-            display: flex; flex-direction: column; gap: clamp(8px, 1.3svh, 14px); }
-.dr-offer a { display: grid; grid-template-columns: 8.5em minmax(0, 1fr); column-gap: var(--fib-3);
-              align-items: baseline; text-decoration: none; color: var(--ink-3);
-              font-family: var(--font-archivo), sans-serif;
-              font-variation-settings: "wdth" 100, "wght" 600;
-              font-size: var(--fs-small); letter-spacing: .06em; line-height: 1.5;
-              text-transform: uppercase;
-              transition: color var(--t-micro) var(--ease-ui); }
-.dr-offer b { color: var(--ink); font-weight: inherit; white-space: nowrap; }
-.dr-offer a:hover { color: var(--ink); }
-/* CAPS, the reference's register (Jake: "their all caps reads more
-   creative than professional which is what im going for"): the card's
-   heading in the title's own condensed face, the copy in small tracked
-   caps, the way their PIZZA WITH URBAN FLAIR sits over its paragraph. */
+/* THE STRIP — thin and white between the title and the film (Jake:
+   "a thin strip as white where some small things are there … just stuff
+   that doesn't take up much vertical space" · "the little avatar icons
+   on left that rotate, that are images of real people, and to the right
+   of that an infinite logo marquee"). 64px: the faces, rotating, and the
+   rating at the left; the clients' marquee filling the rest. White,
+   because thin cannot compete with the film; the badge's shadow, so it
+   floats like the badge did. The panel that held the description is at
+   def30b4. */
+.dr-strip { display: flex; align-items: center;
+            gap: clamp(20px, 2.4vw, 40px); width: 100%; margin-top: clamp(16px, 2.6svh, 32px);
+            min-height: 64px; padding: 8px 24px 8px 12px;
+            border-radius: 999px; background: #ffffff; box-shadow: var(--lift);
+            text-align: left; overflow: hidden; }
+.dr-strip-rating { display: flex; align-items: center; gap: var(--fib-2);
+                   flex: 0 0 auto; text-decoration: none; color: var(--ink); }
+/* THE FACES: three overlapping rounds. They ROTATE — every 2.4s the
+   front one steps to the back and the next comes forward — on one
+   transform each, so the stack is always moving a little. Initials in
+   the small caps until real photographs are cleared; each a step lighter
+   than the last so the stack reads. */
+.dr-faces { display: flex; align-items: center; }
+.dr-face { display: grid; place-items: center; width: 40px; height: 40px;
+           border-radius: 999px; margin-left: -12px; position: relative;
+           border: 2px solid #ffffff; background: var(--ink); color: #fff;
+           font-family: var(--font-archivo), sans-serif;
+           font-variation-settings: "wdth" 100, "wght" 700;
+           font-size: 11px; letter-spacing: .06em;
+           animation: dr-face-turn 7.2s var(--ease-structure) infinite; }
+.dr-face:first-child { margin-left: 0; }
+.dr-face:nth-child(2) { background: #35353a; animation-delay: -2.4s; }
+.dr-face:nth-child(3) { background: #67676e; animation-delay: -4.8s; }
+/* each face takes a third of the cycle at the front (z 3, full size),
+   then steps back */
+@keyframes dr-face-turn {
+  0%, 30%   { z-index: 3; transform: scale(1); }
+  33%, 63%  { z-index: 2; transform: scale(.92); }
+  66%, 96%  { z-index: 1; transform: scale(.84); }
+  100%      { z-index: 3; transform: scale(1); }
+}
+.dr-strip .dr-stars { font-size: 15px; margin-left: var(--fib-2); }
+.dr-strip-l { display: flex; flex-direction: column; gap: 2px; line-height: 1.15;
+              font-family: var(--font-instrument), sans-serif; font-size: var(--fs-body-s); }
+.dr-strip-l b { font-weight: 600; }
+.dr-strip-l span { color: var(--ink-3); font-size: var(--fs-micro); }
+
+/* THE LOGO MARQUEE: the clients as wordmarks in the site's caps, running
+   left, seamless — two identical sets, the track travels one. Faded at
+   both ends so it comes out of and goes into the strip's white. */
+.dr-logos { flex: 1 1 auto; min-width: 0; position: relative; overflow: hidden;
+            height: 40px;
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+.dr-logos-track { position: absolute; left: 0; top: 0; height: 100%;
+                  display: flex; width: max-content;
+                  animation: dr-logos 28s linear infinite; will-change: transform; }
+.dr-logos-set { display: flex; align-items: center; height: 100%; }
+.dr-logos-set span { display: block; padding-right: clamp(28px, 3vw, 56px);
+                     white-space: nowrap; color: var(--ink-2);
+                     font-family: var(--font-archivo), sans-serif;
+                     font-variation-settings: "wdth" 110, "wght" 700;
+                     font-size: var(--fs-small); letter-spacing: .12em;
+                     text-transform: uppercase; }
+.dr-logos-set span::after { content: "·"; padding-left: clamp(28px, 3vw, 56px); color: var(--ink-4); }
+@keyframes dr-logos { to { transform: translate3d(-50%, 0, 0); } }
 .dr-card-h {
   margin: 0 0 var(--fib-2); color: var(--ink);   /* the room's ink, on the ground */
   font-family: var(--font-archivo), "Arial Black", sans-serif;
@@ -770,7 +797,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    still reading. */
 /* the door and everything written on the film go first — the film is
    undimming under them */
-.dr-row {
+.dr-strip, .dr-herocta {
   opacity: calc(1 - min(1, var(--p, 0) / .18) * min(1, var(--p, 0) / .18));
 }
 /* the claim and the card are gone by p .22 (178px at 900), before the
@@ -787,13 +814,15 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    the light room means the DARKEST object on the first screen after the
    chip: an ink pill with the ground as its label (16:1). One rule, both
    rooms: in ?dark it is the white pill with black type. */
+/* THE DOOR floats beneath the strip, at the column's left (Jake: "book
+   the call floating beneath"): the ink pill with the room's one shadow */
 .dr-herocta {
-  flex: 0 0 auto;
+  flex: 0 0 auto; align-self: flex-start;
+  margin-top: clamp(14px, 2.2svh, 24px);
   display: inline-flex; align-items: center; border-radius: 999px;
-  padding: 13px 24px;
+  padding: 14px 26px;
   text-decoration: none; white-space: nowrap;
-  /* on the ground: the ink pill, the darkest object above the film */
-  color: var(--void); background: var(--ink);
+  color: var(--void); background: var(--ink); box-shadow: var(--lift);
   --glint-t: 4.5s;
   transition: background var(--t-micro) var(--ease-ui);
 }
@@ -802,8 +831,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 /* the entrance: the lead, the card, then the door LAST — animate-last is
    the highest in the hierarchy. `backwards`, never `forwards`, so the
    calc above owns opacity once the fade ends. */
-.dr-lit .dr-card-copy { animation: dr-fadein var(--t-enter) var(--ease-structure) 700ms backwards; }
-.dr-lit .dr-rating  { animation: dr-fadein var(--t-enter) var(--ease-structure) 760ms backwards; }
+.dr-lit .dr-strip   { animation: dr-fadein var(--t-enter) var(--ease-structure) 700ms backwards; }
 .dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 900ms backwards; }
 
 /* ── THE RATING CARD ─────────────────────────────────────────────
@@ -928,16 +956,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
   /* the row stacks and centres; the slot is only the badge's frame on a
      phone (the reel is the block after the hero) */
-  .dr-row { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center;
-            row-gap: var(--fib-4); padding: var(--fib-4) var(--fib-3); }
-  .dr-offer a { grid-template-columns: minmax(0, 1fr); text-align: center; }
-  .dr-card-copy { text-align: center; }
-  .dr-slot { aspect-ratio: auto; margin-top: var(--fib-3); background: transparent;
-             display: flex; justify-content: center; }
-  .dr-hero-wrap[data-ready] .dr-slot { background: transparent; }
-  .dr-rating { position: static; }
+  /* the strip stacks on a phone: faces + rating, then the marquee */
+  .dr-strip { flex-direction: column; align-items: stretch; border-radius: var(--fib-3);
+              padding: var(--fib-3); gap: var(--fib-3); }
+  .dr-strip-rating { justify-content: center; }
+  .dr-herocta { align-self: center; }
+  .dr-slot { display: none; }
   .dr-line--film { display: none; }
-  .dr-h1, .dr-row, .dr-rating { opacity: 1; }
+  .dr-h1, .dr-strip, .dr-herocta { opacity: 1; }
   .dr-sub { font-size: var(--fs-body); }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
@@ -1092,15 +1118,16 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   /* the engine publishes --hero-p as 1: the reel sits in its dock and
      the slot would be an empty card in the line — hide it, and the
      page reads as the static version of itself */
-  /* the reel is in its dock; the slot keeps a faint surface so the badge
-     sits on something */
-  .dr-hero-wrap[data-ready] .dr-slot { background: var(--surface-2); }
+  /* the reel is in its dock; the slot is an empty frame — hide it; the
+     faces hold still and the marquee stands */
+  .dr-slot { display: none; }
+  .dr-face, .dr-logos-track { animation: none; }
   .dr-hero-reel { opacity: 1; animation: none; }
   .dr-hero-shade { opacity: 1; animation: none; }
   /* the engine publishes --hero-p as 1: without these the claim and the
      row sit at 8% on the first screen with the reel docked below it */
-  .dr-h1, .dr-row, .dr-rating { opacity: 1; }
-  .dr-lit .dr-card-copy, .dr-lit .dr-rating, .dr-lit .dr-herocta { animation: none; }
+  .dr-h1, .dr-strip, .dr-herocta { opacity: 1; }
+  .dr-lit .dr-strip, .dr-lit .dr-herocta { animation: none; }
 }
 /* ══ THE RECEIPTS — the numbers band under the reel ═══════════════
    Four figures on the ground, separated by space. The numeral is the
