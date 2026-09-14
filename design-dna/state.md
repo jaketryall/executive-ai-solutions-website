@@ -14,15 +14,20 @@ plan as already locked; use `decisions.md` as the record of what was
 decided and why, and only reach for a builder/verifier/critic step from
 here forward.
 
-- §01 hero — THE LINE (2026-09-13): one centred statement with the
-  reel as a card inside its second line; on scroll the reel grows out
-  of the sentence (itsjay's linear grow over 0.9vh) into its own
-  full-width dock after the hero; a Google rating card lower right on
-  PLACEHOLDER numbers (lib/proof.ts — needs Jake's real ones). Fourth
-  hero of the day; the stage, the lift, the shutter and the screening
-  are all in git (decisions.md). Revised the same afternoon: the chip in
-  the title stays (1.08em), a one-line description under the statement
-  (acquisition.com's order, measured). Awaiting Jake's look.
+- §01 hero — THE STRIP (2026-09-13, the eleventh hero of the day and
+  the one that landed; `ee42ec1`..`d3ce8c7`): "DESIGN THAT SELLS" in
+  condensed caps the full measure; a 64px white strip — rotating client
+  marks (DW's file, AA/RP initials until their marks are cleared) ·
+  "5.0 on Google · 14 reviews" (PLACEHOLDER numbers, lib/proof.ts) ·
+  a slow services ticker (22px/s, no dots) · the ink pill at the right
+  end; the film full width below, undimmed, its bottom past the fold;
+  itsjay's grow on scroll into a 108vw dock. Title, strip, film and nav
+  share the same two edges (measured off Chrome frames). Column 92%.
+  Jake: "this is great." Every earlier version is in git — the panel
+  with the description at def30b4, the copy-on-film at 9cbe0e6, the
+  drop cap b3ea6c2, the lift 9cd34bc, the shutter da61f3c. Why it
+  works: memory feedback_hero_that_landed. NEEDS JAKE: real Google
+  rating/count/link; AAHG + Riled marks; the reel cut (reel-spec.md).
 - THE RECEIPTS (2026-09-13, new, under the dock): four honest figures
   with window + source link + as-of, rolling in on the odometer.
   "1,000+" waits on the exact GA number; live GA4 is the next step if

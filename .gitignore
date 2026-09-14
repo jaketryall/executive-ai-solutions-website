@@ -57,3 +57,6 @@ public/builder/raw-*.png
 
 scroll-trace*.json.gz
 .scratch/
+
+# verification screenshots taken in real Chrome, never committed
+design-dna/frames/
