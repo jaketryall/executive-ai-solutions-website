@@ -685,7 +685,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
             min-height: 64px; padding: 8px 8px 8px 12px;
             border-radius: 999px; background: #ffffff; box-shadow: var(--lift);
             text-align: left; overflow: hidden; }
-.dr-strip-rating { display: flex; align-items: center; gap: var(--fib-2);
+.dr-strip-rating { display: flex; align-items: center; gap: var(--fib-1);
                    flex: 0 0 auto; text-decoration: none; color: var(--ink); }
 /* THE FACES: three overlapping rounds. They ROTATE — every 2.4s the
    front one steps to the back and the next comes forward — on one
@@ -713,7 +713,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 /* no star glyphs (Jake): the score and the count say it */
 .dr-strip-l { display: flex; flex-direction: column; gap: 2px; line-height: 1.15;
-              margin-left: var(--fib-2);
+              margin-left: 2px;   /* tight to the faces (Jake: "a little more left") */
               font-family: var(--font-instrument), sans-serif; font-size: var(--fs-body-s); }
 .dr-strip-l b { font-weight: 600; }
 .dr-strip-l span { color: var(--ink-3); font-size: var(--fs-micro); }
