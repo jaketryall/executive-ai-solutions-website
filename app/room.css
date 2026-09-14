@@ -808,17 +808,25 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    grow, so by the time the reel is most of the screen the sentence it
    came out of is gone. Squared, so the fade holds off while you are
    still reading. */
-/* the door and everything written on the film go first — the film is
-   undimming under them */
-.dr-strip, .dr-herocta {
-  opacity: calc(1 - min(1, var(--p, 0) / .18) * min(1, var(--p, 0) / .18));
-}
-/* the claim and the card are gone by p .22 (178px at 900), before the
-   claim's top reaches the rail's hem at p .20 — no ghost ever straddles
-   the pill (the ugliest frame of the day: the claim at .48 behind the
-   rail, a crisp description under a half-gone headline) */
+/* NO EARLY FADE (Jake, 2026-09-14: the grow "creates blank empty space
+   of white while we scroll … the stuff above it cant disappear so
+   early"). The words used to be gone by p .18/.22 — 130–160px of scroll
+   — while the reel's top edge was still 200px+ below the rail, so for
+   most of the grow the top of the screen was ground. Now the words
+   leave at scroll's own rate, like Cosmos's, and the reel's top edge
+   follows them up (the vertical travel is eased in — see .dr-dock), so
+   what is above the film is always the strip until the strip is under
+   the rail. Each fades ONLY as it goes under the rail — the pill takes
+   .5s to darken after it sticks at p .2, and a crisp headline half
+   behind a half-dark pill was the ugliest frame of the last pass — so
+   the fade window is the rail's zone: the title from .06 to .20 (its
+   bottom clears the hem at .27), the strip from .28 to .42 (its bottom
+   clears the hem at .40). Measured at 1440x736. */
 .dr-h1, .dr-rating {
-  opacity: calc(1 - min(1, var(--p, 0) / .22) * min(1, var(--p, 0) / .22));
+  opacity: calc(1 - clamp(0, (var(--p, 0) - .06) / .14, 1));
+}
+.dr-strip, .dr-herocta {
+  opacity: calc(1 - clamp(0, (var(--p, 0) - .28) / .14, 1));
 }
 
 /* ── THE ONE DOOR ────────────────────────────────────────────────
@@ -1081,6 +1089,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   --s1: tan(atan2(100vw - 2 * clamp(24px, 3.8vw, 64px), var(--dock-w)));
   /* the scale, on the dock, so the reel and its shade share one number */
   --s: calc(var(--s0, 1) + (1 - var(--s0, 1)) * var(--p, 0) + (var(--s1) - 1) * var(--q, 0));
+  /* THE VERTICAL TRAVEL IS EASED IN — p², so the reel hangs at the slot's
+     height while it grows and drops to the centre only at the end. With
+     it linear, the reel's top edge climbed the viewport at 0.44px per px
+     of scroll while the words left at 1: a gap opened between the rail
+     and the film that was 245px by mid-grow. Squared, the top edge rises
+     at ~1.06px/px at first — with the strip — and the gap to the rail's
+     hem is under 30px from p .55 on (computed at 1440x736, then measured). */
+  --py: calc(var(--p, 0) * var(--p, 0));
   /* the shrink holds the BOTTOM edge: scaling about the centre would lift
      it by (1 - s) · h / 2 and open a gap to the card, so the reel is
      carried down by exactly that — the top edge drops, the sides come
@@ -1097,7 +1113,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   left: calc((100vw - var(--dock-w)) / 2); width: var(--dock-w);
   aspect-ratio: 2.6 / 1; border-radius: var(--radius-panel);
   box-shadow: var(--lift);
-  translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)) + var(--settle, 0px));
+  translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--py, 0)) + var(--settle, 0px));
   scale: var(--s); transform-origin: 50% 50%;
   will-change: transform; pointer-events: none; opacity: 0;
 }
@@ -1108,7 +1124,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   aspect-ratio: 2.6 / 1;
   overflow: hidden;
   background: #0a0a0b; /* the film's ground, in either room (see .dr-slot) */
-  translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)) + var(--settle, 0px));
+  translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--py, 0)) + var(--settle, 0px));
   scale: var(--s);
   /* THE CORNERS ARE SIZED TO THE OBJECT, not held at one number (Jake:
      "the video has too much of rounded corners"): 24px divided by the
