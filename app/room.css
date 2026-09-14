@@ -794,22 +794,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   flex: 0 0 auto; min-height: 0;
   aspect-ratio: 2.6 / 1; width: 100%;   /* the reference's proportion, measured */
   margin-top: clamp(16px, 2.6svh, 32px);
-  /* THE FILM'S GROUND, from the first paint: a film is black in either
-     room, so the plate the reel lands on is black — not --surface-1,
-     which is #f4f4f7 in the light room and read as a pale rectangle that
-     then went BLACK when the poster painted (screencast 2026-09-14). The
-     radius is the chip's (--r0), so the crossfade has nothing to hide. */
-  border-radius: 10px; background: #0a0a0b;
-  /* THE PLATE IS THE REVEAL. The slot sits in the stage, which paints
-     OVER the dock, so this plate covers the reel; once the reel has been
-     measured onto the box it is simply there, opaque, underneath, and
-     the plate fades to clear over --t-enter from 240ms — black becomes
-     the poster. (Fading the reel in at the same time let the ground
-     through at the midpoint: two half-transparent layers, the film
-     region measured brightening 28 → 73 → 30 on the screencast.) */
-  transition: background-color var(--t-enter) var(--ease-structure) 240ms;
+  /* NO PLATE. It was --surface-1 (a pale rectangle in the light room
+     that went black when the poster painted), then for an hour the
+     film's black from the first paint. Now the film's place is the
+     ground until the reel RISES into it (Jake: "video needs cool
+     entrance … like a rise and grow") — the same rule as the title:
+     nothing is shown that later goes away, so nothing flashes. */
+  border-radius: 10px; background: transparent;
 }
-.dr-hero-wrap[data-ready] .dr-slot { background: transparent; }
 
 /* THE WORDS LEAVE. No pin — the whole screen scrolls away at scroll's
    own rate — and the words fade across the first 60% of the reel's
@@ -1109,7 +1101,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   scale: var(--s); transform-origin: 50% 50%;
   will-change: transform; pointer-events: none; opacity: 0;
 }
-.dr-hero-wrap[data-ready] .dr-hero-shade { animation: dr-fadein var(--t-enter) var(--ease-structure) 240ms forwards; }
+.dr-hero-wrap[data-ready] .dr-hero-shade { animation: dr-reel-in 900ms var(--ease-structure) 400ms both; }
 .dr-hero-reel {
   position: relative; z-index: 1;
   width: var(--dock-w); margin-left: calc((100vw - var(--dock-w)) / 2);
@@ -1132,9 +1124,19 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      the entrance; its natural place is below the fold, so nothing flashes */
   opacity: 0;
 }
-/* no fade of its own: it appears under the slot's plate, and the plate's
-   fade is the entrance (see .dr-slot) */
-.dr-hero-reel[data-ready] { opacity: 1; }
+/* THE RISE AND GROW (Jake, 2026-09-14). Once measured onto the slot the
+   reel comes up from 16% below its place at 88% of its size, on the
+   structure curve, opaque by half way — the title's own rise, in the
+   film's register, 100ms behind it. `transform` composes AFTER the
+   scroll's `translate`/`scale`, so the entrance rides on top of the grow
+   math without touching it; the shade takes the same keyframes on the
+   same clock so the shadow rises with the film. */
+.dr-hero-reel[data-ready] { animation: dr-reel-in 900ms var(--ease-structure) 400ms both; }
+@keyframes dr-reel-in {
+  from { opacity: 0; transform: translateY(16%) scale(.88); }
+  45%  { opacity: 1; }
+  to   { opacity: 1; transform: none; }
+}
 .dr-hero-reel video {
   display: block;
   width: 100%; height: 100%;
