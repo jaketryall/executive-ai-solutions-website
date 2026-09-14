@@ -277,7 +277,6 @@ export default function DarkRoom() {
                         <span className="dr-face" key={p.initials} title={p.name}>{p.initials}</span>
                       ))}
                     </span>
-                    <span className="dr-stars" aria-hidden>{"★★★★★"}</span>
                     <span className="dr-strip-l">
                       <b>{GOOGLE_REVIEWS.rating.toFixed(1)} on Google</b>
                       <span>{GOOGLE_REVIEWS.count} client reviews</span>
@@ -302,13 +301,13 @@ export default function DarkRoom() {
                   </div>
                 </div>
 
-              </div>
 
-              {/* THE DOOR floats beneath the strip (Jake: "book the call
-                  floating beneath"), on the ground, at the column's left. */}
-              <Link href="/contact" className="dr-herocta dr-edge t-cta">
-                Book the call
-              </Link>
+                {/* THE DOOR, inside the strip at its right end (Jake: "put
+                    cta inside that bar somehow") */}
+                <Link href="/contact" className="dr-herocta dr-edge t-cta">
+                  Book the call
+                </Link>
+              </div>
 
               {/* THE CARD — the reel's rest position: full width, its top
                   in the first screen and its bottom past the fold, the way
