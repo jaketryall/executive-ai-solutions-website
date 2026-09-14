@@ -578,11 +578,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    and the headline's second line runs across the card's top edge. */
 .dr-main.wrap {
   flex: 1; min-height: 0; display: flex; flex-direction: column;
-  /* WIDER (Jake): the hero leaves the measure and runs to the room's
-     gutter — the reference's picture is ~94% of its frame — so the
-     title and the film can be 1394 of 1440. The rest of the page
-     keeps the measure. */
-  max-width: none; padding-inline: clamp(12px, 1.6vw, 28px);
+  /* WIDER than the measure (Jake), then a step back in from the gutter
+     ("a little too wide now"): 55px a side at 1440, 1330 of 1440 — 92%,
+     the reference's picture is ~94% of its frame. The rail follows the
+     column's width by measurement (nav.tsx), so it centres to match. */
+  max-width: none; padding-inline: clamp(24px, 3.8vw, 64px);
   /* the film's bottom runs past the fold (Cosmos's low video), so the
      stage's own bottom is where the film continues, not a band */
   padding-block: clamp(10px, 1.9svh, 24px) 0;
