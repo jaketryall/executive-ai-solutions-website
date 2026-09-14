@@ -444,6 +444,9 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    room; the pill, the lit edge and the action are what SCROLL earns. */
 .dr-rail {
   position: relative;
+  /* the hero column's width when there is one (nav.tsx measures it),
+     the full width otherwise */
+  width: var(--rail-w, 100%);
   height: 62px; margin-inline: auto; border-radius: 999px;
   --glint-delay: -1.6s; opacity: 0;
 }

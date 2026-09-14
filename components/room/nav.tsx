@@ -51,6 +51,28 @@ export function RoomNav() {
     return () => io.disconnect();
   }, []);
 
+  /* THE RAIL IS THE HERO COLUMN'S WIDTH (Jake, 2026-09-13: "nav items
+     need to be aligned with titles"). The hero column is the measure OR
+     what the height allows, whichever is less (room.css, .dr-hero) — on
+     a 736-tall screen it is ~82% and centred — and the rail has to be
+     the same width so the wordmark sits on the title's left edge and
+     the last link on its right, whatever the screen makes that. Read
+     off the column itself, so the two cannot drift; interior pages have
+     no hero and the rail keeps its full width. */
+  useEffect(() => {
+    const hero = document.querySelector<HTMLElement>(".dr-hero");
+    const rail = document.querySelector<HTMLElement>(".dr-rail");
+    if (!hero || !rail) return;
+    const fit = () => rail.style.setProperty("--rail-w", `${hero.offsetWidth}px`);
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(hero);
+    return () => {
+      ro.disconnect();
+      rail.style.removeProperty("--rail-w");
+    };
+  }, []);
+
   return (
     <header className="dr-nav wrap">
       <div className="dr-rail dr-edge" data-stuck={stuck ? "true" : undefined}>
