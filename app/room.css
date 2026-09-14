@@ -1153,7 +1153,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   margin-bottom: clamp(20px, 3.2svh, 34px);
   /* in from the column by the tray's inset + the card's padding, so the
      kicker's ink sits on the first figure's left edge */
-  padding-inline: calc(clamp(8px, .7vw, 10px) + clamp(18px, 1.8vw, 28px)); }
+  padding-inline: calc(clamp(14px, 1.5vw, 22px) + clamp(18px, 1.8vw, 28px)); }
 .dr-numbers-kicker { display: block; color: var(--ink-4); margin: 0; }
 .dr-numbers-asof { margin: 0; }
 /* ONE TRAY, FOUR WHITE CARDS (Jake: "each number should have its own
@@ -1168,9 +1168,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    same silhouette whatever its label's length. */
 /* the tray is INK — the strip's pill in the big size (Jake: "the card
    being black"); the head stays on the ground above it, so the tray is
-   nothing but the four numbers */
-.dr-numbers-tray { --tray-pad: clamp(8px, .7vw, 10px);
-  padding: var(--tray-pad); border-radius: var(--radius-panel);
+   nothing but the four numbers. The inset is 22px, not the strip's 8:
+   at 10px the black read as a stroke around four white boxes (frame
+   receipts-cards-3), at 22 it reads as a surface the tiles sit on. The
+   outer radius is the inner + the inset, so the corners stay concentric. */
+.dr-numbers-tray { --tray-pad: clamp(14px, 1.5vw, 22px);
+  padding: var(--tray-pad); border-radius: calc(var(--radius-frame) - 4px + var(--tray-pad));
   background: var(--ink); box-shadow: var(--lift); }
 .dr-receipts { list-style: none; margin: 0; padding: 0;
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1178,7 +1181,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-receipt { display: flex; flex-direction: column; gap: var(--fib-2); min-width: 0;
   container-type: inline-size;
   padding: clamp(18px, 1.8vw, 28px);
-  background: #ffffff; border-radius: calc(var(--radius-panel) - var(--tray-pad)); }
+  background: #ffffff; border-radius: calc(var(--radius-frame) - 4px); }
 .dr-receipt-n { margin: 0; }
 .dr-receipt-fig {
   display: inline-flex; align-items: baseline;
