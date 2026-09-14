@@ -118,7 +118,7 @@
      screen against a 1290 film (Jake: "it does not align with the
      edges of the video"). The column's own width is what answers a
      short screen — see .dr-hero. */
-  --hero-fs: 14.12cqw;   /* the INK spans the column: see .dr-h1 .dr-line */
+  --hero-fs: 14.09cqw;   /* the INK spans the column: see .dr-h1 .dr-line */
   /* ONE number for the work column, so the nav and the hero grid cannot
      drift apart — the links are centred on this, not on a guess */
   --nav-pad: clamp(13px, 2.4svh, 21px);
@@ -583,7 +583,10 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      title and the film can be 1394 of 1440. The rest of the page
      keeps the measure. */
   max-width: none; padding-inline: clamp(12px, 1.6vw, 28px);
-  padding-block: clamp(16px, 3svh, 36px) clamp(12px, 1.6vw, 28px);
+  /* FLOATING (Jake: "the bottom of the video has to come up so its like
+     in a box and we can see the white under it, like cosmos"): a real
+     band of ground under the card, 58px at 900 tall, 48 at 736 */
+  padding-block: clamp(10px, 1.9svh, 24px) clamp(28px, 4.8svh, 48px);
 }
 .dr-hero {
   position: relative;
@@ -600,12 +603,20 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      measure, title 180px. 1440x736: 593 / .575 = 1031 → title 144px,
      card 1031 x 430, both the same width, both on screen. The headline
      is sized in cqw of THIS box, so the title follows automatically. */
-  /* /.5, not /.575 — on a short screen the card may run a little past
-     the fold (the door stays above it: it sits 55px up the card), which
-     buys width. 1440x736: 593 / .5 = 1186 (82%), title 166, card 494,
-     its bottom 30px under the fold, the door 25px above it. 1440x900:
-     1514 → the full 1394 (97%), title 195. */
-  width: min(100%, calc((100svh - var(--nav-space) - 60px) / .5));
+  /* the card FITS, floating: at width W the title stands .129W, the
+     2.6:1 card .385W, ~.02W between — .534W — so W is the space under
+     the nav (less the top pad and the band of ground under the card)
+     over .534. 1440x900: 743 / .534 = 1391 → the measure, title 196,
+     the card's bottom 58px above the fold. 1440x736: 579 / .534 = 1084
+     (75%), title 153, the card 417 tall with 48px of ground under it. */
+  /* ⚠ "everything's too narrow now" (Jake, at 736 tall): every pad here
+     is as small as it can be — the title's line-height is .88, the top
+     pad 14, the band under the card 35 — and the column is still 1153
+     at 1440x736 (80%), because a full-measure title over a 2.6:1
+     letterbox with a band of ground under it needs ~830px of height at
+     1440 wide. The reference's own frame is 720 tall at 1090 wide; at
+     1440 it would need 950. The screen decides. */
+  width: min(100%, calc((100svh - var(--nav-space) - clamp(10px, 1.9svh, 24px) - clamp(28px, 4.8svh, 48px) - 4px) / .523));
   margin-inline: auto;   /* centred when the height, not the width, sets it */
   container-type: inline-size;
 }
@@ -626,6 +637,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    size is 14.08cqw so the INK is the column's width, and the line is
    pulled left by the D's bearing so the ink starts on the film's edge. */
 .dr-h1 .dr-line { margin-left: -0.041em;   /* the D's bearing, measured: 9px at 196 */
+                  /* the line box is overflow:hidden for the rise (vertical);
+                     the last S's ink runs past the column's edge by its own
+                     overshoot and was being clipped there — give the box
+                     room on the right; the SIZE puts the ink on the edge */
+                  padding-right: .08em; margin-right: -.08em;
                   /* UPRIGHT. .dr-line's -4° shear (the old statement's) put
                      the D's cap 6px right of its foot at 196px — a slanted
                      left edge can never align with the film's; and the
@@ -634,7 +650,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .t-hero .dr-line > span { white-space: nowrap; }
 .dr-h1.t-hero {
   font-variation-settings: "wdth" 66, "wght" 800;
-  text-transform: uppercase; letter-spacing: -0.012em; line-height: .92;
+  text-transform: uppercase; letter-spacing: -0.012em; line-height: .88;
   /* SOLID INK, no sweep: seen in real Chrome at 180px the light room's
      shadow-sweep (#35353a with a #0a0a0b band passing) read as
      two-toned, washed letters against the reference's solid black.
@@ -713,7 +729,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      the grow stays one uniform scale. */
   position: relative; z-index: 1;
   flex: 0 0 auto; min-height: 0;
-  aspect-ratio: 2.4 / 1; width: 100%;
+  aspect-ratio: 2.6 / 1; width: 100%;   /* the reference's proportion, measured */
   margin-top: auto;
   border-radius: var(--radius-panel); background: var(--surface-1);
   /* light ink for everything written on the film */
@@ -989,7 +1005,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      holds the card to 83%. Padded on top so that on the frame the grow
      ends (0.9vh of scroll) the reel is CENTRED in the viewport. */
   --dock-w: 108vw;
-  padding: max(0px, calc(40svh - var(--dock-w) / 2.4 / 2)) 0 0;
+  padding: max(0px, calc(40svh - var(--dock-w) / 2.6 / 2)) 0 0;
   /* the scale, on the dock, so the reel and its shade share one number */
   --s: calc(var(--s0, 1) + (1 - var(--s0, 1)) * var(--p, 0));
 }
@@ -999,9 +1015,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    card's shadow under the film. */
 .dr-hero-shade {
   position: absolute;
-  top: max(0px, calc(40svh - var(--dock-w) / 2.4 / 2));
+  top: max(0px, calc(40svh - var(--dock-w) / 2.6 / 2));
   left: calc((100vw - var(--dock-w)) / 2); width: var(--dock-w);
-  aspect-ratio: 2.4 / 1; border-radius: var(--radius-panel);
+  aspect-ratio: 2.6 / 1; border-radius: var(--radius-panel);
   box-shadow: var(--lift);
   translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)));
   scale: var(--s); transform-origin: 50% 50%;
@@ -1011,7 +1027,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-hero-reel {
   position: relative; z-index: 1;
   width: var(--dock-w); margin-left: calc((100vw - var(--dock-w)) / 2);
-  aspect-ratio: 2.4 / 1;
+  aspect-ratio: 2.6 / 1;
   overflow: hidden;
   background: var(--surface-1);
   translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)));
