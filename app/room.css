@@ -629,7 +629,10 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    the rating a badge top right under the headline's crossing, the three
    tags across the picture. Light on the dimmed film; everything fades
    as the scrim lifts (the exit rules below). */
-.dr-card-copy { position: absolute; left: var(--fib-5); bottom: var(--fib-5);
+/* top left, where the reference keeps its copy block (Jake: "can we
+   move text to top left"); the door stays lower right, the badge top
+   right, so the film's centre is picture */
+.dr-card-copy { position: absolute; left: var(--fib-5); top: var(--fib-5);
                 max-width: 44ch; text-align: left; }
 /* CAPS, the reference's register (Jake: "their all caps reads more
    creative than professional which is what im going for"): the card's
