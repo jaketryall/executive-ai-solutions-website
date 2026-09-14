@@ -742,8 +742,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    until the count is real. A white card on the light ground; light
    rooms carry depth in shadow (decisions.md, 2026-09-08). */
 .dr-rating {
-  /* the top right of the film */
-  position: absolute; right: var(--fib-4); top: var(--fib-4);
+  /* the top right of the film, on the copy block's line (Jake: "move
+     reviews down so its in line with that") — same inset as the copy */
+  position: absolute; right: var(--fib-5); top: var(--fib-5);
   z-index: 2;
   --ink: #0a0a0b; --ink-3: #67676e;
   display: flex; align-items: center; gap: var(--fib-3);
