@@ -662,7 +662,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 .dr-line--film > span { color: #fff; }
 /* the entrance: both copies rise together, as the first line */
-.dr-lit .dr-line--film > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
+.dr-lit .dr-line--film > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 300ms forwards; }
 /* ON THE FILM: the copy block lower left (a small caps heading over a
    short paragraph — their PIZZA WITH URBAN FLAIR), the door lower right,
    the rating a badge top right under the headline's crossing, the three
@@ -763,8 +763,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    tall for one line of 180 */
 .dr-line { display: block; overflow: hidden; transform: skewX(-4deg); transform-origin: left center; }
 .dr-line > span { display: block; transform: translateY(103%); }
-.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
-.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 540ms forwards; }
+.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 300ms forwards; }
+.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
 @keyframes dr-rise { to { transform: translateY(0); } }
 
 /* THE CHIP — the reel's rest position, in the line. 16:9, a little
@@ -794,7 +794,20 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   flex: 0 0 auto; min-height: 0;
   aspect-ratio: 2.6 / 1; width: 100%;   /* the reference's proportion, measured */
   margin-top: clamp(16px, 2.6svh, 32px);
-  border-radius: var(--radius-panel); background: var(--surface-1);
+  /* THE FILM'S GROUND, from the first paint: a film is black in either
+     room, so the plate the reel lands on is black — not --surface-1,
+     which is #f4f4f7 in the light room and read as a pale rectangle that
+     then went BLACK when the poster painted (screencast 2026-09-14). The
+     radius is the chip's (--r0), so the crossfade has nothing to hide. */
+  border-radius: 10px; background: #0a0a0b;
+  /* THE PLATE IS THE REVEAL. The slot sits in the stage, which paints
+     OVER the dock, so this plate covers the reel; once the reel has been
+     measured onto the box it is simply there, opaque, underneath, and
+     the plate fades to clear over --t-enter from 240ms — black becomes
+     the poster. (Fading the reel in at the same time let the ground
+     through at the midpoint: two half-transparent layers, the film
+     region measured brightening 28 → 73 → 30 on the screencast.) */
+  transition: background-color var(--t-enter) var(--ease-structure) 240ms;
 }
 .dr-hero-wrap[data-ready] .dr-slot { background: transparent; }
 
@@ -838,8 +851,13 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 /* the entrance: the lead, the card, then the door LAST — animate-last is
    the highest in the hierarchy. `backwards`, never `forwards`, so the
    calc above owns opacity once the fade ends. */
-.dr-lit .dr-strip   { animation: dr-fadein var(--t-enter) var(--ease-structure) 700ms backwards; }
-.dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 900ms backwards; }
+/* NOT THERE before the entrances are armed: the calc above puts these at
+   1 at rest, so the server-rendered frame showed the strip fully lit,
+   hydration hid it (the animation's backwards fill), and it faded in
+   again — visible → gone → back (screencast 2026-09-14). */
+.dr-root:not(.dr-lit) .dr-strip, .dr-root:not(.dr-lit) .dr-herocta { opacity: 0; }
+.dr-lit .dr-strip   { animation: dr-fadein var(--t-enter) var(--ease-structure) 560ms backwards; }
+.dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 720ms backwards; }
 
 /* ── THE RATING CARD ─────────────────────────────────────────────
    Lower right, where the reference floats its app card: five stars, the
@@ -1091,13 +1109,13 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   scale: var(--s); transform-origin: 50% 50%;
   will-change: transform; pointer-events: none; opacity: 0;
 }
-.dr-hero-wrap[data-ready] .dr-hero-shade { animation: dr-fadein var(--t-enter) var(--ease-structure) 360ms forwards; }
+.dr-hero-wrap[data-ready] .dr-hero-shade { animation: dr-fadein var(--t-enter) var(--ease-structure) 240ms forwards; }
 .dr-hero-reel {
   position: relative; z-index: 1;
   width: var(--dock-w); margin-left: calc((100vw - var(--dock-w)) / 2);
   aspect-ratio: 2.6 / 1;
   overflow: hidden;
-  background: var(--surface-1);
+  background: #0a0a0b; /* the film's ground, in either room (see .dr-slot) */
   translate: calc(var(--dx, 0px) * (1 - var(--p, 0))) calc(var(--dy, 0px) * (1 - var(--p, 0)) + var(--settle, 0px));
   scale: var(--s);
   /* THE CORNERS ARE SIZED TO THE OBJECT, not held at one number (Jake:
@@ -1114,7 +1132,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      the entrance; its natural place is below the fold, so nothing flashes */
   opacity: 0;
 }
-.dr-hero-reel[data-ready] { animation: dr-fadein var(--t-enter) var(--ease-structure) 360ms forwards; }
+/* no fade of its own: it appears under the slot's plate, and the plate's
+   fade is the entrance (see .dr-slot) */
+.dr-hero-reel[data-ready] { opacity: 1; }
 .dr-hero-reel video {
   display: block;
   width: 100%; height: 100%;

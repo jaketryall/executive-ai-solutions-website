@@ -56,12 +56,18 @@ export function RoomShell({ children }: { children: React.ReactNode }) {
      is churn with no pixel behind it. The stylesheet still READS
      dark-first; the block in room.css says so at the top.
 
-     Read in an effect rather than at render so the server and the first
-     client pass agree. (`?film` is gone: the film hero is THE hero now.) */
-  const [light, setLight] = useState(false);
+     LIGHT IS SERVER-RENDERED. It used to be decided in this effect from a
+     default of false, so every load painted the DARK room first — black
+     ground, the light rig, the strip floating white on it — for the
+     ~100ms before hydration, then flipped (screencast 2026-09-14: 76→158ms
+     dark, then a blank light page). The server and the first client pass
+     now both say light; only `?dark` turns it off, in the effect, and
+     that one flips light→dark because it is the comparison, not the site.
+     (`?film` is gone: the film hero is THE hero now.) */
+  const [light, setLight] = useState(true);
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
-    setLight(!q.has("dark"));
+    if (q.has("dark")) setLight(false);
   }, []);
 
   return (
