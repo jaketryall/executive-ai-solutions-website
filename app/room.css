@@ -434,8 +434,12 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
 /* ══ THE RAIL ════════════════════════════════════════════════════
    Not a bar with a rule under it — a floating object that OPENS from
    its own centre, then hands off to its contents. */
-.dr-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 30;
-          padding-top: var(--nav-pad); }
+/* THE RAIL RUNS GUTTER TO GUTTER, like the film (Jake: "the title should
+   be left aligned like everything else, in line with video and such"):
+   the wordmark's left edge is the film's left edge. */
+.dr-nav.wrap { position: fixed; top: 0; left: 0; right: 0; z-index: 30;
+          padding-top: var(--nav-pad);
+          max-width: none; padding-inline: clamp(12px, 1.6vw, 28px); }
 /* AT REST this is not a bar. The wordmark and the links simply float on the
    room; the pill, the lit edge and the action are what SCROLL earns. */
 .dr-rail {
@@ -450,7 +454,9 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
 .dr-rail-in {
   position: relative; z-index: 2; height: 100%;
   display: flex; align-items: center; gap: var(--fib-4);
-  padding: 0 4px; border-radius: inherit;
+  /* no inset at rest: the wordmark's left edge IS the film's, the last
+     link's right edge the film's other one; the pill brings its own */
+  padding: 0; border-radius: inherit;
   background: transparent;
   transition: background .5s var(--ease-ui),
               padding .55s var(--ease-structure),
@@ -505,13 +511,10 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    Measured against the RAIL rather than its inner pill on purpose: the
    pill's padding changes between states and would drag the links off
    centre with it. */
+/* in the row, pushed to the far side; the action follows them */
 .dr-links {
-  position: absolute; z-index: 3; top: 50%;
-  left: 50%;
-  translate: -50% -50%;
-  /* an absolutely positioned box only gets the room to the RIGHT of
-     `left`, so without max-content the row is squeezed and each label
-     loses its last letter */
+  position: static; z-index: 3;
+  margin-left: auto;
   width: max-content;
   display: flex; align-items: center; gap: var(--fib-4);
 }
@@ -546,7 +549,6 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 /* the nav CTA is a LIT EDGE, not a second white fill — the hero pill
    keeps the room's only pure-white surface, so the action still wins. */
 .dr-navcta {
-  margin-left: auto;
   display: inline-flex; align-items: center; border-radius: 999px;
   text-decoration: none; color: var(--ink); white-space: nowrap;
   background: var(--surface-2);

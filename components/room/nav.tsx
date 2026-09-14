@@ -54,23 +54,28 @@ export function RoomNav() {
   return (
     <header className="dr-nav wrap">
       <div className="dr-rail dr-edge" data-stuck={stuck ? "true" : undefined}>
-        <nav className="dr-links" aria-label="Main">
-          <Link href="/work" aria-label="Work">
-            <Roll label="Work" />
-          </Link>
-          <Link href="/services/websites" aria-label="Services">
-            <Roll label="Services" />
-          </Link>
-          <Link href="/pricing" aria-label="Pricing">
-            <Roll label="Pricing" />
-          </Link>
-        </nav>
-
         <div className="dr-rail-in">
           <Link className="dr-lockup" href="/">
             <span className="dr-mono" aria-hidden />
             <b>Executive AI Solutions</b>
           </Link>
+
+          {/* THE LINKS SIT RIGHT (Jake, 2026-09-13: "lets move the nav
+              stuff to the right instead of centered"): in the row, after
+              the lockup, pushed to the far side, with the action after
+              them once it has opened. They used to float centred over
+              the rail as an absolute box. */}
+          <nav className="dr-links" aria-label="Main">
+            <Link href="/work" aria-label="Work">
+              <Roll label="Work" />
+            </Link>
+            <Link href="/services/websites" aria-label="Services">
+              <Roll label="Services" />
+            </Link>
+            <Link href="/pricing" aria-label="Pricing">
+              <Roll label="Pricing" />
+            </Link>
+          </nav>
 
           {/* collapsed at the top of the homepage, so it must not be
               reachable by keyboard or read out until it is really there */}
