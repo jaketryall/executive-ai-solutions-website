@@ -25,7 +25,9 @@ here forward.
   goes FULL SCREEN at 0.9vh — a letterbox mask scaled to the viewport,
   the 16:9 picture counter-scaled, edges written in the viewport's frame
   — holds 0.1vh, shrinks in place to the column, then scrolls away with
-  About after it. ENTRANCE (`b3c1cb5`, `c6fcbbd`): light first paint, the
+  §02's card rising under it (ORDER, 2026-09-14: hero → §02 → About →
+  proof → voices; "the video is almost proof"). The page is on ONE
+  column now (`8becbfe`): 3.8vw a side, capped 1760. ENTRANCE (`b3c1cb5`, `c6fcbbd`): light first paint, the
   film rises and grows in, no flashes (scripts/reload-screencast.mjs).
   The numbers band under the film was built (four receipts, then cards,
   a tray, one white card) and CUT 2026-09-14 — not glanceable. Title,

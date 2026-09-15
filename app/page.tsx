@@ -394,13 +394,16 @@ export default function DarkRoom() {
           visuals"). The receipts live on in lib/proof.ts for the pages
           where they are context, not a headline. */}
 
-      {/* About is a plain sibling (Jake: "i dont want that rise thing for
-          the about section"). Nothing climbs over the hero: the pin
-          releases with the reel open, it scrolls away, and About simply
-          arrives after it. */}
-      <AboutSection />
+      {/* THE ORDER (Jake, 2026-09-14: "i feel like the video is almost
+          proof"): the film has just shown the work, so the next question
+          is what you get and what it costs — §02 — then who builds it,
+          whose one line ("built by the person who quoted it") only has
+          its context once §02 has said there is a quote; then the cards,
+          the clickable proof for whoever wants a case study; then the
+          voices. About had drifted to the slot after the hero when its
+          rise was removed; this is the order it was written for.
 
-      {/* §02 comes out of the wrapper and brings its own ruler. Inside it,
+          §02 comes out of the wrapper and brings its own ruler. Inside it,
           it read --hero-p — the hero's progress — and its
           grow-into-the-room was tied to the hero's geometry by accident
           of nesting rather than on purpose. Measured on ITSELF the number
@@ -412,6 +415,11 @@ export default function DarkRoom() {
       <div data-sp data-sp-from="1" data-sp-to="0" data-sp-var="--climb">
         <ServicesSection />
       </div>
+
+      {/* About is a plain sibling (Jake: "i dont want that rise thing for
+          the about section"): §02 scrolls away and About simply arrives
+          after it. */}
+      <AboutSection />
 
       <ProofSection />
       <VoicesSection />
