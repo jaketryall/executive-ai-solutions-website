@@ -394,16 +394,22 @@ export default function DarkRoom() {
           visuals"). The receipts live on in lib/proof.ts for the pages
           where they are context, not a headline. */}
 
-      {/* THE ORDER (Jake, 2026-09-14: "i feel like the video is almost
-          proof"): the film has just shown the work, so the next question
-          is what you get and what it costs — §02 — then who builds it,
-          whose one line ("built by the person who quoted it") only has
-          its context once §02 has said there is a quote; then the cards,
-          the clickable proof for whoever wants a case study; then the
-          voices. About had drifted to the slot after the hero when its
-          rise was removed; this is the order it was written for.
+      {/* THE STATEMENT, after the film (Jake, 2026-09-14, on why itsjay
+          and Cosmos both put one there — measured: Cosmos's is "WE ARE —
+          UI/UX design agency that keeps your product growing", and its
+          actual About Us is section five; itsjay's is "MYSELF — …I craft
+          smooth, interactive experiences"). It is the positioning
+          sentence — what, for whom, how — set where attention is
+          highest, and it is what stands between the reel and the work
+          cards so the two do not read as a repeat. Ours says the two
+          things the hero does not: who it is for and who builds it.
 
-          §02 comes out of the wrapper and brings its own ruler. Inside it,
+          About is a plain sibling (Jake: "i dont want that rise thing
+          for the about section"): the film settles and the statement
+          simply arrives after it. */}
+      <AboutSection />
+
+      {/* §02 comes out of the wrapper and brings its own ruler. Inside it,
           it read --hero-p — the hero's progress — and its
           grow-into-the-room was tied to the hero's geometry by accident
           of nesting rather than on purpose. Measured on ITSELF the number
@@ -415,11 +421,6 @@ export default function DarkRoom() {
       <div data-sp data-sp-from="1" data-sp-to="0" data-sp-var="--climb">
         <ServicesSection />
       </div>
-
-      {/* About is a plain sibling (Jake: "i dont want that rise thing for
-          the about section"): §02 scrolls away and About simply arrives
-          after it. */}
-      <AboutSection />
 
       <ProofSection />
       <VoicesSection />

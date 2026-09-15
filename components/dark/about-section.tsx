@@ -39,7 +39,12 @@ import Image from "next/image";
    size, is the same claim with its consequences for whoever wants them.
    The first draft ran 47 words at display size; the second 27; this is
    7 + 28 at two sizes, which is the reading the section asks for. */
-const COPY = "Built by the person who quoted it.";
+/* …then restaged as THE STATEMENT (same day): the sentence after the film
+   is what Cosmos and itsjay both put there — what, for whom, how — and
+   ours says the two things the hero does not: who it is for, and who
+   builds it. Fourteen words; the first five carry it. */
+const COPY =
+  "Websites, ads and follow-up for owner-run businesses — built by the person you talk to.";
 const MORE =
   "No account managers, no handoffs. The one who quotes the job builds it and launches it — which is why the price is fixed and the date holds.";
 
@@ -73,7 +78,7 @@ export default function AboutSection() {
           {/* the room's one triggered gesture (law 11) — everything else in
               this section is scrubbed */}
           <h2 className="t-label dr-about-kicker" id="dr-about-h" data-wipe>
-            Who builds it
+            What this is
           </h2>
 
           {/* ONE WINDOW FOR THE WHOLE PARAGRAPH. --rp runs 0 as the copy

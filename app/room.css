@@ -2450,9 +2450,10 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   margin: 0;
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 600;
-  /* one line's worth of claim, so it takes the display rung — the
-     paragraph that says more sits under it at body size */
-  font-size: var(--fs-display);
+  /* the statement is fourteen words: at the display rung it ran to four
+     lines (290px of block) and the glance was gone; the feature rung
+     keeps it to three. The paragraph that says more sits under it. */
+  font-size: var(--fs-feature);
   line-height: 1.08; letter-spacing: -0.028em;
   /* the words are inline-blocks, so the spaces between them are the
      paragraph's own — they do not move with the words and never collapse */
