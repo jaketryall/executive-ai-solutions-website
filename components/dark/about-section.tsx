@@ -31,12 +31,17 @@ import Image from "next/image";
    This needs a real photograph (the desk, the room, the person) before it
    ships. */
 
-/* SHORT, because it is set at display size. The first draft ran 47 words and
-   made the copy column half again taller than the picture beside it, which
-   left the right half of the section empty below the fold — at this size a
-   sentence is a paragraph. */
-const COPY =
-  "Every site here is built by the person who quoted it. No account managers, no handoffs — which is why the price is fixed and the date holds.";
+/* THE SHORT VERSION, AND THE REST (Jake, 2026-09-14: "i dont think people
+   will read if its not readable under 3 seconds … we need to have like a
+   short sweet version and maybe a little paragraph under that says more").
+   The display line is the one claim, seven words — glanced, not read —
+   and it answers the kicker directly. The paragraph under it, at body
+   size, is the same claim with its consequences for whoever wants them.
+   The first draft ran 47 words at display size; the second 27; this is
+   7 + 28 at two sizes, which is the reading the section asks for. */
+const COPY = "Built by the person who quoted it.";
+const MORE =
+  "No account managers, no handoffs. The one who quotes the job builds it and launches it — which is why the price is fixed and the date holds.";
 
 /* THE TERMS. Jake: "i'm feeling a marquee under about text."
 
@@ -80,6 +85,7 @@ export default function AboutSection() {
               be recomputed on every reflow, and this survives one for free. */}
           <p
             className="dr-about-lead"
+            style={{ "--n": words.length } as React.CSSProperties}
             data-sp
             /* THE WINDOW SITS IN THE READING ZONE. At .95 → .15 the resolve
                was measured complete by the time the paragraph's top reached
@@ -112,6 +118,8 @@ export default function AboutSection() {
               </React.Fragment>
             ))}
           </p>
+          {/* the rest, for whoever wants it: body size, one short measure */}
+          <p className="dr-about-more t-body">{MORE}</p>
         </div>
 
         {/* THE WELL declares its own window; the engine writes --pp and the

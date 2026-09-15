@@ -2439,7 +2439,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   margin: 0;
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 600;
-  font-size: var(--fs-feature);
+  /* one line's worth of claim, so it takes the display rung — the
+     paragraph that says more sits under it at body size */
+  font-size: var(--fs-display);
   line-height: 1.08; letter-spacing: -0.028em;
   /* the words are inline-blocks, so the spaces between them are the
      paragraph's own — they do not move with the words and never collapse */
@@ -2471,7 +2473,10 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      move — the effect finished before the copy was in a reading position.
      .028 x 27 + a .22 span lands the final word at --rp .98: the paragraph
      is still resolving the entire time it is being read. */
-  --w: clamp(0, (var(--rp, 1) - var(--i) * .028) / .22, 1);
+  /* …and now the count is a variable (--n, from the component): the
+     stagger is (1 − .22) / (n − 1), so the last word lands at --rp .98
+     whether the line is seven words or twenty-seven */
+  --w: clamp(0, (var(--rp, 1) - var(--i) * (.78 / max(1, var(--n, 27) - 1))) / .22, 1);
   /* OPACITY, NOT color-mix — measured. Mixing a colour per word per frame
      re-rasterises 27 runs of 56px glyphs every frame: 13.8ms mean through
      the section with 27 frames over 20ms, which is the same paint-bound
@@ -2545,6 +2550,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-marq-track { animation: none; }
 }
 
+/* THE REST: body size, a short measure, a step down in ink, one gap
+   below the line — there for the reader who wants it, invisible to the
+   one who does not */
+.dr-about-more { margin: clamp(18px, 2.6svh, 28px) 0 0; max-width: 46ch;
+  font-size: var(--fs-read); line-height: 1.5; color: var(--ink-2); }
 .dr-about-media { position: relative; }
 .dr-about-well {
   display: block; position: relative; overflow: hidden;
