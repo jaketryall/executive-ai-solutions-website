@@ -2,8 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import ServicesSection from "@/components/dark/services-section";
-import AboutSection from "@/components/dark/about-section";
+import ServicesSection, { OfferHead } from "@/components/dark/services-section";
 import ProofSection from "@/components/dark/proof-section";
 import VoicesSection from "@/components/dark/voices-section";
 import RunsSection from "@/components/dark/runs-section";
@@ -394,20 +393,19 @@ export default function DarkRoom() {
           visuals"). The receipts live on in lib/proof.ts for the pages
           where they are context, not a headline. */}
 
-      {/* THE STATEMENT, after the film (Jake, 2026-09-14, on why itsjay
-          and Cosmos both put one there — measured: Cosmos's is "WE ARE —
-          UI/UX design agency that keeps your product growing", and its
-          actual About Us is section five; itsjay's is "MYSELF — …I craft
-          smooth, interactive experiences"). It is the positioning
-          sentence — what, for whom, how — set where attention is
-          highest, and it is what stands between the reel and the work
-          cards so the two do not read as a repeat. Ours says the two
-          things the hero does not: who it is for and who builds it.
+      {/* §02 · THE OFFER — the statement and the three services under it
+          (Jake, 2026-09-14, with danielsnows.framer.website: "a centered
+          approach thing like this and then just having services
+          underneath" → "go"). The statement is the positioning sentence
+          Cosmos and itsjay both put after their hero (measured: "WE ARE —
+          UI/UX design agency that keeps your product growing"; Cosmos's
+          actual About Us is section five) — what, for whom, how — and it
+          is what stands between the reel and the work cards so they do
+          not read as a repeat. Ours names the three columns under it.
 
-          About is a plain sibling (Jake: "i dont want that rise thing
-          for the about section"): the film settles and the statement
-          simply arrives after it. */}
-      <AboutSection />
+          The head sits OUTSIDE the card's wrapper: --climb is measured on
+          the wrapper's top, which has to be the card's own top. */}
+      <OfferHead />
 
       {/* §02 comes out of the wrapper and brings its own ruler. Inside it,
           it read --hero-p — the hero's progress — and its

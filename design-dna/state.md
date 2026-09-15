@@ -25,11 +25,12 @@ here forward.
   goes FULL SCREEN at 0.9vh — a letterbox mask scaled to the viewport,
   the 16:9 picture counter-scaled, edges written in the viewport's frame
   — holds 0.1vh, shrinks in place to the column, then scrolls away with
-  THE STATEMENT after it (ORDER, 2026-09-14: hero → statement → §02 →
-  proof → voices — Cosmos's and itsjay's shape, measured: a positioning
-  sentence stands between the reel and the work cards; About restaged
-  as "Websites, ads and follow-up for owner-run businesses — built by
-  the person you talk to.", a draft line for Jake to rewrite). The page is on ONE
+  §02 THE OFFER after it (2026-09-14, the danielsnows shape: a centred
+  caps statement in the hero's face — "WEBSITES, AUTOMATION AND ADS /
+  FOR OWNER-RUN BUSINESSES." — the grey line under it, then the dark
+  card with 01—02—03 and the three services as columns with their
+  still shots and prices; About is gone, the stacked rows and the
+  spotlight are gone). ORDER: hero → offer → proof → voices → … The page is on ONE
   column now (`8becbfe`): 3.8vw a side, capped 1760. ENTRANCE (`b3c1cb5`, `c6fcbbd`): light first paint, the
   film rises and grows in, no flashes (scripts/reload-screencast.mjs).
   The numbers band under the film was built (four receipts, then cards,

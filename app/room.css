@@ -1238,6 +1238,99 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-h1, .dr-strip, .dr-herocta { opacity: 1; }
   .dr-lit .dr-strip, .dr-lit .dr-herocta { animation: none; }
 }
+/* ══ §02 · THE OFFER — the statement, and the three things under it ═
+   (services-section.tsx has the why). THE HEAD is on the light ground,
+   centred — the page's one centred section, the hero being left. The
+   statement is the hero's own face and weight, two lines; under it the
+   grey line, one measure. Both wipe in, the room's one gesture. */
+.dr-offer-head { text-align: center;
+  /* the space under the head is the card's CLIMB (--rise-d, the same
+     expression) plus a hand: the card rises over the seam by that much
+     as it arrives, so the gap you see with the card at the fold has
+     closed to one line's breathing room by the time it is at the top —
+     any less and the card covered the paragraph's last line (frame
+     offer-final, first cut) */
+  padding-block: clamp(72px, 12svh, 150px) calc(clamp(110px, 26svh, 300px) + 24px); }
+@media (max-width: 900px) {
+  /* no climb on the phone, so no room is kept for one — and the section's
+     own top band goes, the head is the band now */
+  .dr-offer-head { padding-bottom: clamp(32px, 5svh, 56px); }
+}
+.dr-offer-kicker { display: block; color: var(--ink-4);
+  margin-bottom: clamp(18px, 3svh, 32px); }
+.dr-offer-say { margin: 0 auto; max-width: 100%;
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-variation-settings: "wdth" 66, "wght" 800;
+  text-transform: uppercase; letter-spacing: -0.012em; line-height: .9;
+  /* two lines at 1440 (the first, 28 characters, is ~1080px at this
+     size — measured off the hero's 0.418em per character) */
+  font-size: clamp(2.6rem, 7vw, 8rem);
+  color: var(--ink); }
+.dr-offer-more { margin: clamp(20px, 3svh, 32px) auto 0; max-width: 52ch;
+  font-size: var(--fs-read); line-height: 1.5; color: var(--ink-2); }
+
+/* THE PATH: three numerals, one over each column, joined by a line —
+   a diagram, not a divider: the customer's route, site → system → the
+   clicks that find it. On the dark card the line is light at .18. */
+.dr-offer-steps { list-style: none; margin: 0 0 clamp(20px, 3svh, 32px); padding: 0;
+  position: relative;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dr-offer-steps::before { content: ""; position: absolute; top: 50%;
+  left: calc(100% / 6); right: calc(100% / 6); height: 1px;
+  background: color-mix(in oklab, var(--ink) 18%, transparent); }
+.dr-offer-steps li { display: flex; justify-content: center; }
+.dr-offer-steps span { position: relative; display: grid; place-items: center;
+  width: 36px; height: 36px; border-radius: 999px;
+  /* the numeral is the card's own ground on an ink disc — not --void,
+     which is the ROOM's ground and in the light room is #e7e7ea on a
+     white disc: three blank buttons (frame offer2) */
+  background: var(--ink); color: var(--svc-ground, #f5f5f7);
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 700;
+  font-size: var(--fs-micro); letter-spacing: .04em; }
+
+/* THE THREE: a still of the deliverable, the stage, the name, one line,
+   the price — centred under its numeral, the whole column a link to the
+   service. The wells keep the photographs' own 4:3. */
+.dr-offer-grid { list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 32px); }
+.dr-offer-col { display: flex; flex-direction: column; align-items: center;
+  text-align: center; gap: 6px; text-decoration: none; color: var(--ink);
+  min-width: 0; }
+.dr-offer-well { display: block; width: 100%; aspect-ratio: 4 / 3;
+  overflow: clip; border-radius: var(--radius-frame);
+  /* the shot's own ground, sampled off the corners of all three, so the
+     frame is never a bright hole while the JPEG decodes */
+  background: #1c1a20;
+  margin-bottom: clamp(14px, 2svh, 22px);
+  transition: translate var(--t-micro) var(--ease-ui); }
+.dr-offer-well .dr-svc-shot { display: block; width: 100%; height: 100%; object-fit: cover; }
+.dr-offer-col:hover .dr-offer-well { translate: 0 -3px; }
+.dr-offer-col:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 6px; border-radius: var(--radius-frame); }
+.dr-offer-stage { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-4); }
+.dr-offer-num { color: var(--ink-3); }
+.dr-offer-title { display: block;
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: var(--fs-section); line-height: 1.08; letter-spacing: -0.022em;
+  margin-top: 2px; }
+.dr-offer-what { display: block; color: var(--ink-3); font-size: var(--fs-body); }
+.dr-offer-price { display: block; margin-top: 6px; color: var(--ink-2);
+  font-size: var(--fs-body-s); }
+/* the witness, centred under the three */
+.dr-offer-vouch { margin: clamp(32px, 5svh, 56px) auto 0; max-width: 60ch;
+  justify-content: center; }
+/* the lag hierarchy (see THREE RATES below): steps first, columns, then
+   the witness */
+.dr-offer-steps { translate: 0 calc((1 - var(--ap, 1)) * 12px); }
+.dr-offer-grid  { translate: 0 calc((1 - var(--ap, 1)) * 32px); }
+@media (max-width: 900px) {
+  .dr-offer-steps { display: none; }
+  .dr-offer-grid { grid-template-columns: minmax(0, 1fr); gap: var(--fib-5); }
+  .dr-offer-say { font-size: clamp(2.2rem, 10.5vw, 3.4rem); }
+}
+
 /* ══ §02 · THE FUNNEL ════════════════════════════════════════════
    THE LIGHTS COME ON. The one light section in a black room, and the only
    place the page inverts. The tokens are redefined here rather than the
@@ -1264,6 +1357,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   padding: clamp(80px, 14svh, 168px) var(--fib-5) clamp(72px, 12svh, 144px);
 }
 @media (max-width: 767px) { .dr-svc { padding-inline: var(--fib-3); } }
+/* the head above is the band now (THE OFFER); on the phone, where the
+   desktop rule that zeroes this does not apply, it goes here */
+@media (max-width: 900px) { .dr-svc { padding-top: 0; } }
 
 /* ── the statement ───────────────────────────────────────────────
    One centred line carrying the whole claim, which the section can only
@@ -1954,6 +2050,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   --ink-3: #949498;
   --ink-4: #8a8a8e;
   --edge-strong: rgba(255, 255, 255, .62);
+  --svc-ground: #121214; /* the card's surface, for ink-on-ink objects */
 }
 /* ⚠ THE SURFACE ONLY, NEVER THE BOX. .dr-svc-in is laid out FULL WIDTH
    and the desktop rules set `background: none` on it on purpose: the
@@ -3082,8 +3179,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
        tan(atan2(a, b)) = a / b. Never more than 84%, so there is always
        8vw of room either side — at 1440 the column is already 90% of
        the screen, and a grow you cannot see is not a grow. */
-    --cf: tan(atan2(1400px - 2 * var(--fib-5), 100vw));
-    --s0: min(var(--cf), .84);
+    --cf: tan(atan2(min(100vw, var(--col-max)) - 2 * var(--col-inset), 100vw));
+    /* ON THE COLUMN (2026-09-14, one column): the card arrives on the
+       same two lines as the statement above it and the film above that,
+       and grows from there to the gutters — 1330 → 1394 at 1440. It used
+       to be capped at 84% so the grow was bigger; a card that starts
+       inside the column is a step at the seam, and the climb carries the
+       arrival now. */
+    --s0: var(--cf);
     --R: clamp(16px, 2vw, 30px);
     /* IT STOPS SHORT OF THE EDGES (Jake, 2026-09-07: "i want it to be a
        card that is almost full screen but has small gaps on the edges").
