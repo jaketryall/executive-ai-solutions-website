@@ -384,9 +384,18 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   padding-top: var(--nav-space);
 }
 @media (min-width: 901px) { .dr-stage { height: 100svh; } }
-.wrap { max-width: 1400px; margin-inline: auto; width: 100%;
-        padding-inline: var(--fib-3); }
-@media (min-width: 768px) { .wrap { padding-inline: var(--fib-5); } }
+/* ONE COLUMN (Jake, 2026-09-14: "yes" to moving the rest of the page
+   onto the hero's). The hero's edges — 3.8vw a side, 92% at 1440 — are
+   the page's: every .wrap, the dock, the services card, the proof row
+   and the runs panel share them, so the film settles onto the same two
+   lines About's text and the cards sit on. It used to be 1400px with
+   55px inside it, 20px in from the film at 1440 — a step at every seam
+   under the hero once the film landed in the column. Capped at 1760, the
+   proof row's own cap, so on a 2560 screen the column is 1632 and the
+   widest objects on the page still agree. */
+.dr-root { --col-inset: clamp(24px, 3.8vw, 64px); --col-max: 1760px; }
+.wrap { max-width: var(--col-max, 1400px); margin-inline: auto; width: 100%;
+        padding-inline: var(--col-inset, var(--fib-5)); }
 
 /* from 0, explicitly: with only a `to`, an element resting at opacity 1
    fades from 1 to 1 — every caption fade was a no-op */
@@ -578,11 +587,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    and the headline's second line runs across the card's top edge. */
 .dr-main.wrap {
   flex: 1; min-height: 0; display: flex; flex-direction: column;
-  /* WIDER than the measure (Jake), then a step back in from the gutter
-     ("a little too wide now"): 55px a side at 1440, 1330 of 1440 — 92%,
-     the reference's picture is ~94% of its frame. The rail follows the
-     column's width by measurement (nav.tsx), so it centres to match. */
-  max-width: none; padding-inline: clamp(24px, 3.8vw, 64px);
+  /* WIDER than the old measure (Jake), then a step back in from the
+     gutter ("a little too wide now"): 55px a side at 1440, 1330 of 1440 —
+     92%, the reference's picture is ~94% of its frame. That is now THE
+     column (.wrap above), so nothing to override here. The rail follows
+     the column's width by measurement (nav.tsx), so it centres to match. */
   /* the film's bottom runs past the fold (Cosmos's low video), so the
      stage's own bottom is where the film continues, not a band */
   padding-block: clamp(10px, 1.9svh, 24px) 0;
@@ -1077,7 +1086,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      edge sits 80px under the fold's top, the rail's hem: the dead space
      is covered by the film while it is full-screen and is behind you by
      the time the film has settled. */
-  --inset: clamp(24px, 3.8vw, 64px);
+  /* the column's inset — and past --col-max, the extra that centres it,
+     so the reel's flow box is exactly .wrap's content box at any width */
+  --inset: max(var(--col-inset), calc((100% - var(--col-max)) / 2 + var(--col-inset)));
   /* THE PIN, WITHOUT A PIN. The reel's home is placed so that at the end
      of the shrink (1.35vh of scroll) its flow box is CENTRED in the
      viewport — top at (vh − h)/2, h the letterbox's height, which is
@@ -1207,7 +1218,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
                   aspect-ratio: 16 / 9; opacity: 1; animation: none;
                   width: 100%; margin-left: 0; }
   .dr-hero-reel video { position: static; translate: none; scale: none; height: 100%; }
-  .dr-dock { padding: 0 var(--fib-3); }
+  .dr-dock { padding: 0 var(--col-inset); }
   .dr-hero-shade { display: none; }
   .dr-hero-reel { box-shadow: var(--lift); }
   .dr-rating { margin: 0 auto var(--fib-4); }
@@ -1590,8 +1601,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   --gap: clamp(14px, 1.4vw, 22px);
   list-style: none;
   margin: clamp(40px, 6.5svh, 72px) auto 0;
-  padding: 0 var(--gap);
-  max-width: 1760px;
+  /* on the column (it was a Lando full-bleed row, 22px off the edge —
+     the page has one full-bleed moment now, the film, and the row's
+     outer edges sit on the same two lines as everything else) */
+  padding: 0 var(--col-inset);
+  max-width: var(--col-max);
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--gap);
 }
@@ -1816,12 +1830,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    It rises from its own BOTTOM edge, so the card grows UP into the space
    the seam left rather than sliding into it — the same direction of
    travel as everything else in the back half. */
-/* the card takes §03's measure, not the page column's. At 2560 the shared
-   .wrap caps at 1290px, which is half the viewport — a panel that is meant
-   to read as the ground cannot be a stripe down the middle of one. 1760 is
-   the proof row's own max-width, so the two widest objects on the page
-   agree. */
-.dr-runs .wrap { max-width: min(1760px, 94vw); }
+/* the card used to take §03's measure instead of the page column's (the
+   old .wrap capped at 1290, half of a 2560 screen). The column IS that
+   measure now — 1760, the proof row's — so there is nothing to override. */
 
 /* ══ THE FLIP · the room turns inside out ════════════════════════
    Between the testimonials and the process the whole room inverts: black
@@ -3150,7 +3161,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    still sits inside the contained shape. Placed AFTER the rule above
    on purpose: same specificity, and order is the tie-break. */
 @media (min-width: 901px) {
-  .dr-svc-in > .wrap { max-width: calc(1400px - 2 * var(--fib-5)); margin-inline: auto; }
+  /* …and that column is the page's (one column, 2026-09-14): the rows'
+     box sits on the same two lines as the film above and the proof row
+     below, 55px off the screen's edge at 1440 — the card is full-bleed,
+     so its edge is the screen's */
+  .dr-svc-in > .wrap { max-width: var(--col-max); padding-inline: var(--col-inset); margin-inline: auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   /* the finished frame: the engine resolves every window to 1, which
