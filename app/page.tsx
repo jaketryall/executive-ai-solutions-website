@@ -339,21 +339,15 @@ export default function DarkRoom() {
             right after the hero, 16:9 at the room's gutter, radius
             --radius-panel. At rest it is transformed up into the slot;
             by 0.9vh of scroll it is here, and the page carries on. */}
-        {/* --q is THE HOLD AND THE SHRINK (Jake: "grow to full and then
-            shrink"): measured on the dock's own top edge, which sits at
-            0.1vh the frame the grow ends (the stage is one screen, the grow
-            is 0.9 of it), so the window starts there: 0.1vh pinned full
-            screen, then 0.35vh shrinking in place to the column (see THE
-            PIN in room.css). */}
-        <section
-          className="dr-dock"
-          aria-label="Showreel"
-          data-sp
-          data-sp-edge="top"
-          data-sp-from="0.1"
-          data-sp-to="-0.35"
-          data-sp-var="--q"
-        >
+        {/* GROW, THEN LEAVE (Jake, 2026-09-15, with Snows' plain hero
+            video: "do you think the video effect is too much" → A). The
+            hold and the shrink-in-place are gone — they were a pin in
+            everything but name, 0.45vh of film choreography between the
+            scroll and the first sentence. Now the reel is the whole screen
+            at 0.9vh and simply scrolls off, full width; the offer's head
+            follows it directly (see --dock-pad in room.css). No window on
+            the dock any more: --p is the only number. */}
+        <section className="dr-dock" aria-label="Showreel">
           {/* THE SHADE: the reel's shadow, on a sibling. The reel's own
               radius is recomputed every frame (divided by the scale), and
               a shadow on a changing radius re-rasters the whole layer per

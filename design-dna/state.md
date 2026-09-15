@@ -24,7 +24,8 @@ here forward.
   ON SCROLL (2026-09-14, `d5886f6`): the film rises with the strip and
   goes FULL SCREEN at 0.9vh — a letterbox mask scaled to the viewport,
   the 16:9 picture counter-scaled, edges written in the viewport's frame
-  — holds 0.1vh, shrinks in place to the column, then scrolls away with
+  — then leaves at 1:1, full width (the hold and the shrink-in-place
+  were cut 2026-09-15: "grow, then leave"), with
   §02 THE OFFER after it (2026-09-14, the danielsnows shape: a centred
   caps statement in the hero's face — "WEBSITES, AUTOMATION AND ADS /
   FOR OWNER-RUN BUSINESSES." — the grey line under it, then the dark
