@@ -20,9 +20,17 @@ here forward.
   marks (DW's file, AA/RP initials until their marks are cleared) ·
   "5.0 on Google · 14 reviews" (PLACEHOLDER numbers, lib/proof.ts) ·
   a slow services ticker (22px/s, no dots) · the ink pill at the right
-  end; the film full width below, undimmed, its bottom past the fold;
-  itsjay's grow on scroll into a 108vw dock. Title, strip, film and nav
-  share the same two edges (measured off Chrome frames). Column 92%.
+  end; the film full width below, undimmed, its bottom past the fold.
+  ON SCROLL (2026-09-14, `d5886f6`): the film rises with the strip and
+  goes FULL SCREEN at 0.9vh — a letterbox mask scaled to the viewport,
+  the 16:9 picture counter-scaled, edges written in the viewport's frame
+  — holds 0.1vh, shrinks in place to the column, then scrolls away with
+  About after it. ENTRANCE (`b3c1cb5`, `c6fcbbd`): light first paint, the
+  film rises and grows in, no flashes (scripts/reload-screencast.mjs).
+  The numbers band under the film was built (four receipts, then cards,
+  a tray, one white card) and CUT 2026-09-14 — not glanceable. Title,
+  strip, film and nav share the same two edges (measured off Chrome
+  frames). Column 92%.
   Jake: "this is great." Every earlier version is in git — the panel
   with the description at def30b4, the copy-on-film at 9cbe0e6, the
   drop cap b3ea6c2, the lift 9cd34bc, the shutter da61f3c. Why it

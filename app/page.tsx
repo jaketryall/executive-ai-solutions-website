@@ -8,7 +8,6 @@ import ProofSection from "@/components/dark/proof-section";
 import VoicesSection from "@/components/dark/voices-section";
 import RunsSection from "@/components/dark/runs-section";
 import ObjectionsSection from "@/components/dark/objections-section";
-import NumbersSection from "@/components/dark/numbers-section";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
 import { GOOGLE_REVIEWS, CLIENT_MARKS, TICKER } from "@/lib/proof";
@@ -386,9 +385,14 @@ export default function DarkRoom() {
         </section>
       </div>
 
-      {/* THE RECEIPTS, under the reel — acquisition.com's numbers row,
-          done as receipts (see components/dark/numbers-section). */}
-      <NumbersSection />
+      {/* No numbers band. It was tried (acquisition.com's stats row, done
+          as receipts with a window and a source each — 2026-09-13/14) and
+          cut: our honest figures need their captions to mean anything,
+          and a number that needs a caption is a report, not proof (Jake:
+          "people are way too lazy to read these days … if you need them
+          to grasp something big you almost have to show them with
+          visuals"). The receipts live on in lib/proof.ts for the pages
+          where they are context, not a headline. */}
 
       {/* About is a plain sibling (Jake: "i dont want that rise thing for
           the about section"). Nothing climbs over the hero: the pin
