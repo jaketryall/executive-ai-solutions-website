@@ -376,7 +376,7 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    so the pill, its lit edge and the nav's action close after them, and
    there is one door on screen at any moment */
 .dr-top { position: absolute; top: 0; left: 0; width: 1px; height: 19.8svh; }
-/* the reel's progress, 0 at rest → 1 at 0.9vh, itsjay's domain. On the
+/* the reel's progress, 0 at rest → 1 at 0.55vh (itsjay's 0.9, shortened). On the
    WRAPPER, because the words (in the stage) and the reel (in the dock,
    the stage's sibling) both read it — declared on the stage it never
    reached the reel, and the reel scrolled off still the size of a word. */
@@ -836,14 +836,15 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    the rail. Each fades ONLY as it goes under the rail — the pill takes
    .5s to darken after it sticks at p .2, and a crisp headline half
    behind a half-dark pill was the ugliest frame of the last pass — so
-   the fade window is the rail's zone: the title from .06 to .20 (its
-   bottom clears the hem at .27), the strip from .28 to .42 (its bottom
-   clears the hem at .40). Measured at 1440x736. */
+   the fade window is the rail's zone: the title from .10 to .33 (its
+   bottom clears the hem at .44), the strip from .46 to .69 (its bottom
+   clears the hem at .65). Measured at 1440x736 in the 0.55vh domain —
+   the same pixels of scroll as before (40–132px, 185–278px). */
 .dr-h1, .dr-rating {
-  opacity: calc(1 - clamp(0, (var(--p, 0) - .06) / .14, 1));
+  opacity: calc(1 - clamp(0, (var(--p, 0) - .10) / .23, 1));
 }
 .dr-strip, .dr-herocta {
-  opacity: calc(1 - clamp(0, (var(--p, 0) - .28) / .14, 1));
+  opacity: calc(1 - clamp(0, (var(--p, 0) - .46) / .23, 1));
 }
 
 /* ── THE ONE DOOR ────────────────────────────────────────────────
@@ -1072,7 +1073,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    all measured by page.tsx and walked by --p and --q (the engine):
 
      p 0   in the slot          translate only (same box)
-     p 1   THE WHOLE SCREEN     0.9vh of scroll, itsjay's domain —
+     p 1   THE WHOLE SCREEN     --grow (0.55vh) of scroll —
                                 and from there it leaves with the page
 
    "A uniform scale cannot change a box's aspect" — so the box is a
@@ -1095,16 +1096,26 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   /* the column's inset — and past --col-max, the extra that centres it,
      so the reel's flow box is exactly .wrap's content box at any width */
   --inset: max(var(--col-inset), calc((100% - var(--col-max)) / 2 + var(--col-inset)));
-  /* THE FLOW BOX ENDS WHERE THE FILM DOES. At 0.9vh of scroll the reel
-     is the whole screen — page 0.9vh to 1.9vh — and from there it keeps
+  /* THE FLOW BOX ENDS WHERE THE FILM DOES. At --grow of scroll the reel
+     is the whole screen — page --grow to --grow + 1vh — and from there it keeps
      that shape and moves with the page. The padding puts the flow box's
      BOTTOM at page 1.9vh (dock top 1.0vh + pad + h, h the letterbox's
      height, (100% − 2·inset)/2.6 — padding percentages resolve against
      width), so the next section starts exactly under the film's bottom
      edge and follows it up. (The pin — a flow box centred at 1.35vh so a
      shrink could happen in place — went with the shrink, 2026-09-15.) */
-  --dock-pad: calc(90vh - (100% - 2 * var(--inset)) / 2.6);
-  padding: var(--dock-pad) var(--inset) 0;
+  /* THE GROW'S SCROLL DISTANCE — one number, matched to the wrapper's
+     data-sp-to in page.tsx (0.55vh; it was itsjay's 0.9 — Jake: "a lot of
+     scrolling, not the effect") */
+  --grow: 55vh;
+  --dock-pad: calc(var(--grow) - (100% - 2 * var(--inset)) / 2.6);
+  /* the pad is NEGATIVE when the grow is shorter than the letterbox is
+     tall (0.55vh = 405px against 511px at 1440) — padding cannot be, so
+     the shortfall is a negative bottom margin instead: the flow box
+     still ends where the film does, the next section still starts
+     under its bottom edge */
+  padding: max(0px, var(--dock-pad)) var(--inset) 0;
+  margin-bottom: min(0px, var(--dock-pad));
 
   /* ── FULL SCREEN (Jake, 2026-09-14: "make the video go full screen as
      part of the scroll effect"). The reel is a MASK the viewport's
@@ -1129,7 +1140,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      (148px at 900). So the two edges are each given their own law, in
      viewport px, and the scale and translate are DERIVED from them:
 
-       top     follows the strip up at scroll's rate (t0 − 90vh·p, the
+       top     follows the strip up at scroll's rate (t0 − grow·p, the
                slot's top leaving), holds at the rail's hem once it gets
                there, and from p .5 walks the last 80px to the top edge;
        bottom  runs from the slot's bottom to the fold, linearly — on a
@@ -1140,7 +1151,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      reel's flow centre, page px) are measured by page.tsx. tan∘atan2 is
      how two lengths divide into a number. */
   --hem: calc(var(--nav-pad) + 62px);
-  --tt: max(var(--t0, 0px) - 90vh * var(--p, 0),
+  --tt: max(var(--t0, 0px) - var(--grow) * var(--p, 0),
             min(var(--hem), 2 * var(--hem) * (1 - var(--p, 0))));
   --bb: calc(var(--t0, 0px) + var(--h, 1px) + (100vh - var(--t0, 0px) - var(--h, 1px)) * var(--p, 0));
   --syg: tan(atan2(var(--bb) - var(--tt), var(--h, 1px)));
@@ -1158,7 +1169,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      the viewport (c0 − scroll). Past p 1 every term is constant, so the
      film keeps the screen's shape and moves with the page. */
   --tx: calc(var(--dx0, 0px) * (1 - var(--p, 0)));
-  --ty: calc((var(--tt) + var(--bb)) / 2 - var(--c0, 0px) + 90vh * var(--p, 0));
+  --ty: calc((var(--tt) + var(--bb)) / 2 - var(--c0, 0px) + var(--grow) * var(--p, 0));
 }
 /* THE SHADE — the reel's shadow on a sibling whose box never changes,
    so it paints once and only transforms (see page.tsx). Its radius is

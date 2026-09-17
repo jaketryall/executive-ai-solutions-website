@@ -219,14 +219,17 @@ export default function DarkRoom() {
           rail's wordmark as the name.
 
           --hero-p is measured on the WRAPPER's top edge: 0 at rest, 1
-          at 0.9vh of scroll, itsjay's domain exactly. The wrapper holds
-          the stage AND the dock so the reel inherits it in both. */}
+          at 0.55vh of scroll — it was itsjay's 0.9 (Jake, 2026-09-17:
+          "maybe it's just a lot of scrolling, not the effect"): the same
+          grow over 40% less scroll, so the statement is at the top of
+          the screen by ~1.5vh instead of 1.9. The wrapper holds the stage
+          AND the dock so the reel inherits it in both. */}
       <div
         className="dr-hero-wrap"
         data-sp
         data-sp-edge="top"
         data-sp-from="0"
-        data-sp-to="-0.9"
+        data-sp-to="-0.55"
         data-sp-var="--hero-p"
       >
         {/* the rail (components/room/nav) watches this by selector: the
