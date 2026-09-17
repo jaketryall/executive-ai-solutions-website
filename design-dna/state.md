@@ -25,7 +25,9 @@ here forward.
   goes FULL SCREEN at 0.9vh — a letterbox mask scaled to the viewport,
   the 16:9 picture counter-scaled, edges written in the viewport's frame
   — then leaves at 1:1, full width (the hold and the shrink-in-place
-  were cut 2026-09-15: "grow, then leave"), with
+  were cut 2026-09-15: "grow, then leave"; the grow shortened to 0.55vh
+  2026-09-17 — "a lot of scrolling, not the effect"; the chrome's corner
+  is 10px, not the pill, 404dc29), with
   §02 THE OFFER after it (2026-09-14, the danielsnows shape: a centred
   caps statement in the hero's face — "WEBSITES, AUTOMATION AND ADS /
   FOR OWNER-RUN BUSINESSES." — the grey line under it, then the dark
