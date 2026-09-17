@@ -369,7 +369,7 @@ export default function DarkRoom() {
               muted
               playsInline
               poster="/dark/reel-film-poster.jpg"
-              preload="metadata"
+              preload="auto"
               aria-label="Recent Executive AI Solutions client work"
             >
               <source src="/dark/reel-film.mp4" type="video/mp4" />

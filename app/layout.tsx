@@ -85,6 +85,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${bricolage.variable} ${instrument.variable}`} suppressHydrationWarning>
       <head>
+        {/* THE REEL FETCHES FIRST. `fetchpriority` is not a valid attribute on
+            <video>/<source>, so the hero film's priority is granted here: the
+            preload scanner finds this before it parses the body, and the
+            bytes arrive beside the fonts instead of after the scripts
+            (production-stack/references/video.md). MEASURED, production
+            build, 4 Mbps / 100ms RTT: `playing` at 1.67s with and without
+            this — the reel is bandwidth-bound (885 KB), not priority-bound;
+            on a fast line it is ~180ms either way. Kept because it costs
+            nothing and removes the one case where priority would matter
+            (a slow line with heavy scripts ahead of the film). What makes it
+            read as instant is the poster being frame 0 of the shipped file. */}
+        <link rel="preload" as="video" href="/dark/reel-film.mp4" type="video/mp4" fetchPriority="high" />
         {/* load gate: pre-hide entrance elements + start every reload at the top */}
         <script
           dangerouslySetInnerHTML={{
