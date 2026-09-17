@@ -100,6 +100,14 @@
   --fib-5: 55px; --fib-6: 89px; --fib-7: 144px; --fib-8: 233px;
 
   --radius-btn: 12px; --radius-frame: 18px; --radius-panel: 24px;
+  /* THE CHROME'S CORNER (Jake, 2026-09-16, with cosmos.studio — measured:
+     their nav bar 68px tall at 8px, "Book a Call" 44px at 8px): the rail,
+     the strip, every button and form field take ONE small radius instead
+     of the pill — 10px, which is also the film chip's radius at rest, so
+     the hero's chrome and its picture share a corner. Avatars, dots,
+     badges and chips stay round: a circle is what they are. Pills read
+     consumer; a small radius on a tall bar reads as an instrument. */
+  --radius-chrome: 10px;
 
   /* THE STATEMENT FILLS ITS MEASURE (the critic, 2026-09-13, on Jake's
      "the top half feels so empty": 69–84px of statement in 736–900px of
@@ -456,7 +464,7 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   /* the hero column's width when there is one (nav.tsx measures it),
      the full width otherwise */
   width: var(--rail-w, 100%);
-  height: 62px; margin-inline: auto; border-radius: 999px;
+  height: 62px; margin-inline: auto; border-radius: var(--radius-chrome);
   --glint-delay: -1.6s; opacity: 0;
 }
 .dr-lit .dr-rail { animation: dr-fadein 480ms var(--ease-ui) 140ms forwards; }
@@ -564,7 +572,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    keeps the room's only pure-white surface, so the action still wins. */
 .dr-navcta {
   margin-left: 0;   /* the gap arrives with the pill, below */
-  display: inline-flex; align-items: center; border-radius: 999px;
+  display: inline-flex; align-items: center; border-radius: var(--radius-chrome);
   text-decoration: none; color: var(--ink); white-space: nowrap;
   background: var(--surface-2);
   --glint-t: 4.5s;
@@ -692,7 +700,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-strip { display: flex; align-items: center;
             gap: clamp(20px, 2.4vw, 40px); width: 100%; margin-top: clamp(16px, 2.6svh, 32px);
             min-height: 64px; padding: 8px 8px 8px 12px;
-            border-radius: 999px; background: #ffffff; box-shadow: var(--lift);
+            border-radius: var(--radius-chrome); background: #ffffff; box-shadow: var(--lift);
             text-align: left; overflow: hidden; }
 .dr-strip-rating { display: flex; align-items: center; gap: var(--fib-1);
                    flex: 0 0 auto; text-decoration: none; color: var(--ink); }
@@ -848,7 +856,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    bar somehow"): the ink pill, 48px in the 64px strip */
 .dr-herocta {
   flex: 0 0 auto; margin-left: auto;
-  display: inline-flex; align-items: center; border-radius: 999px;
+  display: inline-flex; align-items: center; border-radius: var(--radius-chrome);
   padding: 0 24px; height: 48px;
   text-decoration: none; white-space: nowrap;
   color: var(--void); background: var(--ink);
@@ -3422,7 +3430,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    inheriting that would make the button itself six rem tall. */
 .dr-close-cta {
   display: inline-flex; align-items: center; gap: .5em;
-  border-radius: 999px; background: var(--ink); color: #000;
+  border-radius: var(--radius-chrome); background: var(--ink); color: #000;
   text-decoration: none;
   font-size: var(--fs-body-s); letter-spacing: .1em;
 }
@@ -3458,7 +3466,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
                 flex-wrap: wrap; justify-content: flex-start; }
 .dr-check-input {
   flex: 1 1 240px; min-width: 0; min-height: 50px;
-  padding: 0 var(--fib-4); border-radius: 999px;
+  padding: 0 var(--fib-4); border-radius: var(--radius-chrome);
   background: rgba(255, 255, 255, .05);
   border: 1px solid var(--edge); color: var(--ink);
   font-family: var(--font-instrument), sans-serif; font-size: var(--fs-body);
@@ -3471,7 +3479,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
                         background: rgba(255, 255, 255, .08); }
 .dr-check-go {
   flex: 0 0 auto; min-height: 50px; padding: 0 var(--fib-4);
-  border-radius: 999px; border: 1px solid var(--edge-strong);
+  border-radius: var(--radius-chrome); border: 1px solid var(--edge-strong);
   background: transparent; color: var(--ink); cursor: pointer;
   font-family: var(--font-instrument), sans-serif; font-size: var(--fs-body);
   transition: background var(--t-micro) var(--ease-ui),
@@ -3698,7 +3706,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
               flex-wrap: wrap; justify-content: center; }
 .dr-obj-input {
   flex: 1 1 240px; min-width: 0; min-height: 50px;
-  padding: 0 var(--fib-4); border-radius: 999px;
+  padding: 0 var(--fib-4); border-radius: var(--radius-chrome);
   background: rgba(10, 10, 11, .04);
   border: 1px solid var(--edge); color: var(--ink);
   font-family: var(--font-instrument), sans-serif; font-size: var(--fs-body);
@@ -3710,7 +3718,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
                       background: rgba(10, 10, 11, .07); }
 .dr-obj-go {
   flex: 0 0 auto; min-height: 50px; padding: 0 var(--fib-4);
-  border-radius: 999px; border: 1px solid var(--edge); color: var(--ink-2);
+  border-radius: var(--radius-chrome); border: 1px solid var(--edge); color: var(--ink-2);
   background: transparent; cursor: pointer;
   font-family: var(--font-instrument), sans-serif; font-size: var(--fs-body);
   transition: background var(--t-micro) var(--ease-ui),
