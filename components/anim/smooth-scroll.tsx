@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import { gsap, ScrollTrigger, reducedMotion } from "@/components/anim/ease";
+import { setLenis } from "@/components/anim/lenis-store";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -107,6 +108,7 @@ export function SmoothScroll() {
     if (desktop) {
       lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
       lenisRef.current = lenis;
+      setLenis(lenis); // publish it — anything downstream (e.g. work-section's Snap) can now reach it
       lenis.on("scroll", ScrollTrigger.update);
       raf = (t: number) => lenis!.raf(t * 1000);
       gsap.ticker.add(raf);
@@ -142,6 +144,7 @@ export function SmoothScroll() {
         if (raf) gsap.ticker.remove(raf);
         lenis.destroy();
         lenisRef.current = null;
+        setLenis(null);
       }
     };
   }, []);

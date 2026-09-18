@@ -56,16 +56,28 @@ here forward.
 - §02 services rows — grow-into-the-room (`fb13710`), spotlight + lens/ride
   (`6b886f2` → `eaf00a2` → `0a2c6a4`), phone trays (`6afdeca`). Awaiting
   Jake's review — untested past the initial spotlight look.
-- §03 THE WORK (2026-09-18, `ec708b7`) — the three-card proof row
-  (itsjay port `0050b34` → lerp removed `140678b`) is RETIRED and
-  replaced: Cosmos's centred 3:2 card (measured settle, 1.10/1.20 scale)
-  on Apple's horizontal step (one card per viewport width, scrubbed,
-  no neighbour peeking), a glass pill with a Roll hover Cosmos's own
-  lacks. `components/dark/proof-section.tsx` is deleted;
-  `components/dark/work-section.tsx` is the new file. The old
-  `.dr-proof`/`.dr-pf*` CSS is left in `app/room.css`, dead — a cleanup
-  pass is owed. Per-project clips sized for this well don't exist yet
-  (the well always shows the still cover). Awaiting Jake's first look.
+- §03 THE WORK v2, THE GALLERY (2026-09-18) — v1's pinned strip
+  (`ec708b7`, one card per viewport-wide item) is RETIRED same day on
+  Jake's call ("this feels very weird" → "no i want to find some sort
+  of way to do the horizontal"): a fixed clipped 3:2 frame now holds a
+  CONTIGUOUS strip of every site (Cosmos's card, 20px apart, Apple's
+  gap), scrubbed continuously (no dwell), with `lenis/snap` landing on
+  the nearest card on Apple's own curve when the scroll stops. Apple's
+  pager sits under the frame; year/niche are fixed on the outer measure,
+  crossfading. `components/anim/lenis-store.ts` is a new file (12-line
+  pub/sub so any section can reach the root's Lenis without a context);
+  `components/anim/smooth-scroll.tsx` now calls `setLenis`/`setLenis(null)`
+  alongside its own ref. Two real bugs were found and fixed while
+  building it (see decisions.md): `--ch` had to move from the frame to
+  the shared `.dr-work-gallery` ancestor so `.dr-work-infos` could read
+  it (custom properties don't inherit sideways), and the mobile column
+  had the absolutely-positioned card painting over `.dr-work-meta`
+  (fixed by making the card itself the flow-positioned square). v1's own
+  `.dr-work-*` CSS was REPLACED in place (same class names, new rules);
+  the older `.dr-proof`/`.dr-pf*` proof-row CSS from the step before that
+  is still left dead in `app/room.css` — a cleanup pass is owed.
+  Per-project clips sized for this well don't exist yet (the well always
+  shows the still cover). Awaiting Jake's first look.
 - §04 how it runs — ruled slab (`ba6ad74`), staircase retired on Jake's
   call — awaiting his review.
 - §05/§06 — rebuilt to the Off+Brand ending: §05 is a white card that

@@ -1,97 +1,154 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Snap from "lenis/snap";
+import type Lenis from "lenis";
 import { PROJECTS } from "@/lib/work";
 import { Roll } from "@/components/room/nav";
+import { onLenis } from "@/components/anim/lenis-store";
 
-/* §03 · THE WORK — Cosmos's card, Apple's step, on scroll
+/* §03 · THE WORK, v2 — THE GALLERY.
 
-   SUPERSEDES the three-card proof row (proof-section.tsx, 0050b34 →
-   29ae1d2). Jake, looking at both references: "i really like that
-   shrinking entrance … i like the card in the middle … i prefer apple's
-   highlight section feel, on scroll, horizontal … no neighbours peeking
-   … the year and niche on the sides, the little see work pill on the
-   image … when i hover on that pill the See work text should go up and
-   See work in a different colour should come underneath it."
+   SUPERSEDES the pinned strip of the same day (ec708b7, one card centred
+   in its own viewport-wide item, a dwell/slide/dwell shape per window).
+   Jake, shown its frames: "this feels very weird" → slide or stop? "both"
+   → "no i want to find some sort of way to do the horizontal." The
+   frames named the actual fault: mid-slide the leaving and arriving
+   cards sat 700px apart across bare canvas (a void), the slide itself
+   spent only 162px of scroll dragging 1440px sideways (a flick, not a
+   scrub), and the dwells before/after were dead time — nothing on
+   screen was doing anything.
 
-   THE LAYOUT is Cosmos's works section, measured live
-   (decodes/cosmos-works.md §2): one centred 3:2 well at a time, 20px
-   radius, a glass label 32px inside the image's top, YEAR / NICHE on the
-   page's outer measure at the card's mid-height — not on the card's own
-   (narrower) width, exactly as Cosmos's `.works_infos` sits on its wider
-   `.container-large` while `.works_card` is centred inside it.
+   v2 keeps the hold (a card is worth being still for) but rebuilds what
+   fills it, Apple's way: a FIXED, CLIPPED 3:2 frame (Cosmos's well)
+   holds a CONTIGUOUS strip of every site, 20px apart (Apple's own gap,
+   decodes/apple-highlights.md §1) — there is no void, because the
+   leaving and arriving cards are touching, edge to edge, inside one
+   window. The strip is scrubbed CONTINUOUSLY — `--rx` = wp × steps, no
+   dwell/slide/dwell shape this time (law 11: the STRUCTURE is scrubbed)
+   — at ~1.4:1 (0.7svh of scroll per card at 1440×736; 826px of strip
+   per 630px of scroll ≈ 1.31:1 at 1440×900), so the strip never goes
+   through a flick: it moves exactly as fast as the wheel does, the
+   whole time.
 
-   THE ENTRANCE is Cosmos's settle (§3 of the same decode): the wrap
-   scales 1.10→1, the image 1.20→1, independently — the well clips the
-   surplus so the picture is always oversized inside its frame and simply
-   relaxes into it. Cosmos runs this as one card arrives and PINS while
-   the next deals on top of it (a real `position: sticky` stack, replayed
-   both directions). We do not have their vertical list — Apple's
-   horizontal step (below) already claims the scroll axis — so the same
-   settle is measured off THE CARD'S OWN scroll position instead of a
-   sticky hand-off: `--ap` runs 1 → 0.27 as the card's top crosses the
-   fold down to 27% of viewport height. That range, not 1→0, is
-   deliberate: Cosmos's whole 736px settle happens while the card is
-   still on screen (their card pins at `top: 128px`, well inside the
-   viewport), so ours has to finish while the card is still visible too —
-   a track that ran to 0 would still be settling once the card was
-   already centred and readable, which is exactly the "finishing late"
-   failure the room's own About section hit once already (decisions.md,
-   2026-09-08). THE DECK — Cosmos's next card literally dealing on top of
-   the settled one — is NOT taken (Jake: "i dont like their effect of the
-   deck coming up"); Apple's step replaces it.
+   THE SNAP is the landing Apple's own carousel has (decode §2: a
+   deterministic ~1000ms cubic-bezier(.42,0,.58,1) tween, visually
+   ease-in-out) — when the scroll STOPS, `lenis/snap` (proximity, 260px,
+   250ms debounce) eases the scroll position the rest of the way onto
+   the nearest card on that same curve. This is Lenis moving the SCROLL
+   POSITION, not a tween on the strip itself — the strip stays a pure
+   function of scroll throughout (law 11 again: the scrub is ours, the
+   landing is theirs), so scrubbing backwards through a snapped position
+   still runs it backwards exactly. CSS scroll-snap was not used because
+   Lenis already owns the wheel on desktop (smooth-scroll.tsx) and a
+   second thing trying to own the same input fights it.
 
-   THE STEP is Apple's highlights gallery, turned from a click/autoplay
-   carousel into a scroll-scrubbed one (decodes/apple-highlights.md §2):
-   one card fills the frame at a time, neighbours never peek (Jake's own
-   requirement — Apple's actually DO peek 70px each side; ours pin to
-   0/100vw instead), and the advance is their measured
-   cubic-bezier(.42,0,.58,1) — visually ease-in-out — with a dwell before
-   and after so a card is simply THERE for a beat, not perpetually mid-
-   transition. Apple's curve is a deterministic 1000ms tween per click;
-   ours is scrubbed, so the same shape is re-expressed as a function of
-   scroll fraction: `--wp` runs 0 → 1 across each window and the
-   stylesheet turns that into a smoothstep (s²(3−2s), the standard
-   ease-in-out-shaped polynomial) so dwell (0–.3), slide (.3–.7) and
-   dwell (.7–1) read the same as Apple's timing curve without a duration
-   to tune. --steps windows are summed into one `--rx` (the rail's
-   translate, in units of "cards"), so N cards need only N−1 windows and
-   the formula does not change if a case is added or removed from
-   lib/work.ts.
+   Lenis is reached through `components/anim/lenis-store.ts`
+   (setLenis/onLenis) rather than a React context — the root layout owns
+   the one instance, and a context would mean plumbing it through every
+   layout in between for a single section that wants to read it.
 
-   THE STAGE is the room's own sticky-pin-without-a-library pattern
-   (room.css `.dr-runs-stage`/`.dr-runs-pin`, decisions.md 2026-09-06):
-   a tall stage, a sticky panel inside it, one declared window on the
-   stage's own top edge driving everything downstream — never a pin
-   library, never a second measurement pass.
+   Apple's PAGER sits under the frame: dots, the current one stretching
+   to a 48px bar as its card lands, scrubbed off the same `--rx` a click
+   already uses to move the strip. YEAR / NICHE are FIXED on the page's
+   own outer measure at the frame's mid-height (unchanged from v1:
+   Cosmos's `.works_infos` sits on their wider `.container-large` while
+   `.works_card` is centred and narrower inside it) — three sets
+   overlapping and crossfading on the CUBE of their card's arrival
+   (Apple's own caption opacity curve, §2 of the decode). They are fixed
+   rather than riding the strip because Apple's captions don't travel
+   with the card either — only the incoming/outgoing pair ever
+   crossfades; everything else is simply off.
 
-   THE PILL has the hover Cosmos's own label lacks entirely (decode §5:
-   "there is no hover effect on these cards at all") — Jake asked for
-   one: the room's own per-letter Roll (components/room/nav.tsx), the
-   second copy tinted with --work-see-alt so "See work" rolls up and a
-   differently-coloured "See work" rises in behind it, on the pill, not
-   the whole card. NO backdrop-filter on the pill (2026-09-06 law:
-   "nothing composited at rest inside a translating card") — the frost is
-   a blurred COPY of the project's own poster/cover under an ink tint, so
-   it reads as glass without ever re-sampling a live layer while the card
-   is still moving through its entrance.
+   THE ENTRANCE is still Cosmos's settle (decode §3: wrap 1.10→1, image
+   1.20→1, independently, chased at 0.35 — their measured per-frame
+   retention, ≈35–40% of the remaining distance closed a frame) — but it
+   now runs ONCE, measured off the FRAME's own top as the whole section
+   arrives, not per card: the frame never leaves the screen once the
+   gallery starts scrubbing, so there is nothing left for a per-card
+   settle to do.
 
-   THE CLIPS ARE NOT IN THE CARDS. lib/work.ts's `clip`s are the 600×600
-   roster clips used elsewhere on the homepage; upscaled into an ~800px
-   well they would soften badly, so the pill's thumbnail is the clip's
-   poster frame (a still) and the well itself always shows the cover
-   photograph. Per-project cuts sized for this well are future work. */
+   Phone + reduced motion: the column, 1:1 cards (Cosmos's own phone),
+   8px gaps, a static per-card YEAR/NICHE row (`.dr-work-meta`) since the
+   fixed desktop infos have nothing left to crossfade against once the
+   cards are stacked — and no Snap: there is no Lenis instance on touch
+   at all (smooth-scroll.tsx is desktop-only), so there is nothing to
+   hand one to. */
 
-const OURS = "executive-ai-solutions"; // same filter + same reason as the retired file's comment
-const STEP = 0.55; // svh of scroll per card change — one window, Apple's dwell/slide/dwell shape
+const OURS = "executive-ai-solutions"; // same filter + same reason as v1's comment
+const STEP = 0.7; // svh of scroll per card change — 764px of strip per 515px of scroll ≈ 1.48:1 at 1440×736
+
+// Apple's own step curve: CSS ease-in-out over ~1s (decodes/apple-highlights.md
+// §3) — this is the SNAP's landing, not the scrub, which stays f(scroll).
+const stepEase = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
 
 export default function WorkSection() {
   const cases = PROJECTS.filter((p) => p.slug !== OURS && p.cover);
   const n = cases.length;
+  const stageRef = useRef<HTMLDivElement>(null);
+  const lenisRef = useRef<Lenis | null>(null);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    // reduced motion never subscribes: no Snap, no chase — the CSS media
+    // query alone puts the section in its resolved, still, column state
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let cleanup = () => {};
+    const off = onLenis((lenis) => {
+      // kept for `go()` below, whether or not a snap gets built off it
+      lenisRef.current = lenis;
+      cleanup();
+      cleanup = () => {};
+      if (!lenis) return; // touch: no Lenis, no snap — the column has no scrub to land
+
+      const snap = new Snap(lenis, {
+        type: "proximity",
+        distanceThreshold: 260,
+        debounce: 250,
+        duration: 1,
+        easing: stepEase,
+      });
+      const removers: Array<() => void> = [];
+      const place = () => {
+        removers.splice(0).forEach((r) => r());
+        // the stage never transforms — its own top is a stable document position
+        const top = stage.getBoundingClientRect().top + window.scrollY;
+        for (let i = 0; i < n; i++) {
+          removers.push(snap.add(top + i * STEP * window.innerHeight));
+        }
+      };
+      place();
+      // the stage's document offset moves whenever anything above it reflows
+      const ro = new ResizeObserver(place);
+      ro.observe(document.body);
+      cleanup = () => {
+        ro.disconnect();
+        removers.forEach((r) => r());
+        snap.destroy();
+      };
+    });
+    return () => {
+      off();
+      cleanup();
+    };
+  }, [n]);
+
   if (!n) return null;
   const steps = n - 1;
+
+  const go = (i: number) => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const top = stage.getBoundingClientRect().top + window.scrollY + i * STEP * window.innerHeight;
+    const l = lenisRef.current;
+    if (l) l.scrollTo(top, { duration: 1, easing: stepEase });
+    else window.scrollTo({ top, behavior: "smooth" });
+  };
 
   return (
     <section
@@ -109,16 +166,13 @@ export default function WorkSection() {
         </h2>
       </header>
 
-      {/* THE STAGE declares the whole pinned travel on its own top edge:
-          0 at the fold, one more 0.55vh window per card after the first.
-          `--wp` feeds `.dr-work-rail`'s own --t below — one number drives
-          the rail's translate AND every card's arrival marker. Chased at
-          the room's default 0.1: the STRUCTURE (which card is centred)
-          should follow scroll input the way everything else in the room
-          does, unlike the entrance settle below, which is measured off
-          the card's own geometry and wants Cosmos's snappier chase. */}
+      {/* THE STAGE declares the whole pinned travel on its own top edge: 0 at the
+          fold, one more 0.7vh window per card after the first. Chased at the
+          room's default 0.1: the STRUCTURE (which card is centred) follows scroll
+          input the way everything else in the room does. */}
       <div
         className="dr-work-stage"
+        ref={stageRef}
         data-sp
         data-sp-edge="top"
         data-sp-from="0"
@@ -127,78 +181,96 @@ export default function WorkSection() {
         data-sp-lerp="0.1"
       >
         <div className="dr-work-pin">
-          <ol className="dr-work-rail">
-            {cases.map((p, i) => (
-              <li className="dr-work-item" key={p.slug} style={{ "--i": i } as CSSProperties}>
-                {/* THE CARD owns `--ap`, Cosmos's settle, measured off the
-                    CARD'S OWN top (1 at the fold, 0.27 at 27% of viewport
-                    height — not 0, so the whole 1.10/1.20 relax happens
-                    while the card is still visible, the way Cosmos's does
-                    inside their own sticky stack). Chased at 0.35: Cosmos's
-                    measured per-frame retention (~35–40% of the remaining
-                    distance closed a frame, converged by ~300ms) — much
-                    snappier than the room's default 0.1 (Lando's rate),
-                    because this is a settle happening in place, not a
-                    structural position following the scrollbar. */}
-                <Link
-                  href={`/work/${p.slug}`}
-                  className="dr-work-card"
-                  aria-label={`${p.listName} — see work`}
-                  data-sp
-                  data-sp-from="1"
-                  data-sp-to="0.27"
-                  data-sp-var="--ap"
-                  data-sp-lerp="0.35"
-                >
-                  <span className="dr-work-wrap">
-                    <span className="dr-work-well">
-                      <Image
-                        className="dr-work-img"
-                        src={p.cover.src}
-                        alt={p.cover.alt}
-                        width={p.cover.width}
-                        height={p.cover.height}
-                        sizes="(max-width: 900px) 92vw, 56vw"
-                      />
-                    </span>
-                    <span
-                      className="dr-work-pill"
-                      style={
-                        {
-                          "--frost": `url(${p.clip?.poster ?? p.cover.src})`,
-                        } as CSSProperties
-                      }
-                    >
-                      {p.clip && (
-                        <img
-                          className="dr-work-thumb"
-                          src={p.clip.poster}
-                          alt=""
-                          width={36}
-                          height={36}
-                          loading="lazy"
-                        />
-                      )}
-                      <span className="dr-work-name">{p.listName}</span>
-                      <i className="dr-work-sep" aria-hidden />
-                      <span className="dr-work-see">
-                        <Roll label="See work" />
-                      </span>
-                    </span>
-                  </span>
-                </Link>
+          <div className="dr-work-gallery">
+            {/* THE FRAME owns `--ap`, Cosmos's settle, measured off the FRAME's
+                OWN top (1 at the fold, 0.27 at 27% of viewport height) — once,
+                as the whole gallery arrives, not per card. Chased at 0.35:
+                Cosmos's measured per-frame retention, snappier than the room's
+                default 0.1 because this is a settle happening in place, not a
+                structural position following the scrollbar. */}
+            <div
+              className="dr-work-frame"
+              data-sp
+              data-sp-from="1"
+              data-sp-to="0.27"
+              data-sp-var="--ap"
+              data-sp-lerp="0.35"
+            >
+              <div className="dr-work-wrap">
+                <ol className="dr-work-strip">
+                  {cases.map((p, i) => (
+                    <li className="dr-work-slide" key={p.slug} style={{ "--i": i } as CSSProperties}>
+                      <Link
+                        href={`/work/${p.slug}`}
+                        className="dr-work-card"
+                        aria-label={`${p.listName} — see work`}
+                      >
+                        <span className="dr-work-well">
+                          <Image
+                            className="dr-work-img"
+                            src={p.cover.src}
+                            alt={p.cover.alt}
+                            width={p.cover.width}
+                            height={p.cover.height}
+                            sizes="(max-width: 900px) 92vw, 56vw"
+                          />
+                        </span>
+                        <span
+                          className="dr-work-pill"
+                          style={
+                            {
+                              "--frost": `url(${p.clip?.poster ?? p.cover.src})`,
+                            } as CSSProperties
+                          }
+                        >
+                          {p.clip && (
+                            <img
+                              className="dr-work-thumb"
+                              src={p.clip.poster}
+                              alt=""
+                              width={36}
+                              height={36}
+                              loading="lazy"
+                            />
+                          )}
+                          <span className="dr-work-name">{p.listName}</span>
+                          <i className="dr-work-sep" aria-hidden />
+                          <span className="dr-work-see">
+                            <Roll label="See work" />
+                          </span>
+                        </span>
+                      </Link>
 
-                {/* YEAR / NICHE ride the page's own outer measure (`.wrap`),
-                    not the card's narrower width — Cosmos's own
-                    `.works_infos` does the same against `.container-large`
-                    while `.works_card` sits centred and smaller inside it.
-                    `--i` (set on this <li>) and `--rx` (set on the rail
-                    above) both inherit down to this row: opacity is the
-                    CUBE of how close this card's index is to the rail's
-                    current position — Apple's caption fade (decode §2:
-                    opacity ≈ progress³), so the pair is only readable on
-                    the centred card and near-invisible mid-slide. */}
-                <div className="dr-work-infos wrap">
+                      {/* the column's own YEAR/NICHE — the fixed desktop infos
+                          below have nothing to crossfade against once cards are
+                          stacked, so each card carries its own here instead;
+                          hidden at ≥901px */}
+                      <div className="dr-work-meta">
+                        <span className="dr-work-info">
+                          <span className="t-label">Year</span>
+                          <span>{p.year}</span>
+                        </span>
+                        <span className="dr-work-info">
+                          <span className="t-label">Niche</span>
+                          <span>{p.sector}</span>
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+
+            {/* YEAR / NICHE ride the page's own outer measure (`.wrap`), not the
+                frame's narrower width — Cosmos's own `.works_infos` does the same
+                against `.container-large` while `.works_card` sits centred and
+                smaller inside it. `--i` (set per set) and `--rx` (set on the
+                stage, inherited down) together give each set the CUBE of its
+                arrival — Apple's own caption fade — so only the centred set is
+                readable and the rest are near-invisible mid-slide. */}
+            <div className="dr-work-infos wrap" aria-live="polite">
+              {cases.map((p, i) => (
+                <div className="dr-work-info-set" key={p.slug} style={{ "--i": i } as CSSProperties}>
                   <span className="dr-work-info">
                     <span className="t-label">Year</span>
                     <span>{p.year}</span>
@@ -208,9 +280,27 @@ export default function WorkSection() {
                     <span>{p.sector}</span>
                   </span>
                 </div>
-              </li>
-            ))}
-          </ol>
+              ))}
+            </div>
+
+            {/* Apple's pager: one dot per card, scrubbed on the same --rx a
+                click already moves; click scrolls (via Lenis when it exists,
+                native smooth scroll on touch — though the pager itself is
+                hidden there, since the whole gallery is a column). */}
+            <ol className="dr-work-pager" aria-label="Work">
+              {cases.map((p, i) => (
+                <li key={p.slug}>
+                  <button
+                    type="button"
+                    className="dr-work-dot"
+                    style={{ "--i": i } as CSSProperties}
+                    aria-label={`Show ${p.listName}`}
+                    onClick={() => go(i)}
+                  />
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </div>
     </section>
