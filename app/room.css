@@ -3883,7 +3883,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    chased at 0.35 (Cosmos's measured per-frame retention). */
 .dr-work-wrap { position: absolute; inset: 0; will-change: transform; scale: calc(1 + 0.10 * (1 - var(--ap, 1))); }
 .dr-work-strip { position: absolute; inset: 0; display: flex; gap: var(--gap); list-style: none; margin: 0; padding: 0; will-change: transform;
-  translate: calc(var(--rx) * -1 * (100% + var(--gap))) 0; }          /* 100% = the strip = the frame = one slide */
+  /* one slide's pitch in LENGTHS (the frame's width + the gap), not `100%`,
+     so the translate can be ROUNDED to the pixel: the chase settles within
+     0.0004 of its target and the snap lands within 0.16px, which left a
+     hairline of the neighbouring site at the frame's edge on every landing
+     (seen in the v2 pass frames at rx 1 and 2). A whole-pixel translate
+     cannot show a sliver of the card next door. */
+  --pitch: calc(var(--ch) * 1.5 + var(--gap));
+  translate: round(nearest, calc(var(--rx) * -1 * var(--pitch)), 1px) 0; }
 .dr-work-slide { flex: 0 0 100%; height: 100%; position: relative; }
 .dr-work-card { position: absolute; inset: 0; display: block; border-radius: 20px; overflow: clip; text-decoration: none; color: inherit; }
 .dr-work-well { position: absolute; inset: 0; }
