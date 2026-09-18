@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import ServicesSection, { OfferHead } from "@/components/dark/services-section";
-import ProofSection from "@/components/dark/proof-section";
+import WorkSection from "@/components/dark/work-section";
 import VoicesSection from "@/components/dark/voices-section";
 import RunsSection from "@/components/dark/runs-section";
 import ObjectionsSection from "@/components/dark/objections-section";
@@ -417,7 +417,7 @@ export default function DarkRoom() {
         <ServicesSection />
       </div>
 
-      <ProofSection />
+      <WorkSection />
       <VoicesSection />
 
       {/* ══ THE FLIP ══════════════════════════════════════════════════
