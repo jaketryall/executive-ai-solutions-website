@@ -33,7 +33,8 @@ here forward.
   FOR OWNER-RUN BUSINESSES." — the grey line under it, then the dark
   card with 01—02—03 and the three services as columns with their
   still shots and prices; About is gone, the stacked rows and the
-  spotlight are gone). ORDER: hero → offer → proof → voices → … The page is on ONE
+  spotlight are gone). ORDER: hero → statement → offer → THE WORK →
+  voices → … The page is on ONE
   column now (`8becbfe`): 3.8vw a side, capped 1760. ENTRANCE (`b3c1cb5`, `c6fcbbd`): light first paint, the
   film rises and grows in, no flashes (scripts/reload-screencast.mjs).
   The numbers band under the film was built (four receipts, then cards,
@@ -55,9 +56,16 @@ here forward.
 - §02 services rows — grow-into-the-room (`fb13710`), spotlight + lens/ride
   (`6b886f2` → `eaf00a2` → `0a2c6a4`), phone trays (`6afdeca`). Awaiting
   Jake's review — untested past the initial spotlight look.
-- §03 proof cards — itsjay card port (`0050b34`), flash fix (`efc50c6`),
-  cover parallax (`6331d3f` → `cf7ad97`), lerp removed (`140678b`).
-  Awaiting Jake's re-check of the flash fix and the parallax.
+- §03 THE WORK (2026-09-18, `ec708b7`) — the three-card proof row
+  (itsjay port `0050b34` → lerp removed `140678b`) is RETIRED and
+  replaced: Cosmos's centred 3:2 card (measured settle, 1.10/1.20 scale)
+  on Apple's horizontal step (one card per viewport width, scrubbed,
+  no neighbour peeking), a glass pill with a Roll hover Cosmos's own
+  lacks. `components/dark/proof-section.tsx` is deleted;
+  `components/dark/work-section.tsx` is the new file. The old
+  `.dr-proof`/`.dr-pf*` CSS is left in `app/room.css`, dead — a cleanup
+  pass is owed. Per-project clips sized for this well don't exist yet
+  (the well always shows the still cover). Awaiting Jake's first look.
 - §04 how it runs — ruled slab (`ba6ad74`), staircase retired on Jake's
   call — awaiting his review.
 - §05/§06 — rebuilt to the Off+Brand ending: §05 is a white card that

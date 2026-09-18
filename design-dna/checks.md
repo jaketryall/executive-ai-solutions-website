@@ -45,7 +45,7 @@ bug; never delete a line.
 - The title's two windows never overlap: no scroll position has `--in` < 1 while `--out` > 0. The hold between them is ~190px of scroll at 1440 — that gap is the whole point, it is where the claim is simply readable.
 - The kicker above it still runs the room's standard wipe (gains `is-wiped`, ends at opacity 1) — the title is the only exception to law 11, and only the title.
 
-## §03 · Proof cards
+## §03 · Proof cards — RETIRED 2026-09-18 (replaced by THE WORK; the verifier SKIPS this section)
 - `li.dr-pf` `--ex` reaches 1 as the row's bottom clears the top of the screen, lifting the outer pair −26px and the centre −13px (the entrance's two rates, quartered). `--ex` must be 0 at every scroll position where `--sp` < 1 — the exit may never bleed into the entrance.
 - Rest (page settled, no hover, no focus): every `.dr-pf-veil` opacity `0`; every `.dr-pf-demo` `visibility: hidden`; every `video` inside `.dr-pf-demo` `.paused === true`.
 - During a card's scroll-entrance (still translating, `--sp` between 1 and 0.62): no `.dr-pf-veil`/`.dr-pf-demo` becomes visible/composited — a burst-frame capture across the entrance shows no unexpected appear/disappear.
@@ -55,6 +55,16 @@ bug; never delete a line.
 - `.dr-pf-well img`'s `translate` is driven directly by `--pp` with no `data-sp-lerp` on that node (not chased).
 - Entrance settle: `.dr-pf` `translate` resolves to `0` by the time `.dr-proof-grid`'s top edge reaches 62% of viewport height (±2%).
 - `.dr-pf-demo` clip-path at rest and open both contain `round 8px`; mid-transition (250ms after hover) it is an inset with round, never a polygon.
+
+## §03 · THE WORK (2026-09-18, ec708b7)
+- Rest, pinned, dwell (`.dr-work-stage` top at −0.05vh): `.dr-work-card` rect width/height = 1.500 ±.005, centred (|centre − 720| ≤ 1 at 1440); computed `scale` on `.dr-work-wrap` and `.dr-work-img` = `1`; pill top = well top + 32 ±1, pill centred ±1; `backdrop-filter` on the pill = `none`; `.dr-work-infos` opacity is 1 on the centred item and 0 on every other.
+- Arrival: with a card's own rect.top at the fold (736 at 736 tall), after 600ms `.dr-work-wrap` scale is 1.10 ±.01 and `.dr-work-img` scale is 1.20 ±.01; at rect.top ≈ 0.6× the fold, wrap scale is between 1.03 and 1.08.
+- The rail: `getComputedStyle(.dr-work-rail).getPropertyValue('--rx')` (registered via `@property`, a number) reads 0 ±.01 with the stage's top at 0; ≈.50 ±.06 at half a window; 1.00 ±.02 at one full window; 2.00 ±.02 at two. The centred card's rect is horizontally centred at its own integer `--rx`. No neighbour peeks: at an integer `--rx`, the previous card's `rect.right` ≤ 0 and the next card's `rect.left` ≥ the viewport width.
+- Hover `.dr-work-pill`: within 700ms every `.dr-char` inside `.dr-work-see` computes a `transform` matrix with `f` = −(the char's own rendered height) (translateY(−100%)); `.dr-work-img`'s `scale` and the pill's own rect are unchanged before/during/after. Un-hover returns every `.dr-char` transform to `none`.
+- Sweeping one card-to-card slide in small steps: no step shows a `.dr-work-pill` or `.dr-work-card` with zero size, `opacity: 0`, or `visibility: hidden` — nothing disappears mid-slide.
+- At ≤900px width or under `prefers-reduced-motion: reduce`: `.dr-work-pin` computed `position` is `static`; `.dr-work-rail` computed `flex-direction` is `column`; `.dr-work-card` rect width/height = 1.00 ±.01; `.dr-work-wrap`/`.dr-work-img` computed `scale` is `none`; `.dr-work-infos` computed `opacity` is `1`; the vertical gap between two cards' rects equals 8px + the `.dr-work-infos` row's own height.
+- Every `font-size` inside `.dr-work-*` resolves to a `--fs-*` token (`--fs-body-s`, `--fs-micro`, `--fs-body`), per the page-wide type-scale law — no new raw px size.
+- `.dr-work-h` computes the same `--fs-section` (38.4px at 1440) as the other section headers; `[data-wipe]` on `.dr-work-kicker`/`.dr-work-h` fires (`is-wiped`) once their top crosses <0.9vh and both restore to byte-identical authored text afterward.
 
 ## §03→§04 · Curtain lift — RETIRED 2026-09-06 (reverted on Jake's call, code back at `40aec08`; kept for the record, the verifier SKIPS this section)
 - At p=1 (the `.dr-proof-lift` wrapper's bottom edge at its window end, .32vh): `.dr-proof` rect.bottom and `.dr-runs` rect.top both within ±6px of 0, at 1440 and 390 — no gap, no leftover overlap at the lock frame.
