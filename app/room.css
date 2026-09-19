@@ -1410,68 +1410,75 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-say-pin .dr-offer-head { opacity: 1; }
 }
 
-/* THE PATH: three numerals, one over each column, joined by a line —
-   a diagram, not a divider: the customer's route, site → system → the
-   clicks that find it. On the dark card the line is light at .18. */
-.dr-offer-steps { list-style: none; margin: 0 0 clamp(20px, 3svh, 32px); padding: 0;
-  position: relative;
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.dr-offer-steps::before { content: ""; position: absolute; top: 50%;
-  left: calc(100% / 6); right: calc(100% / 6); height: 1px;
-  background: color-mix(in oklab, var(--ink) 18%, transparent); }
-.dr-offer-steps li { display: flex; justify-content: center; }
-.dr-offer-steps span { position: relative; display: grid; place-items: center;
-  width: 36px; height: 36px; border-radius: 999px;
-  /* the numeral is the card's own ground on an ink disc — not --void,
-     which is the ROOM's ground and in the light room is #e7e7ea on a
-     white disc: three blank buttons (frame offer2) */
-  background: var(--ink); color: var(--svc-ground, #f5f5f7);
+/* §02 · THE LEDGER (2026-09-19) SUPERSEDES THE PATH + THE THREE that
+   used to live here — see decisions.md and the file header comment in
+   services-section.tsx. `.dr-offer-steps`, `.dr-offer-grid`,
+   `.dr-offer-col`, `.dr-offer-well`, `.dr-offer-stage`, `.dr-offer-num`,
+   `.dr-offer-title`, `.dr-offer-what`, `.dr-offer-price` and
+   `.dr-offer-inside` are DELETED, not left dead — nothing in the new
+   markup reads them. `.dr-offer-vouch` below is UNCHANGED: the witness
+   still follows the list exactly as it did after the columns. */
+.dr-ledger { list-style: none; margin: 0; padding: 0; }
+.dr-ledger-row { border-top: 1px solid var(--edge); }
+.dr-ledger-row:last-child { border-bottom: 1px solid var(--edge); }
+.dr-ledger-link { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(32px, 5vw, 96px); align-items: center;
+  padding-block: clamp(40px, 7svh, 88px); min-height: 62svh;
+  text-decoration: none; color: var(--ink); }
+.dr-ledger-text { display: flex; flex-direction: column; align-items: flex-start;
+  gap: 10px; max-width: 34ch; }
+.dr-ledger-stage { color: var(--ink-4); display: inline-flex; gap: 10px; }
+.dr-ledger-num { color: var(--ink-3); }
+.dr-ledger-title { margin: 6px 0 0;
   font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wdth" 100, "wght" 700;
-  font-size: var(--fs-micro); letter-spacing: .04em; }
-
-/* THE THREE: a still of the deliverable, the stage, the name, one line,
-   the price — centred under its numeral, the whole column a link to the
-   service. The wells keep the photographs' own 4:3. */
-.dr-offer-grid { list-style: none; margin: 0; padding: 0;
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(16px, 2vw, 32px); }
-.dr-offer-col { display: flex; flex-direction: column; align-items: center;
-  text-align: center; gap: 6px; text-decoration: none; color: var(--ink);
-  min-width: 0; }
-.dr-offer-well { display: block; width: 100%; aspect-ratio: 4 / 3;
-  overflow: clip; border-radius: var(--radius-frame);
-  /* the shot's own ground, sampled off the corners of all three, so the
-     frame is never a bright hole while the JPEG decodes */
-  background: #1c1a20;
-  margin-bottom: clamp(14px, 2svh, 22px);
-  transition: translate var(--t-micro) var(--ease-ui); }
-.dr-offer-well .dr-svc-shot { display: block; width: 100%; height: 100%; object-fit: cover; }
-.dr-offer-col:hover .dr-offer-well { translate: 0 -3px; }
-.dr-offer-col:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 6px; border-radius: var(--radius-frame); }
-.dr-offer-stage { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-4); }
-.dr-offer-num { color: var(--ink-3); }
-.dr-offer-title { display: block;
-  font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wdth" 100, "wght" 600;
-  font-size: var(--fs-section); line-height: 1.08; letter-spacing: -0.022em;
-  margin-top: 2px; }
-.dr-offer-what { display: block; color: var(--ink-3); font-size: var(--fs-body); }
-.dr-offer-price { display: block; margin-top: 6px; color: var(--ink-2);
-  font-size: var(--fs-body-s); }
-/* SEE WHAT'S IN IT (2026-09-19, Jake: "the services one thing is too
-   short") — the first three deliverables, verbatim from lib/services.ts:
-   not a summary, the actual list the service page itself leads with.
-   t-label's own register (Archivo, tracked, --fs-small — checks.md's
-   type-scale law) but sentence case: a LABEL is a tag, this is a
-   sentence naming what you get. */
-.dr-offer-inside { list-style: none; width: 100%; text-align: left;
-  margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--edge);
-  display: flex; flex-direction: column; gap: 6px; }
-.dr-offer-inside li { position: relative; padding-left: 14px;
-  text-transform: none; line-height: 1.5; color: var(--ink-3); }
-.dr-offer-inside li::before { content: ""; position: absolute; left: 0; top: .6em;
-  width: 4px; height: 4px; border-radius: 999px; background: var(--ink-4); }
+  font-variation-settings: "wdth" 100, "wght" 620;
+  /* the statement's rung, not the section's: a row's own claim, not the
+     card's headline */
+  font-size: var(--fs-feature); line-height: 1.02; letter-spacing: -0.028em; }
+.dr-ledger-what { color: var(--ink-3); font-size: var(--fs-body); }
+.dr-ledger-price { color: var(--ink-2); font-size: var(--fs-body); margin-top: 2px; }
+/* x2y's 23px grey paragraph → our body rung, ink-3; the three
+   deliverable names joined into ONE sentence (services-section.tsx),
+   not a bulleted list — a row is read at a glance */
+.dr-ledger-body { margin: 14px 0 0; color: var(--ink-3); font-size: var(--fs-body); line-height: 1.55; max-width: 42ch; }
+.dr-ledger-open { margin-top: 18px; display: inline-flex; align-items: center; gap: .4em;
+  color: var(--ink); font-size: var(--fs-body-s); }
+.dr-ledger-open i { font-style: normal; transition: transform .6s var(--ease-ui); }
+.dr-ledger-link:hover .dr-ledger-open i { transform: translateX(6px); }
+.dr-ledger-well { display: block; aspect-ratio: 4 / 3; overflow: clip;
+  border-radius: var(--radius-frame); background: #1c1a20; will-change: transform; }
+.dr-ledger-well .dr-svc-shot { display: block; width: 100%; height: 100%; object-fit: cover;
+  scale: calc(1 + 0.2 * (1 - var(--rp, 1))); will-change: transform; }
+/* the row's own settle (--rp, per-row `data-sp` on `.dr-ledger-row` —
+   NOT the card's `--ap`): the shot eases in from 1.2, the text rises
+   24px, as the row's top crosses the fold to 35svh up */
+.dr-ledger-text { translate: 0 calc((1 - var(--rp, 1)) * 24px); }
+.dr-ledger-link:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 6px; }
+/* alternating sides: our call for three rows (x2y keeps the video right
+   on all six of theirs) — the zigzag is what keeps the eye moving down
+   only three rows tall; revisit if the frames read as busy. `order`
+   ALONE on a two-fr-track grid does not just mirror the side — it moves
+   the well into whichever grid CELL is auto-placed first, so a bare
+   `order: -1` measurably swapped which content sat in the 7fr track
+   (the well ballooned to 734px/653px-tall row vs the intended
+   524px/496px — the 7:5 ratio inverted, not just flipped). The columns
+   swap WITH the order so the ratio holds on every row; only the side
+   changes. */
+/* scoped to ≥901: at 3 classes deep this beats the mobile media query's
+   single-class `.dr-ledger-link { grid-template-columns: 1fr }` on
+   SPECIFICITY alone, media condition or not — measured live, the even
+   row was still rendering two tracks (120px/168px) at 390 before this
+   was scoped. */
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .dr-ledger-row:nth-child(even) .dr-ledger-link { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+  .dr-ledger-row:nth-child(even) .dr-ledger-well { order: -1; }
+}
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .dr-ledger-link { grid-template-columns: 1fr; min-height: 0; gap: 20px; }
+  .dr-ledger-well { order: -1; }
+  .dr-ledger-well .dr-svc-shot,
+  .dr-ledger-text { scale: none; translate: none; will-change: auto; }
+}
 /* the witness — a FULL PULL QUOTE now (same date, same ask): the
    column's own width, display size, the avatar above it rather than
    beside it. `.dr-vouch` alone still serves nothing else on this page
@@ -1503,13 +1510,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   font-size: var(--fs-section); line-height: 1.25;
   text-wrap: balance; color: var(--ink); }
 .dr-offer-vouch.dr-vouch figcaption { margin-top: clamp(12px, 2svh, 20px); }
-/* the lag hierarchy (see THREE RATES below): steps first, columns, then
-   the witness */
-.dr-offer-steps { translate: 0 calc((1 - var(--ap, 1)) * 12px); }
-.dr-offer-grid  { translate: 0 calc((1 - var(--ap, 1)) * 32px); }
 @media (max-width: 900px) {
-  .dr-offer-steps { display: none; }
-  .dr-offer-grid { grid-template-columns: minmax(0, 1fr); gap: var(--fib-5); }
   .dr-offer-say { font-size: clamp(2.2rem, 10.5vw, 3.4rem); }
 }
 
@@ -2289,10 +2290,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 /* the phone trays were cut on a light-grey ground; on the void they take
    the shots' own near-black, as the light room's dark card already does */
 .dr-root:not(.dr-light) .dr-svc-well { background: #1c1a20; }
-/* the section's edges: a hairline above and below where the card's own
-   edge used to be, so the beat still has a shape (x2y's spacers are
-   plain; ours carry the column's rules) */
-.dr-root:not(.dr-light) .dr-svc-in > .wrap { border-block: 1px solid var(--edge);
+/* the section's own top/bottom spacing before the first/after the last
+   row (x2y's spacers). The hairline itself moved to the ROWS
+   (`.dr-ledger-row`/`:last-child`, 2026-09-19) — a border here too would
+   double the top and bottom lines. */
+.dr-root:not(.dr-light) .dr-svc-in > .wrap {
   padding-block: clamp(36px, 6svh, 80px) clamp(32px, 5svh, 64px); }
 
 /* the hand-written rgba(255,255,255,…) in this file do NOT ride the

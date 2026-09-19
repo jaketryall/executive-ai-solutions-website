@@ -29,6 +29,18 @@ import { SHOTS } from "@/components/dark/service-shots";
    and the headline is in the HERO's register, condensed caps, so it
    echoes "DESIGN THAT SELLS" rather than introducing a third voice.
 
+   SUPERSEDED 2026-09-19 · THE LEDGER (decisions.md has the full record).
+   Jake, on the void: "still not really feeling services section." The
+   three columns were nine small things in a grid between two big
+   cinematic beats — a pricing-table archetype, and the void made it
+   plainer. x2ycreative.com, measured live: six services, ONE PER ROW —
+   a condensed title left, one grey paragraph, one big square shot
+   right, hairlines, no cards. The markup below is now
+   `<ol className="dr-ledger">`, one `<li>` per service; the numeral
+   that used to head its own `.dr-offer-steps` row now opens each row's
+   own kicker line. Same data (stage, title, label, price, the three
+   deliverables, the shot) — a row, not a column.
+
    THE HEAD IS OUTSIDE THE CARD, on purpose: the card's climb (--climb,
    page.tsx) is measured on the wrapper's top, which has to stay the
    card's own top — with the statement inside, the card would have been
@@ -104,64 +116,64 @@ export default function ServicesSection() {
         data-sp-lerp="0.1"
       >
         <div className="wrap">
-          {/* THE PATH: 01 — 02 — 03, one numeral over each column, joined.
-              Decoration to a screen reader — the columns carry their
-              own numerals in their names. */}
-          <ol className="dr-offer-steps" aria-hidden>
+          {/* §02 · THE LEDGER (2026-09-19). One `<li>` per service, x2y's
+              rhythm — see the file header and decisions.md. */}
+          <ol className="dr-ledger">
             {SERVICES.map((s) => (
-              <li key={s.slug}>
-                <span>{s.stageIndex}</span>
-              </li>
-            ))}
-          </ol>
-
-          <ul className="dr-offer-grid">
-            {SERVICES.map((s) => (
-              <li key={s.slug}>
-                <Link href={`/services/${s.slug}`} className="dr-offer-col">
+              <li
+                className="dr-ledger-row"
+                key={s.slug}
+                data-sp
+                data-sp-from="1"
+                data-sp-to="0.35"
+                data-sp-var="--rp"
+                data-sp-lerp="0.35"
+              >
+                <Link
+                  href={`/services/${s.slug}`}
+                  className="dr-ledger-link"
+                  aria-label={`${s.label} — see the service`}
+                >
+                  <div className="dr-ledger-text">
+                    <span className="t-label dr-ledger-stage">
+                      <span className="dr-ledger-num">{s.stageIndex}</span>
+                      {s.stage}
+                    </span>
+                    {/* the two lines as AUTHORED, unchanged from the columns */}
+                    <h3 className="dr-ledger-title">
+                      {s.title.map((line, i) => (
+                        <Fragment key={i}>
+                          {i > 0 && <br />}
+                          {line}
+                        </Fragment>
+                      ))}
+                    </h3>
+                    <span className="dr-ledger-what">{s.label}</span>
+                    <span className="dr-ledger-price">{s.heroPrice}</span>
+                    {/* the three deliverables as ONE SENTENCE — x2y's own
+                        grey paragraph, not a bulleted list
+                        (`.dr-offer-inside`, retired with the columns) */}
+                    <p className="dr-ledger-body">
+                      {s.deliverables.slice(0, 3).map((d) => d.name).join(". ")}.
+                    </p>
+                    <span className="dr-ledger-open">
+                      See the service <i aria-hidden>→</i>
+                    </span>
+                  </div>
                   {/* THE SHOT. What this stage looks like in a customer's
                       hand, photographed rather than drawn — still of its
                       own accord. A service without a shot renders without
                       a well; the picture is evidence, and evidence is
                       allowed to be missing. */}
                   {SHOTS[s.slug] && (
-                    <span className="dr-offer-well" aria-hidden>
+                    <span className="dr-ledger-well" aria-hidden>
                       {SHOTS[s.slug]}
                     </span>
                   )}
-                  <span className="t-label dr-offer-stage">
-                    <span className="dr-offer-num">{s.stageIndex}</span>
-                    {s.stage}
-                  </span>
-                  {/* the two lines as AUTHORED: all three titles are two
-                      lines, so the three columns stay level whatever the
-                      words — joined, the third ran to two lines on its
-                      own and the prices under them fell out of line */}
-                  <span className="dr-offer-title">
-                    {s.title.map((line, i) => (
-                      <Fragment key={i}>
-                        {i > 0 && <br />}
-                        {line}
-                      </Fragment>
-                    ))}
-                  </span>
-                  <span className="dr-offer-what">{s.label}</span>
-                  <span className="dr-offer-price">{s.heroPrice}</span>
-                  {/* SEE WHAT'S IN IT (2026-09-19, Jake: "the services one
-                      thing is too short"): the first three deliverables,
-                      verbatim from lib/services.ts — not a summary, the
-                      actual list the service page itself leads with. */}
-                  <ul className="dr-offer-inside">
-                    {s.deliverables.slice(0, 3).map((d) => (
-                      <li key={d.name} className="t-label">
-                        {d.name}
-                      </li>
-                    ))}
-                  </ul>
                 </Link>
               </li>
             ))}
-          </ul>
+          </ol>
 
           {/* Role-and-sector attribution with the repo's placeholder glyph,
               not a name and a face: lib/quotes.ts carries no real person and

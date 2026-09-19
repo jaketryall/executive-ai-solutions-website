@@ -67,8 +67,19 @@ here forward.
   reel cut — it drops into public/dark/reel-film.mp4 per reel-spec.md.
   Awaiting Jake's look at the open.
 - §02 services rows — grow-into-the-room (`fb13710`), spotlight + lens/ride
-  (`6b886f2` → `eaf00a2` → `0a2c6a4`), phone trays (`6afdeca`). Awaiting
-  Jake's review — untested past the initial spotlight look.
+  (`6b886f2` → `eaf00a2` → `0a2c6a4`), phone trays (`6afdeca`). SUPERSEDED
+  2026-09-19 by THE OFFER's three columns, itself now superseded — see
+  the current state below; kept here only as history.
+- §02 THE LEDGER (2026-09-19, current shape): the three columns are gone
+  — one `<li>` per service, x2y's rhythm, ≥62svh each, title left/shot
+  right (alternating, row 2's shot on the left), the three deliverables
+  as one sentence, price under the title, hairlines between rows, no
+  card in the dark room (still transparent on the void), the light
+  room's dark card (`?light`) unchanged around it. `.dr-offer-steps` /
+  `.dr-offer-grid` / `.dr-offer-col` and siblings are deleted from
+  room.css. `.dr-svc` grew 1.58vh → 2.69vh at 1440×736 (+820px), which
+  pushed everything below it down by the same amount. Verified at
+  390/1440/2560, both rooms, tsc clean. Awaiting Jake's look.
 - §03 THE WORK v2, THE GALLERY (2026-09-18) — v1's pinned strip
   (`ec708b7`, one card per viewport-wide item) is RETIRED same day on
   Jake's call ("this feels very weird" → "no i want to find some sort
