@@ -18,6 +18,18 @@ import { useEffect } from "react";
    WHAT IT WRITES, and nothing more:
      --sp   0 → 1, this element's progress through its declared window
      --spx  the same progress in pixels of viewport travel
+     --force 0 → 1, opt-in (data-sp-force="<px>"). §03·THE WORK v4 needed
+            a VELOCITY, not a position — leoparpeix.com's rail squashes
+            tiles in depth by their own DRAG force (decodes/leoparpeix.md
+            §13: attack 0.42, release 0.065, their pointer delta × 400,
+            capped 600), ported here onto scroll: this track measures how
+            fast its own element's --sp mark is moving right now, in the
+            same two-stage chase (attack then release, THEIR two
+            constants), saturating at data-sp-force's px-per-60fps-frame
+            instead of their raw pointer delta. It is the one place this
+            engine derives a value from RATE rather than POSITION, and it
+            re-arms `settling` on its own while it decays, same as a
+            damped --sp track.
 
    ONE-SHOTS are the single exception, and the grammar's (law 11): the
    structure is scrubbed, the TEXT is triggered — once, in one
@@ -102,6 +114,26 @@ type Track = {
   current: number;
   /** ground colour ramp, resolved from named tokens. null = not declared. */
   bg: { from: RGB; to: RGB; target: HTMLElement } | null;
+
+  /** opt-in (data-sp-force): px of scroll-mark movement per 60fps frame
+      at which --force saturates to 1. 0 = this track does not publish
+      --force at all (leoparpeix.md §13's dragForceMultiplier/Max, ported
+      onto our own scroll velocity instead of their pointer delta). */
+  force: number;
+  /** this track's own scroll mark (see `edge`) on the previous frame the
+      force loop ran, for the velocity estimate. NaN until then. */
+  forceMark: number;
+  /** performance.now() at the previous frame the force loop ran. NaN
+      until then — the first frame always reads a velocity of 0. */
+  forceT: number;
+  /** the force loop's own two lerped values — attack (raw) then release
+      (smooth), leoparpeix's own two constants (§13). */
+  forceRaw: number;
+  forceSmooth: number;
+  /** the last --force string written, so an unchanged frame writes
+      nothing (same saving as `written`, kept separate since --force and
+      the position var can go stale on different frames). */
+  forceWritten: string;
 };
 
 type RGB = [number, number, number];
@@ -268,6 +300,12 @@ function read(el: HTMLElement): Track {
     step: Math.max(0, Math.min(1, num(el.getAttribute("data-sp-step"), 0))),
     written: "",
     current: NaN, // first frame snaps, so nothing eases in from zero on load
+    force: Math.max(0, num(el.getAttribute("data-sp-force"), 0)),
+    forceMark: NaN,
+    forceT: NaN,
+    forceRaw: 0,
+    forceSmooth: 0,
+    forceWritten: "",
   };
 }
 
@@ -288,6 +326,8 @@ export function useScrollEngine(deps: unknown[] = []) {
       // resolved, not mid-flight: reduced motion gets the finished frame
       tracks.forEach((t) => {
         t.varEl.style.setProperty(t.varName, "1");
+        // still: never any velocity, so the depth squash it drives never runs
+        if (t.force > 0) t.varEl.style.setProperty("--force", "0");
         if (t.bg) {
           const [r, g, b] = t.bg.to;
           t.bg.target.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
@@ -330,6 +370,7 @@ export function useScrollEngine(deps: unknown[] = []) {
     const draw = () => {
       frame = 0;
       const vh = window.innerHeight;
+      const now = performance.now(); // one clock read, shared by every force track this frame
       let settling = false;
 
       for (const t of tracks) {
@@ -385,6 +426,46 @@ export function useScrollEngine(deps: unknown[] = []) {
             Math.round(f + (t.bg!.to[i] - f) * e)
           );
           t.bg.target.style.backgroundColor = `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+        }
+
+        /* THE FORCE — leoparpeix.md §13's drag loop, on scroll velocity
+           instead of a pointer delta. `mark` above is this same track's
+           own scroll position (whatever `edge` already reads), so the
+           force is a measure of how fast THIS element's own progress is
+           moving right now, not a separate ruler. */
+        if (t.force > 0) {
+          // dt in units of a 60fps frame, clamped so a long gap (tab
+          // switch, a pause between wheel bursts) can't make the next
+          // frame's velocity estimate explode
+          const u = Number.isNaN(t.forceT)
+            ? 1
+            : Math.max(0.25, Math.min(3, (now - t.forceT) / 16.667));
+          // 0 on the very first frame this track runs — there is no
+          // previous mark yet to measure a distance against
+          const d = Number.isNaN(t.forceMark)
+            ? 0
+            : Math.abs(mark - t.forceMark) / u;
+          t.forceRaw += (d - t.forceRaw) * (1 - Math.exp(-0.42 * u));
+          const f = Math.max(0, Math.min(1, t.forceRaw / t.force));
+          t.forceSmooth += (f - t.forceSmooth) * (1 - Math.exp(-0.065 * u));
+          /* floor at the display's OWN rounding boundary, not at "close to
+             its target": during a release, `f` is itself still decaying
+             asymptotically toward 0 every frame, so smooth can close the
+             GAP to f (both sitting at some tiny shared plateau) long
+             before either one is actually zero — a relative snap freezes
+             the loop there forever, publishing that plateau as if it were
+             rest. An absolute floor matching what toFixed(3) would round
+             to 0 anyway is the only version that can ever reach a true,
+             published 0.000. */
+          if (t.forceSmooth < 0.0005) t.forceSmooth = 0;
+          else settling = true;
+          const fv = t.forceSmooth.toFixed(3);
+          if (fv !== t.forceWritten) {
+            t.forceWritten = fv;
+            t.varEl.style.setProperty("--force", fv);
+          }
+          t.forceMark = mark;
+          t.forceT = now;
         }
       }
 
