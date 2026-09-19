@@ -213,7 +213,7 @@ export default function WorkSection() {
         data-sp-from="0"
         data-sp-to={String(-(TRAVEL_SVH / 100))}
         data-sp-var="--bp"
-        data-sp-lerp="0.1"
+        data-sp-lerp="0.2" /* .2, not the room's .1: the chase is part of the swipe's delay (Jake, 2026-09-19); leoparpeix follows at .068 per frame on a 60fps clock — ours is the same order once the dwell is out of the way */
         data-sp-force="28"
       >
         <div className="dr-work-pin">

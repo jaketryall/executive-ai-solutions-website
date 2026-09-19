@@ -4064,36 +4064,49 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      move — writing all twelve now means that day costs nothing here. A
      term whose own i sits at or past --t's current max just clamps to 0
      and contributes nothing. Each --s<i> lives inside --t ∈ [i, i+1]:
-     pinned at 0 for the window's first .2 (a dwell), ramping to 1 over
-     the middle .6 (the slide), pinned at 1 for the last .2 (the next
-     dwell) — clamp() does all three without a branch. */
+     pinned at 0 for the window's first .03 (a dwell), ramping to 1 over
+     the middle .94 (the slide), pinned at 1 for the last .03 (the next
+     dwell) — clamp() does all three without a branch.
+
+     .03, not the .2 first built (Jake, 2026-09-19: "theres a lot of
+     delay when i start to swipe vs when it goes"): a .2 dwell was 77px
+     of scroll in which nothing moved, on top of the ramp's own slow
+     start, the chase and Lenis's own ramp. The landing (the snap) is
+     what puts the rail on a plateau; the dwell only has to be wide
+     enough to be one — 12px. Measured from a plateau with a real wheel:
+     the rail answers ~150ms after the first notch, of which ~85 is
+     Lenis starting the page itself. */
   --t: calc(var(--bp, 0) * (var(--n) - 1));
-  --s0: clamp(0, calc((var(--t) - 0 - .2) / .6), 1);
-  --s1: clamp(0, calc((var(--t) - 1 - .2) / .6), 1);
-  --s2: clamp(0, calc((var(--t) - 2 - .2) / .6), 1);
-  --s3: clamp(0, calc((var(--t) - 3 - .2) / .6), 1);
-  --s4: clamp(0, calc((var(--t) - 4 - .2) / .6), 1);
-  --s5: clamp(0, calc((var(--t) - 5 - .2) / .6), 1);
-  --s6: clamp(0, calc((var(--t) - 6 - .2) / .6), 1);
-  --s7: clamp(0, calc((var(--t) - 7 - .2) / .6), 1);
-  --s8: clamp(0, calc((var(--t) - 8 - .2) / .6), 1);
-  --s9: clamp(0, calc((var(--t) - 9 - .2) / .6), 1);
-  --s10: clamp(0, calc((var(--t) - 10 - .2) / .6), 1);
-  --s11: clamp(0, calc((var(--t) - 11 - .2) / .6), 1);
-  /* smoothstep — Apple's own step is ease-in-out (decodes/apple-highlights.md),
-     never a linear ramp between the two dwells */
-  --e0: calc(var(--s0) * var(--s0) * (3 - 2 * var(--s0)));
-  --e1: calc(var(--s1) * var(--s1) * (3 - 2 * var(--s1)));
-  --e2: calc(var(--s2) * var(--s2) * (3 - 2 * var(--s2)));
-  --e3: calc(var(--s3) * var(--s3) * (3 - 2 * var(--s3)));
-  --e4: calc(var(--s4) * var(--s4) * (3 - 2 * var(--s4)));
-  --e5: calc(var(--s5) * var(--s5) * (3 - 2 * var(--s5)));
-  --e6: calc(var(--s6) * var(--s6) * (3 - 2 * var(--s6)));
-  --e7: calc(var(--s7) * var(--s7) * (3 - 2 * var(--s7)));
-  --e8: calc(var(--s8) * var(--s8) * (3 - 2 * var(--s8)));
-  --e9: calc(var(--s9) * var(--s9) * (3 - 2 * var(--s9)));
-  --e10: calc(var(--s10) * var(--s10) * (3 - 2 * var(--s10)));
-  --e11: calc(var(--s11) * var(--s11) * (3 - 2 * var(--s11)));
+  --s0: clamp(0, calc((var(--t) - 0 - .03) / .94), 1);
+  --s1: clamp(0, calc((var(--t) - 1 - .03) / .94), 1);
+  --s2: clamp(0, calc((var(--t) - 2 - .03) / .94), 1);
+  --s3: clamp(0, calc((var(--t) - 3 - .03) / .94), 1);
+  --s4: clamp(0, calc((var(--t) - 4 - .03) / .94), 1);
+  --s5: clamp(0, calc((var(--t) - 5 - .03) / .94), 1);
+  --s6: clamp(0, calc((var(--t) - 6 - .03) / .94), 1);
+  --s7: clamp(0, calc((var(--t) - 7 - .03) / .94), 1);
+  --s8: clamp(0, calc((var(--t) - 8 - .03) / .94), 1);
+  --s9: clamp(0, calc((var(--t) - 9 - .03) / .94), 1);
+  --s10: clamp(0, calc((var(--t) - 10 - .03) / .94), 1);
+  --s11: clamp(0, calc((var(--t) - 11 - .03) / .94), 1);
+  /* HALF ease-out, HALF smoothstep: f = .5·(2s − s²) + .5·(3s² − 2s³).
+     Pure smoothstep (Apple's ease-in-out) started at slope 0 — with the
+     dwell in front of it the rail read as asleep for the first quarter
+     of a swipe (Jake, above). This starts at slope 1 — the rail answers
+     the first pixel — and still lands at slope 0, so the arrival stays
+     Apple's; the response is the only thing that changed. */
+  --e0: calc(.5 * var(--s0) * (2 - var(--s0)) + .5 * var(--s0) * var(--s0) * (3 - 2 * var(--s0)));
+  --e1: calc(.5 * var(--s1) * (2 - var(--s1)) + .5 * var(--s1) * var(--s1) * (3 - 2 * var(--s1)));
+  --e2: calc(.5 * var(--s2) * (2 - var(--s2)) + .5 * var(--s2) * var(--s2) * (3 - 2 * var(--s2)));
+  --e3: calc(.5 * var(--s3) * (2 - var(--s3)) + .5 * var(--s3) * var(--s3) * (3 - 2 * var(--s3)));
+  --e4: calc(.5 * var(--s4) * (2 - var(--s4)) + .5 * var(--s4) * var(--s4) * (3 - 2 * var(--s4)));
+  --e5: calc(.5 * var(--s5) * (2 - var(--s5)) + .5 * var(--s5) * var(--s5) * (3 - 2 * var(--s5)));
+  --e6: calc(.5 * var(--s6) * (2 - var(--s6)) + .5 * var(--s6) * var(--s6) * (3 - 2 * var(--s6)));
+  --e7: calc(.5 * var(--s7) * (2 - var(--s7)) + .5 * var(--s7) * var(--s7) * (3 - 2 * var(--s7)));
+  --e8: calc(.5 * var(--s8) * (2 - var(--s8)) + .5 * var(--s8) * var(--s8) * (3 - 2 * var(--s8)));
+  --e9: calc(.5 * var(--s9) * (2 - var(--s9)) + .5 * var(--s9) * var(--s9) * (3 - 2 * var(--s9)));
+  --e10: calc(.5 * var(--s10) * (2 - var(--s10)) + .5 * var(--s10) * var(--s10) * (3 - 2 * var(--s10)));
+  --e11: calc(.5 * var(--s11) * (2 - var(--s11)) + .5 * var(--s11) * var(--s11) * (3 - 2 * var(--s11)));
   --rx: calc(var(--e0) + var(--e1) + var(--e2) + var(--e3) + var(--e4) + var(--e5) + var(--e6) + var(--e7) + var(--e8) + var(--e9) + var(--e10) + var(--e11));
   --rail-x: calc(-1 * var(--rx) * var(--pitch));             /* tile 0's centre, relative to the band's centre — stepped now, not f(bp) directly */
   --pp: calc(var(--bp, 0) * 2 - 1);                          /* their uParallaxProgress, −1 → +1 — UNCHANGED, still f(bp): the pictures keep sliding through a hold */
