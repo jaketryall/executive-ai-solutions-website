@@ -101,7 +101,21 @@ here forward.
   `max-width`, the vertical parallax needs an absolute px calc (not a
   bare `%`, which resolves against the wrong box), and the engine's own
   force-track snap could freeze on a non-zero plateau instead of ever
-  reaching a true 0. Awaiting Jake's first look.
+  reaching a true 0.
+  SUPERSEDED same day by v5, ONE ROW, STICKY, on Jake's call ("okay so
+  better i just want one row though sticky, that's good though"): the
+  three blocks become one nine-tile rail (three cases × cover-plus-two)
+  inside a `position: sticky` band, pinned by the room's existing
+  no-library trick (`.dr-runs-stage`/`.dr-runs-pin`, §04) over a
+  100svh + 360svh (`TRAVEL_SVH`) stage; the info row is now three rows
+  absolutely stacked under the band, crossfading to whichever case is
+  under the centre. Everything else — the two picture parallaxes, the
+  `--force` depth squash, the pill, phone/reduced-motion's finger rail —
+  carries over from v4 unchanged. One real bug found and fixed (see
+  decisions.md): the shared vars moved up from `.dr-work-band` to the
+  new `.dr-work-stage`, so the mobile `--th` override had to move up
+  with them or `--tw` silently kept resolving the desktop formula.
+  Awaiting Jake's first look.
 - THE ENGINE (`components/dark/scroll-engine.ts`) gained a THIRD track
   kind, 2026-09-18: `data-sp-force="<px>"` publishes `--force` (0→1), a
   VELOCITY read off the same element's own `--sp` mark, modelled on

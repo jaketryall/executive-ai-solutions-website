@@ -5,51 +5,54 @@ import { PROJECTS } from "@/lib/work";
 import type { Project } from "@/lib/work";
 import { Roll } from "@/components/room/nav";
 
-/* §03 · THE WORK, v4 — LEOPARPEIX'S RAIL, ON SCROLL.
+/* §03 · THE WORK, v5 — ONE ROW, STICKY. Supersedes v4's three blocks
+   (6b3d1d1) on Jake's call, shown v4's frames: "okay so better i just
+   want one row though sticky, that's good though".
 
-   Jake, shown https://www.leoparpeix.com/'s drag-driven project rail:
-   "this drag work section … that's the feel I'm going for for the work
-   section but activated on scroll instead of drag, the items have like
-   vertical parallax and horizontal" → "go". SUPERSEDES v2, THE GALLERY
-   (49850bb) — a fixed clipped well scrubbing one contiguous strip with a
-   Lenis snap landing. Shown v2's frames, that idea didn't survive contact
-   with a real reference: what Jake wanted was leoparpeix's OWN rail, one
-   per project, not a shared filmstrip.
+   Everything v4 MEASURED still stands and is not re-derived here — the
+   comments beside .dr-work-img, .dr-work-tile and .dr-work-pill in
+   room.css are UNCHANGED (leoparpeix.md §13's two parallaxes, the
+   `--force` depth squash, the pill/frost recipe). What changes is the
+   SHAPE: nine shots (three cases × cover-plus-two) become ONE rail
+   inside a `position: sticky` band, instead of three rails that scroll
+   past one after another like §02's rows.
 
-   The mechanism below is read from leoparpeix's own bundled code
-   (design-dna/decodes/leoparpeix.md §13), not guessed off frames: Vue 3 +
-   THREE, DOM proxies UNIFORM 72.569vw × 41.944vw (1.73:1, 20px gap), one
-   rail per project. Their hand-driven drag (× 3, a 0.068 follow, a
-   0.9/frame coast, a 0.055 snap once the drag force dies) becomes our
-   SCROLL passage instead — no drag, no snap, no released gesture to land;
-   scroll IS the input, continuously, the whole time.
+   THE PIN is the room's own no-library trick, borrowed from §04
+   (`.dr-runs-stage` / `.dr-runs-pin`, room.css ~2147): a tall `relative`
+   wrapper (100svh + TRAVEL_SVH of extra scroll) holds a `sticky top: 0`
+   panel, so the panel holds still while the wrapper's own declared
+   scroll window drives everything inside it. No pin library, same as
+   the rest of the room.
 
-   THE FORCE (scroll-engine.ts's new `data-sp-force` track) stands in for
-   their drag force — attack 0.42 / release 0.065, THEIR two constants —
-   saturating on OUR scroll-mark velocity (28px per 60fps frame) rather
-   than their raw pointer delta. It drives the one thing their canvas does
-   that a position alone cannot: the DEPTH SQUASH (CSS perspective +
-   translateZ, room.css) — the only velocity-derived motion in this room,
-   everything else here is position.
+   TRAVEL_SVH = 360 replaces v4's per-block "~0.8vh of passage" — with
+   nine tiles sharing one rail instead of three separate 3-4-tile rails,
+   the drift (8 pitches at 1440) needs a longer runway to still read as
+   a ride and not a flick; 360svh keeps the same ≈3× drift-to-travel
+   feel v4 measured (verified live against the pass criteria this step
+   was built against, not assumed). `data-sp-to` below and the `--travel`
+   custom property are BOTH derived from this one constant so they
+   cannot silently disagree — the engine reads `data-sp-to` as a raw
+   attribute string (scroll-engine.ts's `read()`, `el.getAttribute(...)`)
+   and has no way to look at the element's own rendered CSS height to
+   infer it, so there is no other way to keep the two in lock-step than
+   sharing one source number.
 
-   THE TWO PARALLAXES (vertical = the block's own scroll passage,
-   horizontal = each tile's screen position) are ported straight off
-   their fragment shader onto the picture inside its frame — the frame
-   itself never parallaxes, exactly as theirs never does either.
+   THE INFO ROW is new: instead of one row per block (v4), the three
+   rows sit absolutely stacked under the one band and crossfade to
+   whichever project is under the centre — see room.css's
+   `.dr-work-info` comment for how `--c` (each row's own centre tile,
+   written from here) and the stage's `--idx` decide which row is on
+   top and clickable.
 
-   All three numbers — the tile geometry, the two parallaxes, the depth
-   math — live in room.css; this file only supplies the DOM and the
-   per-project data the CSS reads through `--i`, `--n` and each shot.
+   No snap (scroll is the input, not a released drag), no per-card
+   entrance settle (unchanged from v4 — the recession already animates
+   arrival). Phone + reduced motion: the finger's own rail, unchanged
+   from v4 (a native x-scroller with snap, no parallax, no depth), with
+   the three info rows stacked in flow instead of crossfading. */
 
-   No pin (the block scrolls past like §02's rows), no snap (there is no
-   released gesture to land), no per-card entrance settle (there is no
-   arrival moment left to settle — the recession is already running the
-   instant the block is on screen, so a separate settle has nothing to
-   do). Phone + reduced motion: the finger's own rail, a native
-   horizontal scroller with snap, no parallax, no depth — R1, nothing may
-   move under reduced motion. */
-
-const OURS = "executive-ai-solutions"; // same filter + same reason as v1/v2's comment
+const OURS = "executive-ai-solutions"; // same filter + same reason as v1/v2/v4's comment
+const SHOTS_PER_PROJECT = 3; // cover + two — down from v4's up-to-4, so three cases make one nine-tile rail
+const TRAVEL_SVH = 360; // the pinned band's scroll travel, in svh — see file header for why this one number feeds both the CSS var and data-sp-to
 
 type Shot = { src: string; width: number; height: number; alt: string };
 
@@ -62,7 +65,8 @@ const LANDSCAPE_MIN = 1.4;
    this is a lookup, not a new data file. A project not listed here (none
    currently) falls back to the general rule the picks above were made
    by: cover + the first three distinct landscape (≥1.4:1) figures out of
-   demo/gallery, in that order, deduped by src. */
+   demo/gallery, in that order, deduped by src. v5 only takes the first
+   SHOTS_PER_PROJECT (3) of whichever list this resolves to. */
 const SHOT_SRCS: Record<string, string[]> = {
   "desert-wings": [
     "/work/desert-wings-tall.png",
@@ -101,9 +105,20 @@ function shotsFor(p: Project): Shot[] {
     .slice(0, 4);
 }
 
+type Tile = { shot: Shot; project: Project; k: number; first: boolean };
+
 export default function WorkSection() {
   const cases = PROJECTS.filter((p) => p.slug !== OURS && p.cover);
   if (!cases.length) return null;
+
+  // ONE flat rail: each case's first SHOTS_PER_PROJECT shots, in project
+  // order, each tile knowing its case index (k, for --c below) and
+  // whether it's that case's first tile (the pill).
+  const tiles: Tile[] = cases.flatMap((p, k) =>
+    shotsFor(p)
+      .slice(0, SHOTS_PER_PROJECT)
+      .map((shot, i) => ({ shot, project: p, k, first: i === 0 }))
+  );
 
   return (
     <section className="dr-work" aria-labelledby="dr-work-h">
@@ -117,99 +132,104 @@ export default function WorkSection() {
         </h2>
       </header>
 
-      {cases.map((p, k) => {
-        const shots = shotsFor(p);
-        const headingId = `dr-work-${p.slug}`;
-        return (
-          <article className="dr-work-block" key={p.slug} aria-labelledby={headingId}>
-            {/* THE BAND declares its own passage — leoparpeix's rail is
-                41.944vw tall ≈ 0.8vh of scroll at 1440×736, so −0.8 carries
-                the rail's own top-to-bottom passage across the fold-to-60vh
-                window (an approximation of their fixed geometry, not an
-                exact one) — and its own FORCE, the depth squash's only
-                input (data-sp-force="28", scroll-engine.ts, cited there). */}
-            <div
-              className="dr-work-band"
-              style={{ "--n": shots.length } as CSSProperties}
-              data-sp
-              data-sp-edge="top"
-              data-sp-from="1"
-              data-sp-to="-0.8"
-              data-sp-var="--bp"
-              data-sp-lerp="0.1"
-              data-sp-force="28"
-            >
-              <ol className="dr-work-rail">
-                {shots.map((s, i) => (
-                  <li className="dr-work-tile" key={s.src} style={{ "--i": i } as CSSProperties}>
-                    <Link
-                      href={`/work/${p.slug}`}
-                      className="dr-work-card"
-                      aria-label={`${p.listName} — see work`}
-                    >
-                      <span className="dr-work-well">
-                        <Image
-                          className="dr-work-img"
-                          src={s.src}
-                          alt={s.alt}
-                          width={s.width}
-                          height={s.height}
-                          sizes="(max-width: 900px) 80vw, 73vw"
-                          priority={k === 0 && i === 0}
-                        />
-                      </span>
-                      {i === 0 && (
-                        <span
-                          className="dr-work-pill"
-                          style={
-                            {
-                              "--frost": `url(${p.clip?.poster ?? p.cover.src})`,
-                            } as CSSProperties
-                          }
-                        >
-                          {p.clip && (
-                            <img
-                              className="dr-work-thumb"
-                              src={p.clip.poster}
-                              alt=""
-                              width={36}
-                              height={36}
-                              loading="lazy"
-                            />
-                          )}
-                          <span className="dr-work-name">{p.listName}</span>
-                          <i className="dr-work-sep" aria-hidden />
-                          <span className="dr-work-see">
-                            <Roll label="See work" />
-                          </span>
+      {/* THE STAGE declares the pinned travel (TRAVEL_SVH, both here and
+          in --travel — see the file header for why one constant feeds
+          both) and its own force track, the depth squash's only input
+          (data-sp-force="28", scroll-engine.ts, cited there — unchanged
+          from v4 bar which element it now lives on). */}
+      <div
+        className="dr-work-stage"
+        style={{ "--n": tiles.length, "--travel": `${TRAVEL_SVH}svh` } as CSSProperties}
+        data-sp
+        data-sp-edge="top"
+        data-sp-from="0"
+        data-sp-to={String(-(TRAVEL_SVH / 100))}
+        data-sp-var="--bp"
+        data-sp-lerp="0.1"
+        data-sp-force="28"
+      >
+        <div className="dr-work-pin">
+          <div className="dr-work-band">
+            <ol className="dr-work-rail">
+              {tiles.map((t, i) => (
+                <li
+                  className="dr-work-tile"
+                  key={`${t.project.slug}-${t.shot.src}`}
+                  style={{ "--i": i } as CSSProperties}
+                >
+                  <Link
+                    href={`/work/${t.project.slug}`}
+                    className="dr-work-card"
+                    aria-label={`${t.project.listName} — see work`}
+                  >
+                    <span className="dr-work-well">
+                      <Image
+                        className="dr-work-img"
+                        src={t.shot.src}
+                        alt={t.shot.alt}
+                        width={t.shot.width}
+                        height={t.shot.height}
+                        sizes="(max-width: 900px) 80vw, 73vw"
+                        priority={i === 0}
+                      />
+                    </span>
+                    {t.first && (
+                      <span
+                        className="dr-work-pill"
+                        style={
+                          {
+                            "--frost": `url(${t.project.clip?.poster ?? t.project.cover.src})`,
+                          } as CSSProperties
+                        }
+                      >
+                        {t.project.clip && (
+                          <img
+                            className="dr-work-thumb"
+                            src={t.project.clip.poster}
+                            alt=""
+                            width={36}
+                            height={36}
+                            loading="lazy"
+                          />
+                        )}
+                        <span className="dr-work-name">{t.project.listName}</span>
+                        <i className="dr-work-sep" aria-hidden />
+                        <span className="dr-work-see">
+                          <Roll label="See work" />
                         </span>
-                      )}
-                    </Link>
-                  </li>
-                ))}
-              </ol>
-            </div>
+                      </span>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          </div>
 
-            {/* the info row — number, name + sector, year, scope, and the
-                exit link. Renamed the heading class to .dr-work-title (the
-                spec's own sketch reused .dr-work-name from the pill above,
-                which would have let this rule's font-size/color win the
-                cascade over the pill's and blown the pill's label up to
-                body size — two different things, two different classes). */}
-            <div className="dr-work-info wrap">
-              <span className="t-label dr-work-num">{String(k + 1).padStart(2, "0")}</span>
-              <h3 className="dr-work-title" id={headingId}>
-                {p.listName} <span className="dr-work-type">{p.sector}</span>
-              </h3>
-              <span className="t-label dr-work-date">{p.year}</span>
-              <span className="t-label dr-work-scope">{p.kind}</span>
-              <Link className="dr-work-open" href={`/work/${p.slug}`}>
-                See the case <i aria-hidden>→</i>
-              </Link>
-            </div>
-          </article>
-        );
-      })}
+          {/* THE INFO ROW — three rows absolutely stacked, crossfading to
+              whichever case is under the centre (room.css's
+              `.dr-work-info`: --c is this row's own centre tile index in
+              the flat rail above). */}
+          <div className="dr-work-infos wrap">
+            {cases.map((p, k) => (
+              <div
+                className="dr-work-info"
+                key={p.slug}
+                style={{ "--c": k * SHOTS_PER_PROJECT + 1 } as CSSProperties}
+              >
+                <span className="t-label dr-work-num">{String(k + 1).padStart(2, "0")}</span>
+                <h3 className="dr-work-title">
+                  {p.listName} <span className="dr-work-type">{p.sector}</span>
+                </h3>
+                <span className="t-label dr-work-date">{p.year}</span>
+                <span className="t-label dr-work-scope">{p.kind}</span>
+                <Link className="dr-work-open" href={`/work/${p.slug}`}>
+                  See the case <i aria-hidden>→</i>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

@@ -3797,55 +3797,48 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 @keyframes dr-lead { from { translate: 0 42px; } to { translate: 0 -18px; } }
 
 
-/* §03 · THE WORK, v4 — LEOPARPEIX'S RAIL, ON SCROLL. Supersedes v2, THE
-   GALLERY (49850bb), on Jake's call: shown leoparpeix.com's drag-driven
-   project rail ("Selected projects"), "that's the feel I'm going for for
-   the work section but activated on scroll instead of drag, the items
-   have like vertical parallax and horizontal" → "go".
+/* §03 · THE WORK, v5 — ONE ROW, STICKY. Supersedes v4's three blocks
+   (6b3d1d1) on Jake's call, shown v4's frames: "okay so better i just
+   want one row though sticky, that's good though".
 
-   The mechanism is read from their own bundled code
-   (design-dna/decodes/leoparpeix.md §13), not guessed off frames: Vue 3 +
-   THREE, DOM proxies UNIFORM 72.569vw × 41.944vw (1.73:1, 20px gap), one
-   rail per project (their six projectBlocks, ours three cases).
+   Everything below the pin is v4's, UNCHANGED, and its own comments are
+   left in place rather than restated: THE TWO PARALLAXES and THE PILL
+   comments a few rules down are still the record of leoparpeix.md §13's
+   math and the 2026-09-06 no-backdrop-filter law. What moved is only
+   WHERE the shared vars (`--th`, `--pitch`, `--drift`, `--rail-x`,
+   `--pp`, `--force`) get computed — up from `.dr-work-band` (one per
+   project block, v4) onto `.dr-work-stage` (one for the whole section,
+   v5) — because the rail, the tiles AND the new info row all need to
+   read them now, and custom properties only inherit downward.
 
-   THE STRUCTURE: their drag loop (hand × 3, a 0.068 follow, a 0.9/frame
-   coast, a 0.055 snap once the drag force dies) becomes our scroll
-   passage — `--bp` runs 1 → −0.8 on the block's own top edge (the rail is
-   ≈0.8vh of passage at 1440×736, since it is 41.9vw ≈ 0.8×736px tall — an
-   approximation of their fixed geometry, not an exact one), chased at the
-   room's own 0.1. Tile 0 is centred at arrival (`--rail-x` at `--bp` 0);
-   the rail then rides the rest of the passage at (n−1) tiles, the same
-   shape as their pitch × drag distance.
+   THE PIN is the room's own no-library trick, borrowed from §04
+   (`.dr-runs-stage` / `.dr-runs-pin` above, ~line 2147): a tall
+   `position: relative` wrapper (100svh + a declared travel) holds a
+   `position: sticky; top: 0` panel, so the panel holds still while the
+   wrapper's own scroll window drives everything inside it — no pin
+   library anywhere in this room.
 
-   THE TWO PARALLAXES are theirs, ported from the FRAGMENT shader onto the
-   picture inside its own frame (never the frame itself, which is exactly
-   what theirs never does either): vertical rides the block's own passage
-   (`--pp`, their `uParallaxProgress`) at 8.5% of the tile's height;
-   horizontal rides the tile's screen position (`--ndc`, their
-   `uParallaxX`, computed as a ratio of two lengths via `tan(atan2())` —
-   design-dna/reference_grow_effects_raster) at 1.25 × 8.5% of the width,
-   toward the centre — ported onto a 20% bleed (theirs is 5%; ours carries
-   more travel, so a bigger bleed is what keeps an edge from ever showing,
-   verified per-corner in the pass criteria).
+   THE TRAVEL is 360svh (`--travel`, written from work-section.tsx's
+   `TRAVEL_SVH`, and `data-sp-to` derived from that same constant so the
+   two cannot drift apart — the engine reads `data-sp-to` as a raw
+   attribute string and has no way to read the element's own rendered
+   height to infer it). It replaces v4's per-block "~0.8vh of passage":
+   nine tiles now share one rail instead of three separate 3-4-tile
+   rails, so the drift ((n−1) pitches) needs a longer runway to still
+   read as v4's own ≈2.4-3× ride rather than a flick — verified live
+   against this step's own pass criteria, not assumed.
 
-   THE SQUASH is depth, ported from their VERTEX shader
-   (`position.z -= dist × dragForce × strength`) onto CSS perspective:
-   `--force` is a NEW engine track (`data-sp-force`, scroll-engine.ts)
-   modelled on their own drag-force loop (attack 0.42, release 0.065 —
-   THEIR two constants) but saturating on OUR scroll-mark velocity
-   (28px of movement per 60fps frame) rather than their raw pointer delta
-   — the only VELOCITY-derived value in the room, everything else here is
-   position. `translateZ` pushes an off-centre tile back by
-   `--force × --dist × 800px` (perspective 1200px, so scale ≈
-   1200/(1200+z) — 800 lands close to their measured ~40% edge-tile
-   shrink at full force, §12/§13 of the decode).
+   THE INFO ROW is new (see the comment beside `.dr-work-info` below):
+   three rows absolutely stacked under the one band, crossfading to
+   whichever case is under the centre, instead of v4's one row per
+   block.
 
-   No snap (scroll is the input, not a released drag), no pin (the block
-   scrolls past like §02's rows), no Cosmos settle (the recession already
-   animates the arrival — there is nothing left for a separate settle to
-   do). Phone + reduced motion: the finger's own rail — a native
-   x-scroller with snap, no parallax, no depth (R1: nothing may move under
-   reduced motion). Neighbours peeking at both edges is the reference's
+   No snap (scroll is the input, not a released drag), no per-card
+   entrance settle (unchanged from v4 — the recession already animates
+   the arrival). Phone + reduced motion: the finger's own rail,
+   unchanged from v4 (a native x-scroller with snap, no parallax, no
+   depth, R1), with the three info rows stacked in flow instead of
+   crossfading. Neighbours peeking at both edges is still the reference's
    own look, not a bug to crop away. */
 
 .dr-work { position: relative; z-index: 4; padding-block: clamp(72px, 12svh, 150px) 0; }
@@ -3859,23 +3852,48 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   line-height: 1.08; letter-spacing: -0.028em;
   max-width: 18em; margin: 0 auto; text-wrap: balance;
 }
-.dr-work-block + .dr-work-block { margin-top: clamp(56px, 9svh, 120px); }
 
-/* THE RAIL — leoparpeix's: uniform 1.73:1 tiles, 20px gap; tile 0 centred
-   at the block's arrival, the rail then rides the block's passage at
-   (n−1) tiles per passage ≈ 2.4× the page (read §13 above). */
-.dr-work-band {
-  position: relative; height: var(--th); overflow: clip;
+/* THE STAGE — the pinned travel and every var the rail/tiles/infos read
+   by inheritance (moved up from v4's `.dr-work-band`, see the file
+   header). `height` is 100svh (the pin's own height) plus the declared
+   travel, so the stage's own bottom edge is exactly where the pin lets
+   go — get this wrong and the pin either releases early (a dead gap of
+   plain scroll before §04) or never releases (§04 stuck under the pin). */
+.dr-work-stage {
+  position: relative; height: calc(100svh + var(--travel));
   /* leoparpeix sizes the tile off vw alone (§13: height 41.944vw, no vh
      ceiling at all) — 90svh is only a SAFETY floor under it for an
      unusually short/ultra-wide window; 70svh measured to silently bind
      at the reference 1440×736 itself (515px, not the reference's own
-     604), which the pass criteria caught. 90svh clears 736's own 604
+     604), which the v4 pass criteria caught. 90svh clears 736's own 604
      with room (662.4) and still caps a genuinely short viewport. */
   --th: min(41.944vw, 90svh); --tw: calc(var(--th) * 1.7302); --gap: 20px; --pitch: calc(var(--tw) + var(--gap));
   --drift: calc((var(--n) - 1) * var(--pitch));
   --rail-x: calc(-1 * var(--bp, 0) * var(--drift));          /* tile 0's centre, relative to the band's centre */
   --pp: calc(var(--bp, 0) * 2 - 1);                          /* their uParallaxProgress, −1 → +1 */
+  --idx: calc(var(--bp, 0) * (var(--n) - 1));                /* the tile under the centre, fractional — the info row's crossfade reads this */
+}
+/* THE PIN — sticky, no library (see the file header). The column is
+   centred on its own axis for the same reason `.dr-runs-pin` is: a
+   single full-width child stretches, so `align-items` on a row would
+   leave it flush top with a dead screen under it; a column with
+   `justify-content: center` does not have that problem. */
+.dr-work-pin {
+  position: sticky; top: 0; height: 100svh; overflow: clip;
+  display: flex; flex-direction: column; justify-content: center;
+  padding-top: clamp(64px, 11svh, 118px);
+}
+
+/* THE RAIL — leoparpeix's: uniform 1.73:1 tiles, 20px gap; tile 0 centred
+   at arrival (`--bp` 0), the rail then rides the stage's whole travel at
+   (n−1) tiles (read the file header above). `overflow: visible` here on
+   purpose — the rail runs wider than the viewport by design (drift is
+   several thousand px at nine tiles), and it is `.dr-work-pin` above,
+   not this band, that clips it to the screen, same split as
+   `.dr-runs-pin` ("the track runs past both edges of the screen and is
+   clipped here"). */
+.dr-work-band {
+  position: relative; height: var(--th); overflow: visible;
   perspective: 1200px; perspective-origin: 50% 50%;
 }
 .dr-work-rail {
@@ -3943,12 +3961,40 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-work-see .dr-char::after { color: var(--work-see-alt); }
 .dr-work-pill:hover .dr-char, .dr-work-card:focus-visible .dr-char { transform: translateY(-100%); }
 
-/* THE INFO ROW — number, name + sector, year, scope, the exit link
-   (`.dr-work-title` rather than the pill's own `.dr-work-name`: the two
-   are different things sharing a page and needed different classes, or
-   this rule's font-size/colour would have won the cascade over the
-   pill's and blown its label up to body size). */
-.dr-work-info { display: grid; grid-template-columns: 3ch 1fr auto auto auto; gap: 24px; align-items: baseline; margin-top: 18px; }
+/* THE INFO ROW — three rows absolutely stacked under the one band,
+   crossfading to whichever case is under the centre. `--idx` (the
+   stage, above) is the fractional tile under the centre; `--c` is this
+   row's OWN centre tile, written per-row from work-section.tsx
+   (`k * SHOTS_PER_PROJECT + 1` — the middle of that case's own three
+   tiles in the flat rail). `--d` is the distance between them: a row is
+   fully on for one tile either side of its own centre (`--d` ≤ 1) and
+   gone by two tiles out, so the run-off overlaps exactly the run-on of
+   its neighbour.
+
+   Because all three rows sit at the identical grid position, plain DOM
+   order would always paint the LAST one on top regardless of which is
+   actually visible — so `z-index` is driven by the same `--d` the
+   opacity reads (rounded, since z-index has to be an integer): the row
+   nearest the centre is always topmost, and its own link is the one
+   `elementFromPoint` returns at that pixel. The rows themselves stay
+   `pointer-events: none` — an off-screen-opacity row's empty grid cells
+   must not swallow a click meant for the visible row's link sitting at
+   the same spot — and only the link opts back in.
+
+   `.dr-work-title` rather than the pill's own `.dr-work-name` still
+   stands (v4): the two are different things sharing a page and needed
+   different classes, or this rule's font-size/colour would have won the
+   cascade over the pill's and blown its label up to body size. */
+.dr-work-infos { position: relative; height: 1.6em; margin-top: 18px; }
+.dr-work-info {
+  position: absolute; inset: 0 var(--col-inset);
+  display: grid; grid-template-columns: 3ch 1fr auto auto auto; gap: 24px; align-items: baseline;
+  --d: max(calc(var(--idx) - var(--c)), calc(var(--c) - var(--idx)));
+  opacity: clamp(0, calc(2 - var(--d)), 1);
+  z-index: round(calc(1000 - var(--d) * 100), 1);
+  pointer-events: none;
+}
+.dr-work-info .dr-work-open { pointer-events: auto; }
 .dr-work-num, .dr-work-date, .dr-work-scope { color: var(--ink-4); }
 .dr-work-title { font-size: var(--fs-body); font-weight: 500; color: var(--ink); margin: 0; }
 .dr-work-type { color: var(--ink-4); }
@@ -3959,12 +4005,24 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-work-open:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 4px; }
 
 @media (max-width: 900px), (prefers-reduced-motion: reduce) {   /* the finger's rail (their mobile: 300×190, touch-action pan-y) */
-  .dr-work-band { height: auto; overflow-x: auto; overflow-y: visible; scroll-snap-type: x mandatory; perspective: none; padding-inline: var(--col-inset); scrollbar-width: none;
-    --th: min(49vw, 240px); }
+  /* --th has to be overridden HERE, on the stage, not on the band below —
+     --tw/--pitch/--drift are declared on `.dr-work-stage` and their own
+     `var(--th)` resolves against THIS element's cascaded --th the moment
+     they're substituted into a used property (tile's flex-basis); a
+     descendant's override of --th (band) only reaches properties that
+     read --th directly at or below that descendant (tile's `height`),
+     never --tw itself, which would keep resolving the desktop
+     `min(41.944vw, 90svh)` formula against the phone's own viewport
+     (measured: 283px, not 330 — this was caught live, not assumed). */
+  .dr-work-stage { height: auto; --th: min(49vw, 240px); }
+  .dr-work-pin { position: static; height: auto; overflow: visible; display: block; padding-top: 0; }
+  .dr-work-band { height: auto; overflow-x: auto; overflow-y: visible; scroll-snap-type: x mandatory; perspective: none; padding-inline: var(--col-inset); scrollbar-width: none; }
   .dr-work-band::-webkit-scrollbar { display: none; }
   .dr-work-rail { position: static; translate: none; will-change: auto; transform-style: flat; width: max-content; }
   .dr-work-tile { transform: none; scroll-snap-align: center; will-change: auto; }
   .dr-work-img { translate: none; inset: 0; width: 100%; height: 100%; }
   .dr-work-pill { top: 12px; }
-  .dr-work-info { grid-template-columns: 3ch 1fr; row-gap: 6px; }
+  .dr-work-infos { height: auto; }
+  .dr-work-info { position: static; opacity: 1; grid-template-columns: 3ch 1fr; row-gap: 6px; }
+  .dr-work-info + .dr-work-info { margin-top: 14px; }
 }
