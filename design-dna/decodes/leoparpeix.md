@@ -411,3 +411,61 @@ tile is flat and full size. `uDragScaleStrength` (75e-6) and
 team · roles · project link`). Cursor pill "Drag" over the rail
 (`cursorIndication`, imperative per-frame follow). Mobile: same rail,
 `touch-action: pan-y`, 300×190 proxies, `n4` config.
+
+---
+
+## 14. THE HERO TITLES' ENTRANCE — "FRENCH / INTERACTIVE / DESIGNER" (from the code, 2026-09-18)
+
+Jake: "the french interactive designer text can you look at the effects for
+it i really like that entrance". Component `BeeBlock` (also the footer's
+titles). Data: `titles: ["French","Interactive","Designer"]`,
+`titlesReveal: ["Creative","Passionnate","Art Director"]`.
+
+**Type:** family "title", `font-variation-settings: "wght" 622`, uppercase,
+`line-height: .9`, `font-size: 11.25vw` (162px at 1440; 324px cap; 48px
+phone), centred, three lines.
+
+**Structure per line:** `.titles__wrapper` (overflow hidden — the MASK) →
+`.wrapper` (the moving box, `overflow: hidden; backface-visibility:
+hidden`) → `h2.title`. Two stacks exist in the same box: the default
+titles and the reveal titles (`position: absolute; top/left 50%;
+translate(−50%, −50%)`), the reveal set resting at
+`translateY(100%) translate(∓5%)`.
+
+**The entrance (exact):**
+- Rest state, set before anything: each line's box at `y: 100%` (one
+  line below, hidden by its mask) and `x: +5% / −5% / +5%` — alternating
+  by line index (`index % 2 ? −5% : +5%`).
+- Trigger: the loader's reveal-complete (or, for blocks lower on the page,
+  the block's top entering the viewport — `progress > 0`, once).
+- Timeline: `delay = 0 + 0.115s`; each line `fromTo({ y:"100%", x:±5% } →
+  { y:"0%", x:"0%" })`, **duration 1.0s**, ease **`cubic-bezier(.4, 0, 0,
+  1)`** (their CustomEase "reveal": slow in, decisive middle, long
+  settle), **stagger 0.115s** per line, `force3D`, `will-change:
+  transform` set on start and REMOVED on complete/interrupt (`fp`).
+  So the three lines rise through their masks on a slight diagonal —
+  the first drifting in from the right, the second from the left, the
+  third from the right — 115ms apart, done at ~1.35s.
+- Their other ease, "hide": `cubic-bezier(.86, 0, .07, 1)`.
+
+**The swap (click on the bee, the `(Click to feed the bee)` indication):**
+the default lines EXIT downward — `to { y:"100%", x: index%2 ? +5% : −5% }`
+(the OPPOSITE sideways direction to their entrance), ease `power4.inOut`,
+**1.5s**, stagger 0.115s — while the reveal lines ENTER from below —
+`to { y:0, x:0 }`, ease "reveal", **2.0s**, starting at **0.63s + index ×
+0.1s**. Toggling back runs the mirror. Two readings of one headline,
+crossing in the same masks.
+
+**Not the titles:** the header's small description ("Driven by detail.
+Obsessed with seamless motion.") uses the generic TextComponent line
+reveal (0.25s after the loader, +0.9s on first load) and EXITS on scroll
+with `translateY(progress × 800%)` and a fade over progress .2 → .45 of
+the header's height — a very fast lift, not a parallax.
+
+**Against the room's laws:** the ease is a THIRD curve (the room runs two:
+structure `(.25, 1, .5, 1)`, UI `(.16, 1, .3, 1)`); to port the feel
+exactly it would have to replace the structure ease site-wide or be the
+one declared exception. The masked rise itself the hero already has
+(the line's entrance transform, 103% below its place); what it lacks is
+the alternating ±5% sideways drift, the 1.0s/115ms timing and the
+second reading on click.
