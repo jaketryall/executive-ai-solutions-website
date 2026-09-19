@@ -46,6 +46,19 @@ here forward.
   drop cap b3ea6c2, the lift 9cd34bc, the shutter da61f3c. Why it
   works: memory feedback_hero_that_landed. NEEDS JAKE: real Google
   rating/count/link; AAHG + Riled marks; the reel cut (reel-spec.md).
+  THE CURTAIN (2026-09-19, Jake: "isnt dramatic enough" → "go on the
+  curtain"): the offer head (OfferHead) is now PINNED under the film in
+  a `.dr-say-stage`/`.dr-say-pin` sticky pair — the film's own leave
+  uncovers the words, a hold follows, then the services card climbs
+  over them (`--climb-wrap`, was a plain wrapper, now carries the cover).
+  data-wipe came OFF the kicker/h2 entirely (a real engine bug found
+  live: splitLines()/undo() does not survive the sticky pin — see
+  decisions.md). Seam devices list in decisions.md is now six, not
+  five. THE CARD also grew: three deliverables per column under the
+  price (lib/services.ts, first three, verbatim) and the vouch is now
+  a full pull quote (--fs-section, avatar above). Card 721→990px at
+  1440; page +383px. Awaiting Jake's look, same as the row-based §02
+  note below (his review is still pending past the initial look).
 - THE RECEIPTS (2026-09-13, new, under the dock): four honest figures
   with window + source link + as-of, rolling in on the odometer.
   "1,000+" waits on the exact GA number; live GA4 is the next step if

@@ -833,6 +833,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      entrance … like a rise and grow") — the same rule as the title:
      nothing is shown that later goes away, so nothing flashes. */
   border-radius: 10px; background: transparent;
+  /* aria-hidden and never filled — but without this it still intercepts
+     hit-testing (elementFromPoint, clicks) for whatever sits under its
+     box. Harmless until THE CURTAIN (2026-09-19) put the pinned
+     statement in that exact first-screen region, behind the reel's z5
+     but still under this slot's z6. */
+  pointer-events: none;
 }
 
 /* THE WORDS LEAVE. No pin — the whole screen scrolls away at scroll's
@@ -1108,6 +1114,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   /* under the stage (6), over the ground: the reel paints beneath the
      words. The rail (30) stays over everything. */
   position: relative; z-index: 5;
+  /* nothing inside is interactive (a plain autoplay/muted video, no
+     controls, no click) — but the dock's own STATIC flow box is far
+     bigger on screen than the transformed reel once THE CURTAIN (below)
+     put the pinned statement right after it: without this, the dock's
+     empty box (no fill of its own) intercepts elementFromPoint/clicks
+     over whatever it overlaps, even in the part of it the film has
+     already scrolled off. */
+  pointer-events: none;
   /* THE REEL'S FLOW BOX IS THE COLUMN — the hero's and the rail's
      edges — a 2.6:1 letterbox, the same box as the slot; the transform
      does the rest. The padding above it is the dead space the film
@@ -1208,6 +1222,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   position: relative; z-index: 1;
   width: 100%; aspect-ratio: 2.6 / 1;
   overflow: hidden;
+  /* re-opts INTO hit-testing: the dock (its parent) is pointer-events:
+     none for its own empty static box (THE CURTAIN, below), which
+     inherits here too unless undone — and this box IS what THE CURTAIN's
+     elementFromPoint checks need to still resolve to while the film
+     visually covers the pin. */
+  pointer-events: auto;
   background: #0a0a0b; /* the film's ground, in either room */
   translate: var(--tx) var(--ty);
   scale: var(--sx) var(--sy);
@@ -1302,6 +1322,72 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-offer-more { margin: clamp(20px, 3svh, 32px) auto 0; max-width: 52ch;
   font-size: var(--fs-read); line-height: 1.5; color: var(--ink-2); }
 
+/* ══ THE CURTAIN (2026-09-19, decisions.md) ═══════════════════════
+   Jake: "this section isnt dramatic enough" → "go on the curtain". The
+   head sits PINNED under the film: `.dr-say-stage` is a tall flow box
+   whose top is pulled (--say-pull, page.tsx measure()) to doc 0.55vh —
+   the instant the reel goes full screen (--grow, THE DOCK above). Its
+   sticky pin then holds the head centred on screen while the film
+   leaves at scroll's own rate, uncovering it, and for a hold beyond
+   that. z 4, under the dock's 5 — the reel paints OVER the pin until it
+   has actually scrolled away, never through a mask or an opacity. */
+.dr-say-stage {
+  position: relative; z-index: 4;
+  margin-top: calc(-1 * var(--say-pull, 0px));
+  /* --say-hold: the pin's own travel (100svh, matching --cur's window
+     below) plus the hold with the words alone once --cur reaches 1.
+     180, not the 130 first tried: the CARD's own pre-arrival rise
+     (--rise-d, .dr-svc-in) starts the moment .dr-climb-wrap's raw layout
+     top crosses the bottom of the viewport — a full --rise-d worth of
+     scroll (≈.26vh) BEFORE its top is visually at 0 — and at 130 that
+     crossing landed inside the uncover, not after the hold (measured:
+     the card was already over the words at 1.55vh). Raised (measured,
+     see .dr-climb-wrap below for the matching correction) until the
+     card is still below the fold through the hold and only arrives
+     once it is over. */
+  --say-hold: 180svh;
+  height: calc(100svh + var(--say-hold));
+}
+.dr-say-pin {
+  position: sticky; top: 0; height: 100svh; z-index: 4;
+  display: grid; place-items: center;
+}
+@media (min-width: 901px) {
+  /* the pin's own centring replaces the bottom padding that used to
+     hold the climb's room (THE HEAD, above) */
+  .dr-say-pin .dr-offer-head { padding-block: 0; }
+}
+/* data-wipe is OFF both lines here (services-section.tsx has the why —
+   a wipe under a curtain fires unseen, and the engine's split/undo cycle
+   measurably did not survive the sticky pin on either width) — no
+   .dr-wl neutralising needed, there is nothing to neutralise. */
+/* THE SETTLE: the lines land as the curtain clears them — full size
+   while the film still covers them (--cur 0, never seen at that scale),
+   resolving to 1 as the last of the film leaves. */
+.dr-offer-say { scale: calc(1.12 - 0.12 * var(--cur, 1)); transform-origin: 50% 60%; }
+
+/* THE COVER: the services card is pulled up a screen so its own top
+   arrives right as the curtain's hold ends, climbing OVER the still-
+   pinned words (THE CARD GROWS, .dr-svc-in, keeps doing the rest).
+   Pulled up LESS than a full 100svh, by exactly .dr-svc-in's own
+   --rise-d (clamp(110px,26svh,300px), duplicated here — a custom
+   property set on a child cannot be read by its parent): the card's
+   pre-arrival RISE (THE CLIMB, .dr-svc-in) makes its own VISUAL top
+   outrun this wrapper's plain layout top by that same amount once it
+   has arrived, so without the correction the card visually reached y 0
+   ~150px before the pin actually released (measured) — pulling up
+   --rise-d less cancels exactly that, so the two now land together. */
+.dr-climb-wrap { margin-top: calc(-100svh + clamp(110px, 26svh, 300px)); }
+
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  /* no stage, no pin: the statement sits in flow exactly as it did
+     before the curtain, and the wipes (still in the markup) run */
+  .dr-say-stage { margin-top: 0; height: auto; }
+  .dr-say-pin { position: static; height: auto; display: block; }
+  .dr-offer-say { scale: none; }
+  .dr-climb-wrap { margin-top: 0; }
+}
+
 /* THE PATH: three numerals, one over each column, joined by a line —
    a diagram, not a divider: the customer's route, site → system → the
    clicks that find it. On the dark card the line is light at .18. */
@@ -1351,9 +1437,50 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-offer-what { display: block; color: var(--ink-3); font-size: var(--fs-body); }
 .dr-offer-price { display: block; margin-top: 6px; color: var(--ink-2);
   font-size: var(--fs-body-s); }
-/* the witness, centred under the three */
-.dr-offer-vouch { margin: clamp(32px, 5svh, 56px) auto 0; max-width: 60ch;
-  justify-content: center; }
+/* SEE WHAT'S IN IT (2026-09-19, Jake: "the services one thing is too
+   short") — the first three deliverables, verbatim from lib/services.ts:
+   not a summary, the actual list the service page itself leads with.
+   t-label's own register (Archivo, tracked, --fs-small — checks.md's
+   type-scale law) but sentence case: a LABEL is a tag, this is a
+   sentence naming what you get. */
+.dr-offer-inside { list-style: none; width: 100%; text-align: left;
+  margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--edge);
+  display: flex; flex-direction: column; gap: 6px; }
+.dr-offer-inside li { position: relative; padding-left: 14px;
+  text-transform: none; line-height: 1.5; color: var(--ink-3); }
+.dr-offer-inside li::before { content: ""; position: absolute; left: 0; top: .6em;
+  width: 4px; height: 4px; border-radius: 999px; background: var(--ink-4); }
+/* the witness — a FULL PULL QUOTE now (same date, same ask): the
+   column's own width, display size, the avatar above it rather than
+   beside it. `.dr-vouch` alone still serves nothing else on this page
+   (grep confirms), so the combined selector is only for cascade order,
+   never a scoping guard. */
+.dr-offer-vouch.dr-vouch { flex-direction: column; align-items: center;
+  text-align: center; gap: 0; max-width: none; width: 100%;
+  margin: clamp(48px, 7svh, 88px) auto 0; }
+.dr-offer-vouch .dr-vouch-av { width: 40px; height: 40px;
+  margin-bottom: clamp(16px, 2.4svh, 24px); }
+/* .dr-vouch's own (later, equal-specificity) blockquote/figcaption rules
+   would otherwise win on source order — combined selectors, not a new
+   scope, force these to win regardless */
+.dr-offer-vouch.dr-vouch blockquote {
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 500;
+  /* --fs-feature (56px at 1440) ran the quote to 7 lines at a 30ch
+     measure (measured) — too big for a witness, however full a quote.
+     The spec's own named fallback was a raw clamp(1.35rem,2.1vw,1.9rem);
+     the type-scale lock (2026-09-07, checks.md) forbids a new raw size,
+     so this is --fs-section instead — the section-header rung, one
+     below --fs-feature, and byte-adjacent in effect: measured at 2 lines
+     here (38.4px), same as the raw clamp measured (30.24px). `max-width`
+     is `ch` on THIS element on purpose, not `.dr-vouch-body` (a
+     different font-size) — `ch` resolves against its own element's
+     font, and on the body it stayed a constant 340px however small this
+     got. */
+  max-width: 30ch;
+  font-size: var(--fs-section); line-height: 1.25;
+  text-wrap: balance; color: var(--ink); }
+.dr-offer-vouch.dr-vouch figcaption { margin-top: clamp(12px, 2svh, 20px); }
 /* the lag hierarchy (see THREE RATES below): steps first, columns, then
    the witness */
 .dr-offer-steps { translate: 0 calc((1 - var(--ap, 1)) * 12px); }

@@ -176,3 +176,21 @@ bug; never delete a line.
 - At rest after the entrance: `.dr-line .dr-read--alt` computed `translate` is `-5% 100%` and NO ink of the second reading is visible between the h1's bottom and the strip's top (the mask clips it — `.dr-line` must be `position: relative`).
 - (RETIRED the same day) the hover swap — hovering `.dr-h1` changes NOTHING now: `.dr-read` translate stays `none`, no `.dr-read--alt` exists.
 - Entrance (screencast): the title's mask clips a diagonal rise (from +5%/103%), landed by ~1.3s; the strip arrives from the left 115ms after the title. `--ease-reveal` appears in no rule outside §01.
+
+## §02 · THE CURTAIN (2026-09-19)
+- At scroll 0.55vh (1440×736: 405px): `.dr-say-pin`'s `getBoundingClientRect().top` is 0; `elementFromPoint` at `.dr-offer-say`'s centre resolves inside the reel (VIDEO or a `.dr-hero-reel`/`.dr-dock` descendant), never the h2.
+- At scroll 1.05vh: `--cur` on `.dr-say-stage` is .50 (±.02); the reel's `bottom` is within 4px of 0.5×innerHeight; `elementFromPoint` just inside the reel's bottom edge (still covered) resolves to the reel, just below it (revealed) resolves to `.dr-offer-say` or a descendant.
+- At scroll 1.55vh: the reel's `bottom` ≤ 0; `.dr-say-pin`'s top is still 0; `--cur` is 1 (±.01); `.dr-offer-say` computed `scale` is 1 (±.005); its vertical centre is within 40px of half the viewport height; `.dr-offer-more`'s computed opacity is 1; `elementFromPoint` at the h2's centre resolves to the h2 itself, not the card.
+- Through the hold (scroll 1.55vh → the pin's own release), `.dr-say-pin`'s top stays 0 and `elementFromPoint` at the h2's centre keeps resolving to the h2 — the card's own `--rise`-driven visual top must still be below it.
+- Once the card's visual top passes the h2's centre, `elementFromPoint` there resolves inside `.dr-svc-in` — and the scroll position where `.dr-svc-in`'s `top` first reaches ≤0 is within 40px of the scroll position where `.dr-say-pin`'s top first goes negative (the release) — both reduce to the same `stageDocTop + --say-hold` sum by construction (`.dr-say-pin`'s height and `.dr-climb-wrap`'s `-100svh` base must stay the same literal quantity for this identity to hold).
+- `.dr-offer-kicker` and `.dr-offer-say` carry no `data-wipe` attribute, and neither ever gains class `is-wiped`; both render as plain text nodes (no `.dr-wl` descendants) at every scroll position and every viewport, on both first load and after a resize.
+- `.dr-slot` and `.dr-dock` both compute `pointer-events: none`; `.dr-hero-reel` computes `pointer-events: auto`.
+- Below 900px and under `prefers-reduced-motion: reduce`: `.dr-say-stage` computed `margin-top` is 0; `.dr-say-pin` computed `position` is `static`; `.dr-climb-wrap` computed `margin-top` is 0; `.dr-offer-say` computed `scale` is `none`.
+- Frame probe, scroll .6vh → 1.6vh in 8 steps, page settled first: max frame ≤ 34ms.
+- §01 THE GROW (line above, sub-criteria a/c/d/f/g only — (e), "the offer head's top equals the reel's bottom", is superseded by this section: the head is now pinned under the film by design, not adjacent below it) still holds at 1440×736 and 1440×900.
+
+## §02 · THE CARD (2026-09-19)
+- Each `.dr-offer-col` has exactly one `.dr-offer-inside` with exactly 3 `li`, none wrapped to a second line (`getBoundingClientRect().height` ≤ 22px each) — at 1440, 1440×900 and 390.
+- The three `.dr-offer-inside` rects share a `top` and a `bottom` (±1px), and the three `.dr-offer-price` rects share a `top` (±1px) — at 1440.
+- `.dr-offer-vouch blockquote` computed `font-size` resolves to a `--fs-*` token (currently `--fs-section`, not the raw clamp a prior draft of this feature tried) and its rendered line count is ≤ 3 at 1440, ≤ 5 at 390.
+- `.dr-offer-vouch .dr-vouch-av` computes 40×40px, and is the first child painted (above the blockquote) in the column's stacking order.

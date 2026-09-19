@@ -52,12 +52,24 @@ export const OFFER_MORE =
 export function OfferHead() {
   return (
     <div className="wrap dr-offer-head">
-      {/* the room's one triggered gesture, twice: the kicker, then the
-          statement line by line — the engine splits it where it broke */}
-      <span className="t-label dr-offer-kicker" data-wipe>
-        What this is
-      </span>
-      <h2 className="dr-offer-say" id="dr-svc-h" data-wipe>
+      {/* THE CURTAIN (2026-09-19) dropped data-wipe from both lines —
+          the room's one triggered gesture stands everywhere else. Two
+          reasons, not one: (1) a wipe fires when an element's top nears
+          the fold, which the sticky pin does almost immediately, well
+          before the film has actually left — a wipe under a curtain
+          fires unseen. (2) tried anyway, keeping data-wipe and
+          neutralising the CSS on desktop only (room.css): the engine's
+          own splitLines()/undo() cycle measurably did not survive being
+          inside the new sticky pin — it split correctly on mount, then
+          silently reverted to plain text ~300ms later, on BOTH desktop
+          and phone (a real interaction with the new wrapper, not a CSS
+          issue — confirmed live, the same split logic run by hand on
+          the same node persisted fine). Rather than ship a page that
+          depends on that timing, the attribute is off entirely; THE
+          SETTLE (room.css, --cur-driven scale) is the only reveal here,
+          on every width. */}
+      <span className="t-label dr-offer-kicker">What this is</span>
+      <h2 className="dr-offer-say" id="dr-svc-h">
         {OFFER_SAY}
       </h2>
       <p className="dr-offer-more">{OFFER_MORE}</p>
@@ -135,6 +147,17 @@ export default function ServicesSection() {
                   </span>
                   <span className="dr-offer-what">{s.label}</span>
                   <span className="dr-offer-price">{s.heroPrice}</span>
+                  {/* SEE WHAT'S IN IT (2026-09-19, Jake: "the services one
+                      thing is too short"): the first three deliverables,
+                      verbatim from lib/services.ts — not a summary, the
+                      actual list the service page itself leads with. */}
+                  <ul className="dr-offer-inside">
+                    {s.deliverables.slice(0, 3).map((d) => (
+                      <li key={d.name} className="t-label">
+                        {d.name}
+                      </li>
+                    ))}
+                  </ul>
                 </Link>
               </li>
             ))}

@@ -153,6 +153,25 @@ export default function DarkRoom() {
       dock.style.setProperty("--reel-y", `${reel.offsetTop}px`);
       reel.setAttribute("data-ready", "");
       reel.closest(".dr-hero-wrap")?.setAttribute("data-ready", "");
+
+      /* THE CURTAIN's own ruler (room.css, .dr-say-stage): --say-pull
+         pulls the stage's natural document position — right after the
+         dock, ~1248px at 1440×736 — up to doc 0.55vh, the exact scroll
+         position the reel above reaches full screen (--grow). Through the
+         offset chain, never getBoundingClientRect: the dock's own rect is
+         mid-transform once scrolled. A negative margin this size on the
+         stage COLLAPSES WITH, rather than adds to, the dock's own small
+         negative margin-bottom (CSS takes the more negative of two
+         adjoining margins) — the dock's own offsetHeight is enough, and
+         verified live rather than assumed. */
+      const sayStage = document.querySelector<HTMLElement>(".dr-say-stage");
+      if (sayStage) {
+        const d = box(dock);
+        sayStage.style.setProperty(
+          "--say-pull",
+          `${d.y + d.h - 0.55 * window.innerHeight}px`
+        );
+      }
     };
     measure();
     document.fonts?.ready.then(measure);
@@ -410,8 +429,38 @@ export default function DarkRoom() {
           not read as a repeat. Ours names the three columns under it.
 
           The head sits OUTSIDE the card's wrapper: --climb is measured on
-          the wrapper's top, which has to be the card's own top. */}
-      <OfferHead />
+          the wrapper's top, which has to be the card's own top.
+
+          THE CURTAIN (2026-09-19, decisions.md: Jake, "this section isnt
+          dramatic enough" → "go on the curtain"). The head is now PINNED
+          UNDER THE FILM: `.dr-say-stage` is pulled up by --say-pull (page
+          px, measured below) so its top sits at doc 0.55vh — the exact
+          scroll position the reel reaches full screen (--grow, room.css).
+          `.dr-say-pin` then holds it centred on screen while --cur runs
+          0→1 as the film leaves at scroll's own rate (data-sp-to="-1" is
+          one viewport of travel, matching the reel's 1:1 exit), then for
+          --say-hold beyond that — a hold with the words alone. This is
+          NOT the 2026-09-06 curtain that was reverted: that one uncovered
+          a NEW light-room plate; this uncovers the statement in the
+          room's own ground and ink (--void/--ink), already sitting there
+          — no new surface. The kicker/h2 wipe (data-wipe) comes OFF
+          entirely (services-section.tsx has the why: a wipe timed to an
+          element nearing the fold fires while the film still covers it,
+          and the engine's own split/undo cycle did not survive being
+          inside the sticky pin on either width) — THE SETTLE below is
+          the only reveal now, phone included. */}
+      <div
+        className="dr-say-stage"
+        data-sp
+        data-sp-edge="top"
+        data-sp-from="0"
+        data-sp-to="-1"
+        data-sp-var="--cur"
+      >
+        <div className="dr-say-pin">
+          <OfferHead />
+        </div>
+      </div>
 
       {/* §02 comes out of the wrapper and brings its own ruler. Inside it,
           it read --hero-p — the hero's progress — and its
@@ -421,8 +470,19 @@ export default function DarkRoom() {
           card's top at the fold, 1 with it at the top of the viewport.
           Renamed --climb, because a variable that means two different
           things in two subtrees is a trap waiting for whoever reads it
-          next. */}
-      <div data-sp data-sp-from="1" data-sp-to="0" data-sp-var="--climb">
+          next.
+
+          THE COVER (2026-09-19): the wrapper is pulled up 100svh
+          (`.dr-climb-wrap`, room.css) so the card's own top arrives right
+          as the curtain's hold ends, climbing OVER the still-pinned words
+          — the third surface in the uncover → hold → cover chain. */}
+      <div
+        className="dr-climb-wrap"
+        data-sp
+        data-sp-from="1"
+        data-sp-to="0"
+        data-sp-var="--climb"
+      >
         <ServicesSection />
       </div>
 
