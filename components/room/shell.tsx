@@ -64,10 +64,17 @@ export function RoomShell({ children }: { children: React.ReactNode }) {
      now both say light; only `?dark` turns it off, in the effect, and
      that one flips light→dark because it is the comparison, not the site.
      (`?film` is gone: the film hero is THE hero now.) */
-  const [light, setLight] = useState(true);
+  /* DARK IS THE DEFAULT AGAIN (2026-09-19 — Jake, with x2ycreative.com:
+     "i kina want to try dark … make dark the default i just want to try
+     it"). The same one boolean, inverted: the server and the first
+     client pass both say dark, `?light` turns the light room back on in
+     the effect for the comparison. First paint is already black
+     (room.css, body:has(.dr-root)), so there is nothing to flash. The
+     light era's own rules stand under .dr-light, untouched. */
+  const [light, setLight] = useState(false);
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
-    if (q.has("dark")) setLight(false);
+    if (q.has("light")) setLight(true);
   }, []);
 
   return (

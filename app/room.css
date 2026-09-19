@@ -69,7 +69,7 @@
 
 .dr-root {
   /* ── ground + surfaces (elevation is LIGHTNESS ONLY — zero box-shadows) */
-  --void: #000000;
+  --void: #0b0b0b;   /* x2ycreative's ground (measured 2026-09-19), not #000: black enough to be the void, soft enough that a black film card still has an edge */
   --surface-1: #121214;
   --surface-2: #171719;
   --surface-3: #202024;
@@ -167,7 +167,7 @@
    very first frame. The moment the route unmounts the selector stops
    matching and every other page is untouched. */
 :root:has(.dr-root),
-body:has(.dr-root) { background: #000; }
+body:has(.dr-root) { background: #0b0b0b; }
 /* the experiment's ground. Same selector shape, so it wins on order. */
 :root:has(.dr-root.dr-light),
 body:has(.dr-root.dr-light) { background: #e7e7ea; }
@@ -709,6 +709,13 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
             min-height: 64px; padding: 8px 8px 8px 12px;
             border-radius: var(--radius-chrome); background: #ffffff; box-shadow: var(--lift);
             text-align: left; overflow: hidden; }
+/* IN THE DARK ROOM the strip is a dark bar with a hairline, not the white
+   one (2026-09-19): white-on-white was the door (the room's white pill)
+   sitting on a white strip — the one white object law needs the bar to
+   step back. The light room keeps the white strip it was designed as. */
+.dr-root:not(.dr-light) .dr-strip { background: var(--surface-1); box-shadow: none;
+                                    outline: 1px solid var(--edge); outline-offset: -1px; }
+.dr-root:not(.dr-light) .dr-face { border-color: var(--surface-1); }
 .dr-strip-rating { display: flex; align-items: center; gap: var(--fib-1);
                    flex: 0 0 auto; text-decoration: none; color: var(--ink); }
 /* THE FACES: three overlapping rounds. They ROTATE — every 2.4s the
@@ -2129,7 +2136,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    so the backdrop and the tokens are driven by one track and cannot
    disagree. */
 .dr-root {
-  --void:        color-mix(in oklab, #000000 calc((1 - var(--flip, 0)) * 100%), #e7e7ea);
+  --void:        color-mix(in oklab, #0b0b0b calc((1 - var(--flip, 0)) * 100%), #e7e7ea);
   --surface-1:   color-mix(in oklab, #121214 calc((1 - var(--flip, 0)) * 100%), #f4f4f7);
   --surface-2:   color-mix(in oklab, #171719 calc((1 - var(--flip, 0)) * 100%), #f8f8fb);
   --surface-3:   color-mix(in oklab, #202024 calc((1 - var(--flip, 0)) * 100%), #ffffff);
