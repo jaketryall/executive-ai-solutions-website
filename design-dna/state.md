@@ -78,6 +78,36 @@ here forward.
   is still left dead in `app/room.css` — a cleanup pass is owed.
   Per-project clips sized for this well don't exist yet (the well always
   shows the still cover). Awaiting Jake's first look.
+- §03 THE WORK v4, LEOPARPEIX'S RAIL ON SCROLL (2026-09-18, `6b3d1d1`) —
+  supersedes v2 same day on Jake's call, shown leoparpeix.com's drag
+  filmstrip ("that's the feel I'm going for... activated on scroll
+  instead of drag"). One rail per project (three blocks), tiles a
+  uniform 1045×604 at 1440, tile 0 centred at arrival, the rail riding
+  the block's own scroll passage; the picture inside each frame carries
+  the two ported parallaxes (vertical off the block's passage, horizontal
+  off the tile's screen position); an off-centre tile recedes in CSS
+  perspective, driven by a NEW engine track (`data-sp-force`, see below).
+  No snap, no pin, no per-card settle. `components/dark/work-section.tsx`
+  was rewritten end to end (the Lenis-snap/pager machinery from v2 is
+  gone — nothing left in this version needs to read the root Lenis
+  instance, so `lenis-store.ts` now has no consumer on this page, though
+  it's left in place); `app/room.css`'s whole §03 block (from `/* §03 ·
+  THE WORK`) was replaced. Per-project shots (up to 4, curated from each
+  project's cover/demo/gallery in `lib/work.ts`) are picked by an inline
+  map in the component — no new data file. Four numbers were wrong on
+  first pass and are now fixed + re-verified (see decisions.md): the
+  band-height svh safety cap silently bound at the reference viewport
+  itself, Tailwind's own preflight clamped the picture's width via
+  `max-width`, the vertical parallax needs an absolute px calc (not a
+  bare `%`, which resolves against the wrong box), and the engine's own
+  force-track snap could freeze on a non-zero plateau instead of ever
+  reaching a true 0. Awaiting Jake's first look.
+- THE ENGINE (`components/dark/scroll-engine.ts`) gained a THIRD track
+  kind, 2026-09-18: `data-sp-force="<px>"` publishes `--force` (0→1), a
+  VELOCITY read off the same element's own `--sp` mark, modelled on
+  leoparpeix.com's drag-force loop (§03 v4 is the only consumer so far).
+  Every other track is still a pure function of position; this is the
+  one place the room derives motion from RATE instead.
 - §04 how it runs — ruled slab (`ba6ad74`), staircase retired on Jake's
   call — awaiting his review.
 - §05/§06 — rebuilt to the Off+Brand ending: §05 is a white card that
