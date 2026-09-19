@@ -216,3 +216,4 @@ All measured live at 1440×736 unless noted; `t = --bp × (--n − 1)`, 9 tiles/
 - At scroll 0 and 0.3vh `.dr-say-pin .dr-offer-head` computed opacity is 0 (nothing of the statement shows under or below the letterbox on any height — check 1440×900 especially); at 0.55vh it is 1 and a hit-test at the h2's centre returns the film.
 - At 1.55vh the film's bottom ≤ 0, the pin's top is 0, the h2 scale is 1, the hit-test returns the words.
 - At 1.85vh (±0.03) the pin releases AND `.dr-svc-in`'s top is at the fold (±10px) — the card never overlaps the words: at 2.1vh the h2's bottom is above the card's top.
+- (2026-09-19) `document.documentElement.scrollWidth === clientWidth` at scroll 0 AND at 1.05vh, at 1280 / 1440 / 2560 — the statement's 1.12 settle-start must never widen the page (`.dr-say-pin` clips x).

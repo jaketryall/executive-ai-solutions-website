@@ -1357,6 +1357,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-say-pin {
   position: sticky; top: 0; height: 100svh; z-index: 4;
   display: grid; place-items: center;
+  /* the statement at its 1.12 settle-start is 1490px wide against a
+     1440 viewport, and a transform's box still counts toward the
+     document's scrollable overflow — a 25px horizontal scrollbar at
+     scroll 0 (measured 2026-09-19). Clipped here; at that scale the
+     words are under the film anyway, and by --cur .5 they fit. */
+  overflow-x: clip;
 }
 /* NOTHING SHOWS UNTIL THE FILM IS THE SCREEN (Jake: "you can see the
    text of second section under hero video"): the pin is pulled up under
