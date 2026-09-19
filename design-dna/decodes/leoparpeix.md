@@ -345,3 +345,69 @@ of the rail band (rows 80–660); tiles = colour/edge tracking. Frames:
   − boundary constant at 85px) — the image did not slide inside its
   frame at that speed. Beyond 300ms the patch left the screen.
 - Frame rate held: 247 frames in 4100ms = 16.6ms mean, no frame > 19ms.
+
+---
+
+## 13. THE CODE (main loop, 2026-09-18) — read from `assets/index-BZFBO0Ol.js` + `index-CLH3rn1-.css`
+
+Jake: "i want you to look at the code of this section". Vue 3 + THREE. The
+slider component keeps DOM proxies (`.slider__media .media__image`,
+CSS: `width: 72.569vw; height: 41.944vw` — UNIFORM 1.73:1, 1045×604 at
+1440, gap `mp()` = 20px desktop / 10px mobile) and renders every tile as a
+THREE plane scaled to the proxy's rect. Everything below is the real
+mechanism; §12's pixel numbers are its output.
+
+**Config (desktop `t4`; `n4` = < 1025px):**
+`{ infiniteDrag: true, parallaxXMultiplier: 1.25 (mobile 2.75), snapThreshold: 42,
+snapLerp: .055 (.14), dragFollowLerp: .068 (.14), dragMultiplier: 3 (4),
+deltaDecay: .9, dragForceDecay: .42, dragForceSmooth: .065 (.14),
+dragForceMultiplier: 400, dragForceMax: 600 }`.
+
+**The drag loop (`onRender`, frame-rate independent — every lerp is
+`1 − exp(−k·dt·60)`):**
+```
+currentDrag      += delta.x × 3          // the pointer's delta, ×3
+delta.x          *= 0.9                  // the same delta keeps applying, decaying — the coast
+rawDragInput      = lerp(raw, |delta.x|, .42)
+dragForce         = clamp(raw × 400, 0, 600)
+smoothDragForce   = lerp(smooth, dragForce, .065)   // while dragging: ≥ snapThreshold+1
+if !dragging && smoothDragForce < 42:                // the FORCE has died → SNAP
+    snapTarget        = round(smoothCurrentDrag / pitch) × pitch   // nearest tile
+    smoothCurrentDrag = lerp(smooth, snapTarget, .055)
+else
+    smoothCurrentDrag = lerp(smooth, currentDrag, .068)            // the FOLLOW
+tile i: position.x = wrap(i × pitch − smoothCurrentDrag)           // infinite
+```
+So: the hand's movement is tripled, follows through a 0.068 chase, coasts
+on the decaying delta (0.9/frame), and once the force is spent the rail
+SNAPS to the nearest tile at 0.055 — the "reverse" in §12 was the snap,
+not a bound; the rail is infinite (wraps).
+
+**The two parallaxes are in the FRAGMENT shader, on the image inside its
+plane (the plane itself never moves vertically):**
+```
+uv = (uv − .5) / uCoverBleed + .5        // uCoverBleed 1.05 desktop, 1.155 mobile — 5% surplus
+uv.y += uParallaxProgress × 0.085        // VERTICAL, on PAGE SCROLL
+uv.x += uParallaxX × 0.085               // HORIZONTAL, on the tile's SCREEN X
+```
+- `uParallaxProgress` = Lenis `animatedScroll` mapped `[sliderTop − vh, sliderTop + sliderH] → [−1, +1]`, set on every scroll for every tile of that project: the picture slides 17% of its height inside its frame across the block's passage through the viewport. This is the scroll-linked vertical parallax the DOM could not show (§12's "no vertical parallax against scroll" measured the plane, which is right, and missed the picture, which is wrong).
+- `uParallaxX` = `tile.position.x / (vw/2) × 1.25`, updated every frame: a tile at the screen's edge has its picture shifted 10.6% toward the centre; at the centre, 0 — so as the rail moves, every picture slides inside its frame against the rail. (§12's "no internal parallax" tracked a content edge as the boundary — invalid.)
+
+**The squash is DEPTH, in the VERTEX shader, on velocity:**
+```
+dist = smoothstep(0, 5.5, length(vec2(screenX_ndc, position.y)))
+position.z -= dist × uDragForce × uDragScaleStrengthZ   // 1.5 desktop, .5 mobile; force ≤ 600
+```
+While the force is up, vertices far from the screen's centre recede —
+tiles near the edges shrink toward the vanishing point (§12's 519 → 356px
+and Jake's frame: the green tile at the right edge 363px tall against the
+band's 840, pulled toward the screen's centre). At rest (force 0) every
+tile is flat and full size. `uDragScaleStrength` (75e-6) and
+`uDragColorStrength` (35e-5) are declared and unused; `scrollDeformationDirection`
+(the `index % 2` alternation) is dead code.
+
+**Structure:** "Selected projects" = six `projectBlock`s, each = its own rail
+(9–12 screens of THAT project) + an info row (`01 · name · type · date ·
+team · roles · project link`). Cursor pill "Drag" over the rail
+(`cursorIndication`, imperative per-frame follow). Mobile: same rail,
+`touch-action: pan-y`, 300×190 proxies, `n4` config.
