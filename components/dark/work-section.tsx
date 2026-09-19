@@ -1,58 +1,70 @@
+"use client";
+
 import type { CSSProperties } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Snap from "lenis/snap";
 import { PROJECTS } from "@/lib/work";
 import type { Project } from "@/lib/work";
 import { Roll } from "@/components/room/nav";
+import { onLenis } from "@/components/anim/lenis-store";
 
-/* §03 · THE WORK, v5 — ONE ROW, STICKY. Supersedes v4's three blocks
-   (6b3d1d1) on Jake's call, shown v4's frames: "okay so better i just
-   want one row though sticky, that's good though".
+/* §03 · THE WORK, v5 → THE RAIL STEPS (2026-09-19). Supersedes v5's own
+   continuous scrub (caa3f58, "one row, sticky") on Jake's call: "can we
+   go back to the work rail. im thinking i want it to be a little more
+   of a controlled motion like it kinda makes you go one at a time."
 
-   Everything v4 MEASURED still stands and is not re-derived here — the
-   comments beside .dr-work-img, .dr-work-tile and .dr-work-pill in
-   room.css are UNCHANGED (leoparpeix.md §13's two parallaxes, the
-   `--force` depth squash, the pill/frost recipe). What changes is the
-   SHAPE: nine shots (three cases × cover-plus-two) become ONE rail
-   inside a `position: sticky` band, instead of three rails that scroll
-   past one after another like §02's rows.
+   EVERYTHING BELOW THE PIN is v5's, UNCHANGED, and its own comments stay
+   in place in room.css: THE TWO PARALLAXES and THE PILL are still
+   leoparpeix.md §13's math and the 2026-09-06 no-backdrop-filter law.
+   What changes is HOW `--bp` (the engine's own 0→1 across the whole
+   pinned travel) turns into the rail's position — see room.css's
+   `.dr-work-stage` comment (`--t`/`--s<i>`/`--e<i>`/`--rx`/`--sl`) for
+   the map itself; this file only owns the PIN, the TRAVEL constant and
+   the LANDING.
 
-   THE PIN is the room's own no-library trick, borrowed from §04
-   (`.dr-runs-stage` / `.dr-runs-pin`, room.css ~2147): a tall `relative`
-   wrapper (100svh + TRAVEL_SVH of extra scroll) holds a `sticky top: 0`
-   panel, so the panel holds still while the wrapper's own declared
-   scroll window drives everything inside it. No pin library, same as
-   the rest of the room.
+   THE PIN is unchanged from v5 (the room's own no-library trick,
+   borrowed from §04's `.dr-runs-stage`/`.dr-runs-pin`): a tall
+   `relative` wrapper (100svh + TRAVEL_SVH of extra scroll) holds a
+   `sticky top: 0` panel.
 
-   TRAVEL_SVH = 360 replaces v4's per-block "~0.8vh of passage" — with
-   nine tiles sharing one rail instead of three separate 3-4-tile rails,
-   the drift (8 pitches at 1440) needs a longer runway to still read as
-   a ride and not a flick; 360svh keeps the same ≈3× drift-to-travel
-   feel v4 measured (verified live against the pass criteria this step
-   was built against, not assumed). `data-sp-to` below and the `--travel`
-   custom property are BOTH derived from this one constant so they
-   cannot silently disagree — the engine reads `data-sp-to` as a raw
-   attribute string (scroll-engine.ts's `read()`, `el.getAttribute(...)`)
-   and has no way to look at the element's own rendered CSS height to
-   infer it, so there is no other way to keep the two in lock-step than
-   sharing one source number.
+   THE TRAVEL grows from v5's 360svh to 420svh: eight windows of 52.5svh
+   each (nine tiles, `--n`−1 plateaus) so a dwell / smoothstepped slide /
+   dwell shape has enough runway per window to read as a real hold and a
+   real move rather than the old continuous ride compressed the same
+   distance. `data-sp-to` below and the `--travel` custom property are
+   BOTH derived from this one constant so they cannot silently disagree
+   — the engine reads `data-sp-to` as a raw attribute string
+   (scroll-engine.ts's `read()`, `el.getAttribute(...)`) and has no way
+   to look at the element's own rendered CSS height to infer it.
 
-   THE INFO ROW is new: instead of one row per block (v4), the three
-   rows sit absolutely stacked under the one band and crossfade to
-   whichever project is under the centre — see room.css's
-   `.dr-work-info` comment for how `--c` (each row's own centre tile,
-   written from here) and the stage's `--idx` decide which row is on
-   top and clickable.
+   THE LANDING is v2's own Snap (`lenis/snap`, 49850bb: proximity,
+   debounce, Apple's ease-in-out over 1s), lifted back — it was retired
+   when v4 traded the gallery's released-drag feel for scroll-as-input,
+   but a STEPPED rail is exactly the shape a snap belongs on again: the
+   points sit at each plateau's document position (stage top + i/(n−1)
+   of the travel), so scrolling to rest anywhere mid-slide eases the
+   rest of the way onto the nearer plateau. This is Lenis moving the
+   SCROLL POSITION — the rail stays a pure function of it throughout
+   (law 11: the structure is scrubbed, only the landing tweens, and it
+   tweens `scrollY`, never the rail's own transform). No snap on touch
+   (no Lenis instance there — smooth-scroll.tsx is desktop-only) or
+   under 900px (the media query at the end of room.css's §03 block puts
+   the band back in the finger's own native, self-snapping scroller).
 
-   No snap (scroll is the input, not a released drag), no per-card
-   entrance settle (unchanged from v4 — the recession already animates
-   arrival). Phone + reduced motion: the finger's own rail, unchanged
-   from v4 (a native x-scroller with snap, no parallax, no depth), with
-   the three info rows stacked in flow instead of crossfading. */
+   THE INFO ROW is unchanged from v5: three rows absolutely stacked
+   under the band, crossfading to whichever project is under the centre
+   off the stage's `--idx` (now the stepped `--rx`, not the old
+   continuous `bp × (n−1)`) — see room.css's `.dr-work-info` comment. */
 
 const OURS = "executive-ai-solutions"; // same filter + same reason as v1/v2/v4's comment
 const SHOTS_PER_PROJECT = 3; // cover + two — down from v4's up-to-4, so three cases make one nine-tile rail
-const TRAVEL_SVH = 360; // the pinned band's scroll travel, in svh — see file header for why this one number feeds both the CSS var and data-sp-to
+const TRAVEL_SVH = 420; // the pinned band's scroll travel, in svh — 8 windows of 52.5svh (see file header)
+
+// Apple's own step curve: CSS ease-in-out over ~1s (decodes/apple-highlights.md
+// §3) — this is the SNAP's landing only, never the scrub, which stays f(scroll).
+const stepEase = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
 
 type Shot = { src: string; width: number; height: number; alt: string };
 
@@ -109,7 +121,6 @@ type Tile = { shot: Shot; project: Project; k: number; first: boolean };
 
 export default function WorkSection() {
   const cases = PROJECTS.filter((p) => p.slug !== OURS && p.cover);
-  if (!cases.length) return null;
 
   // ONE flat rail: each case's first SHOTS_PER_PROJECT shots, in project
   // order, each tile knowing its case index (k, for --c below) and
@@ -119,6 +130,62 @@ export default function WorkSection() {
       .slice(0, SHOTS_PER_PROJECT)
       .map((shot, i) => ({ shot, project: p, k, first: i === 0 }))
   );
+  const n = tiles.length;
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  // THE LANDING — see the file header. Hooks stay unconditional (n can
+  // be 0 on a projects-less build) so the early `if (!n) return null`
+  // below has to come AFTER this, not before it.
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage || n < 2) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // under 900px the band is the finger's own native, self-snapping
+    // scroller (room.css's §03 media query) — a second, JS snap here
+    // would fight it, so this never subscribes at that width at all
+    if (window.matchMedia("(max-width: 900px)").matches) return;
+
+    let cleanup = () => {};
+    const off = onLenis((lenis) => {
+      cleanup();
+      cleanup = () => {};
+      if (!lenis) return; // touch: no Lenis, nothing to hand a snap
+
+      const windowPx = ((TRAVEL_SVH / 100) * window.innerHeight) / (n - 1);
+      const snap = new Snap(lenis, {
+        type: "proximity",
+        distanceThreshold: windowPx / 2 + 20, // half a window + 20px (~213 at 736)
+        debounce: 250,
+        duration: 1,
+        easing: stepEase,
+      });
+      const removers: Array<() => void> = [];
+      const place = () => {
+        removers.splice(0).forEach((r) => r());
+        // the stage never transforms — its own top is a stable document position
+        const top = stage.getBoundingClientRect().top + window.scrollY;
+        const travelPx = (TRAVEL_SVH / 100) * window.innerHeight;
+        for (let i = 0; i < n; i++) {
+          removers.push(snap.add(top + (i / (n - 1)) * travelPx));
+        }
+      };
+      place();
+      // the stage's document offset moves whenever anything above it reflows
+      const ro = new ResizeObserver(place);
+      ro.observe(document.body);
+      cleanup = () => {
+        ro.disconnect();
+        removers.forEach((r) => r());
+        snap.destroy();
+      };
+    });
+    return () => {
+      off();
+      cleanup();
+    };
+  }, [n]);
+
+  if (!cases.length) return null;
 
   return (
     <section className="dr-work" aria-labelledby="dr-work-h">
@@ -139,7 +206,8 @@ export default function WorkSection() {
           from v4 bar which element it now lives on). */}
       <div
         className="dr-work-stage"
-        style={{ "--n": tiles.length, "--travel": `${TRAVEL_SVH}svh` } as CSSProperties}
+        ref={stageRef}
+        style={{ "--n": n, "--travel": `${TRAVEL_SVH}svh` } as CSSProperties}
         data-sp
         data-sp-edge="top"
         data-sp-from="0"

@@ -3950,49 +3950,72 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 @keyframes dr-lead { from { translate: 0 42px; } to { translate: 0 -18px; } }
 
 
-/* §03 · THE WORK, v5 — ONE ROW, STICKY. Supersedes v4's three blocks
-   (6b3d1d1) on Jake's call, shown v4's frames: "okay so better i just
-   want one row though sticky, that's good though".
+/* §03 · THE WORK, v5 → THE RAIL STEPS (2026-09-19). Supersedes v5's own
+   continuous scrub (caa3f58, "one row, sticky") on Jake's call: "can we
+   go back to the work rail. im thinking i want it to be a little more
+   of a controlled motion like it kinda makes you go one at a time."
 
-   Everything below the pin is v4's, UNCHANGED, and its own comments are
-   left in place rather than restated: THE TWO PARALLAXES and THE PILL
-   comments a few rules down are still the record of leoparpeix.md §13's
-   math and the 2026-09-06 no-backdrop-filter law. What moved is only
-   WHERE the shared vars (`--th`, `--pitch`, `--drift`, `--rail-x`,
-   `--pp`, `--force`) get computed — up from `.dr-work-band` (one per
-   project block, v4) onto `.dr-work-stage` (one for the whole section,
-   v5) — because the rail, the tiles AND the new info row all need to
-   read them now, and custom properties only inherit downward.
+   EVERYTHING BELOW THE PIN THROUGH THE PILL is v5's, UNCHANGED, and its
+   own comments stay in place: THE TWO PARALLAXES and THE PILL a few
+   rules down are still the record of leoparpeix.md §13's math and the
+   2026-09-06 no-backdrop-filter law. What changes is HOW `--bp` (the
+   engine's own 0→1 across the whole pinned travel) turns into the
+   rail's position.
 
-   THE PIN is the room's own no-library trick, borrowed from §04
-   (`.dr-runs-stage` / `.dr-runs-pin` above, ~line 2147): a tall
+   THE MAP: `--t` rescales `--bp` to "which window" (0 → `--n`−1, one
+   integer per plateau). Each window gets its own `--s<i>`/`--e<i>` —
+   dwell .2 / smoothstepped slide .6 / dwell .2 of the window — and
+   `--rx` sums the twelve of them (see the comment above `--rx` for why
+   twelve terms, not eight). `--rail-x` and `--idx` now read `--rx`
+   instead of the old continuous `-bp × drift` / `bp × (n−1)` — the
+   running total holds through both dwells and only advances during the
+   .6-wide slide. `--pp` (the pictures' own parallax progress) is
+   UNCHANGED and stays a plain function of `--bp`: the images keep
+   sliding through a hold, so nothing in the frame is ever fully still.
+
+   THE PIN is unchanged (the room's own no-library trick, borrowed from
+   §04's `.dr-runs-stage` / `.dr-runs-pin` above, ~line 2147): a tall
    `position: relative` wrapper (100svh + a declared travel) holds a
-   `position: sticky; top: 0` panel, so the panel holds still while the
-   wrapper's own scroll window drives everything inside it — no pin
-   library anywhere in this room.
+   `position: sticky; top: 0` panel.
 
-   THE TRAVEL is 360svh (`--travel`, written from work-section.tsx's
-   `TRAVEL_SVH`, and `data-sp-to` derived from that same constant so the
-   two cannot drift apart — the engine reads `data-sp-to` as a raw
-   attribute string and has no way to read the element's own rendered
-   height to infer it). It replaces v4's per-block "~0.8vh of passage":
-   nine tiles now share one rail instead of three separate 3-4-tile
-   rails, so the drift ((n−1) pitches) needs a longer runway to still
-   read as v4's own ≈2.4-3× ride rather than a flick — verified live
-   against this step's own pass criteria, not assumed.
+   THE TRAVEL grows from v5's 360svh to 420svh (`--travel`, written from
+   work-section.tsx's `TRAVEL_SVH`, `data-sp-to` derived from the same
+   constant so the two cannot drift apart — the engine reads
+   `data-sp-to` as a raw attribute string and has no way to read the
+   element's own rendered height to infer it). Eight windows of 52.5svh
+   each (386px at 736) instead of one continuous ride over the same
+   runway: the slide is .6 of a window (232px of scroll, ≈4.6px of rail
+   per px of scroll) and the two half-dwells either side (.2+.2 of a
+   window) are a real hold, not a name for "still moving but slowly."
 
-   THE INFO ROW is new (see the comment beside `.dr-work-info` below):
-   three rows absolutely stacked under the one band, crossfading to
-   whichever case is under the centre, instead of v4's one row per
-   block.
+   THE DEPTH SQUASH now follows `--sl` (below), the slide's own activity,
+   instead of raw `--force` alone: v5 borrowed leoparpeix's drag force
+   wholesale; here the drag IS the slide, so a tile only recedes while
+   the rail is actually moving between two plateaus, never through a
+   dwell even if a real wheel burst is still decaying `--force` toward 0
+   into one.
 
-   No snap (scroll is the input, not a released drag), no per-card
-   entrance settle (unchanged from v4 — the recession already animates
-   the arrival). Phone + reduced motion: the finger's own rail,
-   unchanged from v4 (a native x-scroller with snap, no parallax, no
-   depth, R1), with the three info rows stacked in flow instead of
-   crossfading. Neighbours peeking at both edges is still the reference's
-   own look, not a bug to crop away. */
+   THE LANDING is v2's own Snap (`lenis/snap`, 49850bb), lifted back into
+   work-section.tsx: points sit at each plateau's document position,
+   proximity type, a half-a-window-plus-20px threshold, 250ms debounce,
+   Apple's ease-in-out over 1s. The snap moves the SCROLL POSITION — the
+   rail above stays a pure function of it throughout (law 11: the
+   structure is scrubbed, only the landing tweens, and it tweens
+   `scrollY`, never the rail's own transform). No snap on touch (no
+   Lenis instance there) or under 900px (the media query at the end of
+   this block puts the band back in the finger's own native,
+   self-snapping scroller).
+
+   THE INFO ROW is unchanged from v5 (see the comment beside
+   `.dr-work-info` below): three rows absolutely stacked under the one
+   band, crossfading to whichever case is under the centre.
+
+   No per-card entrance settle (unchanged from v4 — the recession
+   already animates the arrival). Phone + reduced motion: the finger's
+   own rail, unchanged from v4/v5 (a native x-scroller with snap, no
+   parallax, no depth, R1), with the three info rows stacked in flow
+   instead of crossfading. Neighbours peeking at both edges is still the
+   reference's own look, not a bug to crop away. */
 
 .dr-work { position: relative; z-index: 4; padding-block: clamp(72px, 12svh, 150px) 0; }
 .dr-work-head { text-align: center; margin-bottom: clamp(40px, 8svh, 96px); }
@@ -4012,6 +4035,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    travel, so the stage's own bottom edge is exactly where the pin lets
    go — get this wrong and the pin either releases early (a dead gap of
    plain scroll before §04) or never releases (§04 stuck under the pin). */
+/* --rx (below) is typed so it composites cleanly through the calc()
+   chains that consume it (--rail-x, --idx) and the ones it's built from
+   (twelve --e<i> sums, each already a calc() of a calc()). */
+@property --rx { syntax: "<number>"; inherits: true; initial-value: 0; }
+
 .dr-work-stage {
   position: relative; height: calc(100svh + var(--travel));
   /* leoparpeix sizes the tile off vw alone (§13: height 41.944vw, no vh
@@ -4021,10 +4049,58 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      604), which the v4 pass criteria caught. 90svh clears 736's own 604
      with room (662.4) and still caps a genuinely short viewport. */
   --th: min(41.944vw, 90svh); --tw: calc(var(--th) * 1.7302); --gap: 20px; --pitch: calc(var(--tw) + var(--gap));
-  --drift: calc((var(--n) - 1) * var(--pitch));
-  --rail-x: calc(-1 * var(--bp, 0) * var(--drift));          /* tile 0's centre, relative to the band's centre */
-  --pp: calc(var(--bp, 0) * 2 - 1);                          /* their uParallaxProgress, −1 → +1 */
-  --idx: calc(var(--bp, 0) * (var(--n) - 1));                /* the tile under the centre, fractional — the info row's crossfade reads this */
+
+  /* THE MAP — --t rescales --bp (0→1 across the WHOLE pinned travel) to
+     "which window": 0 at the first plateau, --n−1 at the last. Twelve
+     --s<i>/--e<i> terms are written, not eight (today's actual window
+     count at nine tiles, --n−1): a future case added to lib/work.ts
+     raises --n, and with it how many of these twelve terms actually
+     move — writing all twelve now means that day costs nothing here. A
+     term whose own i sits at or past --t's current max just clamps to 0
+     and contributes nothing. Each --s<i> lives inside --t ∈ [i, i+1]:
+     pinned at 0 for the window's first .2 (a dwell), ramping to 1 over
+     the middle .6 (the slide), pinned at 1 for the last .2 (the next
+     dwell) — clamp() does all three without a branch. */
+  --t: calc(var(--bp, 0) * (var(--n) - 1));
+  --s0: clamp(0, calc((var(--t) - 0 - .2) / .6), 1);
+  --s1: clamp(0, calc((var(--t) - 1 - .2) / .6), 1);
+  --s2: clamp(0, calc((var(--t) - 2 - .2) / .6), 1);
+  --s3: clamp(0, calc((var(--t) - 3 - .2) / .6), 1);
+  --s4: clamp(0, calc((var(--t) - 4 - .2) / .6), 1);
+  --s5: clamp(0, calc((var(--t) - 5 - .2) / .6), 1);
+  --s6: clamp(0, calc((var(--t) - 6 - .2) / .6), 1);
+  --s7: clamp(0, calc((var(--t) - 7 - .2) / .6), 1);
+  --s8: clamp(0, calc((var(--t) - 8 - .2) / .6), 1);
+  --s9: clamp(0, calc((var(--t) - 9 - .2) / .6), 1);
+  --s10: clamp(0, calc((var(--t) - 10 - .2) / .6), 1);
+  --s11: clamp(0, calc((var(--t) - 11 - .2) / .6), 1);
+  /* smoothstep — Apple's own step is ease-in-out (decodes/apple-highlights.md),
+     never a linear ramp between the two dwells */
+  --e0: calc(var(--s0) * var(--s0) * (3 - 2 * var(--s0)));
+  --e1: calc(var(--s1) * var(--s1) * (3 - 2 * var(--s1)));
+  --e2: calc(var(--s2) * var(--s2) * (3 - 2 * var(--s2)));
+  --e3: calc(var(--s3) * var(--s3) * (3 - 2 * var(--s3)));
+  --e4: calc(var(--s4) * var(--s4) * (3 - 2 * var(--s4)));
+  --e5: calc(var(--s5) * var(--s5) * (3 - 2 * var(--s5)));
+  --e6: calc(var(--s6) * var(--s6) * (3 - 2 * var(--s6)));
+  --e7: calc(var(--s7) * var(--s7) * (3 - 2 * var(--s7)));
+  --e8: calc(var(--s8) * var(--s8) * (3 - 2 * var(--s8)));
+  --e9: calc(var(--s9) * var(--s9) * (3 - 2 * var(--s9)));
+  --e10: calc(var(--s10) * var(--s10) * (3 - 2 * var(--s10)));
+  --e11: calc(var(--s11) * var(--s11) * (3 - 2 * var(--s11)));
+  --rx: calc(var(--e0) + var(--e1) + var(--e2) + var(--e3) + var(--e4) + var(--e5) + var(--e6) + var(--e7) + var(--e8) + var(--e9) + var(--e10) + var(--e11));
+  --rail-x: calc(-1 * var(--rx) * var(--pitch));             /* tile 0's centre, relative to the band's centre — stepped now, not f(bp) directly */
+  --pp: calc(var(--bp, 0) * 2 - 1);                          /* their uParallaxProgress, −1 → +1 — UNCHANGED, still f(bp): the pictures keep sliding through a hold */
+  --idx: var(--rx);                                          /* the tile under the centre — the info row's crossfade reads this, now stepped */
+  /* THE SLIDE ACTIVITY — 0 on a plateau, 1 mid-slide (4s(1−s) is a
+     parabola peaking at 1 when s=.5; only one window is ever between 0
+     and 1 at a time, so this is a clean pulse per slide, never a sum
+     that overshoots 1). The tile's depth squash below multiplies
+     --force by THIS instead of running on raw scroll alone: the drag
+     here is the slide, not the wheel — a tile must not recede through a
+     dwell even while a real wheel burst is still decaying --force
+     toward 0. */
+  --sl: calc(4 * var(--s0) * (1 - var(--s0)) + 4 * var(--s1) * (1 - var(--s1)) + 4 * var(--s2) * (1 - var(--s2)) + 4 * var(--s3) * (1 - var(--s3)) + 4 * var(--s4) * (1 - var(--s4)) + 4 * var(--s5) * (1 - var(--s5)) + 4 * var(--s6) * (1 - var(--s6)) + 4 * var(--s7) * (1 - var(--s7)) + 4 * var(--s8) * (1 - var(--s8)) + 4 * var(--s9) * (1 - var(--s9)) + 4 * var(--s10) * (1 - var(--s10)) + 4 * var(--s11) * (1 - var(--s11)));
 }
 /* THE PIN — sticky, no library (see the file header). The column is
    centred on its own axis for the same reason `.dr-runs-pin` is: a
@@ -4038,13 +4114,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 
 /* THE RAIL — leoparpeix's: uniform 1.73:1 tiles, 20px gap; tile 0 centred
-   at arrival (`--bp` 0), the rail then rides the stage's whole travel at
-   (n−1) tiles (read the file header above). `overflow: visible` here on
-   purpose — the rail runs wider than the viewport by design (drift is
-   several thousand px at nine tiles), and it is `.dr-work-pin` above,
-   not this band, that clips it to the screen, same split as
-   `.dr-runs-pin` ("the track runs past both edges of the screen and is
-   clipped here"). */
+   at arrival (`--bp` 0), then a hold, a smoothstepped slide of one
+   pitch, the next hold, repeated (n−1) times across the stage's whole
+   travel — `--rx` above is the stepped position, not a continuous f(bp)
+   (read the file header). `overflow: visible` here on purpose — the
+   rail runs wider than the viewport by design (the full run is several
+   thousand px at nine tiles), and it is `.dr-work-pin` above, not this
+   band, that clips it to the screen, same split as `.dr-runs-pin` ("the
+   track runs past both edges of the screen and is clipped here"). */
 .dr-work-band {
   position: relative; height: var(--th); overflow: visible;
   perspective: 1200px; perspective-origin: 50% 50%;
@@ -4062,8 +4139,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   --dist: min(1, max(var(--ndc), -1 * var(--ndc)));
   /* THE DEPTH: their vertex shader pushes vertices back by dist × dragForce;
      at full force an edge tile read ~40% smaller in the frames (§12/§13).
-     CSS perspective 1200px: scale = 1200/(1200+z) → z 800 ≈ 0.6 */
-  transform: translateZ(calc(-800px * var(--force, 0) * var(--dist)));
+     CSS perspective 1200px: scale = 1200/(1200+z) → z 800 ≈ 0.6. --sl
+     (the stage, above) is THE RAIL STEPS' own gate: the squash is
+     leoparpeix's drag force; here the drag is the slide, so this stays
+     at the flat identity through every dwell no matter what --force
+     reads off a live wheel burst. */
+  transform: translateZ(calc(-800px * var(--force, 0) * var(--sl, 0) * var(--dist)));
   will-change: transform;
 }
 .dr-work-card { position: absolute; inset: 0; display: block; border-radius: 10px; overflow: clip; text-decoration: none; color: inherit; background: #e7e7ea; }
@@ -4163,7 +4244,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 
 @media (max-width: 900px), (prefers-reduced-motion: reduce) {   /* the finger's rail (their mobile: 300×190, touch-action pan-y) */
   /* --th has to be overridden HERE, on the stage, not on the band below —
-     --tw/--pitch/--drift are declared on `.dr-work-stage` and their own
+     --tw/--pitch are declared on `.dr-work-stage` and their own
      `var(--th)` resolves against THIS element's cascaded --th the moment
      they're substituted into a used property (tile's flex-basis); a
      descendant's override of --th (band) only reaches properties that

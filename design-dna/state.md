@@ -128,7 +128,19 @@ here forward.
   decisions.md): the shared vars moved up from `.dr-work-band` to the
   new `.dr-work-stage`, so the mobile `--th` override had to move up
   with them or `--tw` silently kept resolving the desktop formula.
-  Awaiting Jake's first look.
+  SUPERSEDED same day (well, the next) by RAIL STEPS, 2026-09-19, on
+  Jake's ask for "a little more of a controlled motion like it kinda
+  makes you go one at a time": `--bp` no longer maps to the rail
+  continuously — it's rescaled to `--t` (which window), each of the 8
+  windows (travel grown 360→420svh) runs dwell .2 / smoothstepped slide
+  .6 / dwell .2, and `--rx` (the running sum, `@property`-typed) replaces
+  the old `-bp × drift`. The depth squash now gates on `--sl` (the
+  slide's own activity) instead of raw `--force`, so a tile only recedes
+  while the rail is actually moving. `lenis/snap` (v2's own, 49850bb) is
+  back, landing a stop on the nearest plateau — no snap under 900px or
+  reduced motion. See decisions.md for the full measured record,
+  including a real Lenis gotcha (the snap listens to `virtual-scroll`,
+  which a bare `scrollTo` never fires). Awaiting Jake's first look.
 - THE ENGINE (`components/dark/scroll-engine.ts`) gained a THIRD track
   kind, 2026-09-18: `data-sp-force="<px>"` publishes `--force` (0→1), a
   VELOCITY read off the same element's own `--sp` mark, modelled on
