@@ -1345,13 +1345,28 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      see .dr-climb-wrap below for the matching correction) until the
      card is still below the fold through the hold and only arrives
      once it is over. */
-  --say-hold: 180svh;
+  /* 2026-09-19, second cut (Jake: "if we are having the curtain it
+     shouldnt be sticky and services shouldnt rise like that"): the pin
+     holds ONLY for the uncover — the film's own exit, one screen — plus
+     a 30svh beat with the words alone, then releases and the words
+     scroll like anything else; the card arrives in flow below them, no
+     cover. The 180 above was the cover's arithmetic; gone with it. */
+  --say-hold: 130svh;
   height: calc(100svh + var(--say-hold));
 }
 .dr-say-pin {
   position: sticky; top: 0; height: 100svh; z-index: 4;
   display: grid; place-items: center;
 }
+/* NOTHING SHOWS UNTIL THE FILM IS THE SCREEN (Jake: "you can see the
+   text of second section under hero video"): the pin is pulled up under
+   the letterbox, and on a 900-tall screen the statement's lower half sat
+   BELOW the letterbox's bottom edge before the grow — in plain view on
+   the first screen. --pre is the pin's own approach (its top from the
+   fold to the top of the viewport, which is the frame the film goes full
+   screen); the words are transparent until the last 4% of it, by which
+   point the film covers them. Uncovered by the curtain, never faded in. */
+.dr-say-pin .dr-offer-head { opacity: calc(clamp(0, (var(--pre, 1) - .96) * 25, 1)); }
 @media (min-width: 901px) {
   /* the pin's own centring replaces the bottom padding that used to
      hold the climb's room (THE HEAD, above) */
@@ -1366,18 +1381,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    resolving to 1 as the last of the film leaves. */
 .dr-offer-say { scale: calc(1.12 - 0.12 * var(--cur, 1)); transform-origin: 50% 60%; }
 
-/* THE COVER: the services card is pulled up a screen so its own top
-   arrives right as the curtain's hold ends, climbing OVER the still-
-   pinned words (THE CARD GROWS, .dr-svc-in, keeps doing the rest).
-   Pulled up LESS than a full 100svh, by exactly .dr-svc-in's own
-   --rise-d (clamp(110px,26svh,300px), duplicated here — a custom
-   property set on a child cannot be read by its parent): the card's
-   pre-arrival RISE (THE CLIMB, .dr-svc-in) makes its own VISUAL top
-   outrun this wrapper's plain layout top by that same amount once it
-   has arrived, so without the correction the card visually reached y 0
-   ~150px before the pin actually released (measured) — pulling up
-   --rise-d less cancels exactly that, so the two now land together. */
-.dr-climb-wrap { margin-top: calc(-100svh + clamp(110px, 26svh, 300px)); }
+/* THE COVER IS GONE (2026-09-19, same day it was built — Jake: "services
+   shouldnt rise like that"): the card is no longer pulled up over the
+   pinned words; it arrives in flow after the stage, its top at the fold
+   the moment the pin releases. Its own small climb (--rise-d, .dr-svc-in,
+   2026-09-14) is untouched. */
+.dr-climb-wrap { margin-top: 0; }
 
 @media (max-width: 900px), (prefers-reduced-motion: reduce) {
   /* no stage, no pin: the statement sits in flow exactly as it did
@@ -1385,7 +1394,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-say-stage { margin-top: 0; height: auto; }
   .dr-say-pin { position: static; height: auto; display: block; }
   .dr-offer-say { scale: none; }
-  .dr-climb-wrap { margin-top: 0; }
+  .dr-say-pin .dr-offer-head { opacity: 1; }
 }
 
 /* THE PATH: three numerals, one over each column, joined by a line —

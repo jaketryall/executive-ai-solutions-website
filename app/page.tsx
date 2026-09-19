@@ -457,7 +457,15 @@ export default function DarkRoom() {
         data-sp-to="-1"
         data-sp-var="--cur"
       >
-        <div className="dr-say-pin">
+        {/* the pin's own approach, for the gate that keeps the words
+            invisible until the film is the screen (room.css) */}
+        <div
+          className="dr-say-pin"
+          data-sp
+          data-sp-from="1"
+          data-sp-to="0"
+          data-sp-var="--pre"
+        >
           <OfferHead />
         </div>
       </div>
@@ -472,10 +480,9 @@ export default function DarkRoom() {
           things in two subtrees is a trap waiting for whoever reads it
           next.
 
-          THE COVER (2026-09-19): the wrapper is pulled up 100svh
-          (`.dr-climb-wrap`, room.css) so the card's own top arrives right
-          as the curtain's hold ends, climbing OVER the still-pinned words
-          — the third surface in the uncover → hold → cover chain. */}
+          THE COVER (2026-09-19, built and removed the same day — Jake:
+          "services shouldnt rise like that"): the card is no longer
+          pulled up over the pinned words; it follows the stage in flow. */}
       <div
         className="dr-climb-wrap"
         data-sp
