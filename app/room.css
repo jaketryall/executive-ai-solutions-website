@@ -370,11 +370,13 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    from the first frame, the minimal caption, the rail's wordmark as the
    name. */
 
-/* the sentinel is 19.8svh TALL: the rail's observer (threshold 0)
-   reports it gone when its BOTTOM passes the top of the viewport, i.e.
-   at p .22 — the frame the words are gone and the hero's door is out —
-   so the pill, its lit edge and the nav's action close after them, and
-   there is one door on screen at any moment */
+/* the sentinel's height is the STRIP'S BOTTOM EDGE, written by the nav
+   (components/room/nav.tsx) from the strip's own box: the rail's observer
+   (threshold 0) reports it gone when that edge passes the top of the
+   viewport — after the strip has faded (p .69) and its box has left —
+   so the pill, its lit edge and the nav's action arrive only once the
+   hero's white bar is gone (Jake, 2026-09-18). 19.8svh is the no-JS
+   fallback, the old p .22 mark. */
 .dr-top { position: absolute; top: 0; left: 0; width: 1px; height: 19.8svh; }
 /* the reel's progress, 0 at rest → 1 at 0.55vh (itsjay's 0.9, shortened). On the
    WRAPPER, because the words (in the stage) and the reel (in the dock,
