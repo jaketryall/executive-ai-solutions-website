@@ -174,5 +174,5 @@ bug; never delete a line.
 
 ## §01 · the title's rise and the second reading (2026-09-18)
 - At rest after the entrance: `.dr-line .dr-read--alt` computed `translate` is `-5% 100%` and NO ink of the second reading is visible between the h1's bottom and the strip's top (the mask clips it — `.dr-line` must be `position: relative`).
-- Hover `.dr-h1`: within 1.7s the main reading is at `-5% 100%` and the alt at `0px`; the film copy's alt matches the ink copy's. Leave: the mirror within 1.8s; the entering copy is the delayed one (~.38s) in both directions.
+- (RETIRED the same day) the hover swap — hovering `.dr-h1` changes NOTHING now: `.dr-read` translate stays `none`, no `.dr-read--alt` exists.
 - Entrance (screencast): the title's mask clips a diagonal rise (from +5%/103%), landed by ~1.3s; the strip arrives from the left 115ms after the title. `--ease-reveal` appears in no rule outside §01.
