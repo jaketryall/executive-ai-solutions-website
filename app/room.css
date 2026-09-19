@@ -3988,7 +3988,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-work-infos { position: relative; height: 1.6em; margin-top: 18px; }
 .dr-work-info {
   position: absolute; inset: 0 var(--col-inset);
-  display: grid; grid-template-columns: 3ch 1fr auto auto auto; gap: 24px; align-items: baseline;
+  display: grid; grid-template-columns: 3ch 1fr auto auto auto auto; gap: 24px; align-items: baseline;
   --d: max(calc(var(--idx) - var(--c)), calc(var(--c) - var(--idx)));
   opacity: clamp(0, calc(2 - var(--d)), 1);
   z-index: round(calc(1000 - var(--d) * 100), 1);
@@ -4002,6 +4002,10 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   color: var(--ink); text-decoration: none; font-size: var(--fs-body-s); }
 .dr-work-open i { font-style: normal; transition: transform .6s var(--ease-ui); }
 .dr-work-open:hover i, .dr-work-open:focus-visible i { transform: translateX(6px); }
+/* the live link's arrow points out, so it lifts instead of sliding */
+.dr-work-live { color: var(--ink-4); }
+.dr-work-live:hover, .dr-work-live:focus-visible { color: var(--ink); }
+.dr-work-live:hover i, .dr-work-live:focus-visible i { transform: translate(3px, -3px); }
 .dr-work-open:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 4px; }
 
 @media (max-width: 900px), (prefers-reduced-motion: reduce) {   /* the finger's rail (their mobile: 300×190, touch-action pan-y) */

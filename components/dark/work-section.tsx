@@ -222,6 +222,14 @@ export default function WorkSection() {
                 </h3>
                 <span className="t-label dr-work-date">{p.year}</span>
                 <span className="t-label dr-work-scope">{p.kind}</span>
+                {/* THE LIVE LINK (2026-09-18): the one word that makes the
+                    rail unfakeable — a site they can open in a new tab. The
+                    case is the story; the live site is the proof. */}
+                {p.url && (
+                  <a className="dr-work-open dr-work-live" href={p.url} target="_blank" rel="noopener">
+                    Live <i aria-hidden>↗</i>
+                  </a>
+                )}
                 <Link className="dr-work-open" href={`/work/${p.slug}`}>
                   See the case <i aria-hidden>→</i>
                 </Link>

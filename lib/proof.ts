@@ -5,6 +5,14 @@
    ship as-is: `rating`, `count` and `url` must come from the live Google
    Business profile, and the hero's rating card renders nothing while
    `count` is 0. Set the three values and the card appears. */
+/* THE ONE HONEST URGENCY (2026-09-18). One person builds these, which is
+   real capacity: "One build at a time. Next start: October 6." is the only
+   scarcity this site will ever state, and only while it is TRUE — a
+   countdown or a "3 spots left" would break the no-fake-proof rule and
+   repel exactly the owner it is meant for. Set the date to show the line
+   in the close; keep it current or set it back to null. */
+export const NEXT_START: string | null = null; // ← Jake: e.g. "October 6", or null to hide
+
 export const GOOGLE_REVIEWS = {
   rating: 5.0, // ← PLACEHOLDER so the card can be seen in review
   count: 14, // ← PLACEHOLDER — Jake: the real count from Google, or 0 to hide

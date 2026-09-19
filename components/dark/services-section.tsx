@@ -42,8 +42,11 @@ import { SHOTS } from "@/components/dark/service-shots";
    positioning (lib/services.ts: websites → automation → ads), and the
    statement walks the reader through the columns in that order. */
 export const OFFER_SAY = "Websites, automation and ads for owner-run businesses.";
+/* the paragraph is where the DECISION happens (2026-09-18): the three
+   promises the visitor is actually weighing, said once, plainly, in the
+   order they ask them — how fast, how much, when. 27 words. */
 export const OFFER_MORE =
-  "Built by the person you talk to. No account managers, no handoffs — which is why the price is fixed and the date holds.";
+  "Built by the person you talk to. No account managers, no handoffs. A fixed quote in two days, a price that never moves, a date that holds.";
 
 /* THE HEAD: rendered by page.tsx before the card's wrapper — see above */
 export function OfferHead() {

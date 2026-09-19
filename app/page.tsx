@@ -322,9 +322,14 @@ export default function DarkRoom() {
 
 
                 {/* THE DOOR, inside the strip at its right end (Jake: "put
-                    cta inside that bar somehow") */}
-                <Link href="/contact" className="dr-herocta dr-edge t-cta">
-                  Book the call
+                    cta inside that bar somehow"). IT OPENS THE ESTIMATOR,
+                    not the call (2026-09-18): for a cold ad visitor a call
+                    is a big ask on our schedule; a price in sixty seconds
+                    is about them, costs nothing, and is the thing nobody
+                    else has. The call is the nav's persistent action and
+                    the close — it is asked for once trust exists. */}
+                <Link href="/pricing#estimate" className="dr-herocta dr-edge t-cta">
+                  See your price
                 </Link>
               </div>
 

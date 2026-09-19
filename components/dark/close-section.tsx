@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { NEXT_START } from "@/lib/proof";
 
 /* §06 · THE CLOSE
    The page's one action, and the thing that earns it — now built as CTA
@@ -111,6 +112,8 @@ export default function CloseSection() {
 
           <p className="dr-close-note">
             Twenty minutes. A fixed quote within two days.
+            {/* the capacity line, only while it is true (lib/proof.ts) */}
+            {NEXT_START && <> One build at a time — next start {NEXT_START}.</>}
           </p>
 
           {/* the mobile copy of the pill — the headline can't carry an
