@@ -244,7 +244,7 @@ export default function DarkRoom() {
           the screen by ~1.5vh instead of 1.9. The wrapper holds the stage
           AND the dock so the reel inherits it in both. */}
       <div
-        className="dr-hero-wrap"
+        className="dr-hero-wrap dr-zone-dark"
         data-sp
         data-sp-edge="top"
         data-sp-from="0"
@@ -254,6 +254,14 @@ export default function DarkRoom() {
         {/* the rail (components/room/nav) watches this by selector: the
             pill and the action are what the first scroll earns */}
         <div className="dr-top" aria-hidden />
+        {/* THE ROOM (2026-09-19): the hero is a DARK ZONE even in the
+            light room (.dr-zone-dark, room.css) — a ::before paints
+            #0b0b0b from here down to the film's own frozen post-grow
+            bottom edge. This second sentinel marks that SAME edge in
+            the flow, so the rail (components/room/nav) knows when it
+            has scrolled past the dark ground and can flip its own
+            chrome from dark to light. */}
+        <div className="dr-ground-end" aria-hidden />
 
         <div className="dr-stage">
           <main className="dr-main wrap">

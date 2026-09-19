@@ -390,6 +390,78 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
 .dr-hero-wrap { position: relative; --p: clamp(0, var(--hero-p, 0), 1);
                 /* the docked reel bleeds past both edges; nothing scrolls */
                 overflow-x: clip; }
+
+/* ══ THE DARK ZONE (2026-09-19, THE ROOM: white page, black hero) ═══
+   hugeinc.com's own seam, Jake: "yea lets do white page with black
+   hero". The light room is the page again (shell.tsx); the hero — from
+   the page's top edge to the film's own bottom — stays the dark room's
+   ink regardless, so the curtain still lifts a black film off a white
+   statement.
+
+   THE GROUND is a ::before, painted from the wrap's own top down to
+   EXACTLY the film's frozen post-grow bottom edge — not the wrap's own
+   border box, which (measured live, 1440x736: 1247.75px) runs 106.95px
+   PAST that edge, into where the words' white ground begins (THE DOCK,
+   above: --dock-pad is negative here, and .dr-hero-wrap's overflow-x:
+   clip computes overflow-y to auto too, which blocks that negative
+   margin from collapsing through — so the wrap's rendered box is the
+   reel's full UNCOMPRESSED flow height, not the reduced one). The film's
+   true bottom, once scrolled to --grow, is a geometric invariant instead:
+   .dr-stage is exactly one viewport tall and the dock starts right after
+   it, so "one viewport plus --grow" IS the film's frozen bottom, in
+   document space, for every scroll ≥ --grow (measured: scrollY +
+   reel.getBoundingClientRect().bottom settles on 1140.5px for every
+   scroll from 405px to 1200px at this viewport, against
+   100svh + 55vh = 1140.8 — a twin of --grow on .dr-dock below,
+   duplicated as a literal rather than read cross-tree (custom
+   properties only inherit downward, and .dr-dock is a descendant of
+   this wrapper, not an ancestor) — RE-MEASURE BOTH TOGETHER if --grow
+   ever changes there. */
+.dr-hero-wrap.dr-zone-dark {
+  /* the same list .dr-root.dr-light .dr-svc re-declares (below), plus
+     the ground and its surfaces: the rail (components/room/nav.tsx)
+     sits OUTSIDE this wrapper and re-declares its own copy for the same
+     reason — a var() only inherits down the DOM, and the rail is a
+     RoomShell sibling of the page's own content, not a descendant of it. */
+  --void: #0b0b0b;
+  --surface-1: #121214;
+  --surface-2: #171719;
+  --surface-3: #202024;
+  --ink: #ffffff;
+  --ink-2: #d4d4d8;
+  --ink-3: #949498;
+  --ink-4: #8a8a8e;
+  --edge: #565759;
+  --edge-strong: #6e7075;
+}
+.dr-hero-wrap.dr-zone-dark::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0;
+  height: calc(100svh + 55vh); /* the twin of --grow, see above */
+  background: var(--void);
+}
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  /* no grow, no pin on the phone (state.md: "the film a 4:3 object
+     after the words") — the film's bottom IS the wrap's own natural
+     rendered bottom, measured live at 390x844: wrap height 602.4px,
+     dock top 410 + dock height 192 = 602 exactly, no reduction */
+  .dr-hero-wrap.dr-zone-dark::before { height: 100%; }
+}
+/* a plain 1px marker at that same edge, for the rail (nav.tsx) to
+   measure against — see the comment above */
+.dr-ground-end { position: absolute; left: 0; right: 0;
+                 top: calc(100svh + 55vh); height: 1px; pointer-events: none; }
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .dr-ground-end { top: 100%; }
+}
+/* THE STRIP AND FACES GO DARK IN THE ZONE, exactly as they already do
+   in the ?dark room's own `:not(.dr-light)` rule below — duplicated
+   rather than shared because that rule is deliberately gated OFF while
+   `.dr-light` is present, and the zone needs the opposite: dark here,
+   regardless of the room. */
+.dr-zone-dark .dr-strip { background: var(--surface-1); box-shadow: none;
+                           outline: 1px solid var(--edge); outline-offset: -1px; }
+.dr-zone-dark .dr-face { border-color: var(--surface-1); }
 .dr-stage {
   /* 6, above the dock (5): the reel paints UNDER the words and the card's
      copy, over the ground — the stage has no background of its own */
@@ -596,6 +668,49 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-rail[data-stuck] .dr-navcta::before { opacity: 1; }
 .dr-navcta:hover { background: var(--surface-3); }
 .dr-navcta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
+
+/* ── THE RAIL'S CHROME FOLLOWS THE GROUND (2026-09-19, THE ROOM) ────
+   The rail is a RoomShell sibling of the page's own content, not a
+   descendant of it — it cannot inherit the dark zone's re-declared
+   tokens the way the hero's own content does, and its stuck pill's
+   background above is a literal rgba(11,11,13,.92), dark regardless of
+   room ("the pill has to carry its own darkness rather than borrow the
+   ground's," 2026-09-13). That was fine when the whole page was one
+   colour; now the same rail crosses from the hero's black ground to the
+   page's white one, so both states need an explicit answer instead of
+   quietly borrowing whichever room happens to be active — "dark" is
+   what the rail already looked like above; "light" is the new half. */
+.dr-rail[data-ground="dark"] .dr-lockup b { color: #ffffff; }
+.dr-rail[data-ground="dark"] .dr-mono { background: #ffffff; }
+.dr-rail[data-ground="dark"] .dr-links a { color: #949498; }
+.dr-rail[data-ground="dark"] .dr-links a:hover,
+.dr-rail[data-ground="dark"] .dr-links a:focus-visible { color: #ffffff; }
+.dr-rail[data-ground="dark"] .dr-navcta { background: #171719; color: #ffffff; }
+.dr-rail[data-ground="dark"] .dr-navcta:hover { background: #202024; }
+.dr-rail[data-ground="dark"][data-stuck] .dr-rail-in { background: rgba(11, 11, 13, 0.92); }
+
+.dr-rail[data-ground="light"] .dr-lockup b { color: #0a0a0b; }
+.dr-rail[data-ground="light"] .dr-mono { background: #0a0a0b; }
+.dr-rail[data-ground="light"] .dr-links a { color: #5c5c63; }
+.dr-rail[data-ground="light"] .dr-links a:hover,
+.dr-rail[data-ground="light"] .dr-links a:focus-visible { color: #0a0a0b; }
+.dr-rail[data-ground="light"] .dr-navcta { background: #0a0a0b; color: #ffffff; }
+.dr-rail[data-ground="light"] .dr-navcta:hover { background: #35353a; }
+.dr-rail[data-ground="light"][data-stuck] .dr-rail-in {
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+}
+/* THE FLIP IS A FADE, not a cut: .dr-links a already transitions colour
+   at var(--t-micro), and .dr-navcta already transitions background at
+   the same duration (both above) — this adds the two the ground-swap
+   newly touches. .dr-rail-in's OWN background transition stays .5s,
+   the stuck/unstuck fade's own dial (2026-09-13) and not this step's to
+   retune; it still crossfades, just on that longer, pre-existing clock. */
+.dr-lockup b { transition: max-width .55s var(--ease-structure),
+              opacity .3s var(--ease-ui), color var(--t-micro) var(--ease-ui); }
+.dr-mono { transition: width .55s var(--ease-structure), opacity .35s var(--ease-ui),
+              background var(--t-micro) var(--ease-ui); }
 
 /* main: the whole first screen under the nav. The headline sits high;
    the card takes everything under it down to the gutter above the fold,

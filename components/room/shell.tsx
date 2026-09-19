@@ -70,11 +70,23 @@ export function RoomShell({ children }: { children: React.ReactNode }) {
      client pass both say dark, `?light` turns the light room back on in
      the effect for the comparison. First paint is already black
      (room.css, body:has(.dr-root)), so there is nothing to flash. The
-     light era's own rules stand under .dr-light, untouched. */
-  const [light, setLight] = useState(false);
+     light era's own rules stand under .dr-light, untouched.
+
+     SUPERSEDED THE SAME DAY (2026-09-19 — THE ROOM: WHITE PAGE, BLACK
+     HERO, Jake with hugeinc.com as the model: "yea lets do white page
+     with black hero"). That trial was a "want to try," never a
+     measurement, and the model settles it: Huge's own seam is a light
+     page with a dark hero, which is neither plain room as they stood —
+     the light room returns as the default, `?dark` is the comparison
+     again, and the hero itself now carries its own dark zone
+     (app/page.tsx's `.dr-hero-wrap.dr-zone-dark`, room.css) regardless
+     of which room the rest of the page is in. Still one boolean, still
+     one flag — the two full rooms (`?dark` vs default) are untouched by
+     the zone; only the hero's own ground changed shape. */
+  const [light, setLight] = useState(true);
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
-    if (q.has("light")) setLight(true);
+    if (q.has("dark")) setLight(false);
   }, []);
 
   return (

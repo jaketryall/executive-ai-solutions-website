@@ -80,6 +80,28 @@ here forward.
   room.css. `.dr-svc` grew 1.58vh → 2.69vh at 1440×736 (+820px), which
   pushed everything below it down by the same amount. Verified at
   390/1440/2560, both rooms, tsc clean. Awaiting Jake's look.
+- THE ROOM · WHITE PAGE, BLACK HERO (2026-09-19, the model — hugeinc.com,
+  Jake: "yea lets do white page with black hero"): the light room is the
+  default again (shell.tsx `useState(true)`, `?dark` is the comparison),
+  and the hero now carries its OWN dark zone regardless of which room is
+  active — `.dr-hero-wrap.dr-zone-dark` (app/page.tsx, room.css)
+  re-declares the dark room's ink/surface tokens and paints `#0b0b0b`
+  from the page's top down to the film's own frozen post-grow bottom
+  edge (a geometric invariant, `100svh + --grow`, not the wrap's own
+  larger border box). The curtain still lifts the film off the
+  statement, unchanged — now black off white, Huge's own seam. The rail
+  (components/room/nav.tsx) flips from dark chrome to light chrome once
+  the film's bottom passes its own hem (`data-ground`, a second sentinel
+  `.dr-ground-end`, a rAF-batched scroll check, not IntersectionObserver
+  — a thin sentinel's `isIntersecting` reads the same false whether it
+  is early or late). A real bug was found and fixed verifying it: the
+  flip ran even in `?dark`, where there is no light ground to flip into
+  — the check now re-confirms `.dr-light` is present on every call.
+  Verified at 390/1440/2560, both rooms, interior pages, tsc clean, 0
+  console errors, frame probe ≤10.4ms settled. NOT YET REVIEWED by Jake.
+  Known, not fixed (pre-existing, unrelated): the hero reel's own
+  transform renders off-screen under `prefers-reduced-motion: reduce`
+  at desktop widths — confirmed on the code before this step too.
 - §03 THE WORK v2, THE GALLERY (2026-09-18) — v1's pinned strip
   (`ec708b7`, one card per viewport-wide item) is RETIRED same day on
   Jake's call ("this feels very weird" → "no i want to find some sort

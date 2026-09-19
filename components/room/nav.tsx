@@ -38,10 +38,14 @@ export function Roll({ label }: { label: string }) {
 
 export function RoomNav() {
   const [stuck, setStuck] = useState(false);
+  const [ground, setGround] = useState<"dark" | "light">("dark");
   useEffect(() => {
     const top = document.querySelector<HTMLElement>(".dr-top");
     if (!top) {
       setStuck(true);
+      /* no hero, no dark zone: an interior page opens on its own
+         content, in the light room's own chrome */
+      setGround("light");
       return;
     }
     /* THE SENTINEL ENDS WHERE THE STRIP ENDS (Jake, 2026-09-18: "i dont
@@ -101,9 +105,63 @@ export function RoomNav() {
     };
   }, []);
 
+  /* THE GROUND FLIPS WITH THE FILM (2026-09-19, THE ROOM: white page,
+     black hero). `.dr-ground-end` (page.tsx) marks the film's own frozen
+     post-grow bottom edge — well past `.dr-top`, which only marks the
+     strip. While that edge sits below the rail's own hem the rail is
+     over the dark zone (dark chrome); once it has scrolled above the
+     hem the rail is over the light page (light chrome).
+
+     A plain position compare on scroll, not a single IntersectionObserver
+     threshold: `.dr-ground-end` is a 1px line, and a rootMargin shrunk to
+     the hem gives isIntersecting the SAME false reading whether the line
+     is still off the bottom of the screen (page just loaded — should
+     read dark) or has already passed above the hem (should read light).
+     Reading its rect against the rail's own rect has no such ambiguity,
+     and it costs one comparison of two already-cheap
+     getBoundingClientRect calls, rAF-batched like the hero's own wall
+     drift (app/page.tsx).
+
+     ⚠ ONLY IN THE LIGHT ROOM. `.dr-ground-end` sits at the same document
+     position regardless of which room is active, but in `?dark` there is
+     no light page below it to flip INTO — the whole route is the dark
+     room end to end, and a real bug here (caught live) flipped the rail
+     to the light-chrome colours once scrolled past the sentinel even in
+     `?dark`. Re-checked on every call, not just at mount: shell.tsx's own
+     `?dark` effect and this one both run on mount, in undefined order
+     across components, so trusting a single read at mount could race it. */
+  useEffect(() => {
+    const rail = document.querySelector<HTMLElement>(".dr-rail");
+    const groundEnd = document.querySelector<HTMLElement>(".dr-ground-end");
+    if (!rail || !groundEnd) return;
+    let frame = 0;
+    const check = () => {
+      frame = 0;
+      const isLightRoom = document.querySelector(".dr-root")?.classList.contains("dr-light");
+      if (!isLightRoom) {
+        setGround("dark");
+        return;
+      }
+      const hem = rail.getBoundingClientRect().bottom;
+      setGround(groundEnd.getBoundingClientRect().top < hem ? "light" : "dark");
+    };
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
   return (
     <header className="dr-nav wrap">
-      <div className="dr-rail dr-edge" data-stuck={stuck ? "true" : undefined}>
+      <div className="dr-rail dr-edge" data-stuck={stuck ? "true" : undefined} data-ground={ground}>
         <div className="dr-rail-in">
           <Link className="dr-lockup" href="/">
             <span className="dr-mono" aria-hidden />
