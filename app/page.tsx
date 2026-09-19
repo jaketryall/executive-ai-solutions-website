@@ -247,9 +247,19 @@ export default function DarkRoom() {
                   second, ads not in the statement. It crosses the film's
                   top edge, and is white where it does — see the second
                   copy below. */}
+              {/* TWO READINGS (leoparpeix, decodes/leoparpeix.md §14,
+                  2026-09-18): the claim, and on hover a second reading
+                  that rises in behind it through the same mask while the
+                  first leaves downward — their bee's swap, on hover
+                  (Jake: "on hover for the swap"). Both copies of the
+                  line carry both readings so the film's white clip swaps
+                  with the ink. */}
               <h1 className="t-hero dr-h1">
                 <span className="dr-line">
-                  <span className="sweep">Design that sells</span>
+                  <span className="sweep dr-read">Design that sells</span>
+                  <span className="dr-read dr-read--alt" aria-hidden>
+                    Sites that book
+                  </span>
                 </span>
                 {/* THE SAME LINE, WHITE, CLIPPED TO THE FILM. Where the
                     headline crosses the film's box this copy shows and
@@ -261,7 +271,8 @@ export default function DarkRoom() {
                     frame of film, and the reference never inverts —
                     the words are white on the picture, full stop. */}
                 <span className="dr-line dr-line--film" aria-hidden>
-                  <span>Design that sells</span>
+                  <span className="dr-read">Design that sells</span>
+                  <span className="dr-read dr-read--alt">Sites that book</span>
                 </span>
               </h1>
 

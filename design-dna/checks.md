@@ -171,3 +171,8 @@ bug; never delete a line.
 - `.dr-top`'s offsetHeight equals the strip's document bottom edge minus the hero wrapper's top (342 at 1440×736, 352 at 1440×900, 410 at 390×844 — re-measure, the numbers follow the hero).
 - Scrolled to strip-bottom − 2px the rail has NO `data-stuck`; at strip-bottom + 2px it has it — on desktop AND on the phone.
 - On desktop the strip's computed opacity is 0 at the frame the rail sticks (the fade ends at p .69, before the box leaves).
+
+## §01 · the title's rise and the second reading (2026-09-18)
+- At rest after the entrance: `.dr-line .dr-read--alt` computed `translate` is `-5% 100%` and NO ink of the second reading is visible between the h1's bottom and the strip's top (the mask clips it — `.dr-line` must be `position: relative`).
+- Hover `.dr-h1`: within 1.7s the main reading is at `-5% 100%` and the alt at `0px`; the film copy's alt matches the ink copy's. Leave: the mirror within 1.8s; the entering copy is the delayed one (~.38s) in both directions.
+- Entrance (screencast): the title's mask clips a diagonal rise (from +5%/103%), landed by ~1.3s; the strip arrives from the left 115ms after the title. `--ease-reveal` appears in no rule outside §01.

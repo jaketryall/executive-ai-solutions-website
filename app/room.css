@@ -145,6 +145,11 @@
   /* ── exactly two curves. */
   --ease-structure: cubic-bezier(0.25, 1, 0.5, 1);  /* every entrance/reveal */
   --ease-ui: cubic-bezier(0.16, 1, 0.3, 1);         /* overlays + hover */
+  /* THE ONE EXCEPTION, hero only (2026-09-18): leoparpeix's "reveal"
+     curve for the title's rise and its two-reading swap — slow in, a
+     decisive middle, a long settle (decodes/leoparpeix.md §14). Nothing
+     outside the hero may use it. */
+  --ease-reveal: cubic-bezier(0.4, 0, 0, 1);
 
   /* ── duration ladder */
   --t-micro: 300ms;  /* every hover on the site */
@@ -681,7 +686,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 .dr-line--film > span { color: #fff; }
 /* the entrance: both copies rise together, as the first line */
-.dr-lit .dr-line--film > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 300ms forwards; }
+.dr-lit .dr-line--film > span { animation: dr-rise 1s var(--ease-reveal) 300ms forwards; }
+.dr-line--film > span { position: relative; }
+.dr-line--film > .dr-read--alt { position: absolute; }
 /* ON THE FILM: the copy block lower left (a small caps heading over a
    short paragraph — their PIZZA WITH URBAN FLAIR), the door lower right,
    the rating a badge top right under the headline's crossing, the three
@@ -781,10 +788,32 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    measured in Chrome as 181px of nothing above the line, the title 361
    tall for one line of 180 */
 .dr-line { display: block; overflow: hidden; transform: skewX(-4deg); transform-origin: left center; }
-.dr-line > span { display: block; transform: translateY(103%); }
-.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 300ms forwards; }
-.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise var(--t-stagger) var(--ease-structure) 420ms forwards; }
-@keyframes dr-rise { to { transform: translateY(0); } }
+/* THE RISE IS LEOPARPEIX'S (decodes/leoparpeix.md §14, 2026-09-18): each
+   line starts one line below its mask AND 5% sideways — the first from
+   the right, the next from the left — and rises to home over 1.0s on
+   the reveal curve, 115ms apart. The mask clips both axes, so the drift
+   is seen as the line arriving on a slight diagonal, never as a slide. */
+.dr-line > span { display: block; transform: translate(5%, 103%); }
+.dr-lit .dr-line:nth-of-type(1) > span { animation: dr-rise 1s var(--ease-reveal) 300ms forwards; }
+.dr-lit .dr-line:nth-of-type(2) > span { animation: dr-rise 1s var(--ease-reveal) 415ms forwards; }
+@keyframes dr-rise { to { transform: none; } }
+/* THE SWAP, on hover (their bee's click): the claim leaves downward on
+   the opposite diagonal while the second reading rises in behind it
+   through the same mask, 0.38s later — the entering copy is always the
+   late, longer one (their 2.0s at +0.63 against a 1.5s exit, scaled to a
+   hover). Both readings share the line's box; the alt is absolute over
+   the first and rests one line below, 5% left. */
+/* the line is the alt's CONTAINING BLOCK, or the mask cannot clip it: an
+   absolutely positioned child is clipped by an overflow:hidden ancestor
+   only when that ancestor is on its containing-block chain. Without this
+   the second reading sat one line under the first, in plain view
+   (screencast 2026-09-18). The film copy is already absolute. */
+.dr-line:not(.dr-line--film) { position: relative; }
+.dr-read { transition: translate 1.2s var(--ease-reveal) .38s; }
+.dr-read--alt { position: absolute; inset: 0; translate: -5% 100%;
+                transition: translate .9s var(--ease-reveal) 0s; }
+.dr-h1:hover .dr-read { translate: -5% 100%; transition-duration: .9s; transition-delay: 0s; }
+.dr-h1:hover .dr-read--alt { translate: 0 0; transition-duration: 1.2s; transition-delay: .38s; }
 
 /* THE CHIP — the reel's rest position, in the line. 16:9, a little
    taller than the caps so it reads as an object set into the sentence
@@ -876,7 +905,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    hydration hid it (the animation's backwards fill), and it faded in
    again — visible → gone → back (screencast 2026-09-14). */
 .dr-root:not(.dr-lit) .dr-strip, .dr-root:not(.dr-lit) .dr-herocta { opacity: 0; }
-.dr-lit .dr-strip   { animation: dr-fadein var(--t-enter) var(--ease-structure) 560ms backwards; }
+/* the strip is the hero's SECOND LINE (leoparpeix §14): it comes in
+   115ms after the title, from the left, on the same curve. Unmasked —
+   a mask would cut its shadow — so a short diagonal rise with the fade. */
+.dr-lit .dr-strip   { animation: dr-strip-in 1s var(--ease-reveal) 415ms backwards; }
+@keyframes dr-strip-in { from { opacity: 0; transform: translate(-5%, 40%); } to { opacity: 1; transform: none; } }
 .dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 720ms backwards; }
 
 /* ── THE RATING CARD ─────────────────────────────────────────────
@@ -1253,6 +1286,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      row sit at 8% on the first screen with the reel docked below it */
   .dr-h1, .dr-strip, .dr-herocta { opacity: 1; }
   .dr-lit .dr-strip, .dr-lit .dr-herocta { animation: none; }
+  .dr-read { transition: none; }
 }
 /* ══ §02 · THE OFFER — the statement, and the three things under it ═
    (services-section.tsx has the why). THE HEAD is on the light ground,
