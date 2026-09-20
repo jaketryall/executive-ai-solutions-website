@@ -643,6 +643,30 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   }
 }
 
+/* `still` — NO GROW (Jake: "i want to keep the video with the gap, i
+   want to try not having it go full width"): the film stays the object
+   it is at rest and scrolls with the page. --p is pinned at 0 so every
+   grow transform holds its rest value; the dock's flow box is moved
+   UP onto the slot (its natural place is after the 100svh stage, the
+   slot's top is --grow into it) so the measured rest translate is
+   zero and the next section follows the film's real bottom edge; the
+   dark ground and its sentinel end there too, not a grow's worth
+   lower. Desktop only, like the grow itself. */
+@media (min-width: 901px) {
+  .dr-hero-wrap[data-v~="still"] { --p: 0; }
+  [data-v~="still"] .dr-dock {
+    margin-top: calc(var(--grow, 55vh) - 100svh);
+    padding-top: 0; margin-bottom: 0;
+  }
+  .dr-hero-wrap[data-v~="still"].dr-zone-dark::before,
+  .dr-hero-wrap[data-v~="still"] .dr-air {
+    height: calc(var(--grow, 55vh) + var(--film-h, 36vw));
+  }
+  .dr-hero-wrap[data-v~="still"] .dr-ground-end {
+    top: calc(var(--grow, 55vh) + var(--film-h, 36vw));
+  }
+}
+
 /* `glow` — THE FILM'S OWN LIGHT. A 32x18 canvas (hero-room.tsx draws
    the reel into it ten times a second), blurred AT THAT SIZE — the
    filter runs on 576 pixels — then scaled by transform to cover the
@@ -1981,9 +2005,15 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 600; font-weight: 600;
   text-transform: none; letter-spacing: -0.05em; line-height: .92;
-  /* three lines at 1440 (our 52-character sentence, where Huge's own
-     36-character line makes three at 146px — the block heights match) */
-  font-size: min(8.2vw, 7.4rem);
+  /* TWO LINES (2026-09-20, Jake: "i want the section after video title
+     to be two lines"): the rotating word's cell is as wide as its
+     longest phrase — "owner-run businesses." is 1118px at 118 — and at
+     118 "ads for " + that cell overran the column, putting the word on
+     a third line by itself. 104px (7.2vw) is the largest size at which
+     the widest phrase still shares the second line (measured: cell 985
+     + "ads for " 291 = 1276 of 1331). To have 118 back, the longest
+     phrase would have to lose ~2 characters — copy, Jake's call. */
+  font-size: min(7.2vw, 6.5rem);
   color: var(--ink); }
 
 /* THE ROTATING WORD (2026-09-19 · Huge's, decodes/hugeinc.md §4: the
