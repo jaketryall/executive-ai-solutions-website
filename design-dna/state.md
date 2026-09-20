@@ -294,3 +294,20 @@ and the ground invariant both re-measured byte-identical to before this
 step. Frames: `design-dna/frames/snows-rest.jpg`, `snows-grow.jpg`
 (0.275vh), `snows-390.jpg`. AWAITING JAKE'S LOOK against A — this state
 line and its checks.md/decisions.md entries live on this branch only.
+
+THE LIVING MARK (2026-09-20): the empty half of the band under "Welcome"
+now holds the EA mark — a grey square (`.dr-hero-band` two-column grid,
+`.dr-hero-say` unchanged holding the day line + door, `.dr-hero-mark`
+on the right, `components/ui/monogram.tsx` inside) exactly the band's
+own height, measured live off the day line's top and the door's bottom
+(page.tsx, a new small effect) rather than derived from a CSS calc
+against the grid's stretched row — that path measured a real subpixel
+overflow at 1440×900 (a grid item's child margin doesn't collapse
+through it the way a plain block's does). It waves once on load
+(900ms in, 1.1s, the reveal curve), breathes forever after (6s, 1→1.02,
+unconditional), and leans 6px toward the pointer on desktop (Lando's
+bee). Links to /work; hidden on the phone. Verified at 1440×736,
+1440×900 and 390×844: tsc clean, 0 console errors, no overflow, day
+line/door positions byte-identical to before this step, frame probe
+max 10.2ms/0 slow. Frame: `design-dna/frames/snows-mark.jpg` (at rest).
+Awaiting Jake's look, same as the rest of trial B.

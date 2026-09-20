@@ -7,6 +7,7 @@ import WorkSection from "@/components/dark/work-section";
 import VoicesSection from "@/components/dark/voices-section";
 import RunsSection from "@/components/dark/runs-section";
 import ObjectionsSection from "@/components/dark/objections-section";
+import { Monogram } from "@/components/ui/monogram";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
 import { GOOGLE_REVIEWS } from "@/lib/proof";
@@ -200,6 +201,75 @@ export default function DarkRoom() {
       if (frame) cancelAnimationFrame(frame);
       gsap.killTweensOf(atmos);
       gsap.set(atmos, { clearProps: "transform" });
+    };
+  }, []);
+
+  /* THE MARK'S OWN HEIGHT — measured, not left to a CSS calc against the
+     grid row's stretched size (see room.css: that path left a real,
+     if small, mismatch between the "auto" column's reserved width and
+     the aspect-ratio box's own rendered one — enough to trip the ±1px
+     right-edge check at 1440x900 though not at 736). Read the day
+     line's own top and the door's own bottom directly, the same
+     getBoundingClientRect this file already trusts for the slot and
+     the dock, and hand the exact span to `.dr-hero-band` as one number. */
+  useEffect(() => {
+    const band = document.querySelector<HTMLElement>(".dr-hero-band");
+    const meta = document.querySelector<HTMLElement>(".dr-meta");
+    const door = document.querySelector<HTMLElement>(".dr-hero-door");
+    if (!band || !meta || !door) return;
+    const measure = () => {
+      const h = door.getBoundingClientRect().bottom - meta.getBoundingClientRect().top;
+      if (h > 0) band.style.setProperty("--hero-band-h", `${h}px`);
+    };
+    measure();
+    document.fonts?.ready.then(measure);
+    const ro = new ResizeObserver(measure);
+    ro.observe(meta);
+    ro.observe(door);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
+  /* THE LEAN (2026-09-20, THE LIVING MARK — Jake: "some little greeting
+     character that waves inside like a gray box ... to the right of
+     welcome" → the EA mark, not a character; Lando's bee idles toward
+     the pointer). Desktop only — no pointer to lean toward on touch, and
+     the breathe alone carries "alive" there. --lx/--ly are the pointer's
+     offset from the MARK's OWN centre, normalised against its own
+     half-width/half-height so the mark's own corner reads exactly ±1
+     (matches the CSS's own 6px cap), clamped so a pointer anywhere else
+     in the hero can't overshoot it. The CSS does the smoothing
+     (translate, 600ms) — this only ever writes the target. */
+  useEffect(() => {
+    const hero = document.querySelector<HTMLElement>(".dr-hero");
+    const mark = document.querySelector<HTMLElement>(".dr-hero-mark");
+    if (
+      !hero ||
+      !mark ||
+      reducedMotion() ||
+      !window.matchMedia("(hover: hover)").matches
+    )
+      return;
+    const clamp = (n: number) => Math.max(-1, Math.min(1, n));
+    const onMove = (e: PointerEvent) => {
+      const r = mark.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      mark.style.setProperty("--lx", String(clamp((e.clientX - cx) / (r.width / 2))));
+      mark.style.setProperty("--ly", String(clamp((e.clientY - cy) / (r.height / 2))));
+    };
+    const onLeave = () => {
+      mark.style.setProperty("--lx", "0");
+      mark.style.setProperty("--ly", "0");
+    };
+    hero.addEventListener("pointermove", onMove, { passive: true });
+    hero.addEventListener("pointerleave", onLeave, { passive: true });
+    return () => {
+      hero.removeEventListener("pointermove", onMove);
+      hero.removeEventListener("pointerleave", onLeave);
     };
   }, []);
 
@@ -447,32 +517,58 @@ export default function DarkRoom() {
                   first screen (the nav carries the action; the rating
                   returns where proof lives). The row's element name stays
                   so the nav's sentinel and the fades keep their hook. */}
-              {/* THE DAY WORD IN THE ACCENT: the line's first word ("Weekend." ·
-                  "Monday." · "Back again.") is the cyan — its first use as a
-                  LETTER, on the black, the ground the accent decision gave
-                  it (Huge's rotating word is their accent's text use; ours
-                  in the hero is the day). The rest stays white. */}
-              <p className="dr-meta dr-hero-day">
-                {(() => {
-                  const i = greeting.line.indexOf(". ");
-                  if (i === -1) return greeting.line;
-                  return (
-                    <>
-                      <span className="dr-day-word">{greeting.line.slice(0, i + 1)}</span>
-                      {greeting.line.slice(i + 1)}
-                    </>
-                  );
-                })()}
-              </p>
-              {/* THE DOOR, back in the hero (Jake, on the band the lower film
-                  opened under the day line: "now how can we use that
-                  space"): the one action, cyan on the black (the accent's
-                  home ground), ink type — the estimator, or the call from
-                  the third visit (lib/greeting.ts). The last thing to
-                  arrive in the entrance. */}
-              <Link href={greeting.door.href} className="dr-herocta dr-hero-door t-cta">
-                {greeting.door.label}
-              </Link>
+              {/* THE LIVING MARK (2026-09-20, decisions.md: Jake, "some
+                  little greeting character that waves inside like a gray
+                  box or something to the right of welcome" → agreed as
+                  the EA MARK, not a character — Huge's plush H, Lando's
+                  bee: a brand object doing one small living thing;
+                  "i feel theres more we can do with the section under
+                  welcome"). The day line and the door move into their own
+                  column, `.dr-hero-say` — same elements, same classes,
+                  same margins and entrance rules as before this step —
+                  so a second column, the mark's square, can sit beside
+                  them on the band's right edge without touching either. */}
+              <div className="dr-hero-band">
+                <div className="dr-hero-say">
+                  {/* THE DAY WORD IN THE ACCENT: the line's first word ("Weekend." ·
+                      "Monday." · "Back again.") is the cyan — its first use as a
+                      LETTER, on the black, the ground the accent decision gave
+                      it (Huge's rotating word is their accent's text use; ours
+                      in the hero is the day). The rest stays white. */}
+                  <p className="dr-meta dr-hero-day">
+                    {(() => {
+                      const i = greeting.line.indexOf(". ");
+                      if (i === -1) return greeting.line;
+                      return (
+                        <>
+                          <span className="dr-day-word">{greeting.line.slice(0, i + 1)}</span>
+                          {greeting.line.slice(i + 1)}
+                        </>
+                      );
+                    })()}
+                  </p>
+                  {/* THE DOOR, back in the hero (Jake, on the band the lower film
+                      opened under the day line: "now how can we use that
+                      space"): the one action, cyan on the black (the accent's
+                      home ground), ink type — the estimator, or the call from
+                      the third visit (lib/greeting.ts). The last thing to
+                      arrive in the entrance. */}
+                  <Link href={greeting.door.href} className="dr-herocta dr-hero-door t-cta">
+                    {greeting.door.label}
+                  </Link>
+                </div>
+
+                {/* THE MARK: a square exactly the band's own height (the day
+                    line's own top to the door's own bottom, room.css), the
+                    frame's radius, the EA mark centred at 44%, white. Waves
+                    once on load, breathes forever after, leans a little
+                    toward the cursor (Lando's bee). Links to /work. Hidden
+                    on the phone (room.css) — a 96px grey square on a 390
+                    screen is noise the wave doesn't earn there. */}
+                <Link href="/work" className="dr-hero-mark" aria-label="Recent work">
+                  <Monogram className="dr-hero-mark-m" />
+                </Link>
+              </div>
 
               {/* THE CARD — the reel's rest position: full width, its top
                   in the first screen and its bottom past the fold, the way

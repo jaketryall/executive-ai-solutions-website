@@ -1119,6 +1119,85 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 @media (max-width: 900px) { .dr-hero-door { align-self: stretch; width: 100%; margin-inline: 0; justify-content: center; margin-top: 16px; } }
 @media (prefers-reduced-motion: reduce) { .dr-hero-door { opacity: 1; } .dr-lit .dr-hero-door { animation: none; } }
 .dr-herocta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
+
+/* ══ THE LIVING MARK (2026-09-20, decisions.md: Jake, "some little
+   greeting character that waves inside like a gray box or something to
+   the right of welcome" → agreed as the EA MARK, not a character —
+   Huge's plush H, Lando's bee: a brand object doing one small living
+   thing, never a mascot). THE BAND holds the day line + door
+   (`.dr-hero-say`, unchanged) beside the mark's square, on the column's
+   right edge — the empty half of the row under "Welcome".
+
+   --hero-band-h is MEASURED (page.tsx), not derived from a CSS calc
+   against the stretched grid row: that path (subtracting the day line's
+   own margin-top from 100% of the row) measured a real ~1.2px overflow
+   past the column's right edge at 1440x900 — a grid item's child margin
+   does not collapse through it the way a plain block's does, so the
+   row's own height already includes that leading gap, and getting it
+   back out via percentage math left the aspect-ratio-derived WIDTH a
+   subpixel off from what the "auto" column had reserved, wide enough to
+   trip the ±1px check at 900 though not at 736. Reading the day line's
+   own top and the door's own bottom directly (getBoundingClientRect, as
+   the rest of this file already does for the slot and the dock) removes
+   the percentage cascade entirely: an absolute height makes the
+   aspect-ratio's width a single direct computation, not a circular one. */
+.dr-hero-band {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 32px;
+  align-items: stretch;
+  width: 100%;
+}
+.dr-hero-say { min-width: 0; text-align: left; }
+
+/* THE BOX: surface-1, the frame's own radius. Sized by HEIGHT, not
+   width — a square derives its width from the ratio, and the grid's own
+   "auto" column sizes to that. align-self: end (not stretch) pins it to
+   the row's bottom, which is the door's own bottom; --hero-band-h is
+   exactly the day line's top to the door's bottom, so that same edge
+   lands the box's top on the day line's. */
+.dr-hero-mark {
+  align-self: end;
+  aspect-ratio: 1;
+  height: var(--hero-band-h, 117px);
+  min-height: 96px;
+  display: grid; place-items: center;
+  background: var(--surface-1);
+  border-radius: var(--radius-frame);
+  text-decoration: none;
+  /* THE LEAN (page.tsx, pointermove over .dr-hero, desktop only): a 6px
+     nudge toward the cursor, never a follow. THE BREATHE runs
+     unconditionally from load (2.4s in, forever, barely there) — it
+     never needed a hold the way the entrance does. */
+  translate: calc(var(--lx, 0) * 6px) calc(var(--ly, 0) * 6px);
+  transition: background var(--t-micro) var(--ease-ui), translate 600ms var(--ease-ui);
+  animation: dr-breathe 6s ease-in-out 2.4s infinite;
+}
+.dr-hero-mark:hover { background: var(--surface-2); }
+.dr-hero-mark:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
+.dr-hero-mark-m { width: 44%; aspect-ratio: 1; color: #fff; transform-origin: 50% 70%; }
+@keyframes dr-breathe { 50% { scale: 1.02; } }
+
+/* THE ENTRANCE — the door's own timing (680ms backwards); THE WAVE
+   fires once, 900ms in (after the box has arrived), a hand pivoting low
+   rather than from its own centre. */
+.dr-root:not(.dr-lit) .dr-hero-mark { opacity: 0; }
+.dr-lit .dr-hero-mark {
+  animation: dr-fadein var(--t-enter) var(--ease-structure) 680ms backwards,
+             dr-breathe 6s ease-in-out 2.4s infinite;
+}
+.dr-lit .dr-hero-mark-m { animation: dr-wave 1100ms var(--ease-reveal) 900ms both; }
+@keyframes dr-wave {
+  0%   { rotate: 0deg; }
+  25%  { rotate: -14deg; }
+  55%  { rotate: 12deg; }
+  80%  { rotate: -6deg; }
+  100% { rotate: 0deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dr-hero-mark { opacity: 1; animation: none; scale: 1; translate: none; }
+  .dr-lit .dr-hero-mark-m { animation: none; rotate: 0deg; }
+}
 /* the entrance: the lead, the card, then the door LAST — animate-last is
    the highest in the hierarchy. `backwards`, never `forwards`, so the
    calc above owns opacity once the fade ends. */
@@ -1265,6 +1344,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
               padding: var(--fib-3); gap: var(--fib-3); }
   .dr-strip-rating { justify-content: center; }
   .dr-herocta { margin-left: 0; align-self: center; }
+  /* THE LIVING MARK is a desktop object (Jake's "to the right of
+     welcome" needs a first screen wide enough to have a right) — a 96px
+     grey square on a 390 screen is noise the wave doesn't earn there.
+     The band collapses to the one column it always visually was here. */
+  .dr-hero-band { grid-template-columns: 1fr; column-gap: 0; }
+  .dr-hero-mark { display: none; }
   .dr-slot { display: none; }
   .dr-h1, .dr-strip, .dr-herocta, .dr-meta { opacity: 1; }
   .dr-sub { font-size: var(--fs-body); }
