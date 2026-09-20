@@ -24,7 +24,27 @@ import { pickGreeting } from "@/lib/greeting";
    that actually works. */
 export const dynamic = "force-dynamic";
 
-export default function Page() {
+/* HERO TRIALS (2026-09-20, branch hero/air — Jake: "theres something
+   simple missing in the hero i want to try different variations ...
+   always have the text be full width, or maybe theres some sort of
+   ambience missing"). `?v=` is a space/plus-separated list of trial
+   tokens (wide · light · glow), handed to the hero as a data attribute
+   so every variant lives on the one dev server and combines by URL —
+   `?v=wide+light`. Read here, on the server, so the first paint is
+   already the variant (no flash on hydration). Unknown tokens are
+   inert; no `?v=` is the shipped hero. Trial-only: whichever wins is
+   folded into the stylesheet as the default and this read goes. */
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const sp = await searchParams;
+  const raw = sp.v;
+  const variant = (typeof raw === "string" ? raw : "")
+    .replace(/\+/g, " ")
+    .replace(/[^a-z ]/g, "")
+    .trim();
   const greeting = pickGreeting(1, { i: null, svc: null }, new Date());
-  return <HeroRoom initialGreeting={greeting} />;
+  return <HeroRoom initialGreeting={greeting} variant={variant} />;
 }

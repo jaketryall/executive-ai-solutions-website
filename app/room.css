@@ -463,6 +463,73 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
      dock top 410 + dock height 192 = 602 exactly, no reduction */
   .dr-hero-wrap.dr-zone-dark::before { height: 100%; }
 }
+/* ══ HERO TRIALS (2026-09-20, branch hero/air — Jake: "something simple
+   missing in the hero ... always have the text be full width, or maybe
+   theres some sort of ambience missing"). Gated on the wrapper's
+   `data-v` (app/page.tsx reads `?v=`), combinable: `?v=wide+light`.
+   Trial-only — the winner becomes the default and the gate goes. ══ */
+
+/* `wide` — THE TITLE FILLS THE COLUMN: --fit is the measured ratio
+   column / longest line (hero-room.tsx), applied on top of the 118
+   rung; the 22ch cap comes off so the measure itself is the cap. */
+[data-v~="wide"] .dr-h1.dr-greet {
+  font-size: calc(min(8.2vw, 7.4rem) * var(--fit, 1));
+  max-width: none;
+}
+
+/* the zone's own air — clipped to the dark ground's exact height (the
+   twin of ::before above), over the ground, under the stage (6) and
+   the dock (5) */
+.dr-air {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: calc(100svh + var(--grow, 55vh));
+  overflow: hidden; pointer-events: none; z-index: 1;
+}
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .dr-air { height: 100%; }
+}
+
+/* `light` — THE ROOM'S LIGHTS, back inside the zone. The ?dark room's
+   own rig (.dr-key above: two soft white radials on a 26s/37s drift,
+   the cursor parallax in hero-room.tsx), re-homed here so it is the
+   hero's and not the viewport's: the light room's --flip put the
+   fixed rig out, and the hero went flat black with it. The left lamp
+   sits behind the title's first line; the right one is lower and
+   fainter, spilling toward the film. Never a colour: the lamps are
+   white, the cyan stays the copy's. */
+.dr-air-key {
+  position: absolute; inset: -25%;
+  background:
+    radial-gradient(27% 32% at 30% 22%, rgba(255,255,255,.17), transparent 66%),
+    radial-gradient(24% 40% at 70% 34%, rgba(255,255,255,.08), transparent 68%);
+  animation: dr-drift 26s ease-in-out infinite alternate;
+}
+.dr-air-key::after {
+  content: ""; position: absolute; inset: 12%;
+  background: radial-gradient(28% 32% at 56% 62%, rgba(255,255,255,.05), transparent 70%);
+  animation: dr-drift-b 37s ease-in-out infinite alternate;
+}
+
+/* `glow` — THE FILM'S OWN LIGHT. A 32x18 canvas (hero-room.tsx draws
+   the reel into it ten times a second), blurred AT THAT SIZE — the
+   filter runs on 576 pixels — then scaled by transform to cover the
+   zone, a hair past its edges so the blur's own soft border is
+   clipped away. Division of lengths via tan(atan2()) (see
+   reference_grow_effects_raster): the scale is 110vw over the canvas's
+   32px, and the zone's own height over its 18px. */
+.dr-glow {
+  position: absolute; left: -5vw; top: -5vh;
+  width: 32px; height: 18px;
+  transform-origin: 0 0;
+  transform: scale(
+    tan(atan2(110vw, 32px)),
+    tan(atan2(calc(110svh + var(--grow, 55vh)), 18px))
+  );
+  filter: blur(2.4px) saturate(1.5) brightness(1.35);
+  opacity: .55;
+}
+@media (prefers-reduced-motion: reduce) { .dr-glow { display: none; } }
+
 /* a plain 1px marker at that same edge, for the rail (nav.tsx) to
    measure against — see the comment above */
 .dr-ground-end { position: absolute; left: 0; right: 0;

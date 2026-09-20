@@ -84,7 +84,26 @@ function LiveTile() {
    freeze at build day). This split is the only way the greeting is
    both interactive (the wave, the lean, the return-visit swap) and
    genuinely re-read per request. */
-export default function DarkRoom({ initialGreeting }: { initialGreeting: Greeting }) {
+export default function DarkRoom({
+  initialGreeting,
+  variant = "",
+}: {
+  initialGreeting: Greeting;
+  variant?: string;
+}) {
+  /* HERO TRIALS (2026-09-20, branch hero/air) — see app/page.tsx. Tokens:
+     wide  · the title fills the column — its longest line is fitted to
+             the measure by --fit (below), Huge's h1 reaching both edges
+     light · the room's own lights come back, INSIDE the dark zone only:
+             the two drifting white radials the ?dark room had (.dr-key,
+             room.css), re-homed as .dr-air-key and clipped to the hero's
+             ground, so the light room's --flip no longer puts them out
+     glow  · the film's own light: the reel is sampled into a 32x18
+             canvas ten times a second and blown up behind the words, so
+             the void breathes with whatever the reel is showing */
+  const v = variant.split(" ").filter(Boolean);
+  const has = (t: string) => v.includes(t);
+
   /* The frame — tokens, ground, nav, ending, the scroll engine, the
      entrance arm and the ?dark switch — is the layout's
      RoomShell now. This page is the room's own atmosphere and sections. */
@@ -166,9 +185,15 @@ export default function DarkRoom({ initialGreeting }: { initialGreeting: Greetin
       return;
     const ax = gsap.quickTo(atmos, "x", { duration: 1.2, ease: U });
     const ay = gsap.quickTo(atmos, "y", { duration: 1.2, ease: U });
+    /* the hero's own lights (trial `light`) answer the cursor the same way */
+    const air = document.querySelector<HTMLElement>(".dr-air-key");
+    const bx = air ? gsap.quickTo(air, "x", { duration: 1.2, ease: U }) : null;
+    const by = air ? gsap.quickTo(air, "y", { duration: 1.2, ease: U }) : null;
     const onMove = (e: PointerEvent) => {
       ax((e.clientX / window.innerWidth - 0.5) * 78);
       ay((e.clientY / window.innerHeight - 0.5) * 46);
+      bx?.((e.clientX / window.innerWidth - 0.5) * 78);
+      by?.((e.clientY / window.innerHeight - 0.5) * 46);
     };
     window.addEventListener("pointermove", onMove, { passive: true });
 
@@ -264,6 +289,86 @@ export default function DarkRoom({ initialGreeting }: { initialGreeting: Greetin
       hero.removeEventListener("pointermove", onMove);
       hero.removeEventListener("pointerleave", onLeave);
     };
+  }, []);
+
+  /* TRIAL `wide` — THE TITLE FILLS THE COLUMN. The h1 is prose that
+     balances onto two lines, so "full width" means: the size at which
+     its LONGEST line is exactly the column. Measured, not guessed —
+     the line boxes are read off a Range (one rect per line), the
+     ratio column / longest line is folded into --fit, and it is run
+     three times because `text-wrap: balance` re-breaks the lines as
+     the size moves (it converges by the second pass). The reel's
+     measure below listens for resize, so it is nudged once the title
+     has settled — the slot and the grow follow the new title height. */
+  useEffect(() => {
+    if (!has("wide")) return;
+    const h1 = document.querySelector<HTMLElement>(".dr-greet");
+    const col = document.querySelector<HTMLElement>(".dr-hero");
+    if (!h1 || !col) return;
+    const fit = () => {
+      if (!window.matchMedia("(min-width: 901px)").matches) {
+        h1.style.removeProperty("--fit");
+        return;
+      }
+      let f = 1;
+      h1.style.setProperty("--fit", "1");
+      for (let i = 0; i < 3; i++) {
+        const range = document.createRange();
+        range.selectNodeContents(h1);
+        const rects = [...range.getClientRects()];
+        /* one width per line: rects on the same row are one line
+           (the cyan lead is its own rect on the first line) */
+        const rows = new Map<number, { l: number; r: number }>();
+        for (const b of rects) {
+          const k = Math.round(b.top);
+          const row = rows.get(k) ?? { l: b.left, r: b.right };
+          row.l = Math.min(row.l, b.left); row.r = Math.max(row.r, b.right);
+          rows.set(k, row);
+        }
+        let longest = 0;
+        for (const row of rows.values()) longest = Math.max(longest, row.r - row.l);
+        if (!longest) break;
+        /* 1% of slack, and stop once it is within it: fitted to the
+           exact pixel, the first line overflows by a fraction and the
+           greedy wrap tips the whole title to three lines (measured:
+           132.52px held two lines, 132.62 broke into three) */
+        const ratio = (col.clientWidth * 0.99) / longest;
+        if (Math.abs(ratio - 1) < 0.01 && rows.size <= 2) break;
+        f = f * ratio;
+        h1.style.setProperty("--fit", f.toFixed(4));
+      }
+      window.dispatchEvent(new Event("resize"));
+    };
+    fit();
+    document.fonts?.ready.then(fit);
+    window.addEventListener("resize", fit);
+    return () => {
+      window.removeEventListener("resize", fit);
+      h1.style.removeProperty("--fit");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [greeting.title]);
+
+  /* TRIAL `glow` — THE FILM'S OWN LIGHT. The playing reel is drawn into
+     a 32x18 canvas ten times a second; the canvas is a 32x18 CSS box
+     blurred at that size (cheap) and then scaled up by transform to
+     cover the dark zone (room.css, .dr-glow) — the ambilight trick,
+     the blur costing 576 pixels rather than a million. Pointer,
+     touch, everything: it is the film's light, not an interaction. */
+  useEffect(() => {
+    if (!has("glow")) return;
+    const c = document.querySelector<HTMLCanvasElement>(".dr-glow");
+    const video = document.querySelector<HTMLVideoElement>(".dr-hero-reel video");
+    if (!c || !video || reducedMotion()) return;
+    const ctx = c.getContext("2d");
+    if (!ctx) return;
+    const draw = () => {
+      if (video.readyState >= 2) ctx.drawImage(video, 0, 0, c.width, c.height);
+    };
+    draw();
+    const id = setInterval(draw, 100);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* THE REEL'S REST TRANSFORM — measured, not guessed. The slot in the
@@ -443,12 +548,23 @@ export default function DarkRoom({ initialGreeting }: { initialGreeting: Greetin
           AND the dock so the reel inherits it in both. */}
       <div
         className="dr-hero-wrap dr-zone-dark"
+        data-v={variant || undefined}
         data-sp
         data-sp-edge="top"
         data-sp-from="0"
         data-sp-to="-0.55"
         data-sp-var="--hero-p"
       >
+        {/* HERO TRIALS (hero/air): the zone's own air — the lights
+            (`light`) and the film's glow (`glow`), clipped to the dark
+            ground's own height, under the stage and the dock. Present
+            only for the variants that use them. */}
+        {(has("light") || has("glow")) && (
+          <div className="dr-air" aria-hidden>
+            {has("glow") && <canvas className="dr-glow" width={32} height={18} />}
+            {has("light") && <div className="dr-air-key" />}
+          </div>
+        )}
         {/* the rail (components/room/nav) watches this by selector: the
             pill and the action are what the first scroll earns */}
         <div className="dr-top" aria-hidden />
