@@ -1034,7 +1034,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      to come up so high"); --day-b is the day line's bottom in page px
      (page.tsx measure()); the clamp is the floor when the screen is
      short and the line already sits near the fold */
-  --slot-show: 240px;   /* was 150 (Snows' 112): with the door in the band the film read too low (Jake) — the band's bottom is the door now, so the film sits 240 into the screen */
+  --slot-show: 200px;   /* the dial: 150 (Snows' 112) read too low with the door in the band, 240 "a little too high" (Jake, both within the hour) — 200 */
   margin-top: max(clamp(16px, 2.6svh, 32px), calc(100svh - var(--slot-show) - var(--day-b, 100svh)));
   /* NO PLATE. It was --surface-1 (a pale rectangle in the light room
      that went black when the poster painted), then for an hour the
