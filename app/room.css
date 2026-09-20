@@ -534,6 +534,27 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   animation: dr-drift-b 37s ease-in-out infinite alternate;
 }
 
+/* `halo` — A LAMP BEHIND THE FILM. Centred on the film's measured box
+   (--film-c / --film-h, hero-room.tsx), white like the other two lamps,
+   and larger than the film so its spill clears the film's edges: over
+   the top into the gap under the door, and down both sides in the
+   gutters. The film itself (dock, 5) covers the lamp's core, which is
+   the point — a dark screen on a lit wall. Same slow breathe as the
+   right lamp. */
+.dr-air-film {
+  position: absolute; left: 50%;
+  /* the lamp sits just under the film's TOP edge, not at its centre: a
+     lamp centred on the film had its ring at 62% of its own radius by
+     the time it cleared the top edge and measured +16 luminance at
+     best; from here the spill over the edge is the lamp's own core */
+  top: calc(var(--film-c, calc(var(--grow, 55vh) + 18vw)) - var(--film-h, 36vw) * .35);
+  width: 110vw; height: calc(var(--film-h, 36vw) * 2.2);
+  translate: -50% -50%;
+  background: radial-gradient(50% 50% at 50% 50%,
+    rgba(255,255,255,.26), rgba(255,255,255,.10) 50%, transparent 72%);
+  animation: dr-drift-b 37s ease-in-out infinite alternate;
+}
+
 /* `glow` — THE FILM'S OWN LIGHT. A 32x18 canvas (hero-room.tsx draws
    the reel into it ten times a second), blurred AT THAT SIZE — the
    filter runs on 576 pixels — then scaled by transform to cover the

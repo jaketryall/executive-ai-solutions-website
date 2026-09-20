@@ -44,7 +44,7 @@ export default async function Page({
   /* Jake, shown wide+light against lines: "i like the previous better"
      — wide+light is the branch's default now; `?v=none` is the hero as
      it shipped, `?v=lines` / `?v=glow` the other trials, still there. */
-  const variant = (typeof raw === "string" ? raw : "wide light")
+  const variant = (typeof raw === "string" ? raw : "wide light halo")
     .replace(/\+/g, " ")
     .replace(/[^a-z ]/g, "")
     .replace(/\bnone\b/, "")
