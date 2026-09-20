@@ -1102,6 +1102,21 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   transition: background var(--t-micro) var(--ease-ui);
 }
 .dr-herocta:hover { background: var(--ink-2); }
+/* IN THE HERO (hero/snows, 2026-09-19): cyan, ink type, on the column's
+   left under the day line — the band the lower film opened. 52px, the
+   model's pill height; the hover lifts the fill toward white. */
+.dr-hero-door {
+  margin: clamp(18px, 3svh, 30px) 0 0; margin-left: 0; align-self: flex-start;
+  height: 52px; padding: 0 26px;
+  color: #0d0b0a; background: var(--accent);
+  transition: background var(--t-micro) var(--ease-ui), translate var(--t-micro) var(--ease-ui);
+}
+.dr-hero-door:hover { background: #7ff0ff; }
+.dr-hero-door:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.dr-root:not(.dr-lit) .dr-hero-door { opacity: 0; }
+.dr-lit .dr-hero-door { animation: dr-fadein var(--t-enter) var(--ease-structure) 680ms backwards; }
+@media (max-width: 900px) { .dr-hero-door { align-self: stretch; width: 100%; margin-inline: 0; justify-content: center; margin-top: 16px; } }
+@media (prefers-reduced-motion: reduce) { .dr-hero-door { opacity: 1; } .dr-lit .dr-hero-door { animation: none; } }
 .dr-herocta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 /* the entrance: the lead, the card, then the door LAST — animate-last is
    the highest in the hierarchy. `backwards`, never `forwards`, so the

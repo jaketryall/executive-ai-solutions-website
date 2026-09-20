@@ -59,7 +59,11 @@ export function RoomNav() {
        only once the hero's white bar is gone — on every viewport, the
        phone included, where the row does not fade but simply scrolls
        off. The 19.8svh in the stylesheet is the no-JS fallback. */
-    const metaRow = document.querySelector<HTMLElement>(".dr-meta");
+    // the sentinel ends at the DOOR now (the last thing under the word), or
+    // the day line where a page has no door
+    const metaRow =
+      document.querySelector<HTMLElement>(".dr-hero-door") ??
+      document.querySelector<HTMLElement>(".dr-meta");
     const wrap = top.offsetParent as HTMLElement | null;
     const docY = (el: HTMLElement) => {
       let y = 0;

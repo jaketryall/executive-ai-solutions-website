@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import ServicesSection, { OfferHead } from "@/components/dark/services-section";
 import WorkSection from "@/components/dark/work-section";
 import VoicesSection from "@/components/dark/voices-section";
@@ -242,7 +243,10 @@ export default function DarkRoom() {
          offset chain) and .dr-slot's margin grows so the slot's top lands
          at the fold less --slot-show. Written BEFORE the slot is boxed —
          the margin moves the slot, and the grow is measured off it. */
-      const day = document.querySelector<HTMLElement>(".dr-meta");
+      // the LAST thing above the slot — the door when there is one
+      const day =
+        document.querySelector<HTMLElement>(".dr-hero-door") ??
+        document.querySelector<HTMLElement>(".dr-meta");
       if (day) {
         const db = box(day);
         reel.closest<HTMLElement>(".dr-hero-wrap")?.style.setProperty("--day-b", `${db.y + db.h}px`);
@@ -444,6 +448,15 @@ export default function DarkRoom() {
                   returns where proof lives). The row's element name stays
                   so the nav's sentinel and the fades keep their hook. */}
               <p className="dr-meta dr-hero-day">{greeting.line}</p>
+              {/* THE DOOR, back in the hero (Jake, on the band the lower film
+                  opened under the day line: "now how can we use that
+                  space"): the one action, cyan on the black (the accent's
+                  home ground), ink type — the estimator, or the call from
+                  the third visit (lib/greeting.ts). The last thing to
+                  arrive in the entrance. */}
+              <Link href={greeting.door.href} className="dr-herocta dr-hero-door t-cta">
+                {greeting.door.label}
+              </Link>
 
               {/* THE CARD — the reel's rest position: full width, its top
                   in the first screen and its bottom past the fold, the way
