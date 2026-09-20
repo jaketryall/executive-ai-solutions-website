@@ -78,12 +78,11 @@ export const TITLE = "We build the site. You get on with the business.";
    four days earned one; Wednesday, Thursday and Sunday are quiet and
    the days that do speak land harder for it. The reply-time promise
    left the line entirely — the door and the nav carry the practical. */
-const DAY_LINES: Partial<Record<DayName, string>> = {
-  Mon: "Monday. Nobody asked for this.",
-  Tue: "Tuesday. Monday's less annoying little brother.",
-  Fri: "Friday. Whatever it is, it can wait till Monday.",
-  Sat: "Saturday. You're working? Go outside.",
-};
+/* THE DAYS ARE OUT (Jake, 2026-09-20, on the live hero: "i think the one
+   line is clean, screw the days"): one line, the door, the film. The
+   table stays empty rather than deleted so a day line can return as a
+   one-line edit; personalisation moves elsewhere on the page. */
+const DAY_LINES: Partial<Record<DayName, string>> = {};
 export type DayName = "Sun" | "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat";
 
 const DEFAULT_DOOR: Door = { label: "See your price", href: "/pricing#estimate" };
@@ -94,8 +93,8 @@ const CALL_DOOR: Door = { label: "Book the call", href: "/contact" };
    also where the localStorage cap (9) always lands. */
 const RETURN_TITLES: { title: string; door: Door }[] = [
   { title: "Back so soon. We like you already.", door: DEFAULT_DOOR },
-  { title: "Third time? We'll have to start charging rent.", door: CALL_DOOR },   /* the longer cut made three lines at 118 — shorten copy, never the size */
-  { title: "Oh, it's you. Come in, come in.", door: CALL_DOOR },
+  { title: "Third time? We should start charging you rent.", door: CALL_DOOR },
+  { title: "You again. Don't you have a business to run?", door: CALL_DOOR },
 ];
 
 /* THE CYAN LEAD — the first sentence of a greeting-shaped line (a day
