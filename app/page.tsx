@@ -447,7 +447,23 @@ export default function DarkRoom() {
                   first screen (the nav carries the action; the rating
                   returns where proof lives). The row's element name stays
                   so the nav's sentinel and the fades keep their hook. */}
-              <p className="dr-meta dr-hero-day">{greeting.line}</p>
+              {/* THE DAY WORD IN THE ACCENT: the line's first word ("Weekend." ·
+                  "Monday." · "Back again.") is the cyan — its first use as a
+                  LETTER, on the black, the ground the accent decision gave
+                  it (Huge's rotating word is their accent's text use; ours
+                  in the hero is the day). The rest stays white. */}
+              <p className="dr-meta dr-hero-day">
+                {(() => {
+                  const i = greeting.line.indexOf(". ");
+                  if (i === -1) return greeting.line;
+                  return (
+                    <>
+                      <span className="dr-day-word">{greeting.line.slice(0, i + 1)}</span>
+                      {greeting.line.slice(i + 1)}
+                    </>
+                  );
+                })()}
+              </p>
               {/* THE DOOR, back in the hero (Jake, on the band the lower film
                   opened under the day line: "now how can we use that
                   space"): the one action, cyan on the black (the accent's

@@ -883,6 +883,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   max-width: none; white-space: nowrap;
 }
 @media (max-width: 1180px) { .dr-meta { white-space: normal; } }
+.dr-day-word { color: var(--accent); }
 .dr-meta-col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .dr-meta-col--rating { align-items: center; text-align: center; }
 .dr-meta-col--services { align-items: flex-end; text-align: right; }
