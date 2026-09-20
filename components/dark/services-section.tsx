@@ -73,11 +73,12 @@ export const OFFER_ROT_WORDS = [
   "contractors.",
 ];
 export const OFFER_SAY = OFFER_PREFIX + OFFER_ROT_WORDS[0];
-/* the paragraph is where the DECISION happens (2026-09-18): the three
-   promises the visitor is actually weighing, said once, plainly, in the
-   order they ask them — how fast, how much, when. 27 words. */
+/* THE STATEMENT IN THE MODEL'S FORM (2026-09-20, decisions.md): Huge's
+   own paragraph under its statement is ONE sentence — the three-sentence
+   27-word version above (2026-09-18) is gone, per the law (one line at
+   display size, at most one sentence under it). */
 export const OFFER_MORE =
-  "Built by the person you talk to. No account managers, no handoffs. A fixed quote in two days, a price that never moves, a date that holds.";
+  "Built by the person you talk to — a fixed quote in two days, a price that never moves.";
 
 /* THE HEAD: rendered by page.tsx before the card's wrapper — see above */
 export function OfferHead() {
@@ -99,7 +100,12 @@ export function OfferHead() {
           depends on that timing, the attribute is off entirely; THE
           SETTLE (room.css, --cur-driven scale) is the only reveal here,
           on every width. */}
-      <span className="t-label dr-offer-kicker">What this is</span>
+      {/* THE EYEBROW IS GONE (2026-09-20, Jake: "i want eyebrow gone in
+          section after video") — Huge has none above its statement
+          either, and "What this is" was the smallest text in the
+          section, the exact thing THE LAW OF THE MODEL (decisions.md)
+          says a homepage section should not carry. The section is now
+          just the h2 and the one sentence under it. */}
       {/* THE ROTATING WORD: index 0 is a plain child alongside the other
           five inside .dr-offer-rot (display: inline-grid, room.css) — all
           six share the one grid cell, so the box's width is always the

@@ -376,8 +376,15 @@ export function useScrollEngine(deps: unknown[] = []) {
       for (const t of tracks) {
         const b = t.el.getBoundingClientRect();
         const mark = t.edge === "top" ? b.top : b.bottom;
+        /* A WINDOW CAN BE OVERRIDDEN IN PX at run time (2026-09-19, the
+           Snows hero): `data-sp-to-px` on the element, written by a
+           measurement (the grow's distance IS the slot's top, which
+           only layout knows), wins over the vh fraction. Read each
+           frame — a string attribute, no layout cost — so measure() can
+           rewrite it on resize without the engine re-scanning. */
+        const toPx = t.el.getAttribute("data-sp-to-px");
         const from = vh * t.from;
-        const to = vh * t.to;
+        const to = toPx !== null ? parseFloat(toPx) : vh * t.to;
         // guard a zero-length window rather than dividing by it
         const span = from - to;
         const p = span === 0 ? 1 : (from - mark) / span;

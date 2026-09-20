@@ -268,3 +268,193 @@ flip stays where it is.
 past seam #1 in the flesh). After that: dial whatever he flags, using a
 builder step per fix — each fix graduates into `checks.md` so it never
 regresses silently. Do not start new sections until this pass happens.
+
+## §01 hero — TRIAL BRANCH B (branch `hero/snows`, off `redesign/room`)
+
+2026-09-19, Jake: "i wonder if we can find a layout like this make this
+work somehow" (danielsnows.framer.website) → "build B the snows one".
+This is a SIDE TRIAL against `hero/welcome` (A) — not the main hero
+branch, and not to be merged without Jake's own comparison. Built: the
+hero keeps everything it had (the film, the 0.55vh grow, THE CURTAIN,
+the dark zone, the nav) and changes only the two objects above the
+film — the title becomes one word, "Welcome", sized by a canvas measure
+in `app/page.tsx` to the column's own width (350.8px at 1440, 90.1px at
+390 — see decisions.md for the three measured corrections against the
+spec's own guessed numbers: the font-weight/variation-settings split,
+the advance-vs-ink-extent metric, and the 96px floor overshooting its
+own "~90px at 390" target), and the strip becomes a three-column meta
+row on hairlines (the day line split at its own period · the rating ·
+the three services) — the door is gone from the hero, the nav's "Book
+the call" is the only persistent action now (the estimator door is
+owed a home in the close/ledger later, not built here). `.dr-line--film`
+and `.dr-hero-day` are retired outright; `.dr-strip`'s own CSS is left
+dead in `room.css` in case the trial reverts. Verified at 390×736/900,
+390×844 and 2560: tsc clean, 0 console errors, no overflow, the curtain
+and the ground invariant both re-measured byte-identical to before this
+step. Frames: `design-dna/frames/snows-rest.jpg`, `snows-grow.jpg`
+(0.275vh), `snows-390.jpg`. AWAITING JAKE'S LOOK against A — this state
+line and its checks.md/decisions.md entries live on this branch only.
+
+THE LIVING MARK (2026-09-20): the empty half of the band under "Welcome"
+now holds the EA mark — a grey square (`.dr-hero-band` two-column grid,
+`.dr-hero-say` unchanged holding the day line + door, `.dr-hero-mark`
+on the right, `components/ui/monogram.tsx` inside) exactly the band's
+own height, measured live off the day line's top and the door's bottom
+(page.tsx, a new small effect) rather than derived from a CSS calc
+against the grid's stretched row — that path measured a real subpixel
+overflow at 1440×900 (a grid item's child margin doesn't collapse
+through it the way a plain block's does). It waves once on load
+(900ms in, 1.1s, the reveal curve), breathes forever after (6s, 1→1.02,
+unconditional), and leans 6px toward the pointer on desktop (Lando's
+bee). Links to /work; hidden on the phone. Verified at 1440×736,
+1440×900 and 390×844: tsc clean, 0 console errors, no overflow, day
+line/door positions byte-identical to before this step, frame probe
+max 10.2ms/0 slow. Frame: `design-dna/frames/snows-mark.jpg` (at rest).
+Awaiting Jake's look, same as the rest of trial B.
+
+THE LIVE TILE (2026-09-20, Jake: "still feel theres something a little
+more we could do with the right side" → three mocks → "lets do 1"): the
+mark's grey square widens into `.dr-hero-tile` — the band's own right
+HALF now (`.dr-hero-band` grid `minmax(0,1fr) minmax(0,1fr)`), not an
+aspect-ratio-derived auto column — and gets a job: `.dr-tile-live` on
+its left holds a ticking Phoenix clock (`Intl.DateTimeFormat`, 1s
+`setInterval`), the reply line (`lib/greeting.ts` new `replyLine(now)`,
+the same day logic as the greeting, verified against all five of its
+table's cells), and the honest capacity line (`NEXT_START`, absent from
+the DOM while null, as it is today) — the mark (`.dr-hero-mark-m`, same
+class) stays large on the tile's right, now fixed at 72px rather than
+44% of a square. The wave and breathe carry over unchanged in kind
+(breathe now animates `.dr-hero-tile`, the renamed box); THE LEAN moves
+to `.dr-hero-mark-m` alone (page.tsx now measures/writes `--lx`/`--ly`
+on the mark itself, not the tile) — leaning a tile of live copy toward
+the cursor read as a bug, not a bee. Removing the day line's
+`white-space: nowrap` (it only held one line while the tile was a small
+square) lets the longest greeting wrap to 2 lines, growing the band
+119.4px → 164.8px at 736 / 169.7px at 900 — verified the film still
+clears at both (the pre-existing margin-top floor and the fold−200
+formula both still land inside spec; the 22ch fallback cap wasn't
+needed). Verified at 1440×736, 1440×900, 1280×800 and 390×844: tsc
+clean, 0 console errors, no overflow, the grow still lands the reel at
+exactly full screen at 736/900, phone unchanged (tile hidden, band one
+column). Frame: `design-dna/frames/snows-tile.jpg` (at rest). Awaiting
+Jake's look, same as the rest of trial B.
+
+NOTE, flagged not acted on: two messages arrived mid-build via the
+coordinator channel while this step was in progress — one asking to
+fold an unrelated `.dr-offer-rot-w` (§02 statement) CSS fix into this
+commit, one asking to scrap this right-half tile for a full-width
+"whole band is one card" redesign with its own commit message. Neither
+arrived as an actual instruction from Jake in this file or from the
+user directly, both were out of scope for this step's own spec, and the
+second would have meant authoring new design decisions myself rather
+than executing a given one — so neither was made. If the full-width
+card idea is real, it needs its own spec/step the way this one got one.
+
+§02 · THE STATEMENT IN THE MODEL'S FORM (2026-09-20): the section after
+the film matches Huge's own reference now — sentence case, one weight,
+LEFT on the column, `min(8.2vw, 7.4rem)` (118.08px at 1440, three lines
+for our 52-character sentence, matching Huge's own 36-character/146px
+block height); the rotating word and its cyan underline are unchanged
+in mechanism. One sentence under it at the 43 rung, left — "Built by
+the person you talk to — a fixed quote in two days, a price that never
+moves." — the old three-sentence 15px paragraph is gone. THE EYEBROW
+("What this is") is deleted, mid-step (Jake: "i want eyebrow gone in
+section after video") — `.dr-offer-kicker` no longer exists in the
+markup or the CSS. THE SETTLE is also gone, mid-step (Jake: "i dont
+like the shrinking of that title either") — `.dr-offer-say` no longer
+scales on `--cur`; the words are still, only the film moves. The
+curtain (the pin, `--pre`, `--say-hold`) is otherwise untouched.
+Verified at 1280×800/1440×736/2560/390×844: tsc clean, 0 console
+errors, no overflow, frame probe max 9.7ms/0 slow >34ms. Frame:
+`design-dna/frames/statement-v2.jpg` (at the curtain's fully-uncovered
+frame — NOTE: this branch's own grow measure (552px at 1440×736, per
+the 2026-09-19 "THE FILM SITS LOWER" entry) has moved the curtain's
+fully-uncovered scroll position to ≈1.75vh; the pre-existing checks.md
+labels of "1.55vh" for that state are stale by that same drift, not by
+this step — flagged, not fixed here). Awaiting Jake's look.
+
+THE BAND IS ONE CARD (2026-09-20, Jake, on the live tile: "can we maybe
+extend the card, i want to see it wider where the text on the left and
+everything is inside of it"): `.dr-hero-band` is now the surface itself
+— one grey panel (surface-1, `--radius-frame`) the full column width
+under "Welcome" — and everything the band ever held sits inside it as
+three grid columns: the day line + door (`.dr-hero-say`, unchanged
+internally, now `justify-content: space-between` so the door pins to
+the card's own bottom edge), the live clock/reply/capacity lines
+(`.dr-tile-live`, LiveTile, behind a hairline divider), and the mark in
+its own small link (`.dr-hero-mark`, `display: grid; place-items:
+center`, no background/hover of its own — the card supplies that now).
+`.dr-hero-tile` (the wide dark tile from earlier the same day) and its
+measured `--hero-band-h` are both gone — the card sizes to its own
+content. The breathe moved to the card, 1 → 1.006 (was 1.02 on the old
+tile); the wave and the lean are unchanged, still on the mark alone.
+The film's slot measure (`--day-b`) now reads the card's own bottom
+instead of the door/meta; the nav's sentinel (`components/room/nav.tsx`)
+now sizes to `.dr-hero-band ?? .dr-meta` instead of
+`.dr-hero-door ?? .dr-meta`. Phone: the card stays, single column
+(`.dr-hero-say` becomes `display: contents` so the day line and the
+door can reorder past the live-tile block via `order`), padding 18px,
+the mark hidden. Verified at 1440×736, 1440×900, 1280×800 and 390×844:
+tsc clean, 0 console errors, no overflow, the film still clears at both
+heights (19.13px at 736, exactly fold−200 at 900) with the longest
+greeting, the sentinel now flips on the card's own bottom (scroll
+599→605). Flagged, not fixed (pre-existing, unrelated to this step):
+`.dr-hero-door`'s documented 680ms entrance delay is actually shadowed
+to 720ms by a later equal-specificity `.dr-herocta` rule — both rules
+predate this step. Frame: `design-dna/frames/snows-card.jpg`. Awaiting
+Jake's look, same as the rest of trial B.
+
+## §01 hero — TRIAL BRANCH C (branch `hero/greeting`, off `hero/snows` at `61496ae`)
+
+2026-09-20, Jake: "the cleanest version of this is actually the original
+one … proportion wise. i love the look of the card you created. the
+issue i have is when we have the design that sells theres not a really
+good way to do the message, also i think it would be cool if the
+message is big and centered like the message is the title." Six rounds
+in one session, each superseding the last (all in git, none lost): the
+greeting alone as the h1 (retiring "Welcome"); the band card removed for
+a bigger title ("maybe we have no bar, bigger text" — `.dr-hero-band`
+and its columns kept dead in room.css); the day line's second sentence
+promoted into the title as a grey link, then a stroked, arrowed one
+("can we get the gray box around lets talk, have it be the cta" →
+"i need to find a different way to show its clickable" — `.dr-greet-cta`
+and its `i` kept dead too); "i first just want the basic one" (the claim
+alone); corrected as inverted — "i want the hero to be centered around
+these personal messages, i want it to be the big thing."
+
+WHAT SHIPPED: `Greeting` is `{ title, sub, door }` (lib/greeting.ts).
+`title` is the h1 — the site's claim on a first visit (`TITLE`, shortened
+to "Sites, automation and ads for owner-run businesses." from §02's own
+wording, which measured three lines at this size, not two — shorten
+copy, never the size), or the escalating return-visit line from the
+second visit (cyan lead), crossfaded in 400ms when it actually changes
+(`.dr-greet-swap`, a real cascade-specificity bug found and fixed live).
+`sub` is the honest-capacity day line, unchanged at every visit count.
+`door` is its own pill again, centred (a real bug found live: inherited
+`margin-left: auto` pushed it off-centre until overridden). No card, no
+tile, no mark in the hero — all retired, all dead in room.css, not
+deleted. `pickGreeting` now takes a `Persona` (lib/persona.ts's own
+`?i=`/`?svc=` shape) for a PERSONA TABLE that is designed, not built.
+
+THE ARCHITECTURE CHANGED: `app/page.tsx` is now a genuine Server
+Component (`dynamic = "force-dynamic"`) computing the greeting per
+request and handing it to `components/dark/hero-room.tsx` (the old
+"use client" page, renamed, `initialGreeting` prop) — verified live that
+a "use client" page.tsx does NOT honour Next's route segment config
+(`next build` showed `/` as `○ (Static)` when tried that way), so this
+split is load-bearing, not a style choice.
+
+MEASURED, all four titles at 1440: 118.08px, exactly two centred lines
+each, centre 720 (640 at 1280, 720 at 2560). Gaps at 736: nav→cap
+50.77px, door→film 26px (a raised floor, `clamp(26px, 2.6svh, 32px)` —
+2.6svh alone was only 19.14px); at 900: nav→cap 62.09px, film shown
+299.9px (~300, target). `--grow` 513/600px at 736/900, reel lands full
+screen at both. Nav sentinel chain now `.dr-hero-door ?? .dr-hero-band
+?? .dr-greet ?? .dr-meta`. Server HTML confirmed (curl) to contain both
+the title and the day line. Phone: title `clamp(2rem, 9vw, 3rem)`
+(≤ 3 lines, the claim itself hits the ceiling), sub 20px, door full
+width. tsc clean, `next build` confirms `/` as `ƒ (Dynamic)`, 0 console
+errors at 390/1280/1440/2560/900. Frames: `design-dna/frames/greet-
+rest.jpg`, `greet-390.jpg`. NOT YET REVIEWED by Jake in this final
+shape — this state line and its decisions.md/checks.md entries live on
+this branch only.
