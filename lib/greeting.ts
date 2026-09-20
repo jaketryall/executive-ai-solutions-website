@@ -48,7 +48,7 @@
                claim's own path); every real greeting line has a lead. */
 
 export type Door = { label: string; href: string };
-export type Greeting = { title: string; sub: string; door: Door };
+export type Greeting = { title: string; sub: string | null; door: Door };
 export type DayKey = "monday" | "midweek" | "friday" | "weekend";
 /* lib/persona.ts's own shape, re-declared here rather than imported, so
    this file has no dependency on where persona capture happens to live
@@ -66,14 +66,25 @@ export type Persona = { i: string | null; svc: "ai" | "websites" | null };
    businesses.") measured THREE lines at the h1's 22ch — "Websites" ->
    "Sites" (one word shorter, same meaning, "owner-run businesses"
    untouched) measures exactly two. */
-export const TITLE = "Sites, automation and ads for owner-run businesses.";
+export const TITLE = "We build the site. You get on with the business.";
 
-const DAY_LINES: Record<DayKey, string> = {
-  monday: "Monday. Quotes go out Wednesday.",
-  midweek: "Midweek. A call today, a quote in two days.",
-  friday: "Friday. Start the plan this weekend.",
-  weekend: "Weekend. We reply Monday morning.",
+/* THE VOICE (2026-09-20, Jake: "i dont want to be too focused on
+   conversions, all those messages are more for conversions, i want this
+   to be fun … the first visit needs to say what we are, all the others
+   can be fun" · "lets not use theirs word for word, i want to capture
+   the feel of theirs without their exact ideas"). Huge's register — dry,
+   a little conspiratorial, the site in on it with you — in our own
+   lines. NOT EVERY DAY GETS A LINE (Jake: "maybe we dont do daily"):
+   four days earned one; Wednesday, Thursday and Sunday are quiet and
+   the days that do speak land harder for it. The reply-time promise
+   left the line entirely — the door and the nav carry the practical. */
+const DAY_LINES: Partial<Record<DayName, string>> = {
+  Mon: "Monday. Nobody asked for this.",
+  Tue: "Tuesday. Monday's less annoying little brother.",
+  Fri: "Friday. Whatever it is, it can wait till Monday.",
+  Sat: "Saturday. You're working? Go outside.",
 };
+export type DayName = "Sun" | "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat";
 
 const DEFAULT_DOOR: Door = { label: "See your price", href: "/pricing#estimate" };
 const CALL_DOOR: Door = { label: "Book the call", href: "/contact" };
@@ -82,9 +93,9 @@ const CALL_DOOR: Door = { label: "Book the call", href: "/contact" };
    clamped to the last row for every visit past the third, which is
    also where the localStorage cap (9) always lands. */
 const RETURN_TITLES: { title: string; door: Door }[] = [
-  { title: "Back again. Sixty seconds to a price.", door: DEFAULT_DOOR },
-  { title: "Third visit. Twenty minutes to a call.", door: CALL_DOOR },
-  { title: "You keep coming back. Let's talk.", door: CALL_DOOR },
+  { title: "Back so soon. We like you already.", door: DEFAULT_DOOR },
+  { title: "Third time? We'll have to start charging rent.", door: CALL_DOOR },   /* the longer cut made three lines at 118 — shorten copy, never the size */
+  { title: "Oh, it's you. Come in, come in.", door: CALL_DOOR },
 ];
 
 /* THE CYAN LEAD — the first sentence of a greeting-shaped line (a day
@@ -101,15 +112,19 @@ export function splitLead(text: string): { lead: string | null; rest: string } {
   return { lead: text.slice(0, i + 1), rest: text.slice(i + 1) };
 }
 
-export function dayKey(now: Date): DayKey {
-  /* Intl, not now.getDay(): getDay() reads the BUILD/BROWSER's own
-     timezone, and a visitor's Monday morning is still Sunday night on
-     a server in a different zone — Phoenix is fixed on purpose (no DST
-     to drift the boundary either). */
-  const short = new Intl.DateTimeFormat("en-US", {
+/* Intl, not now.getDay(): getDay() reads the BUILD/BROWSER's own
+   timezone, and a visitor's Monday morning is still Sunday night on a
+   server in a different zone — Phoenix is fixed on purpose (no DST to
+   drift the boundary either). */
+export function dayName(now: Date): DayName {
+  return new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Phoenix",
     weekday: "short",
-  }).format(now);
+  }).format(now) as DayName;
+}
+
+export function dayKey(now: Date): DayKey {
+  const short = dayName(now);
   switch (short) {
     case "Mon":
       return "monday";
@@ -128,7 +143,7 @@ export function dayKey(now: Date): DayKey {
 export function pickGreeting(visits: number, persona: Persona, now: Date): Greeting {
   // `persona` is accepted, not yet read — see THE PERSONA TABLE above.
   void persona;
-  const sub = DAY_LINES[dayKey(now)];
+  const sub = DAY_LINES[dayName(now)] ?? null; // null on a quiet day: the h1 and the door sit alone
   if (visits <= 1) {
     return { title: TITLE, sub, door: DEFAULT_DOOR };
   }

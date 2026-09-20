@@ -136,11 +136,13 @@ export default function DarkRoom({ initialGreeting }: { initialGreeting: Greetin
     } catch {
       /* storage unavailable — the first-visit claim still stands, every visit */
     }
-    if (visits >= 2) {
-      const next = pickGreeting(visits, getPersona(), new Date());
-      if (next.title !== initialGreeting.title) setSwapped(true);
-      setGreeting(next);
-    }
+    /* every visit re-picks on the VISITOR's clock — the server's day line
+       is the server's "now", and a first-time visitor at 11pm Phoenix on
+       a Monday would otherwise keep Tuesday's line (or none); the title
+       only swaps (and crossfades) when it actually changed */
+    const next = pickGreeting(visits, getPersona(), new Date());
+    if (next.title !== initialGreeting.title) setSwapped(true);
+    setGreeting(next);
   }, [initialGreeting.title]);
 
   /* THE WORD IS THE SCREEN — RETIRED (2026-09-20, branch hero/greeting):
@@ -504,19 +506,23 @@ export default function DarkRoom({ initialGreeting }: { initialGreeting: Greetin
                   );
                 })()}
               </h1>
-              <p className="dr-hero-sub">
-                {(() => {
-                  const { lead, rest } = splitLead(greeting.sub);
-                  return lead ? (
-                    <>
-                      <span className="dr-day-word">{lead}</span>
-                      {rest}
-                    </>
-                  ) : (
-                    rest
-                  );
-                })()}
-              </p>
+              {/* the day line — only on the days that earned one (lib/greeting.ts);
+                  on a quiet day the title and the door sit alone */}
+              {greeting.sub && (
+                <p className="dr-hero-sub">
+                  {(() => {
+                    const { lead, rest } = splitLead(greeting.sub);
+                    return lead ? (
+                      <>
+                        <span className="dr-day-word">{lead}</span>
+                        {rest}
+                      </>
+                    ) : (
+                      rest
+                    );
+                  })()}
+                </p>
+              )}
               <Link href={greeting.door.href} className="dr-herocta dr-hero-door t-cta">
                 {greeting.door.label}
               </Link>
