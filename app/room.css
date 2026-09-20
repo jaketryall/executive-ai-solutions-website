@@ -578,7 +578,7 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
     radial-gradient(80% 45% at 50% 50%,
       rgba(30,229,255,.045), rgba(30,229,255,.03) 60%, transparent 92%);
 }
-[data-v~="cyan"] .dr-air-edge { box-shadow: 0 0 110px 18px rgba(30,229,255,.14); }
+[data-v~="cyan"] .dr-air-edge { box-shadow: 0 -18px 110px 4px rgba(30,229,255,.15); }
 
 /* `edge` — A GLOW AROUND THE FILM, hugging its rectangle: an empty box
    on the slot's own measured rect (--film-x/--film-w/--grow/--film-h,
@@ -591,7 +591,10 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   left: var(--film-x, 3.8vw); top: var(--grow, 55vh);
   width: var(--film-w, 92.4vw); height: var(--film-h, 36vw);
   border-radius: var(--radius-panel, 24px);
-  box-shadow: 0 0 110px 18px rgba(255,255,255,.10);
+  /* biased UP (Jake: "can we still make sides less"): the shadow's box
+     sits 18px above the film's with 4px of spread instead of 18, so
+     the top edge keeps its glow and the sides get the blur's tail only */
+  box-shadow: 0 -18px 110px 4px rgba(255,255,255,.10);
 }
 /* THE SIDES FALL OFF TO THE SCREEN EDGE (Jake: "the sides feel a little
    off"): the glow has 110px to die over the top edge but only the
@@ -600,10 +603,13 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    The air is masked to fade over the gutter's own width, so the side
    glow dies at the screen's edge the way the top one dies in the air. */
 .dr-hero-wrap[data-v~="edge"] .dr-air {
+  /* and the gutter itself starts at .6, not 1: less on the sides again */
   -webkit-mask-image: linear-gradient(to right,
-    transparent, #000 var(--film-x, 3.8vw), #000 calc(100% - var(--film-x, 3.8vw)), transparent);
+    transparent, rgba(0,0,0,.6) var(--film-x, 3.8vw), #000 calc(var(--film-x, 3.8vw) + 60px),
+    #000 calc(100% - var(--film-x, 3.8vw) - 60px), rgba(0,0,0,.6) calc(100% - var(--film-x, 3.8vw)), transparent);
   mask-image: linear-gradient(to right,
-    transparent, #000 var(--film-x, 3.8vw), #000 calc(100% - var(--film-x, 3.8vw)), transparent);
+    transparent, rgba(0,0,0,.6) var(--film-x, 3.8vw), #000 calc(var(--film-x, 3.8vw) + 60px),
+    #000 calc(100% - var(--film-x, 3.8vw) - 60px), rgba(0,0,0,.6) calc(100% - var(--film-x, 3.8vw)), transparent);
 }
 
 /* `glow` — THE FILM'S OWN LIGHT. A 32x18 canvas (hero-room.tsx draws
