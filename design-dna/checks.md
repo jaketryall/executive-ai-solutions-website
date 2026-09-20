@@ -260,3 +260,4 @@ All measured live at 1440×736 unless noted; `t = --bp × (--n − 1)`, 9 tiles/
 - The server HTML's statement ends "for owner-run businesses."; live, exactly one `.dr-offer-rot-w` is at opacity > .9 at any instant outside a 700ms cross; each holds ≈1250ms; the h2 stays two lines through a whole 11.7s lap at 1440.
 - On white the visible word's colour is the ink and its `::after` is `--accent` (#1ee5ff) spanning the WORD's text box (not the cell); on a dark ground (`.dr-zone-dark`, `?dark`) the word's colour is #1ee5ff and the ::after is display none.
 - Reduced motion: no animation, the first word at opacity 1 with its underline at scale 1.
+- (hero/welcome) hit-test through the grow: `.dr-herocta`'s top-left pixel returns the door at 0 / .3 / .45vh and the film at .55vh; the statement's centre returns the film from .3 to 1.05vh and the statement from 1.55vh; `.dr-stage` computed z-index is 6 at p < .5 and 4 at p ≥ .5.

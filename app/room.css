@@ -475,8 +475,14 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
 .dr-zone-dark .dr-face { border-color: var(--surface-1); }
 .dr-stage {
   /* 6, above the dock (5): the reel paints UNDER the words and the card's
-     copy, over the ground — the stage has no background of its own */
-  position: relative; z-index: 6;
+     copy, over the ground — the stage has no background of its own.
+     ON THE WELCOME BRANCH the words are taller than the old title and
+     ~290px of them still stood over the full-screen film at 0.55vh
+     (measured b61fdd8): so the stage steps UNDER the dock as the film
+     grows — z 6 while the film is the corner card (p < .5), z 4 once
+     it is more than half the screen. A z-index cannot interpolate; the
+     hand-off happens at one frame, hidden inside the film's own edge. */
+  position: relative; z-index: calc(6 - 2 * round(var(--p, 0)));
   min-height: 100svh; display: flex; flex-direction: column;
   /* the fixed rail is out of flow, so the hero reserves its height here */
   padding-top: var(--nav-space);
@@ -1692,7 +1698,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    that. z 4, under the dock's 5 — the reel paints OVER the pin until it
    has actually scrolled away, never through a mask or an opacity. */
 .dr-say-stage {
-  position: relative; z-index: 4;
+  /* 3, not 4: the hero's stage steps down to 4 while the film grows
+     (see .dr-stage), and the pin — transparent then, but a hit-target —
+     was catching the door's clicks between 0.3 and 0.55vh (measured on
+     the Welcome branch). Under the stage, under the dock; the card (4)
+     still covers it. */
+  position: relative; z-index: 3;
   margin-top: calc(-1 * var(--say-pull, 0px));
   /* --say-hold: the pin's own travel (100svh, matching --cur's window
      below) plus the hold with the words alone once --cur reaches 1.
@@ -1715,7 +1726,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   height: calc(100svh + var(--say-hold));
 }
 .dr-say-pin {
-  position: sticky; top: 0; height: 100svh; z-index: 4;
+  position: sticky; top: 0; height: 100svh; z-index: 3;
   display: grid; place-items: center;
   /* the statement at its 1.12 settle-start is 1490px wide against a
      1440 viewport, and a transform's box still counts toward the
