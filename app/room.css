@@ -565,6 +565,20 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   animation: dr-drift-b 37s ease-in-out infinite alternate;
 }
 
+/* `edge` — A GLOW AROUND THE FILM, hugging its rectangle: an empty box
+   on the slot's own measured rect (--film-x/--film-w/--grow/--film-h,
+   hero-room.tsx) with a wide white outer shadow. Even on all four
+   sides — the gap under the door, the two gutters, and below the fold.
+   The film grows outward from this same rect, so it covers the glow as
+   it goes; nothing to hand off. */
+.dr-air-edge {
+  position: absolute;
+  left: var(--film-x, 3.8vw); top: var(--grow, 55vh);
+  width: var(--film-w, 92.4vw); height: var(--film-h, 36vw);
+  border-radius: var(--radius-panel, 24px);
+  box-shadow: 0 0 110px 18px rgba(255,255,255,.10);
+}
+
 /* `glow` — THE FILM'S OWN LIGHT. A 32x18 canvas (hero-room.tsx draws
    the reel into it ten times a second), blurred AT THAT SIZE — the
    filter runs on 576 pixels — then scaled by transform to cover the

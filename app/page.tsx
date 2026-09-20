@@ -49,7 +49,9 @@ export default async function Page({
   /* tokens ADD to the default set — `?v=flat` is the default hero with
      no curtain; `none` clears the defaults first (`?v=none` is the
      shipped hero, `?v=none+lines` the lines trial alone) */
-  const DEFAULT = "wide light halo";
+  /* Jake: "a version with only a glow around the video no other lamps"
+     — the default is that now; ?v=none+wide+light+halo is the lamps */
+  const DEFAULT = "wide edge";
   const given = (typeof raw === "string" ? raw : "")
     .replace(/\+/g, " ")
     .replace(/[^a-z ]/g, "")

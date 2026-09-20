@@ -107,6 +107,11 @@ export default function DarkRoom({
              radial centred on the film's own box (measured below), so
              what shows is its spill past the film's edges: over the top
              edge into the gap under the door, and down the two sides
+     edge  · a glow HUGGING the film's rectangle, even on all four
+             sides (Jake: "only a glow around the video, no other
+             lamps") — an outer box-shadow on an empty box laid exactly
+             over the slot, so it is the film's own edge light, not a
+             lamp in the room
      lines · EVERY line is full width (Jake, on `wide`: "they arent
              always full width") — the title is split at its sentence
              ends, one sentence per line, and each line is fitted to the
@@ -486,6 +491,10 @@ export default function DarkRoom({
          `halo`, .dr-air-film in room.css) */
       wrapEl?.style.setProperty("--film-c", `${s.y + s.h / 2}px`);
       wrapEl?.style.setProperty("--film-h", `${s.h}px`);
+      /* and its left edge / width, for the glow that hugs its rectangle
+         (trial `edge`, .dr-air-edge) */
+      wrapEl?.style.setProperty("--film-x", `${s.x}px`);
+      wrapEl?.style.setProperty("--film-w", `${s.w}px`);
       if (!s.h || !r.h) return;
       /* THE WORD NO LONGER CROSSES THE FILM (TRIAL B — hero/snows,
          2026-09-19): the film's box is no longer read against the
@@ -614,11 +623,12 @@ export default function DarkRoom({
             (`light`) and the film's glow (`glow`), clipped to the dark
             ground's own height, under the stage and the dock. Present
             only for the variants that use them. */}
-        {(has("light") || has("glow") || has("halo")) && (
+        {(has("light") || has("glow") || has("halo") || has("edge")) && (
           <div className="dr-air" aria-hidden>
             {has("glow") && <canvas className="dr-glow" width={32} height={18} />}
             {has("light") && <div className="dr-air-key" />}
             {has("halo") && <div className="dr-air-film" />}
+            {has("edge") && <div className="dr-air-edge" />}
           </div>
         )}
         {/* the rail (components/room/nav) watches this by selector: the
