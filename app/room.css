@@ -548,10 +548,18 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
      the time it cleared the top edge and measured +16 luminance at
      best; from here the spill over the edge is the lamp's own core */
   top: calc(var(--film-c, calc(var(--grow, 55vh) + 18vw)) - var(--film-h, 36vw) * .35);
-  width: 110vw; height: calc(var(--film-h, 36vw) * 2.2);
+  width: 160vw; height: calc(var(--film-h, 36vw) * 2.2);
   translate: -50% -50%;
-  background: radial-gradient(50% 50% at 50% 50%,
-    rgba(255,255,255,.26), rgba(255,255,255,.10) 50%, transparent 72%);
+  /* two layers: the lamp (radius ~400px, as before — 35% of the wider
+     box is the old 50% of 110vw), and under it a wide, faint wash so
+     the two gutters beside the film catch a little of it too (Jake:
+     "dont forget the left and right of video slightly") — measured
+     22 luminance in the gutter against 11 void, 59 at the top edge */
+  background:
+    radial-gradient(35% 50% at 50% 50%,
+      rgba(255,255,255,.26), rgba(255,255,255,.10) 50%, transparent 72%),
+    radial-gradient(80% 45% at 50% 50%,
+      rgba(255,255,255,.07), rgba(255,255,255,.05) 60%, transparent 92%);
   animation: dr-drift-b 37s ease-in-out infinite alternate;
 }
 
