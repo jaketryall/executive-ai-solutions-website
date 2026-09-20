@@ -399,6 +399,7 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    the stage's sibling) both read it — declared on the stage it never
    reached the reel, and the reel scrolled off still the size of a word. */
 .dr-hero-wrap { position: relative; --p: clamp(0, var(--hero-p, 0), 1);
+                --grow: 55vh; /* no-JS fallback; measure() overwrites with the slot's top */
                 /* the docked reel bleeds past both edges; nothing scrolls */
                 overflow-x: clip; }
 
@@ -448,7 +449,11 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
 .dr-hero-wrap.dr-zone-dark::before {
   content: "";
   position: absolute; top: 0; left: 0; right: 0;
-  height: calc(100svh + 55vh); /* the twin of --grow, see above */
+  /* the twin of --grow, see above — now the wrapper's OWN --grow (page.tsx
+     writes it here = the slot's top, 2026-09-19), so the ground's end
+     and the film's frozen bottom cannot drift apart; 55vh is the no-JS
+     fallback of both */
+  height: calc(100svh + var(--grow, 55vh));
   background: var(--void);
 }
 @media (max-width: 900px), (prefers-reduced-motion: reduce) {
@@ -843,7 +848,10 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 /* MEASURED, not the spec's -0.03em guess: "Welcome"'s W carries almost
    no left bearing at this weight/width — 0 landed the ink within 0.3px
    of the column's left edge live; -0.03em overshot it by ~10px. */
-.dr-welcome .dr-line { margin-left: 0; padding-right: 0; margin-right: 0; }
+/* the mask (.dr-line, overflow hidden for the rise) needs room on the
+   right for the last e's overshoot past its advance width — the old
+   title had the same for its S (Jake: "the e is clipped on the right") */
+.dr-welcome .dr-line { margin-left: 0; padding-right: .06em; margin-right: -.06em; }
 .dr-welcome .dr-line > span { white-space: nowrap; }
 
 /* THE META ROW (danielsnows' three columns, on hairlines) — supersedes
@@ -1021,7 +1029,13 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   position: relative; z-index: 1;
   flex: 0 0 auto; min-height: 0;
   aspect-ratio: 2.6 / 1; width: 100%;   /* the reference's proportion, measured */
-  margin-top: clamp(16px, 2.6svh, 32px);
+  /* the slot's top lands at the fold less --slot-show (danielsnows: 112px
+     of video in the first screen — Jake: "the video reel [doesn't] have
+     to come up so high"); --day-b is the day line's bottom in page px
+     (page.tsx measure()); the clamp is the floor when the screen is
+     short and the line already sits near the fold */
+  --slot-show: 150px;
+  margin-top: max(clamp(16px, 2.6svh, 32px), calc(100svh - var(--slot-show) - var(--day-b, 100svh)));
   /* NO PLATE. It was --surface-1 (a pale rectangle in the light room
      that went black when the poster painted), then for an hour the
      film's black from the first paint. Now the film's place is the
@@ -1353,7 +1367,13 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   /* THE GROW'S SCROLL DISTANCE — one number, matched to the wrapper's
      data-sp-to in page.tsx (0.55vh; it was itsjay's 0.9 — Jake: "a lot of
      scrolling, not the effect") */
-  --grow: 55vh;
+  /* --grow is INHERITED from .dr-hero-wrap (page.tsx measure() writes it
+     there = the slot's top, --t0, 2026-09-19): the film's top edge leaves
+     at scroll's rate, so it is the screen the instant the page has
+     scrolled the slot's own top. Declared here it shadowed the wrapper's
+     value (55vh, the old fixed grow) and the film stopped 181px short —
+     top at 0 by the extra scroll, but 555 tall. The wrapper carries the
+     55vh fallback for no-JS. */
   --dock-pad: calc(var(--grow) - (100% - 2 * var(--inset)) / 2.6);
   /* the pad is NEGATIVE when the grow is shorter than the letterbox is
      tall (0.55vh = 405px against 511px at 1440) — padding cannot be, so

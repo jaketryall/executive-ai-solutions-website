@@ -128,7 +128,9 @@ export default function DarkRoom() {
       // 64px floor (a true safety net, not the spec's 96 — see the note
       // above); no meaningful ceiling short of an absurd viewport — 900px
       // is well past what 2560's own capped column (~1632px) ever needs
-      const fs = Math.max(64, Math.min((colW / inkW) * SIZE, 900));
+      // .992: the last e overshoots its advance by ~.8% of the size; aiming
+      // a hair inside the column keeps its ink off the column's edge
+      const fs = Math.max(64, Math.min((colW / inkW) * SIZE * 0.992, 900));
       h1.style.setProperty("--welcome-fs", `${fs}px`);
     };
     measureWord();
@@ -231,7 +233,31 @@ export default function DarkRoom() {
         }
         return { x, y, w: el.offsetWidth, h: el.offsetHeight };
       };
+      /* HOW MUCH FILM SHOWS ABOVE THE FOLD (Jake, on trial B: "i dont think
+         the video reel has to come up so high, in the reference it
+         doesnt"): danielsnows' video top sits at y 624 of 736 — 112px of
+         it in the first screen. The slot's own top is the day line's
+         bottom plus a gap, which at 736 put 256px of film on screen; the
+         hero hands the stylesheet the day line's bottom (page px, the
+         offset chain) and .dr-slot's margin grows so the slot's top lands
+         at the fold less --slot-show. Written BEFORE the slot is boxed —
+         the margin moves the slot, and the grow is measured off it. */
+      const day = document.querySelector<HTMLElement>(".dr-meta");
+      if (day) {
+        const db = box(day);
+        reel.closest<HTMLElement>(".dr-hero-wrap")?.style.setProperty("--day-b", `${db.y + db.h}px`);
+      }
       const s = box(slot), r = box(reel);
+      /* THE GROW IS AS LONG AS THE SLOT IS HIGH (2026-09-19): the film's
+         top edge leaves at scroll's rate and reaches the top of the
+         screen exactly when the page has scrolled the slot's own top —
+         so the grow's distance is --t0, not a fixed 0.55vh (with the
+         slot lowered to danielsnows' height above the fold, 0.55vh fell
+         181px short and the film stopped growing with its top at 181).
+         The wrapper's window is handed the same number in px. */
+      const wrapEl = reel.closest<HTMLElement>(".dr-hero-wrap");
+      wrapEl?.setAttribute("data-sp-to-px", String(-s.y));
+      wrapEl?.style.setProperty("--grow", `${s.y}px`);
       if (!s.h || !r.h) return;
       /* THE WORD NO LONGER CROSSES THE FILM (TRIAL B — hero/snows,
          2026-09-19): the film's box is no longer read against the
@@ -273,10 +299,8 @@ export default function DarkRoom() {
       const sayStage = document.querySelector<HTMLElement>(".dr-say-stage");
       if (sayStage) {
         const d = box(dock);
-        sayStage.style.setProperty(
-          "--say-pull",
-          `${d.y + d.h - 0.55 * window.innerHeight}px`
-        );
+        // the grow's distance is the slot's top (s.y) now, not 0.55vh
+        sayStage.style.setProperty("--say-pull", `${d.y + d.h - s.y}px`);
       }
     };
     measure();
