@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import ServicesSection, { OfferHead } from "@/components/dark/services-section";
 import WorkSection from "@/components/dark/work-section";
 import VoicesSection from "@/components/dark/voices-section";
@@ -9,16 +8,28 @@ import RunsSection from "@/components/dark/runs-section";
 import ObjectionsSection from "@/components/dark/objections-section";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
-import { GOOGLE_REVIEWS, CLIENT_MARKS, TICKER } from "@/lib/proof";
+import { GOOGLE_REVIEWS } from "@/lib/proof";
 import { pickGreeting, type Greeting } from "@/lib/greeting";
+
+/* THE META ROW's col 1 (danielsnows shape, TRIAL B — hero/snows): the
+   greeting splits at its own first period into the day word ("Weekend.")
+   and the rest ("Book the call now, we reply Monday morning.") — same
+   split for the return-visit lines (lib/greeting.ts). Pure, so it is
+   trivial to verify against the day tables directly. */
+function splitGreeting(line: string): [string, string] {
+  const i = line.indexOf(".");
+  if (i === -1) return [line, ""];
+  return [line.slice(0, i + 1), line.slice(i + 1).trim()];
+}
 
 /* THE DAY LINE'S OWN DEFAULT (page.tsx, not lib/greeting.ts): the door
    before the visitor's clock has been read at all — the SAME "See your
-   price" → /pricing#estimate the room has always opened with (2026-09-18
-   decision stands). The line itself starts null: the server renders
-   nothing under the h1 (Huge's mechanism read the visitor's OWN day, not
-   the build's), and .dr-hero-day's min-height (room.css) reserves the
-   row so the strip below never jumps once the real line mounts. */
+   price" → /pricing#estimate the room has opened with since 2026-09-18,
+   though TRIAL B (hero/snows) retires the door from the hero itself; the
+   value stays on `greeting` for when the trial reverts. The line itself
+   starts empty: the server renders nothing (Huge's mechanism reads the
+   visitor's OWN day, not the build's) — col 3 of the meta row is what
+   anchors that row's height meanwhile, so col 1 mounting never jumps it. */
 const DEFAULT_GREETING: Greeting = {
   line: "",
   door: { label: "See your price", href: "/pricing#estimate" },
@@ -65,6 +76,81 @@ export default function DarkRoom() {
       /* storage unavailable — the day line still stands, every visit */
     }
     setGreeting(pickGreeting(visits, new Date()));
+  }, []);
+  const [dayWord, dayRest] = splitGreeting(greeting.line);
+
+  /* THE WORD IS THE SCREEN (2026-09-19, TRIAL B — hero/snows,
+     danielsnows.framer.website: "SNOWS" set to the full width of the
+     screen, measured on theirs at 365px). Archivo wdth 100/wght 600 does
+     not scale by one fixed ratio the way the condensed caps line did
+     (glyphs of very uneven width), so the size is MEASURED, not guessed:
+     a canvas context is given the h1's own resolved weight/family and
+     "Welcome"'s ADVANCE width (m.width, matching a live Range's own
+     getBoundingClientRect() — see below) is read at 100px; --welcome-fs
+     is the column's own width scaled by that ratio. Canvas's own
+     `letterSpacing` (Chrome 99+) carries the same -0.07em the CSS
+     declares so the two numbers can never disagree.
+
+     ⚠ TWO THINGS MEASURED, NOT GUESSED, BOTH CONTRADICTING THE SPEC'S OWN
+     NUMBERS: (1) getComputedStyle(h1).fontWeight reads the CSS
+     `font-weight` property, NOT the `font-variation-settings` "wght"
+     axis — with font-weight left unset the canvas measured a THINNER
+     400-weight "Welcome" than the 600 actually painted (confirmed
+     against a real DOM Range measurement of the live h1); filling the
+     1330px column at 1440 measures ≈350px either way, not the spec's
+     "≈300", and its "cap at 17.8rem" (284.8px) would leave the ink
+     ~250px short of the column's right edge — dropped, corroborated by
+     the reference itself (Snows' own "SNOWS" is 365px at 1440, the same
+     order of magnitude). (2) `actualBoundingBoxLeft/Right` (the ink's
+     true pixel extent) measured "Welcome"'s trailing 'e' overshoot as
+     ~2px wider than its ADVANCE box — compounded to a 6-7px shortfall
+     at hero scale against the column, because a Range's own
+     getBoundingClientRect() (used to verify this) follows the advance
+     model, not ink pixels; switched to `m.width` so the two agree by
+     construction. And the spec's 96px FLOOR overshoots its OWN "~90px
+     at 390" expectation (the unfloored formula already lands at ~90 —
+     confirmed live) by enough to push the ink past the phone column's
+     gutter; lowered to 64px, a true safety floor for a viewport
+     narrower than any this room supports, not a value meant to bind at
+     390. See decisions.md for the full note on both. */
+  useEffect(() => {
+    const h1 = document.querySelector<HTMLElement>(".dr-welcome");
+    if (!h1) return;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const measureWord = () => {
+      if (!ctx) return;
+      const cs = getComputedStyle(h1); // font-weight: 600 is declared alongside the axis (room.css) so this reads true
+      const SIZE = 100;
+      ctx.font = `${cs.fontWeight} ${SIZE}px ${cs.fontFamily}`;
+      if ("letterSpacing" in ctx) {
+        (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = `${-0.07 * SIZE}px`;
+      }
+      /* the ADVANCE width (m.width), not actualBoundingBox: a Range over
+         the live text (used to verify this, and how a screenshot crop
+         reads it) measures the same advance-based box a browser lays
+         text out with — actualBoundingBox instead measured "Welcome"'s
+         trailing overshoot (the 'e') as ~2px wider, which compounded to
+         a 6-7px shortfall against the column at hero scale. */
+      const m = ctx.measureText("Welcome");
+      const inkW = m.width;
+      const colW = h1.offsetWidth;
+      if (!inkW || !colW) return;
+      // 64px floor (a true safety net, not the spec's 96 — see the note
+      // above); no meaningful ceiling short of an absurd viewport — 900px
+      // is well past what 2560's own capped column (~1632px) ever needs
+      const fs = Math.max(64, Math.min((colW / inkW) * SIZE, 900));
+      h1.style.setProperty("--welcome-fs", `${fs}px`);
+    };
+    measureWord();
+    document.fonts?.ready.then(measureWord);
+    const ro = new ResizeObserver(measureWord);
+    ro.observe(h1);
+    window.addEventListener("resize", measureWord);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measureWord);
+    };
   }, []);
   /* PARALLAX — the LIGHT only. The mark holds still: it is the object in the
      room, and an object that slides with your cursor stops reading as one.
@@ -158,14 +244,10 @@ export default function DarkRoom() {
       };
       const s = box(slot), r = box(reel);
       if (!s.h || !r.h) return;
-      /* the headline's white copy is clipped to the film's box */
-      const h1 = document.querySelector<HTMLElement>(".dr-h1");
-      if (h1) {
-        const hb = box(h1);
-        h1.style.setProperty("--cross-top", `${Math.max(0, s.y - hb.y)}px`);
-        h1.style.setProperty("--cross-left", `${Math.max(0, s.x - hb.x)}px`);
-        h1.style.setProperty("--cross-right", `${Math.max(0, hb.x + hb.w - (s.x + s.w))}px`);
-      }
+      /* THE WORD NO LONGER CROSSES THE FILM (TRIAL B — hero/snows,
+         2026-09-19): the film's box is no longer read against the
+         headline's, and no --cross-* is written — see the retired
+         .dr-line--film in room.css's history. */
       /* on the DOCK, so the reel and its shade both inherit the same numbers.
          Three frames (see THE GROW in room.css): the slot at p 0 — the reel
          and the slot are the same column box now, so this is a translate
@@ -301,110 +383,67 @@ export default function DarkRoom() {
         <div className="dr-stage">
           <main className="dr-main wrap">
             <div className="dr-hero">
-              {/* ONE LINE, condensed, uppercase, the width of the measure —
-                  the Hyperactive shot's DISCOVER THE TASTE. The second
-                  half of the statement moves onto the card as its
-                  heading (their PIZZA WITH URBAN FLAIR). ⚠ THE
-                  POSITIONING LINE still holds: design first, systems
-                  second, ads not in the statement. It crosses the film's
-                  top edge, and is white where it does — see the second
-                  copy below. */}
-              {/* ONE READING. The hover swap (leoparpeix's bee, a second
-                  line rising through the same mask) was built and taken
-                  off the same day — Jake: "its a cool idea but im not
-                  sure". Recoverable at 5eef8b3. The rise itself stays. */}
-              <h1 className="t-hero dr-h1">
+              {/* §01 · THE SNOWS HERO (TRIAL B — branch hero/snows, Jake:
+                  "i wonder if we can find a layout like this make this
+                  work somehow" → "build B the snows one").
+                  danielsnows.framer.website, measured at 1440x736: the
+                  one word "SNOWS" at the screen's full width (rect x 10,
+                  w 1420 of 1440); under it three small meta columns on
+                  hairlines; the video full width, its top just above the
+                  fold. Ours keeps the hero we had — the film, the grow,
+                  the curtain, the dark zone, the nav — with two changes:
+                  the word becomes "Welcome" set to the column's full
+                  width (see the measure effect above), and the strip
+                  becomes the three-column meta row below. ONE READING,
+                  ONE LINE: the hover swap and the film-clipped second
+                  copy both retire with "Design that sells" — see
+                  decisions.md. The rise (leoparpeix's, --ease-reveal,
+                  300ms) is the only entrance the word keeps. */}
+              <h1 className="dr-h1 dr-welcome">
                 <span className="dr-line">
-                  <span className="sweep dr-read">Design that sells</span>
-                </span>
-                {/* THE SAME LINE, WHITE, CLIPPED TO THE FILM. Where the
-                    headline crosses the film's box this copy shows and
-                    the ink one is under it; everywhere else it is
-                    clipped away. The clip is three measured numbers
-                    (page.tsx measure(): the film box against the
-                    headline box), static at rest, so nothing re-rasters.
-                    Not a blend mode: `difference` inverts on a bright
-                    frame of film, and the reference never inverts —
-                    the words are white on the picture, full stop. */}
-                <span className="dr-line dr-line--film" aria-hidden>
-                  <span className="dr-read">Design that sells</span>
+                  <span className="dr-read">Welcome</span>
                 </span>
               </h1>
 
-              {/* THE DAY LINE (2026-09-19, Huge's §3): the room speaking to
-                  the day, then to the return visit, from the SECOND line
-                  down — see lib/greeting.ts for the tables and the
-                  boundary cases, and the effect above for why it starts
-                  empty. min-height in room.css reserves the row so this
-                  mounting never nudges the strip. */}
-              <p className="dr-hero-day">{greeting.line}</p>
-
-              {/* THE STRIP — thin, white, between the title and the film,
-                  for the small things (Jake, 2026-09-13: "a thin strip
-                  as white where some small things are there, like
-                  reviews with the little half circle things on far left,
-                  just stuff that doesn't take up much vertical space" …
-                  "the little avatar icons on left that rotate, that are
-                  images of real people, and to the right of that an
-                  infinite logo marquee"). Left: the faces, rotating, and
-                  the rating. Middle: the clients' marquee. Right: the one
-                  door. The panel that held the description is at def30b4
-                  if wanted back. ⚠ The faces are initials until Jake
-                  clears real photographs; the marquee is wordmarks until
-                  the logo files exist. */}
-              <div className="dr-strip">
-                {GOOGLE_REVIEWS.count > 0 && (
-                  <a
-                    className="dr-strip-rating"
-                    href={GOOGLE_REVIEWS.url || undefined}
-                    target={GOOGLE_REVIEWS.url ? "_blank" : undefined}
-                    rel={GOOGLE_REVIEWS.url ? "noopener noreferrer" : undefined}
-                    aria-label={`Rated ${GOOGLE_REVIEWS.rating.toFixed(1)} on Google from ${GOOGLE_REVIEWS.count} reviews`}
-                  >
-                    {/* the businesses the rating comes from, rotating: a
-                        mark where the file exists, initials until then */}
-                    <span className="dr-faces" aria-hidden>
-                      {CLIENT_MARKS.map((c) => (
-                        <span className="dr-face" key={c.initials} title={c.name}>
-                          {c.src ? <img src={c.src} alt="" /> : c.initials}
-                        </span>
-                      ))}
-                    </span>
-                    <span className="dr-strip-l">
-                      <b>{GOOGLE_REVIEWS.rating.toFixed(1)} on Google</b>
-                      <span>{GOOGLE_REVIEWS.count} client reviews</span>
-                    </span>
-                  </a>
-                )}
-
-                {/* THE TICKER, to the right of the marks (Jake: "instead
-                    of companies … the services in infinite marquee"):
-                    what is sold and the real things inside it, running.
-                    Two sets, the track travels one; the second is
-                    decoration. */}
-                <div className="dr-logos" aria-label="What we build">
-                  <div className="dr-logos-track">
-                    {[0, 1].map((i) => (
-                      <div className="dr-logos-set" key={i} aria-hidden={i === 1}>
-                        {TICKER.map((c) => (
-                          <span key={c}>{c}</span>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
+              {/* THE META ROW (danielsnows' three columns, on hairlines).
+                  Retires THE STRIP below it in room.css (the faces, the
+                  ticker, the door) — its CSS stays, dead, in case the
+                  trial reverts; `.dr-hero-day` is gone outright, its job
+                  folded into col 1. Col 1 is the day line (lib/greeting.ts),
+                  split at its own first period — the day word as the
+                  label, the rest underneath; col 2 is the rating
+                  (GOOGLE_REVIEWS, hidden while count is 0), a link to the
+                  profile; col 3 is the three services, static. THE DOOR
+                  LEAVES THE HERO: the nav's "Book the call" is the
+                  persistent action now; the estimator door ("See your
+                  price") returns in the close/ledger later — noted, not
+                  built here. Col 3 is always populated, so it is what
+                  anchors the row's height before col 1's async day line
+                  has mounted — no reserved min-height needed, no shift
+                  when it pops in. */}
+              <div className="dr-meta">
+                <div className="dr-meta-col">
+                  <span className="t-label dr-meta-l1">{dayWord}</span>
+                  <span className="t-meta">{dayRest}</span>
                 </div>
-
-
-                {/* THE DOOR, inside the strip at its right end (Jake: "put
-                    cta inside that bar somehow"). IT OPENS THE ESTIMATOR,
-                    not the call (2026-09-18): for a cold ad visitor a call
-                    is a big ask on our schedule; a price in sixty seconds
-                    is about them, costs nothing, and is the thing nobody
-                    else has. The call is the nav's persistent action and
-                    the close — it is asked for once trust exists. */}
-                <Link href={greeting.door.href} className="dr-herocta dr-edge t-cta">
-                  {greeting.door.label}
-                </Link>
+                <div className="dr-meta-col dr-meta-col--rating">
+                  {GOOGLE_REVIEWS.count > 0 && (
+                    <a
+                      className="dr-meta-link"
+                      href={GOOGLE_REVIEWS.url || undefined}
+                      target={GOOGLE_REVIEWS.url ? "_blank" : undefined}
+                      rel={GOOGLE_REVIEWS.url ? "noopener noreferrer" : undefined}
+                      aria-label={`Rated ${GOOGLE_REVIEWS.rating.toFixed(1)} on Google from ${GOOGLE_REVIEWS.count} reviews`}
+                    >
+                      <span className="t-label dr-meta-l1">{GOOGLE_REVIEWS.rating.toFixed(1)} on Google</span>
+                      <span className="t-meta">{GOOGLE_REVIEWS.count} client reviews</span>
+                    </a>
+                  )}
+                </div>
+                <div className="dr-meta-col dr-meta-col--services">
+                  <span className="t-label dr-meta-l1">Websites · Automation · Ads</span>
+                  <span className="t-meta">For owner-run businesses</span>
+                </div>
               </div>
 
               {/* THE CARD — the reel's rest position: full width, its top

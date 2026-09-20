@@ -806,47 +806,70 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-root.dr-light .dr-h1.t-hero { color: var(--ink); }
 .dr-h1.t-hero .sweep { background: none; -webkit-text-fill-color: currentColor;
                        color: inherit; animation: none; }
-.dr-line--film {
-  position: absolute; inset: 0;
-  clip-path: inset(var(--cross-top, 100%) var(--cross-right, 0px) 0 var(--cross-left, 0px));
-}
-.dr-line--film > span { color: #fff; }
-/* the entrance: both copies rise together, as the first line */
-.dr-lit .dr-line--film > span { animation: dr-rise 1s var(--ease-reveal) 300ms forwards; }
-/* ON THE FILM: the copy block lower left (a small caps heading over a
-   short paragraph — their PIZZA WITH URBAN FLAIR), the door lower right,
-   the rating a badge top right under the headline's crossing, the three
-   tags across the picture. Light on the dimmed film; everything fades
-   as the scrim lifts (the exit rules below). */
-/* top left, where the reference keeps its copy block (Jake: "can we
-   move text to top left"); the door stays lower right, the badge top
-   right, so the film's centre is picture */
-
-/* THE DAY LINE (2026-09-19 · Huge's, decodes/hugeinc.md §3: under
-   "Hello." a line for the day, and from the second visit a line for the
-   return — lib/greeting.ts has the tables and the boundary cases, this
-   only sets the face). t-label's family and weight, but SENTENCE CASE —
-   a tracked, uppercase label here would read as a badge over a promise,
-   and the buyer this room is for is an owner, never quipped at.
-   min-height reserves the row (the server renders nothing, page.tsx: the
-   day is the visitor's own clock) so the strip below never jumps once
-   the real line mounts. */
-.dr-hero-day {
-  margin: 12px 0 0;
-  min-height: 1.5em;
-  max-width: 62ch;
-  /* .dr-hero is a centred flex column (align-items: center) — the line is
-     a shrink-wrapped item, so text-align alone left it centred as a box;
-     it takes the column's left edge, under the h1's, like Huge's */
-  align-self: flex-start; text-align: left;
-  font-family: var(--font-archivo), sans-serif;
+/* ══ THE WORD (2026-09-19, TRIAL B — hero/snows, danielsnows.
+   framer.website's shape: "SNOWS" set to the screen's full width,
+   measured on theirs at 365px). Sentence case, Archivo wdth 100/wght
+   600 — the type system's own §01 rung (decisions.md, THE TYPE SYSTEM
+   OF THE MODEL), not the condensed caps .t-hero carries. --welcome-fs
+   is written by page.tsx's canvas measure (colW / ink-width-at-100px ×
+   100), floored at 96px — NO 17.8rem CEILING (see page.tsx's own note:
+   filling the 1330px column at 1440 measures ≈350px, matching Snows'
+   own 365px, not the spec's "≈300"; the CSS fallback below (seen only
+   before JS/fonts are ready) keeps its own 17.8rem bound since it is a
+   rough placeholder, never the measured value). RETIRES .dr-line--film
+   (the film no longer crosses the title — the whole word IS the film's
+   width now) and .dr-hero-day (its job folds into THE META ROW's col 1,
+   below). */
+.dr-h1.dr-welcome {
+  font-family: var(--font-archivo), "Arial Black", "Helvetica Neue", sans-serif;
   font-variation-settings: "wdth" 100, "wght" 600;
-  font-size: var(--fs-body);
-  letter-spacing: .01em;
-  line-height: 1.4;
-  color: var(--ink-3);
-  text-align: left; /* Huge's day line sits on the column's left edge under the h1, never centred */
+  /* font-weight, ALONGSIDE the axis: getComputedStyle().fontWeight reads
+     the CSS property, not the variation axis — without this, page.tsx's
+     canvas measure silently fell back to weight 400 (a narrower "Welcome"
+     than the 600 actually painted), which is the wrong ink width to be
+     dividing the column by. */
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: -0.07em;
+  line-height: .86;
+  color: #fff;
+  text-align: left;
+  font-size: var(--welcome-fs, min(24cqw, 17.8rem));
 }
+/* OPTICAL, not geometric, same law as the retired title (.dr-h1 .dr-line
+   above): "Welcome"'s W carries its own left bearing, pulled out here so
+   the ink — not the box — lands on the column's left edge. No overshoot
+   compensation on the right: "Welcome" ends in a bowl, not a spur. */
+/* MEASURED, not the spec's -0.03em guess: "Welcome"'s W carries almost
+   no left bearing at this weight/width — 0 landed the ink within 0.3px
+   of the column's left edge live; -0.03em overshot it by ~10px. */
+.dr-welcome .dr-line { margin-left: 0; padding-right: 0; margin-right: 0; }
+.dr-welcome .dr-line > span { white-space: nowrap; }
+
+/* THE META ROW (danielsnows' three columns, on hairlines) — supersedes
+   both THE STRIP below, kept dead, and .dr-hero-day, gone outright: its
+   job (the day line, decodes/hugeinc.md §3) folds into col 1, split at
+   its own first period (page.tsx splitGreeting()) into the day word and
+   the rest. Col 2 is the rating (GOOGLE_REVIEWS, centred, hidden while
+   count is 0); col 3 the three services, static and right-aligned — it
+   is what anchors the row's height while col 1's async day line is
+   still empty, so no min-height hack is needed. THE DOOR LEFT WITH THE
+   STRIP: the nav's persistent action is the only door in the hero now. */
+.dr-meta {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  width: 100%; margin-top: clamp(18px, 3svh, 32px);
+  padding-block: 12px; border-block: 1px solid var(--edge);
+  align-items: center;
+}
+.dr-meta-col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.dr-meta-col--rating { align-items: center; text-align: center; }
+.dr-meta-col--services { align-items: flex-end; text-align: right; }
+.dr-meta-link { display: flex; flex-direction: column; gap: 4px;
+                align-items: inherit; text-decoration: none; color: inherit; }
+.dr-meta-l1 { color: var(--ink); letter-spacing: .1em; }
+
+/* RETIRED 2026-09-19 (TRIAL B — hero/snows): superseded by THE META ROW
+   above. Rules kept dead, not deleted, in case the trial reverts. */
 /* THE STRIP — thin and white between the title and the film (Jake:
    "a thin strip as white where some small things are there … just stuff
    that doesn't take up much vertical space" · "the little avatar icons
@@ -1026,6 +1049,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-strip, .dr-herocta {
   opacity: calc(1 - clamp(0, (var(--p, 0) - .46) / .23, 1));
 }
+/* THE META ROW takes the strip's own fade window — it sits where the
+   strip sat, in the rail's same zone, and needs the same reason: a crisp
+   row half behind a half-dark pill was the ugliest frame of that pass. */
+.dr-meta {
+  opacity: calc(1 - clamp(0, (var(--p, 0) - .46) / .23, 1));
+}
 
 /* ── THE ONE DOOR ────────────────────────────────────────────────
    The room's pill, centred under the claim. */
@@ -1054,16 +1083,16 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    hydration hid it (the animation's backwards fill), and it faded in
    again — visible → gone → back (screencast 2026-09-14). */
 .dr-root:not(.dr-lit) .dr-strip, .dr-root:not(.dr-lit) .dr-herocta,
-.dr-root:not(.dr-lit) .dr-hero-day { opacity: 0; }
+.dr-root:not(.dr-lit) .dr-meta { opacity: 0; }
 /* the strip is the hero's SECOND LINE (leoparpeix §14): it comes in
    115ms after the title, from the left, on the same curve. Unmasked —
    a mask would cut its shadow — so a short diagonal rise with the fade. */
 .dr-lit .dr-strip   { animation: dr-strip-in 1s var(--ease-reveal) 415ms backwards; }
 @keyframes dr-strip-in { from { opacity: 0; transform: translate(-5%, 40%); } to { opacity: 1; transform: none; } }
 .dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 720ms backwards; }
-/* the day line rises between the title (300ms) and the strip (415ms) —
-   it is the h1's own second line, read before the strip's proof */
-.dr-lit .dr-hero-day { animation: dr-fadein var(--t-enter) var(--ease-structure) 520ms backwards; }
+/* THE META ROW takes the day line's own slot (520ms) — it is the h1's
+   second line now, same as .dr-hero-day was before it retired. */
+.dr-lit .dr-meta { animation: dr-fadein var(--t-enter) var(--ease-structure) 520ms backwards; }
 
 /* ── THE RATING CARD ─────────────────────────────────────────────
    Lower right, where the reference floats its app card: five stars, the
@@ -1193,9 +1222,15 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-strip-rating { justify-content: center; }
   .dr-herocta { margin-left: 0; align-self: center; }
   .dr-slot { display: none; }
-  .dr-line--film { display: none; }
-  .dr-h1, .dr-strip, .dr-herocta, .dr-hero-day { opacity: 1; }
+  .dr-h1, .dr-strip, .dr-herocta, .dr-meta { opacity: 1; }
   .dr-sub { font-size: var(--fs-body); }
+  /* THE META ROW STACKS (2026-09-19, TRIAL B): three columns → one,
+     left-aligned, 12px between the stacked groups (danielsnows' own
+     columns don't survive a phone width any better than the strip did). */
+  .dr-meta { grid-template-columns: 1fr; gap: 12px; padding-block: 12px; }
+  .dr-meta-col, .dr-meta-col--rating, .dr-meta-col--services {
+    align-items: flex-start; text-align: left;
+  }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
   /* on a phone the same idea, scaled: bled off the left, reaching past
@@ -1242,7 +1277,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-lit .dr-herocta { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
   .dr-lit .dr-vignette { animation: none; opacity: .8; }
-  .dr-lit .dr-hero-day { opacity: 1; animation: none; }
+  .dr-lit .dr-meta { opacity: 1; animation: none; }
 }
 /* the witness — small, dim, and after the promise it vouches for */
 .dr-vouch { display: flex; align-items: flex-start; gap: var(--fib-2);
@@ -1452,8 +1487,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-hero-shade { opacity: 1; animation: none; }
   /* the engine publishes --hero-p as 1: without these the claim and the
      row sit at 8% on the first screen with the reel docked below it */
-  .dr-h1, .dr-strip, .dr-herocta, .dr-hero-day { opacity: 1; }
-  .dr-lit .dr-strip, .dr-lit .dr-herocta, .dr-lit .dr-hero-day { animation: none; }
+  .dr-h1, .dr-strip, .dr-herocta, .dr-meta { opacity: 1; }
+  .dr-lit .dr-strip, .dr-lit .dr-herocta, .dr-lit .dr-meta { animation: none; }
 }
 /* ══ §02 · THE OFFER — the statement, and the three things under it ═
    (services-section.tsx has the why). THE HEAD is on the light ground,

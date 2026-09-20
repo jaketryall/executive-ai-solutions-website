@@ -48,17 +48,18 @@ export function RoomNav() {
       setGround("light");
       return;
     }
-    /* THE SENTINEL ENDS WHERE THE STRIP ENDS (Jake, 2026-09-18: "i dont
+    /* THE SENTINEL ENDS WHERE THE META ROW ENDS (Jake, 2026-09-18: "i dont
        think the nav bar should come in with its animation until after the
-       bar in the hero has disappeared"). The strip fades out by p .69 of
-       the grow and its box leaves the top of the screen a beat later; the
-       sentinel is sized to that box's bottom edge, through the offset
-       chain (transforms ignored, same as the hero's own measure), so the
-       rail's pill, lit edge and action arrive only once the hero's white
-       bar is gone — on every viewport, the phone included, where the
-       strip does not fade but simply scrolls off. The 19.8svh in the
-       stylesheet is the no-JS fallback. */
-    const strip = document.querySelector<HTMLElement>(".dr-strip");
+       bar in the hero has disappeared" — the strip, then; the row now,
+       TRIAL B, 2026-09-19: "sized to the META ROW's bottom"). The row
+       fades out by p .69 of the grow and its box leaves the top of the
+       screen a beat later; the sentinel is sized to that box's bottom
+       edge, through the offset chain (transforms ignored, same as the
+       hero's own measure), so the rail's pill, lit edge and action arrive
+       only once the hero's white bar is gone — on every viewport, the
+       phone included, where the row does not fade but simply scrolls
+       off. The 19.8svh in the stylesheet is the no-JS fallback. */
+    const metaRow = document.querySelector<HTMLElement>(".dr-meta");
     const wrap = top.offsetParent as HTMLElement | null;
     const docY = (el: HTMLElement) => {
       let y = 0;
@@ -66,11 +67,11 @@ export function RoomNav() {
       return y;
     };
     const fit = () => {
-      if (!strip || !wrap) return;
-      top.style.height = `${docY(strip) + strip.offsetHeight - docY(wrap)}px`;
+      if (!metaRow || !wrap) return;
+      top.style.height = `${docY(metaRow) + metaRow.offsetHeight - docY(wrap)}px`;
     };
     fit();
-    const ro = strip && wrap ? new ResizeObserver(fit) : null;
+    const ro = metaRow && wrap ? new ResizeObserver(fit) : null;
     ro?.observe(wrap!);
     const io = new IntersectionObserver(([e]) => setStuck(!e.isIntersecting), {
       threshold: 0,

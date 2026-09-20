@@ -268,3 +268,29 @@ flip stays where it is.
 past seam #1 in the flesh). After that: dial whatever he flags, using a
 builder step per fix — each fix graduates into `checks.md` so it never
 regresses silently. Do not start new sections until this pass happens.
+
+## §01 hero — TRIAL BRANCH B (branch `hero/snows`, off `redesign/room`)
+
+2026-09-19, Jake: "i wonder if we can find a layout like this make this
+work somehow" (danielsnows.framer.website) → "build B the snows one".
+This is a SIDE TRIAL against `hero/welcome` (A) — not the main hero
+branch, and not to be merged without Jake's own comparison. Built: the
+hero keeps everything it had (the film, the 0.55vh grow, THE CURTAIN,
+the dark zone, the nav) and changes only the two objects above the
+film — the title becomes one word, "Welcome", sized by a canvas measure
+in `app/page.tsx` to the column's own width (350.8px at 1440, 90.1px at
+390 — see decisions.md for the three measured corrections against the
+spec's own guessed numbers: the font-weight/variation-settings split,
+the advance-vs-ink-extent metric, and the 96px floor overshooting its
+own "~90px at 390" target), and the strip becomes a three-column meta
+row on hairlines (the day line split at its own period · the rating ·
+the three services) — the door is gone from the hero, the nav's "Book
+the call" is the only persistent action now (the estimator door is
+owed a home in the close/ledger later, not built here). `.dr-line--film`
+and `.dr-hero-day` are retired outright; `.dr-strip`'s own CSS is left
+dead in `room.css` in case the trial reverts. Verified at 390×736/900,
+390×844 and 2560: tsc clean, 0 console errors, no overflow, the curtain
+and the ground invariant both re-measured byte-identical to before this
+step. Frames: `design-dna/frames/snows-rest.jpg`, `snows-grow.jpg`
+(0.275vh), `snows-390.jpg`. AWAITING JAKE'S LOOK against A — this state
+line and its checks.md/decisions.md entries live on this branch only.
