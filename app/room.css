@@ -565,6 +565,21 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   animation: dr-drift-b 37s ease-in-out infinite alternate;
 }
 
+/* `cyan` — THE HALO / EDGE IN THE ACCENT (Jake: "in wide and halo can
+   we try the electric color glowing maybe"). Electric cyan as a LIGHT
+   on the dark ground — the accent rule's own case (letters and fills
+   only on dark, decisions 2026-09-19): the film's backlight is the
+   brand's colour. A touch more alpha than the white — cyan's own
+   luminance is ~.7 of white's, so the same alpha reads dimmer. */
+[data-v~="cyan"] .dr-air-film {
+  background:
+    radial-gradient(35% 50% at 50% 50%,
+      rgba(30,229,255,.20), rgba(30,229,255,.08) 50%, transparent 72%),
+    radial-gradient(80% 45% at 50% 50%,
+      rgba(30,229,255,.045), rgba(30,229,255,.03) 60%, transparent 92%);
+}
+[data-v~="cyan"] .dr-air-edge { box-shadow: 0 0 110px 18px rgba(30,229,255,.14); }
+
 /* `edge` — A GLOW AROUND THE FILM, hugging its rectangle: an empty box
    on the slot's own measured rect (--film-x/--film-w/--grow/--film-h,
    hero-room.tsx) with a wide white outer shadow. Even on all four
