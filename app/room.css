@@ -687,18 +687,25 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   transform: translateZ(0);
 }
 .dr-pblur-l { position: absolute; inset: 0; }
+/* ⚠ NEVER write `-webkit-backdrop-filter` in this file. Turbopack's
+   Lightning CSS, given BOTH the prefixed and the unprefixed declaration,
+   emits ONLY the prefixed one — and Chrome does not honour the prefix
+   (measured 2026-09-20: every such rule computed `backdrop-filter:
+   none` in Chrome 153 — the rail's stuck pill, the progressive blur,
+   the glass — while rules with the bare property alone were served with
+   both). Write `backdrop-filter` once; the prefix is generated. */
 .dr-pblur-l1 {
-  backdrop-filter: blur(1.8px); -webkit-backdrop-filter: blur(1.8px);
+  backdrop-filter: blur(1.8px);
   -webkit-mask-image: linear-gradient(rgba(0,0,0,0) 12.5%, #000 25%, #000 37.5%, rgba(0,0,0,0) 50%);
   mask-image: linear-gradient(rgba(0,0,0,0) 12.5%, #000 25%, #000 37.5%, rgba(0,0,0,0) 50%);
 }
 .dr-pblur-l2 {
-  backdrop-filter: blur(7.2px); -webkit-backdrop-filter: blur(7.2px);
+  backdrop-filter: blur(7.2px);
   -webkit-mask-image: linear-gradient(rgba(0,0,0,0) 0%, #000 12.5%, #000 25%, rgba(0,0,0,0) 37.5%);
   mask-image: linear-gradient(rgba(0,0,0,0) 0%, #000 12.5%, #000 25%, rgba(0,0,0,0) 37.5%);
 }
 .dr-pblur-l3 {
-  backdrop-filter: blur(28.7px); -webkit-backdrop-filter: blur(28.7px);
+  backdrop-filter: blur(28.7px);
   -webkit-mask-image: linear-gradient(#000 0%, #000 12.5%, rgba(0,0,0,0) 25%);
   mask-image: linear-gradient(#000 0%, #000 12.5%, rgba(0,0,0,0) 25%);
 }
@@ -706,7 +713,7 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    the links float over the dissolving page, Huge's transparent header */
 .dr-root:has(.dr-hero-wrap[data-v~="pblur"]) .dr-rail[data-stuck] .dr-rail-in {
   background: transparent;
-  backdrop-filter: none; -webkit-backdrop-filter: none;
+  backdrop-filter: none;
   padding: 0;
 }
 .dr-root:has(.dr-hero-wrap[data-v~="pblur"]) .dr-rail[data-stuck]::before { opacity: 0; }
@@ -728,7 +735,7 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   .dr-hero-wrap[data-v~="glass"] + .dr-say-stage .dr-say-pin .dr-offer-head {
     background: rgba(255, 255, 255, .72);
     backdrop-filter: blur(28px) saturate(120%);
-    -webkit-backdrop-filter: blur(28px) saturate(120%);
+   
     border-radius: var(--radius-panel) var(--radius-panel) 0 0;
     /* the head is a .wrap (column width); its padding is the column's
        own inset so the words stay on the column while the glass runs
@@ -838,7 +845,7 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   border-radius: var(--radius-panel);
   background: rgba(16, 16, 19, 0.55);
   backdrop-filter: blur(12px) saturate(115%);
-  -webkit-backdrop-filter: blur(12px) saturate(115%);
+ 
   --glint-peak: rgba(255, 255, 255, 0.42);
   --glint-t: 13s;
 }
@@ -889,7 +896,7 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
        over black     rgb(10,10,12)   links 6.4:1 */
   background: rgba(11, 11, 13, 0.92);
   backdrop-filter: blur(14px) saturate(120%);
-  -webkit-backdrop-filter: blur(14px) saturate(120%);
+ 
 }
 
 /* ONE line, not two: "Mesa, Arizona" already opens the hero, and a
@@ -1015,7 +1022,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-rail[data-ground="light"][data-stuck] .dr-rail-in {
   background: rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(14px) saturate(120%);
-  -webkit-backdrop-filter: blur(14px) saturate(120%);
+ 
 }
 /* THE FLIP IS A FADE, not a cut: .dr-links a already transitions colour
    at var(--t-micro), and .dr-navcta already transitions background at
