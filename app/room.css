@@ -1109,9 +1109,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-herocta:hover { background: var(--ink-2); }
 /* IN THE HERO (hero/snows, 2026-09-19): cyan, ink type, on the column's
    left under the day line — the band the lower film opened. 52px, the
-   model's pill height; the hover lifts the fill toward white. */
+   model's pill height; the hover lifts the fill toward white. Pinned to
+   `.dr-hero-say`'s own bottom now (2026-09-20, THE BAND IS ONE CARD:
+   `justify-content: space-between` on that column) — the flat 24px is
+   the FLOOR under the day line, not the only source of the gap. */
 .dr-hero-door {
-  margin: clamp(18px, 3svh, 30px) 0 0; margin-left: 0; align-self: flex-start;
+  margin-top: 24px; margin-left: 0; align-self: flex-start;
   height: 52px; padding: 0 26px;
   color: #0d0b0a; background: var(--accent);
   transition: background var(--t-micro) var(--ease-ui), translate var(--t-micro) var(--ease-ui);
@@ -1120,88 +1123,62 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-hero-door:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 .dr-root:not(.dr-lit) .dr-hero-door { opacity: 0; }
 .dr-lit .dr-hero-door { animation: dr-fadein var(--t-enter) var(--ease-structure) 680ms backwards; }
-@media (max-width: 900px) { .dr-hero-door { align-self: stretch; width: 100%; margin-inline: 0; justify-content: center; margin-top: 16px; } }
+/* phone: full width, LAST in the card (order: 3) — `.dr-hero-say` turns
+   to `display: contents` at this width (below) so the day line and the
+   door become direct children of the card's own grid and can be
+   reordered past the live-tile column independently. */
+@media (max-width: 900px) { .dr-hero-door { align-self: stretch; width: 100%; margin-inline: 0; justify-content: center; margin-top: 16px; order: 3; } }
 @media (prefers-reduced-motion: reduce) { .dr-hero-door { opacity: 1; } .dr-lit .dr-hero-door { animation: none; } }
 .dr-herocta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 
-/* ══ THE LIVING MARK (2026-09-20, decisions.md: Jake, "some little
-   greeting character that waves inside like a gray box or something to
-   the right of welcome" → agreed as the EA MARK, not a character —
-   Huge's plush H, Lando's bee: a brand object doing one small living
-   thing, never a mascot). THE BAND holds the day line + door
-   (`.dr-hero-say`, unchanged) beside the mark's square, on the column's
-   right edge — the empty half of the row under "Welcome".
-
-   --hero-band-h is MEASURED (page.tsx), not derived from a CSS calc
-   against the stretched grid row: that path (subtracting the day line's
-   own margin-top from 100% of the row) measured a real ~1.2px overflow
-   past the column's right edge at 1440x900 — a grid item's child margin
-   does not collapse through it the way a plain block's does, so the
-   row's own height already includes that leading gap, and getting it
-   back out via percentage math left the aspect-ratio-derived WIDTH a
-   subpixel off from what the "auto" column had reserved, wide enough to
-   trip the ±1px check at 900 though not at 736. Reading the day line's
-   own top and the door's own bottom directly (getBoundingClientRect, as
-   the rest of this file already does for the slot and the dock) removes
-   the percentage cascade entirely: an absolute height makes the
-   aspect-ratio's width a single direct computation, not a circular one.
-
-   ══ THE LIVE TILE (same day, Jake: "still feel theres something a
-   little more we could do with the right side" → three mocks → "lets
-   do 1"). The square becomes a wide tile — the band's own right HALF,
-   not an aspect-ratio-derived auto column — so it can carry a job: real,
-   ticking information (the Phoenix clock, the reply line, the honest
-   capacity line — LiveTile, page.tsx) beside the mark, which stays
-   large on the tile's right. */
+/* ══ THE BAND IS ONE CARD (2026-09-20, Jake, on the tile that used to
+   fill the band's right half: "can we maybe extend the card, i want to
+   see it wider where the text on the left and everything is inside of
+   it"). `.dr-hero-band` IS the surface now — one grey panel, the frame's
+   own radius, the column's full width — and everything the band ever
+   held sits INSIDE it as three grid columns: the day line + door
+   (`.dr-hero-say`), the live clock/reply/capacity lines (`.dr-tile-live`,
+   LiveTile) behind a hairline divider, and the mark on the right in its
+   own small link. Supersedes both THE LIVING MARK's grey square and THE
+   LIVE TILE's wide dark tile (`.dr-hero-tile`, gone, along with its
+   measured `--hero-band-h` — a panel this simple sizes to its own
+   content; nothing needs to hand it a number any more). */
 .dr-hero-band {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  column-gap: 32px;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto;
+  column-gap: clamp(24px, 3vw, 48px);
   align-items: stretch;
   width: 100%;
-}
-.dr-hero-say { min-width: 0; text-align: left; }
-
-/* THE TILE: surface-1, the frame's own radius, sized by HEIGHT only now
-   (its width is the grid column's own half, not an aspect-ratio-derived
-   auto track). align-self: end (not stretch) pins it to the row's
-   bottom, which is the door's own bottom; --hero-band-h is exactly the
-   day line's top to the door's bottom, so that same edge lands the
-   tile's top on the day line's. Its own grid: the live info on the
-   left, the mark on the right. */
-.dr-hero-tile {
-  align-self: end;
-  height: var(--hero-band-h, 117px);
-  min-height: 96px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 16px;
-  padding: clamp(18px, 2vw, 28px);
   background: var(--surface-1);
   border-radius: var(--radius-frame);
-  text-decoration: none;
-  /* THE BREATHE runs unconditionally from load (2.4s in, forever,
-     barely there) — it never needed a hold the way the entrance does.
-     THE LEAN moved OFF this element onto .dr-hero-mark-m alone (below)
-     — leaning a tile of live copy toward the cursor read as a bug. */
-  transition: background var(--t-micro) var(--ease-ui);
+  padding: clamp(20px, 2.4vw, 32px);
+  /* THE BREATHE runs unconditionally from load (2.4s in, forever, barely
+     there) — moved here from the old tile: the object that visibly
+     breathes is the whole card now, 1 → 1.006 (a ~1330px card moving
+     ~8px, not the tile's old 27 at 1.02). */
   animation: dr-breathe 6s ease-in-out 2.4s infinite;
 }
-.dr-hero-tile:hover { background: var(--surface-2); }
-.dr-hero-tile:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
-@keyframes dr-breathe { 50% { scale: 1.02; } }
+/* col 1: the day line at the top of its own column, the door pinned to
+   the bottom (space-between, plus its own 24px floor below) — same
+   elements, same classes as before this step, just a column of the
+   card now instead of the card itself. */
+.dr-hero-say {
+  min-width: 0; text-align: left;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
 
-/* THE LIVE INFO (LiveTile, page.tsx): three lines in the label register
-   — 13px, .1em tracking, the same family/weight as the nav's own caps
-   (.dr-links a) — but the copy itself is ALREADY caps (lib/greeting.ts's
-   replyLine(), the literal strings below), so nothing here forces
-   text-transform. Clock (PHOENIX + the ticking time), the reply line
-   (same day logic as the greeting), the capacity line (NEXT_START, only
-   while Jake has set one — absent from the DOM otherwise). NO ACCENT:
-   the band already holds two cyan objects (the day word, the door) —
-   a third in the tile would be one too many. */
-.dr-tile-live { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+/* col 2: LiveTile's own `.dr-tile-live`, sitting directly in the card's
+   grid now (no wrapping tile of its own) — vertically centred against
+   whatever height col 1/col 3 give the row, a hairline standing in on
+   its own left for the card edge the old tile used to have. NO ACCENT:
+   the band already holds two cyan objects (the day word, the door) — a
+   third here would be one too many. */
+.dr-tile-live {
+  display: flex; flex-direction: column; justify-content: center; gap: 6px;
+  min-width: 0;
+  border-left: 1px solid var(--edge);
+  padding-left: clamp(24px, 3vw, 48px);
+}
 .dr-tile-clock, .dr-tile-reply, .dr-tile-next {
   display: block;
   font-family: var(--font-archivo), sans-serif;
@@ -1215,24 +1192,30 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   color: #fff; font-variant-numeric: tabular-nums;
 }
 
-/* THE MARK: fixed at 72px now (the tile's height ≈119 → the mark ~60%
-   of it) — no longer 44% of a square box, since the box is a wide tile.
-   THE LEAN lives here alone (page.tsx measures and writes --lx/--ly
-   directly on THIS element, not the tile) — normalised against the
-   mark's OWN half-size so its own corner reads exactly ±1, matching the
-   6px cap. */
+/* col 3: the mark's own link — no background, no hover, no height to
+   size (the card supplies all three now); a focus ring is the only
+   affordance it needs. THE MARK itself: fixed at 72px, white. THE LEAN
+   lives here alone (page.tsx measures and writes --lx/--ly directly on
+   THIS element) — normalised against the mark's OWN half-size so its
+   own corner reads exactly ±1, matching the 6px cap. */
+.dr-hero-mark { display: grid; place-items: center; }
+.dr-hero-mark:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 .dr-hero-mark-m {
   width: 72px; aspect-ratio: 1; color: #fff; transform-origin: 50% 70%;
   translate: calc(var(--lx, 0) * 6px) calc(var(--ly, 0) * 6px);
   transition: translate 600ms var(--ease-ui);
 }
+@keyframes dr-breathe { 50% { scale: 1.006; } }
 
-/* THE ENTRANCE — the door's own timing (680ms backwards); THE WAVE
-   fires once, 900ms in (after the tile has arrived), a hand pivoting low
-   rather than from its own centre. */
-.dr-root:not(.dr-lit) .dr-hero-tile { opacity: 0; }
-.dr-lit .dr-hero-tile {
-  animation: dr-fadein var(--t-enter) var(--ease-structure) 680ms backwards,
+/* THE ENTRANCE — the card fades in as ONE object, on the day line's own
+   old timing (300ms backwards); the door keeps its own separate 680ms
+   fade inside it (above, unchanged); the live lines and the mark carry
+   no delay of their own any more — they simply arrive with the card.
+   THE WAVE fires once, 900ms in, a hand pivoting low rather than from
+   its own centre — unchanged, still on the mark alone. */
+.dr-root:not(.dr-lit) .dr-hero-band { opacity: 0; }
+.dr-lit .dr-hero-band {
+  animation: dr-fadein var(--t-enter) var(--ease-structure) 300ms backwards,
              dr-breathe 6s ease-in-out 2.4s infinite;
 }
 .dr-lit .dr-hero-mark-m { animation: dr-wave 1100ms var(--ease-reveal) 900ms both; }
@@ -1244,7 +1227,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   100% { rotate: 0deg; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .dr-hero-tile { opacity: 1; animation: none; scale: 1; }
+  .dr-hero-band { opacity: 1; animation: none; scale: 1; }
   .dr-lit .dr-hero-mark-m { animation: none; rotate: 0deg; translate: none; }
 }
 /* the entrance: the lead, the card, then the door LAST — animate-last is
@@ -1393,19 +1376,30 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
               padding: var(--fib-3); gap: var(--fib-3); }
   .dr-strip-rating { justify-content: center; }
   .dr-herocta { margin-left: 0; align-self: center; }
-  /* THE LIVE TILE is a desktop object (Jake's "to the right of welcome"
-     needs a first screen wide enough to have a right) — a wide dark
-     tile with live copy is still noise a 390 screen doesn't earn.
-     The band collapses to the one column it always visually was here. */
-  .dr-hero-band { grid-template-columns: 1fr; column-gap: 0; }
-  .dr-hero-tile { display: none; }
+  /* THE CARD STAYS on the phone (2026-09-20, THE BAND IS ONE CARD) — full
+     width, single column, its own padding tightened to 18px. THE MARK is
+     still a desktop object (Jake's "to the right of welcome" needs a
+     first screen wide enough to have a right); the live clock/reply
+     lines keep their job, minus the divider a single column has no use
+     for. `.dr-hero-say` turns to `display: contents` so the day line and
+     the door — its two children — become direct grid items of the card
+     and can be reordered independently: day line, then the clock lines,
+     then the door LAST, full width (its own phone rule, order: 3, above). */
+  .dr-hero-band { grid-template-columns: 1fr; column-gap: 0; padding: 18px; }
+  .dr-hero-say { display: contents; }
+  .dr-tile-live { order: 2; border-left: none; padding-left: 0; }
+  .dr-hero-mark { display: none; }
+  .dr-tile-next { display: none; }
   .dr-slot { display: none; }
   .dr-h1, .dr-strip, .dr-herocta, .dr-meta { opacity: 1; }
   .dr-sub { font-size: var(--fs-body); }
   /* THE META ROW STACKS (2026-09-19, TRIAL B): three columns → one,
      left-aligned, 12px between the stacked groups (danielsnows' own
-     columns don't survive a phone width any better than the strip did). */
-  .dr-meta { font-size: clamp(1.15rem, 5.6vw, 1.6rem); max-width: none; }
+     columns don't survive a phone width any better than the strip did).
+     order: 1 (2026-09-20) — first in the card, ahead of the clock lines
+     and the door, now that `.dr-hero-say` promotes it to a direct grid
+     item of `.dr-hero-band`. */
+  .dr-meta { font-size: clamp(1.15rem, 5.6vw, 1.6rem); max-width: none; order: 1; }
   .dr-meta-col, .dr-meta-col--rating, .dr-meta-col--services {
     align-items: flex-start; text-align: left;
   }

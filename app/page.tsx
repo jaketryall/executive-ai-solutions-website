@@ -247,34 +247,14 @@ export default function DarkRoom() {
     };
   }, []);
 
-  /* THE MARK'S OWN HEIGHT — measured, not left to a CSS calc against the
-     grid row's stretched size (see room.css: that path left a real,
-     if small, mismatch between the "auto" column's reserved width and
-     the aspect-ratio box's own rendered one — enough to trip the ±1px
-     right-edge check at 1440x900 though not at 736). Read the day
-     line's own top and the door's own bottom directly, the same
-     getBoundingClientRect this file already trusts for the slot and
-     the dock, and hand the exact span to `.dr-hero-band` as one number. */
-  useEffect(() => {
-    const band = document.querySelector<HTMLElement>(".dr-hero-band");
-    const meta = document.querySelector<HTMLElement>(".dr-meta");
-    const door = document.querySelector<HTMLElement>(".dr-hero-door");
-    if (!band || !meta || !door) return;
-    const measure = () => {
-      const h = door.getBoundingClientRect().bottom - meta.getBoundingClientRect().top;
-      if (h > 0) band.style.setProperty("--hero-band-h", `${h}px`);
-    };
-    measure();
-    document.fonts?.ready.then(measure);
-    const ro = new ResizeObserver(measure);
-    ro.observe(meta);
-    ro.observe(door);
-    window.addEventListener("resize", measure);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, []);
+  /* THE MARK'S OWN HEIGHT measure (--hero-band-h, the day line's top to
+     the door's bottom) is GONE (2026-09-20, THE BAND IS ONE CARD — Jake:
+     "extend the card, i want to see it wider where the text on the left
+     and everything is inside of it"). The band is the whole card now —
+     background, radius and padding are declared on `.dr-hero-band`
+     itself in room.css, so it sizes to its own content like any other
+     panel; nothing needs to measure a span across two children and hand
+     it back as a custom property any more. */
 
   /* THE LEAN (2026-09-20, THE LIVING MARK; RETARGETED same day by THE
      LIVE TILE — the box widened into a wide tile carrying real copy, so
@@ -285,8 +265,9 @@ export default function DarkRoom() {
      character; Lando's bee idles toward the pointer). Desktop only — no
      pointer to lean toward on touch, and the breathe alone carries
      "alive" there. --lx/--ly are the pointer's offset from the MARK's
-     OWN centre (.dr-hero-mark-m, the 72px icon — not .dr-hero-tile, the
-     box around it), normalised against its own half-width/half-height
+     OWN centre (.dr-hero-mark-m, the 72px icon — not .dr-hero-mark, its
+     link wrapper, gone dark-tile now that THE BAND IS ONE CARD, 2026-09-20),
+     normalised against its own half-width/half-height
      so the mark's own corner reads exactly ±1 (matches the CSS's own
      6px cap), clamped so a pointer anywhere else in the hero can't
      overshoot it. The CSS does the smoothing (translate, 600ms) — this
@@ -361,10 +342,11 @@ export default function DarkRoom() {
          offset chain) and .dr-slot's margin grows so the slot's top lands
          at the fold less --slot-show. Written BEFORE the slot is boxed —
          the margin moves the slot, and the grow is measured off it. */
-      // the LAST thing above the slot — the door when there is one
-      const day =
-        document.querySelector<HTMLElement>(".dr-hero-door") ??
-        document.querySelector<HTMLElement>(".dr-meta");
+      // the LAST thing above the slot — now THE CARD itself (2026-09-20,
+      // THE BAND IS ONE CARD): the day line, the door, the live tile and
+      // the mark are all inside `.dr-hero-band`, so its own bottom edge
+      // is what the slot must clear, not any one thing inside it.
+      const day = document.querySelector<HTMLElement>(".dr-hero-band");
       if (day) {
         const db = box(day);
         reel.closest<HTMLElement>(".dr-hero-wrap")?.style.setProperty("--day-b", `${db.y + db.h}px`);
@@ -571,16 +553,25 @@ export default function DarkRoom() {
                   the EA MARK, not a character — Huge's plush H, Lando's
                   bee: a brand object doing one small living thing;
                   "i feel theres more we can do with the section under
-                  welcome"). The day line and the door move into their own
-                  column, `.dr-hero-say` — same elements, same classes,
-                  same margins and entrance rules as before this step —
-                  so a second column, the mark's square, can sit beside
-                  them on the band's right edge without touching either.
-                  THE LIVE TILE (same day, Jake: "still feel theres
-                  something a little more we could do with the right
-                  side" → option 1): that square is now a wide tile, the
-                  band's right HALF (`minmax(0,1fr) minmax(0,1fr)` below),
-                  carrying real ticking information — see LiveTile above. */}
+                  welcome"). THE LIVE TILE (same day, Jake: "still feel
+                  theres something a little more we could do with the
+                  right side" → option 1) widened the mark's square into a
+                  tile carrying real, ticking copy.
+
+                  THE BAND IS ONE CARD (2026-09-20, Jake, on the tile:
+                  "can we maybe extend the card, i want to see it wider
+                  where the text on the left and everything is inside of
+                  it"): `.dr-hero-band` itself is now the surface — one
+                  grey panel the full column width, background/radius/
+                  padding declared on it directly (room.css) — and
+                  everything the band ever held sits INSIDE it as three
+                  grid columns: the day line + door (`.dr-hero-say`), the
+                  live clock/reply/capacity lines (`LiveTile`, its own
+                  `.dr-tile-live`) behind a hairline divider, and the mark
+                  on the right in its own small link. `.dr-hero-tile` (the
+                  wide dark tile that used to be the card) is gone — the
+                  band no longer needs a measured `--hero-band-h` either,
+                  since a panel sizes to its own content. */}
               <div className="dr-hero-band">
                 <div className="dr-hero-say">
                   {/* THE DAY WORD IN THE ACCENT: the line's first word ("Weekend." ·
@@ -604,28 +595,30 @@ export default function DarkRoom() {
                       opened under the day line: "now how can we use that
                       space"): the one action, cyan on the black (the accent's
                       home ground), ink type — the estimator, or the call from
-                      the third visit (lib/greeting.ts). The last thing to
-                      arrive in the entrance. */}
+                      the third visit (lib/greeting.ts). Pinned to the say
+                      column's own bottom (justify-content: space-between) now
+                      that the card is the outer surface, not this column. */}
                   <Link href={greeting.door.href} className="dr-herocta dr-hero-door t-cta">
                     {greeting.door.label}
                   </Link>
                 </div>
 
-                {/* THE TILE (2026-09-20, THE LIVE TILE): the mark's old
-                    square is now a wide tile — exactly the band's own
-                    height (the day line's own top to the door's own
-                    bottom, room.css), the frame's radius, same background
-                    — split in two by its own grid: LiveTile's real,
-                    ticking copy on the left, the EA mark large (72px) on
-                    the right. The mark still waves once on load, still
-                    breathes (now the tile breathes with it), and still
-                    leans toward the cursor — the LEAN moves the mark
-                    ONLY now, not the whole tile (see the lean effect
-                    above). Links to /work. Hidden on the phone (room.css)
-                    — a wide dark tile with live copy is still a desktop
-                    object; the first screen there has no room for it. */}
-                <Link href="/work" className="dr-hero-tile" aria-label="Recent work">
-                  <LiveTile />
+                {/* THE LIVE INFO — LiveTile's own `.dr-tile-live`, sitting
+                    directly in the card's second column now (no more
+                    `.dr-hero-tile` wrapper of its own): the ticking clock,
+                    the reply line, the honest capacity line, behind a
+                    hairline divider on its left. */}
+                <LiveTile />
+
+                {/* THE MARK — its own small link now, `display: grid;
+                    place-items: center` in the card's third column. The
+                    wave (once, on load) and the lean (toward the cursor)
+                    both still live on the mark itself (.dr-hero-mark-m,
+                    unchanged); the breathe moved to the CARD (below) since
+                    the object that visibly breathes is the whole panel
+                    now, not a box around the mark. Hidden on the phone
+                    (room.css) — the card stays there, single column. */}
+                <Link href="/work" className="dr-hero-mark" aria-label="Recent work">
                   <Monogram className="dr-hero-mark-m" />
                 </Link>
               </div>

@@ -51,18 +51,21 @@ export function RoomNav() {
     /* THE SENTINEL ENDS WHERE THE META ROW ENDS (Jake, 2026-09-18: "i dont
        think the nav bar should come in with its animation until after the
        bar in the hero has disappeared" — the strip, then; the row now,
-       TRIAL B, 2026-09-19: "sized to the META ROW's bottom"). The row
-       fades out by p .69 of the grow and its box leaves the top of the
-       screen a beat later; the sentinel is sized to that box's bottom
-       edge, through the offset chain (transforms ignored, same as the
-       hero's own measure), so the rail's pill, lit edge and action arrive
-       only once the hero's white bar is gone — on every viewport, the
-       phone included, where the row does not fade but simply scrolls
+       TRIAL B, 2026-09-19: "sized to the META ROW's bottom"; 2026-09-20,
+       THE BAND IS ONE CARD: "sized to the CARD's bottom" — everything the
+       row used to hold is inside `.dr-hero-band` now, so the card's own
+       bottom edge is the hero's true last thing, not any one child of
+       it). The row fades out by p .69 of the grow and its box leaves the
+       top of the screen a beat later; the sentinel is sized to that box's
+       bottom edge, through the offset chain (transforms ignored, same as
+       the hero's own measure), so the rail's pill, lit edge and action
+       arrive only once the hero's white bar is gone — on every viewport,
+       the phone included, where the row does not fade but simply scrolls
        off. The 19.8svh in the stylesheet is the no-JS fallback. */
-    // the sentinel ends at the DOOR now (the last thing under the word), or
-    // the day line where a page has no door
+    // the sentinel ends at the CARD now (the whole band, everything it
+    // holds), or the day line where a page has no band
     const metaRow =
-      document.querySelector<HTMLElement>(".dr-hero-door") ??
+      document.querySelector<HTMLElement>(".dr-hero-band") ??
       document.querySelector<HTMLElement>(".dr-meta");
     const wrap = top.offsetParent as HTMLElement | null;
     const docY = (el: HTMLElement) => {

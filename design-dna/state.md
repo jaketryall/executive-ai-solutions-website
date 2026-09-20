@@ -372,3 +372,34 @@ the 2026-09-19 "THE FILM SITS LOWER" entry) has moved the curtain's
 fully-uncovered scroll position to ≈1.75vh; the pre-existing checks.md
 labels of "1.55vh" for that state are stale by that same drift, not by
 this step — flagged, not fixed here). Awaiting Jake's look.
+
+THE BAND IS ONE CARD (2026-09-20, Jake, on the live tile: "can we maybe
+extend the card, i want to see it wider where the text on the left and
+everything is inside of it"): `.dr-hero-band` is now the surface itself
+— one grey panel (surface-1, `--radius-frame`) the full column width
+under "Welcome" — and everything the band ever held sits inside it as
+three grid columns: the day line + door (`.dr-hero-say`, unchanged
+internally, now `justify-content: space-between` so the door pins to
+the card's own bottom edge), the live clock/reply/capacity lines
+(`.dr-tile-live`, LiveTile, behind a hairline divider), and the mark in
+its own small link (`.dr-hero-mark`, `display: grid; place-items:
+center`, no background/hover of its own — the card supplies that now).
+`.dr-hero-tile` (the wide dark tile from earlier the same day) and its
+measured `--hero-band-h` are both gone — the card sizes to its own
+content. The breathe moved to the card, 1 → 1.006 (was 1.02 on the old
+tile); the wave and the lean are unchanged, still on the mark alone.
+The film's slot measure (`--day-b`) now reads the card's own bottom
+instead of the door/meta; the nav's sentinel (`components/room/nav.tsx`)
+now sizes to `.dr-hero-band ?? .dr-meta` instead of
+`.dr-hero-door ?? .dr-meta`. Phone: the card stays, single column
+(`.dr-hero-say` becomes `display: contents` so the day line and the
+door can reorder past the live-tile block via `order`), padding 18px,
+the mark hidden. Verified at 1440×736, 1440×900, 1280×800 and 390×844:
+tsc clean, 0 console errors, no overflow, the film still clears at both
+heights (19.13px at 736, exactly fold−200 at 900) with the longest
+greeting, the sentinel now flips on the card's own bottom (scroll
+599→605). Flagged, not fixed (pre-existing, unrelated to this step):
+`.dr-hero-door`'s documented 680ms entrance delay is actually shadowed
+to 720ms by a later equal-specificity `.dr-herocta` rule — both rules
+predate this step. Frame: `design-dna/frames/snows-card.jpg`. Awaiting
+Jake's look, same as the rest of trial B.
