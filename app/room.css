@@ -811,28 +811,33 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    (decodes/hugeinc.md §14) but symmetric: the blur is strongest on the
    line itself and gone 110px either side. Over the whole width, z above
    the ground and the air, under the stage's words. */
+/* MORE DRAMATIC (Jake): the band is 320px and the peak blur 44px, and
+   the black under the film is shortened to 12svh so the film's own
+   bottom edge and its cyan glow sit INSIDE the band — the seam now has
+   the film moving through it, not just a line. */
+.dr-hero-wrap[data-v~="seam"] { --after: 12svh; }
 .dr-seam {
   position: absolute; left: 0; right: 0;
-  top: calc(100svh + var(--grow, 55vh) + var(--after, 0px) - 110px);
+  top: calc(100svh + var(--grow, 55vh) + var(--after, 0px) - 160px);
   /* ABOVE the next section (its white ground is a later sibling at z 4,
      and a backdrop-filter can only blur what is painted beneath it):
      7, over the stage's 6 and the dock's 5, under the rail's 30 */
-  height: 220px; z-index: 7; pointer-events: none;
+  height: 320px; z-index: 7; pointer-events: none;
   isolation: isolate; contain: paint; overflow: hidden;
 }
 .dr-seam-l { position: absolute; inset: 0; }
 .dr-seam-l1 {
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
   -webkit-mask-image: linear-gradient(transparent 0%, #000 20%, #000 80%, transparent 100%);
   mask-image: linear-gradient(transparent 0%, #000 20%, #000 80%, transparent 100%);
 }
 .dr-seam-l2 {
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(18px);
   -webkit-mask-image: linear-gradient(transparent 20%, #000 35%, #000 65%, transparent 80%);
   mask-image: linear-gradient(transparent 20%, #000 35%, #000 65%, transparent 80%);
 }
 .dr-seam-l3 {
-  backdrop-filter: blur(30px);
+  backdrop-filter: blur(44px);
   -webkit-mask-image: linear-gradient(transparent 35%, #000 46%, #000 54%, transparent 65%);
   mask-image: linear-gradient(transparent 35%, #000 46%, #000 54%, transparent 65%);
 }
