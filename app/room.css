@@ -630,6 +630,36 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
     width: calc(100vw - 2 * var(--film-gap));
     margin-inline: calc(50% - 50vw + var(--film-gap));
   }
+  /* THE BLACK BELOW THE FILM (Jake: "i want the black part of hero
+     section below where the video is to be more"): --after of dark
+     ground past the film's full-height bottom edge (page --grow +
+     100svh), before the white page. The wrapper's padding moves the
+     next section down by it; the ground, its sentinel and the air are
+     all that much taller. */
+  .dr-hero-wrap[data-v~="full"] { --after: 26svh; padding-bottom: var(--after); }
+  .dr-hero-wrap[data-v~="full"].dr-zone-dark::before,
+  .dr-hero-wrap[data-v~="full"] .dr-air {
+    height: calc(100svh + var(--grow, 55vh) + var(--after));
+  }
+  .dr-hero-wrap[data-v~="full"] .dr-ground-end {
+    top: calc(100svh + var(--grow, 55vh) + var(--after));
+  }
+  /* AND THE GLOW UNDER IT, mirrored (Jake: "the glow in the opposite
+     direction from whats up top"): a second box on the film's FINAL
+     rect — top --grow, one screen tall, the film at p 1 — with the same
+     shadow biased DOWN instead of up, clipped to its lower part so it
+     never doubles the top glow. Below the fold until the film is full
+     height, then it shows under the film's bottom edge as it scrolls
+     off, lighting the black band. */
+  .dr-hero-wrap[data-v~="full"] .dr-air-edge::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 0;
+    height: 100svh; border-radius: inherit;
+    box-shadow: 0 22px 110px 0 rgba(255,255,255,.10);
+    clip-path: inset(70% -300px -300px -300px);
+  }
+  .dr-hero-wrap[data-v~="full"][data-v~="cyan"] .dr-air-edge::after {
+    box-shadow: 0 22px 110px 0 rgba(30,229,255,.15);
+  }
   [data-v~="full"] .dr-dock {
     --inset: var(--film-gap);
     /* the corners stay: with its gutters the film never becomes the
