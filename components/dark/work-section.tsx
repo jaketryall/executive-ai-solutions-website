@@ -250,6 +250,12 @@ export default function WorkSection() {
                           } as CSSProperties
                         }
                       >
+                        {/* the case's number — shown only by trial `frost`
+                            (room.css), where the pill becomes the tile's
+                            frosted caption strip */}
+                        <span className="dr-work-pill-num t-label" aria-hidden>
+                          {String(cases.findIndex((p) => p.slug === t.project.slug) + 1).padStart(2, "0")}
+                        </span>
                         {t.project.clip && (
                           <img
                             className="dr-work-thumb"

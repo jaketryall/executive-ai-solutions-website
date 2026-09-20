@@ -51,7 +51,7 @@ export default async function Page({
      shipped hero, `?v=none+lines` the lines trial alone) */
   /* Jake: "a version with only a glow around the video no other lamps"
      — the default is that now; ?v=none+wide+light+halo is the lamps */
-  const DEFAULT = "wide edge cyan full flat";
+  const DEFAULT = "wide edge cyan full flat frost";
   const given = (typeof raw === "string" ? raw : "")
     .replace(/\+/g, " ")
     .replace(/[^a-z ]/g, "")

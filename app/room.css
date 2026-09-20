@@ -750,6 +750,30 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   .dr-hero-wrap[data-v~="glass"] + .dr-say-stage .dr-offer-rot-w::after { display: none; }
 }
 
+/* `frost` — THE FROST LIVES IN THE RAIL (Jake, after the seam: "i dont
+   like where is now and how the section is a card" — "where should we
+   put the frost"): the "See work" pill on each case's first tile grows
+   into the tile's own caption strip along its bottom edge — real glass
+   now (backdrop-filter over the image that slides under it at every
+   step of the rail), dark, with the case's number in cyan (accent on
+   dark), the name, and the See work roll rolling to cyan. The faked
+   frost (the blurred poster copy in ::before) comes off. Gated through
+   the root — the rail is far from the hero's wrapper. */
+.dr-work-pill-num { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="frost"]) .dr-work-pill {
+  top: auto; bottom: 0; left: 0; right: 0; translate: none;
+  border-radius: 0 0 10px 10px;
+  padding: 16px 22px; gap: 16px;
+  backdrop-filter: blur(22px) saturate(140%);
+}
+.dr-root:has(.dr-hero-wrap[data-v~="frost"]) .dr-work-pill::before { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="frost"]) .dr-work-pill::after { background: rgba(10, 10, 11, .36); }
+.dr-root:has(.dr-hero-wrap[data-v~="frost"]) .dr-work-thumb { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="frost"]) .dr-work-pill-num { display: inline; color: var(--accent); }
+.dr-root:has(.dr-hero-wrap[data-v~="frost"]) .dr-work-name { font-size: var(--fs-body); }
+.dr-root:has(.dr-hero-wrap[data-v~="frost"]) .dr-work-sep { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="frost"]) .dr-work-see { margin-left: auto; --work-see-alt: var(--accent); }
+
 /* `glow` — THE FILM'S OWN LIGHT. A 32x18 canvas (hero-room.tsx draws
    the reel into it ten times a second), blurred AT THAT SIZE — the
    filter runs on 576 pixels — then scaled by transform to cover the
