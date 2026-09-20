@@ -42,13 +42,25 @@ export default async function Page({
   const sp = await searchParams;
   const raw = sp.v;
   /* Jake, shown wide+light against lines: "i like the previous better"
-     — wide+light is the branch's default now; `?v=none` is the hero as
-     it shipped, `?v=lines` / `?v=glow` the other trials, still there. */
-  const variant = (typeof raw === "string" ? raw : "wide light halo")
+     — wide+light is the branch's default now (+halo, the lamp behind
+     the film, since); `?v=none` is the hero as it shipped, `?v=lines`
+     / `?v=glow` the other trials, still there. `flat` = no curtain
+     (room.css, .dr-say-stage) — Jake: "i want to try no curtain too". */
+  /* tokens ADD to the default set — `?v=flat` is the default hero with
+     no curtain; `none` clears the defaults first (`?v=none` is the
+     shipped hero, `?v=none+lines` the lines trial alone) */
+  const DEFAULT = "wide light halo";
+  const given = (typeof raw === "string" ? raw : "")
     .replace(/\+/g, " ")
     .replace(/[^a-z ]/g, "")
-    .replace(/\bnone\b/, "")
-    .trim();
+    .split(" ")
+    .filter(Boolean);
+  const variant = [
+    ...(given.includes("none") ? [] : DEFAULT.split(" ")),
+    ...given.filter((t) => t !== "none"),
+  ]
+    .filter((t, i, a) => a.indexOf(t) === i)
+    .join(" ");
   const greeting = pickGreeting(1, { i: null, svc: null }, new Date());
   return <HeroRoom initialGreeting={greeting} variant={variant} />;
 }

@@ -2061,6 +2061,21 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-offer-say { scale: none; }
   .dr-say-pin .dr-offer-head { opacity: 1; }
 }
+/* TRIAL `flat` (2026-09-20, hero/air — Jake: "i want to try no curtain
+   too"): the phone's own no-curtain layout, on every width. The stage
+   is not pulled under the film and nothing pins: the film grows, scrolls
+   off at its own rate, and the statement follows its bottom edge in
+   flow like any section, with the head's own padding back (the pin's
+   centring had replaced it). Gated on the hero wrapper's data-v — the
+   stage is its next sibling. */
+.dr-hero-wrap[data-v~="flat"] + .dr-say-stage { margin-top: 0; height: auto; }
+.dr-hero-wrap[data-v~="flat"] + .dr-say-stage .dr-say-pin {
+  position: static; height: auto; display: block;
+}
+.dr-hero-wrap[data-v~="flat"] + .dr-say-stage .dr-say-pin .dr-offer-head {
+  opacity: 1;
+  padding-block: clamp(72px, 12svh, 150px) calc(clamp(110px, 26svh, 300px) + 24px);
+}
 
 /* §02 · THE LEDGER (2026-09-19) SUPERSEDES THE PATH + THE THREE that
    used to live here — see decisions.md and the file header comment in
