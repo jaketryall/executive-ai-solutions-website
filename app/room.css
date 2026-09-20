@@ -828,6 +828,8 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    measure against — see the comment above */
 .dr-ground-end { position: absolute; left: 0; right: 0;
                  top: calc(100svh + 55vh); height: 1px; pointer-events: none; }
+/* the exit's clock — see hero-room.tsx: 0 at the slot's top, one screen of travel */
+.dr-exit { position: absolute; left: 0; right: 0; top: var(--grow, 55vh); height: 1px; pointer-events: none; }
 @media (max-width: 900px), (prefers-reduced-motion: reduce) {
   .dr-ground-end { top: 100%; }
 }
@@ -2086,8 +2088,19 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-hero-reel video {
   display: block; position: absolute; left: 0; top: 50%;
   width: 100%; height: auto; aspect-ratio: 16 / 9;
-  translate: 0 -50%;
-  scale: calc(var(--k) / var(--sx)) calc(var(--k) / var(--sy));
+  /* THE PARALLAX CONTINUES (2026-09-20, hero/air): the picture is
+     overscanned by 25% across the grow (--over, 1 → 1.25 with --p, so
+     the rest framing is untouched), which leaves it 12.5% taller than
+     the mask each side once the film is full height; then, as the film
+     scrolls off (--x, the exit sentinel in hero-room.tsx), it slides
+     DOWN through that slack — the mask leaves at the page's rate, the
+     picture at roughly nine tenths of it. In the mask's own frame, so
+     divided by the axis scale like the rest. */
+  --over: calc(1 + .25 * var(--p, 0));
+  /* 10% of the picture's own height: on screen that is the picture's
+     height x k x --over x .10 = ~112px at 1440x900, half the slack */
+  translate: 0 calc(-50% + var(--x, 0) * 9%);
+  scale: calc(var(--k) * var(--over) / var(--sx)) calc(var(--k) * var(--over) / var(--sy));
   transform-origin: 50% 50%;
   will-change: transform;
 }

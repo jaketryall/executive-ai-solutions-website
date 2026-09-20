@@ -665,6 +665,24 @@ export default function DarkRoom({
             has scrolled past the dark ground and can flip its own
             chrome from dark to light. */}
         <div className="dr-ground-end" aria-hidden />
+        {/* THE EXIT'S OWN CLOCK (2026-09-20, hero/air — Jake: "the parallax
+            needs to continue, right now the parallax stops"): the grow's
+            --p is clamped at 1 the moment the film is full height, and
+            the picture inside froze with it. This sentinel sits at the
+            slot's top (--grow) — the exact scroll the grow completes —
+            and publishes --x on the wrapper: 0 there, 1 one screen
+            later, the film's bottom edge at the top of the screen. The
+            picture rides it (room.css, .dr-hero-reel video). */}
+        <div
+          className="dr-exit"
+          aria-hidden
+          data-sp
+          data-sp-edge="top"
+          data-sp-from="0"
+          data-sp-to="-1"
+          data-sp-var="--x"
+          data-sp-target=".dr-hero-wrap"
+        />
 
         <div className="dr-stage">
           <main className="dr-main wrap">
