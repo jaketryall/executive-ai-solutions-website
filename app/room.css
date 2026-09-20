@@ -630,7 +630,12 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
     width: calc(100vw - 2 * var(--film-gap));
     margin-inline: calc(50% - 50vw + var(--film-gap));
   }
-  [data-v~="full"] .dr-dock { --inset: var(--film-gap); }
+  [data-v~="full"] .dr-dock {
+    --inset: var(--film-gap);
+    /* the corners stay: with its gutters the film never becomes the
+       screen, so it keeps its 10px radius at full size too */
+    --rv: 10px;
+  }
   /* the glow's sides: the gap's own width to die over, then 70px to
      come up to full — the top glow falls off toward the two corners */
   .dr-hero-wrap[data-v~="full"] .dr-air {
