@@ -41,9 +41,13 @@ export default async function Page({
 }) {
   const sp = await searchParams;
   const raw = sp.v;
-  const variant = (typeof raw === "string" ? raw : "")
+  /* Jake, shown wide+light against lines: "i like the previous better"
+     — wide+light is the branch's default now; `?v=none` is the hero as
+     it shipped, `?v=lines` / `?v=glow` the other trials, still there. */
+  const variant = (typeof raw === "string" ? raw : "wide light")
     .replace(/\+/g, " ")
     .replace(/[^a-z ]/g, "")
+    .replace(/\bnone\b/, "")
     .trim();
   const greeting = pickGreeting(1, { i: null, svc: null }, new Date());
   return <HeroRoom initialGreeting={greeting} variant={variant} />;
