@@ -84,6 +84,15 @@
   --ink-3: #949498;      /* 7.76:1 — hero h1, labels, secondary */
   --ink-4: #8a8a8e;      /* 6.11:1 — FLOOR. nothing dimmer carries text. */
 
+  /* THE ACCENT SLOT (2026-09-19, decisions.md · Huge's, decodes/hugeinc.md
+     §2/§4: rgb(255,0,144), used sparingly, and it is what the rotating
+     statement word takes). There is no accent chosen for this room yet —
+     --accent is var(--ink) for now (white in the dark room, ink in the
+     light one — no colour change until Jake picks one), reads var(--ink)
+     so it crosses THE FLIP and the hero's own dark zone for free, and
+     the §02 rotating word (room.css, .dr-offer-rot-w) is its first use. */
+  --accent: var(--ink);
+
   /* ── edges. --edge is DECORATIVE ONLY; anything that carries meaning
         (focus, fields, the only affordance) must use --edge-strong. */
   --edge: #565759;         /* 2.87:1 — strokes, frames, rules */
@@ -150,6 +159,13 @@
      decisive middle, a long settle (decodes/leoparpeix.md §14). Nothing
      outside the hero may use it. */
   --ease-reveal: cubic-bezier(0.4, 0, 0, 1);
+
+  /* ── THE ACCENT (2026-09-19, decisions.md): electric cyan, Lando's way.
+     Text and fill on DARK grounds only (12.8:1 on #0b0b0b); on white it
+     is a surface (the door, an underline) — never a letter (1.5:1). The
+     off twin is for the rare word on white (≥4.5:1). */
+  --accent: #1ee5ff;
+  --accent-off: #0aa9c2;
 
   /* ── duration ladder */
   --t-micro: 300ms;  /* every hover on the site */
@@ -810,6 +826,27 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 /* top left, where the reference keeps its copy block (Jake: "can we
    move text to top left"); the door stays lower right, the badge top
    right, so the film's centre is picture */
+
+/* THE DAY LINE (2026-09-19 · Huge's, decodes/hugeinc.md §3: under
+   "Hello." a line for the day, and from the second visit a line for the
+   return — lib/greeting.ts has the tables and the boundary cases, this
+   only sets the face). t-label's family and weight, but SENTENCE CASE —
+   a tracked, uppercase label here would read as a badge over a promise,
+   and the buyer this room is for is an owner, never quipped at.
+   min-height reserves the row (the server renders nothing, page.tsx: the
+   day is the visitor's own clock) so the strip below never jumps once
+   the real line mounts. */
+.dr-hero-day {
+  margin: 12px 0 0;
+  min-height: 1.5em;
+  max-width: 62ch;
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: var(--fs-body);
+  letter-spacing: .01em;
+  line-height: 1.4;
+  color: var(--ink-3);
+}
 /* THE STRIP — thin and white between the title and the film (Jake:
    "a thin strip as white where some small things are there … just stuff
    that doesn't take up much vertical space" · "the little avatar icons
@@ -1016,13 +1053,17 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    1 at rest, so the server-rendered frame showed the strip fully lit,
    hydration hid it (the animation's backwards fill), and it faded in
    again — visible → gone → back (screencast 2026-09-14). */
-.dr-root:not(.dr-lit) .dr-strip, .dr-root:not(.dr-lit) .dr-herocta { opacity: 0; }
+.dr-root:not(.dr-lit) .dr-strip, .dr-root:not(.dr-lit) .dr-herocta,
+.dr-root:not(.dr-lit) .dr-hero-day { opacity: 0; }
 /* the strip is the hero's SECOND LINE (leoparpeix §14): it comes in
    115ms after the title, from the left, on the same curve. Unmasked —
    a mask would cut its shadow — so a short diagonal rise with the fade. */
 .dr-lit .dr-strip   { animation: dr-strip-in 1s var(--ease-reveal) 415ms backwards; }
 @keyframes dr-strip-in { from { opacity: 0; transform: translate(-5%, 40%); } to { opacity: 1; transform: none; } }
 .dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 720ms backwards; }
+/* the day line rises between the title (300ms) and the strip (415ms) —
+   it is the h1's own second line, read before the strip's proof */
+.dr-lit .dr-hero-day { animation: dr-fadein var(--t-enter) var(--ease-structure) 520ms backwards; }
 
 /* ── THE RATING CARD ─────────────────────────────────────────────
    Lower right, where the reference floats its app card: five stars, the
@@ -1153,7 +1194,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-herocta { margin-left: 0; align-self: center; }
   .dr-slot { display: none; }
   .dr-line--film { display: none; }
-  .dr-h1, .dr-strip, .dr-herocta { opacity: 1; }
+  .dr-h1, .dr-strip, .dr-herocta, .dr-hero-day { opacity: 1; }
   .dr-sub { font-size: var(--fs-body); }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
@@ -1201,6 +1242,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-lit .dr-herocta { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
   .dr-lit .dr-vignette { animation: none; opacity: .8; }
+  .dr-lit .dr-hero-day { opacity: 1; animation: none; }
 }
 /* the witness — small, dim, and after the promise it vouches for */
 .dr-vouch { display: flex; align-items: flex-start; gap: var(--fib-2);
@@ -1410,8 +1452,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-hero-shade { opacity: 1; animation: none; }
   /* the engine publishes --hero-p as 1: without these the claim and the
      row sit at 8% on the first screen with the reel docked below it */
-  .dr-h1, .dr-strip, .dr-herocta { opacity: 1; }
-  .dr-lit .dr-strip, .dr-lit .dr-herocta { animation: none; }
+  .dr-h1, .dr-strip, .dr-herocta, .dr-hero-day { opacity: 1; }
+  .dr-lit .dr-strip, .dr-lit .dr-herocta, .dr-lit .dr-hero-day { animation: none; }
 }
 /* ══ §02 · THE OFFER — the statement, and the three things under it ═
    (services-section.tsx has the why). THE HEAD is on the light ground,
@@ -1441,6 +1483,56 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      size — measured off the hero's 0.418em per character) */
   font-size: clamp(2.6rem, 7vw, 8rem);
   color: var(--ink); }
+
+/* THE ROTATING WORD (2026-09-19 · Huge's, decodes/hugeinc.md §4: the
+   accent word rotates on a timer, ~1250ms hold / ~700ms crossfade,
+   seven words, all pre-rendered in the DOM). Ours: the statement's last
+   phrase cycles six real audiences (services-section.tsx has the list
+   and the sourcing) — CSS keyframes only, no JS timer, so it needs no
+   hydration and reduced motion below stops it on the true first word.
+
+   inline-grid puts every word in the SAME cell (grid-area 1/1): the
+   track sizes itself to the widest child, so the line's width is fixed
+   to the longest word ("owner-run businesses.") and never reflows as
+   the others cycle through it; overflow:hidden on the span keeps each
+   word's own .35em rise/fall from poking past the line.
+
+   THE ARITHMETIC: 6 words × 1950ms (1250ms hold + 700ms cross, in and
+   out) = 11700ms (11.7s) per lap. Word i's animation-delay is i ×
+   1950ms, on ONE shared keyframe — at that instant word i begins its
+   own 700ms rise in exactly as word i−1 begins its own 700ms fall out
+   (a real simultaneous crossfade, never a hard cut), and its hold ends
+   exactly as word i+1's own delay elapses. In percent of the 11700ms
+   cycle: one 700ms transition is 700/11700 ≈ 5.983%; the 1250ms hold is
+   1250/11700 ≈ 10.684% (5.983 + 10.684 = 1/6 of the cycle exactly — one
+   word's whole 1950ms turn). Before a word's own delay elapses it shows
+   its plain (unanimated) declared style below, which is written to
+   match the keyframe's own 0%/100% value — so there is no jump the
+   instant each word's animation actually starts. */
+.dr-offer-rot { display: inline-grid; overflow: hidden; vertical-align: bottom; }
+.dr-offer-rot-w {
+  grid-area: 1 / 1; white-space: nowrap;
+  color: var(--accent);
+  opacity: 0; translate: 0 .35em;
+  animation: dr-rot 11700ms linear infinite;
+  animation-delay: calc(var(--i) * 1950ms);
+}
+@keyframes dr-rot {
+  /* arriving: hidden, below — eases IN on the structure curve */
+  0%      { opacity: 0; translate: 0 .35em; animation-timing-function: var(--ease-structure); }
+  5.983%  { opacity: 1; translate: 0 0; }
+  /* held, from 5.983% to 16.667% (1250ms) — then eases OUT */
+  16.667% { opacity: 1; translate: 0 0; animation-timing-function: var(--ease-structure); }
+  22.650% { opacity: 0; translate: 0 -.35em; }
+  /* left, above — hidden for the rest of the cycle until it wraps */
+  100%    { opacity: 0; translate: 0 -.35em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* the true statement only — no timer, no motion */
+  .dr-offer-rot-w { animation: none; opacity: 0; translate: 0 0; }
+  .dr-offer-rot-w:first-child { opacity: 1; }
+}
+
 .dr-offer-more { margin: clamp(20px, 3svh, 32px) auto 0; max-width: 52ch;
   font-size: var(--fs-read); line-height: 1.5; color: var(--ink-2); }
 
