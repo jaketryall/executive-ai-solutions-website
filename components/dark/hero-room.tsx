@@ -222,11 +222,7 @@ export default function DarkRoom({
     };
     window.addEventListener("pointermove", onMove, { passive: true });
 
-    /* THE WALL RISES ON SCROLL, at a tenth of the page's rate. It is a fixed
-       layer, so without this it sits dead still while everything moves past
-       it; a slow climb is what makes it read as depth rather than wallpaper.
-       Capped so it never drifts out of frame on a long page. */
-    const wall = document.querySelector<HTMLElement>(".dr-wall");
+    const wall = document.querySelector<HTMLElement>(".dr-wall"); // gone (2026-09-20) — null, the scroll below is inert
     /* THE HERO DIMS AS IT LEAVES. It used to shrink and lag as well —
        copied wholesale off a reference where the hero is a photograph.
        On type that read as a zoom rather than as depth, and it made §02
@@ -573,13 +569,11 @@ export default function DarkRoom({
       <div className="dr-atmos" aria-hidden>
         <div className="dr-key" />
       </div>
-      {/* massive, half off the left edge, barely there — the room's own wall.
-          No contour: the shape is carried entirely by its material. The
-          wrapper exists so scroll can move the wall while the wall keeps its
-          own drift — both want `transform`, and one would overwrite the other. */}
-      <div className="dr-wall" aria-hidden>
-        <div className="dr-figure" />
-      </div>
+      {/* THE WALL IS GONE (2026-09-20, hero/air — Jake: "can we take my
+          logo out of the background"): the massive EAS mark half off the
+          left edge, hatched and drifting, that was the dark room's own
+          wall. Its CSS (.dr-wall/.dr-figure, room.css) is retired with it;
+          the scroll rise it had in the parallax effect above is removed. */}
       <div className="dr-grain" aria-hidden />
       {has("pblur") && (
         <div className="dr-pblur" aria-hidden>

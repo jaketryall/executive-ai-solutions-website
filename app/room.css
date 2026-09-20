@@ -1756,6 +1756,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    gone by the time it reaches the middle. */
 /* the wrapper takes the SCROLL rise; the wall keeps its own slow drift,
    because both want `transform` and the last one written would win */
+/* RETIRED 2026-09-20 (Jake: "take my logo out of the background") — the
+   markup is gone from hero-room.tsx; these rules match nothing. */
 .dr-wall { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 .dr-figure { animation: dr-wall-drift 54s ease-in-out infinite alternate; }
 @keyframes dr-wall-drift {
