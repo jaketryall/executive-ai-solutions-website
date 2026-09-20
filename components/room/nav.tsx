@@ -50,22 +50,24 @@ export function RoomNav() {
     }
     /* THE SENTINEL ENDS WHERE THE META ROW ENDS (Jake, 2026-09-18: "i dont
        think the nav bar should come in with its animation until after the
-       bar in the hero has disappeared" — the strip, then; the row now,
-       TRIAL B, 2026-09-19: "sized to the META ROW's bottom"; 2026-09-20,
-       THE BAND IS ONE CARD: "sized to the CARD's bottom" — everything the
-       row used to hold is inside `.dr-hero-band` now, so the card's own
-       bottom edge is the hero's true last thing, not any one child of
-       it). The row fades out by p .69 of the grow and its box leaves the
-       top of the screen a beat later; the sentinel is sized to that box's
-       bottom edge, through the offset chain (transforms ignored, same as
-       the hero's own measure), so the rail's pill, lit edge and action
-       arrive only once the hero's white bar is gone — on every viewport,
-       the phone included, where the row does not fade but simply scrolls
-       off. The 19.8svh in the stylesheet is the no-JS fallback. */
-    // the sentinel ends at the CARD now (the whole band, everything it
-    // holds), or the day line where a page has no band
+       bar in the hero has disappeared" — the strip, then the meta row,
+       then the card, then (mid-trial) the title alone — final settle,
+       same day: the DOOR again, back to being its own pill under the
+       title and the day line, the hero's true last thing). The row fades
+       out by p .69 of the grow and its box leaves the top of the screen
+       a beat later; the sentinel is sized to that box's bottom edge,
+       through the offset chain (transforms ignored, same as the hero's
+       own measure), so the rail's pill, lit edge and action arrive only
+       once the hero's white bar is gone — on every viewport, the phone
+       included, where the row does not fade but simply scrolls off. The
+       19.8svh in the stylesheet is the no-JS fallback. */
+    // the sentinel ends at the DOOR when one exists (every shape this
+    // hero has had, current and past), else the CARD, else the TITLE
+    // alone, else the old day line — first match wins
     const metaRow =
+      document.querySelector<HTMLElement>(".dr-hero-door") ??
       document.querySelector<HTMLElement>(".dr-hero-band") ??
+      document.querySelector<HTMLElement>(".dr-greet") ??
       document.querySelector<HTMLElement>(".dr-meta");
     const wrap = top.offsetParent as HTMLElement | null;
     const docY = (el: HTMLElement) => {

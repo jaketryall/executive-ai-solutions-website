@@ -403,3 +403,58 @@ greeting, the sentinel now flips on the card's own bottom (scroll
 to 720ms by a later equal-specificity `.dr-herocta` rule — both rules
 predate this step. Frame: `design-dna/frames/snows-card.jpg`. Awaiting
 Jake's look, same as the rest of trial B.
+
+## §01 hero — TRIAL BRANCH C (branch `hero/greeting`, off `hero/snows` at `61496ae`)
+
+2026-09-20, Jake: "the cleanest version of this is actually the original
+one … proportion wise. i love the look of the card you created. the
+issue i have is when we have the design that sells theres not a really
+good way to do the message, also i think it would be cool if the
+message is big and centered like the message is the title." Six rounds
+in one session, each superseding the last (all in git, none lost): the
+greeting alone as the h1 (retiring "Welcome"); the band card removed for
+a bigger title ("maybe we have no bar, bigger text" — `.dr-hero-band`
+and its columns kept dead in room.css); the day line's second sentence
+promoted into the title as a grey link, then a stroked, arrowed one
+("can we get the gray box around lets talk, have it be the cta" →
+"i need to find a different way to show its clickable" — `.dr-greet-cta`
+and its `i` kept dead too); "i first just want the basic one" (the claim
+alone); corrected as inverted — "i want the hero to be centered around
+these personal messages, i want it to be the big thing."
+
+WHAT SHIPPED: `Greeting` is `{ title, sub, door }` (lib/greeting.ts).
+`title` is the h1 — the site's claim on a first visit (`TITLE`, shortened
+to "Sites, automation and ads for owner-run businesses." from §02's own
+wording, which measured three lines at this size, not two — shorten
+copy, never the size), or the escalating return-visit line from the
+second visit (cyan lead), crossfaded in 400ms when it actually changes
+(`.dr-greet-swap`, a real cascade-specificity bug found and fixed live).
+`sub` is the honest-capacity day line, unchanged at every visit count.
+`door` is its own pill again, centred (a real bug found live: inherited
+`margin-left: auto` pushed it off-centre until overridden). No card, no
+tile, no mark in the hero — all retired, all dead in room.css, not
+deleted. `pickGreeting` now takes a `Persona` (lib/persona.ts's own
+`?i=`/`?svc=` shape) for a PERSONA TABLE that is designed, not built.
+
+THE ARCHITECTURE CHANGED: `app/page.tsx` is now a genuine Server
+Component (`dynamic = "force-dynamic"`) computing the greeting per
+request and handing it to `components/dark/hero-room.tsx` (the old
+"use client" page, renamed, `initialGreeting` prop) — verified live that
+a "use client" page.tsx does NOT honour Next's route segment config
+(`next build` showed `/` as `○ (Static)` when tried that way), so this
+split is load-bearing, not a style choice.
+
+MEASURED, all four titles at 1440: 118.08px, exactly two centred lines
+each, centre 720 (640 at 1280, 720 at 2560). Gaps at 736: nav→cap
+50.77px, door→film 26px (a raised floor, `clamp(26px, 2.6svh, 32px)` —
+2.6svh alone was only 19.14px); at 900: nav→cap 62.09px, film shown
+299.9px (~300, target). `--grow` 513/600px at 736/900, reel lands full
+screen at both. Nav sentinel chain now `.dr-hero-door ?? .dr-hero-band
+?? .dr-greet ?? .dr-meta`. Server HTML confirmed (curl) to contain both
+the title and the day line. Phone: title `clamp(2rem, 9vw, 3rem)`
+(≤ 3 lines, the claim itself hits the ceiling), sub 20px, door full
+width. tsc clean, `next build` confirms `/` as `ƒ (Dynamic)`, 0 console
+errors at 390/1280/1440/2560/900. Frames: `design-dna/frames/greet-
+rest.jpg`, `greet-390.jpg`. NOT YET REVIEWED by Jake in this final
+shape — this state line and its decisions.md/checks.md entries live on
+this branch only.
