@@ -767,7 +767,9 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
      white is the PAGE's own top edge — full bleed, square, no inset —
      the film simply slides under the page and dissolves into it. And
      no black band under the film here: the glass IS the transition. */
-  .dr-hero-wrap[data-v~="glass"] { --after: 0px; }
+  /* (the black band under the film stays — Jake: "add the glass as a
+     seam between the two sections": the film, its lower glow and the
+     black all slide under the frosted page edge) */
   .dr-hero-wrap[data-v~="glass"] + .dr-say-stage .dr-say-pin .dr-offer-head {
     background: rgba(255, 255, 255, .72);
     backdrop-filter: blur(28px) saturate(120%);
@@ -802,6 +804,39 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
 .dr-root:has(.dr-hero-wrap[data-v~="frost"]) .dr-work-name { font-size: var(--fs-body); }
 .dr-root:has(.dr-hero-wrap[data-v~="frost"]) .dr-work-sep { display: none; }
 .dr-root:has(.dr-hero-wrap[data-v~="frost"]) .dr-work-see { margin-left: auto; --work-see-alt: var(--accent); }
+
+/* `seam` — GLASS ON THE SEAM. A 220px band centred on the wrapper's
+   bottom edge (the black/white boundary, page --grow + 100svh +
+   --after), three backdrop-filter layers masked to bands like Huge's
+   (decodes/hugeinc.md §14) but symmetric: the blur is strongest on the
+   line itself and gone 110px either side. Over the whole width, z above
+   the ground and the air, under the stage's words. */
+.dr-seam {
+  position: absolute; left: 0; right: 0;
+  top: calc(100svh + var(--grow, 55vh) + var(--after, 0px) - 110px);
+  /* ABOVE the next section (its white ground is a later sibling at z 4,
+     and a backdrop-filter can only blur what is painted beneath it):
+     7, over the stage's 6 and the dock's 5, under the rail's 30 */
+  height: 220px; z-index: 7; pointer-events: none;
+  isolation: isolate; contain: paint; overflow: hidden;
+}
+.dr-seam-l { position: absolute; inset: 0; }
+.dr-seam-l1 {
+  backdrop-filter: blur(4px);
+  -webkit-mask-image: linear-gradient(transparent 0%, #000 20%, #000 80%, transparent 100%);
+  mask-image: linear-gradient(transparent 0%, #000 20%, #000 80%, transparent 100%);
+}
+.dr-seam-l2 {
+  backdrop-filter: blur(12px);
+  -webkit-mask-image: linear-gradient(transparent 20%, #000 35%, #000 65%, transparent 80%);
+  mask-image: linear-gradient(transparent 20%, #000 35%, #000 65%, transparent 80%);
+}
+.dr-seam-l3 {
+  backdrop-filter: blur(30px);
+  -webkit-mask-image: linear-gradient(transparent 35%, #000 46%, #000 54%, transparent 65%);
+  mask-image: linear-gradient(transparent 35%, #000 46%, #000 54%, transparent 65%);
+}
+@media (max-width: 900px), (prefers-reduced-motion: reduce) { .dr-seam { display: none; } }
 
 /* `glow` — THE FILM'S OWN LIGHT. A 32x18 canvas (hero-room.tsx draws
    the reel into it ten times a second), blurred AT THAT SIZE — the

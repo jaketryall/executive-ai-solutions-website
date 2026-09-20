@@ -677,6 +677,20 @@ export default function DarkRoom({
           data-sp-var="--x"
           data-sp-target=".dr-hero-wrap"
         />
+        {/* THE SEAM (trial `seam` — Jake: "add the glass as a seam between
+            the two sections"): a band of glass straddling the edge where
+            the hero's black meets the page's white, Huge's progressive
+            blur turned sideways — the blur fades in from above and out
+            below, so the hard line between the two grounds (and the
+            film's lower glow just above it) dissolves into a frosted
+            gradient instead of a cut. */}
+        {has("seam") && (
+          <div className="dr-seam" aria-hidden>
+            <div className="dr-seam-l dr-seam-l1" />
+            <div className="dr-seam-l dr-seam-l2" />
+            <div className="dr-seam-l dr-seam-l3" />
+          </div>
+        )}
 
         <div className="dr-stage">
           <main className="dr-main wrap">
