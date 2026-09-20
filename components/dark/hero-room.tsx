@@ -100,7 +100,11 @@ export default function DarkRoom({
              ground, so the light room's --flip no longer puts them out
      glow  · the film's own light: the reel is sampled into a 32x18
              canvas ten times a second and blown up behind the words, so
-             the void breathes with whatever the reel is showing */
+             the void breathes with whatever the reel is showing
+     lines · EVERY line is full width (Jake, on `wide`: "they arent
+             always full width") — the title is split at its sentence
+             ends, one sentence per line, and each line is fitted to the
+             column at its OWN size; the first sentence is the cyan lead */
   const v = variant.split(" ").filter(Boolean);
   const has = (t: string) => v.includes(t);
 
@@ -305,11 +309,16 @@ export default function DarkRoom({
     const h1 = document.querySelector<HTMLElement>(".dr-greet");
     const col = document.querySelector<HTMLElement>(".dr-hero");
     if (!h1 || !col) return;
+    /* re-entrancy guard: fit() ends by dispatching resize (for the reel's
+       measure), and fit() itself listens for resize */
+    let busy = false;
     const fit = () => {
+      if (busy) return;
       if (!window.matchMedia("(min-width: 901px)").matches) {
         h1.style.removeProperty("--fit");
         return;
       }
+      busy = true;
       let f = 1;
       h1.style.setProperty("--fit", "1");
       for (let i = 0; i < 3; i++) {
@@ -338,6 +347,7 @@ export default function DarkRoom({
         h1.style.setProperty("--fit", f.toFixed(4));
       }
       window.dispatchEvent(new Event("resize"));
+      busy = false;
     };
     fit();
     document.fonts?.ready.then(fit);
@@ -346,6 +356,41 @@ export default function DarkRoom({
       window.removeEventListener("resize", fit);
       h1.style.removeProperty("--fit");
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [greeting.title]);
+
+  /* TRIAL `lines` — EVERY LINE FULL WIDTH. Each sentence is its own
+     nowrap block (.dr-greet-l), so one measurement is exact: --fl is
+     column / the line's own width, no re-wrap to converge on. The
+     sizes differ by sentence length — "We build the site." stands
+     taller than "You get on with the business." — which is the point:
+     the short line is the big one. */
+  useEffect(() => {
+    if (!has("lines")) return;
+    const h1 = document.querySelector<HTMLElement>(".dr-greet");
+    const col = document.querySelector<HTMLElement>(".dr-hero");
+    if (!h1 || !col) return;
+    let busy = false;
+    const fit = () => {
+      if (busy) return;
+      const lines = [...h1.querySelectorAll<HTMLElement>(".dr-greet-l")];
+      if (!window.matchMedia("(min-width: 901px)").matches) {
+        lines.forEach((l) => l.style.removeProperty("--fl"));
+        return;
+      }
+      busy = true;
+      for (const l of lines) {
+        l.style.setProperty("--fl", "1");
+        const w = l.getBoundingClientRect().width;
+        if (w) l.style.setProperty("--fl", ((col.clientWidth * 0.995) / w).toFixed(4));
+      }
+      window.dispatchEvent(new Event("resize"));
+      busy = false;
+    };
+    fit();
+    document.fonts?.ready.then(fit);
+    window.addEventListener("resize", fit);
+    return () => window.removeEventListener("resize", fit);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [greeting.title]);
 
@@ -611,6 +656,20 @@ export default function DarkRoom({
                   same cyan class (`.dr-day-word`) for their lead. */}
               <h1 className={`dr-h1 dr-greet${swapped ? " dr-greet-swap" : ""}`}>
                 {(() => {
+                  if (has("lines")) {
+                    /* one sentence per line — split at ". " / "? " / "! " */
+                    const parts = greeting.title.split(/(?<=[.?!])\s+/).filter(Boolean);
+                    return parts.map((t, i) => (
+                      <span
+                        key={t}
+                        className={`dr-greet-l${i === 0 && parts.length > 1 ? " dr-day-word" : ""}${
+                          /[gjpqy]/.test(t) && i < parts.length - 1 ? " dr-greet-l--desc" : ""
+                        }`}
+                      >
+                        {t}
+                      </span>
+                    ));
+                  }
                   const { lead, rest } = splitLead(greeting.title);
                   return lead ? (
                     <>

@@ -477,6 +477,30 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   max-width: none;
 }
 
+/* `lines` — EVERY LINE FULL WIDTH: one sentence per block line, no
+   wrapping, each at its own measured size (--fl, hero-room.tsx) on top
+   of the 118 rung. Under 900 the spans fall back to inline prose. */
+[data-v~="lines"] .dr-h1.dr-greet { max-width: none; }
+[data-v~="lines"] .dr-greet-l {
+  /* shrink-wrapped, so the measured box IS the text's own width */
+  display: block; width: max-content; margin-inline: auto;
+  white-space: nowrap;
+  font-size: calc(1em * var(--fl, 1));
+  /* re-declared, not inherited: letter-spacing inherits as the parent's
+     COMPUTED px (-5.9 at 118), so a 193px line would keep 118's
+     tracking and run 4.6% wider than the measure predicted */
+  letter-spacing: -0.05em;
+  line-height: .92;
+}
+/* a line with a descender over another line gets its own room: at .92
+   a 330px "You again." drove its g through the caps of the line under
+   it (measured on visit 4). Only when there IS a descender, and only
+   when there is a line under it, so the tight lines stay tight. */
+[data-v~="lines"] .dr-greet-l--desc { padding-bottom: .09em; }
+@media (max-width: 900px) {
+  [data-v~="lines"] .dr-greet-l { display: inline; white-space: normal; font-size: 1em; padding: 0; }
+}
+
 /* the zone's own air — clipped to the dark ground's exact height (the
    twin of ::before above), over the ground, under the stage (6) and
    the dock (5) */
