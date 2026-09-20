@@ -112,6 +112,16 @@ export default function DarkRoom({
              lamps") — an outer box-shadow on an empty box laid exactly
              over the slot, so it is the film's own edge light, not a
              lamp in the room
+     pblur · HUGE'S TOP GLASS (Jake: "look at the blur glass effect or
+             whatever it is at the top of the huge navbar"; decoded
+             live 2026-09-20, decodes/hugeinc.md §10): not a bar — a
+             fixed, pointer-less PROGRESSIVE BLUR under a transparent
+             header. Three stacked backdrop-filter layers, each masked
+             to a band, the blur radius climbing toward the top edge
+             (1.8 → 7.2 → 28.7px), so whatever scrolls under the nav
+             dissolves instead of sliding under a pill. With it, our
+             rail's own stuck pill (the 92% dark, the 14px blur, the
+             glint edge) comes off — the links float, Huge's way
      lines · EVERY line is full width (Jake, on `wide`: "they arent
              always full width") — the title is split at its sentence
              ends, one sentence per line, and each line is fitted to the
@@ -571,6 +581,13 @@ export default function DarkRoom({
         <div className="dr-figure" />
       </div>
       <div className="dr-grain" aria-hidden />
+      {has("pblur") && (
+        <div className="dr-pblur" aria-hidden>
+          <div className="dr-pblur-l dr-pblur-l1" />
+          <div className="dr-pblur-l dr-pblur-l2" />
+          <div className="dr-pblur-l dr-pblur-l3" />
+        </div>
+      )}
       <div className="dr-vignette" aria-hidden />
 
       {/* §01 · THE LINE. Jake, 2026-09-13, with a HeartBloom landing

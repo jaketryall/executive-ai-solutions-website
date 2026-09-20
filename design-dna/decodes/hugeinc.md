@@ -142,3 +142,21 @@ Saved to `design-dna/frames/decodes/hugeinc/`:
 - `04-never-one-and-done-mid.jpeg` — the radial marquee at scroll-fraction 0.5 of its 3332px domain (scrollY ≈10,895, angle ≈−70°).
 - `05-solutions-row-hovered.jpeg` — "Brand strategy & design." card under a real CDP-trusted hover (no visual change per §7, included for completeness).
 - `06-mobile-hero.jpeg` — 390×844 hero, return-visit greeting state ("Back already?…").
+
+## 14. THE TOP GLASS — a progressive blur, not a bar (measured live 2026-09-20)
+
+Jake: "look at the blur glass effect or whatever it is at the top of the huge navbar." §3's "header background always transparent" stands — the glass is a SEPARATE fixed layer, `div.progressive-blur.is--top` (aria-hidden), a sibling of the header:
+
+- `position: fixed; top: 0; left: 0; width: 100%; height: 15em` = **286.5px** at the 19.1px root · `z-index: 40` (header is 50) · `pointer-events: none; isolation: isolate; contain: paint; overflow: hidden; transform: translateZ(0)` · `transition: opacity .4s`, `.is-hidden { opacity: 0 }` (not hidden at scroll 0 — the hero title dissolves under it too).
+- Three absolutely-positioned children, each a `backdrop-filter: blur()` masked to a band, the radius climbing toward the top edge:
+
+  | layer | blur | mask (top → down) |
+  |---|---|---|
+  | `is--1` | `.09375em` = **1.79px** | transparent 12.5% → black 25%–37.5% → transparent 50% |
+  | `is--2` | `.375em` = **7.16px** | transparent 0 → black 12.5%–25% → transparent 37.5% |
+  | `is--3` | `1.5em` = **28.66px** | black 0–12.5% → transparent 25% |
+
+  So the blur is 28.7px in the top 36px, ~7px to 72px, ~1.8px to 108px and gone by 143px — the lower half of the box does nothing. No tint, no colour: the header's ink flip (§3) is what keeps the links legible.
+- The same component exists as `.is--bottom` (masks reversed, layers 4–5 defined in the stylesheet for a finer ramp) — not present on the homepage.
+
+Ported as trial `pblur` on hero/air (room.css `.dr-pblur`, 300px tall so the blurred half clears our rail), with the rail's own stuck pill (92% dark, 14px blur, glint edge) turned off under it.

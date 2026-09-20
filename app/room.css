@@ -672,6 +672,45 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   }
 }
 
+/* `pblur` — HUGE'S PROGRESSIVE BLUR (measured live 2026-09-20 on
+   hugeinc.com: `.progressive-blur.is--top`, fixed, 15em = 287px tall,
+   z 40 under the header's 50, pointer-events none, three children with
+   backdrop-filter blur .09375em / .375em / 1.5em = 1.79 / 7.16 / 28.66px
+   and the masks below — the blur climbs toward the top edge and is gone
+   by 50% of the box; the header itself stays rgba(0,0,0,0) always).
+   Ported at the same pixels: 300px tall so the blurred half (150px)
+   clears our rail (nav-pad + 62). Under the rail (30), over the page. */
+.dr-pblur {
+  position: fixed; top: 0; left: 0; width: 100%; height: 300px;
+  z-index: 29; pointer-events: none;
+  isolation: isolate; contain: paint; overflow: hidden;
+  transform: translateZ(0);
+}
+.dr-pblur-l { position: absolute; inset: 0; }
+.dr-pblur-l1 {
+  backdrop-filter: blur(1.8px); -webkit-backdrop-filter: blur(1.8px);
+  -webkit-mask-image: linear-gradient(rgba(0,0,0,0) 12.5%, #000 25%, #000 37.5%, rgba(0,0,0,0) 50%);
+  mask-image: linear-gradient(rgba(0,0,0,0) 12.5%, #000 25%, #000 37.5%, rgba(0,0,0,0) 50%);
+}
+.dr-pblur-l2 {
+  backdrop-filter: blur(7.2px); -webkit-backdrop-filter: blur(7.2px);
+  -webkit-mask-image: linear-gradient(rgba(0,0,0,0) 0%, #000 12.5%, #000 25%, rgba(0,0,0,0) 37.5%);
+  mask-image: linear-gradient(rgba(0,0,0,0) 0%, #000 12.5%, #000 25%, rgba(0,0,0,0) 37.5%);
+}
+.dr-pblur-l3 {
+  backdrop-filter: blur(28.7px); -webkit-backdrop-filter: blur(28.7px);
+  -webkit-mask-image: linear-gradient(#000 0%, #000 12.5%, rgba(0,0,0,0) 25%);
+  mask-image: linear-gradient(#000 0%, #000 12.5%, rgba(0,0,0,0) 25%);
+}
+/* and the rail's own stuck pill comes off: no dark, no blur, no glint —
+   the links float over the dissolving page, Huge's transparent header */
+.dr-root:has(.dr-hero-wrap[data-v~="pblur"]) .dr-rail[data-stuck] .dr-rail-in {
+  background: transparent;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  padding: 0;
+}
+.dr-root:has(.dr-hero-wrap[data-v~="pblur"]) .dr-rail[data-stuck]::before { opacity: 0; }
+
 /* `glow` — THE FILM'S OWN LIGHT. A 32x18 canvas (hero-room.tsx draws
    the reel into it ten times a second), blurred AT THAT SIZE — the
    filter runs on 576 pixels — then scaled by transform to cover the
