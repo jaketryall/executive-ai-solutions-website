@@ -613,6 +613,20 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
     #000 calc(100% - var(--film-x, 3.8vw) - 90px), rgba(0,0,0,.22) calc(100% - var(--film-x, 3.8vw)), transparent);
 }
 
+/* `full` — THE FILM FULL WIDTH AT REST (Jake: "can we try the video
+   being full width, still with rounded corners and the top"): the slot
+   and the dock's flow box both go edge to edge (the grow's rest is a
+   translate that assumes the two are the same box — so BOTH, never one),
+   same 2.6:1, same radius; the grow is then vertical only (--sx1 = 1).
+   No gutters, so the edge glow's side mask has nothing to fix and comes
+   off — the top is all that shows. Desktop only: the phone's own film
+   rules are untouched. */
+@media (min-width: 901px) {
+  [data-v~="full"] .dr-slot { width: 100vw; margin-inline: calc(50% - 50vw); }
+  [data-v~="full"] .dr-dock { --inset: 0px; }
+  .dr-hero-wrap[data-v~="full"] .dr-air { -webkit-mask-image: none; mask-image: none; }
+}
+
 /* `glow` — THE FILM'S OWN LIGHT. A 32x18 canvas (hero-room.tsx draws
    the reel into it ten times a second), blurred AT THAT SIZE — the
    filter runs on 576 pixels — then scaled by transform to cover the
