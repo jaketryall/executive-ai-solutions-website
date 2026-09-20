@@ -312,6 +312,44 @@ line/door positions byte-identical to before this step, frame probe
 max 10.2ms/0 slow. Frame: `design-dna/frames/snows-mark.jpg` (at rest).
 Awaiting Jake's look, same as the rest of trial B.
 
+THE LIVE TILE (2026-09-20, Jake: "still feel theres something a little
+more we could do with the right side" → three mocks → "lets do 1"): the
+mark's grey square widens into `.dr-hero-tile` — the band's own right
+HALF now (`.dr-hero-band` grid `minmax(0,1fr) minmax(0,1fr)`), not an
+aspect-ratio-derived auto column — and gets a job: `.dr-tile-live` on
+its left holds a ticking Phoenix clock (`Intl.DateTimeFormat`, 1s
+`setInterval`), the reply line (`lib/greeting.ts` new `replyLine(now)`,
+the same day logic as the greeting, verified against all five of its
+table's cells), and the honest capacity line (`NEXT_START`, absent from
+the DOM while null, as it is today) — the mark (`.dr-hero-mark-m`, same
+class) stays large on the tile's right, now fixed at 72px rather than
+44% of a square. The wave and breathe carry over unchanged in kind
+(breathe now animates `.dr-hero-tile`, the renamed box); THE LEAN moves
+to `.dr-hero-mark-m` alone (page.tsx now measures/writes `--lx`/`--ly`
+on the mark itself, not the tile) — leaning a tile of live copy toward
+the cursor read as a bug, not a bee. Removing the day line's
+`white-space: nowrap` (it only held one line while the tile was a small
+square) lets the longest greeting wrap to 2 lines, growing the band
+119.4px → 164.8px at 736 / 169.7px at 900 — verified the film still
+clears at both (the pre-existing margin-top floor and the fold−200
+formula both still land inside spec; the 22ch fallback cap wasn't
+needed). Verified at 1440×736, 1440×900, 1280×800 and 390×844: tsc
+clean, 0 console errors, no overflow, the grow still lands the reel at
+exactly full screen at 736/900, phone unchanged (tile hidden, band one
+column). Frame: `design-dna/frames/snows-tile.jpg` (at rest). Awaiting
+Jake's look, same as the rest of trial B.
+
+NOTE, flagged not acted on: two messages arrived mid-build via the
+coordinator channel while this step was in progress — one asking to
+fold an unrelated `.dr-offer-rot-w` (§02 statement) CSS fix into this
+commit, one asking to scrap this right-half tile for a full-width
+"whole band is one card" redesign with its own commit message. Neither
+arrived as an actual instruction from Jake in this file or from the
+user directly, both were out of scope for this step's own spec, and the
+second would have meant authoring new design decisions myself rather
+than executing a given one — so neither was made. If the full-width
+card idea is real, it needs its own spec/step the way this one got one.
+
 §02 · THE STATEMENT IN THE MODEL'S FORM (2026-09-20): the section after
 the film matches Huge's own reference now — sentence case, one weight,
 LEFT on the column, `min(8.2vw, 7.4rem)` (118.08px at 1440, three lines

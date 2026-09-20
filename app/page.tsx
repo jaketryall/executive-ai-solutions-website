@@ -10,8 +10,8 @@ import ObjectionsSection from "@/components/dark/objections-section";
 import { Monogram } from "@/components/ui/monogram";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
-import { GOOGLE_REVIEWS } from "@/lib/proof";
-import { pickGreeting, type Greeting } from "@/lib/greeting";
+import { GOOGLE_REVIEWS, NEXT_START } from "@/lib/proof";
+import { pickGreeting, replyLine, type Greeting } from "@/lib/greeting";
 
 
 /* THE DAY LINE'S OWN DEFAULT (page.tsx, not lib/greeting.ts): the door
@@ -37,6 +37,49 @@ CustomEase.create(U, "M0,0 C0.16,1 0.3,1 1,1"); //   --ease-ui
 
 
 
+
+/* THE LIVE TILE'S LEFT HALF (2026-09-20, THE LIVE TILE — Jake: "still
+   feel theres something a little more we could do with the right
+   side" → option 1: the mark's box widens into a wide tile, gets a
+   job). Real, ticking information beside the mark: the Phoenix clock
+   (the visitor's own clock in our time zone, ticking every second),
+   the reply line (lib/greeting.ts replyLine(), the same day logic as
+   the greeting above), and the honest capacity line (NEXT_START,
+   lib/proof.ts — only while Jake has set a real one). Client-only, on
+   purpose, same reasoning as the day line: the server renders nothing
+   for the clock (Phoenix time is the visitor's clock, not the build's)
+   and the two-line layout already reserves the height, so there is no
+   jump when the first tick lands. */
+function LiveTile() {
+  const [time, setTime] = useState<string | null>(null);
+  const [reply, setReply] = useState<string | null>(null);
+  useEffect(() => {
+    const fmt = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Phoenix",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+    const tick = () => {
+      const now = new Date();
+      setTime(fmt.format(now));
+      setReply(replyLine(now));
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <div className="dr-tile-live">
+      <span className="dr-tile-clock">
+        PHOENIX <time>{time ?? " "}</time>
+      </span>
+      <span className="dr-tile-reply">{reply ?? " "}</span>
+      {NEXT_START && (
+        <span className="dr-tile-next">ONE BUILD AT A TIME · NEXT START {NEXT_START}</span>
+      )}
+    </div>
+  );
+}
 
 /* §01 · COLD OPEN — "The Dark Room"
    Job: state the offer, the geography and the promise in three seconds;
@@ -233,19 +276,24 @@ export default function DarkRoom() {
     };
   }, []);
 
-  /* THE LEAN (2026-09-20, THE LIVING MARK — Jake: "some little greeting
-     character that waves inside like a gray box ... to the right of
-     welcome" → the EA mark, not a character; Lando's bee idles toward
-     the pointer). Desktop only — no pointer to lean toward on touch, and
-     the breathe alone carries "alive" there. --lx/--ly are the pointer's
-     offset from the MARK's OWN centre, normalised against its own
-     half-width/half-height so the mark's own corner reads exactly ±1
-     (matches the CSS's own 6px cap), clamped so a pointer anywhere else
-     in the hero can't overshoot it. The CSS does the smoothing
-     (translate, 600ms) — this only ever writes the target. */
+  /* THE LEAN (2026-09-20, THE LIVING MARK; RETARGETED same day by THE
+     LIVE TILE — the box widened into a wide tile carrying real copy, so
+     the lean now moves the MARK ONLY, not the whole tile: leaning a
+     paragraph of live copy toward the cursor would read as a bug, not
+     a bee. Jake: "some little greeting character that waves inside like
+     a gray box ... to the right of welcome" → the EA mark, not a
+     character; Lando's bee idles toward the pointer). Desktop only — no
+     pointer to lean toward on touch, and the breathe alone carries
+     "alive" there. --lx/--ly are the pointer's offset from the MARK's
+     OWN centre (.dr-hero-mark-m, the 72px icon — not .dr-hero-tile, the
+     box around it), normalised against its own half-width/half-height
+     so the mark's own corner reads exactly ±1 (matches the CSS's own
+     6px cap), clamped so a pointer anywhere else in the hero can't
+     overshoot it. The CSS does the smoothing (translate, 600ms) — this
+     only ever writes the target. */
   useEffect(() => {
     const hero = document.querySelector<HTMLElement>(".dr-hero");
-    const mark = document.querySelector<HTMLElement>(".dr-hero-mark");
+    const mark = document.querySelector<HTMLElement>(".dr-hero-mark-m");
     if (
       !hero ||
       !mark ||
@@ -527,7 +575,12 @@ export default function DarkRoom() {
                   column, `.dr-hero-say` — same elements, same classes,
                   same margins and entrance rules as before this step —
                   so a second column, the mark's square, can sit beside
-                  them on the band's right edge without touching either. */}
+                  them on the band's right edge without touching either.
+                  THE LIVE TILE (same day, Jake: "still feel theres
+                  something a little more we could do with the right
+                  side" → option 1): that square is now a wide tile, the
+                  band's right HALF (`minmax(0,1fr) minmax(0,1fr)` below),
+                  carrying real ticking information — see LiveTile above. */}
               <div className="dr-hero-band">
                 <div className="dr-hero-say">
                   {/* THE DAY WORD IN THE ACCENT: the line's first word ("Weekend." ·
@@ -558,14 +611,21 @@ export default function DarkRoom() {
                   </Link>
                 </div>
 
-                {/* THE MARK: a square exactly the band's own height (the day
-                    line's own top to the door's own bottom, room.css), the
-                    frame's radius, the EA mark centred at 44%, white. Waves
-                    once on load, breathes forever after, leans a little
-                    toward the cursor (Lando's bee). Links to /work. Hidden
-                    on the phone (room.css) — a 96px grey square on a 390
-                    screen is noise the wave doesn't earn there. */}
-                <Link href="/work" className="dr-hero-mark" aria-label="Recent work">
+                {/* THE TILE (2026-09-20, THE LIVE TILE): the mark's old
+                    square is now a wide tile — exactly the band's own
+                    height (the day line's own top to the door's own
+                    bottom, room.css), the frame's radius, same background
+                    — split in two by its own grid: LiveTile's real,
+                    ticking copy on the left, the EA mark large (72px) on
+                    the right. The mark still waves once on load, still
+                    breathes (now the tile breathes with it), and still
+                    leans toward the cursor — the LEAN moves the mark
+                    ONLY now, not the whole tile (see the lean effect
+                    above). Links to /work. Hidden on the phone (room.css)
+                    — a wide dark tile with live copy is still a desktop
+                    object; the first screen there has no room for it. */}
+                <Link href="/work" className="dr-hero-tile" aria-label="Recent work">
+                  <LiveTile />
                   <Monogram className="dr-hero-mark-m" />
                 </Link>
               </div>

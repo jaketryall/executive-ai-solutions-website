@@ -69,3 +69,38 @@ export function pickGreeting(visits: number, now: Date): Greeting {
   const idx = Math.min(visits - 2, RETURN_LINES.length - 1);
   return RETURN_LINES[idx];
 }
+
+/* THE REPLY LINE (2026-09-20, THE LIVE TILE) — the hero's tile carries a
+   second honest promise beside the day line, keyed to the SAME Phoenix
+   clock plus the hour, since a reply promise is only true inside
+   business hours:
+     Mon–Thu, 8:00–17:00 Phoenix -> "REPLIES WITHIN THE HOUR"
+     Mon–Thu, outside that       -> "REPLIES TOMORROW 8 AM"
+     Fri, before 15:00           -> "REPLIES TODAY UNTIL 3 PM"
+     Fri, 15:00 or later         -> "REPLIES MONDAY 8 AM"
+     Sat / Sun                   -> "REPLIES MONDAY 8 AM"
+   `hour12: false` can render midnight as "24" in some engines — `% 24`
+   normalises it. Used by app/page.tsx's LiveTile, ticking on the same
+   1s interval as the Phoenix clock so the two never disagree. */
+export function replyLine(now: Date): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Phoenix",
+    weekday: "short",
+    hour: "numeric",
+    hour12: false,
+  }).formatToParts(now);
+  const weekday = parts.find((p) => p.type === "weekday")?.value ?? "Mon";
+  const hour = Number(parts.find((p) => p.type === "hour")?.value ?? "0") % 24;
+  switch (weekday) {
+    case "Mon":
+    case "Tue":
+    case "Wed":
+    case "Thu":
+      return hour >= 8 && hour < 17 ? "REPLIES WITHIN THE HOUR" : "REPLIES TOMORROW 8 AM";
+    case "Fri":
+      return hour < 15 ? "REPLIES TODAY UNTIL 3 PM" : "REPLIES MONDAY 8 AM";
+    default:
+      // "Sat" / "Sun"
+      return "REPLIES MONDAY 8 AM";
+  }
+}

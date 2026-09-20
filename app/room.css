@@ -878,9 +878,13 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   font-variation-settings: "wdth" 100, "wght" 600; font-weight: 600;
   font-size: min(3vw, 2.7rem); letter-spacing: -0.03em; line-height: 1.05;
   color: #fff; text-align: left; min-height: 1.05em;
-  /* ONE line: the longest greeting is 52 characters ≈ 1000px at 43px on
-     the 1330 column; a 26ch cap wrapped it onto the film's top edge */
-  max-width: none; white-space: nowrap;
+  /* WRAPS now (2026-09-20, THE LIVE TILE): the longest greeting is 52
+     characters ≈ 1000px at 43px, one line only while the day line had
+     the column's full ~1330px — the tile now takes the band's right
+     half, leaving ~640px, so `white-space: nowrap` (which held it to
+     one line before this step, a 26ch cap having wrapped it onto the
+     film's top edge) comes off; the day line wraps to two lines instead. */
+  max-width: none;
 }
 @media (max-width: 1180px) { .dr-meta { white-space: normal; } }
 .dr-day-word { color: var(--accent); }
@@ -1140,49 +1144,94 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    own top and the door's own bottom directly (getBoundingClientRect, as
    the rest of this file already does for the slot and the dock) removes
    the percentage cascade entirely: an absolute height makes the
-   aspect-ratio's width a single direct computation, not a circular one. */
+   aspect-ratio's width a single direct computation, not a circular one.
+
+   ══ THE LIVE TILE (same day, Jake: "still feel theres something a
+   little more we could do with the right side" → three mocks → "lets
+   do 1"). The square becomes a wide tile — the band's own right HALF,
+   not an aspect-ratio-derived auto column — so it can carry a job: real,
+   ticking information (the Phoenix clock, the reply line, the honest
+   capacity line — LiveTile, page.tsx) beside the mark, which stays
+   large on the tile's right. */
 .dr-hero-band {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   column-gap: 32px;
   align-items: stretch;
   width: 100%;
 }
 .dr-hero-say { min-width: 0; text-align: left; }
 
-/* THE BOX: surface-1, the frame's own radius. Sized by HEIGHT, not
-   width — a square derives its width from the ratio, and the grid's own
-   "auto" column sizes to that. align-self: end (not stretch) pins it to
-   the row's bottom, which is the door's own bottom; --hero-band-h is
-   exactly the day line's top to the door's bottom, so that same edge
-   lands the box's top on the day line's. */
-.dr-hero-mark {
+/* THE TILE: surface-1, the frame's own radius, sized by HEIGHT only now
+   (its width is the grid column's own half, not an aspect-ratio-derived
+   auto track). align-self: end (not stretch) pins it to the row's
+   bottom, which is the door's own bottom; --hero-band-h is exactly the
+   day line's top to the door's bottom, so that same edge lands the
+   tile's top on the day line's. Its own grid: the live info on the
+   left, the mark on the right. */
+.dr-hero-tile {
   align-self: end;
-  aspect-ratio: 1;
   height: var(--hero-band-h, 117px);
   min-height: 96px;
-  display: grid; place-items: center;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: clamp(18px, 2vw, 28px);
   background: var(--surface-1);
   border-radius: var(--radius-frame);
   text-decoration: none;
-  /* THE LEAN (page.tsx, pointermove over .dr-hero, desktop only): a 6px
-     nudge toward the cursor, never a follow. THE BREATHE runs
-     unconditionally from load (2.4s in, forever, barely there) — it
-     never needed a hold the way the entrance does. */
-  translate: calc(var(--lx, 0) * 6px) calc(var(--ly, 0) * 6px);
-  transition: background var(--t-micro) var(--ease-ui), translate 600ms var(--ease-ui);
+  /* THE BREATHE runs unconditionally from load (2.4s in, forever,
+     barely there) — it never needed a hold the way the entrance does.
+     THE LEAN moved OFF this element onto .dr-hero-mark-m alone (below)
+     — leaning a tile of live copy toward the cursor read as a bug. */
+  transition: background var(--t-micro) var(--ease-ui);
   animation: dr-breathe 6s ease-in-out 2.4s infinite;
 }
-.dr-hero-mark:hover { background: var(--surface-2); }
-.dr-hero-mark:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
-.dr-hero-mark-m { width: 44%; aspect-ratio: 1; color: #fff; transform-origin: 50% 70%; }
+.dr-hero-tile:hover { background: var(--surface-2); }
+.dr-hero-tile:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
 @keyframes dr-breathe { 50% { scale: 1.02; } }
 
+/* THE LIVE INFO (LiveTile, page.tsx): three lines in the label register
+   — 13px, .1em tracking, the same family/weight as the nav's own caps
+   (.dr-links a) — but the copy itself is ALREADY caps (lib/greeting.ts's
+   replyLine(), the literal strings below), so nothing here forces
+   text-transform. Clock (PHOENIX + the ticking time), the reply line
+   (same day logic as the greeting), the capacity line (NEXT_START, only
+   while Jake has set one — absent from the DOM otherwise). NO ACCENT:
+   the band already holds two cyan objects (the day word, the door) —
+   a third in the tile would be one too many. */
+.dr-tile-live { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.dr-tile-clock, .dr-tile-reply, .dr-tile-next {
+  display: block;
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 700;
+  font-size: var(--fs-small); letter-spacing: .1em;
+  color: var(--ink-4);
+}
+.dr-tile-clock time {
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: 22px; letter-spacing: -0.01em;
+  color: #fff; font-variant-numeric: tabular-nums;
+}
+
+/* THE MARK: fixed at 72px now (the tile's height ≈119 → the mark ~60%
+   of it) — no longer 44% of a square box, since the box is a wide tile.
+   THE LEAN lives here alone (page.tsx measures and writes --lx/--ly
+   directly on THIS element, not the tile) — normalised against the
+   mark's OWN half-size so its own corner reads exactly ±1, matching the
+   6px cap. */
+.dr-hero-mark-m {
+  width: 72px; aspect-ratio: 1; color: #fff; transform-origin: 50% 70%;
+  translate: calc(var(--lx, 0) * 6px) calc(var(--ly, 0) * 6px);
+  transition: translate 600ms var(--ease-ui);
+}
+
 /* THE ENTRANCE — the door's own timing (680ms backwards); THE WAVE
-   fires once, 900ms in (after the box has arrived), a hand pivoting low
+   fires once, 900ms in (after the tile has arrived), a hand pivoting low
    rather than from its own centre. */
-.dr-root:not(.dr-lit) .dr-hero-mark { opacity: 0; }
-.dr-lit .dr-hero-mark {
+.dr-root:not(.dr-lit) .dr-hero-tile { opacity: 0; }
+.dr-lit .dr-hero-tile {
   animation: dr-fadein var(--t-enter) var(--ease-structure) 680ms backwards,
              dr-breathe 6s ease-in-out 2.4s infinite;
 }
@@ -1195,8 +1244,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   100% { rotate: 0deg; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .dr-hero-mark { opacity: 1; animation: none; scale: 1; translate: none; }
-  .dr-lit .dr-hero-mark-m { animation: none; rotate: 0deg; }
+  .dr-hero-tile { opacity: 1; animation: none; scale: 1; }
+  .dr-lit .dr-hero-mark-m { animation: none; rotate: 0deg; translate: none; }
 }
 /* the entrance: the lead, the card, then the door LAST — animate-last is
    the highest in the hierarchy. `backwards`, never `forwards`, so the
@@ -1344,12 +1393,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
               padding: var(--fib-3); gap: var(--fib-3); }
   .dr-strip-rating { justify-content: center; }
   .dr-herocta { margin-left: 0; align-self: center; }
-  /* THE LIVING MARK is a desktop object (Jake's "to the right of
-     welcome" needs a first screen wide enough to have a right) — a 96px
-     grey square on a 390 screen is noise the wave doesn't earn there.
+  /* THE LIVE TILE is a desktop object (Jake's "to the right of welcome"
+     needs a first screen wide enough to have a right) — a wide dark
+     tile with live copy is still noise a 390 screen doesn't earn.
      The band collapses to the one column it always visually was here. */
   .dr-hero-band { grid-template-columns: 1fr; column-gap: 0; }
-  .dr-hero-mark { display: none; }
+  .dr-hero-tile { display: none; }
   .dr-slot { display: none; }
   .dr-h1, .dr-strip, .dr-herocta, .dr-meta { opacity: 1; }
   .dr-sub { font-size: var(--fs-body); }
