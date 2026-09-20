@@ -593,6 +593,18 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   border-radius: var(--radius-panel, 24px);
   box-shadow: 0 0 110px 18px rgba(255,255,255,.10);
 }
+/* THE SIDES FALL OFF TO THE SCREEN EDGE (Jake: "the sides feel a little
+   off"): the glow has 110px to die over the top edge but only the
+   55px gutter beside the film before the screen ends, so the gutters
+   were lit end to end at near the glow's peak — a band, not a glow.
+   The air is masked to fade over the gutter's own width, so the side
+   glow dies at the screen's edge the way the top one dies in the air. */
+.dr-hero-wrap[data-v~="edge"] .dr-air {
+  -webkit-mask-image: linear-gradient(to right,
+    transparent, #000 var(--film-x, 3.8vw), #000 calc(100% - var(--film-x, 3.8vw)), transparent);
+  mask-image: linear-gradient(to right,
+    transparent, #000 var(--film-x, 3.8vw), #000 calc(100% - var(--film-x, 3.8vw)), transparent);
+}
 
 /* `glow` — THE FILM'S OWN LIGHT. A 32x18 canvas (hero-room.tsx draws
    the reel into it ten times a second), blurred AT THAT SIZE — the
