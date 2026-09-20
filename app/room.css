@@ -84,14 +84,9 @@
   --ink-3: #949498;      /* 7.76:1 — hero h1, labels, secondary */
   --ink-4: #8a8a8e;      /* 6.11:1 — FLOOR. nothing dimmer carries text. */
 
-  /* THE ACCENT SLOT (2026-09-19, decisions.md · Huge's, decodes/hugeinc.md
-     §2/§4: rgb(255,0,144), used sparingly, and it is what the rotating
-     statement word takes). There is no accent chosen for this room yet —
-     --accent is var(--ink) for now (white in the dark room, ink in the
-     light one — no colour change until Jake picks one), reads var(--ink)
-     so it crosses THE FLIP and the hero's own dark zone for free, and
-     the §02 rotating word (room.css, .dr-offer-rot-w) is its first use. */
-  --accent: var(--ink);
+  /* (the accent slot the rotating word was built against was var(--ink)
+     for an hour on 2026-09-19; the colour is chosen — see --accent below
+     — and the word takes it Lando's way: as a letter only on dark) */
 
   /* ── edges. --edge is DECORATIVE ONLY; anything that carries meaning
         (focus, fields, the only affordance) must use --edge-strong. */
@@ -840,12 +835,17 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   margin: 12px 0 0;
   min-height: 1.5em;
   max-width: 62ch;
+  /* .dr-hero is a centred flex column (align-items: center) — the line is
+     a shrink-wrapped item, so text-align alone left it centred as a box;
+     it takes the column's left edge, under the h1's, like Huge's */
+  align-self: flex-start; text-align: left;
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 600;
   font-size: var(--fs-body);
   letter-spacing: .01em;
   line-height: 1.4;
   color: var(--ink-3);
+  text-align: left; /* Huge's day line sits on the column's left edge under the h1, never centred */
 }
 /* THE STRIP — thin and white between the title and the film (Jake:
    "a thin strip as white where some small things are there … just stuff
@@ -1512,10 +1512,38 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-offer-rot { display: inline-grid; overflow: hidden; vertical-align: bottom; }
 .dr-offer-rot-w {
   grid-area: 1 / 1; white-space: nowrap;
-  color: var(--accent);
+  /* THE COLOUR, LANDO'S WAY (decisions.md 2026-09-19, the accent): on the
+     white page the word is INK with the cyan drawn UNDER it — cyan
+     letters on white are 1.5:1; on a dark ground (the hero's zone, the
+     dark room) the word itself is cyan. The underline is the word's own
+     ::after so it rides the same keyframe and delay. */
+  color: var(--ink); position: relative;
+  /* the cell is the LONGEST word's width (inline-grid, all words stacked);
+     a shorter word is centred in it by the h2's text-align, so the item
+     is shrunk to its own text and centred — the underline then spans the
+     word, not the cell (first frame: a rule running from "for" to well
+     past a short word) */
+  justify-self: center; width: max-content;
   opacity: 0; translate: 0 .35em;
   animation: dr-rot 11700ms linear infinite;
   animation-delay: calc(var(--i) * 1950ms);
+}
+.dr-offer-rot-w::after {
+  content: ""; position: absolute; left: 0; right: .12em; bottom: .02em;
+  height: .07em; background: var(--accent);
+  transform-origin: left; scale: 0 1;
+  animation: dr-rot-ul 11700ms linear infinite;
+  animation-delay: inherit;
+}
+.dr-zone-dark .dr-offer-rot-w, .dr-root:not(.dr-light) .dr-offer-rot-w { color: var(--accent); }
+.dr-zone-dark .dr-offer-rot-w::after, .dr-root:not(.dr-light) .dr-offer-rot-w::after { display: none; }
+/* the rule draws in AFTER the word has landed (from 5.983%, over the
+   first 600ms of the hold) and leaves with it */
+@keyframes dr-rot-ul {
+  0%, 5.983% { scale: 0 1; animation-timing-function: var(--ease-structure); }
+  11.111%    { scale: 1 1; }
+  16.667%    { scale: 1 1; }
+  22.650%, 100% { scale: 0 1; }
 }
 @keyframes dr-rot {
   /* arriving: hidden, below — eases IN on the structure curve */
@@ -1531,6 +1559,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   /* the true statement only — no timer, no motion */
   .dr-offer-rot-w { animation: none; opacity: 0; translate: 0 0; }
   .dr-offer-rot-w:first-child { opacity: 1; }
+  .dr-offer-rot-w::after { animation: none; scale: 0 1; }
+  .dr-offer-rot-w:first-child::after { scale: 1 1; }
 }
 
 .dr-offer-more { margin: clamp(20px, 3svh, 32px) auto 0; max-width: 52ch;

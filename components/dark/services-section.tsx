@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, type CSSProperties } from "react";
 import Link from "next/link";
 import { SERVICES } from "@/lib/services";
 import { QUOTES } from "@/lib/quotes";
@@ -53,7 +53,26 @@ import { SHOTS } from "@/components/dark/service-shots";
 /* ⚠ IT NAMES THE LIST, SO IT MOVES WITH THE LIST. The order is
    positioning (lib/services.ts: websites → automation → ads), and the
    statement walks the reader through the columns in that order. */
-export const OFFER_SAY = "Websites, automation and ads for owner-run businesses.";
+export const OFFER_PREFIX = "Websites, automation and ads for ";
+/* THE ROTATING WORD (2026-09-19, decisions.md · Huge's, decodes/hugeinc.md
+   §4: the statement's last word rotates on a timer, seven words, all
+   pre-rendered). Ours cycles six real audiences — the three case
+   studies' own sectors (lib/work.ts: Desert Wings' Aviation, Riled Up's
+   Coaching, AAHG's Nonprofit) plus two more owner-run categories — the
+   same ad-audience personalisation the estimator already targets, made
+   visible in the room's own claim. Index 0 is the default AND the
+   SERVER-RENDERED one: it is what SEO and a no-motion visitor both read
+   as the true sentence; see .dr-offer-rot/.dr-offer-rot-w in room.css
+   for the CSS-only (no JS timer) mechanism. */
+export const OFFER_ROT_WORDS = [
+  "owner-run businesses.",
+  "flight schools.",
+  "coaches.",
+  "clinics.",
+  "nonprofits.",
+  "contractors.",
+];
+export const OFFER_SAY = OFFER_PREFIX + OFFER_ROT_WORDS[0];
 /* the paragraph is where the DECISION happens (2026-09-18): the three
    promises the visitor is actually weighing, said once, plainly, in the
    order they ask them — how fast, how much, when. 27 words. */
@@ -81,8 +100,26 @@ export function OfferHead() {
           SETTLE (room.css, --cur-driven scale) is the only reveal here,
           on every width. */}
       <span className="t-label dr-offer-kicker">What this is</span>
+      {/* THE ROTATING WORD: index 0 is a plain child alongside the other
+          five inside .dr-offer-rot (display: inline-grid, room.css) — all
+          six share the one grid cell, so the box's width is always the
+          longest word's and the line never reflows as they cycle. Only
+          index 0 is exposed to assistive tech: the other five are the
+          same "true statement" playing dress-up, not five more facts. */}
       <h2 className="dr-offer-say" id="dr-svc-h">
-        {OFFER_SAY}
+        {OFFER_PREFIX}
+        <span className="dr-offer-rot">
+          {OFFER_ROT_WORDS.map((word, i) => (
+            <span
+              key={word}
+              className="dr-offer-rot-w"
+              aria-hidden={i === 0 ? undefined : true}
+              style={{ "--i": i } as CSSProperties}
+            >
+              {word}
+            </span>
+          ))}
+        </span>
       </h2>
       <p className="dr-offer-more">{OFFER_MORE}</p>
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import ServicesSection, { OfferHead } from "@/components/dark/services-section";
 import WorkSection from "@/components/dark/work-section";
@@ -10,6 +10,19 @@ import ObjectionsSection from "@/components/dark/objections-section";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
 import { GOOGLE_REVIEWS, CLIENT_MARKS, TICKER } from "@/lib/proof";
+import { pickGreeting, type Greeting } from "@/lib/greeting";
+
+/* THE DAY LINE'S OWN DEFAULT (page.tsx, not lib/greeting.ts): the door
+   before the visitor's clock has been read at all — the SAME "See your
+   price" → /pricing#estimate the room has always opened with (2026-09-18
+   decision stands). The line itself starts null: the server renders
+   nothing under the h1 (Huge's mechanism read the visitor's OWN day, not
+   the build's), and .dr-hero-day's min-height (room.css) reserves the
+   row so the strip below never jumps once the real line mounts. */
+const DEFAULT_GREETING: Greeting = {
+  line: "",
+  door: { label: "See your price", href: "/pricing#estimate" },
+};
 
 /* The room runs its own two curves — the same two the stylesheet declares,
    registered here so JS and CSS can never drift apart. Nothing in this room
@@ -31,6 +44,28 @@ export default function DarkRoom() {
   /* The frame — tokens, ground, nav, ending, the scroll engine, the
      entrance arm and the ?dark switch — is the layout's
      RoomShell now. This page is the room's own atmosphere and sections. */
+
+  /* THE DAY LINE AND THE RETURN (Huge's, decodes/hugeinc.md §3; the
+     tables and the pickers live in lib/greeting.ts). Client-only, on
+     purpose: rendering the day server-side would be the BUILD's clock,
+     not the visitor's, so the line starts empty and is filled the
+     moment this mounts — one localStorage read, capped at 9 so the
+     counter never becomes a number the copy has no line for. Wrapped in
+     try/catch: a visitor with storage blocked (private mode, a strict
+     cookie policy) still gets the first-visit day line, just every time. */
+  const [greeting, setGreeting] = useState<Greeting>(DEFAULT_GREETING);
+  useEffect(() => {
+    let visits = 1;
+    try {
+      const raw = window.localStorage.getItem("eas:visits");
+      const prev = raw ? parseInt(raw, 10) : 0;
+      visits = Math.min((Number.isFinite(prev) ? prev : 0) + 1, 9);
+      window.localStorage.setItem("eas:visits", String(visits));
+    } catch {
+      /* storage unavailable — the day line still stands, every visit */
+    }
+    setGreeting(pickGreeting(visits, new Date()));
+  }, []);
   /* PARALLAX — the LIGHT only. The mark holds still: it is the object in the
      room, and an object that slides with your cursor stops reading as one.
      Pointer only; on touch there is nothing to answer and the ambient drift
@@ -296,6 +331,14 @@ export default function DarkRoom() {
                 </span>
               </h1>
 
+              {/* THE DAY LINE (2026-09-19, Huge's §3): the room speaking to
+                  the day, then to the return visit, from the SECOND line
+                  down — see lib/greeting.ts for the tables and the
+                  boundary cases, and the effect above for why it starts
+                  empty. min-height in room.css reserves the row so this
+                  mounting never nudges the strip. */}
+              <p className="dr-hero-day">{greeting.line}</p>
+
               {/* THE STRIP — thin, white, between the title and the film,
                   for the small things (Jake, 2026-09-13: "a thin strip
                   as white where some small things are there, like
@@ -359,8 +402,8 @@ export default function DarkRoom() {
                     is about them, costs nothing, and is the thing nobody
                     else has. The call is the nav's persistent action and
                     the close — it is asked for once trust exists. */}
-                <Link href="/pricing#estimate" className="dr-herocta dr-edge t-cta">
-                  See your price
+                <Link href={greeting.door.href} className="dr-herocta dr-edge t-cta">
+                  {greeting.door.label}
                 </Link>
               </div>
 

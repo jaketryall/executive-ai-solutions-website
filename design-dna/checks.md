@@ -240,3 +240,12 @@ All measured live at 1440×736 unless noted; `t = --bp × (--n − 1)`, 9 tiles/
 - A `scripts/reload-screencast.mjs` run against a dev server that has already compiled the route shows the dark hero from its first captured frame (≤20ms) with no frame flashing to a full light page or an inverse (light-hero/dark-page) frame. (A fresh dev server's very first request can serve one stale pre-recompile frame — a compile-cache artifact, re-run once before treating this as a regression.)
 - `.dr-svc-in::before` (the ledger's dark card, §02 · THE LEDGER) still paints in the light room: computed `background-color` `rgb(18,18,20)`, `display: block` — the zone does not touch it.
 - ⚠ NOT COVERED, pre-existing: under `prefers-reduced-motion: reduce` at desktop widths, `.dr-hero-reel`'s own transform already renders a broken off-screen rect (confirmed on the code before this step, via `git stash`) — not a regression this step introduced, and not fixed by it.
+
+## §01 · the day line (2026-09-19)
+- Client-only: the server HTML has no `.dr-hero-day` text; after mount the line reads the day table's text for the Phoenix weekday (mock the clock: Mon → "Monday…", Thu → "Midweek…", Fri → "Friday…", Sun → "Weekend…"); `localStorage eas:visits` increments once per load; visit 2 → "Back again…" with the door "See your price"; visit 3+ → "…twenty minutes" / "…Let's talk." with the door "Book the call" → /contact.
+- The line's left edge = the h1's ink left edge (55 at 1440); the strip's top does not move between the server frame and the hydrated one (±1px).
+
+## §02 · the rotating word (2026-09-19)
+- The server HTML's statement ends "for owner-run businesses."; live, exactly one `.dr-offer-rot-w` is at opacity > .9 at any instant outside a 700ms cross; each holds ≈1250ms; the h2 stays two lines through a whole 11.7s lap at 1440.
+- On white the visible word's colour is the ink and its `::after` is `--accent` (#1ee5ff) spanning the WORD's text box (not the cell); on a dark ground (`.dr-zone-dark`, `?dark`) the word's colour is #1ee5ff and the ::after is display none.
+- Reduced motion: no animation, the first word at opacity 1 with its underline at scale 1.
