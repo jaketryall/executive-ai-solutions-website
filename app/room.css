@@ -622,9 +622,25 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    off — the top is all that shows. Desktop only: the phone's own film
    rules are untouched. */
 @media (min-width: 901px) {
-  [data-v~="full"] .dr-slot { width: 100vw; margin-inline: calc(50% - 50vw); }
-  [data-v~="full"] .dr-dock { --inset: 0px; }
-  .dr-hero-wrap[data-v~="full"] .dr-air { -webkit-mask-image: none; mask-image: none; }
+  /* THE SLIGHTEST GAP (Jake: "can we get the slightest gap in between
+     the edges"): 10px of ground between the film and the screen's edge,
+     each side — the film reads as an object again, not a bleed */
+  .dr-hero-wrap[data-v~="full"] { --film-gap: 10px; }
+  [data-v~="full"] .dr-slot {
+    width: calc(100vw - 2 * var(--film-gap));
+    margin-inline: calc(50% - 50vw + var(--film-gap));
+  }
+  [data-v~="full"] .dr-dock { --inset: var(--film-gap); }
+  /* the glow's sides: the gap's own width to die over, then 70px to
+     come up to full — the top glow falls off toward the two corners */
+  .dr-hero-wrap[data-v~="full"] .dr-air {
+    -webkit-mask-image: linear-gradient(to right,
+      transparent, rgba(0,0,0,.35) var(--film-gap), #000 calc(var(--film-gap) + 70px),
+      #000 calc(100% - var(--film-gap) - 70px), rgba(0,0,0,.35) calc(100% - var(--film-gap)), transparent);
+    mask-image: linear-gradient(to right,
+      transparent, rgba(0,0,0,.35) var(--film-gap), #000 calc(var(--film-gap) + 70px),
+      #000 calc(100% - var(--film-gap) - 70px), rgba(0,0,0,.35) calc(100% - var(--film-gap)), transparent);
+  }
 }
 
 /* `glow` — THE FILM'S OWN LIGHT. A 32x18 canvas (hero-room.tsx draws
