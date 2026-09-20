@@ -740,48 +740,62 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-hero {
   position: relative;
   flex: 1; min-height: 0;
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: flex-start; text-align: center;
+  /* THE WELCOME HERO (2026-09-19): left, not centred — Huge's own hero
+     is a left column of words with the reel parked in the corner, not a
+     centred statement with the film woven into it. The title, the day
+     line and the row all take the column's left edge; the card is
+     absolutely positioned off this box's own bottom-right corner (THE
+     SLOT, below) and does not share the column's width any more — the
+     old "one width for the title and the film" geometry this comment
+     block used to carry retires with it. */
+  display: flex; flex-direction: column; align-items: flex-start;
+  justify-content: flex-start; text-align: left;
   gap: 0;
-  /* ONE WIDTH FOR THE TITLE AND THE FILM. The column is as wide as the
-     measure OR as wide as the height allows, whichever is less: at width
-     W the title stands .92 x W/7.146 = .129W tall and the 2.4:1 card
-     .417W, plus ~.03W between — .575W in all — so the W that fits the
-     space under the nav (less the gutter above the fold) is that space
-     divided by .575. 1440x900: 757 / .575 = 1316 → capped at the 1290
-     measure, title 180px. 1440x736: 593 / .575 = 1031 → title 144px,
-     card 1031 x 430, both the same width, both on screen. The headline
-     is sized in cqw of THIS box, so the title follows automatically. */
-  /* the card FITS, floating: at width W the title stands .129W, the
-     2.6:1 card .385W, ~.02W between — .534W — so W is the space under
-     the nav (less the top pad and the band of ground under the card)
-     over .534. 1440x900: 743 / .534 = 1391 → the measure, title 196,
-     the card's bottom 58px above the fold. 1440x736: 579 / .534 = 1084
-     (75%), title 153, the card 417 tall with 48px of ground under it. */
-  /* THE FULL WIDTH, on every screen. The height no longer sets the
-     column: with the copy off the film, the film needs no height of
-     its own in the first screen — its bottom runs past the fold — so
-     the title is the measure wide everywhere ("everything's too
-     narrow now" is answered by geometry, not by pads). */
   width: 100%;
   container-type: inline-size;
 }
-/* ONE CONDENSED LINE. Archivo at the narrow end of its width axis, 800,
-   uppercase, sized so "DESIGN THAT SELLS" is the width of the measure
-   (see --hero-fs). Ink on the ground; and where it crosses the film a
-   second, WHITE copy of the line sits over it, clipped to the film's
-   box — three numbers page.tsx measures — so the words are white on the
-   picture the way the reference's are, and never invert. */
-/* THE TITLE IS THE FILM'S WIDTH (Jake: "in the reference the title is
-   the same width as video"): the h1 box is the measure, like the card,
-   and the line inside it is set to that width — one number governs
-   both, so they cannot drift. */
+/* THE WORD IS THE TITLE (2026-09-19, THE WELCOME HERO). "Design that
+   sells" and its film-clipped white twin retire — no crossing, no
+   sweep, no shared-width lock with the card, which now lives in the
+   corner (THE SLOT, below). --hero-fs and the whole "one number governs
+   both" geometry that follows in this file were built for the old
+   full-width film and are dead for this element; they are left in place
+   (decisions.md: the strip's own rules stay dead the same way) rather
+   than deleted, since `.t-hero`/`.dr-line--film` are still readable
+   history of how the hero got here and touch no other page. */
 .dr-h1 { margin: 0; position: relative; z-index: 2; width: 100%; }
-/* OPTICAL, not geometric (Jake: "the title isnt perfectly aligned on the
-   left side"): a letter's box carries a side bearing, so a line set to
-   the column's width has its ink ~4px inside each edge at 180px. The
-   size is 14.08cqw so the INK is the column's width, and the line is
-   pulled left by the D's bearing so the ink starts on the film's edge. */
+/* HUGE'S OWN RUNG (decodes/hugeinc.md §3, decisions.md 2026-09-19 THE
+   TYPE SYSTEM OF THE MODEL): 284.8px at 1440, no period, one weight,
+   left on the column. min(28.5vw, 17.8rem) measured against "Welcome":
+   the word is well inside the column's 1330px at every width ≥ 1100,
+   so unlike the old condensed line this never needs a second ceiling. */
+.dr-welcome {
+  font-family: var(--font-archivo);
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: min(28.5vw, 17.8rem);
+  letter-spacing: -0.07em;
+  line-height: .9;
+  text-transform: none;
+  color: #fff;
+  text-align: left;
+  /* OPTICAL, not the spec's first guess: measured live in Chrome
+     (a leftmost-ink-pixel scan of the rendered glyph, PNG, several
+     thresholds) — "W"'s own bearing at this weight/width is only ~3px,
+     far smaller than "D"'s was for the old condensed line, so -0.04em
+     overshot the column's edge by 8-9px. -0.01em lands the ink on 55. */
+  margin: 0 0 0 -0.01em;
+}
+/* THE ENTRANCE (Huge's spring, decisions.md 2026-09-18 THE RISE stays
+   available): a plain translate+fade, not the old two-line masked rise
+   — there is only one copy of the word now, nothing to mask against a
+   film it no longer crosses. Reused by the day line and the row below,
+   staggered 100/120ms apart on the same curve. */
+@keyframes dr-rise-sp { from { opacity: 0; transform: translateY(.35em); } to { opacity: 1; transform: none; } }
+.dr-lit .dr-welcome { animation: dr-rise-sp 900ms var(--ease-reveal) 200ms both; }
+/* ⚠ DEAD BELOW, ON PURPOSE (kept for history, per the strip's own
+   allowance in decisions.md — none of it matches an element on this
+   page any more): the old condensed line's optical alignment, its caps
+   face, and the film-clipped white copy it crossed. */
 .dr-h1 .dr-line { margin-left: -0.041em;   /* the D's bearing, measured: 9px at 196 */
                   /* the line box is overflow:hidden for the rise (vertical);
                      the last S's ink runs past the column's edge by its own
@@ -822,31 +836,99 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    move text to top left"); the door stays lower right, the badge top
    right, so the film's centre is picture */
 
-/* THE DAY LINE (2026-09-19 · Huge's, decodes/hugeinc.md §3: under
-   "Hello." a line for the day, and from the second visit a line for the
-   return — lib/greeting.ts has the tables and the boundary cases, this
-   only sets the face). t-label's family and weight, but SENTENCE CASE —
-   a tracked, uppercase label here would read as a badge over a promise,
-   and the buyer this room is for is an owner, never quipped at.
-   min-height reserves the row (the server renders nothing, page.tsx: the
-   day is the visitor's own clock) so the strip below never jumps once
-   the real line mounts. */
+/* THE BAND (2026-09-19, THE WELCOME HERO, second mid-build change —
+   Jake: "i want to see what the text underneath looks like in a gray
+   box with rounded corners for the bottom left kinda section, it
+   should be a big box"). Two surfaces side by side, `align-items:
+   stretch` so both share ONE height — the card's own, since it is the
+   only one of the two sized by something other than its content (a
+   16:9 aspect-ratio) — and both bottom-aligned together by construction
+   (a flex row with no extra cross-axis space to misalign them in).
+   `margin-top: auto` on a flex-column child pushes it, and everything
+   after it, to the bottom of the column; `margin-bottom: 40px` is the
+   fold gap from THE SLOT's own former absolute `bottom`, moved up here
+   now that the band positions both children at once. */
+.dr-hero-band {
+  --gap: 20px;
+  display: flex; align-items: stretch; gap: var(--gap);
+  width: 100%;
+  margin-top: auto; margin-bottom: 40px;
+}
+/* THE PANEL — content lives on surfaces, never bare on the canvas
+   (Jake's own standing law) — TURNED OFF THE SAME HOUR (third mid-build
+   change: "can we try it no box now but with the text being the same
+   height of the video box"). The LAYOUT survives regardless of the
+   surface: `justify-content: space-between` pins the day line to its
+   top and the door row to its bottom, and `align-items: stretch` on
+   `.dr-hero-band` (above) makes this box exactly THE SLOT's own height
+   — an invisible column the same height as the video, not a box drawn
+   around one. 54% of the column less the gap, so panel + gap + THE
+   SLOT's 46% is exactly 100% — the two meet edge to edge with one gap
+   between them. ONE RULE BRINGS THE SURFACE BACK: restore `background:
+   var(--surface-1)` and a padding (e.g. `clamp(28px, 3vw, 44px)`) —
+   everything else here is unchanged either way. */
+.dr-hero-panel {
+  width: calc(54% - var(--gap));
+  background: none;         /* was var(--surface-1) — the grey card, one edit away */
+  border-radius: var(--radius-frame);
+  padding: 0;                /* was clamp(28px, 3vw, 44px) */
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+/* THE DAY LINE (Huge's, decodes/hugeinc.md §3: under "Hello." a line for
+   the day, and from the second visit a line for the return —
+   lib/greeting.ts has the tables and the boundary cases, this only sets
+   the face). SENTENCE CASE — a tracked, uppercase label here would read
+   as a badge over a promise, and the buyer this room is for is an
+   owner, never quipped at. min-height reserves the row (the server
+   renders nothing, page.tsx: the day is the visitor's own clock) so THE
+   ROW below never jumps once the real line mounts. THE WELCOME HERO
+   (2026-09-19): the second voice at Huge's own 43 rung, white, under
+   the word — see .dr-welcome above for the first. */
 .dr-hero-day {
-  margin: 12px 0 0;
-  min-height: 1.5em;
-  max-width: 62ch;
-  /* .dr-hero is a centred flex column (align-items: center) — the line is
-     a shrink-wrapped item, so text-align alone left it centred as a box;
-     it takes the column's left edge, under the h1's, like Huge's */
-  align-self: flex-start; text-align: left;
+  /* no margin-top: with THE PANEL carrying no padding of its own (the
+     surface was turned off the same hour it was built — see
+     .dr-hero-panel above), the day line's top IS the panel's top IS the
+     card's top, by construction (align-items: stretch); it used to sit
+     bare on the ground under the h1, needing its own offset, and that
+     offset moved to .dr-hero-band's margin-bottom instead. */
+  margin: 0;
+  /* 2 lines, not 1 (measured live: all seven lib/greeting.ts lines wrap
+     to exactly 2 at this size/measure, INSIDE THE PANEL's own padded
+     width too — re-verified after the panel landed) — reserving one
+     line moved the row below by a full line-height the instant the
+     real greeting replaced the empty server frame, and desynced the
+     nav's own sentinel (nav.tsx measures the row's position at mount,
+     before the greeting effect has run). */
+  min-height: 2.1em;
+  max-width: 22ch;   /* readability, not overlap-avoidance — THE PANEL's own box does that now */
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 100, "wght" 600;
-  font-size: var(--fs-body);
-  letter-spacing: .01em;
-  line-height: 1.4;
-  color: var(--ink-3);
-  text-align: left; /* Huge's day line sits on the column's left edge under the h1, never centred */
+  font-size: min(3vw, 2.7rem);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: #fff;
+  text-align: left;
 }
+/* THE ROW (2026-09-19, THE WELCOME HERO) — the door and the return-visit
+   rating, pinned to THE PANEL's own bottom edge by its parent's
+   `justify-content: space-between` (no margin needed here any more).
+   Supersedes THE STRIP (below, left dead per decisions.md's own
+   allowance for retired markup): the strip's marquee was small text
+   this model does not carry, and Huge's hero has no logo band at all. */
+.dr-hero-row {
+  display: flex; align-items: center; gap: var(--fib-3);
+}
+.dr-hero-rating {
+  color: var(--ink-3); text-decoration: none;
+  font-family: var(--font-instrument), sans-serif;
+  font-size: var(--fs-body-s);
+  transition: color var(--t-micro) var(--ease-ui);
+}
+.dr-hero-rating:hover, .dr-hero-rating:focus-visible { color: var(--ink); }
+
+/* ⚠ THE STRIP IS DEAD (2026-09-19, THE WELCOME HERO) — no element on
+   the page carries this class any more; the rules stay, per
+   decisions.md's own note that a retired section's CSS can stay dead. */
 /* THE STRIP — thin and white between the title and the film (Jake:
    "a thin strip as white where some small things are there … just stuff
    that doesn't take up much vertical space" · "the little avatar icons
@@ -958,6 +1040,10 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    built and removed the same day — Jake: "its a cool idea but im not
    sure". The rules are at 5eef8b3 if it comes back. */
 
+/* ⚠ THE CHIP / THE OLD CARD ARE DEAD (2026-09-19, THE WELCOME HERO) —
+   both described the reel woven into or under the title; the reel's
+   rest position is now the CORNER, below, where Huge parks its own
+   showreel. Left for history, per decisions.md's own allowance. */
 /* THE CHIP — the reel's rest position, in the line. 16:9, a little
    taller than the caps so it reads as an object set into the sentence
    rather than a word, on the baseline, square against the line's skew.
@@ -972,26 +1058,24 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    door and the rating; the reel is transformed onto it underneath (the
    dock is z 5, the stage 6). Its own faint surface is there from the
    first paint and goes when the reel has been measured onto it. */
+/* THE SLOT IS THE CORNER (2026-09-19, THE WELCOME HERO, Huge's own
+   showreel placement): 46% of the column (Jake, mid-build: "can we make
+   the video box bigger" — up from 34%), 16:9. SUPERSEDED ITS OWN
+   ABSOLUTE POSITIONING the same day when THE BAND arrived (Jake: "a
+   gray box … big box" for the words) — it is a normal flex item now,
+   the band's `align-items: stretch` and `margin-top: auto` do the
+   bottom-alignment job a `position: absolute; bottom: 40px` used to do
+   alone. `position: relative` stays, for THE TAG below. Still measured
+   the same way by page.tsx (the offset chain resolves to the same page
+   position regardless of static/absolute — offsetParent is about the
+   nearest POSITIONED ANCESTOR, which is still .dr-hero either way). */
 .dr-slot {
-  /* THE REFERENCE'S PROPORTION (Jake: "i want the films proportions to
-     be closer to the reference"): their picture is a LETTERBOX, ~2.6:1,
-     nearly the frame's full width, under the headline with a small gap
-     — it is the pizza cut-out that climbs over the letters, not the
-     picture's rectangle. So: the full measure wide, 2.4:1 (1290 x 537
-     at 1440), pinned to the fold by margin-top: auto, the gap above it
-     whatever the headline leaves. The dock is the same proportion so
-     the grow stays one uniform scale. */
   position: relative; z-index: 1;
-  flex: 0 0 auto; min-height: 0;
-  aspect-ratio: 2.6 / 1; width: 100%;   /* the reference's proportion, measured */
-  margin-top: clamp(16px, 2.6svh, 32px);
-  /* NO PLATE. It was --surface-1 (a pale rectangle in the light room
-     that went black when the poster painted), then for an hour the
-     film's black from the first paint. Now the film's place is the
-     ground until the reel RISES into it (Jake: "video needs cool
-     entrance … like a rise and grow") — the same rule as the title:
-     nothing is shown that later goes away, so nothing flashes. */
-  border-radius: 10px; background: transparent;
+  width: 46%; aspect-ratio: 16 / 9;   /* ≈612×344 at 1440's 1330 column */
+  /* NO PLATE, same law as before: the film's place is the ground until
+     the reel RISES into it (Jake: "video needs cool entrance … like a
+     rise and grow") — nothing is shown that later goes away. */
+  border-radius: var(--radius-frame); background: transparent;
   /* aria-hidden and never filled — but without this it still intercepts
      hit-testing (elementFromPoint, clicks) for whatever sits under its
      box. Harmless until THE CURTAIN (2026-09-19) put the pinned
@@ -999,71 +1083,66 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      but still under this slot's z6. */
   pointer-events: none;
 }
+/* THE TAG — "Recent work", the pill's frost look (THE WORK section's
+   .dr-work-pill) at a smaller scale, top-left inset on the card; it is
+   the card's own object, not the screen's, so it fades out over the
+   first 30% of the grow rather than riding the rail's own zone. */
+.dr-slot-tag {
+  position: absolute; top: 14px; left: 14px; z-index: 2;
+  display: inline-flex; align-items: center;
+  padding: 6px 12px; border-radius: 999px;
+  background: rgba(10, 10, 11, .42);
+  color: #fff;
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: var(--fs-micro); letter-spacing: .04em;
+  pointer-events: none;
+  opacity: calc(1 - var(--p, 0) / .3);
+}
 
-/* THE WORDS LEAVE. No pin — the whole screen scrolls away at scroll's
-   own rate — and the words fade across the first 60% of the reel's
-   grow, so by the time the reel is most of the screen the sentence it
-   came out of is gone. Squared, so the fade holds off while you are
-   still reading. */
-/* NO EARLY FADE (Jake, 2026-09-14: the grow "creates blank empty space
-   of white while we scroll … the stuff above it cant disappear so
-   early"). The words used to be gone by p .18/.22 — 130–160px of scroll
-   — while the reel's top edge was still 200px+ below the rail, so for
-   most of the grow the top of the screen was ground. Now the words
-   leave at scroll's own rate, like Cosmos's, and the reel's top edge
-   follows them up (the vertical travel is eased in — see .dr-dock), so
-   what is above the film is always the strip until the strip is under
-   the rail. Each fades ONLY as it goes under the rail — the pill takes
-   .5s to darken after it sticks at p .2, and a crisp headline half
-   behind a half-dark pill was the ugliest frame of the last pass — so
-   the fade window is the rail's zone: the title from .10 to .33 (its
-   bottom clears the hem at .44), the strip from .46 to .69 (its bottom
-   clears the hem at .65). Measured at 1440x736 in the 0.55vh domain —
-   the same pixels of scroll as before (40–132px, 185–278px). */
-.dr-h1, .dr-rating {
-  opacity: calc(1 - clamp(0, (var(--p, 0) - .10) / .23, 1));
-}
-.dr-strip, .dr-herocta {
-  opacity: calc(1 - clamp(0, (var(--p, 0) - .46) / .23, 1));
-}
+/* THE WORDS LEAVE, NO FADE (2026-09-19, THE WELCOME HERO — the spec's
+   own instruction: "the words leave at scroll's rate with no fade").
+   `.dr-hero-wrap` is a plain in-flow block, not sticky or fixed, so
+   "Welcome", the day line and the row already leave at exactly scroll's
+   own rate with zero extra CSS — the p-tied opacity fades that used to
+   sit here (keyed to the OLD strip clearing the rail's hem, .dr-h1/
+   .dr-rating/.dr-strip/.dr-herocta) are REMOVED, not just retargeted:
+   the card is now independent of the words (it lives in the corner,
+   not behind the rail's own line), so there is no "half-dark pill
+   behind crisp type" frame left to hide. `.dr-rating` was already dead
+   (no element on the page has carried that class since THE STRIP). */
 
 /* ── THE ONE DOOR ────────────────────────────────────────────────
-   The room's pill, centred under the claim. */
-/* the room's own law — the extreme value is the action — inverted for
-   the light room means the DARKEST object on the first screen after the
-   chip: an ink pill with the ground as its label (16:1). One rule, both
-   rooms: in ?dark it is the white pill with black type. */
-/* THE DOOR, inside the strip at its right end (Jake: "put cta inside that
-   bar somehow"): the ink pill, 48px in the 64px strip */
+   THE WELCOME HERO (2026-09-19) · THE ACCENT, LANDO'S WAY (decisions.md
+   2026-09-19): the door is the one bright object on the screen — cyan
+   fill, ink type — not the room's own ink pill any more. 52px, in the
+   row under the day line. */
 .dr-herocta {
-  flex: 0 0 auto; margin-left: auto;
+  flex: 0 0 auto;
   display: inline-flex; align-items: center; border-radius: var(--radius-chrome);
-  padding: 0 24px; height: 48px;
+  padding: 0 24px; height: 52px;
   text-decoration: none; white-space: nowrap;
-  color: var(--void); background: var(--ink);
+  color: #0d0b0a; background: var(--accent);
   --glint-t: 4.5s;
   transition: background var(--t-micro) var(--ease-ui);
 }
-.dr-herocta:hover { background: var(--ink-2); }
+.dr-herocta:hover { background: var(--accent-off); }
 .dr-herocta:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 3px; }
-/* the entrance: the lead, the card, then the door LAST — animate-last is
-   the highest in the hierarchy. `backwards`, never `forwards`, so the
-   calc above owns opacity once the fade ends. */
-/* NOT THERE before the entrances are armed: the calc above puts these at
-   1 at rest, so the server-rendered frame showed the strip fully lit,
-   hydration hid it (the animation's backwards fill), and it faded in
-   again — visible → gone → back (screencast 2026-09-14). */
-.dr-root:not(.dr-lit) .dr-strip, .dr-root:not(.dr-lit) .dr-herocta,
-.dr-root:not(.dr-lit) .dr-hero-day { opacity: 0; }
-/* the strip is the hero's SECOND LINE (leoparpeix §14): it comes in
-   115ms after the title, from the left, on the same curve. Unmasked —
-   a mask would cut its shadow — so a short diagonal rise with the fade. */
-.dr-lit .dr-strip   { animation: dr-strip-in 1s var(--ease-reveal) 415ms backwards; }
-@keyframes dr-strip-in { from { opacity: 0; transform: translate(-5%, 40%); } to { opacity: 1; transform: none; } }
-.dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 720ms backwards; }
-/* the day line rises between the title (300ms) and the strip (415ms) —
-   it is the h1's own second line, read before the strip's proof */
-.dr-lit .dr-hero-day { animation: dr-fadein var(--t-enter) var(--ease-structure) 520ms backwards; }
+/* the entrance: the welcome, then THE PANEL as one object — see the
+   dr-rise-sp keyframes with .dr-welcome, above. `backwards`, never
+   `forwards`, so nothing else has to own opacity once it ends. THE
+   PANEL (2026-09-19, second mid-build change) carries the day line and
+   the row's entrance as a single surface now — Jake: "the panel fades/
+   rises with the day line's timing, as one object" — so .dr-hero-day/
+   .dr-hero-row no longer animate individually; they simply ride their
+   parent's opacity and transform. */
+/* NOT THERE before the entrances are armed: a server-rendered frame
+   showed these fully lit, hydration hid them (the animation's backwards
+   fill), and they faded in again — visible → gone → back (screencast
+   2026-09-14; the fix, not-there-until-lit, still holds). */
+.dr-root:not(.dr-lit) .dr-welcome,
+.dr-root:not(.dr-lit) .dr-hero-panel { opacity: 0; }
+.dr-lit .dr-hero-panel { animation: dr-rise-sp 900ms var(--ease-reveal) 300ms both; }
 
 /* ── THE RATING CARD ─────────────────────────────────────────────
    Lower right, where the reference floats its app card: five stars, the
@@ -1178,23 +1257,42 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 @keyframes dr-wall-wave { to { background-position: 100% 100%; } }
 
 @media (max-width: 900px) {
-  /* stacked, no grow: the meta, the statement, the description, the
-     door, the rating — then the reel as the block after. The stage is
+  /* stacked, no grow: the word, the day line, the row — then the reel
+     as the block after (Huge's phone: no pin, no grow). The stage is
      only as tall as they are; its 100svh minimum is a desktop number. */
   .dr-stage { min-height: 0; }
   .dr-hero { justify-content: flex-start; padding-top: var(--fib-5); }
   .dr-main { padding-bottom: var(--fib-5); }
   .t-hero .dr-line > span { white-space: normal; text-wrap: balance; }
-  /* the row stacks and centres; the slot is only the badge's frame on a
-     phone (the reel is the block after the hero) */
-  /* the strip stacks on a phone: faces + rating, then the marquee */
+  /* THE WELCOME HERO (2026-09-19): "Welcome" fits a phone's width
+     rather than the desktop rung's 17.8rem ceiling; the day line comes
+     down to a reading size; the row goes full width, no cap needed
+     since the card is out of flow entirely below. */
+  /* 6.5rem measured too wide LIVE: "Welcome" at 104px scrollWidth's
+     394.6px against a 342px column at 390 — it ran off the right edge
+     of the screen. Re-measured with a probe span across a range of
+     sizes; 5.5rem (88px) renders 334.6px, inside the column with room. */
+  .dr-welcome { font-size: min(28.5vw, 5.5rem); }
+  /* THE BAND stacks to one column and THE PANEL takes the full column
+     width — THE SLOT is display:none below (unchanged, "today"'s rule),
+     so the row would otherwise carry a 54%-wide panel with nothing
+     beside it. No more fold-anchoring either: .dr-stage's 100svh
+     minimum is a desktop number (.dr-stage{min-height:0} above), so
+     there is no "bottom of the screen" for margin-top:auto to push to
+     here — a plain top gap replaces it. */
+  .dr-hero-band { margin-top: var(--fib-4); margin-bottom: 0; }
+  .dr-hero-panel { width: 100%; }
+  .dr-hero-day { font-size: 22px; max-width: none; }
+  .dr-hero-row { max-width: none; width: 100%; flex-direction: column; align-items: stretch; gap: var(--fib-2); }
+  /* THE STRIP is retired — rules stay dead (decisions.md), noted here too */
   .dr-strip { flex-direction: column; align-items: stretch; border-radius: var(--fib-3);
               padding: var(--fib-3); gap: var(--fib-3); }
   .dr-strip-rating { justify-content: center; }
-  .dr-herocta { margin-left: 0; align-self: center; }
+  .dr-herocta { margin-left: 0; justify-content: center; width: 100%; }
+  .dr-hero-rating { align-self: flex-start; }
   .dr-slot { display: none; }
   .dr-line--film { display: none; }
-  .dr-h1, .dr-strip, .dr-herocta, .dr-hero-day { opacity: 1; }
+  .dr-welcome, .dr-hero-panel { opacity: 1; }
   .dr-sub { font-size: var(--fs-body); }
   /* stacked, the cards run full width, so the mark rides UP into the
      statement's half rather than sitting behind a pane */
@@ -1239,10 +1337,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-key, .dr-key::after,
   .dr-figure, .dr-figure::before, .dr-figure::after { animation: none; }
   .dr-edge::before { animation: none; background-position: 46% 0; }
+  .dr-lit .dr-welcome { opacity: 1; transform: none; animation: none; }
+  .dr-lit .dr-hero-panel { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-herocta { opacity: 1; transform: none; animation: none; }
   .dr-lit .dr-line > span { transform: none; animation: none; }
   .dr-lit .dr-vignette { animation: none; opacity: .8; }
-  .dr-lit .dr-hero-day { opacity: 1; animation: none; }
 }
 /* the witness — small, dim, and after the promise it vouches for */
 .dr-vouch { display: flex; align-items: flex-start; gap: var(--fib-2);
@@ -1330,41 +1429,56 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      grow, then leave.) */
   --gs: var(--p, 0);
 
-  /* ── THE BOX IS WRITTEN IN THE VIEWPORT'S FRAME. Not "scale from the
-     slot to the screen" — that moved every edge about the centre, and
-     whichever way it was eased one edge lagged: the top opened a gap
-     under the rail (245px), or the bottom opened one over the fold
-     (148px at 900). So the two edges are each given their own law, in
-     viewport px, and the scale and translate are DERIVED from them:
-
-       top     follows the strip up at scroll's rate (t0 − grow·p, the
-               slot's top leaving), holds at the rail's hem once it gets
-               there, and from p .5 walks the last 80px to the top edge;
-       bottom  runs from the slot's bottom to the fold, linearly — on a
-               736 screen that is below the fold the whole way, on 900 a
-               12px sliver at rest that closes.
-
-     --t0 (the slot's top), --h (the letterbox's height) and --c0 (the
-     reel's flow centre, page px) are measured by page.tsx. tan∘atan2 is
-     how two lengths divide into a number. */
-  --hem: calc(var(--nav-pad) + 62px);
-  --tt: max(var(--t0, 0px) - var(--grow) * var(--p, 0),
-            min(var(--hem), 2 * var(--hem) * (1 - var(--p, 0))));
-  --bb: calc(var(--t0, 0px) + var(--h, 1px) + (100vh - var(--t0, 0px) - var(--h, 1px)) * var(--p, 0));
+  /* ── THE BOX IS WRITTEN IN THE VIEWPORT'S FRAME. THE WELCOME HERO
+     (2026-09-19) re-derives this so p 0's mask is THE CARD's own rect
+     (a 16:9 box, 34% of the column, bottom-right of .dr-hero) rather
+     than the old full-width 2.6:1 letterbox under the words — and p 1
+     is still the whole viewport, unchanged. Each of the four edges is a
+     PLAIN LINEAR law from its p-0 value (the card's) to its p-1 value
+     (the viewport's): --t0/--w0/--h0 are the card's own top/width/
+     height (page.tsx measures them off .dr-slot, which is now
+     position:absolute so the offset chain still resolves to its true
+     page position). Dropped the old hem-hold clamp on --tt (it existed
+     to keep the growing film from covering the departing STRIP before
+     it cleared the nav rail — a concern that no longer exists now the
+     card sits in the corner, independent of the words): a clamp keyed
+     to the nav's own height cannot promise landing on EXACTLY 0/vw/vh
+     for an arbitrary card rect, and the pass criteria need exactly
+     that. --h (the reel's own natural, untransformed height) and --c0
+     (its flow centre, page px) are still measured off the REEL, not
+     the card — the reel's flow box (the letterbox below the hero) is
+     untouched, so the scale needed to turn it into the card's shape is
+     necessarily non-uniform on both axes, not just one. tan∘atan2 is
+     how two lengths divide into a number without CSS calc()'s ban on
+     dividing a length by a length. */
+  --tt: calc(var(--t0, 0px) * (1 - var(--p, 0)));
+  --bb: calc((var(--t0, 0px) + var(--h0, 1px)) * (1 - var(--p, 0)) + 100vh * var(--p, 0));
   --syg: tan(atan2(var(--bb) - var(--tt), var(--h, 1px)));
   --sy: var(--syg);
-  --sx: calc(1 + (var(--sx1, 1) - 1) * var(--gs));
+  /* the reel's own natural WIDTH, derived from its fixed 2.6:1 shape and
+     the already-measured --h — one new measured px (--w0) is all
+     page.tsx has to add for the horizontal law to match the vertical
+     one exactly */
+  --rw: calc(var(--h, 1px) * 2.6);
+  --sx0: tan(atan2(var(--w0, 1px), var(--rw, 1px)));
+  --sx: calc(var(--sx0, 1) + (var(--sx1, 1) - var(--sx0, 1)) * var(--gs));
   /* the picture's uniform scale: the least that covers the mask on both
-     axes (--hr = letterbox height over 16:9 height, measured) */
+     axes (--hr = letterbox height over 16:9 height, measured). Unchanged
+     in form — it already covers ANY non-uniform mask shape, card or
+     screen, which is why THE GROW'S endpoint at p 1 needed no edits. */
   --k: max(var(--sx), var(--sy) * var(--hr, .69));
-  /* the corners: the chip's 10px at rest, square at full screen; each
-     divided by the axis's scale so the element renders it at exactly
-     that size */
-  --rv: calc(10px * (1 - var(--p, 0)));
+  /* the corners: the CARD's own radius (--radius-frame) at rest, square
+     at full screen; each divided by the axis's scale so the element
+     renders it at exactly that size */
+  --rv: calc(var(--radius-frame) * (1 - var(--p, 0)));
   /* the translate puts the box's centre where the two edges say it is:
      (top + bottom)/2 in the viewport, minus the flow centre's place in
      the viewport (c0 − scroll). Past p 1 every term is constant, so the
-     film keeps the screen's shape and moves with the page. */
+     film keeps the screen's shape and moves with the page. --tx is
+     unchanged in form: translate is specified in the box's OWN,
+     unscaled px and applied about a 50%/50% origin, so a raw centre
+     offset still lands the reel's centre on the card's centre even
+     though the two boxes are no longer the same shape. */
   --tx: calc(var(--dx0, 0px) * (1 - var(--p, 0)));
   --ty: calc((var(--tt) + var(--bb)) / 2 - var(--c0, 0px) + var(--grow) * var(--p, 0));
 }
@@ -1381,7 +1495,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   scale: var(--sx) var(--sy); transform-origin: 50% 50%;
   will-change: transform; pointer-events: none; opacity: 0;
 }
-.dr-hero-wrap[data-ready] .dr-hero-shade { animation: dr-reel-in 900ms var(--ease-structure) 400ms both; }
+.dr-hero-wrap[data-ready] .dr-hero-shade { animation: dr-reel-in 900ms var(--ease-structure) 500ms both; }
 .dr-hero-reel {
   position: relative; z-index: 1;
   width: 100%; aspect-ratio: 2.6 / 1;
@@ -1404,12 +1518,14 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 /* THE RISE AND GROW (Jake, 2026-09-14). Once measured onto the slot the
    reel comes up from 16% below its place at 88% of its size, on the
-   structure curve, opaque by half way — the title's own rise, in the
-   film's register, 100ms behind it. `transform` composes AFTER the
-   scroll's `translate`/`scale`, so the entrance rides on top of the grow
-   math without touching it; the shade takes the same keyframes on the
-   same clock so the shadow rises with the film. */
-.dr-hero-reel[data-ready] { animation: dr-reel-in 900ms var(--ease-structure) 400ms both; }
+   structure curve, opaque by half way. THE WELCOME HERO's own clock
+   (2026-09-19): the card is the LAST of the four objects to arrive —
+   word 200ms, day line 300ms, row 420ms, card 500ms. `transform`
+   composes AFTER the scroll's `translate`/`scale`, so the entrance
+   rides on top of the grow math without touching it; the shade takes
+   the same keyframes on the same clock so the shadow rises with the
+   film. */
+.dr-hero-reel[data-ready] { animation: dr-reel-in 900ms var(--ease-structure) 500ms both; }
 @keyframes dr-reel-in {
   from { opacity: 0; transform: translateY(16%) scale(.88); }
   45%  { opacity: 1; }
@@ -1450,10 +1566,10 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-face, .dr-logos-track { animation: none; }
   .dr-hero-reel { opacity: 1; animation: none; }
   .dr-hero-shade { opacity: 1; animation: none; }
-  /* the engine publishes --hero-p as 1: without these the claim and the
-     row sit at 8% on the first screen with the reel docked below it */
-  .dr-h1, .dr-strip, .dr-herocta, .dr-hero-day { opacity: 1; }
-  .dr-lit .dr-strip, .dr-lit .dr-herocta, .dr-lit .dr-hero-day { animation: none; }
+  /* the engine publishes --hero-p as 1: without these the word and THE
+     PANEL sit at 8% on the first screen with the reel docked below it */
+  .dr-welcome, .dr-hero-panel { opacity: 1; }
+  .dr-lit .dr-welcome, .dr-lit .dr-hero-panel { animation: none; }
 }
 /* ══ §02 · THE OFFER — the statement, and the three things under it ═
    (services-section.tsx has the why). THE HEAD is on the light ground,

@@ -9,7 +9,7 @@ import RunsSection from "@/components/dark/runs-section";
 import ObjectionsSection from "@/components/dark/objections-section";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
-import { GOOGLE_REVIEWS, CLIENT_MARKS, TICKER } from "@/lib/proof";
+import { GOOGLE_REVIEWS } from "@/lib/proof";
 import { pickGreeting, type Greeting } from "@/lib/greeting";
 
 /* THE DAY LINE'S OWN DEFAULT (page.tsx, not lib/greeting.ts): the door
@@ -158,27 +158,29 @@ export default function DarkRoom() {
       };
       const s = box(slot), r = box(reel);
       if (!s.h || !r.h) return;
-      /* the headline's white copy is clipped to the film's box */
-      const h1 = document.querySelector<HTMLElement>(".dr-h1");
-      if (h1) {
-        const hb = box(h1);
-        h1.style.setProperty("--cross-top", `${Math.max(0, s.y - hb.y)}px`);
-        h1.style.setProperty("--cross-left", `${Math.max(0, s.x - hb.x)}px`);
-        h1.style.setProperty("--cross-right", `${Math.max(0, hb.x + hb.w - (s.x + s.w))}px`);
-      }
+      /* THE WELCOME HERO (2026-09-19): the film-clipped second copy of
+         the headline retired with it — "Welcome" never crosses the card,
+         which now sits in the corner, so the --cross-* box measurement
+         is gone. */
       /* on the DOCK, so the reel and its shade both inherit the same numbers.
-         Three frames (see THE GROW in room.css): the slot at p 0 — the reel
-         and the slot are the same column box now, so this is a translate
-         — the viewport at p 1, which is 0.9vh of scroll down, and home. */
+         Three frames (see THE GROW in room.css): the CARD at p 0 — a
+         different shape from the reel's own flow box now, so both a
+         scale and a translate are needed, not a translate alone — the
+         viewport at p 1, same as before. --w0/--h0 are the card's own
+         box, the two numbers THE GROW's rewritten edge laws need that
+         the old translate-only version never had to measure. */
       const dock = reel.closest<HTMLElement>(".dr-dock") ?? reel;
       const vw = document.documentElement.clientWidth;
       dock.style.setProperty("--dx0", `${s.x + s.w / 2 - (r.x + r.w / 2)}px`);
       /* THE BOX IS WRITTEN IN THE VIEWPORT'S FRAME (room.css, .dr-dock):
-         the slot's top and the letterbox's height give the two edges'
-         laws, the reel's flow centre is what the translate is measured
-         from, --sx1 is the mask's full width, --hr the letterbox over
-         the 16:9 picture so the picture's scale can be derived */
+         the card's top/width/height and the letterbox's height give the
+         edges' laws, the reel's flow centre is what the translate is
+         measured from, --sx1 is the mask's full width, --hr the
+         letterbox over the 16:9 picture so the picture's scale can be
+         derived */
       dock.style.setProperty("--t0", `${s.y}px`);
+      dock.style.setProperty("--w0", `${s.w}px`);
+      dock.style.setProperty("--h0", `${s.h}px`);
       dock.style.setProperty("--h", `${r.h}px`);
       dock.style.setProperty("--c0", `${r.y + r.h / 2}px`);
       dock.style.setProperty("--sx1", String(vw / r.w));
@@ -301,118 +303,73 @@ export default function DarkRoom() {
         <div className="dr-stage">
           <main className="dr-main wrap">
             <div className="dr-hero">
-              {/* ONE LINE, condensed, uppercase, the width of the measure —
-                  the Hyperactive shot's DISCOVER THE TASTE. The second
-                  half of the statement moves onto the card as its
-                  heading (their PIZZA WITH URBAN FLAIR). ⚠ THE
-                  POSITIONING LINE still holds: design first, systems
-                  second, ads not in the statement. It crosses the film's
-                  top edge, and is white where it does — see the second
-                  copy below. */}
-              {/* ONE READING. The hover swap (leoparpeix's bee, a second
-                  line rising through the same mask) was built and taken
-                  off the same day — Jake: "its a cool idea but im not
-                  sure". Recoverable at 5eef8b3. The rise itself stays. */}
-              <h1 className="t-hero dr-h1">
-                <span className="dr-line">
-                  <span className="sweep dr-read">Design that sells</span>
-                </span>
-                {/* THE SAME LINE, WHITE, CLIPPED TO THE FILM. Where the
-                    headline crosses the film's box this copy shows and
-                    the ink one is under it; everywhere else it is
-                    clipped away. The clip is three measured numbers
-                    (page.tsx measure(): the film box against the
-                    headline box), static at rest, so nothing re-rasters.
-                    Not a blend mode: `difference` inverts on a bright
-                    frame of film, and the reference never inverts —
-                    the words are white on the picture, full stop. */}
-                <span className="dr-line dr-line--film" aria-hidden>
-                  <span className="dr-read">Design that sells</span>
-                </span>
-              </h1>
+              {/* THE WELCOME HERO (2026-09-19, decisions.md: Jake —
+                  "instead of saying hello can we say welcome and then
+                  have the text somehow be the focus and the video
+                  somewhere … focused on the intro experience" · "no
+                  period" · "we can try it"). Huge's own hero
+                  (decodes/hugeinc.md §3): "Welcome" at the 285 rung is
+                  now the whole first line — no crossing film, no second
+                  clipped copy, no sweep. The film moves to the corner
+                  (THE SLOT, below) and grows from there on the first
+                  scroll. TRIAL: on hero/welcome only, never
+                  redesign/room. */}
+              <h1 className="dr-h1 dr-welcome">Welcome</h1>
 
-              {/* THE DAY LINE (2026-09-19, Huge's §3): the room speaking to
-                  the day, then to the return visit, from the SECOND line
-                  down — see lib/greeting.ts for the tables and the
-                  boundary cases, and the effect above for why it starts
-                  empty. min-height in room.css reserves the row so this
-                  mounting never nudges the strip. */}
-              <p className="dr-hero-day">{greeting.line}</p>
+              {/* THE BAND (Jake, mid-build: "i want to see what the text
+                  underneath looks like in a gray box with rounded
+                  corners for the bottom left kinda section, it should be
+                  a big box"). Two surfaces side by side, same height,
+                  both bottom-aligned to the fold − 40 — the PANEL (the
+                  words, on their own grey surface: content lives on
+                  surfaces, never bare on the canvas) and THE CARD (the
+                  film, unchanged in kind). The card sets the row's
+                  height by its own 16:9 aspect; the panel stretches to
+                  match it. */}
+              <div className="dr-hero-band">
+                <div className="dr-hero-panel">
+                  {/* THE DAY LINE (Huge's §3): the room speaking to the
+                      day, then to the return visit — see lib/greeting.ts
+                      for the tables and the boundary cases, and the
+                      effect above for why it starts empty. */}
+                  <p className="dr-hero-day">{greeting.line}</p>
 
-              {/* THE STRIP — thin, white, between the title and the film,
-                  for the small things (Jake, 2026-09-13: "a thin strip
-                  as white where some small things are there, like
-                  reviews with the little half circle things on far left,
-                  just stuff that doesn't take up much vertical space" …
-                  "the little avatar icons on left that rotate, that are
-                  images of real people, and to the right of that an
-                  infinite logo marquee"). Left: the faces, rotating, and
-                  the rating. Middle: the clients' marquee. Right: the one
-                  door. The panel that held the description is at def30b4
-                  if wanted back. ⚠ The faces are initials until Jake
-                  clears real photographs; the marquee is wordmarks until
-                  the logo files exist. */}
-              <div className="dr-strip">
-                {GOOGLE_REVIEWS.count > 0 && (
-                  <a
-                    className="dr-strip-rating"
-                    href={GOOGLE_REVIEWS.url || undefined}
-                    target={GOOGLE_REVIEWS.url ? "_blank" : undefined}
-                    rel={GOOGLE_REVIEWS.url ? "noopener noreferrer" : undefined}
-                    aria-label={`Rated ${GOOGLE_REVIEWS.rating.toFixed(1)} on Google from ${GOOGLE_REVIEWS.count} reviews`}
-                  >
-                    {/* the businesses the rating comes from, rotating: a
-                        mark where the file exists, initials until then */}
-                    <span className="dr-faces" aria-hidden>
-                      {CLIENT_MARKS.map((c) => (
-                        <span className="dr-face" key={c.initials} title={c.name}>
-                          {c.src ? <img src={c.src} alt="" /> : c.initials}
-                        </span>
-                      ))}
-                    </span>
-                    <span className="dr-strip-l">
-                      <b>{GOOGLE_REVIEWS.rating.toFixed(1)} on Google</b>
-                      <span>{GOOGLE_REVIEWS.count} client reviews</span>
-                    </span>
-                  </a>
-                )}
-
-                {/* THE TICKER, to the right of the marks (Jake: "instead
-                    of companies … the services in infinite marquee"):
-                    what is sold and the real things inside it, running.
-                    Two sets, the track travels one; the second is
-                    decoration. */}
-                <div className="dr-logos" aria-label="What we build">
-                  <div className="dr-logos-track">
-                    {[0, 1].map((i) => (
-                      <div className="dr-logos-set" key={i} aria-hidden={i === 1}>
-                        {TICKER.map((c) => (
-                          <span key={c}>{c}</span>
-                        ))}
-                      </div>
-                    ))}
+                  {/* THE ROW — the door and the rating, pinned to the
+                      panel's own bottom (THE STRIP retires: the marquee
+                      was small text this model does not have, and the
+                      businesses' marks go for now — noted in
+                      decisions.md). */}
+                  <div className="dr-hero-row">
+                    {/* IT OPENS THE ESTIMATOR, not the call (2026-09-18):
+                        for a cold ad visitor a call is a big ask on our
+                        schedule; a price in sixty seconds is about them.
+                        The call is the nav's persistent action and the
+                        close. */}
+                    <Link href={greeting.door.href} className="dr-herocta dr-edge t-cta">
+                      {greeting.door.label}
+                    </Link>
+                    {GOOGLE_REVIEWS.count > 0 && (
+                      <a
+                        className="dr-hero-rating"
+                        href={GOOGLE_REVIEWS.url || undefined}
+                        target={GOOGLE_REVIEWS.url ? "_blank" : undefined}
+                        rel={GOOGLE_REVIEWS.url ? "noopener noreferrer" : undefined}
+                      >
+                        {GOOGLE_REVIEWS.rating.toFixed(1)} on Google · {GOOGLE_REVIEWS.count} client reviews
+                      </a>
+                    )}
                   </div>
                 </div>
 
-
-                {/* THE DOOR, inside the strip at its right end (Jake: "put
-                    cta inside that bar somehow"). IT OPENS THE ESTIMATOR,
-                    not the call (2026-09-18): for a cold ad visitor a call
-                    is a big ask on our schedule; a price in sixty seconds
-                    is about them, costs nothing, and is the thing nobody
-                    else has. The call is the nav's persistent action and
-                    the close — it is asked for once trust exists. */}
-                <Link href={greeting.door.href} className="dr-herocta dr-edge t-cta">
-                  {greeting.door.label}
-                </Link>
+                {/* THE CARD — the reel's rest position, Huge's own corner
+                    (where they park their showreel): a 16:9 object,
+                    playing, tagged "Recent work". It grows on the first
+                    scroll from here to the whole screen — see THE GROW
+                    in room.css. */}
+                <div className="dr-slot" aria-hidden>
+                  <span className="dr-slot-tag">Recent work</span>
+                </div>
               </div>
-
-              {/* THE CARD — the reel's rest position: full width, its top
-                  in the first screen and its bottom past the fold, the way
-                  Cosmos's video sits low. Undimmed from the first frame;
-                  nothing on it. The reel lives in the dock and is measured
-                  onto this box. */}
-              <div className="dr-slot" aria-hidden />
             </div>
           </main>
         </div>

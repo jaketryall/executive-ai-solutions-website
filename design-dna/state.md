@@ -5,6 +5,23 @@ the step it's at, the last commit that landed, and what's awaiting whom
 (Jake's review, a rebuild, a dial). Read this FIRST, before decisions.md
 or checks.md — it tells you where the crew left off.
 
+## / (branch `hero/welcome` — TRIAL BRANCH, do not merge without Jake's review)
+
+- §01 hero — THE WELCOME HERO (2026-09-19). "Welcome" at Huge's 285 rung,
+  left on the column; below it a two-box band, same height, bottom-aligned
+  to the fold − 40 — THE PANEL (day line + door row, currently NO visible
+  surface — a grey card was built then turned off the same hour, one CSS
+  declaration restores it) and THE CARD (the film, 46% of the column,
+  16:9, grew from an original 34% mid-build) that grows on the first
+  scroll to fill the screen, unchanged mechanism from the shipped hero.
+  THE STRIP, the condensed-caps title and the film-clipped second copy
+  all retire on this branch only. OPEN, reported not fixed: at the film's
+  full-screen frame (0.55vh) ~291px of the panel's words have not yet
+  scrolled clear and render over the film (decisions.md has the numbers).
+  Built and verified at 390/1440×736/1440×900, tsc clean, 0 console
+  errors — NOT YET SHOWN to Jake past this session's own screenshots.
+  Never merge into redesign/room without his look.
+
 ## /dark (branch `redesign/dark-room`)
 
 §01–§06 were built BEFORE the crew existed — there is no `brief.md` or

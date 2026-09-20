@@ -48,17 +48,18 @@ export function RoomNav() {
       setGround("light");
       return;
     }
-    /* THE SENTINEL ENDS WHERE THE STRIP ENDS (Jake, 2026-09-18: "i dont
-       think the nav bar should come in with its animation until after the
-       bar in the hero has disappeared"). The strip fades out by p .69 of
-       the grow and its box leaves the top of the screen a beat later; the
-       sentinel is sized to that box's bottom edge, through the offset
-       chain (transforms ignored, same as the hero's own measure), so the
-       rail's pill, lit edge and action arrive only once the hero's white
-       bar is gone — on every viewport, the phone included, where the
-       strip does not fade but simply scrolls off. The 19.8svh in the
-       stylesheet is the no-JS fallback. */
-    const strip = document.querySelector<HTMLElement>(".dr-strip");
+    /* THE SENTINEL ENDS WHERE THE DOOR'S ROW ENDS (Jake, 2026-09-18: "i
+       dont think the nav bar should come in with its animation until
+       after the bar in the hero has disappeared" — THE WELCOME HERO,
+       2026-09-19, retires the strip that row used to mean: the words
+       leave with no fade now, so the sentinel just has to wait for the
+       row itself to scroll off). The sentinel is sized to .dr-hero-row's
+       bottom edge, through the offset chain (transforms ignored, same as
+       the hero's own measure), so the rail's pill, lit edge and action
+       arrive only once the hero's words have cleared the top of the
+       screen — on every viewport, the phone included. The 19.8svh in
+       the stylesheet is the no-JS fallback. */
+    const row = document.querySelector<HTMLElement>(".dr-hero-row");
     const wrap = top.offsetParent as HTMLElement | null;
     const docY = (el: HTMLElement) => {
       let y = 0;
@@ -66,11 +67,11 @@ export function RoomNav() {
       return y;
     };
     const fit = () => {
-      if (!strip || !wrap) return;
-      top.style.height = `${docY(strip) + strip.offsetHeight - docY(wrap)}px`;
+      if (!row || !wrap) return;
+      top.style.height = `${docY(row) + row.offsetHeight - docY(wrap)}px`;
     };
     fit();
-    const ro = strip && wrap ? new ResizeObserver(fit) : null;
+    const ro = row && wrap ? new ResizeObserver(fit) : null;
     ro?.observe(wrap!);
     const io = new IntersectionObserver(([e]) => setStuck(!e.isIntersecting), {
       threshold: 0,
