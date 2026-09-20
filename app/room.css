@@ -762,17 +762,16 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
     position: relative; z-index: 6;
     margin-top: -38svh;
   }
+  /* NOT A CARD (Jake, seeing the first cut: "i dont like ... how the
+     section is a card" / "you did this i dont know why"): the frosted
+     white is the PAGE's own top edge — full bleed, square, no inset —
+     the film simply slides under the page and dissolves into it. And
+     no black band under the film here: the glass IS the transition. */
+  .dr-hero-wrap[data-v~="glass"] { --after: 0px; }
   .dr-hero-wrap[data-v~="glass"] + .dr-say-stage .dr-say-pin .dr-offer-head {
     background: rgba(255, 255, 255, .72);
     backdrop-filter: blur(28px) saturate(120%);
-   
-    border-radius: var(--radius-panel) var(--radius-panel) 0 0;
-    /* the head is a .wrap (column width); its padding is the column's
-       own inset so the words stay on the column while the glass runs
-       gutter to gutter */
-    max-width: none; width: calc(100% - 2 * var(--film-gap, 10px));
-    margin-inline: auto;
-    padding-inline: calc(var(--col-inset) - var(--film-gap, 10px));
+    max-width: none; width: 100%;
   }
   /* the white page picks up right under the glass, no seam */
   .dr-hero-wrap[data-v~="glass"] + .dr-say-stage { background: transparent; }
