@@ -11,16 +11,6 @@ import { gsap, reducedMotion } from "@/components/anim/ease";
 import { GOOGLE_REVIEWS } from "@/lib/proof";
 import { pickGreeting, type Greeting } from "@/lib/greeting";
 
-/* THE META ROW's col 1 (danielsnows shape, TRIAL B — hero/snows): the
-   greeting splits at its own first period into the day word ("Weekend.")
-   and the rest ("Book the call now, we reply Monday morning.") — same
-   split for the return-visit lines (lib/greeting.ts). Pure, so it is
-   trivial to verify against the day tables directly. */
-function splitGreeting(line: string): [string, string] {
-  const i = line.indexOf(".");
-  if (i === -1) return [line, ""];
-  return [line.slice(0, i + 1), line.slice(i + 1).trim()];
-}
 
 /* THE DAY LINE'S OWN DEFAULT (page.tsx, not lib/greeting.ts): the door
    before the visitor's clock has been read at all — the SAME "See your
@@ -77,7 +67,6 @@ export default function DarkRoom() {
     }
     setGreeting(pickGreeting(visits, new Date()));
   }, []);
-  const [dayWord, dayRest] = splitGreeting(greeting.line);
 
   /* THE WORD IS THE SCREEN (2026-09-19, TRIAL B — hero/snows,
      danielsnows.framer.website: "SNOWS" set to the full width of the
@@ -421,30 +410,16 @@ export default function DarkRoom() {
                   anchors the row's height before col 1's async day line
                   has mounted — no reserved min-height needed, no shift
                   when it pops in. */}
-              <div className="dr-meta">
-                <div className="dr-meta-col">
-                  <span className="t-label dr-meta-l1">{dayWord}</span>
-                  <span className="t-meta">{dayRest}</span>
-                </div>
-                <div className="dr-meta-col dr-meta-col--rating">
-                  {GOOGLE_REVIEWS.count > 0 && (
-                    <a
-                      className="dr-meta-link"
-                      href={GOOGLE_REVIEWS.url || undefined}
-                      target={GOOGLE_REVIEWS.url ? "_blank" : undefined}
-                      rel={GOOGLE_REVIEWS.url ? "noopener noreferrer" : undefined}
-                      aria-label={`Rated ${GOOGLE_REVIEWS.rating.toFixed(1)} on Google from ${GOOGLE_REVIEWS.count} reviews`}
-                    >
-                      <span className="t-label dr-meta-l1">{GOOGLE_REVIEWS.rating.toFixed(1)} on Google</span>
-                      <span className="t-meta">{GOOGLE_REVIEWS.count} client reviews</span>
-                    </a>
-                  )}
-                </div>
-                <div className="dr-meta-col dr-meta-col--services">
-                  <span className="t-label dr-meta-l1">Websites · Automation · Ads</span>
-                  <span className="t-meta">For owner-run businesses</span>
-                </div>
-              </div>
+              {/* THE SECOND VOICE (Jake, on trial B's meta row: "i dont like
+                  the area under the welcome" — three columns of 12px labels
+                  between two giant things was the smallest text on the
+                  page). Huge's hero exactly: the one word, then the day
+                  line at the 43 rung, white, left, ONE line — nothing else
+                  in the hero. The rating and the three services leave the
+                  first screen (the nav carries the action; the rating
+                  returns where proof lives). The row's element name stays
+                  so the nav's sentinel and the fades keep their hook. */}
+              <p className="dr-meta dr-hero-day">{greeting.line}</p>
 
               {/* THE CARD — the reel's rest position: full width, its top
                   in the first screen and its bottom past the fold, the way

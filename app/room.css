@@ -855,12 +855,26 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    is what anchors the row's height while col 1's async day line is
    still empty, so no min-height hack is needed. THE DOOR LEFT WITH THE
    STRIP: the nav's persistent action is the only door in the hero now. */
+/* THE DAY LINE AT THE 43 RUNG (Jake: the three-column row under the
+   word was "the area under the welcome" he did not like — the smallest
+   text on the page between two giant things). Huge's: 43.25px/600, white,
+   left, one line. The .dr-meta name stays for the nav's sentinel and
+   the fades; the grid is gone. */
 .dr-meta {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-  width: 100%; margin-top: clamp(18px, 3svh, 32px);
-  padding-block: 12px; border-block: 1px solid var(--edge);
-  align-items: center;
+  display: block; width: 100%; margin: clamp(16px, 2.8svh, 30px) 0 0;
+  /* .dr-hero centres its items (align-items: center) and the line is
+     capped at 26ch, so it sat at x 397; it takes the column's left edge
+     under the W, like the word */
+  align-self: flex-start;
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 600; font-weight: 600;
+  font-size: min(3vw, 2.7rem); letter-spacing: -0.03em; line-height: 1.05;
+  color: #fff; text-align: left; min-height: 1.05em;
+  /* ONE line: the longest greeting is 52 characters ≈ 1000px at 43px on
+     the 1330 column; a 26ch cap wrapped it onto the film's top edge */
+  max-width: none; white-space: nowrap;
 }
+@media (max-width: 1180px) { .dr-meta { white-space: normal; } }
 .dr-meta-col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .dr-meta-col--rating { align-items: center; text-align: center; }
 .dr-meta-col--services { align-items: flex-end; text-align: right; }
@@ -1227,7 +1241,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   /* THE META ROW STACKS (2026-09-19, TRIAL B): three columns → one,
      left-aligned, 12px between the stacked groups (danielsnows' own
      columns don't survive a phone width any better than the strip did). */
-  .dr-meta { grid-template-columns: 1fr; gap: 12px; padding-block: 12px; }
+  .dr-meta { font-size: clamp(1.15rem, 5.6vw, 1.6rem); max-width: none; }
   .dr-meta-col, .dr-meta-col--rating, .dr-meta-col--services {
     align-items: flex-start; text-align: left;
   }
