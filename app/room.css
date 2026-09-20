@@ -555,11 +555,13 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
      the two gutters beside the film catch a little of it too (Jake:
      "dont forget the left and right of video slightly") — measured
      22 luminance in the gutter against 11 void, 59 at the top edge */
+  /* softened (Jake: "a bit too much, it should be slight") — the lamp
+     at .15, the wash at .035: top edge 42, door 33, gutters 17–18 */
   background:
     radial-gradient(35% 50% at 50% 50%,
-      rgba(255,255,255,.26), rgba(255,255,255,.10) 50%, transparent 72%),
+      rgba(255,255,255,.15), rgba(255,255,255,.06) 50%, transparent 72%),
     radial-gradient(80% 45% at 50% 50%,
-      rgba(255,255,255,.07), rgba(255,255,255,.05) 60%, transparent 92%);
+      rgba(255,255,255,.035), rgba(255,255,255,.025) 60%, transparent 92%);
   animation: dr-drift-b 37s ease-in-out infinite alternate;
 }
 
