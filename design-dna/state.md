@@ -311,3 +311,26 @@ bee). Links to /work; hidden on the phone. Verified at 1440×736,
 line/door positions byte-identical to before this step, frame probe
 max 10.2ms/0 slow. Frame: `design-dna/frames/snows-mark.jpg` (at rest).
 Awaiting Jake's look, same as the rest of trial B.
+
+§02 · THE STATEMENT IN THE MODEL'S FORM (2026-09-20): the section after
+the film matches Huge's own reference now — sentence case, one weight,
+LEFT on the column, `min(8.2vw, 7.4rem)` (118.08px at 1440, three lines
+for our 52-character sentence, matching Huge's own 36-character/146px
+block height); the rotating word and its cyan underline are unchanged
+in mechanism. One sentence under it at the 43 rung, left — "Built by
+the person you talk to — a fixed quote in two days, a price that never
+moves." — the old three-sentence 15px paragraph is gone. THE EYEBROW
+("What this is") is deleted, mid-step (Jake: "i want eyebrow gone in
+section after video") — `.dr-offer-kicker` no longer exists in the
+markup or the CSS. THE SETTLE is also gone, mid-step (Jake: "i dont
+like the shrinking of that title either") — `.dr-offer-say` no longer
+scales on `--cur`; the words are still, only the film moves. The
+curtain (the pin, `--pre`, `--say-hold`) is otherwise untouched.
+Verified at 1280×800/1440×736/2560/390×844: tsc clean, 0 console
+errors, no overflow, frame probe max 9.7ms/0 slow >34ms. Frame:
+`design-dna/frames/statement-v2.jpg` (at the curtain's fully-uncovered
+frame — NOTE: this branch's own grow measure (552px at 1440×736, per
+the 2026-09-19 "THE FILM SITS LOWER" entry) has moved the curtain's
+fully-uncovered scroll position to ≈1.75vh; the pre-existing checks.md
+labels of "1.55vh" for that state are stale by that same drift, not by
+this step — flagged, not fixed here). Awaiting Jake's look.
