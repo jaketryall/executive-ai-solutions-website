@@ -458,3 +458,62 @@ errors at 390/1280/1440/2560/900. Frames: `design-dna/frames/greet-
 rest.jpg`, `greet-390.jpg`. NOT YET REVIEWED by Jake in this final
 shape — this state line and its decisions.md/checks.md entries live on
 this branch only.
+
+## 2026-09-20 · WHERE THE PAGE STANDS (written at the compaction)
+
+THE MODEL is hugeinc.com (decodes/hugeinc.md): white page, black hero, one
+family/one weight/sentence case at 285/146/57/43/19, big-few-visual-led
+(≤200 words; ours were 473), the accent electric cyan #1ee5ff used Lando's
+way (letters only on dark; a surface — the door, an underline — on white).
+`redesign/room` = `1dc2de1`. Branches hero/welcome (A), hero/snows (B),
+hero/greeting (C, merged) are pushed and kept for the record.
+
+SHIPPED, top to bottom:
+- §01 THE HERO (C): the PERSONAL MESSAGE is the title, centred, two lines
+  at the 118 rung — "We build the site. You get on with the business."
+  (1st visit) · "Back so soon. We like you already." · "Third time? We
+  should start charging you rent." · "You again. Don't you have a
+  business to run?" (4th+, wording still Jake's to tweak) — then the
+  cyan door (See your price / Book the call from the 3rd visit), then
+  the film at the original proportion (~300px in the first screen), the
+  grow (= the slot's top, measured), the curtain. Days are OUT (table
+  empty). lib/greeting.ts, components/dark/hero-room.tsx (the page is a
+  server component handing `initialGreeting`; the client re-picks on
+  the visitor's clock and crossfades the title from the 2nd visit).
+  Dead in code, noted: the strip, the card/tile/mark band, the welcome
+  word measure, the intro (stashed).
+- THE ROOM: light page, the hero a dark zone to the film's frozen
+  bottom; the nav flips dark→light chrome as the film passes its hem.
+- §02 THE STATEMENT: sentence case, left, 118 in three lines, the
+  rotating audience word (ink + cyan underline on white), one sentence
+  at 43 under it, no eyebrow, no settle; uncovered by the film (the
+  curtain, pin for the uncover only).
+- §02 THE LEDGER: three rows ≥62vh, shot alternating sides, three
+  deliverable lines + a pull quote (to be CUT per the text law).
+- §03 THE WORK: one sticky rail, leoparpeix's physics on scroll (the
+  engine's --force, the two picture parallaxes, the depth squash), a
+  stepped map (dwell .03 / slide .94, half ease-out), Lenis snap
+  landing, Live ↗ links.
+- Voices · process · objections · close: untouched; process + objections
+  are to LEAVE the homepage (decided, not done).
+
+NEXT (in the convergence order, decisions 2026-09-19 THE CONVERGENCE):
+1. The cuts: process + objections off the homepage; the ledger's
+   deliverable lines and the pull quote out; the rail's info row down to
+   number · name · Live.
+2. The rail in Huge's form (wide cards, name + one line on the card, 1:1,
+   the end hold) — or keep ours; Jake to say.
+3. The ledger as three cards at 146 with cyan numerals on a dark card.
+4. "Built by the person you talk to." at 146 — the about beat (needs the
+   photo).
+5. The close at the 249 rung.
+6. PERSONALISATION PAGE-WIDE (Jake: "maybe we can add personalization
+   throughout the site too … it sets the tone in the hero"): the persona
+   table for the first-visit title (?i=/?svc=: e.g. aviation → "We build
+   websites for people who'd rather be flying"), the rail leading with
+   the case they opened, the ledger leading with the service the ad
+   named, the close in the conversion voice. Designed, not built.
+
+STILL OWED BY JAKE: a photograph for the about beat; the real Google
+rating/count/link; real names on the quotes (or cut them); NEXT_START if
+the capacity line is to show; the 4th-visit line's final wording.
