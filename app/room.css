@@ -429,6 +429,24 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    properties only inherit downward, and .dr-dock is a descendant of
    this wrapper, not an ancestor) — RE-MEASURE BOTH TOGETHER if --grow
    ever changes there. */
+/* ANY DARK ZONE (2026-09-20 — the work goes dark, Jake: "we need the
+   background flip to dark before work section", Huge's own cut at "Our
+   work."): the hero's token list, now on the bare class so a second
+   wrapper can be a dark zone too. The nav (components/room/nav.tsx)
+   reads these zones' rects to flip its own chrome. */
+.dr-zone-dark {
+  --void: #0b0b0b;
+  --surface-1: #121214;
+  --surface-2: #171719;
+  --surface-3: #202024;
+  --ink: #ffffff;
+  --ink-2: #d4d4d8;
+  --ink-3: #949498;
+  --ink-4: #8a8a8e;
+  --edge: #565759;
+  --edge-strong: #6e7075;
+}
+.dr-work-zone { background: var(--void); padding-bottom: clamp(72px, 12svh, 150px); }
 .dr-hero-wrap.dr-zone-dark {
   /* the same list .dr-root.dr-light .dr-svc re-declares (below), plus
      the ground and its surfaces: the rail (components/room/nav.tsx)

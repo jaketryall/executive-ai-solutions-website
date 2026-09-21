@@ -917,7 +917,12 @@ export default function DarkRoom({
       {/* §02b · the paragraph and the in-page nav (services-section.tsx) */}
       <OfferMore />
 
-      <WorkSection />
+      {/* §03 ON THE VOID (2026-09-20 — Jake: "we need the background flip
+          to dark before work section"; Huge's page goes dark at "Our
+          work."): a second dark zone, the same tokens as the hero's. */}
+      <div className="dr-zone-dark dr-work-zone">
+        <WorkSection />
+      </div>
       <VoicesSection />
 
       {/* ══ THE FLIP ══════════════════════════════════════════════════

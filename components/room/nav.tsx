@@ -153,7 +153,14 @@ export function RoomNav() {
         return;
       }
       const hem = rail.getBoundingClientRect().bottom;
-      setGround(groundEnd.getBoundingClientRect().top < hem ? "light" : "dark");
+      /* past the hero's ground, the rail is over the light page — unless
+         its hem is inside another dark zone (the work, 2026-09-20): any
+         .dr-work-zone whose box spans the hem reads dark too */
+      const inZone = [...document.querySelectorAll<HTMLElement>(".dr-work-zone")].some((z) => {
+        const r = z.getBoundingClientRect();
+        return r.top < hem && r.bottom > hem;
+      });
+      setGround(groundEnd.getBoundingClientRect().top < hem && !inZone ? "light" : "dark");
     };
     const onScroll = () => {
       if (frame) return;
