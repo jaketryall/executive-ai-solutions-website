@@ -969,9 +969,22 @@ export default function DarkRoom({
               poster="/dark/reel-film-poster.jpg"
               preload="auto"
               aria-label="Recent Executive AI Solutions client work"
-              onLoadedData={(e) => e.currentTarget.parentElement?.setAttribute("data-film", "")}
+              /* data-film = A FRAME HAS BEEN PRESENTED (2026-09-21, second
+                 pass — Jake: "no before the video animated in there is
+                 black"): loadeddata fires with a frame DECODED, but the
+                 first seek (the #t start) can still leave the element
+                 painting black while the reel is already fading in.
+                 requestVideoFrameCallback fires only when a frame has
+                 actually been composited — that is the moment there is a
+                 picture; loadeddata is the fallback where it does not
+                 exist (Firefox). */
               ref={(v) => {
-                if (v && v.readyState >= 2) v.parentElement?.setAttribute("data-film", "");
+                if (!v || v.dataset.armed) return;
+                v.dataset.armed = "1";
+                const show = () => v.parentElement?.setAttribute("data-film", "");
+                const anyV = v as HTMLVideoElement & { requestVideoFrameCallback?: (cb: () => void) => number };
+                if (typeof anyV.requestVideoFrameCallback === "function") anyV.requestVideoFrameCallback(show);
+                else v.addEventListener("loadeddata", show, { once: true });
               }}
               /* THE FILM SKIPS ITS OWN DARK SECOND (measured 2026-09-21:
                  the v1 cut opens at a mean luminance of 30–33 for 1.0s
