@@ -109,8 +109,31 @@ export const OFFER_NAV: { label: string; href: string }[] = [
 export function OfferMore() {
   return (
     <section className="wrap dr-more" aria-label="What you get">
-      <p className="dr-more-p" data-wipe>
-        {OFFER_MORE}
+      {/* THE WORDS LIGHT UP AS YOU SCROLL (2026-09-21 — Jake: "the scroll
+          effect on the text that huge has where the words like glow"):
+          each word sits at a quarter of its ink and comes up to full in
+          turn as the paragraph rises through the lower half of the
+          screen — --r is the paragraph's own approach (0 with its top
+          at 95% of the screen, 1 at 40%), and word w reads
+          clamp(0, r·(N+3) − w, 1) (room.css) so the light walks the
+          sentence and is scrubbed back if you scroll up. Measured on
+          Huge: their headlines FADE IN on a trigger (~150px, a tween),
+          not a scrub — this is the scrubbed reading of the same feeling,
+          the derived-motion rule's version. Replaces the wipe here. */}
+      <p
+        className="dr-more-p"
+        data-sp
+        data-sp-edge="top"
+        data-sp-from="0.95"
+        data-sp-to="0.4"
+        data-sp-var="--r"
+        style={{ "--n": OFFER_MORE.split(" ").length } as CSSProperties}
+      >
+        {OFFER_MORE.split(" ").map((w, i) => (
+          <span className="dr-more-w" key={i} style={{ "--w": i } as CSSProperties}>
+            {w}{" "}
+          </span>
+        ))}
       </p>
       <nav className="dr-more-nav" aria-label="On this site">
         {OFFER_NAV.map((n, i) => (

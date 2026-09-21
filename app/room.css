@@ -2344,6 +2344,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   font-size: min(4vw, 3.6rem); line-height: 1.08; letter-spacing: -0.03em;   /* 57.6 at 1440 — the model's 57 rung */
   color: var(--ink);
 }
+/* the words' light: a quarter at rest, full in turn — --r is the
+   paragraph's approach (services-section.tsx), --n its word count */
+.dr-more-w {
+  opacity: calc(.22 + .78 * clamp(0, var(--r, 1) * (var(--n, 20) + 3) - var(--w, 0), 1));
+}
+@media (prefers-reduced-motion: reduce) { .dr-more-w { opacity: 1; } }
 .dr-more-nav {
   display: flex; flex-direction: column; gap: 14px;
   padding-top: .35em; font-size: 19px;                                          /* the model's 19 rung */
