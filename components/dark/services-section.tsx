@@ -6,6 +6,8 @@ import { SERVICES } from "@/lib/services";
 import { QUOTES } from "@/lib/quotes";
 import { PersonIcon } from "@/components/ui/person-icon";
 import { SHOTS } from "@/components/dark/service-shots";
+import { useEffect, useRef } from "react";
+import SayCorners from "@/components/dark/say-corners";
 
 /* §02 · THE OFFER — the statement, and the three things under it.
 
@@ -54,6 +56,11 @@ import { SHOTS } from "@/components/dark/service-shots";
    positioning (lib/services.ts: websites → automation → ads), and the
    statement walks the reader through the columns in that order. */
 export const OFFER_PREFIX = "Websites, automation and ads for ";
+/* §02a (2026-09-20): the statement as THREE centred lines — the prefix
+   broken once, the rotating word alone on the third — each line its own
+   mask for leoparpeix's rise (OfferHead). OFFER_SAY above is unchanged:
+   the one true sentence, for SEO and readers. */
+export const OFFER_LINES = ["Websites, automation", "and ads for"];
 /* THE ROTATING WORD (2026-09-19, decisions.md · Huge's, decodes/hugeinc.md
    §4: the statement's last word rotates on a timer, seven words, all
    pre-rendered). Ours cycles six real audiences — the three case
@@ -82,30 +89,44 @@ export const OFFER_MORE =
 
 /* THE HEAD: rendered by page.tsx before the card's wrapper — see above */
 export function OfferHead() {
+  /* §02a · THE SCREEN (2026-09-20, hero/air — Jake, with leoparpeix's
+     FRENCH / INTERACTIVE / DESIGNER: "i really like the entrance
+     animation centered big text and the stuff in the top right and left
+     corners"). One viewport: the statement centred as three lines at
+     138px, the corners (say-corners.tsx) at 14px, nothing else — the
+     paragraph (OFFER_MORE) moves to §02b with the in-page nav.
+
+     THE ENTRANCE is theirs exactly (decodes/leoparpeix.md §14): each
+     line rests one line below its own mask, shifted +5% / −5% / +5% by
+     line, and rises to place over 1s on cubic-bezier(.4,0,0,1) —
+     --ease-reveal, the hero's declared exception, now this screen's too
+     — 115ms apart, once, when the head's top enters the viewport. The
+     corners fade in behind the third line. `data-in` is the trigger;
+     the CSS (.dr-say-l / .dr-say-li, room.css) does every frame.
+     Reduced motion: the lines are simply there (room.css). */
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.setAttribute("data-in", "");
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          el.setAttribute("data-in", "");
+          io.disconnect();
+        }
+      },
+      { threshold: 0.35 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   return (
-    <div className="wrap dr-offer-head">
-      {/* THE CURTAIN (2026-09-19) dropped data-wipe from both lines —
-          the room's one triggered gesture stands everywhere else. Two
-          reasons, not one: (1) a wipe fires when an element's top nears
-          the fold, which the sticky pin does almost immediately, well
-          before the film has actually left — a wipe under a curtain
-          fires unseen. (2) tried anyway, keeping data-wipe and
-          neutralising the CSS on desktop only (room.css): the engine's
-          own splitLines()/undo() cycle measurably did not survive being
-          inside the new sticky pin — it split correctly on mount, then
-          silently reverted to plain text ~300ms later, on BOTH desktop
-          and phone (a real interaction with the new wrapper, not a CSS
-          issue — confirmed live, the same split logic run by hand on
-          the same node persisted fine). Rather than ship a page that
-          depends on that timing, the attribute is off entirely; THE
-          SETTLE (room.css, --cur-driven scale) is the only reveal here,
-          on every width. */}
-      {/* THE EYEBROW IS GONE (2026-09-20, Jake: "i want eyebrow gone in
-          section after video") — Huge has none above its statement
-          either, and "What this is" was the smallest text in the
-          section, the exact thing THE LAW OF THE MODEL (decisions.md)
-          says a homepage section should not carry. The section is now
-          just the h2 and the one sentence under it. */}
+    <div className="wrap dr-offer-head dr-say-screen" ref={ref}>
+      <SayCorners />
       {/* THE ROTATING WORD: index 0 is a plain child alongside the other
           five inside .dr-offer-rot (display: inline-grid, room.css) — all
           six share the one grid cell, so the box's width is always the
@@ -113,21 +134,28 @@ export function OfferHead() {
           index 0 is exposed to assistive tech: the other five are the
           same "true statement" playing dress-up, not five more facts. */}
       <h2 className="dr-offer-say" id="dr-svc-h">
-        {OFFER_PREFIX}
-        <span className="dr-offer-rot">
-          {OFFER_ROT_WORDS.map((word, i) => (
-            <span
-              key={word}
-              className="dr-offer-rot-w"
-              aria-hidden={i === 0 ? undefined : true}
-              style={{ "--i": i } as CSSProperties}
-            >
-              {word}
+        {OFFER_LINES.map((line, l) => (
+          <span className="dr-say-l" key={line} style={{ "--l": l } as CSSProperties}>
+            <span className="dr-say-li">{line}</span>
+          </span>
+        ))}
+        <span className="dr-say-l" style={{ "--l": OFFER_LINES.length } as CSSProperties}>
+          <span className="dr-say-li">
+            <span className="dr-offer-rot">
+              {OFFER_ROT_WORDS.map((word, i) => (
+                <span
+                  key={word}
+                  className="dr-offer-rot-w"
+                  aria-hidden={i === 0 ? undefined : true}
+                  style={{ "--i": i } as CSSProperties}
+                >
+                  {word}
+                </span>
+              ))}
             </span>
-          ))}
+          </span>
         </span>
       </h2>
-      <p className="dr-offer-more">{OFFER_MORE}</p>
     </div>
   );
 }
