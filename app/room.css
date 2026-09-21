@@ -2138,7 +2138,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      taller box — and the 25% eases in as the film slides off, which
      reads as the parallax rather than a zoom. Coverage holds: the
      slack grows 112px a side per unit of --x, the slide takes ≤101. */
-  --over: calc(1 + .25 * var(--x, 0));
+  /* NO OVERSCAN AT ALL (Jake: "i like getting rid of exit slack"): the
+     picture is exactly the mask at full height, and the exit slide
+     below bares a strip of mask along the picture's top — which is
+     always off-screen: the mask's top leaves at 900px per unit of --x,
+     the bared strip is ≤ 119px per unit. Measured, not assumed. */
+  --over: 1;
   /* 7.5% of the picture's own (unscaled) height, in the MASK's space —
      so on screen it is x the mask's own sy (1.65 at full height): ~99px
      at x 1 against the 112px of slack a side the overscan leaves; 9%
