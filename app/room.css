@@ -2268,6 +2268,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 .dr-zone-dark .dr-offer-rot-w, .dr-root:not(.dr-light) .dr-offer-rot-w { color: var(--accent); }
 .dr-zone-dark .dr-offer-rot-w::after, .dr-root:not(.dr-light) .dr-offer-rot-w::after { display: none; }
+/* THE WORD IS THE COLOUR, on white too (2026-09-20, Jake: "the underline
+   words i want to just be the color") — his own reversal of the
+   2026-09-19 accent rule for this one word, recorded in decisions.md:
+   cyan letters on the white page, 1.5:1, the underline gone. */
+.dr-offer-rot-w { color: var(--accent); }
+.dr-offer-rot-w::after { display: none; }
 /* the rule draws in AFTER the word has landed (from 5.983%, over the
    first 600ms of the hold) and leaves with it */
 @keyframes dr-rot-ul {
