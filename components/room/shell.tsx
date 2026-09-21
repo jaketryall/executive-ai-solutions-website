@@ -95,10 +95,20 @@ export function RoomShell({ children }: { children: React.ReactNode }) {
      of which room the rest of the page is in. Still one boolean, still
      one flag — the two full rooms (`?dark` vs default) are untouched by
      the zone; only the hero's own ground changed shape. */
-  const [light, setLight] = useState(true);
+  /* THE PAGE IS DARK (2026-09-21 — Jake, after the scroll-driven flip
+     put the work on the void: "hold shit the dark version looks
+     incredible im debating if we even have the light section" → "i
+     think i like the dark page better than white section"). The same
+     one boolean, inverted again: the server and the first client pass
+     both say dark, `?light` turns the light page back on for the
+     comparison. First paint is already black (room.css,
+     body:has(.dr-root)), so nothing flashes. The light era's rules
+     stand under .dr-light, untouched; the flip track before the work
+     is inert in the dark room (room.css, the !important). */
+  const [light, setLight] = useState(false);
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
-    if (q.has("dark")) setLight(false);
+    if (q.has("light")) setLight(true);
   }, []);
 
   return (

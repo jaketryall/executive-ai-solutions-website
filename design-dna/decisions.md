@@ -186,3 +186,7 @@ Jake, at the day's start: "theres something simple missing in the hero … maybe
 - **The rail is continuous and flat** — steps, snap and depth squash off; the pictures keep the horizontal parallax and gain a vertical lag into and out of the pin.
 - **`?v=` is the trial switch** (app/page.tsx: tokens add to the default set, `none` clears it); the winners are the default. Folding them into plain CSS is housekeeping still owed.
 - **Pipeline law**: never write `-webkit-backdrop-filter` in room.css (checks.md 2026-09-20).
+
+## 2026-09-21 · THE PAGE IS DARK
+
+Jake, after the scroll-driven flip put the work on the void: "hold shit the dark version looks incredible im debating if we even have the light section" → "i think i like the dark page better than white section." The room is dark end to end again — the hero, the screen, the paragraph, the tiles, the work, the close. This is Jake's own reversal of 2026-09-19's "white page, black hero" (the model's structure); the accent's happy case everywhere (cyan letters on dark, 12.8:1), and the rotating word's cyan-on-white exception (2026-09-20) has nothing to except. `?light` is the comparison. What the light page's seam owned — the glass on the black/white line, the 26svh of black under the film, the flip track before the work — is inert on a dark page and stays written; housekeeping may remove it.
