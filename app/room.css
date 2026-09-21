@@ -856,6 +856,40 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
 }
 @media (max-width: 900px), (prefers-reduced-motion: reduce) { .dr-seam { display: none; } }
 
+/* THE LIGHTS COME AND GO (2026-09-21 — Jake: "maybe sometimes they
+   should stop and new ones should come in … maybe even add blue glows
+   somewhere"). One keyframe: dark, up over a third of the cycle, out
+   again, dark for the rest — a light is OFF more than it is on, and
+   with cycles that share no period (19/23/29s) the pattern never
+   repeats inside a visit. */
+@keyframes dr-lamp {
+  0%   { opacity: 0; }
+  18%  { opacity: 1; }
+  38%  { opacity: 1; }
+  56%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+/* (the hero's edge glow is NOT one of these — Jake: "the blue glow was
+   perfect, the spotlights were making it odd"; the five spots on the
+   film's edges were built and taken off the same hour) */
+/* the void behind the work: three lamps inside the PIN (they hold the
+   screen with the rail), larger and fainter, staggered the same way;
+   the band and the infos are positioned over them */
+.dr-lamps { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.dr-work-pin > .dr-work-band, .dr-work-pin > .dr-work-infos { position: relative; z-index: 1; }
+.dr-lamp {
+  position: absolute; width: 60vw; height: 60vw; translate: -50% -50%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(30,229,255,.11), rgba(30,229,255,.03) 50%, transparent 72%);
+  animation: dr-lamp var(--t, 19s) ease-in-out var(--d, 0s) infinite;
+  opacity: 0;
+}
+.dr-lamp--1 { left: 30%; top: 12%; --t: 23s; --d: -5s; }
+.dr-lamp--2 { left: 88%; top: 60%; --t: 29s; --d: -17s; }
+.dr-lamp--3 { left: 12%; top: 92%; --t: 19s; --d: -12s; }
+@media (prefers-reduced-motion: reduce) {
+  .dr-spot, .dr-lamp { animation: none; opacity: .5; }
+}
+
 /* `glow` — THE FILM'S OWN LIGHT. A 32x18 canvas (hero-room.tsx draws
    the reel into it ten times a second), blurred AT THAT SIZE — the
    filter runs on 576 pixels — then scaled by transform to cover the

@@ -260,6 +260,17 @@ export default function WorkSection() {
         /* data-sp-force="28" — the squash's input, off with the squash (2026-09-20) */
       >
         <div className="dr-work-pin">
+          {/* THE LIGHTS IN THE VOID (2026-09-21, Jake: "maybe even add blue
+              glows somewhere"): three cyan lamps behind the rail, INSIDE
+              the pin so they hold the screen with it for the whole
+              travel — each coming and going on its own slow cycle
+              (room.css, dr-lamp), one behind the head, one low left, one
+              right, under the band. */}
+          <div className="dr-lamps" aria-hidden>
+            <i className="dr-lamp dr-lamp--1" />
+            <i className="dr-lamp dr-lamp--2" />
+            <i className="dr-lamp dr-lamp--3" />
+          </div>
           {/* VERTICAL PARALLAX (2026-09-20 — Jake: "can we give the photos
               vertical parallax as well like when everything is moving
               vertically"): two more clocks, for the moments the band
