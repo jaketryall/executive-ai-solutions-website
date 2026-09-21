@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { OfferHead, OfferMore } from "@/components/dark/services-section";
+import VoicesTiles from "@/components/dark/voices-tiles";
 import WorkSection from "@/components/dark/work-section";
 import VoicesSection from "@/components/dark/voices-section";
 import RunsSection from "@/components/dark/runs-section";
@@ -916,6 +917,8 @@ export default function DarkRoom({
 
       {/* §02b · the paragraph and the in-page nav (services-section.tsx) */}
       <OfferMore />
+      {/* §02c · the three voices as tiles, the last thing on the light page */}
+      <VoicesTiles />
 
       {/* THE FLIP TO DARK, SCROLL-DRIVEN (2026-09-20 — Jake: "we need the
           background flip to dark before work section" → "i mean the flip
