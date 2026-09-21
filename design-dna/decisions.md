@@ -170,3 +170,19 @@ silently overriding a prior call.
 ## 2026-09-20 · THE ROTATING WORD IS CYAN ON WHITE
 
 Jake: "the underline words i want to just be the color." The statement's rotating word (§02, `.dr-offer-rot-w`) is set in the accent itself on the white page — cyan letters, no underline. This is Jake's own, knowing reversal of the 2026-09-19 accent rule ("never cyan letters on white") for this one word: it measures 1.5:1 against the page, and it is the brand's colour said out loud, not a word that has to be read cold — the sentence carries it. The rule stands everywhere else; `--accent-off` (petrol) remains the answer for a word that must pass.
+
+## 2026-09-20 · THE AIR — what settled on branch hero/air (46 commits, pushed)
+
+Jake, at the day's start: "theres something simple missing in the hero … maybe some way to always have the text be full width, or maybe theres some sort of ambience missing." What the frames settled, in order:
+
+- **The title fills the column** (`wide`): one size, balanced, the longest line fitted to the measure by measurement (131 on the claim, 179 on "Back so soon.", 136 on "You again."). Not one-sentence-per-line at its own size (`lines`, built, rejected: "i like the previous better").
+- **The film at rest is edge to edge less 10px** (`full`), rounded; it grows to the whole screen (square) and scrolls off with the picture sliding 7.5% inside the mask on its own exit clock (`--x`); NO overscan — "i like getting rid of exit slack".
+- **A cyan glow on the film's edge** (`edge` + `cyan`), biased up, the sides "almost invisible"; a mirrored glow under the film's full-height bottom edge, and **26svh of black** under the film before the page. The lamps (`light`), the halo (`halo`), the frost on the statement (`glass`) and Huge's nav blur (`pblur`) were all built and turned off — the frost lives in the RAIL instead, as each case's caption strip (`frost`).
+- **No curtain** (`flat`); **the glass on the seam** (`seam`, 220px, symmetric progressive blur on the black/white line — the "more dramatic" version that put the film inside it was reverted).
+- **The scrawl** (`scrawl`): the section's nickname hand-written in the accent behind its head, writing itself on scroll — Lando's Rive "Collabs" decoded; ours in Caveat Brush until Jake writes the words himself.
+- **The wall (the background mark) is gone.** **The services card is off the homepage.** **The rotating word is cyan on white** (above).
+- **§02 is Huge's second beat on leoparpeix's screen**: §02a one screen — Websites / Automation / Ads for / [audience] at 138, one a line, the masked rise every time it enters, the corners (Mesa · building for anyone · Phoenix clock · reply hours · capacity); §02b the paragraph at 57 with the four doors on the right, on the wipe.
+- **The page flips to dark before the work, scroll-driven** — the room's own `--flip` on the root over a fifth of a screen (a longer window measured grey-on-grey at its midpoint); everything after the work sits on the void. The nav reads the root's `--flip`.
+- **The rail is continuous and flat** — steps, snap and depth squash off; the pictures keep the horizontal parallax and gain a vertical lag into and out of the pin.
+- **`?v=` is the trial switch** (app/page.tsx: tokens add to the default set, `none` clears it); the winners are the default. Folding them into plain CSS is housekeeping still owed.
+- **Pipeline law**: never write `-webkit-backdrop-filter` in room.css (checks.md 2026-09-20).

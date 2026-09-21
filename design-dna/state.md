@@ -517,3 +517,11 @@ NEXT (in the convergence order, decisions 2026-09-19 THE CONVERGENCE):
 STILL OWED BY JAKE: a photograph for the about beat; the real Google
 rating/count/link; real names on the quotes (or cut them); NEXT_START if
 the capacity line is to show; the 4th-visit line's final wording.
+
+## 2026-09-20 (evening) · WHERE THE PAGE STANDS — branch `hero/air`, pushed at 33356a5
+
+The page, top to bottom: the hero (the personal-message title fitted to the column, the cyan door, the film edge to edge less 10px with its cyan edge glow, the lamps off) → the grow to full screen, the exit parallax, the mirrored glow, 26svh of black → the glass seam → §02a the screen (one word a line, the rise every time, the corners) → §02b the paragraph and the four doors → the page crossfades to dark → §03 the rail on the void, continuous, "Proof" scrawled behind its head, the frost caption strips, horizontal + vertical parallax → Voices → Runs/Objections → the close.
+
+**Next, in order:** (1) §02c — testimonial tiles where Huge has the logo grid, between §02b and the flip (needs Jake's real names and words; the three in lib/quotes.ts are placeholders); (2) fold the `?v=` trial tokens into plain CSS and delete the losers; (3) the scrawl in Jake's own hand (he writes the words; vectorise; a spine path for a true pen draw-on); (4) the persona table (`?i=`/`?svc=` first-visit titles); (5) `?dark` end to end is one line away if Jake decides against the light section ("im debating if we even have the light section" — my read: the flip IS the moment, keep the light).
+
+**Owed by Jake:** the about photo, real Google rating/count/link, real quote names, `NEXT_START`, the fourth-visit line, the handwritten words.
