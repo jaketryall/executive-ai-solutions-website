@@ -5357,7 +5357,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    the frame rises); horizontal = the tile's screen x × 1.25 × 8.5% of the
    width, toward the centre. */
 .dr-work-img {
-  position: absolute; inset: -10%; width: 120%; height: 120%; max-width: none; object-fit: cover; will-change: transform;
+  position: absolute; inset: -14%; width: 128%; height: 128%; max-width: none; object-fit: cover; will-change: transform;
   /* max-width: none overrides Tailwind's preflight (img,video{max-width:
      100%}) — a DIFFERENT property from our own `width`, so our class
      winning the cascade for `width` alone still left the used width
@@ -5374,7 +5374,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      custom properties aren't scoped to a box, only vw/svh units are
      viewport-relative regardless of which element resolves them) to tie
      it to the TILE's own height instead. */
-  translate: calc(var(--ndc) * -1.25 * 8.5%) calc(var(--pp) * 0.085 * var(--th));
+  /* + THE VERTICAL LAG (2026-09-20): --vy (the band's own two clocks,
+     work-section.tsx) at 5.5% of the tile's height — the picture trails
+     the page's rise into the pin and out of it. The bleed below is 14%
+     a side so 8.5 + 5.5 never shows an edge. */
+  --vy: calc(var(--xp, 0) - (1 - var(--ap, 1)));
+  translate: calc(var(--ndc) * -1.25 * 8.5%) calc(var(--pp) * 0.085 * var(--th) + var(--vy) * 0.055 * var(--th));
 }
 .dr-work-card:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: -3px; }
 

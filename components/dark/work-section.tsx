@@ -133,6 +133,29 @@ export default function WorkSection() {
   );
   const n = tiles.length;
   const stageRef = useRef<HTMLDivElement>(null);
+  const railRef = useRef<HTMLOListElement>(null);
+  /* the two clocks' pinned ends are the band's own geometry, not a
+     constant: while pinned its top sits at the pin's sticky offset plus
+     its own offset inside the pin (175px at 1440x900 — the approach
+     ends THERE, not at 0), and its bottom that much lower by its own
+     height (where the exit begins). Both written as screen fractions on
+     every resize. */
+  useEffect(() => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const fit = () => {
+      const band = rail.parentElement;
+      const pin = band?.closest<HTMLElement>(".dr-work-pin");
+      if (!band || !pin) return;
+      const vh = window.innerHeight;
+      const pinnedTop = (parseFloat(getComputedStyle(pin).top) || 0) + band.offsetTop;
+      band.setAttribute("data-sp-to", (pinnedTop / vh).toFixed(4));
+      rail.setAttribute("data-sp-from", ((pinnedTop + band.offsetHeight) / vh).toFixed(4));
+    };
+    fit();
+    window.addEventListener("resize", fit);
+    return () => window.removeEventListener("resize", fit);
+  }, []);
 
   // THE LANDING — see the file header. Hooks stay unconditional (n can
   // be 0 on a projects-less build) so the early `if (!n) return null`
@@ -237,8 +260,35 @@ export default function WorkSection() {
         /* data-sp-force="28" — the squash's input, off with the squash (2026-09-20) */
       >
         <div className="dr-work-pin">
-          <div className="dr-work-band">
-            <ol className="dr-work-rail">
+          {/* VERTICAL PARALLAX (2026-09-20 — Jake: "can we give the photos
+              vertical parallax as well like when everything is moving
+              vertically"): two more clocks, for the moments the band
+              itself moves. --ap: the band's top from the fold to the top
+              of the screen (0 → 1) — the approach, before the pin. --xp:
+              the band's bottom from its pinned height to the top of the
+              screen (0 → 1) — the exit, after the pin; its start is the
+              band's own height as a fraction of the screen, written by
+              the effect below on every resize. The pictures read
+              `--vy = xp − (1 − ap)` (room.css): they trail the page's
+              rise on the way in, and again on the way out. */}
+          <div
+            className="dr-work-band"
+            data-sp
+            data-sp-edge="top"
+            data-sp-from="1"
+            data-sp-to="0"
+            data-sp-var="--ap"
+          >
+            <ol
+              className="dr-work-rail"
+              ref={railRef}
+              data-sp
+              data-sp-edge="bottom"
+              data-sp-from="0.7"
+              data-sp-to="0"
+              data-sp-var="--xp"
+              data-sp-target=".dr-work-band"
+            >
               {tiles.map((t, i) => (
                 <li
                   className="dr-work-tile"
