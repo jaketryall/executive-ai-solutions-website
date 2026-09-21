@@ -142,7 +142,7 @@ export function OfferHead() {
      line rests one line below its own mask, shifted +5% / −5% / +5% by
      line, and rises to place over 1s on cubic-bezier(.4,0,0,1) —
      --ease-reveal, the hero's declared exception, now this screen's too
-     — 115ms apart, once, when the head's top enters the viewport. The
+     — 115ms apart, every time the screen comes into view. The
      corners fade in behind the third line. `data-in` is the trigger;
      the CSS (.dr-say-l / .dr-say-li, room.css) does every frame.
      Reduced motion: the lines are simply there (room.css). */
@@ -154,14 +154,20 @@ export function OfferHead() {
       el.setAttribute("data-in", "");
       return;
     }
+    /* EVERY TIME, not once (Jake: "the entrance animation for the word
+       by word should not be one time only"): the lines rise when a
+       third of the screen is in view and are put back below their
+       masks the moment it is fully out, so the next arrival — from
+       above or below — plays it again. The reset is instant (room.css:
+       no transition without data-in) and happens off-screen. */
     const io = new IntersectionObserver(
       (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          el.setAttribute("data-in", "");
-          io.disconnect();
+        for (const e of entries) {
+          if (e.intersectionRatio >= 0.35) el.setAttribute("data-in", "");
+          else if (!e.isIntersecting) el.removeAttribute("data-in");
         }
       },
-      { threshold: 0.35 }
+      { threshold: [0, 0.35] }
     );
     io.observe(el);
     return () => io.disconnect();
