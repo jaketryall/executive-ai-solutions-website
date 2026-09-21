@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import ServicesSection, { OfferHead } from "@/components/dark/services-section";
+import { OfferHead } from "@/components/dark/services-section";
 import WorkSection from "@/components/dark/work-section";
 import VoicesSection from "@/components/dark/voices-section";
 import RunsSection from "@/components/dark/runs-section";
@@ -905,15 +905,11 @@ export default function DarkRoom({
           THE COVER (2026-09-19, built and removed the same day — Jake:
           "services shouldnt rise like that"): the card is no longer
           pulled up over the pinned words; it follows the stage in flow. */}
-      <div
-        className="dr-climb-wrap"
-        data-sp
-        data-sp-from="1"
-        data-sp-to="0"
-        data-sp-var="--climb"
-      >
-        <ServicesSection />
-      </div>
+      {/* THE SERVICES CARD IS GONE (2026-09-20, hero/air — Jake: "services
+          section has to go"): the dark ledger card that followed the
+          statement is off the homepage; the statement hands straight to
+          the work. ServicesSection still exists (services-section.tsx —
+          OfferHead above is exported from it) for the services pages. */}
 
       <WorkSection />
       <VoicesSection />
