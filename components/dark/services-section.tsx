@@ -89,7 +89,45 @@ export const OFFER_SAY = OFFER_PREFIX + OFFER_ROT_WORDS[0];
    27-word version above (2026-09-18) is gone, per the law (one line at
    display size, at most one sentence under it). */
 export const OFFER_MORE =
-  "Built by the person you talk to — a fixed quote in two days, a price that never moves.";
+  "Built by the person you talk to. A fixed quote in two days, a price that never moves, and a site that's yours to run the day it ships.";
+
+/* §02b · THE IN-PAGE NAV (2026-09-20 — Huge's six arrow links beside
+   their paragraph, decodes/hugeinc.md §15; Jake: "they like have more
+   nav inside which i think is genius"). Four doors, the page's own. */
+export const OFFER_NAV: { label: string; href: string }[] = [
+  { label: "See the work", href: "/work" },
+  { label: "What we build", href: "/services/websites" },
+  { label: "See your price", href: "/pricing#estimate" },
+  { label: "Book the call", href: "/contact" },
+];
+
+/* §02b · THE PARAGRAPH AND THE NAV — Huge's second beat (decodes/hugeinc
+   §15): one paragraph at 57 on the left, the in-page nav on the right,
+   both arriving with the room's one triggered gesture (data-wipe, the
+   engine's line wipe, staggered by data-wipe-delay) — theirs is a
+   staggered entrance too, measured, not a scrub. */
+export function OfferMore() {
+  return (
+    <section className="wrap dr-more" aria-label="What you get">
+      <p className="dr-more-p" data-wipe>
+        {OFFER_MORE}
+      </p>
+      <nav className="dr-more-nav" aria-label="On this site">
+        {OFFER_NAV.map((n, i) => (
+          <Link
+            key={n.href}
+            href={n.href}
+            className="dr-more-link"
+            data-wipe
+            data-wipe-delay={String(250 + i * 110)}
+          >
+            {n.label} <i aria-hidden>→</i>
+          </Link>
+        ))}
+      </nav>
+    </section>
+  );
+}
 
 /* THE HEAD: rendered by page.tsx before the card's wrapper — see above */
 export function OfferHead() {

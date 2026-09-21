@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { OfferHead } from "@/components/dark/services-section";
+import { OfferHead, OfferMore } from "@/components/dark/services-section";
 import WorkSection from "@/components/dark/work-section";
 import VoicesSection from "@/components/dark/voices-section";
 import RunsSection from "@/components/dark/runs-section";
@@ -913,6 +913,9 @@ export default function DarkRoom({
           statement is off the homepage; the statement hands straight to
           the work. ServicesSection still exists (services-section.tsx —
           OfferHead above is exported from it) for the services pages. */}
+
+      {/* §02b · the paragraph and the in-page nav (services-section.tsx) */}
+      <OfferMore />
 
       <WorkSection />
       <VoicesSection />
