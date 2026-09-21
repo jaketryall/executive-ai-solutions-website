@@ -2351,22 +2351,10 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 .dr-say-corner--l { left: var(--col-inset); text-align: left; }
 .dr-say-corner--r { right: var(--col-inset); text-align: right; }
-/* THE ORBS (2026-09-21): two white radials low in the corners, 44vw
-   across, at the rig's own brightness (.dr-key's .2 / .09), on the
-   rig's own drifts (dr-drift 26s, dr-drift-b 37s). Under the words.
-   ("Scroll ↓" and the address were tried in the bottom corners first
-   and taken off — Jake: "sorry. i meant ambient orbs in the corners") */
-.dr-say-orb {
-  position: absolute; width: 44vw; height: 44vw; border-radius: 50%;
-  pointer-events: none; z-index: 0;
-  background: radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,.16), rgba(255,255,255,.05) 50%, transparent 72%);
-}
-.dr-say-orb--l { left: -14vw; bottom: -18vw; animation: dr-drift 26s ease-in-out infinite alternate; }
-.dr-say-orb--r { right: -14vw; bottom: -20vw; animation: dr-drift-b 37s ease-in-out infinite alternate;
-                 background: radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,.11), rgba(255,255,255,.04) 50%, transparent 72%); }
-.dr-say-screen .dr-offer-say, .dr-say-corner { position: relative; z-index: 1; }
+/* (2026-09-21: a cyan light behind the word, then two white orbs in the
+   bottom corners, were tried here and taken off — "remove them sorry i
+   dont like it"; the screen carries no ambience of its own) */
 .dr-say-corner { position: absolute; }
-@media (prefers-reduced-motion: reduce) { .dr-say-orb { animation: none; } }
 .dr-say-dim { color: var(--ink-3); }
 .dr-say-corner time { font-variant-numeric: tabular-nums; }
 [data-in] .dr-say-corner { opacity: 1; transition: opacity .8s var(--ease-ui) 700ms; }
