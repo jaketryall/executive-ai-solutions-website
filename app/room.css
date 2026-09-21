@@ -205,8 +205,12 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    off-white: they wash into a pale blob with grey corners and follow you
    down the page doing it. It rides --flip like everything else — the
    whole reason the flip writes onto .dr-root. */
+/* OFF FOR THE SCREEN (2026-09-21): --soff rises to 1 as §02a's screen
+   takes the viewport, --son back to 1 as §02b arrives (both written on
+   the root by their own sections, services-section.tsx) — the rig is
+   dark for exactly the one screen that has no ambience of its own */
 .dr-atmos { position: fixed; inset: 0; z-index: 3; pointer-events: none;
-            opacity: calc(1 - var(--flip, 0)); }
+            opacity: calc((1 - var(--flip, 0)) * clamp(0, 1 - var(--soff, 0) + var(--son, 0), 1)); }
 .dr-key {
   position: absolute; inset: -25%;
   background:

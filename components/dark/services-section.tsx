@@ -165,7 +165,17 @@ function SweepLines({ text, className, ...rest }: { text: string; className: str
 
 export function OfferMore() {
   return (
-    <section className="wrap dr-more" aria-label="What you get">
+    <section
+      className="wrap dr-more"
+      aria-label="What you get"
+      /* the rig comes back on as this section rises (see OfferHead) */
+      data-sp
+      data-sp-edge="top"
+      data-sp-from="0.8"
+      data-sp-to="0.35"
+      data-sp-var="--son"
+      data-sp-target=".dr-root"
+    >
       {/* THE SWEEP (2026-09-21 — Jake: "the scroll effect on the text
           that huge has where the words like glow" → "theirs is still
           much better"; decoded properly the second time, decodes/
@@ -251,7 +261,22 @@ export function OfferHead() {
     return () => io.disconnect();
   }, []);
   return (
-    <div className="wrap dr-offer-head dr-say-screen" ref={ref}>
+    <div
+      className="wrap dr-offer-head dr-say-screen"
+      ref={ref}
+      /* THE ROOM'S LAMPS GO OUT HERE (2026-09-21 — Jake: "the ambient orbs
+         can we make them turn off for the second section"): the fixed
+         rig (.dr-atmos, the two white radials that follow the cursor)
+         reads --soff off the root — 0 with this screen's top at the
+         fold, 1 with it at a third of the screen — and dims by it;
+         §02b's own track (--son, below) brings the rig back. */
+      data-sp
+      data-sp-edge="top"
+      data-sp-from="0.9"
+      data-sp-to="0.3"
+      data-sp-var="--soff"
+      data-sp-target=".dr-root"
+    >
       <SayCorners />
       {/* THE ROTATING WORD: index 0 is a plain child alongside the other
           five inside .dr-offer-rot (display: inline-grid, room.css) — all
