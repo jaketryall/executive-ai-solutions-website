@@ -173,6 +173,12 @@ export default function DarkRoom({
   useEffect(() => {
     let visits = 1;
     try {
+      /* `?fresh` forgets the visitor (Jake: "is there a way to clear it
+         so i can see the default text") — the counter is removed BEFORE
+         it is read, so this load is visit 1 and shows the claim */
+      if (new URLSearchParams(window.location.search).has("fresh")) {
+        window.localStorage.removeItem("eas:visits");
+      }
       const raw = window.localStorage.getItem("eas:visits");
       const prev = raw ? parseInt(raw, 10) : 0;
       visits = Math.min((Number.isFinite(prev) ? prev : 0) + 1, 9);
