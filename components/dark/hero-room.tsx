@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import Link from "next/link";
 import { OfferHead, OfferMore } from "@/components/dark/services-section";
 import VoicesTiles from "@/components/dark/voices-tiles";
@@ -68,6 +68,105 @@ function LiveTile() {
       )}
     </div>
   );
+}
+
+/* THE TITLE'S OWN ELEMENT (2026-09-21): React renders it ONCE, with the
+   server's title as plain text (SEO, no-JS, the first paint), and never
+   again — memo with a constant prop — so the line masks splitRise writes
+   into it survive the return-visit swap (the swap re-renders the page;
+   React reconciling the h1's children would wipe the masks and the
+   title would just appear). The swapped text reaches it through
+   splitRise, called from the fit effect on every title change. */
+const GreetTitle = memo(function GreetTitle({ initial }: { initial: string }) {
+  const { lead, rest } = splitLead(initial);
+  return (
+    <h1 className="dr-h1 dr-greet" suppressHydrationWarning>
+      {lead ? (
+        <>
+          <span className="dr-day-word">{lead}</span>
+          {rest}
+        </>
+      ) : (
+        rest
+      )}
+    </h1>
+  );
+});
+
+/* the plain form, for the fit to measure against (block line masks
+   would measure as the column's width and shrink the fit 1% a pass) */
+function renderPlain(h1: HTMLElement, title: string, hasLead: boolean) {
+  h1.textContent = "";
+  if (hasLead) {
+    const i = title.indexOf(". ") + 1;
+    const sp = document.createElement("span");
+    sp.className = "dr-day-word";
+    sp.textContent = title.slice(0, i);
+    h1.append(sp, title.slice(i));
+  } else {
+    h1.textContent = title;
+  }
+}
+
+/* THE RISE's line maker (2026-09-21): words → probes → lines by top →
+   one `.dr-greet-l` mask per line with a `.dr-greet-li` riser inside,
+   --l on each; words of the lead sentence keep the cyan class. Idempotent:
+   re-run on resize it rebuilds from the text, and keeps data-in so a
+   resize never replays the entrance. */
+function splitRise(h1: HTMLElement, title: string, hasLead: boolean) {
+  const wasIn = h1.hasAttribute("data-in");
+  const words = title.split(/\s+/).filter(Boolean);
+  const leadEnd = hasLead ? title.indexOf(". ") + 1 : -1; // char index where the lead sentence ends
+  let pos = 0;
+  const probes = words.map((w) => {
+    const sp = document.createElement("span");
+    sp.textContent = w;
+    const start = title.indexOf(w, pos);
+    pos = start + w.length;
+    if (hasLead && pos <= leadEnd) sp.className = "dr-day-word";
+    return sp;
+  });
+  h1.textContent = "";
+  probes.forEach((sp) => h1.append(sp, " "));
+  const lines: HTMLSpanElement[][] = [];
+  let top = NaN;
+  for (const sp of probes) {
+    const t = sp.getBoundingClientRect().top;
+    if (!(Math.abs(t - top) < 2)) {
+      lines.push([]);
+      top = t;
+    }
+    lines[lines.length - 1].push(sp);
+  }
+  h1.textContent = "";
+  lines.forEach((ws, i) => {
+    const l = document.createElement("span");
+    l.className = "dr-greet-l";
+    l.style.setProperty("--l", String(i));
+    const li = document.createElement("span");
+    li.className = "dr-greet-li";
+    ws.forEach((sp, k) => {
+      li.append(sp);
+      if (k < ws.length - 1) li.append(" ");
+    });
+    l.append(li);
+    h1.append(l);
+  });
+  /* a rebuild before the entrance has FINISHED (data-entered, set on the
+     last riser's transitionend below) starts the rise over from below —
+     on a return visit the swap re-splits the title within the first
+     ~100ms, when the first split's risers had been armed but had not
+     moved yet, and building the new risers under data-in put them
+     straight in place (measured: no rise on visit 2+). After the
+     entrance, a rebuild (a resize) keeps the lines in place. */
+  if (wasIn && h1.hasAttribute("data-entered")) {
+    h1.setAttribute("data-in", "");
+  } else {
+    h1.removeAttribute("data-in");
+    const last = h1.querySelector<HTMLElement>(".dr-greet-l:last-child .dr-greet-li");
+    last?.addEventListener("transitionend", () => h1.setAttribute("data-entered", ""), { once: true });
+    requestAnimationFrame(() => requestAnimationFrame(() => h1.setAttribute("data-in", "")));
+  }
 }
 
 /* §01 · COLD OPEN — "The Dark Room"
@@ -192,7 +291,20 @@ export default function DarkRoom({
        a Monday would otherwise keep Tuesday's line (or none); the title
        only swaps (and crossfades) when it actually changed */
     const next = pickGreeting(visits, getPersona(), new Date());
-    if (next.title !== initialGreeting.title) setSwapped(true);
+    /* THE ENTRANCE OWNS THE FIRST SWAP (2026-09-21 — Jake: "i dont know
+       if the text being dependant on the user if the animation will not
+       work correctly"): this effect runs on mount, BEFORE the room is
+       lit (shell.tsx arms .dr-lit on the first frame after mount) and
+       well before the entrance's 300ms delay — so the return-visit text
+       is already in place when the lines rise, and the rise IS its
+       reveal. The crossfade is only for a swap that lands after the
+       entrance has started, which in practice is never. */
+    if (next.title !== initialGreeting.title) {
+      if (document.querySelector(".dr-root")?.classList.contains("dr-lit")) {
+        setSwapped(true);
+        document.querySelector(".dr-greet")?.classList.add("dr-greet-swap");
+      }
+    }
     setGreeting(next);
   }, [initialGreeting.title]);
 
@@ -343,11 +455,26 @@ export default function DarkRoom({
         return;
       }
       busy = true;
+      const hasLead = !!splitLead(greeting.title).lead;
+      /* MEASURED ON A PROBE, never on the h1 itself (2026-09-21): the h1
+         holds the rise's line masks, and rebuilding them for a re-fit
+         (fonts.ready lands ~100ms after mount) recreated the risers in
+         their arrived state and killed the entrance. The probe is a
+         hidden twin — same classes, same column — carrying the plain
+         current title; the fit and the line breaks are read off it, and
+         the h1 is only touched if either actually changed. */
+      const probe = document.createElement("h1");
+      probe.className = h1.className.replace("dr-greet-swap", "");
+      probe.removeAttribute("data-in");
+      probe.style.cssText = "position:absolute; left:0; right:0; visibility:hidden; pointer-events:none; margin:0";
+      probe.style.setProperty("--fit", "1");
+      renderPlain(probe, greeting.title, hasLead);
+      col.style.position = col.style.position || "relative";
+      col.append(probe);
       let f = 1;
-      h1.style.setProperty("--fit", "1");
       for (let i = 0; i < 3; i++) {
         const range = document.createRange();
-        range.selectNodeContents(h1);
+        range.selectNodeContents(probe);
         const rects = [...range.getClientRects()];
         /* one width per line: rects on the same row are one line
            (the cyan lead is its own rect on the first line) */
@@ -368,10 +495,34 @@ export default function DarkRoom({
         const ratio = (col.clientWidth * 0.99) / longest;
         if (Math.abs(ratio - 1) < 0.01 && rows.size <= 2) break;
         f = f * ratio;
-        h1.style.setProperty("--fit", f.toFixed(4));
+        probe.style.setProperty("--fit", f.toFixed(4));
+      }
+      /* the line breaks at the fitted size, off the probe's own words */
+      const fitted = f.toFixed(4);
+      const lineKey = (() => {
+        probe.textContent = "";
+        const words = greeting.title.split(/\s+/).filter(Boolean);
+        const spans = words.map((w) => { const sp = document.createElement("span"); sp.textContent = w; probe.append(sp, " "); return sp; });
+        const tops = spans.map((sp) => Math.round(sp.getBoundingClientRect().top));
+        return tops.join(",");
+      })();
+      probe.remove();
+      const changed = h1.style.getPropertyValue("--fit") !== fitted || h1.dataset.lines !== lineKey;
+      if (changed) {
+        h1.style.setProperty("--fit", fitted);
+        h1.dataset.lines = lineKey;
       }
       window.dispatchEvent(new Event("resize"));
       busy = false;
+      if (!changed && h1.querySelector(".dr-greet-l")) return; // the lines stand; nothing to rebuild
+      /* THE RISE (2026-09-21 — Jake: "the title in the hero is there a way
+         to have it animate in"): leoparpeix's masked rise, the same recipe
+         as §02a's screen, on whatever the title IS — fitted first (above:
+         the size decides the line breaks), then split into one mask per
+         rendered line (the engine's probe method), the cyan lead carried
+         word by word, then armed on the next frame. The lines stand
+         103% below their masks until data-in; the CSS does the rest. */
+      splitRise(h1, greeting.title, hasLead);
     };
     fit();
     document.fonts?.ready.then(fit);
@@ -489,7 +640,7 @@ export default function DarkRoom({
         const db = box(day);
         reel.closest<HTMLElement>(".dr-hero-wrap")?.style.setProperty("--day-b", `${db.y + db.h}px`);
       }
-      const s = box(slot), r = box(reel);
+      const s = box(slot);
       /* THE GROW IS AS LONG AS THE SLOT IS HIGH (2026-09-19): the film's
          top edge leaves at scroll's rate and reaches the top of the
          screen exactly when the page has scrolled the slot's own top —
@@ -508,6 +659,14 @@ export default function DarkRoom({
          (trial `edge`, .dr-air-edge) */
       wrapEl?.style.setProperty("--film-x", `${s.x}px`);
       wrapEl?.style.setProperty("--film-w", `${s.w}px`);
+      /* THE REEL IS BOXED AFTER --grow IS WRITTEN (2026-09-21): with no
+         grow the dock's own place IS --grow (room.css, `still`: margin-top
+         grow − 100svh), so reading the reel's box before writing the new
+         --grow read its OLD place — on a return visit, where the swapped
+         title changed the slot's top, that left --c0 stale and the film
+         parked 310px above its slot, over the title (measured). The
+         offset read here forces the layout the new --grow implies. */
+      const r = box(reel);
       if (!s.h || !r.h) return;
       /* THE WORD NO LONGER CROSSES THE FILM (TRIAL B — hero/snows,
          2026-09-19): the film's box is no longer read against the
@@ -734,33 +893,7 @@ export default function DarkRoom({
                   labelled button — `greeting.door.label`, not a sentence
                   fragment). Both lines share the same split rule and the
                   same cyan class (`.dr-day-word`) for their lead. */}
-              <h1 className={`dr-h1 dr-greet${swapped ? " dr-greet-swap" : ""}`}>
-                {(() => {
-                  if (has("lines")) {
-                    /* one sentence per line — split at ". " / "? " / "! " */
-                    const parts = greeting.title.split(/(?<=[.?!])\s+/).filter(Boolean);
-                    return parts.map((t, i) => (
-                      <span
-                        key={t}
-                        className={`dr-greet-l${i === 0 && parts.length > 1 ? " dr-day-word" : ""}${
-                          /[gjpqy]/.test(t) && i < parts.length - 1 ? " dr-greet-l--desc" : ""
-                        }`}
-                      >
-                        {t}
-                      </span>
-                    ));
-                  }
-                  const { lead, rest } = splitLead(greeting.title);
-                  return lead ? (
-                    <>
-                      <span className="dr-day-word">{lead}</span>
-                      {rest}
-                    </>
-                  ) : (
-                    rest
-                  );
-                })()}
-              </h1>
+              <GreetTitle initial={initialGreeting.title} />
               {/* the day line — only on the days that earned one (lib/greeting.ts);
                   on a quiet day the title and the door sit alone */}
               {greeting.sub && (
@@ -820,6 +953,14 @@ export default function DarkRoom({
                 design-dna/reel-spec.md; it drops in here with its
                 poster and nothing else changes. Until it lands, the v1
                 cut's own baked-in type is in the frame. */}
+            {/* THE FILM ARRIVES WITH A FRAME IN IT (2026-09-21 — Jake: "for
+                the video theres a stationary black box, you can see its
+                weird when you reload page"): the reel used to fade in as
+                an empty black plate and the picture arrived after. Now
+                the plate is transparent and the rise waits for
+                `data-film` — the first frame decoded (loadeddata), or
+                already there on a warm cache — so nothing shows until
+                there is a picture to show. */}
             <video
               autoPlay
               loop
@@ -828,8 +969,24 @@ export default function DarkRoom({
               poster="/dark/reel-film-poster.jpg"
               preload="auto"
               aria-label="Recent Executive AI Solutions client work"
+              onLoadedData={(e) => e.currentTarget.parentElement?.setAttribute("data-film", "")}
+              ref={(v) => {
+                if (v && v.readyState >= 2) v.parentElement?.setAttribute("data-film", "");
+              }}
+              /* THE FILM SKIPS ITS OWN DARK SECOND (measured 2026-09-21:
+                 the v1 cut opens at a mean luminance of 30–33 for 1.0s
+                 before the picture comes up to 42 — fading THAT in read
+                 as "a stationary black box"). It starts at 1.4s (the #t
+                 fragment) and, because a loop returns to 0 regardless of
+                 the fragment (measured), is seeked past the dark second
+                 every time round. Goes away with the reel cut on black
+                 (design-dna/reel-spec.md). */
+              onTimeUpdate={(e) => {
+                const v = e.currentTarget;
+                if (v.currentTime < 1.35) v.currentTime = 1.4;
+              }}
             >
-              <source src="/dark/reel-film.mp4" type="video/mp4" />
+              <source src="/dark/reel-film.mp4#t=1.4" type="video/mp4" />
             </video>
           </div>
         </section>

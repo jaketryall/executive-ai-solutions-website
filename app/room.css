@@ -1343,11 +1343,26 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    .dr-h1 fade below (same dual-opacity-source pattern .dr-herocta
    already uses safely) — the animation's backwards fill wins while it
    runs, the scroll calc takes over after. */
+/* THE RISE (2026-09-21) replaces the block fade above (kept below for
+   the record): the title is split into one mask per rendered line by
+   hero-room.tsx's splitRise, and each line rises through its mask on
+   --ease-reveal, 115ms apart, from 103% below and 5% to the side
+   (alternating) — leoparpeix's entrance, §02a's recipe. The h1 is
+   invisible until it has been split and armed (data-in), so the plain
+   server text never flashes; then the masks do the reveal. */
 @keyframes dr-greet-in { from { opacity: 0; transform: translateY(.35em); } to { opacity: 1; transform: none; } }
-.dr-root:not(.dr-lit) .dr-greet { opacity: 0; }
-.dr-lit .dr-greet { animation: dr-greet-in 1s var(--ease-reveal) 300ms backwards; }
+.dr-greet:not([data-in]) { opacity: 0; }
+.dr-greet-l { display: block; overflow: hidden; padding-inline: .06em; margin-inline: -.06em; }
+.dr-greet-li {
+  display: inline-block;
+  transform: translate(calc(5% * (1 - 2 * mod(var(--l, 0), 2))), 103%);
+  will-change: transform;
+}
+[data-in] .dr-greet-li { transform: none; transition: transform 1s var(--ease-reveal) calc(300ms + var(--l, 0) * 115ms); }
 @media (prefers-reduced-motion: reduce) {
   .dr-lit .dr-greet { opacity: 1; animation: none; transform: none; }
+  .dr-greet { opacity: 1; }
+  .dr-greet-li { transform: none; transition: none; }
 }
 /* THE CROSSFADE — "the site recognising you, not a glitch" (Jake). Armed
    only when the return-visit swap actually changes the title's text
@@ -2174,7 +2189,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   scale: var(--sx) var(--sy); transform-origin: 50% 50%;
   will-change: transform; pointer-events: none; opacity: 0;
 }
-.dr-hero-wrap[data-ready] .dr-hero-shade { animation: dr-reel-in 900ms var(--ease-structure) 400ms both; }
+.dr-hero-wrap[data-ready]:has(.dr-hero-reel[data-film]) .dr-hero-shade { animation: dr-reel-in 900ms var(--ease-structure) 400ms both; }
 .dr-hero-reel {
   position: relative; z-index: 1;
   width: 100%; aspect-ratio: 2.6 / 1;
@@ -2185,7 +2200,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      elementFromPoint checks need to still resolve to while the film
      visually covers the pin. */
   pointer-events: auto;
-  background: #0a0a0b; /* the film's ground, in either room */
+  background: transparent; /* no plate (2026-09-21): an empty box fading in read as "a stationary black box" before the picture arrived */
   translate: var(--tx) var(--ty);
   scale: var(--sx) var(--sy);
   border-radius: calc(var(--rv) / var(--sx)) / calc(var(--rv) / var(--sy));
@@ -2202,7 +2217,7 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    scroll's `translate`/`scale`, so the entrance rides on top of the grow
    math without touching it; the shade takes the same keyframes on the
    same clock so the shadow rises with the film. */
-.dr-hero-reel[data-ready] { animation: dr-reel-in 900ms var(--ease-structure) 400ms both; }
+.dr-hero-reel[data-ready][data-film] { animation: dr-reel-in 900ms var(--ease-structure) 400ms both; }
 @keyframes dr-reel-in {
   from { opacity: 0; transform: translateY(16%) scale(.88); }
   45%  { opacity: 1; }
