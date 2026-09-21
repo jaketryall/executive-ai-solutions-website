@@ -2132,10 +2132,18 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      DOWN through that slack — the mask leaves at the page's rate, the
      picture at roughly nine tenths of it. In the mask's own frame, so
      divided by the axis scale like the rest. */
-  --over: calc(1 + .25 * var(--p, 0));
-  /* 10% of the picture's own height: on screen that is the picture's
-     height x k x --over x .10 = ~112px at 1440x900, half the slack */
-  translate: 0 calc(-50% + var(--x, 0) * 9%);
+  /* on the EXIT clock, not the grow's (Jake: "why does the video scale
+     inside of it" → the third option): no extra zoom while the mask
+     opens — only the inherent ~13% a 16:9 picture needs to cover the
+     taller box — and the 25% eases in as the film slides off, which
+     reads as the parallax rather than a zoom. Coverage holds: the
+     slack grows 112px a side per unit of --x, the slide takes ≤101. */
+  --over: calc(1 + .25 * var(--x, 0));
+  /* 7.5% of the picture's own (unscaled) height, in the MASK's space —
+     so on screen it is x the mask's own sy (1.65 at full height): ~99px
+     at x 1 against the 112px of slack a side the overscan leaves; 9%
+     measured 7px of bare mask at the top (off-screen by then, but no) */
+  translate: 0 calc(-50% + var(--x, 0) * 7.5%);
   scale: calc(var(--k) * var(--over) / var(--sx)) calc(var(--k) * var(--over) / var(--sy));
   transform-origin: 50% 50%;
   will-change: transform;
