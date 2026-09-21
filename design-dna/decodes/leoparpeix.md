@@ -469,3 +469,7 @@ one declared exception. The masked rise itself the hero already has
 (the line's entrance transform, 103% below its place); what it lacks is
 the alternating ±5% sideways drift, the 1.0s/115ms timing and the
 second reading on click.
+
+## 15. THE BEE BLOCK'S CORNERS (frame 2026-09-20 — Jake: "the stuff in the top right and left corners")
+
+The FRENCH / INTERACTIVE / DESIGNER screen (page 1800, one viewport, §14's entrance) carries four small facts at 14px in its corners, nothing else on the screen but the titles, the bee and "(Click to feed the bee)": top-left "Based in Paris, France / Designing worldwide" and, beside it, "Art director, Interactive designer"; top-right, right-aligned, "Currently pushing design boundaries at @Locomotive and in freelance" and "Former: @ImmersiveGarden" (the @s greyed). Location · role · currently · formerly. Under the nav's own row, same type size as the nav.

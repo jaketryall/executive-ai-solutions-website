@@ -160,3 +160,11 @@ Jake: "look at the blur glass effect or whatever it is at the top of the huge na
 - The same component exists as `.is--bottom` (masks reversed, layers 4–5 defined in the stylesheet for a finer ramp) — not present on the homepage.
 
 Ported as trial `pblur` on hero/air (room.css `.dr-pblur`, 300px tall so the blurred half clears our rail), with the rail's own stuck pill (92% dark, 14px blur, glint edge) turned off under it.
+
+## 15. BETWEEN THE HERO AND OUR WORK (measured 2026-09-20 — Jake: "the rest of the section similar to this")
+
+Three sections on the white page before the dark "Our work." (page 900 → 2910 at 1440×900):
+1. **The statement** (900–1394): "We make things that / matter to [people]." at 145.65px/600, left, the rotating word (§4).
+2. **The paragraph + the in-page nav** (1394–2037, `.image-trail-section`): left column, 5 lines at 57.46px/600, ink — "Anyone can make. Creating experiences that resonate with culture and business is the hard part. It takes design, tech and human judgment." Right column, x 1256: six arrow links, 19px — "See the work. →", "Discover our solutions. →", "Check our approach. →", "Latest ideas & news. →", "This is Huge. →", "Want to join us? →" (`/work /solutions /approach /ideas /company /careers`). **The "text scroll animation" is an ENTRANCE, not a scrub**: sampled at five scroll positions once in view, every line and link is already `rgb(13,11,10)` / opacity 1 — the grey state in the frame is the staggered reveal mid-flight (links one after another). The section's class names an image trail (a stack of 242px images at one point) — a cursor-following image trail, not decoded.
+3. **The logo grid** (2037–2713): 4 × 2 tiles, 128px logos centred in ~342px cells on the page's own ground — McDonald's, PlayStation, [one], The Ring, Google, Tracksmith, LPGA, Darling Ingredients, NBC.
+Then the ground goes DARK at "Our work." (§5), the flip carried by the section's own `bg-(--theme-…)`, and the nav's `data-theme` flips with it (§3).
