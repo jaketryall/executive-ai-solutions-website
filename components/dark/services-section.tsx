@@ -60,7 +60,11 @@ export const OFFER_PREFIX = "Websites, automation and ads for ";
    broken once, the rotating word alone on the third — each line its own
    mask for leoparpeix's rise (OfferHead). OFFER_SAY above is unchanged:
    the one true sentence, for SEO and readers. */
-export const OFFER_LINES = ["Websites, automation", "and ads for"];
+/* one word a line (Jake, 2026-09-20: "I think maybe one word per line"
+   — leoparpeix's FRENCH / INTERACTIVE / DESIGNER): the three services
+   as three lines, "Ads for" carrying the audience onto the fourth, the
+   rotating word alone there so the widest phrase still sets the size */
+export const OFFER_LINES = ["Websites", "Automation", "Ads for"];
 /* THE ROTATING WORD (2026-09-19, decisions.md · Huge's, decodes/hugeinc.md
    §4: the statement's last word rotates on a timer, seven words, all
    pre-rendered). Ours cycles six real audiences — the three case

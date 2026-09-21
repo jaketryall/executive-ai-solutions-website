@@ -2214,7 +2214,11 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 
 /* ══ §02a · THE SCREEN (2026-09-20, hero/air — leoparpeix's bee block:
    decodes/leoparpeix.md §14 the entrance, §15 the corners) ════════ */
-.dr-say-pin .dr-offer-head.dr-say-screen {
+/* (specificity 0,6,0 on purpose: the `flat` trial's rule on the same
+   head — .dr-hero-wrap[data-v~=flat] + .dr-say-stage .dr-say-pin
+   .dr-offer-head, 0,5,0 — was winning the padding and pushing the
+   statement 75px above centre) */
+.dr-say-stage .dr-say-pin .dr-offer-head.dr-say-screen.dr-say-screen.dr-say-screen {
   position: relative; min-height: 100svh;
   display: grid; place-items: center;
   padding-block: 0; max-width: none; width: 100%;
