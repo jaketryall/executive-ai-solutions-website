@@ -720,6 +720,17 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
      the reverse glow"): the mirrored lamp's box was the full-height
      rect; here it is the film's own */
   .dr-hero-wrap[data-v~="still"] .dr-air-edge::after { height: var(--film-h, 36vw); }
+  /* THE DRIFT (Jake: "we lost parallax do it drift style like last
+     time"): a 16:9 picture exactly fills a 16:9 mask, so the exit slide
+     had no room and read as nothing. Overscanned 15% and driven from
+     REST — the film moves from the first pixel of scroll here, so the
+     drift runs on the hero's own clock (--hero-p, 0 at rest, 1 when the
+     film's top reaches the top of the screen) and then the exit's (--x)
+     — 5% of the picture's height per clock, ~77px in all at 1440. */
+  [data-v~="still"] .dr-hero-reel video {
+    --over: 1.15;
+    translate: 0 calc(-50% + (var(--hero-p, 0) + var(--x, 0)) * 5%);
+  }
   [data-v~="still"] .dr-dock {
     margin-top: calc(var(--grow, 55vh) - 100svh);
     padding-top: 0; margin-bottom: 0;
