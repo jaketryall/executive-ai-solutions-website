@@ -153,14 +153,17 @@ export function RoomNav() {
         return;
       }
       const hem = rail.getBoundingClientRect().bottom;
-      /* past the hero's ground, the rail is over the light page — unless
-         its hem is inside another dark zone (the work, 2026-09-20): any
-         .dr-work-zone whose box spans the hem reads dark too */
-      const inZone = [...document.querySelectorAll<HTMLElement>(".dr-work-zone")].some((z) => {
-        const r = z.getBoundingClientRect();
-        return r.top < hem && r.bottom > hem;
-      });
-      setGround(groundEnd.getBoundingClientRect().top < hem && !inZone ? "light" : "dark");
+      /* THE PAGE ITSELF CAN BE DARK (2026-09-20, the scroll-driven flip
+         before the work, hero-room.tsx): the root's --flip is the ground's
+         truth — under .5 the page is on its dark side and the chrome
+         follows it, wherever the hero's own sentinel is */
+      const root = document.querySelector<HTMLElement>(".dr-root");
+      const flip = root ? parseFloat(getComputedStyle(root).getPropertyValue("--flip")) : 1;
+      if (Number.isFinite(flip) && flip < 0.5) {
+        setGround("dark");
+        return;
+      }
+      setGround(groundEnd.getBoundingClientRect().top < hem ? "light" : "dark");
     };
     const onScroll = () => {
       if (frame) return;

@@ -917,10 +917,33 @@ export default function DarkRoom({
       {/* §02b · the paragraph and the in-page nav (services-section.tsx) */}
       <OfferMore />
 
-      {/* §03 ON THE VOID (2026-09-20 — Jake: "we need the background flip
-          to dark before work section"; Huge's page goes dark at "Our
-          work."): a second dark zone, the same tokens as the hero's. */}
-      <div className="dr-zone-dark dr-work-zone">
+      {/* THE FLIP TO DARK, SCROLL-DRIVEN (2026-09-20 — Jake: "we need the
+          background flip to dark before work section" → "i mean the flip
+          like how lando does it the scroll driven one"): not a cut at
+          the section's edge but the whole PAGE crossfading, the room's
+          own --flip written on the ROOT (every token is a color-mix on
+          it, room.css .dr-root) as this wrapper's top rises from 1.1
+          screens to .9 — a fifth of a screen, FAST, Lando's 0.8s at a
+          normal scroll: a crossfade of ground AND ink has a muddy middle
+          (grey on grey at --flip .5, measured at a .5vh window), and the
+          only cure is not to dwell there. The ground is dark before the
+          work's head is on
+          screen, and everything after (the voices, the runs, the close)
+          sits on the void as it was designed to. data-sp-step is the
+          measured perf floor for twelve color-mix tokens (1/32, see the
+          old .dr-flip note below); the rail (nav.tsx) reads the root's
+          --flip for its own chrome. */}
+      <div
+        className="dr-work-zone"
+        data-sp
+        data-sp-edge="top"
+        data-sp-from="0.9"
+        data-sp-to="1.1"
+        data-sp-var="--flip"
+        data-sp-target=".dr-root"
+        data-sp-lerp="0.1"
+        data-sp-step="0.03125"
+      >
         <WorkSection />
       </div>
       <VoicesSection />

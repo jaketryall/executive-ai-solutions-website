@@ -446,7 +446,9 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   --edge: #565759;
   --edge-strong: #6e7075;
 }
-.dr-work-zone { background: var(--void); padding-bottom: clamp(72px, 12svh, 150px); }
+/* the work's wrapper: no ground of its own — the ROOT's ground crossfades
+   under it (the scroll-driven flip, hero-room.tsx) — just the room below */
+.dr-work-zone { padding-bottom: clamp(72px, 12svh, 150px); }
 .dr-hero-wrap.dr-zone-dark {
   /* the same list .dr-root.dr-light .dr-svc re-declares (below), plus
      the ground and its surfaces: the rail (components/room/nav.tsx)
