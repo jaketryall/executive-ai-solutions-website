@@ -707,6 +707,19 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
    lower. Desktop only, like the grow itself. */
 @media (min-width: 901px) {
   .dr-hero-wrap[data-v~="still"] { --p: 0; }
+  /* THE FILM IS 16:9 AT REST when it never grows (2026-09-21 — Jake, on
+     no-grow: "video is small"): the letterbox was the grow's starting
+     shape; without a grow the film is the whole frame, 1368x770 at
+     1440, its top 300px into the first screen, the rest below the fold
+     and rising. The slot, the reel and its shade share the shape (the
+     picture's --hr resolves to 1: no crop, no zoom). */
+  [data-v~="still"] .dr-slot,
+  [data-v~="still"] .dr-hero-reel,
+  [data-v~="still"] .dr-hero-shade { aspect-ratio: 16 / 9; }
+  /* AND THE REVERSE GLOW SITS ON THE FILM'S REAL BOTTOM EDGE ("we lost
+     the reverse glow"): the mirrored lamp's box was the full-height
+     rect; here it is the film's own */
+  .dr-hero-wrap[data-v~="still"] .dr-air-edge::after { height: var(--film-h, 36vw); }
   [data-v~="still"] .dr-dock {
     margin-top: calc(var(--grow, 55vh) - 100svh);
     padding-top: 0; margin-bottom: 0;
