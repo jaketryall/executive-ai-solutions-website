@@ -727,6 +727,14 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
      drift runs on the hero's own clock (--hero-p, 0 at rest, 1 when the
      film's top reaches the top of the screen) and then the exit's (--x)
      — 5% of the picture's height per clock, ~77px in all at 1440. */
+  /* THE HERO'S LIGHT ENDS WITH THE FILM (2026-09-21 — Jake: "the second
+     section i want to do something different from the ambience, the
+     first lamps will have to stop"): the air is clipped 140px under the
+     film's bottom edge — the reverse glow's own reach — so no cyan from
+     the hero leaks into the screen below. The black band under the film
+     (--after) closes to 12svh with it. */
+  .dr-hero-wrap[data-v~="still"] { --after: 12svh; }
+  .dr-hero-wrap[data-v~="still"] .dr-air { height: calc(var(--grow, 55vh) + var(--film-h, 36vw) + 140px); }
   [data-v~="still"] .dr-hero-reel video {
     --over: 1.15;
     translate: 0 calc(-50% + (var(--hero-p, 0) + var(--x, 0)) * 5%);
@@ -735,10 +743,12 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
     margin-top: calc(var(--grow, 55vh) - 100svh);
     padding-top: 0; margin-bottom: 0;
   }
-  .dr-hero-wrap[data-v~="still"].dr-zone-dark::before,
-  .dr-hero-wrap[data-v~="still"] .dr-air {
+  .dr-hero-wrap[data-v~="still"].dr-zone-dark::before {
     height: calc(var(--grow, 55vh) + var(--film-h, 36vw));
   }
+  /* (the air's own height is set above — the film's bottom + 140px,
+     the reverse glow's reach; it used to be clipped AT the film's edge
+     here, which cut the reverse glow off entirely — measured 2026-09-21) */
   .dr-hero-wrap[data-v~="still"] .dr-ground-end {
     top: calc(var(--grow, 55vh) + var(--film-h, 36vw));
   }
@@ -2310,6 +2320,30 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   text-align: center; font-size: min(9.6vw, 8.6rem);
   display: flex; flex-direction: column; align-items: center;
 }
+/* THE SCREEN'S OWN AMBIENCE (2026-09-21 — "something different"): the
+   word is the light. A soft cyan glow sits behind the rotating cell
+   and breathes with the cycle — down as a word leaves, up as the next
+   lands (the same 1950ms period as one word's turn, dr-rot's 11700 / 6)
+   — so the only light on this screen is cast by the word that changes.
+   Nothing drifts, nothing else is lit. */
+/* on the h2 itself, behind its last line — the rotating cell and the
+   line masks both clip (they have to, for the crossfade and the rise),
+   so the light lives outside them */
+.dr-say-screen .dr-offer-say { position: relative; }
+.dr-say-screen .dr-offer-say::after {
+  content: ""; position: absolute; left: 50%; bottom: 0;
+  width: 70vw; height: 46svh; translate: -50% 40%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(30,229,255,.16), rgba(30,229,255,.05) 50%, transparent 72%);
+  pointer-events: none; z-index: -1;
+  animation: dr-word-light 1950ms ease-in-out infinite;
+}
+@keyframes dr-word-light {
+  0%   { opacity: .35; }
+  40%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: .35; }
+}
+@media (prefers-reduced-motion: reduce) { .dr-say-screen .dr-offer-say::after { animation: none; opacity: .8; } }
 /* the rotating words centre in their shared cell here (the underline
    era put them at start so the underline fit the word — the underline
    is gone) */
