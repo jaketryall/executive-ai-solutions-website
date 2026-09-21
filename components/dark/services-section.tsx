@@ -106,35 +106,90 @@ export const OFFER_NAV: { label: string; href: string }[] = [
    both arriving with the room's one triggered gesture (data-wipe, the
    engine's line wipe, staggered by data-wipe-delay) — theirs is a
    staggered entrance too, measured, not a scrub. */
+/* SWEEP LINES: a paragraph split into one span per rendered line (the
+   engine's own probe method: one span per word, grouped by top), each
+   line given --l, re-split on resize. The text is kept whole for
+   readers via aria-label; the spans are aria-hidden. */
+function SweepLines({ text, className, ...rest }: { text: string; className: string } & Record<string, unknown>) {
+  const ref = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const split = () => {
+      const words = text.split(/\s+/).filter(Boolean);
+      el.textContent = "";
+      const probes = words.map((w) => {
+        const sp = document.createElement("span");
+        sp.textContent = w;
+        el.append(sp, " ");
+        return sp;
+      });
+      const lines: string[][] = [];
+      let top = NaN;
+      for (const sp of probes) {
+        const t = sp.getBoundingClientRect().top;
+        if (!(Math.abs(t - top) < 2)) {
+          lines.push([]);
+          top = t;
+        }
+        lines[lines.length - 1].push(sp.textContent || "");
+      }
+      el.textContent = "";
+      lines.forEach((ws, i) => {
+        const l = document.createElement("span");
+        l.className = "dr-sweep-l";
+        l.style.setProperty("--l", String(i));
+        l.setAttribute("aria-hidden", "true");
+        l.textContent = ws.join(" ");
+        el.append(l, i < lines.length - 1 ? " " : "");
+      });
+      el.style.setProperty("--nl", String(lines.length));
+    };
+    split();
+    document.fonts?.ready.then(split);
+    let w = window.innerWidth;
+    const onResize = () => {
+      if (window.innerWidth === w) return;
+      w = window.innerWidth;
+      split();
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [text]);
+  return (
+    <p ref={ref} className={className} aria-label={text} {...rest}>
+      {text}
+    </p>
+  );
+}
+
 export function OfferMore() {
   return (
     <section className="wrap dr-more" aria-label="What you get">
-      {/* THE WORDS LIGHT UP AS YOU SCROLL (2026-09-21 — Jake: "the scroll
-          effect on the text that huge has where the words like glow"):
-          each word sits at a quarter of its ink and comes up to full in
-          turn as the paragraph rises through the lower half of the
-          screen — --r is the paragraph's own approach (0 with its top
-          at 95% of the screen, 1 at 40%), and word w reads
-          clamp(0, r·(N+3) − w, 1) (room.css) so the light walks the
-          sentence and is scrubbed back if you scroll up. Measured on
-          Huge: their headlines FADE IN on a trigger (~150px, a tween),
-          not a scrub — this is the scrubbed reading of the same feeling,
-          the derived-motion rule's version. Replaces the wipe here. */}
-      <p
+      {/* THE SWEEP (2026-09-21 — Jake: "the scroll effect on the text
+          that huge has where the words like glow" → "theirs is still
+          much better"; decoded properly the second time, decodes/
+          hugeinc.md §16, `data-anim="paragraph-sweep"`): each LINE is a
+          background-clip:text span carrying a 300%-wide gradient —
+          ink for the first 40%, the ACCENT at 50%, ink at 20% alpha
+          from 60% — and its background-position slides 100% → 0% as the
+          line rises through the screen, so a cyan edge sweeps left to
+          right through the words as they fill with ink, line after line,
+          scrubbed by scroll both ways. Theirs: a line sweeps as its own
+          top passes .72 → .48 of the screen (~210px), the next line ~a
+          quarter behind. Ours reads the paragraph's one clock --r (its
+          top from .95 → .4) and offsets by line index (room.css). The
+          lines are made here at mount and on resize (SweepLines). */}
+      <SweepLines
         className="dr-more-p"
+        text={OFFER_MORE}
         data-sp
         data-sp-edge="top"
         data-sp-from="0.95"
         data-sp-to="0.4"
         data-sp-var="--r"
-        style={{ "--n": OFFER_MORE.split(" ").length } as CSSProperties}
-      >
-        {OFFER_MORE.split(" ").map((w, i) => (
-          <span className="dr-more-w" key={i} style={{ "--w": i } as CSSProperties}>
-            {w}{" "}
-          </span>
-        ))}
-      </p>
+        data-sp-lerp="0.12" /* the chase: theirs is smoothed too (Jake: "it feels super smooth") */
+      />
       <nav className="dr-more-nav" aria-label="On this site">
         {OFFER_NAV.map((n, i) => (
           <Link

@@ -2344,12 +2344,26 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   font-size: min(4vw, 3.6rem); line-height: 1.08; letter-spacing: -0.03em;   /* 57.6 at 1440 — the model's 57 rung */
   color: var(--ink);
 }
-/* the words' light: a quarter at rest, full in turn — --r is the
-   paragraph's approach (services-section.tsx), --n its word count */
-.dr-more-w {
-  opacity: calc(.22 + .78 * clamp(0, var(--r, 1) * (var(--n, 20) + 3) - var(--w, 0), 1));
+/* THE SWEEP (Huge's paragraph-sweep, decodes/hugeinc.md §16): each line
+   a text-clipped 300%-wide gradient — ink 0–40%, the accent at 50%,
+   ink at 20% alpha from 60% — whose x-position slides 100% → 0% (faint
+   → the cyan edge crossing → ink) as the line rises. --r is the
+   paragraph's approach (top .95 → .4 of the screen, 495px at 900);
+   theirs sweeps a line over its own .72 → .48 (r .42 → .86 for line 0)
+   and each next line 62px later (r + .125). */
+.dr-sweep-l {
+  -webkit-text-fill-color: transparent;
+  background-clip: text; -webkit-background-clip: text;
+  background-repeat: no-repeat; background-size: 300% 100%;
+  background-image: linear-gradient(90deg,
+    currentColor 0%, currentColor 40%,
+    var(--accent) 50%,
+    color-mix(in srgb, currentColor 20%, transparent) 60%,
+    color-mix(in srgb, currentColor 20%, transparent) 100%);
+  --sw: clamp(0, (var(--r, 1) - (.42 + .125 * var(--l, 0))) / .44, 1);
+  background-position: calc((1 - var(--sw)) * 100%) 0%;
 }
-@media (prefers-reduced-motion: reduce) { .dr-more-w { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .dr-sweep-l { --sw: 1; } }
 .dr-more-nav {
   display: flex; flex-direction: column; gap: 14px;
   padding-top: .35em; font-size: 19px;                                          /* the model's 19 rung */
