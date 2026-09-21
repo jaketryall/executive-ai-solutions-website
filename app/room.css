@@ -3298,6 +3298,12 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   --flip: 1;
   --edge-strong: #84848c;
 }
+/* THE DARK ROOM IS IMMUNE TO THE FLIP TRACK (2026-09-20): the work's
+   wrapper writes --flip inline on the root as it scrolls (hero-room.tsx),
+   and inline would beat the room's own 0 — in `?dark` the page read
+   light until the work. !important on a stylesheet rule outranks an
+   inline style; the reduced-motion rule below does the same. */
+.dr-root:not(.dr-light) { --flip: 0 !important; }
 
 /* THE HEADLINE DOES NOT RIDE THE TOKENS — and no longer needs to. It
    used to invert with the room (a highlight sweeping a dark surface
