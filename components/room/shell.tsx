@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Archivo, Instrument_Sans } from "next/font/google";
+import { Archivo, Instrument_Sans, Caveat_Brush } from "next/font/google";
 import { RoomNav } from "@/components/room/nav";
 import CloseSection from "@/components/dark/close-section";
 import { useScrollEngine } from "@/components/dark/scroll-engine";
@@ -27,6 +27,18 @@ const archivo = Archivo({
   axes: ["wdth"],
   display: "swap",
   variable: "--font-archivo",
+});
+/* THE SCRAWL (2026-09-20, hero/air trial — Jake, with landonorris.com's
+   lime "Collabs" tag: "i really like that neon drawing thing i want to
+   find a way to do something similar"). A marker script for the one
+   hand-written word a section gets, in the accent, behind its formal
+   head. Stand-in until Jake writes the words himself (his own hand is
+   the point — "built by the person you talk to"). */
+const scrawl = Caveat_Brush({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-scrawl",
+  display: "swap",
 });
 const instrument = Instrument_Sans({
   subsets: ["latin"],
@@ -91,7 +103,7 @@ export function RoomShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div
-      className={`dr-root ${archivo.variable} ${instrument.variable}${
+      className={`dr-root ${archivo.variable} ${instrument.variable} ${scrawl.variable}${
         lit ? " dr-lit" : ""
       }${light ? " dr-light" : ""}`}
     >

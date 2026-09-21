@@ -5056,7 +5056,35 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    reference's own look, not a bug to crop away. */
 
 .dr-work { position: relative; z-index: 4; padding-block: clamp(72px, 12svh, 150px) 0; }
-.dr-work-head { text-align: center; margin-bottom: clamp(40px, 8svh, 96px); }
+.dr-work-head { text-align: center; margin-bottom: clamp(40px, 8svh, 96px); position: relative; }
+/* THE SCRAWL (trial `scrawl` — decodes/lando: `phrases.riv`, artboard
+   `collabs`, a Rive handwriting animation 1062x665 at z -1, lime, fired
+   by ScrollTrigger at "top center", writing "Collabs" in ~1.5s over the
+   PARTNERS &CAMPAIGNS head with the logos over it). Ours: the word in
+   the marker face (--font-scrawl), the accent, 30vw tall, tilted −9°,
+   under the head (z 0; the kicker and h2 sit at 1), starting past the
+   column's left edge like theirs. Written on by scroll: --write is 1
+   with the head at the fold and 0 at 45% of the screen; the clip opens
+   left to right along the word's own tilt. */
+.dr-work-scrawl {
+  display: none;
+  /* centred on the head and a little left of it, so the word CROSSES
+     the headline the way Lando's crosses PARTNERS — the head sits over it */
+  position: absolute; left: 50%; top: 50%;
+  translate: -56% -56%; rotate: -9deg;
+  font-family: var(--font-scrawl), cursive;
+  font-size: clamp(180px, 30vw, 460px); line-height: 1;
+  color: var(--accent); white-space: nowrap; pointer-events: none;
+  z-index: 0; user-select: none;
+  /* --write runs 0 → 1 as the head rises from the fold to 45% (the
+     engine's p is 0 at data-sp-from, 1 at data-sp-to) */
+  clip-path: inset(-20% calc((1 - var(--write, 1)) * 100%) -20% -5%);
+}
+.dr-root:has(.dr-hero-wrap[data-v~="scrawl"]) .dr-work-scrawl { display: block; }
+.dr-work-head .dr-work-kicker, .dr-work-head .dr-work-h { position: relative; z-index: 1; }
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .dr-work-scrawl { clip-path: none; font-size: 34vw; }
+}
 .dr-work-kicker { display: block; color: var(--ink-4); margin-bottom: var(--fib-3); }
 .dr-work-h {
   color: var(--ink);

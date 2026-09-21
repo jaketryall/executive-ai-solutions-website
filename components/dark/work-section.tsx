@@ -189,7 +189,20 @@ export default function WorkSection() {
 
   return (
     <section className="dr-work" aria-labelledby="dr-work-h">
-      <header className="dr-work-head wrap">
+      <header
+        className="dr-work-head wrap"
+        data-sp
+        data-sp-from="1"
+        data-sp-to=".45"
+        data-sp-var="--write"
+      >
+        {/* THE SCRAWL (trial `scrawl`, room.css — Lando's "Collabs"): the
+            section's nickname hand-written in the accent, giant, tilted,
+            BEHIND the formal head, and it WRITES ITSELF on scroll — a
+            left-to-right clip driven by --write (0 with the head at the
+            fold, 1 with it at 45% of the screen), so the pen is scroll.
+            aria-hidden: the kicker below says the same word for readers. */}
+        <span className="dr-work-scrawl" aria-hidden>Proof</span>
         {/* the one triggered vocabulary (law 11), same as every other section head */}
         <span className="t-label dr-work-kicker" data-wipe>
           Proof
