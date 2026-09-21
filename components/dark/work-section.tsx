@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Snap from "lenis/snap";
+const SNAP_OFF = true; // 2026-09-20, see the effect below
 import { PROJECTS } from "@/lib/work";
 import type { Project } from "@/lib/work";
 import { Roll } from "@/components/room/nav";
@@ -139,6 +140,12 @@ export default function WorkSection() {
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage || n < 2) return;
+    /* THE LANDING IS OFF (2026-09-20 — Jake: "just the horizontal
+       parallax is fine and that way we dont have to do the one at a
+       time thing too"): the rail is continuous again (room.css, --rx =
+       --t), so there are no plateaus to land on. The snap stays written
+       for the day it comes back; it never subscribes. */
+    if (SNAP_OFF) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     // under 900px the band is the finger's own native, self-snapping
     // scroller (room.css's §03 media query) — a second, JS snap here
@@ -227,7 +234,7 @@ export default function WorkSection() {
         data-sp-to={String(-(TRAVEL_SVH / 100))}
         data-sp-var="--bp"
         data-sp-lerp="0.2" /* .2, not the room's .1: the chase is part of the swipe's delay (Jake, 2026-09-19); leoparpeix follows at .068 per frame on a 60fps clock — ours is the same order once the dwell is out of the way */
-        data-sp-force="28"
+        /* data-sp-force="28" — the squash's input, off with the squash (2026-09-20) */
       >
         <div className="dr-work-pin">
           <div className="dr-work-band">

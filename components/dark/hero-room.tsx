@@ -532,8 +532,11 @@ export default function DarkRoom({
          the film grows to the screen's height but keeps its two
          gutters (Jake: "not full width ... the video isnt full size and
          we have lost the parallax too" — the grow stays, the gap stays) */
-      const gap = wrapEl ? parseFloat(getComputedStyle(wrapEl).getPropertyValue("--film-gap")) || 0 : 0;
-      dock.style.setProperty("--sx1", String((vw - 2 * gap) / r.w));
+      /* FULL SCREEN AGAIN (2026-09-20, Jake: "im thinking i move back to
+         having video scale to full screen but with the current way
+         parallax works"): the mask's full width is the screen — the gap
+         is the film's at rest only; the exit slide (--x) is untouched */
+      dock.style.setProperty("--sx1", String(vw / r.w));
       dock.style.setProperty("--hr", String(r.h / (r.w * 9 / 16)));
       /* the shade sits on the reel's box; `top` cannot read the padding's
          width-based percentage, so it is handed the measured offset */

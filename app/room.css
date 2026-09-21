@@ -660,12 +660,9 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   .dr-hero-wrap[data-v~="full"][data-v~="cyan"] .dr-air-edge::after {
     box-shadow: 0 22px 110px 0 rgba(30,229,255,.15);
   }
-  [data-v~="full"] .dr-dock {
-    --inset: var(--film-gap);
-    /* the corners stay: with its gutters the film never becomes the
-       screen, so it keeps its 10px radius at full size too */
-    --rv: 10px;
-  }
+  /* (the corners go square at full screen again — the default --rv —
+     since the film is the screen once more, 2026-09-20) */
+  [data-v~="full"] .dr-dock { --inset: var(--film-gap); }
   /* the glow's sides: the gap's own width to die over, then 70px to
      come up to full — the top glow falls off toward the two corners */
   .dr-hero-wrap[data-v~="full"] .dr-air {
@@ -5167,7 +5164,13 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   --e9: calc(.5 * var(--s9) * (2 - var(--s9)) + .5 * var(--s9) * var(--s9) * (3 - 2 * var(--s9)));
   --e10: calc(.5 * var(--s10) * (2 - var(--s10)) + .5 * var(--s10) * var(--s10) * (3 - 2 * var(--s10)));
   --e11: calc(.5 * var(--s11) * (2 - var(--s11)) + .5 * var(--s11) * var(--s11) * (3 - 2 * var(--s11)));
-  --rx: calc(var(--e0) + var(--e1) + var(--e2) + var(--e3) + var(--e4) + var(--e5) + var(--e6) + var(--e7) + var(--e8) + var(--e9) + var(--e10) + var(--e11));
+  /* THE STEPS ARE OFF (2026-09-20, Jake: "the cards zooming in and out
+     and all that is kinda chaotic i think just the horizontal parallax
+     is fine and that way we dont have to do the one at a time thing
+     too"): --rx is --t itself — one continuous, linear slide across the
+     pinned travel, Huge's 1:1 rail with our pictures' parallax inside.
+     The twelve --s/--e terms above are left in place, unread. */
+  --rx: var(--t);
   --rail-x: calc(-1 * var(--rx) * var(--pitch));             /* tile 0's centre, relative to the band's centre — stepped now, not f(bp) directly */
   --pp: calc(var(--bp, 0) * 2 - 1);                          /* their uParallaxProgress, −1 → +1 — UNCHANGED, still f(bp): the pictures keep sliding through a hold */
   --idx: var(--rx);                                          /* the tile under the centre — the info row's crossfade reads this, now stepped */
@@ -5223,7 +5226,9 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
      leoparpeix's drag force; here the drag is the slide, so this stays
      at the flat identity through every dwell no matter what --force
      reads off a live wheel burst. */
-  transform: translateZ(calc(-800px * var(--force, 0) * var(--sl, 0) * var(--dist)));
+  /* THE DEPTH SQUASH IS OFF (2026-09-20, with the steps — Jake: "the
+     cards zooming in and out … is kinda chaotic"): flat, no z. */
+  transform: translateZ(0);
   will-change: transform;
 }
 .dr-work-card { position: absolute; inset: 0; display: block; border-radius: 10px; overflow: clip; text-decoration: none; color: inherit; background: #e7e7ea; }
