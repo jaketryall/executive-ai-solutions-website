@@ -47,6 +47,12 @@ export default function SayCorners() {
         <span>Mesa, Arizona</span>
         <span className="dr-say-dim">Building for anyone, anywhere</span>
       </div>
+      {/* THE ORBS (2026-09-21 — Jake: "ambient orbs in the corners for that
+          section"): two soft white lights low in the screen's corners,
+          each on its own slow drift — the dark room's own lamps, parked
+          where the text isn't. The screen's only ambience. */}
+      <div className="dr-say-orb dr-say-orb--l" aria-hidden />
+      <div className="dr-say-orb dr-say-orb--r" aria-hidden />
       <div className="dr-say-corner dr-say-corner--r">
         <span>
           Phoenix <time>{time ?? "  :  "}</time>

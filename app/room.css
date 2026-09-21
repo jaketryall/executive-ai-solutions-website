@@ -2320,30 +2320,8 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   text-align: center; font-size: min(9.6vw, 8.6rem);
   display: flex; flex-direction: column; align-items: center;
 }
-/* THE SCREEN'S OWN AMBIENCE (2026-09-21 — "something different"): the
-   word is the light. A soft cyan glow sits behind the rotating cell
-   and breathes with the cycle — down as a word leaves, up as the next
-   lands (the same 1950ms period as one word's turn, dr-rot's 11700 / 6)
-   — so the only light on this screen is cast by the word that changes.
-   Nothing drifts, nothing else is lit. */
-/* on the h2 itself, behind its last line — the rotating cell and the
-   line masks both clip (they have to, for the crossfade and the rise),
-   so the light lives outside them */
-.dr-say-screen .dr-offer-say { position: relative; }
-.dr-say-screen .dr-offer-say::after {
-  content: ""; position: absolute; left: 50%; bottom: 0;
-  width: 70vw; height: 46svh; translate: -50% 40%;
-  background: radial-gradient(50% 50% at 50% 50%, rgba(30,229,255,.16), rgba(30,229,255,.05) 50%, transparent 72%);
-  pointer-events: none; z-index: -1;
-  animation: dr-word-light 1950ms ease-in-out infinite;
-}
-@keyframes dr-word-light {
-  0%   { opacity: .35; }
-  40%  { opacity: 1; }
-  80%  { opacity: 1; }
-  100% { opacity: .35; }
-}
-@media (prefers-reduced-motion: reduce) { .dr-say-screen .dr-offer-say::after { animation: none; opacity: .8; } }
+/* (a cyan light behind the rotating word was tried here 2026-09-21 and
+   taken off the same hour — Jake: "i dont like the blue glow") */
 /* the rotating words centre in their shared cell here (the underline
    era put them at start so the underline fit the word — the underline
    is gone) */
@@ -2373,6 +2351,22 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 }
 .dr-say-corner--l { left: var(--col-inset); text-align: left; }
 .dr-say-corner--r { right: var(--col-inset); text-align: right; }
+/* THE ORBS (2026-09-21): two white radials low in the corners, 44vw
+   across, at the rig's own brightness (.dr-key's .2 / .09), on the
+   rig's own drifts (dr-drift 26s, dr-drift-b 37s). Under the words.
+   ("Scroll ↓" and the address were tried in the bottom corners first
+   and taken off — Jake: "sorry. i meant ambient orbs in the corners") */
+.dr-say-orb {
+  position: absolute; width: 44vw; height: 44vw; border-radius: 50%;
+  pointer-events: none; z-index: 0;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,.16), rgba(255,255,255,.05) 50%, transparent 72%);
+}
+.dr-say-orb--l { left: -14vw; bottom: -18vw; animation: dr-drift 26s ease-in-out infinite alternate; }
+.dr-say-orb--r { right: -14vw; bottom: -20vw; animation: dr-drift-b 37s ease-in-out infinite alternate;
+                 background: radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,.11), rgba(255,255,255,.04) 50%, transparent 72%); }
+.dr-say-screen .dr-offer-say, .dr-say-corner { position: relative; z-index: 1; }
+.dr-say-corner { position: absolute; }
+@media (prefers-reduced-motion: reduce) { .dr-say-orb { animation: none; } }
 .dr-say-dim { color: var(--ink-3); }
 .dr-say-corner time { font-variant-numeric: tabular-nums; }
 [data-in] .dr-say-corner { opacity: 1; transition: opacity .8s var(--ease-ui) 700ms; }
