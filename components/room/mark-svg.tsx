@@ -19,6 +19,9 @@ const D =
      whatever the geometry.
    · `dr-mark-lit`   the diagonal wipe (`?v=logowipe`), kept.
    · `dr-mark-draw`  the hairline outline (`?v=logodraw`), kept. */
+const PEN =
+  "M250,50 H62 Q40,50 40,88 V168 Q40,205 78,205 H215 L215,258 H78 Q40,258 40,296 V402 Q40,442 80,442 H244 L188,472 L332,42 H402 Q458,42 458,100 V240 V392 Q458,442 410,442 H300 L268,442";
+
 export function MarkSvg() {
   const trace = useRef<SVGPathElement>(null);
   useEffect(() => {
@@ -45,6 +48,19 @@ export function MarkSvg() {
         <stop offset="1" stopColor="#000" />
       </linearGradient>
 
+      {/* THE PEN (`?v=logopen`, 2026-09-22): a hand-authored centreline
+          through the monogram — one subpath, because SVG RESTARTS the
+          dash at every subpath and three strokes then revealed at once.
+          It runs the E from its top arm, steps down through the notch,
+          runs the lower E, crosses to the A's foot, up the diagonal,
+          round the right and out along the bottom. It is a MASK over
+          the real mark, not a drawing of it: the glyph that appears is
+          always the true one, so the pen's own inaccuracy never shows —
+          it only decides the ORDER things arrive in. */}
+      <mask id="dr-mark-pen" maskUnits="userSpaceOnUse" x="-150" y="-150" width="800" height="800">
+        <path className="dr-mark-pen" d={PEN} pathLength={1000} />
+      </mask>
+      <path className="dr-mark-written" d={D} mask="url(#dr-mark-pen)" />
       <path className="dr-mark-ink" d={D} />
       <path className="dr-mark-lit" mask="url(#dr-mark-corner)" d={D} />
       <g clipPath="url(#dr-mark-glyph)">
