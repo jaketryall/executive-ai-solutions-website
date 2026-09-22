@@ -27,7 +27,8 @@ import { useEffect, useRef } from "react";
 
 const BANDS = 22;
 const REACH = 7.5; // bands of falloff each side of the pointer's row
-const AMP = 46; // px at full strength, at the pointer's own row
+const AMP = 64; // px at full strength, at the pointer's own row
+const EDGE = "30, 229, 255"; // the accent, as the cut's own light
 const CHASE = 0.14;
 
 export default function FilmSlice() {
@@ -82,6 +83,16 @@ export default function FilmSlice() {
         const dir = i % 2 ? -1 : 1;
         const dx = dir * f * P.amp * AMP;
         ctx.drawImage(video, 0, i * sbh, vw, sbh + 1, dx, i * bh, w, bh + 1);
+        /* THE CUT HAS TO BE VISIBLE ON BLACK. Displacing dark pixels
+           against dark pixels shows nothing, and most of this reel's
+           frame IS black — the first build read as "not working" for
+           exactly that reason. So each opened band gets the accent along
+           its own edge: the scan line, not the displacement, is what the
+           eye follows. */
+        if (f > 0.02) {
+          ctx.fillStyle = `rgba(${EDGE}, ${(f * P.amp * 0.5).toFixed(3)})`;
+          ctx.fillRect(0, i * bh, w, 1.25);
+        }
       }
       cvs.dataset.on = "true";
     };

@@ -6329,8 +6329,13 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
               margin-left .56s cubic-bezier(.4, 0, 0, 1);
   margin-left: 0;
 }
-.dr-root:has(.dr-hero-wrap[data-v~="logoname"]) .dr-lockup.is-open b {
-  max-width: 32ch; margin-left: 10px;
+/* ⚠ SPECIFICITY: `logoc`'s own rest rule (.dr-root:has(…) .dr-rail:not([data-stuck])
+   .dr-lockup b { max-width: 0; opacity: 0 }) is (0,6,1); this has to
+   match it and come later, or the name opens at the top of the page
+   with opacity 0 and the hover reads as doing nothing — which is
+   exactly what it did (measured 2026-09-22). */
+.dr-root:has(.dr-hero-wrap[data-v~="logoname"]) .dr-rail .dr-lockup.is-open b {
+  max-width: 32ch; margin-left: 10px; opacity: 1;
 }
 .dr-root:has(.dr-hero-wrap[data-v~="logoname"]) .dr-lockup b i {
   font-style: normal; display: inline-block; white-space: pre;
@@ -6357,7 +6362,10 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
 .dr-lockup { position: relative; }
 .dr-lockup::after { content: none; }
 .dr-root:has(.dr-hero-wrap[data-v~="logobloom"]) .dr-lockup::after {
-  content: ""; position: absolute; left: 50%; top: 50%; z-index: -1;
+  /* z-index 0, not −1: a negative child of a non-stacking ancestor
+     paints BEHIND the page's ground, which is opaque — the bloom was
+     invisible (2026-09-22) */
+  content: ""; position: absolute; left: 50%; top: 50%; z-index: 0;
   width: 520px; height: 520px; margin: -260px 0 0 -260px;
   background: var(--accent);
   mask: url("/brand/eas-mark.svg") center / contain no-repeat;
@@ -6365,6 +6373,8 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
   pointer-events: none;
   transition: opacity .5s var(--ease-ui), scale .8s cubic-bezier(.2, .8, .2, 1), filter .8s var(--ease-ui);
 }
+.dr-root:has(.dr-hero-wrap[data-v~="logobloom"]) .dr-mono,
+.dr-root:has(.dr-hero-wrap[data-v~="logobloom"]) .dr-lockup b { position: relative; z-index: 1; }
 .dr-root:has(.dr-hero-wrap[data-v~="logobloom"]) .dr-lockup:hover::after,
 .dr-root:has(.dr-hero-wrap[data-v~="logobloom"]) .dr-lockup:focus-visible::after {
   opacity: .16; scale: 1; filter: blur(6px);
