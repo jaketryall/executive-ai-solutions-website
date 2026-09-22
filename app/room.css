@@ -1122,6 +1122,11 @@ body:has(.dr-root) main { margin-bottom: 0 !important; box-shadow: none !importa
   width: max-content;
   display: flex; align-items: center; gap: var(--fib-4);
 }
+/* the links are two groups in the markup (nav.tsx, for `logoc`); in every
+   other layout they read as the one row they were: the second group
+   follows the first at the links' own gap, and its wrapper is invisible */
+.dr-links--r { margin-left: var(--fib-4); }
+.dr-rail-r { display: contents; }
 .dr-links a {
   display: inline-block; overflow: hidden;
   height: 1.15em; line-height: 1.15;
@@ -5932,3 +5937,43 @@ body:has(.dr-hero-wrap[data-v~="lm"]) { background: #e7e7ea; }
 .dr-root:has(.dr-hero-wrap[data-v~="navc"]:not([data-v~="left"])) .dr-rail { width: max-content; }
 .dr-root:has(.dr-hero-wrap[data-v~="navc"]:not([data-v~="left"])) .dr-rail-in { gap: clamp(22px, 2.6vw, 44px); }
 .dr-root:has(.dr-hero-wrap[data-v~="navc"]:not([data-v~="left"])) .dr-links { margin-left: 0; margin-right: 0; }
+
+/* ── ASK, IN THE RAIL (trial `?v=ask`, 2026-09-21 — "should i add a search
+   bar and ai chat" → one word in the rail: the search bar and the chat
+   are the same thing here, the ask-this-site chat that answers from the
+   site's own pages). Hidden unless the token is on. On this route the
+   panel (globals.css .schat-panel, a fixed paper card that unfolded from
+   the old floating pill's bottom-right spot) drops from under the rail
+   instead — top-centred, opening from a capsule the width of the word.
+   The old floating pill stays hidden. */
+.dr-ask { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="ask"]) .dr-ask { display: inline-flex; }
+body:has(.dr-root) .schat-panel {
+  top: 96px; bottom: auto; right: auto; left: 50%; translate: -50% 0;
+  width: min(460px, calc(100vw - 32px));
+  max-height: min(560px, calc(100dvh - 120px));
+  clip-path: inset(0 calc(50% - 46px) calc(100% - 44px) calc(50% - 46px) round 999px);
+}
+body:has(.dr-root) .schat-panel.is-open { clip-path: inset(0 0 0 0 round var(--radius-panel, 24px)); }
+
+/* `logoc` (same night — Jake: "can we put the logo in the center tho of
+   nav"): the mark at the rail's centre. A 1fr auto 1fr grid: Work ·
+   Services at the end of the left cell, the lockup in the middle,
+   Pricing · Ask (and the call, once stuck) at the start of the right
+   cell — the centre holds whatever the sides weigh. */
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail-in {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+}
+/* once stuck the call joins the right group and equal cells would leave
+   the call's width EMPTY on the pill's left (measured: 200px of nothing
+   before Work) — so the pill packs its contents and the mark sits at
+   the centre of what is in it, a call's half-width left of the page's
+   centre. A compact pill beats a centred mark in a lopsided one. */
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail[data-stuck] .dr-rail-in { grid-template-columns: auto auto auto; }
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-links--l { order: 1; justify-self: end; margin: 0; }
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-lockup { order: 2; justify-self: center; }
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail-r {
+  order: 3; display: flex; align-items: center; justify-self: start; min-width: 0;
+}
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-links--r { margin: 0; }
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-nav-proof { order: 4; }

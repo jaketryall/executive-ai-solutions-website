@@ -88,12 +88,11 @@ export function RoomNav() {
        — the proof after the mark, the one door at the end — so the rail
        is the pill from the first frame, not something the first scroll
        earns. */
-    /* `navc` too (Jake: "i like it when its in the scrolling state not
-       the original"): the centred rail is the pill — mark, links, the
-       call — from the first frame. */
-    const always = !!document.querySelector(
-      '.dr-hero-wrap[data-v~="navstrip"], .dr-hero-wrap[data-v~="navpill"], .dr-hero-wrap[data-v~="navc"]'
-    );
+    /* (`navc` was in this list for an hour — Jake: "i dont want the pill
+       in by default i do like it centered tho" — so the centred rail is
+       the quiet cluster at rest and the pill on the first scroll, like
+       the wide one was.) */
+    const always = !!document.querySelector('.dr-hero-wrap[data-v~="navstrip"], .dr-hero-wrap[data-v~="navpill"]');
     if (always) setStuck(true);
     const io = new IntersectionObserver(([e]) => setStuck(always || !e.isIntersecting), {
       threshold: 0,
@@ -251,16 +250,44 @@ export function RoomNav() {
               the lockup, pushed to the far side, with the action after
               them once it has opened. They used to float centred over
               the rail as an absolute box. */}
-          <nav className="dr-links" aria-label="Main">
+          {/* two groups, one nav for readers (`?v=logoc`, room.css: the
+              mark goes to the centre of the rail with Work · Services on
+              its left and Pricing · Ask on its right — a 1fr auto 1fr
+              grid, so the mark is the rail's centre whatever the sides
+              weigh; the call joins the right group. Every other layout
+              sees one row, as before.) */}
+          <nav className="dr-links dr-links--l" aria-label="Main">
             <Link href="/work" aria-label="Work">
               <Roll label="Work" />
             </Link>
             <Link href="/services/websites" aria-label="Services">
               <Roll label="Services" />
             </Link>
+          </nav>
+          <div className="dr-rail-r">
+          <nav className="dr-links dr-links--r" aria-label="More">
             <Link href="/pricing" aria-label="Pricing">
               <Roll label="Pricing" />
             </Link>
+            {/* ASK (`?v=ask`, hidden otherwise — room.css): the ask-this-
+                site chat's one entry, in the rail with the links — the
+                search bar and the chat as one word (Jake: "put the ask
+                in the pill i want to see it"). Opens the chat that is
+                already mounted (site-chat.tsx, layout.tsx) through its
+                own event; the panel drops from under the rail on this
+                route (room.css). */}
+            <a
+              href="#ask"
+              className="dr-ask"
+              role="button"
+              aria-label="Ask this site a question"
+              onClick={(e) => {
+                e.preventDefault();
+                window.dispatchEvent(new Event("eas:chat-open"));
+              }}
+            >
+              <Roll label="Ask" />
+            </a>
           </nav>
 
           {/* collapsed at the top of the homepage, so it must not be
@@ -284,6 +311,7 @@ export function RoomNav() {
           >
             See your price
           </Link>
+          </div>
         </div>
       </div>
     </header>
