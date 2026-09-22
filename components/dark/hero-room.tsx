@@ -4,6 +4,7 @@ import { memo, useEffect, useState } from "react";
 import Link from "next/link";
 import { OfferHead, OfferMore } from "@/components/dark/services-section";
 import VoicesTiles from "@/components/dark/voices-tiles";
+import FilmSlice from "@/components/dark/film-slice";
 import WorkSection from "@/components/dark/work-section";
 import VoicesSection from "@/components/dark/voices-section";
 import RunsSection from "@/components/dark/runs-section";
@@ -1113,6 +1114,9 @@ export default function DarkRoom({
             >
               <source src="/dark/reel-film.mp4#t=1.4" type="video/mp4" />
             </video>
+            {/* `?v=slice` — the pointer cuts the picture into bands
+                (film-slice.tsx; Lando's WebGL hero, without the shader) */}
+            {has("slice") && <FilmSlice />}
           </div>
         </section>
       </div>

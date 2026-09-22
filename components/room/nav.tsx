@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { CLIENT_MARKS, GOOGLE_REVIEWS } from "@/lib/proof";
 import { SiteChat } from "@/components/ui/site-chat";
+import type { CSSProperties } from "react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 /* THE ROOM'S NAV, as the site's nav.
@@ -134,6 +135,50 @@ export function RoomNav() {
      and the call's width open on the same curve and duration, so the
      two motions read as one. Same in reverse when the hero comes back. */
   const railRef = useRef<HTMLDivElement>(null);
+  const lockRef = useRef<HTMLAnchorElement>(null);
+  /* THE UNPACK (`?v=logoname`, 2026-09-22): hovering the mark opens the
+     whole name out of it, and the PILL GROWS to take it — the rail's
+     width is max-content, which no CSS transition can animate from, so
+     the same Web Animations trick the island uses runs it here: measure
+     the closed width, let the name open, measure again, animate between
+     the two numbers. The letters' own stagger is CSS. */
+  useEffect(() => {
+    const rail = railRef.current;
+    const lock = lockRef.current;
+    if (!rail || !lock) return;
+    if (!document.querySelector('.dr-hero-wrap[data-v~="logoname"]')) return;
+    if (!window.matchMedia("(hover: hover)").matches) return;
+    let anim: Animation | null = null;
+    const run = (open: boolean) => {
+      const from = rail.getBoundingClientRect().width;
+      lock.classList.toggle("is-open", open);
+      const to = rail.getBoundingClientRect().width;
+      if (Math.abs(to - from) < 1) return;
+      anim?.cancel();
+      anim = rail.animate([{ width: `${from}px` }, { width: `${to}px` }], {
+        duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 560,
+        easing: "cubic-bezier(.4, 0, 0, 1)",
+        fill: "both",
+      });
+      anim.onfinish = () => {
+        anim?.cancel();
+        anim = null;
+      };
+    };
+    const on = () => run(true);
+    const off = () => run(false);
+    lock.addEventListener("pointerenter", on);
+    lock.addEventListener("pointerleave", off);
+    lock.addEventListener("focus", on);
+    lock.addEventListener("blur", off);
+    return () => {
+      anim?.cancel();
+      lock.removeEventListener("pointerenter", on);
+      lock.removeEventListener("pointerleave", off);
+      lock.removeEventListener("focus", on);
+      lock.removeEventListener("blur", off);
+    };
+  }, []);
   type Snap = { first: Map<HTMLElement, DOMRect>; old: Map<HTMLElement, Record<string, string>> };
   const snapRef = useRef<Snap | null>(null);
   const stuckRef = useRef(false);
@@ -453,7 +498,7 @@ export function RoomNav() {
         data-ground={ground}
       >
         <div className="dr-rail-in">
-          <Link className="dr-lockup" href="/">
+          <Link className="dr-lockup" href="/" ref={lockRef}>
             <span className="dr-mono" aria-hidden>
               {/* `logoslice` only — inert in every other layout (room.css) */}
               <span className="dr-mono-slices">
@@ -462,7 +507,16 @@ export function RoomNav() {
                 <span className="dr-mono-slice dr-mono-slice--3" />
               </span>
             </span>
-            <b>Executive AI Solutions</b>
+            {/* the name is per-character so it can UNPACK from the mark
+                (`?v=logoname`, room.css) — letters arriving in sequence
+                out of the monogram. One string, one split, no library. */}
+            <b aria-label="Executive AI Solutions">
+              {"Executive AI Solutions".split("").map((c, i) => (
+                <i key={i} aria-hidden style={{ "--i": i } as CSSProperties}>
+                  {c === " " ? "\u00A0" : c}
+                </i>
+              ))}
+            </b>
           </Link>
 
           {/* THE PROOF IN THE RAIL (`?v=navstrip`, hidden otherwise —

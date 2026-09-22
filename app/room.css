@@ -6315,3 +6315,77 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
 @media (prefers-reduced-motion: reduce) {
   .dr-mono, .dr-mono-slice { transition: none !important; animation: none !important; }
 }
+
+/* ── THE UNPACK (trial `?v=logoname`, 2026-09-22 — "boring", on a sweep
+   and a glitch that both stayed inside a 21px box). This one leaves the
+   box: hover the mark and the whole NAME comes out of it, letter by
+   letter, and the rail grows to take them; leave and it packs back in.
+   The letters ride the house's own roll — up from under, .022s apart,
+   the reveal curve — and the first few carry the accent so the colour
+   comes OUT of the monogram with them. */
+.dr-root:has(.dr-hero-wrap[data-v~="logoname"]) .dr-lockup b {
+  display: flex; max-width: 0; opacity: 1;
+  transition: max-width .56s cubic-bezier(.4, 0, 0, 1),
+              margin-left .56s cubic-bezier(.4, 0, 0, 1);
+  margin-left: 0;
+}
+.dr-root:has(.dr-hero-wrap[data-v~="logoname"]) .dr-lockup.is-open b {
+  max-width: 32ch; margin-left: 10px;
+}
+.dr-root:has(.dr-hero-wrap[data-v~="logoname"]) .dr-lockup b i {
+  font-style: normal; display: inline-block; white-space: pre;
+  translate: 0 .9em; opacity: 0;
+  transition: translate .42s var(--ease-reveal) calc(var(--i) * 22ms),
+              opacity .3s var(--ease-ui) calc(var(--i) * 22ms),
+              color .5s var(--ease-ui) calc(var(--i) * 22ms);
+}
+.dr-root:has(.dr-hero-wrap[data-v~="logoname"]) .dr-lockup.is-open b i {
+  translate: 0 0; opacity: 1;
+}
+/* the accent comes out of the mark with the first letters and drains
+   away as they settle */
+.dr-root:has(.dr-hero-wrap[data-v~="logoname"]) .dr-lockup b i:nth-child(-n+6) { color: var(--accent); }
+.dr-root:has(.dr-hero-wrap[data-v~="logoname"]) .dr-lockup.is-open b i:nth-child(-n+6) {
+  color: var(--ink); transition-delay: calc(var(--i) * 22ms), calc(var(--i) * 22ms), calc(320ms + var(--i) * 22ms);
+}
+/* the pill's own padding follows the name so the mark keeps its inset */
+.dr-root:has(.dr-hero-wrap[data-v~="logoname"]) .dr-rail-in { transition: padding .56s cubic-bezier(.4, 0, 0, 1); }
+
+/* ── THE BLOOM (trial `?v=logobloom`): the monogram at 40× behind the
+   whole rail — it blooms out of the mark in the accent and fades, the
+   way the room's own lamps do, and nothing in the layout moves. */
+.dr-lockup { position: relative; }
+.dr-lockup::after { content: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="logobloom"]) .dr-lockup::after {
+  content: ""; position: absolute; left: 50%; top: 50%; z-index: -1;
+  width: 520px; height: 520px; margin: -260px 0 0 -260px;
+  background: var(--accent);
+  mask: url("/brand/eas-mark.svg") center / contain no-repeat;
+  opacity: 0; scale: .35; filter: blur(0px);
+  pointer-events: none;
+  transition: opacity .5s var(--ease-ui), scale .8s cubic-bezier(.2, .8, .2, 1), filter .8s var(--ease-ui);
+}
+.dr-root:has(.dr-hero-wrap[data-v~="logobloom"]) .dr-lockup:hover::after,
+.dr-root:has(.dr-hero-wrap[data-v~="logobloom"]) .dr-lockup:focus-visible::after {
+  opacity: .16; scale: 1; filter: blur(6px);
+}
+
+/* ── THE SLICE (trial `?v=slice`, 2026-09-22): the canvas sits exactly
+   over the video, inside the reel's own mask, and carries the film's
+   drift by taking the same rules — so the parallax is untouched and the
+   only new thing on screen is the cut. It paints nothing until the
+   pointer is over the film (data-on), and the video underneath is
+   hidden only while it does, so at rest there is one layer, as before. */
+.dr-hero-slice {
+  display: block; position: absolute; left: 0; top: 50%;
+  width: 100%; height: auto; aspect-ratio: 16 / 9;
+  pointer-events: none; opacity: 0;
+  transition: opacity .18s var(--ease-ui);
+}
+[data-v~="still"] .dr-hero-reel .dr-hero-slice {
+  --over: 1.15;
+  translate: 0 calc(-50% + (var(--hero-p, 0) + var(--x, 0)) * 5%);
+}
+.dr-hero-slice[data-on="true"] { opacity: 1; }
+.dr-hero-reel:has(.dr-hero-slice[data-on="true"]) video { opacity: 0; }
+@media (max-width: 900px), (prefers-reduced-motion: reduce) { .dr-hero-slice { display: none; } }
