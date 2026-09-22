@@ -1366,6 +1366,13 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
    riser starts a full line PLUS that padding below, so nothing peeks
    before its turn. */
 .dr-greet-l { display: block; overflow: hidden; padding: .16em .06em; margin: -.16em -.06em; }
+/* adjacent lines' negative margins COLLAPSE (line 1's −.16em bottom and
+   line 2's −.16em top merged into one and the title grew 21px between
+   its lines, measured) — so between lines the top margin is the sum,
+   which collapses to exactly what two would have been. (A flex column
+   would have stopped the collapse, and broke the fit: the probe h1
+   wraps every word.) */
+.dr-greet-l + .dr-greet-l { margin-top: -.32em; }
 .dr-greet-li {
   display: inline-block;
   transform: translate(calc(5% * (1 - 2 * mod(var(--l, 0), 2))), calc(100% + .34em));
@@ -6015,11 +6022,10 @@ body:has(.dr-root) .schat-panel.is-open { clip-path: inset(0 0 0 0 round var(--r
    not three things evenly spaced — the title belongs to the film. Air
    above (72px nav → cap line at 900), the picture close under it (40px
    baseline → film): Apple's own proportion on a product page. */
-/* third pass ("i feel like the title and video are really close"): 64
-   above, 60 below at 900 — the picture still nearer the words than the
-   chrome is, but breathing. */
+/* third pass ("i feel like the title and video are really close" …
+   "focus on video"): 52 above, 72 below at 900. */
 .dr-hero-wrap[data-v~="tidy"] .dr-slot { --slot-show: 426px; }
-.dr-hero-wrap[data-v~="tidy"] .dr-h1.dr-greet { margin-top: clamp(36px, 6.6svh, 72px); }
+.dr-hero-wrap[data-v~="tidy"] .dr-h1.dr-greet { margin-top: clamp(30px, 5.2svh, 60px); }
 .dr-root:has(.dr-hero-wrap[data-v~="tidy"]) { --nav-pad: clamp(16px, 2.7svh, 24px); }
 .dr-root:has(.dr-hero-wrap[data-v~="tidy"]) .dr-links a { font-size: 14px; letter-spacing: .1em; }
 .dr-root:has(.dr-hero-wrap[data-v~="tidy"]) .dr-rail-in { gap: 40px; }
