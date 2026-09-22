@@ -5873,3 +5873,17 @@ body:has(.dr-hero-wrap[data-v~="lm"]) { background: #e7e7ea; }
 }
 .dr-root:has(.dr-hero-wrap[data-v~="strip"]) .dr-rail .dr-lockup b { max-width: 0; opacity: 0; }
 .dr-root:has(.dr-hero-wrap[data-v~="strip"]) .dr-rail .dr-mono { width: 21px; opacity: 1; }
+
+/* `left` (trial, same night — Jake: "the top third still doesnt feel
+   good idk why"). The diagnosis: a CENTRED two-line title over a
+   JUSTIFIED bar. The strip's contents sit at its two ends (faces left,
+   door right) and the film is flush; the title's second line sits
+   centred with ragged air either side — a trapezoid on a beam. The
+   white hero never had this: its one line filled the measure. So the
+   title goes flush left with the faces, the second line ragged right,
+   and the top of the page is one left-aligned column — the model's own
+   grammar (hugeinc.com's statements sit left). The fit is untouched;
+   the first line still spans the measure. The day line follows it. */
+.dr-hero-wrap[data-v~="left"] .dr-h1.dr-greet,
+.dr-hero-wrap[data-v~="left"] .dr-hero-sub { text-align: left; }
+.dr-hero-wrap[data-v~="left"] .dr-hero-sub { margin-inline: 0; }
