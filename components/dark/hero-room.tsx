@@ -11,7 +11,7 @@ import ObjectionsSection from "@/components/dark/objections-section";
 import { Monogram } from "@/components/ui/monogram";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
-import { CLIENT_MARKS, GOOGLE_REVIEWS, NEXT_START } from "@/lib/proof";
+import { CLIENT_MARKS, GOOGLE_REVIEWS, NEXT_START, TICKER } from "@/lib/proof";
 import { pickGreeting, replyLine, splitLead, type Greeting } from "@/lib/greeting";
 import { getPersona } from "@/lib/persona";
 
@@ -635,7 +635,10 @@ export default function DarkRoom({
       // same day: title, then the day line, then the door pill — the
       // door's own bottom edge is what the slot must clear, same as the
       // room's very first hero).
-      const day = document.querySelector<HTMLElement>(".dr-hero-proof") ?? document.querySelector<HTMLElement>(".dr-hero-door");
+      const day =
+        document.querySelector<HTMLElement>(".dr-strip") ??
+        document.querySelector<HTMLElement>(".dr-hero-proof") ??
+        document.querySelector<HTMLElement>(".dr-hero-door");
       if (day) {
         const db = box(day);
         reel.closest<HTMLElement>(".dr-hero-wrap")?.style.setProperty("--day-b", `${db.y + db.h}px`);
@@ -911,9 +914,65 @@ export default function DarkRoom({
                   })()}
                 </p>
               )}
+              {has("strip") ? (
+                /* THE STRIP, back (trial `?v=strip`, 2026-09-21 — Jake: "can
+                   we try bringing the pill from the design that sells thing
+                   in to this design … i just want to see it"): the thin
+                   64px bar from the white hero, between the title and the
+                   film — the faces, rotating, and the rating at the left;
+                   the services ticker running; THIS design's cyan door at
+                   its right end. It replaces the door + the proof line
+                   (it IS both). room.css's retired .dr-strip rules carry
+                   it; the light room's white bar, the dark room's dark
+                   one. measure() clears it as the last thing above the
+                   slot. */
+                <div className="dr-strip">
+                  {GOOGLE_REVIEWS.count > 0 && (
+                    <a
+                      className="dr-strip-rating"
+                      href={GOOGLE_REVIEWS.url || undefined}
+                      target={GOOGLE_REVIEWS.url ? "_blank" : undefined}
+                      rel={GOOGLE_REVIEWS.url ? "noopener noreferrer" : undefined}
+                      aria-label={`Rated ${GOOGLE_REVIEWS.rating.toFixed(1)} on Google from ${GOOGLE_REVIEWS.count} reviews`}
+                    >
+                      <span className="dr-faces" aria-hidden>
+                        {CLIENT_MARKS.map((c) => (
+                          <span className="dr-face" key={c.initials} title={c.name}>
+                            {c.src ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={c.src} alt="" />
+                            ) : (
+                              c.initials
+                            )}
+                          </span>
+                        ))}
+                      </span>
+                      <span className="dr-strip-l">
+                        <b>{GOOGLE_REVIEWS.rating.toFixed(1)} on Google</b>
+                        <span>{GOOGLE_REVIEWS.count} client reviews</span>
+                      </span>
+                    </a>
+                  )}
+                  <div className="dr-logos" aria-label="What we build">
+                    <div className="dr-logos-track">
+                      {[0, 1].map((i) => (
+                        <div className="dr-logos-set" key={i} aria-hidden={i === 1}>
+                          {TICKER.map((c) => (
+                            <span key={c}>{c}</span>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <Link href={greeting.door.href} className="dr-herocta dr-hero-door t-cta">
+                    {greeting.door.label}
+                  </Link>
+                </div>
+              ) : (
               <Link href={greeting.door.href} className="dr-herocta dr-hero-door t-cta">
                 {greeting.door.label}
               </Link>
+              )}
               {/* THE PROOF LINE (2026-09-21 — the one thing the white
                   "Design that sells" hero had that this one lost: the
                   strip's proof. Jake: "okay lets try it"). One quiet row
@@ -923,6 +982,7 @@ export default function DarkRoom({
                   (0 hides it); the numbers there are PLACEHOLDERS until
                   Jake sets the live ones. The row is the last thing above
                   the slot now, so measure() clears it, not the door. */}
+              {!has("strip") && (
               <div className="dr-hero-proof">
                 <span className="dr-hero-proof-marks" aria-hidden>
                   {CLIENT_MARKS.map((m) => (
@@ -952,6 +1012,7 @@ export default function DarkRoom({
                   </>
                 )}
               </div>
+              )}
 
               {/* THE CARD — the reel's rest position: full width, its top
                   in the first screen and its bottom past the fold, the way

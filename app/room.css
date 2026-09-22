@@ -5825,3 +5825,26 @@ body:has(.dr-hero-wrap[data-v~="lm"]) { background: #e7e7ea; }
   /* his own rule: the caption simply appears (the slide itself stays) */
   .dr-gal-cap { translate: 0 0; opacity: 1; }
 }
+
+
+/* ── THE STRIP IN THIS HERO (trial `?v=strip`, 2026-09-21) ───────────
+   The white hero's 64px bar (the retired .dr-strip rules above carry
+   it) between this hero's title and its film, holding the faces, the
+   rating, the services ticker and THIS design's cyan door at its right
+   end — so it replaces the door and the proof line. It arrives on the
+   door's own cue (680ms after lit); the door inside it does not fade
+   twice. Dark room: the dark bar with the hairline. Light mode (`lm`,
+   no .dr-light class): the white bar with the lift it was designed
+   with. */
+.dr-root:not(.dr-lit) .dr-strip { opacity: 0; }
+.dr-lit .dr-strip { animation: dr-fadein var(--t-enter) var(--ease-structure) 680ms backwards; }
+.dr-root .dr-strip .dr-hero-door { opacity: 1; animation: none; margin: 0 0 0 auto; height: 48px; padding: 0 22px; }
+.dr-strip { margin-top: clamp(20px, 3.2svh, 36px); }
+.dr-root:has(.dr-hero-wrap[data-v~="lm"]) .dr-strip { background: #ffffff; box-shadow: var(--lift); outline: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="lm"]) .dr-face { border-color: #ffffff; }
+@media (prefers-reduced-motion: reduce) { .dr-strip { opacity: 1; } .dr-lit .dr-strip { animation: none; } }
+@media (max-width: 900px) {
+  .dr-strip { flex-wrap: wrap; }
+  .dr-strip .dr-logos { display: none; }
+  .dr-root .dr-strip .dr-hero-door { width: auto; }
+}
