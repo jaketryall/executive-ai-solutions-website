@@ -5887,3 +5887,35 @@ body:has(.dr-hero-wrap[data-v~="lm"]) { background: #e7e7ea; }
 .dr-hero-wrap[data-v~="left"] .dr-h1.dr-greet,
 .dr-hero-wrap[data-v~="left"] .dr-hero-sub { text-align: left; }
 .dr-hero-wrap[data-v~="left"] .dr-hero-sub { margin-inline: 0; }
+
+/* ── THE STRIP IN THE RAIL (trial `?v=navstrip`, 2026-09-21 — Jake: "do
+   you think maybe the strip we could move it up to where the nav is and
+   combine it with the nav somehow, maybe thats the best way to do it").
+   The hero keeps only the title and the film. The rail is the pill from
+   the first frame and carries the strip's contents: the faces and the
+   rating after the mark, the links, and the ONE door — the price, in
+   the accent, the hero's own door moved up. The ticker does not come
+   (a marquee in a nav is noise); the call lives in the close. */
+.dr-nav-proof { display: none; align-items: center; gap: 10px;
+  margin-left: clamp(14px, 1.8vw, 26px); text-decoration: none; color: var(--ink);
+  font-family: var(--font-instrument), sans-serif; font-size: var(--fs-body-s); white-space: nowrap; }
+.dr-nav-proof .dr-face { width: 28px; height: 28px; margin-left: -9px; font-size: 9px; letter-spacing: .04em; }
+.dr-nav-proof .dr-face img { padding: 4px; }
+.dr-nav-proof-l { display: flex; flex-direction: column; line-height: 1.1; gap: 1px; margin-left: 1px; }
+.dr-nav-proof-l b { font-weight: 600; }
+.dr-nav-proof-l span { color: var(--ink-3); font-size: var(--fs-micro); }
+.dr-rail[data-ground="dark"] .dr-nav-proof { color: #ffffff; }
+.dr-rail[data-ground="dark"] .dr-nav-proof-l span { color: #949498; }
+.dr-rail[data-ground="dark"] .dr-face { border-color: #17171a; }
+.dr-navcta--price { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="navstrip"]) .dr-nav-proof { display: flex; }
+.dr-root:has(.dr-hero-wrap[data-v~="navstrip"]) .dr-navcta--call { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="navstrip"]) .dr-navcta--price { display: inline-flex; }
+.dr-root:has(.dr-hero-wrap[data-v~="navstrip"]) .dr-rail[data-stuck] .dr-navcta--price {
+  background: var(--accent); color: #0d0b0a; }
+.dr-root:has(.dr-hero-wrap[data-v~="navstrip"]) .dr-rail[data-stuck] .dr-navcta--price:hover { background: #7ff0ff; }
+/* the film under the title alone: the same 41px the strip had under it */
+.dr-hero-wrap[data-v~="navstrip"] .dr-slot,
+.dr-hero-wrap[data-v~="navpill"] .dr-slot,
+.dr-hero-wrap[data-v~="nopill"] .dr-slot { --slot-show: 470px; }
+@media (max-width: 900px) { .dr-nav-proof-l { display: none; } }

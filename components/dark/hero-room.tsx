@@ -638,7 +638,8 @@ export default function DarkRoom({
       const day =
         document.querySelector<HTMLElement>(".dr-strip") ??
         document.querySelector<HTMLElement>(".dr-hero-proof") ??
-        document.querySelector<HTMLElement>(".dr-hero-door");
+        document.querySelector<HTMLElement>(".dr-hero-door") ??
+        document.querySelector<HTMLElement>(".dr-h1"); // `navstrip`: nothing under the title but the film
       if (day) {
         const db = box(day);
         reel.closest<HTMLElement>(".dr-hero-wrap")?.style.setProperty("--day-b", `${db.y + db.h}px`);
@@ -914,7 +915,14 @@ export default function DarkRoom({
                   })()}
                 </p>
               )}
-              {has("strip") ? (
+              {/* `nopill` / `navpill` / `navstrip` (Jake, same night: "maybe try
+                  no pills on the hero at all" / "take the content out the
+                  pill and have the pill be up top with the nav"): nothing
+                  under the title — the film follows it. nopill leaves the
+                  nav quiet; navpill makes the rail the pill from the first
+                  frame (mark, links, the call); navstrip puts the strip's
+                  proof and the price door in that pill (nav.tsx). */}
+              {has("navstrip") || has("nopill") || has("navpill") ? null : has("strip") ? (
                 /* THE STRIP, back (trial `?v=strip`, 2026-09-21 — Jake: "can
                    we try bringing the pill from the design that sells thing
                    in to this design … i just want to see it"): the thin
@@ -982,7 +990,7 @@ export default function DarkRoom({
                   (0 hides it); the numbers there are PLACEHOLDERS until
                   Jake sets the live ones. The row is the last thing above
                   the slot now, so measure() clears it, not the door. */}
-              {!has("strip") && (
+              {!has("strip") && !has("navstrip") && !has("nopill") && !has("navpill") && (
               <div className="dr-hero-proof">
                 <span className="dr-hero-proof-marks" aria-hidden>
                   {CLIENT_MARKS.map((m) => (

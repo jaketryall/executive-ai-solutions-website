@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { CLIENT_MARKS, GOOGLE_REVIEWS } from "@/lib/proof";
 import { useEffect, useState } from "react";
 
 /* THE ROOM'S NAV, as the site's nav.
@@ -82,7 +83,14 @@ export function RoomNav() {
     fit();
     const ro = metaRow && wrap ? new ResizeObserver(fit) : null;
     ro?.observe(wrap!);
-    const io = new IntersectionObserver(([e]) => setStuck(!e.isIntersecting), {
+    /* `?v=navstrip` (trial, 2026-09-21 — Jake: "move it up to where the
+       nav is and combine it with the nav"): the hero's strip lives HERE
+       — the proof after the mark, the one door at the end — so the rail
+       is the pill from the first frame, not something the first scroll
+       earns. */
+    const always = !!document.querySelector('.dr-hero-wrap[data-v~="navstrip"], .dr-hero-wrap[data-v~="navpill"]');
+    if (always) setStuck(true);
+    const io = new IntersectionObserver(([e]) => setStuck(always || !e.isIntersecting), {
       threshold: 0,
     });
     io.observe(top);
@@ -202,6 +210,37 @@ export function RoomNav() {
             <b>Executive AI Solutions</b>
           </Link>
 
+          {/* THE PROOF IN THE RAIL (`?v=navstrip`, hidden otherwise —
+              room.css): the strip's faces and rating, after the mark.
+              Rendered on every route so the first paint has it; the
+              token decides whether it shows. */}
+          {GOOGLE_REVIEWS.count > 0 && (
+            <a
+              className="dr-nav-proof"
+              href={GOOGLE_REVIEWS.url || undefined}
+              target={GOOGLE_REVIEWS.url ? "_blank" : undefined}
+              rel={GOOGLE_REVIEWS.url ? "noopener noreferrer" : undefined}
+              aria-label={`Rated ${GOOGLE_REVIEWS.rating.toFixed(1)} on Google from ${GOOGLE_REVIEWS.count} reviews`}
+            >
+              <span className="dr-faces" aria-hidden>
+                {CLIENT_MARKS.map((c) => (
+                  <span className="dr-face" key={c.initials} title={c.name}>
+                    {c.src ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={c.src} alt="" />
+                    ) : (
+                      c.initials
+                    )}
+                  </span>
+                ))}
+              </span>
+              <span className="dr-nav-proof-l">
+                <b>{GOOGLE_REVIEWS.rating.toFixed(1)} on Google</b>
+                <span>{GOOGLE_REVIEWS.count} reviews</span>
+              </span>
+            </a>
+          )}
+
           {/* THE LINKS SIT RIGHT (Jake, 2026-09-13: "lets move the nav
               stuff to the right instead of centered"): in the row, after
               the lockup, pushed to the far side, with the action after
@@ -223,11 +262,22 @@ export function RoomNav() {
               reachable by keyboard or read out until it is really there */}
           <Link
             href="/contact"
-            className="dr-navcta dr-edge t-cta"
+            className="dr-navcta dr-navcta--call dr-edge t-cta"
             tabIndex={stuck ? undefined : -1}
             aria-hidden={!stuck}
           >
             Book the call
+          </Link>
+          {/* `?v=navstrip`: the hero's door is the rail's one action —
+              the price, the cold visitor's door; the call stays in the
+              close. Hidden unless the token is on (room.css). */}
+          <Link
+            href="/pricing#estimate"
+            className="dr-navcta dr-navcta--price dr-edge t-cta"
+            tabIndex={stuck ? undefined : -1}
+            aria-hidden={!stuck}
+          >
+            See your price
           </Link>
         </div>
       </div>
