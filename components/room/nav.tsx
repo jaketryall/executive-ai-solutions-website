@@ -237,9 +237,20 @@ export function RoomNav() {
       for (let e: HTMLElement | null = el; e; e = e.offsetParent as HTMLElement | null) y += e.offsetTop;
       return y;
     };
+    /* SOONER (2026-09-22 — Jake: "the nav bar can we have it switch
+       sooner now"): the sentinel used to end at the hero's last small
+       thing, so the pill waited for the whole strip/door/proof stack to
+       leave (392px of scroll at 900, measured). The hero has none of
+       that now — just the title and the film — so it ends at the
+       title's CAP LINE: the rail becomes the pill as the words start to
+       go, ~150px in, and the switch is over before the film reaches the
+       top. 24px of slack keeps it off the exact pixel the cap sits on. */
+    const CAP = 0.28; // the title box above its cap line, measured (.92 line-height)
     const fit = () => {
       if (!metaRow || !wrap) return;
-      top.style.height = `${docY(metaRow) + metaRow.offsetHeight - docY(wrap)}px`;
+      const isTitle = metaRow.classList.contains("dr-greet");
+      const h = isTitle ? metaRow.offsetHeight * CAP + 24 : metaRow.offsetHeight;
+      top.style.height = `${docY(metaRow) + h - docY(wrap)}px`;
     };
     fit();
     const ro = metaRow && wrap ? new ResizeObserver(fit) : null;
