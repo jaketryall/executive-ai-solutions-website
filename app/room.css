@@ -6629,23 +6629,26 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
 }
 .dr-day:has(.dr-hero-wrap[data-v~="shade"]) .dr-key {
   background:
-    /* ⚠ AND IT HAS TO BE DEEPER THAN A GLOW WAS BRIGHT. Measured at .055
-       the ground moved 230.3 → 228.1: two levels, invisible. Shade on
-       paper has 231 levels of room BELOW it against a glow's 24 above,
-       so the alphas go up an order: the lamps land the ground around
-       218–222 at their cores, an 8–12 level fall that reads as a room
-       with light in it rather than a flat sheet. */
-    radial-gradient(34% 40% at 20% 18%, rgba(8, 58, 74, .16), transparent 68%),
-    radial-gradient(30% 46% at 62% 30%, rgba(8, 58, 74, .10), transparent 70%),
-    radial-gradient(32% 30% at 52% 88%, rgba(8, 58, 74, .13), transparent 76%);
+    /* ⚠ AND IT IS NEUTRAL. Two measured facts: shade on paper has 231
+       levels of room BELOW it against a glow's 24 above, so the alphas
+       go up an order (at the glow's own .055 the ground moved 230.3 →
+       228.1 — two levels, invisible); and the accent's HUE cannot
+       survive there. At any alpha soft enough to be ambience, a blue
+       tint on #e7e7ea is a colour nobody can name (Jake: "the blue is
+       so hard to see") — the eye reads the darkening and misses the
+       hue, so the hue is only costing saturation. Black and grey, the
+       way a shadow on paper actually is. */
+    radial-gradient(38% 44% at 20% 18%, rgba(0, 0, 0, .085), transparent 70%),
+    radial-gradient(34% 50% at 62% 30%, rgba(0, 0, 0, .055), transparent 72%),
+    radial-gradient(36% 34% at 52% 88%, rgba(0, 0, 0, .07), transparent 76%);
 }
 .dr-day:has(.dr-hero-wrap[data-v~="shade"]) .dr-key::after {
-  background: radial-gradient(32% 36% at 62% 22%, rgba(8, 58, 74, .07), transparent 72%);
+  background: radial-gradient(34% 38% at 62% 22%, rgba(0, 0, 0, .04), transparent 74%);
 }
 /* the work's three lamps, as three soft shades on the same slow cycles */
 .dr-day:has(.dr-hero-wrap[data-v~="shade"]) .dr-lamps { opacity: 1; }
 .dr-day:has(.dr-hero-wrap[data-v~="shade"]) .dr-lamp {
-  background: radial-gradient(50% 50% at 50% 50%, rgba(8, 58, 74, .15), rgba(8, 58, 74, .05) 50%, transparent 72%);
+  background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, .075), rgba(0, 0, 0, .025) 50%, transparent 72%);
 }
 /* and the film's edge light becomes the film's SHADOW: on paper an
    object this dark casts, it does not glow */
@@ -6653,3 +6656,28 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
   box-shadow: 0 18px 60px -18px rgba(8, 40, 52, .28), 0 -10px 40px -18px rgba(8, 40, 52, .12);
 }
 .dr-day:has(.dr-hero-wrap[data-v~="shade"]) .dr-air::after { opacity: .3; }
+
+/* ── THE PAPER ITSELF (`shade`, same trial). Two more things a light room
+   needs that a dark one does not:
+
+   THE SHEET IS NOT FLAT. A fixed vertical gradient — a shade at the very
+   top under the chrome and a deeper one along the bottom edge — so the
+   page reads as a sheet lit from the front rather than a colour. It is
+   NEUTRAL and it is small: 231 at the middle, ~223 at the edges.
+
+   AND IT HAS TOOTH. 2.4% monochrome grain, tiled, fixed: on a dark
+   ground the film and the glows carry the texture, and on paper there is
+   nothing, so large flat areas band and read as a screen rather than a
+   surface. The noise is an inline feTurbulence — no request, no decode. */
+.dr-day:has(.dr-hero-wrap[data-v~="shade"]) .dr-atmos::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,.05), transparent 22%, transparent 74%, rgba(0,0,0,.055)),
+    linear-gradient(to right, rgba(0,0,0,.03), transparent 18%, transparent 82%, rgba(0,0,0,.03));
+}
+.dr-day:has(.dr-hero-wrap[data-v~="shade"]) .dr-atmos::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1;
+  opacity: .024; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
