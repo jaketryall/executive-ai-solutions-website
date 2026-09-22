@@ -6015,8 +6015,11 @@ body:has(.dr-root) .schat-panel.is-open { clip-path: inset(0 0 0 0 round var(--r
    not three things evenly spaced — the title belongs to the film. Air
    above (72px nav → cap line at 900), the picture close under it (40px
    baseline → film): Apple's own proportion on a product page. */
-.dr-hero-wrap[data-v~="tidy"] .dr-slot { --slot-show: 438px; }
-.dr-hero-wrap[data-v~="tidy"] .dr-h1.dr-greet { margin-top: clamp(40px, 7.4svh, 80px); }
+/* third pass ("i feel like the title and video are really close"): 64
+   above, 60 below at 900 — the picture still nearer the words than the
+   chrome is, but breathing. */
+.dr-hero-wrap[data-v~="tidy"] .dr-slot { --slot-show: 426px; }
+.dr-hero-wrap[data-v~="tidy"] .dr-h1.dr-greet { margin-top: clamp(36px, 6.6svh, 72px); }
 .dr-root:has(.dr-hero-wrap[data-v~="tidy"]) { --nav-pad: clamp(16px, 2.7svh, 24px); }
 .dr-root:has(.dr-hero-wrap[data-v~="tidy"]) .dr-links a { font-size: 14px; letter-spacing: .1em; }
 .dr-root:has(.dr-hero-wrap[data-v~="tidy"]) .dr-rail-in { gap: 40px; }
