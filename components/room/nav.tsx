@@ -243,13 +243,14 @@ export function RoomNav() {
        leave (392px of scroll at 900, measured). The hero has none of
        that now — just the title and the film — so it ends at the
        title's CAP LINE: the rail becomes the pill as the words start to
-       go, ~150px in, and the switch is over before the film reaches the
-       top. 24px of slack keeps it off the exact pixel the cap sits on. */
-    const CAP = 0.28; // the title box above its cap line, measured (.92 line-height)
+       go. Jake, on the 242px that gave: "try 150" — so the sentinel
+       stops at the title's TOP (it ends where the words begin), and the
+       pill forms the moment the title starts to move. */
+    const CAP = 0; // 0.28 = the cap line (242px at 1440x900); 0 = the title's top (150px)
     const fit = () => {
       if (!metaRow || !wrap) return;
       const isTitle = metaRow.classList.contains("dr-greet");
-      const h = isTitle ? metaRow.offsetHeight * CAP + 24 : metaRow.offsetHeight;
+      const h = isTitle ? metaRow.offsetHeight * CAP : metaRow.offsetHeight;
       top.style.height = `${docY(metaRow) + h - docY(wrap)}px`;
     };
     fit();
