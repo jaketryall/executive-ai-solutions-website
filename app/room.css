@@ -6036,8 +6036,8 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
 /* while open the row keeps only the mark, Close and the call — the
    links would be clipped in the panel's width (measured: "W SE PR C"),
    and yeqq's island does the same: brand, close, one button */
-.dr-root:not(:has(.dr-hero-wrap[data-v~="hud"])) .dr-rail[data-ask] .dr-links--l,
-.dr-root:not(:has(.dr-hero-wrap[data-v~="hud"])) .dr-rail[data-ask] .dr-links--r a:not(.dr-ask) { display: none; }
+.dr-root:not(:has(.dr-hero-wrap[data-v~="hudask"])) .dr-rail[data-ask] .dr-links--l,
+.dr-root:not(:has(.dr-hero-wrap[data-v~="hudask"])) .dr-rail[data-ask] .dr-links--r a:not(.dr-ask) { display: none; }
 /* the island is nearly opaque — at .92 the hero's white title ghosted
    through the chat (8% of white is a readable grey) */
 .dr-rail[data-ask]::after { background: rgba(11, 11, 13, .97); }
@@ -6181,8 +6181,13 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
   display: flex; align-items: center; gap: 10px;
 }
 /* the rail gives them up */
-.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail .dr-room-sw,
-.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail .dr-ask { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail .dr-room-sw { display: none; }
+/* `hudask` also takes Ask down there; `hud` alone leaves it in the rail,
+   which is the nav Jake asked for back — "just before the lightmode
+   switch" (2026-09-22) */
+.dr-root:has(.dr-hero-wrap[data-v~="hudask"]) .dr-rail .dr-ask { display: none; }
+.dr-hud-ask { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="hudask"]) .dr-hud-ask { display: inline-flex; }
 .dr-hud-ask {
   display: inline-flex; align-items: center; height: 38px; padding: 0 18px;
   border: 0; border-radius: 999px; cursor: pointer;
@@ -6206,16 +6211,16 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
 /* THE CHAT GROWS OUT OF THE CORNER: the panel is unpinned from the rail
    and anchored to the HUD, opening upward — the rail stays its own size
    and never becomes the island under this token */
-.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail[data-ask] { width: auto; }
-.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail[data-ask]::after { display: none; }
-.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail-ask {
+.dr-root:has(.dr-hero-wrap[data-v~="hudask"]) .dr-rail[data-ask] { width: auto; }
+.dr-root:has(.dr-hero-wrap[data-v~="hudask"]) .dr-rail[data-ask]::after { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="hudask"]) .dr-rail-ask {
   position: fixed; z-index: 30;
   right: clamp(16px, 2vw, 28px); bottom: calc(clamp(16px, 2vw, 28px) + 48px);
   width: min(420px, calc(100vw - 32px));
   display: block; grid-template-rows: none;
 }
-.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail-ask-in { overflow: visible; }
-.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail .schat-panel {
+.dr-root:has(.dr-hero-wrap[data-v~="hudask"]) .dr-rail-ask-in { overflow: visible; }
+.dr-root:has(.dr-hero-wrap[data-v~="hudask"]) .dr-rail .schat-panel {
   border-radius: var(--radius-panel, 22px);
   background: rgba(11, 11, 13, .97);
   backdrop-filter: blur(14px) saturate(120%);
@@ -6226,14 +6231,13 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
   opacity: 0; visibility: hidden; pointer-events: none;
   transition: clip-path .34s var(--ease-ui), opacity .16s var(--ease-ui) .1s, visibility 0s .34s;
 }
-.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-day .dr-rail .schat-panel,
-.dr-day:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail .schat-panel { background: rgba(255, 255, 255, .97); }
-.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail .schat-panel.is-open {
+.dr-day:has(.dr-hero-wrap[data-v~="hudask"]) .dr-rail .schat-panel { background: rgba(255, 255, 255, .97); }
+.dr-root:has(.dr-hero-wrap[data-v~="hudask"]) .dr-rail .schat-panel.is-open {
   clip-path: inset(0 0 0 0 round var(--radius-panel, 22px));
   opacity: 1; visibility: visible; pointer-events: auto;
   transition: clip-path .7s cubic-bezier(.9, 0, .1, 1), opacity .2s var(--ease-ui), visibility 0s;
 }
 @media (max-width: 900px) {
   .dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-hud { gap: 8px; }
-  .dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail-ask { left: 16px; right: 16px; width: auto; }
+  .dr-root:has(.dr-hero-wrap[data-v~="hudask"]) .dr-rail-ask { left: 16px; right: 16px; width: auto; }
 }

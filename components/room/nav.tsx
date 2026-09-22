@@ -58,7 +58,7 @@ export function RoomNav() {
      the rail at all — it stayed its own size but still flipped to the
      pill and dropped its links (caught live) */
   const [hud, setHud] = useState(false);
-  useEffect(() => setHud(!!document.querySelector('.dr-hero-wrap[data-v~="hud"]')), []);
+  useEffect(() => setHud(!!document.querySelector('.dr-hero-wrap[data-v~="hudask"]')), []);
   useEffect(() => {
     const el = document.documentElement;
     const read = () => setDay(el.classList.contains("eas-day"));
