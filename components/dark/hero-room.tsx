@@ -1170,7 +1170,7 @@ export default function DarkRoom({
               "data-sp-step": "0.03125",
             })}
       >
-        <WorkSection paper={has("paper")} />
+        <WorkSection paper={has("paper")} gallery={has("gallery")} />
       </div>
       <VoicesSection />
 

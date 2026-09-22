@@ -5691,3 +5691,114 @@ a.dr-hero-proof-rating:hover { color: var(--accent); }
   .dr-work-info { position: static; opacity: 1; grid-template-columns: 3ch 1fr; row-gap: 6px; }
   .dr-work-info + .dr-work-info { margin-top: 14px; }
 }
+
+
+/* ══ §03 · THE GALLERY (trial `?v=gallery`, 2026-09-21) ═══════════════
+   Apple's "Get the highlights." media card gallery in the rail's place,
+   measured in decodes/apple-highlights.md; the component comment in
+   work-gallery.tsx has the mechanics. Here: the geometry.
+
+   THE CARD is his 1260×612 (2.0588:1) — 87.5% of a 1440 viewport, 90px
+   a side, the neighbours peeking 70px (90 − the 20px gap) — capped at
+   the room's own column (1760) on wide screens, 28px radius, the media
+   clipped inside it. The track is the section's whole width; the list
+   pads itself so the first and last cards can centre (100cqw is the
+   TRACK's width — the padding is on the list, a child, where cqw
+   resolves to the container and not the viewport).
+
+   THE CAPTION sits UNDER the card, not over it (his media is composed
+   for a caption at its top; ours are the sites' own heroes, with their
+   own headlines there). It rides --cx / --co, written per frame by the
+   caption law — no transition, no animation. */
+.dr-gal { position: relative; }
+.dr-gal-track {
+  overflow-x: scroll; overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  container-type: inline-size;
+}
+.dr-gal-track::-webkit-scrollbar { display: none; }
+.dr-gal-set {
+  --gal-w: min(calc(100cqw - 180px), 1760px);
+  --gal-gap: 20px;
+  display: grid; grid-auto-flow: column; grid-auto-columns: var(--gal-w);
+  gap: var(--gal-gap);
+  padding: 0 calc((100cqw - var(--gal-w)) / 2);
+  margin: 0; list-style: none;
+}
+.dr-gal-item { scroll-snap-align: center; }
+.dr-gal-card {
+  display: block; aspect-ratio: 1260 / 612;
+  border-radius: 28px; overflow: clip;
+  background: var(--surface-1);
+  outline: none;
+}
+.dr-gal-card:focus-visible { box-shadow: 0 0 0 3px var(--accent); }
+.dr-gal-img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.dr-gal-cap {
+  margin-top: 24px; max-width: 46ch;
+  translate: var(--cx, 0) 0; opacity: var(--co, 1);
+}
+.dr-gal-who { display: block; color: var(--ink-3); }
+.dr-gal-line {
+  margin: 6px 0 0; color: var(--ink);
+  font-size: 28px; font-weight: 600; letter-spacing: -.01em; line-height: 1.15;
+  text-wrap: balance;
+}
+
+/* THE PAGER: his 8px dots at 24px centres, rgba(255,255,255,.36) on
+   his dark — ours mix on the ink so they hold on paper; the current one
+   becomes the 48px pill and its ::after is the clock. The button is his
+   56px, to the right. */
+.dr-gal-ctl {
+  display: flex; align-items: center; justify-content: center; gap: 32px;
+  margin-top: 32px;
+}
+.dr-gal-dots { display: flex; align-items: center; gap: 16px; }
+.dr-gal-dot {
+  position: relative; width: 8px; height: 8px; padding: 0; border: 0;
+  border-radius: 10px; cursor: pointer;
+  background: color-mix(in oklab, var(--ink) 36%, transparent);
+  transition: width .25s ease, background-color .25s linear;
+}
+.dr-gal-dot[aria-selected="true"] { width: 48px; }
+.dr-gal-dot::after {
+  content: ""; position: absolute; inset: 0 auto 0 0;
+  width: calc(var(--pp, 0) * 100%); border-radius: 10px;
+  background: var(--ink);
+  opacity: 0;
+}
+.dr-gal-dot[aria-selected="true"]::after { opacity: 1; }
+.dr-gal-dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.dr-gal-play {
+  width: 56px; height: 56px; padding: 0; border: 0; border-radius: 50%; cursor: pointer;
+  display: grid; place-items: center;
+  background: color-mix(in oklab, var(--ink) 9%, transparent);
+  color: var(--ink);
+  transition: background-color var(--t-micro) ease;
+}
+.dr-gal-play:hover { background: color-mix(in oklab, var(--ink) 15%, transparent); }
+.dr-gal-play:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.dr-gal-ico { width: 24px; height: 24px; fill: currentColor; display: none; }
+.dr-gal[data-play="playing"] .dr-gal-ico--pause,
+.dr-gal[data-play="paused"] .dr-gal-ico--play,
+.dr-gal[data-play="ended"] .dr-gal-ico--replay { display: block; }
+
+/* his phone: the card left-flush at the page gutter, the next one
+   peeking the gutter's width on the right; ours stays landscape (the
+   sites' own screens are) */
+@media (max-width: 900px) {
+  .dr-gal-set {
+    --gal-w: calc(100cqw - 48px);
+    padding: 0 24px;
+  }
+  .dr-gal-item { scroll-snap-align: start; }
+  .dr-gal-card { aspect-ratio: 4 / 3; border-radius: 20px; }
+  .dr-gal-line { font-size: 22px; }
+  .dr-gal-ctl { margin-top: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* his own rule: the caption simply appears (the slide itself stays) */
+  .dr-gal-cap { translate: 0 0; opacity: 1; }
+}

@@ -10,6 +10,7 @@ import { PROJECTS } from "@/lib/work";
 import type { Project } from "@/lib/work";
 import { Roll } from "@/components/room/nav";
 import { onLenis } from "@/components/anim/lenis-store";
+import WorkGallery from "@/components/dark/work-gallery";
 
 /* §03 · THE WORK, v5 → THE RAIL STEPS (2026-09-19). Supersedes v5's own
    continuous scrub (caa3f58, "one row, sticky") on Jake's call: "can we
@@ -128,7 +129,13 @@ type Tile = { shot: Shot; project: Project; k: number; first: boolean };
    whose shots read as mush on a mid-grey ground — goes LAST, so its
    pictures arrive in the light. The two dark cases lead, dark panels on
    the dark room turning to dark panels on paper. */
-export default function WorkSection({ paper = false }: { paper?: boolean }) {
+/* `gallery` (trial `?v=gallery`, 2026-09-21): Apple's media card gallery
+   in the rail's place — the same nine shots, one card each, on a native
+   scroll-snap track with the measured 1s slide, the geometry caption and
+   the progress pill (work-gallery.tsx). No pin: the section is one
+   screen, and under `paper` the ground lifts as it enters instead of
+   across a travel that no longer exists. The head stays. */
+export default function WorkSection({ paper = false, gallery = false }: { paper?: boolean; gallery?: boolean }) {
   const cases = PROJECTS.filter((p) => p.slug !== OURS && p.cover);
   if (paper) {
     const dw = cases.findIndex((p) => p.slug === "desert-wings");
@@ -230,7 +237,27 @@ export default function WorkSection({ paper = false }: { paper?: boolean }) {
   if (!cases.length) return null;
 
   return (
-    <section className="dr-work" aria-labelledby="dr-work-h">
+    <section
+      className="dr-work"
+      aria-labelledby="dr-work-h"
+      {...(gallery && paper
+        ? {
+            /* the paper clock, gallery edition: no pin to fade across, so
+               the ground lifts as the SECTION rises — from its top at the
+               fold to a quarter-screen above it, which is the card's top
+               settling under the nav (head ≈ 350px). 1.25 screens; the
+               gallery is on paper by the time you are reading it. */
+            "data-sp": true,
+            "data-sp-edge": "top",
+            "data-sp-from": "1",
+            "data-sp-to": "-0.25",
+            "data-sp-var": "--fp",
+            "data-sp-target": ".dr-root",
+            "data-sp-lerp": "0.1",
+            "data-sp-step": "0.03125",
+          }
+        : {})}
+    >
       <header
         className="dr-work-head wrap"
         data-sp
@@ -254,6 +281,21 @@ export default function WorkSection({ paper = false }: { paper?: boolean }) {
         </h2>
       </header>
 
+      {gallery ? (
+        <div className="dr-gal-zone">
+          <WorkGallery
+            cards={tiles.map((t) => ({
+              src: t.shot.src,
+              width: t.shot.width,
+              height: t.shot.height,
+              alt: t.shot.alt,
+              project: t.project,
+              k: t.k,
+            }))}
+          />
+        </div>
+      ) : (
+      <>
       {/* THE STAGE declares the pinned travel (TRAVEL_SVH, both here and
           in --travel — see the file header for why one constant feeds
           both) and its own force track, the depth squash's only input
@@ -425,6 +467,8 @@ export default function WorkSection({ paper = false }: { paper?: boolean }) {
           </div>
         </div>
       </div>
+      </>
+      )}
     </section>
   );
 }
