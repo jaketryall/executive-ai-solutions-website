@@ -6036,7 +6036,8 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
 /* while open the row keeps only the mark, Close and the call — the
    links would be clipped in the panel's width (measured: "W SE PR C"),
    and yeqq's island does the same: brand, close, one button */
-.dr-rail[data-ask] .dr-links--l, .dr-rail[data-ask] .dr-links--r a:not(.dr-ask) { display: none; }
+.dr-root:not(:has(.dr-hero-wrap[data-v~="hud"])) .dr-rail[data-ask] .dr-links--l,
+.dr-root:not(:has(.dr-hero-wrap[data-v~="hud"])) .dr-rail[data-ask] .dr-links--r a:not(.dr-ask) { display: none; }
 /* the island is nearly opaque — at .92 the hero's white title ghosted
    through the chat (8% of white is a readable grey) */
 .dr-rail[data-ask]::after { background: rgba(11, 11, 13, .97); }
@@ -6164,4 +6165,75 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
 }
 @media (prefers-reduced-motion: reduce) {
   .dr-room-sw circle, .dr-room-sw .dr-room-rays { transition: none; }
+}
+
+/* ── THE CORNER (trial `?v=hud`, 2026-09-22 — itsoffbrand.com's HUD,
+   measured: a 45×46 burger 19px off both edges with a 71×23 light/dark
+   toggle beside it, a 229×440 menu opening UPWARD over ~800ms, and a
+   full top bar still in place above it). Ours takes only the TOOLS out
+   of the rail — the room switch and Ask — so the rail is the brand, the
+   path and the call again; and the chat grows upward out of the corner
+   instead of downward out of the pill. */
+.dr-hud { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-hud {
+  position: fixed; z-index: 31;
+  right: clamp(16px, 2vw, 28px); bottom: clamp(16px, 2vw, 28px);
+  display: flex; align-items: center; gap: 10px;
+}
+/* the rail gives them up */
+.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail .dr-room-sw,
+.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail .dr-ask { display: none; }
+.dr-hud-ask {
+  display: inline-flex; align-items: center; height: 38px; padding: 0 18px;
+  border: 0; border-radius: 999px; cursor: pointer;
+  background: rgba(11, 11, 13, .92); color: #fff;
+  backdrop-filter: blur(14px) saturate(120%);
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: 13px; letter-spacing: .12em; text-transform: uppercase;
+  transition: background var(--t-micro) var(--ease-ui);
+}
+.dr-hud-ask:hover { background: rgba(32, 32, 36, .95); }
+.dr-hud-ask:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.dr-day .dr-hud-ask { background: rgba(255, 255, 255, .92); color: #0a0a0b; }
+.dr-day .dr-hud-ask:hover { background: #fff; }
+.dr-hud .dr-room-sw {
+  width: 38px; height: 38px; color: var(--ink-2);
+  background: color-mix(in oklab, var(--ink) 8%, transparent);
+  backdrop-filter: blur(14px) saturate(120%);
+}
+.dr-hud .dr-room-sw:hover { color: var(--ink); background: color-mix(in oklab, var(--ink) 14%, transparent); }
+/* THE CHAT GROWS OUT OF THE CORNER: the panel is unpinned from the rail
+   and anchored to the HUD, opening upward — the rail stays its own size
+   and never becomes the island under this token */
+.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail[data-ask] { width: auto; }
+.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail[data-ask]::after { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail-ask {
+  position: fixed; z-index: 30;
+  right: clamp(16px, 2vw, 28px); bottom: calc(clamp(16px, 2vw, 28px) + 48px);
+  width: min(420px, calc(100vw - 32px));
+  display: block; grid-template-rows: none;
+}
+.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail-ask-in { overflow: visible; }
+.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail .schat-panel {
+  border-radius: var(--radius-panel, 22px);
+  background: rgba(11, 11, 13, .97);
+  backdrop-filter: blur(14px) saturate(120%);
+  padding: 10px 12px 12px;
+  /* the grow: a capsule the width of the Ask pill in the bottom-right
+     corner, opening to the card — their ~800ms, our structure curve */
+  clip-path: inset(calc(100% - 38px) 0 0 calc(100% - 96px) round 999px);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: clip-path .34s var(--ease-ui), opacity .16s var(--ease-ui) .1s, visibility 0s .34s;
+}
+.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-day .dr-rail .schat-panel,
+.dr-day:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail .schat-panel { background: rgba(255, 255, 255, .97); }
+.dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail .schat-panel.is-open {
+  clip-path: inset(0 0 0 0 round var(--radius-panel, 22px));
+  opacity: 1; visibility: visible; pointer-events: auto;
+  transition: clip-path .7s cubic-bezier(.9, 0, .1, 1), opacity .2s var(--ease-ui), visibility 0s;
+}
+@media (max-width: 900px) {
+  .dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-hud { gap: 8px; }
+  .dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-rail-ask { left: 16px; right: 16px; width: auto; }
 }

@@ -54,6 +54,11 @@ export function RoomNav() {
      class the inline script and the shell keep on <html>. A lamp, not a
      sun/moon pair — one glyph that fills when the light is on. */
   const [day, setDay] = useState(false);
+  /* `?v=hud`: the tools live in the corner, so opening Ask must not touch
+     the rail at all — it stayed its own size but still flipped to the
+     pill and dropped its links (caught live) */
+  const [hud, setHud] = useState(false);
+  useEffect(() => setHud(!!document.querySelector('.dr-hero-wrap[data-v~="hud"]')), []);
   useEffect(() => {
     const el = document.documentElement;
     const read = () => setDay(el.classList.contains("eas-day"));
@@ -443,7 +448,7 @@ export function RoomNav() {
       <div
         className="dr-rail dr-edge"
         ref={railRef}
-        data-stuck={stuck || ask ? "true" : undefined}
+        data-stuck={stuck || (ask && !hud) ? "true" : undefined}
         data-ask={ask ? "true" : undefined}
         data-ground={ground}
       >
@@ -580,6 +585,42 @@ export function RoomNav() {
             <SiteChat />
           </div>
         </div>
+      </div>
+
+      {/* ── THE CORNER (trial `?v=hud`, 2026-09-22 — Jake, on
+          itsoffbrand.com: "has a little menu item in the bottom right
+          corner … im thinking maybe doing that could be better").
+          Measured there: a 45×46 burger 19px off both edges, a 71×23
+          light/dark toggle beside it, and a 229×440 menu that opens
+          UPWARD from it over ~800ms — all of it ON TOP of a full top bar
+          (wordmark, two links, a Contact button), so the corner is where
+          the TOOLS live, not the path. Ours holds the two things in our
+          rail that are tools and not navigation: the room switch and
+          Ask. The rail keeps the brand, the three links and the call. */}
+      <div className="dr-hud" data-ask={ask ? "true" : undefined}>
+        <button
+          type="button"
+          className="dr-room-sw dr-hud-sw"
+          aria-pressed={day}
+          aria-label={day ? "Switch to the dark room" : "Switch to the light room"}
+          onClick={() => window.dispatchEvent(new CustomEvent("eas:room", { detail: { day: !day } }))}
+        >
+          <svg viewBox="0 0 16 16" aria-hidden>
+            <circle cx="8" cy="8" r="3.4" />
+            <g className="dr-room-rays">
+              <path d="M8 .8v2M8 13.2v2M.8 8h2M13.2 8h2M2.9 2.9l1.4 1.4M11.7 11.7l1.4 1.4M13.1 2.9l-1.4 1.4M4.3 11.7l-1.4 1.4" />
+            </g>
+          </svg>
+        </button>
+        <button
+          type="button"
+          className="dr-hud-ask t-cta"
+          aria-expanded={ask}
+          aria-label="Ask this site a question"
+          onClick={() => window.dispatchEvent(new Event("eas:chat-toggle"))}
+        >
+          <Roll label={ask ? "Close" : "Ask"} />
+        </button>
       </div>
     </header>
   );
