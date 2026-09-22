@@ -454,7 +454,14 @@ export function RoomNav() {
       >
         <div className="dr-rail-in">
           <Link className="dr-lockup" href="/">
-            <span className="dr-mono" aria-hidden />
+            <span className="dr-mono" aria-hidden>
+              {/* `logoslice` only — inert in every other layout (room.css) */}
+              <span className="dr-mono-slices">
+                <span className="dr-mono-slice dr-mono-slice--1" />
+                <span className="dr-mono-slice dr-mono-slice--2" />
+                <span className="dr-mono-slice dr-mono-slice--3" />
+              </span>
+            </span>
             <b>Executive AI Solutions</b>
           </Link>
 

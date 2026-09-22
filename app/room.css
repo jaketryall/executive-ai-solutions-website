@@ -6240,3 +6240,78 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
   .dr-root:has(.dr-hero-wrap[data-v~="hud"]) .dr-hud { gap: 8px; }
   .dr-root:has(.dr-hero-wrap[data-v~="hudask"]) .dr-rail-ask { left: 16px; right: 16px; width: auto; }
 }
+
+/* ── THE MARK ON HOVER (trials, 2026-09-22 — Jake: "i want a cool hover
+   animation on logo like lando site"). Lando's own wordmark, measured,
+   does nothing on hover — it is set once at scale 1.2 from its top-left
+   corner and held; what his site actually does is hover EVERYWHERE in
+   one vocabulary (the per-letter roll on links, the sliced hero). So
+   these are built in OUR vocabulary instead of copied from his, and
+   there are two, because they are different ideas:
+
+   `logoscan` — the accent sweeps THROUGH the mark, the paragraph's own
+   sweep (decodes/hugeinc.md §16) at the size of a monogram: the mask
+   stays, the fill becomes a 300% gradient whose position runs 100% → 0%.
+   One thing moves, and it is the site's one colour.
+
+   `logoslice` — Lando's sliced hero at 21px: the mark in three bands
+   that shear apart and come back, the accent showing through the cuts.
+
+   Both keep the lockup's own collapse (the mark is 21px at rest, the
+   name opens beside it in the pill) — the hover is on top of it, never
+   instead of it. */
+.dr-lockup { --mk: 0; }
+@media (hover: hover) {
+  .dr-lockup:hover, .dr-lockup:focus-visible { --mk: 1; }
+}
+
+/* `logoscan` */
+.dr-root:has(.dr-hero-wrap[data-v~="logoscan"]) .dr-mono {
+  background: linear-gradient(100deg,
+    var(--ink) 0%, var(--ink) 30%,
+    var(--accent) 44%, var(--accent) 56%,
+    var(--ink) 70%, var(--ink) 100%);
+  background-size: 300% 100%;
+  background-position: 118% 0;
+  transition: width .55s var(--ease-structure), opacity .35s var(--ease-ui),
+              background-position .72s cubic-bezier(.4, 0, 0, 1);
+}
+.dr-root:has(.dr-hero-wrap[data-v~="logoscan"]) .dr-lockup:hover .dr-mono,
+.dr-root:has(.dr-hero-wrap[data-v~="logoscan"]) .dr-lockup:focus-visible .dr-mono {
+  background-position: -18% 0;
+}
+
+/* `logoslice` — three bands of the same mask, each its own element, so
+   the cut is real geometry rather than a filter */
+.dr-mono-slices { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="logoslice"]) .dr-mono { background: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="logoslice"]) .dr-mono-slices {
+  display: block; position: absolute; inset: 0;
+}
+.dr-root:has(.dr-hero-wrap[data-v~="logoslice"]) .dr-mono { position: relative; }
+/* ONE SHOT, not a held state: the bands shear apart and come straight
+   back, the accent flashing through the cut on the way — a glitch that
+   RESOLVES. Held apart (the first build) the mark just reads broken for
+   as long as the pointer is on it. */
+.dr-mono-slice {
+  position: absolute; inset: 0;
+  background: var(--ink);
+  mask: url("/brand/eas-mark.svg") center / contain no-repeat;
+}
+.dr-mono-slice--1 { clip-path: inset(0 0 66% 0); }
+.dr-mono-slice--2 { clip-path: inset(34% 0 34% 0); }
+.dr-mono-slice--3 { clip-path: inset(66% 0 0 0); }
+@keyframes dr-mono-cut-a { 0% { translate: 0 0 } 30% { translate: 2.5px 0 } 62% { translate: -1px 0 } 100% { translate: 0 0 } }
+@keyframes dr-mono-cut-b {
+  0% { translate: 0 0; background: var(--ink) }
+  30% { translate: -3.5px 0; background: var(--accent) }
+  62% { translate: 1.5px 0; background: var(--accent) }
+  100% { translate: 0 0; background: var(--ink) }
+}
+@keyframes dr-mono-cut-c { 0% { translate: 0 0 } 30% { translate: 2px 0 } 62% { translate: -.5px 0 } 100% { translate: 0 0 } }
+.dr-lockup:hover .dr-mono-slice--1, .dr-lockup:focus-visible .dr-mono-slice--1 { animation: dr-mono-cut-a .5s cubic-bezier(.4, 0, 0, 1); }
+.dr-lockup:hover .dr-mono-slice--2, .dr-lockup:focus-visible .dr-mono-slice--2 { animation: dr-mono-cut-b .5s cubic-bezier(.4, 0, 0, 1); }
+.dr-lockup:hover .dr-mono-slice--3, .dr-lockup:focus-visible .dr-mono-slice--3 { animation: dr-mono-cut-c .5s cubic-bezier(.4, 0, 0, 1); }
+@media (prefers-reduced-motion: reduce) {
+  .dr-mono, .dr-mono-slice { transition: none !important; animation: none !important; }
+}
