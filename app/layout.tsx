@@ -3,7 +3,6 @@ import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 import "./room.css";
 import { PersonaCapture } from "@/components/persona-capture";
-import { SiteChat } from "@/components/ui/site-chat";
 import { RoomShell } from "@/components/room/shell";
 import { SmoothScroll } from "@/components/anim/smooth-scroll";
 import { ViewTransitions } from "@/components/anim/view-transition";
@@ -110,12 +109,11 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <PersonaCapture />
-        {/* ⚠ still mounted, and hidden on every page by room.css's
-            `.schat-pill { display: none }`. The chat is a tool Jake
-            asked to keep; it has no place in the room's design yet, and
-            in production it 502s on an invalid ANTHROPIC_API_KEY. Kept
-            rather than deleted so re-siting it is a CSS change. */}
-        <SiteChat />
+        {/* THE CHAT LIVES IN THE RAIL now (components/room/nav.tsx,
+            2026-09-22): Ask is one of the links, and the rail grows into
+            the panel the way yeqq.com.tr's island grows into its menu.
+            Its floating pill stays hidden (room.css). In production it
+            still 502s on an invalid ANTHROPIC_API_KEY — owed. */}
         {/* THE ROOM IS THE FRAME. The old Nav, PersistentCta and Footer
             are gone — the room's nav and its ending wrap every page, so
             the interior pages sit in the new frame before any of them

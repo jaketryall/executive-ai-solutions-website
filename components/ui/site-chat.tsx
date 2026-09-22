@@ -63,6 +63,11 @@ export function SiteChat() {
     }
   };
 
+  // whoever holds the chat (the room's rail) hears its state
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("eas:chat-state", { detail: { open } }));
+  }, [open]);
+
   // arrive quietly, after the page has had its entrance beat
   useEffect(() => {
     const t = setTimeout(() => setReady(true), 1600);
@@ -81,12 +86,23 @@ export function SiteChat() {
     const onHide = () => {
       if (document.visibilityState === "hidden") flush();
     };
+    /* the rail's Ask toggles it (nav.tsx) and needs to know when it is
+       open to grow into it — see the state broadcast below */
+    const onClose = () => {
+      setOpen(false);
+      flush();
+    };
+    const onToggle = () => setOpen((o) => (o ? (flush(), false) : (setReady(true), true)));
     window.addEventListener("eas:chat-open", onOpen);
+    window.addEventListener("eas:chat-close", onClose);
+    window.addEventListener("eas:chat-toggle", onToggle);
     window.addEventListener("pagehide", onLeave);
     document.addEventListener("visibilitychange", onHide);
     return () => {
       clearTimeout(t);
       window.removeEventListener("eas:chat-open", onOpen);
+      window.removeEventListener("eas:chat-close", onClose);
+      window.removeEventListener("eas:chat-toggle", onToggle);
       window.removeEventListener("pagehide", onLeave);
       document.removeEventListener("visibilitychange", onHide);
     };

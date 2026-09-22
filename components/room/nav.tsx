@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CLIENT_MARKS, GOOGLE_REVIEWS } from "@/lib/proof";
+import { SiteChat } from "@/components/ui/site-chat";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 /* THE ROOM'S NAV, as the site's nav.
@@ -40,6 +41,70 @@ export function Roll({ label }: { label: string }) {
 export function RoomNav() {
   const [stuck, setStuckState] = useState(false);
   const [ground, setGround] = useState<"dark" | "light">("dark");
+  /* THE ISLAND (2026-09-22 — Jake, on yeqq.com.tr's menu: "see how it
+     like expands when u click thats what i want to happen with ask").
+     Measured there: the pill itself grows into the panel — 196×32 →
+     269×330 over ~700ms on cubic-bezier(.9,0,.1,1), radius 16 → 20,
+     still centred — and only THEN do its links arrive, ~100ms apart; on
+     close the links go first and the pill shrinks in ~400ms. Here the
+     chat sits inside the rail under the row, the rail is `data-ask`
+     while it is open, and room.css does the growing. */
+  const [ask, setAsk] = useState(false);
+  /* the rail's width, by hand: its rest width in px is snapshotted the
+     instant it opens, then it transitions to the panel's; on close it
+     transitions back to that snapshot and lets go of the inline width.
+     (CSS from max-content re-reads max-content every frame while the
+     panel grows — it overshot to 649px, measured.) */
+  const restW = useRef(0);
+  const widthAnim = useRef<Animation | null>(null);
+  useEffect(() => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const EASE = "cubic-bezier(.9, 0, .1, 1)";
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    widthAnim.current?.cancel();
+    const to = Math.min(460, window.innerWidth - 32);
+    if (ask) {
+      // restW was taken in the state handler, BEFORE data-ask reached the
+      // DOM — once the panel's row is open the rail's max-content is the
+      // panel's own width (measured 460 on the very first frame, which
+      // made every "animation from rest" start at its end)
+      widthAnim.current = rail.animate([{ width: `${restW.current}px` }, { width: `${to}px` }], {
+        duration: reduce ? 0 : 700,
+        easing: EASE,
+        fill: "forwards",
+      });
+      return;
+    }
+    if (!restW.current) return;
+    const a = rail.animate([{ width: `${to}px` }, { width: `${restW.current}px` }], {
+      duration: reduce ? 0 : 400,
+      delay: reduce ? 0 : 200, // the words go first (room.css), then the pill
+      easing: EASE,
+      fill: "both",
+    });
+    widthAnim.current = a;
+    a.onfinish = () => {
+      a.cancel(); // back to the stylesheet's max-content
+      widthAnim.current = null;
+    };
+  }, [ask]);
+  useEffect(() => {
+    const onState = (e: Event) => {
+      const open = !!(e as CustomEvent<{ open: boolean }>).detail?.open;
+      if (open && railRef.current) restW.current = railRef.current.getBoundingClientRect().width; // pre-commit
+      setAsk(open);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") window.dispatchEvent(new Event("eas:chat-close"));
+    };
+    window.addEventListener("eas:chat-state", onState);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("eas:chat-state", onState);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, []);
 
   /* THE REGROUP IS A MOVE, NOT A CUT (Jake: "can we animate the regroup
      when it becomes the pill"). At rest the rail is Work · Services —
@@ -318,7 +383,13 @@ export function RoomNav() {
 
   return (
     <header className="dr-nav wrap">
-      <div className="dr-rail dr-edge" ref={railRef} data-stuck={stuck ? "true" : undefined} data-ground={ground}>
+      <div
+        className="dr-rail dr-edge"
+        ref={railRef}
+        data-stuck={stuck || ask ? "true" : undefined}
+        data-ask={ask ? "true" : undefined}
+        data-ground={ground}
+      >
         <div className="dr-rail-in">
           <Link className="dr-lockup" href="/">
             <span className="dr-mono" aria-hidden />
@@ -392,12 +463,13 @@ export function RoomNav() {
               className="dr-ask"
               role="button"
               aria-label="Ask this site a question"
+              aria-expanded={ask}
               onClick={(e) => {
                 e.preventDefault();
-                window.dispatchEvent(new Event("eas:chat-open"));
+                window.dispatchEvent(new Event("eas:chat-toggle"));
               }}
             >
-              <Roll label="Ask" />
+              <Roll label={ask ? "Close" : "Ask"} />
             </a>
           </nav>
 
@@ -422,6 +494,13 @@ export function RoomNav() {
           >
             See your price
           </Link>
+          </div>
+        </div>
+        {/* the island's second storey: the chat, under the row, inside the
+            pill — 0fr until Ask, 1fr after (room.css) */}
+        <div className="dr-rail-ask" aria-hidden={!ask}>
+          <div className="dr-rail-ask-in">
+            <SiteChat />
           </div>
         </div>
       </div>

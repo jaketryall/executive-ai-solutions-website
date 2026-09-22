@@ -2051,9 +2051,15 @@ a.dr-hero-proof-rating:hover { color: var(--accent); }
   .dr-vignette { display: none; }          /* dropped below 820px */
   /* the rail keeps the lockup and the one action; the link set needs a
      real overlay menu rather than a squeezed row (deferred, not shipped) */
-  .dr-rail { height: 56px; }
+  .dr-rail { height: auto; min-height: 56px; }
+  .dr-rail-in { height: 56px; }
   .dr-root { --nav-h: 56px; }
   .dr-links { display: none; }
+  /* the phone keeps ONE link: Ask — the island is the phone's menu, and
+     the chat answers what the hidden links would have (2026-09-22) */
+  .dr-root:has(.dr-hero-wrap[data-v~="ask"]) .dr-links--r { display: flex; }
+  .dr-root:has(.dr-hero-wrap[data-v~="ask"]) .dr-links--r a:not(.dr-ask) { display: none; }
+  .dr-root:has(.dr-hero-wrap[data-v~="ask"]) .dr-rail:not([data-stuck]) .dr-rail-in { display: flex; gap: 18px; }
   .dr-rail-in { padding: 0; gap: var(--fib-1); }
   .dr-rail[data-stuck] .dr-rail-in { padding: 0 6px 0 var(--fib-2); }
   .dr-navcta { font-size: var(--fs-micro); }
@@ -2426,7 +2432,10 @@ a.dr-hero-proof-rating:hover { color: var(--accent); }
 }
 @media (max-width: 900px) {
   .dr-say-pin .dr-offer-head.dr-say-screen { min-height: 80svh; }
-  .dr-say-screen .dr-offer-say { font-size: clamp(2rem, 11vw, 3.4rem); }
+  /* 9vw, not 11: the rotating cell is as wide as its LONGEST word
+     ("owner-run businesses."), and at 11vw that is 406px on a 390 screen
+     — the screen's words ran 40px off the right edge (measured) */
+  .dr-say-screen .dr-offer-say { font-size: clamp(1.8rem, 9vw, 3.4rem); }
   .dr-say-corner { font-size: 12px; top: calc(var(--nav-space) + 4px); }
   .dr-say-corner--r .dr-say-dim:last-child { display: none; }
 }
@@ -5963,13 +5972,79 @@ body:has(.dr-hero-wrap[data-v~="lm"]) { background: #e7e7ea; }
    The old floating pill stays hidden. */
 .dr-links .dr-ask { display: none; }   /* (.dr-links a sets display — this has to outrank it) */
 .dr-root:has(.dr-hero-wrap[data-v~="ask"]) .dr-links .dr-ask { display: inline-flex; }
-body:has(.dr-root) .schat-panel {
-  top: 96px; bottom: auto; right: auto; left: 50%; translate: -50% 0;
-  width: min(460px, calc(100vw - 32px));
-  max-height: min(560px, calc(100dvh - 120px));
-  clip-path: inset(0 calc(50% - 46px) calc(100% - 44px) calc(50% - 46px) round 999px);
+/* ── THE ISLAND (2026-09-22 — yeqq.com.tr's menu, measured: the pill
+   grows into the panel, 196×32 → 269×330 in ~700ms on cubic-bezier(.9,
+   0,.1,1), radius 16 → 20, still centred; its links arrive only after,
+   ~100ms apart; on close they leave first and the pill shrinks in
+   ~400ms). The chat is INSIDE the rail (nav.tsx), under the row, in a
+   grid row that goes 0fr → 1fr — height: auto, animated — while the
+   rail's width goes from its content to the panel's. The rail's own
+   background carries the pill while open (the row's steps back so the
+   two do not stack to black). */
+.dr-rail { height: auto; min-height: 62px; }
+.dr-rail-in { height: 62px; }
+/* the WIDTH is driven inline by nav.tsx: rest width snapshotted in px,
+   then the panel's — a max-content → px transition re-reads max-content
+   every frame as the panel grows and overshot to 649 (measured) */
+.dr-rail[data-ask] { z-index: 3; }
+.dr-rail[data-ask] .dr-rail-in { background: transparent; }
+.dr-rail[data-ask]::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit;
+  background: rgba(11, 11, 13, 0.92);
+  backdrop-filter: blur(14px) saturate(120%);
 }
-body:has(.dr-root) .schat-panel.is-open { clip-path: inset(0 0 0 0 round var(--radius-panel, 24px)); }
+.dr-rail[data-ground="light"][data-ask]::after { background: rgba(255, 255, 255, 0.86); }
+.dr-rail-ask { position: relative; z-index: 2; display: grid; grid-template-rows: 0fr;
+  contain: inline-size;   /* the chat's own width must not widen the rail at rest — it did: 921px (measured) */
+  transition: grid-template-rows .4s cubic-bezier(.9, 0, .1, 1) .2s; }  /* close: the words go first, then the pill */
+.dr-rail[data-ask] .dr-rail-ask { grid-template-rows: 1fr; transition: grid-template-rows .7s cubic-bezier(.9, 0, .1, 1); }
+.dr-rail-ask-in { min-height: 0; overflow: hidden; }
+/* the chat's panel, unfixed: a block in the island, its own skin gone */
+.dr-rail .schat-panel {
+  position: static; translate: none; width: auto; max-height: none;
+  clip-path: none; opacity: 1; visibility: visible; pointer-events: auto;
+  background: transparent; box-shadow: none; border-radius: 0;
+  padding: 4px 6px 10px; transition: none;
+}
+.dr-rail .schat-panel:not(.is-open) { pointer-events: none; }
+.dr-rail .schat-scroll { max-height: min(360px, calc(100dvh - 240px)); }
+/* the words arrive after the pill has grown (his ~650ms), a beat apart;
+   on close they go first, together, fast */
+.dr-rail .schat-head, .dr-rail .schat-scroll, .dr-rail .schat-form {
+  opacity: 0; transform: translateY(14px);
+  transition: opacity .2s var(--ease-ui), transform .2s var(--ease-ui);
+}
+.dr-rail .schat-panel.is-open .schat-head { opacity: 1; transform: none; transition: opacity .35s cubic-bezier(.9, 0, .1, 1) .6s, transform .35s cubic-bezier(.9, 0, .1, 1) .6s; }
+.dr-rail .schat-panel.is-open .schat-scroll { opacity: 1; transform: none; transition: opacity .35s cubic-bezier(.9, 0, .1, 1) .7s, transform .35s cubic-bezier(.9, 0, .1, 1) .7s; }
+.dr-rail .schat-panel.is-open .schat-form { opacity: 1; transform: none; transition: opacity .35s cubic-bezier(.9, 0, .1, 1) .8s, transform .35s cubic-bezier(.9, 0, .1, 1) .8s; }
+/* while open the row keeps only the mark, Close and the call — the
+   links would be clipped in the panel's width (measured: "W SE PR C"),
+   and yeqq's island does the same: brand, close, one button */
+.dr-rail[data-ask] .dr-links--l, .dr-rail[data-ask] .dr-links--r a:not(.dr-ask) { display: none; }
+/* the island is nearly opaque — at .92 the hero's white title ghosted
+   through the chat (8% of white is a readable grey) */
+.dr-rail[data-ask]::after { background: rgba(11, 11, 13, .97); }
+.dr-rail[data-ground="light"][data-ask]::after { background: rgba(255, 255, 255, .96); }
+/* THE DARK SKIN: the chat was drawn for paper (globals.css) — its bubbles,
+   chips, input and send are rgba(19,20,19) on white; in the dark island
+   they are the same recipe on the room's ink */
+.dr-rail[data-ground="dark"] .schat-panel { color: #fff; }
+.dr-rail[data-ground="dark"] .schat-panel .text-ink\/50 { color: rgba(255, 255, 255, .55); }
+.dr-rail[data-ground="dark"] .schat-x { color: rgba(255, 255, 255, .55); }
+.dr-rail[data-ground="dark"] .schat-x:hover { color: #fff; background: rgba(255, 255, 255, .08); }
+.dr-rail[data-ground="dark"] .chat-b--bot { background: rgba(255, 255, 255, .07); color: rgba(255, 255, 255, .86); }
+.dr-rail[data-ground="dark"] .chat-b--user { background: #fff; color: #0a0a0b; }
+.dr-rail[data-ground="dark"] .schat-chip { border-color: rgba(255, 255, 255, .18); color: rgba(255, 255, 255, .8); background: transparent; }
+.dr-rail[data-ground="dark"] .schat-chip:hover { border-color: rgba(255, 255, 255, .45); color: #fff; }
+.dr-rail[data-ground="dark"] .schat-form { border-top-color: rgba(255, 255, 255, .1); }
+.dr-rail[data-ground="dark"] .schat-input { background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .16); color: #fff; }
+.dr-rail[data-ground="dark"] .schat-input::placeholder { color: rgba(255, 255, 255, .45); }
+.dr-rail[data-ground="dark"] .schat-input:focus-visible { outline-color: var(--accent); }
+.dr-rail[data-ground="dark"] .schat-send { background: #fff; color: #0a0a0b; }
+.dr-rail[data-ground="dark"] .ct-dot { background: rgba(255, 255, 255, .6); }
+@media (prefers-reduced-motion: reduce) {
+  .dr-rail, .dr-rail-ask, .dr-rail .schat-head, .dr-rail .schat-scroll, .dr-rail .schat-form { transition: none; }
+}
 
 /* `logoc` (same night — Jake: "can we put the logo in the center tho of
    nav"): the mark at the rail's centre. A 1fr auto 1fr grid: Work ·

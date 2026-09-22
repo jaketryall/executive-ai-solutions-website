@@ -450,12 +450,17 @@ export default function DarkRoom({
     let busy = false;
     const fit = () => {
       if (busy) return;
+      const hasLead = !!splitLead(greeting.title).lead;
       if (!window.matchMedia("(min-width: 901px)").matches) {
+        /* THE PHONE (2026-09-22): no fit — the title is the rung the
+           media query sets — but the RISE still has to run, or the h1
+           stays at the opacity 0 it holds until data-in (it did: the
+           phone's hero had no title at all, measured). */
         h1.style.removeProperty("--fit");
+        if (!h1.querySelector(".dr-greet-l")) splitRise(h1, greeting.title, hasLead);
         return;
       }
       busy = true;
-      const hasLead = !!splitLead(greeting.title).lead;
       /* MEASURED ON A PROBE, never on the h1 itself (2026-09-21): the h1
          holds the rise's line masks, and rebuilding them for a re-fit
          (fonts.ready lands ~100ms after mount) recreated the risers in
