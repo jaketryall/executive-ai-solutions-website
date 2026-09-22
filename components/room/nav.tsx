@@ -50,6 +50,18 @@ export function RoomNav() {
      chat sits inside the rail under the row, the rail is `data-ask`
      while it is open, and room.css does the growing. */
   const [ask, setAsk] = useState(false);
+  /* THE SWITCH (2026-09-22): which room the page is in, mirrored from the
+     class the inline script and the shell keep on <html>. A lamp, not a
+     sun/moon pair — one glyph that fills when the light is on. */
+  const [day, setDay] = useState(false);
+  useEffect(() => {
+    const el = document.documentElement;
+    const read = () => setDay(el.classList.contains("eas-day"));
+    read();
+    const mo = new MutationObserver(read);
+    mo.observe(el, { attributes: true, attributeFilter: ["class"] });
+    return () => mo.disconnect();
+  }, []);
   /* the rail's width, by hand: its rest width in px is snapshotted the
      instant it opens, then it transitions to the panel's; on close it
      transitions back to that snapshot and lets go of the inline width.
@@ -380,8 +392,11 @@ export function RoomNav() {
          the root's --flip is the only truth here, the hero's sentinel
          says nothing about it */
       const paper = !!document.querySelector('.dr-hero-wrap[data-v~="paper"]');
-      /* `?v=lm`: the whole page on the light tokens, hero included — light chrome, full stop */
-      if (document.querySelector('.dr-hero-wrap[data-v~="lm"]')) {
+      /* THE DAY ROOM: the whole page on the light tokens, hero included —
+         light chrome, full stop. Keyed on the ROOM (shell.tsx), not on
+         the old `?v=lm` token, or the switch left the pill dark on a
+         light page (caught live, 2026-09-22). */
+      if (root?.classList.contains("dr-day")) {
         setGround("light");
         return;
       }
@@ -410,9 +425,13 @@ export function RoomNav() {
       frame = requestAnimationFrame(check);
     };
     check();
+    const mo = new MutationObserver(check);
+    const rootEl = document.querySelector(".dr-root");
+    if (rootEl) mo.observe(rootEl, { attributes: true, attributeFilter: ["class"] });
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
+      mo.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       if (frame) cancelAnimationFrame(frame);
@@ -521,6 +540,26 @@ export function RoomNav() {
           >
             Book the call
           </Link>
+          {/* THE ROOM SWITCH, last in the row before the action: the two
+              rooms are both real now (shell.tsx), and this is how you
+              change your mind (Jake: "i change my mind constantly over
+              which i like more"). */}
+          <button
+            type="button"
+            className="dr-room-sw"
+            aria-pressed={day}
+            aria-label={day ? "Switch to the dark room" : "Switch to the light room"}
+            title={day ? "Dark" : "Light"}
+            onClick={() => window.dispatchEvent(new CustomEvent("eas:room", { detail: { day: !day } }))}
+          >
+            <svg viewBox="0 0 16 16" aria-hidden>
+              <circle cx="8" cy="8" r="3.4" />
+              <g className="dr-room-rays">
+                <path d="M8 .8v2M8 13.2v2M.8 8h2M13.2 8h2M2.9 2.9l1.4 1.4M11.7 11.7l1.4 1.4M13.1 2.9l-1.4 1.4M4.3 11.7l-1.4 1.4" />
+              </g>
+            </svg>
+          </button>
+
           {/* `?v=navstrip`: the hero's door is the rail's one action —
               the price, the cold visitor's door; the call stays in the
               close. Hidden unless the token is on (room.css). */}

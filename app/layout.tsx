@@ -108,6 +108,18 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
+        {/* THE ROOM, BEFORE FIRST PAINT (2026-09-22): the remembered room
+            (or ?v=lm) lands on <html> as `eas-day` in the same tick the
+            document parses, so the day room never flashes black. The
+            room's own class on .dr-root follows in React (shell.tsx). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var q=new URLSearchParams(location.search),v=(q.get('v')||'').split(/[+ ]/);" +
+              "if(v.indexOf('lm')>-1||(localStorage.getItem('eas-room')==='day'&&v.indexOf('none')<0))" +
+              "document.documentElement.classList.add('eas-day')}catch(e){}",
+          }}
+        />
         <PersonaCapture />
         {/* THE CHAT LIVES IN THE RAIL now (components/room/nav.tsx,
             2026-09-22): Ask is one of the links, and the rail grows into

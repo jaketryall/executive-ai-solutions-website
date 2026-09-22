@@ -3502,7 +3502,7 @@ a.dr-hero-proof-rating:hover { color: var(--accent); }
    and inline would beat the room's own 0 — in `?dark` the page read
    light until the work. !important on a stylesheet rule outranks an
    inline style; the reduced-motion rule below does the same. */
-.dr-root:not(.dr-light):not(:has(.dr-hero-wrap[data-v~="paper"])):not(:has(.dr-hero-wrap[data-v~="lm"])) { --flip: 0 !important; }
+.dr-root:not(.dr-light):not(.dr-day):not(:has(.dr-hero-wrap[data-v~="paper"])) { --flip: 0 !important; }
 
 /* ── LIGHT MODE (trial `?v=lm`, 2026-09-21 — Jake: "can we try a light
    mode version of the current site"). Not the old light page (`?light`:
@@ -3514,18 +3514,34 @@ a.dr-hero-proof-rating:hover { color: var(--accent); }
    nav reads it (nav.tsx). In CSS rather than the .dr-light class so it
    is in the first paint — the class is set after hydration and would
    flash black. */
-:root:has(.dr-hero-wrap[data-v~="lm"]),
-body:has(.dr-hero-wrap[data-v~="lm"]) { background: #e7e7ea; }
-.dr-root:has(.dr-hero-wrap[data-v~="lm"]) { --flip: 1; --edge-strong: #84848c; }
-.dr-hero-wrap[data-v~="lm"].dr-zone-dark {
+/* the ground before React (layout.tsx's inline script writes .eas-day on
+   <html>), and after it */
+:root.eas-day, :root.eas-day body,
+:root:has(.dr-root.dr-day),
+body:has(.dr-root.dr-day) { background: #e7e7ea; }
+.dr-root.dr-day {
+  --flip: 1;
+  --edge-strong: #84848c;
+  /* ── THE DAY ACCENT (2026-09-22 — Jake: "the light version, im hoping
+     that can be improved"). Measured: every colour in the light room
+     cleared AA except the accent — electric cyan on the off-white ground
+     is 1.24:1, against 12.85:1 on the dark ground, so the headline's own
+     half read as a highlighter rather than as ink. This is the SAME
+     COLOUR, darker: identical hue and chroma in oklab (H −150.4°, C
+     .143), lightness .846 → .50 — Apple's own answer to the same problem
+     (#2997ff on dark, #0071e3 on light). 4.27:1 on the ground, 5.27 on
+     a white surface: AA for body text, not just for display. */
+  --accent: #00768f;
+}
+.dr-day .dr-hero-wrap.dr-zone-dark {
   --void: inherit; --surface-1: inherit; --surface-2: inherit; --surface-3: inherit;
   --ink: inherit; --ink-2: inherit; --ink-3: inherit; --ink-4: inherit;
   --edge: inherit; --edge-strong: inherit;
 }
-.dr-root:has(.dr-hero-wrap[data-v~="lm"]) .t-hero { color: #35353a; }
-.dr-root:has(.dr-hero-wrap[data-v~="lm"]) .dr-h1.t-hero,
-.dr-root:has(.dr-hero-wrap[data-v~="lm"]) .dr-h1.dr-greet { color: var(--ink); }
-.dr-root:has(.dr-hero-wrap[data-v~="lm"]) .dr-lamps { opacity: 0; }
+.dr-root.dr-day .t-hero { color: #35353a; }
+.dr-root.dr-day .dr-h1.t-hero,
+.dr-root.dr-day .dr-h1.dr-greet { color: var(--ink); }
+.dr-root.dr-day .dr-lamps { opacity: 0; }
 
 /* ── PAPER (trial, 2026-09-21 — Jake: "do work after the second section
    with white background flip like this site", landonorris.com). What
@@ -5869,8 +5885,8 @@ body:has(.dr-hero-wrap[data-v~="lm"]) { background: #e7e7ea; }
 .dr-lit .dr-strip { animation: dr-fadein var(--t-enter) var(--ease-structure) 680ms backwards; }
 .dr-root .dr-strip .dr-hero-door { opacity: 1; animation: none; margin: 0 0 0 auto; height: 48px; padding: 0 22px; }
 .dr-strip { margin-top: clamp(20px, 3.2svh, 36px); }
-.dr-root:has(.dr-hero-wrap[data-v~="lm"]) .dr-strip { background: #ffffff; box-shadow: var(--lift); outline: none; }
-.dr-root:has(.dr-hero-wrap[data-v~="lm"]) .dr-face { border-color: #ffffff; }
+.dr-root.dr-day .dr-strip { background: #ffffff; box-shadow: var(--lift); outline: none; }
+.dr-root.dr-day .dr-face { border-color: #ffffff; }
 @media (prefers-reduced-motion: reduce) { .dr-strip { opacity: 1; } .dr-lit .dr-strip { animation: none; } }
 @media (max-width: 900px) {
   .dr-strip { flex-wrap: wrap; }
@@ -6113,3 +6129,39 @@ body:has(.dr-hero-wrap[data-v~="lm"]) { background: #e7e7ea; }
 .dr-root:has(.dr-hero-wrap[data-v~="tidy"]) .dr-rail-in { gap: 40px; }
 .dr-root:has(.dr-hero-wrap[data-v~="tidy"]) .dr-rail:not([data-stuck]) .dr-mono,
 .dr-root:has(.dr-hero-wrap[data-v~="tidy"]) .dr-rail[data-stuck] .dr-mono { width: 24px; height: 24px; }
+
+/* the hero's edge glow in the day room: the same light, at a third —
+   a cyan haze on off-white reads as a smudge where on black it reads as
+   a lamp (the room's own rule: elevation is lightness, and there is no
+   headroom above #e7e7ea) */
+.dr-day [data-v~="cyan"] .dr-air-edge { box-shadow: 0 -22px 110px 0 rgba(0, 118, 143, .10); }
+.dr-day .dr-air::after { opacity: .45; }
+
+/* ── THE ROOM SWITCH (2026-09-22): a lamp in the rail — the disc is the
+   bulb, the rays arrive with the light. Same 14px register as the links,
+   the same ink-3 at rest, ink on hover; no colour, because the accent is
+   the page's one colour and this is chrome. */
+.dr-room-sw {
+  flex: 0 0 auto; display: grid; place-items: center;
+  width: 30px; height: 30px; padding: 0; border: 0; border-radius: 999px;
+  background: transparent; color: var(--ink-3); cursor: pointer;
+  transition: color var(--t-micro) var(--ease-ui), background var(--t-micro) var(--ease-ui);
+}
+.dr-room-sw:hover { color: var(--ink); background: color-mix(in oklab, var(--ink) 8%, transparent); }
+.dr-room-sw:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dr-room-sw svg { width: 16px; height: 16px; overflow: visible; }
+.dr-room-sw circle { fill: currentColor; transition: r .4s var(--ease-structure); }
+.dr-room-sw .dr-room-rays {
+  stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; fill: none;
+  opacity: 0; scale: .6; transform-origin: 8px 8px;
+  transition: opacity .3s var(--ease-ui), scale .4s var(--ease-structure);
+}
+.dr-room-sw[aria-pressed="true"] circle { r: 2.6; }
+.dr-room-sw[aria-pressed="true"] .dr-room-rays { opacity: 1; scale: 1; }
+.dr-rail[data-ask] .dr-room-sw { display: none; }
+@media (max-width: 900px) {
+  .dr-root:has(.dr-hero-wrap[data-v~="ask"]) .dr-rail .dr-room-sw { display: grid; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dr-room-sw circle, .dr-room-sw .dr-room-rays { transition: none; }
+}

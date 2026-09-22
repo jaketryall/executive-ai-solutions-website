@@ -106,16 +106,38 @@ export function RoomShell({ children }: { children: React.ReactNode }) {
      stand under .dr-light, untouched; the flip track before the work
      is inert in the dark room (room.css, the !important). */
   const [light, setLight] = useState(false);
+  /* ── THE TWO ROOMS (2026-09-22 — Jake: "im invisioning developing light
+     and dark, i change my mind constantly over which i like more"). The
+     day room is no longer a `?v=` trial: `.dr-day` on the root, chosen by
+     the switch in the rail, remembered in localStorage, applied by an
+     inline script BEFORE first paint (layout.tsx) so nothing flashes.
+     React only has to agree with what that script already did. `?v=lm`
+     still works, as the URL way in. */
+  const [day, setDay] = useState(false);
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
     if (q.has("light")) setLight(true);
+    const el = document.documentElement;
+    setDay(el.classList.contains("eas-day") || (q.get("v") || "").split(/[+ ]/).includes("lm"));
+    const onRoom = (e: Event) => {
+      const next = !!(e as CustomEvent<{ day: boolean }>).detail?.day;
+      setDay(next);
+      el.classList.toggle("eas-day", next);
+      try {
+        localStorage.setItem("eas-room", next ? "day" : "night");
+      } catch {
+        /* a blocked store never breaks the switch */
+      }
+    };
+    window.addEventListener("eas:room", onRoom);
+    return () => window.removeEventListener("eas:room", onRoom);
   }, []);
 
   return (
     <div
       className={`dr-root ${archivo.variable} ${instrument.variable} ${scrawl.variable}${
         lit ? " dr-lit" : ""
-      }${light ? " dr-light" : ""}`}
+      }${light ? " dr-light" : ""}${day ? " dr-day" : ""}`}
     >
       <RoomNav />
       {children}
