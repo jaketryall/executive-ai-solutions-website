@@ -5983,3 +5983,31 @@ body:has(.dr-root) .schat-panel.is-open { clip-path: inset(0 0 0 0 round var(--r
 }
 .dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail:not([data-stuck]) .dr-links--r { margin: 0; }
 .dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail:not([data-stuck]) .dr-nav-proof { order: 4; }
+
+/* ── TIDY (trial `?v=tidy`, 2026-09-21 — Jake: "can we fix the spacing of
+   everything in hero and sizing of nav bar stuff"). Measured at 1440×900
+   before this: nav 21–83, title glyphs 133–397, film 430–1200; the film
+   36px from the screen's edge while the title's column starts at 55 —
+   the one picture 19px wider than the words above it each side, 96px at
+   1920; the nav's links 13px on a 21px mark, three words floating 50px
+   over a 131px title with 33px between the title and the film. Four
+   moves, one rhythm:
+   1. THE FILM SITS ON THE COLUMN — its gutter is the column's inset (and
+      the column's cap on wide screens), so the title and the film share
+      edges at every width.
+   2. ONE GAP: 44px from the nav's row to the title's cap line, 44px from
+      the title's baseline to the film.
+   3. THE NAV GROWS A STEP — links 14px, the mark 24px, 40px between the
+      groups, the row 24px from the top — enough presence to be the
+      page's chrome next to a 131px word, still nothing like a bar.
+   4. The pill inherits all of it. */
+.dr-hero-wrap[data-v~="tidy"] {
+  --film-gap: max(var(--col-inset), calc((100vw - var(--col-max)) / 2 + var(--col-inset)));
+}
+.dr-hero-wrap[data-v~="tidy"] .dr-slot { --slot-show: 462px; }
+.dr-hero-wrap[data-v~="tidy"] .dr-h1.dr-greet { margin-top: clamp(24px, 4.3svh, 48px); }
+.dr-root:has(.dr-hero-wrap[data-v~="tidy"]) { --nav-pad: clamp(16px, 2.7svh, 24px); }
+.dr-root:has(.dr-hero-wrap[data-v~="tidy"]) .dr-links a { font-size: 14px; letter-spacing: .1em; }
+.dr-root:has(.dr-hero-wrap[data-v~="tidy"]) .dr-rail-in { gap: 40px; }
+.dr-root:has(.dr-hero-wrap[data-v~="tidy"]) .dr-rail:not([data-stuck]) .dr-mono,
+.dr-root:has(.dr-hero-wrap[data-v~="tidy"]) .dr-rail[data-stuck] .dr-mono { width: 24px; height: 24px; }
