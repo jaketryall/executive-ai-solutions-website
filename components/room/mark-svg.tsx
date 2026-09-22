@@ -19,8 +19,13 @@ const D =
      whatever the geometry.
    · `dr-mark-lit`   the diagonal wipe (`?v=logowipe`), kept.
    · `dr-mark-draw`  the hairline outline (`?v=logodraw`), kept. */
+/* ⚠ THE ROUTE HAS TO COVER THE WHOLE GLYPH. Measured at full hover: 3.6%
+   of the mark stayed white — a patch where the A's crossbar meets its
+   right leg (x≈310–370, y≈250–310 in the 500 box), which fell between
+   the diagonal's stroke and the right column's. The route now steps
+   LEFT into that shoulder on its way down and back out to the leg. */
 const PEN =
-  "M250,50 H62 Q40,50 40,88 V168 Q40,205 78,205 H215 L215,258 H78 Q40,258 40,296 V402 Q40,442 80,442 H244 L188,472 L332,42 H402 Q458,42 458,100 V240 V392 Q458,442 410,442 H300 L268,442";
+  "M250,50 H62 Q40,50 40,88 V168 Q40,205 78,205 H215 L215,258 H78 Q40,258 40,296 V402 Q40,442 80,442 H244 L188,472 L332,42 H402 Q458,42 458,100 V216 L344,268 L458,330 V392 Q458,442 410,442 H300 L268,442";
 
 export function MarkSvg() {
   const trace = useRef<SVGPathElement>(null);
