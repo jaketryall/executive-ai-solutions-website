@@ -6420,3 +6420,36 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
 .dr-hero-slice[data-on="true"] { opacity: 1; }
 .dr-hero-reel:has(.dr-hero-slice[data-on="true"]) video { opacity: 0; }
 @media (max-width: 900px), (prefers-reduced-motion: reduce) { .dr-hero-slice { display: none; } }
+
+/* ── THE FILL (trial `?v=logofill`, 2026-09-22 — Jake: "what i want is
+   some sort of logo fill that has ease to it"). Not a highlight passing
+   through (that was `logoscan`, and a sweep LEAVES): the accent RISES
+   into the mark and stays while the pointer is on it, then drains back
+   down. One number does it — --fill, a registered percentage so the
+   browser can interpolate it at all — read by a two-stop gradient with
+   a soft 7% shoulder, so the waterline has a little light on it rather
+   than being a ruled edge. The ease is the whole point: a slow start,
+   a committed middle and a long settle going up (.62s), and a quicker,
+   plainer drain coming down (.42s) — entrances are slower than exits,
+   the room's own law. */
+@property --fill { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
+.dr-root:has(.dr-hero-wrap[data-v~="logofill"]) .dr-mono {
+  --fill: 0%;
+  background: linear-gradient(to top,
+    var(--accent) 0%,
+    var(--accent) var(--fill),
+    color-mix(in oklab, var(--accent) 55%, var(--ink)) calc(var(--fill) + 7%),
+    var(--ink) calc(var(--fill) + 8%),
+    var(--ink) 100%);
+  transition: width .55s var(--ease-structure), opacity .35s var(--ease-ui),
+              --fill .42s cubic-bezier(.4, 0, 1, 1);
+}
+.dr-root:has(.dr-hero-wrap[data-v~="logofill"]) .dr-lockup:hover .dr-mono,
+.dr-root:has(.dr-hero-wrap[data-v~="logofill"]) .dr-lockup:focus-visible .dr-mono {
+  --fill: 100%;
+  transition: width .55s var(--ease-structure), opacity .35s var(--ease-ui),
+              --fill .68s cubic-bezier(.16, .84, .24, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dr-root:has(.dr-hero-wrap[data-v~="logofill"]) .dr-mono { transition: none; }
+}
