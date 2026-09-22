@@ -60,8 +60,12 @@ export function MarkSvg() {
       <mask id="dr-mark-pen" maskUnits="userSpaceOnUse" x="-150" y="-150" width="800" height="800">
         <path className="dr-mark-pen" d={PEN} pathLength={1000} />
       </mask>
-      <path className="dr-mark-written" d={D} mask="url(#dr-mark-pen)" />
       <path className="dr-mark-ink" d={D} />
+      {/* ON TOP of the ink copy: under it, the same path in the accent is
+          invisible except as an antialiasing fringe — a cyan outline
+          round a white mark, which is the other half of what read as
+          "odd dimming" */}
+      <path className="dr-mark-written" d={D} mask="url(#dr-mark-pen)" />
       <path className="dr-mark-lit" mask="url(#dr-mark-corner)" d={D} />
       <g clipPath="url(#dr-mark-glyph)">
         <path className="dr-mark-trace" ref={trace} d={D} />

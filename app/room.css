@@ -6508,7 +6508,8 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
   transform-origin: 0px 500px;   /* the bottom-left corner of the box */
   transition: transform .42s cubic-bezier(.4, 0, 1, 1);
 }
-.dr-lockup:hover .dr-mark-c, .dr-lockup:focus-visible .dr-mark-c {
+.dr-root:has(.dr-hero-wrap[data-v~="logowipe"]) .dr-lockup:hover .dr-mark-c,
+.dr-root:has(.dr-hero-wrap[data-v~="logowipe"]) .dr-lockup:focus-visible .dr-mark-c {
   transform: rotate(-45deg) translate(750px);
   transition: transform .72s cubic-bezier(.16, .84, .24, 1);
 }
@@ -6551,7 +6552,16 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
    starting at .5s — before the trace lands, so the two read as one
    gesture) with the glyph clipping whatever spills outside. The mark
    draws itself and then inks itself, from one element and one path. */
-.dr-mark-trace {
+/* ⚠ AND AN SVG PATH WITH NO FILL RULE IS BLACK. Scoping the trace left
+   it with no declaration at all, so it painted a solid black glyph over
+   the mark — the nav's logo went dark (caught live). Every path in this
+   SVG needs a base `fill: none` whether or not its token is on. */
+.dr-mark-trace { fill: none; stroke: none; }
+/* ⚠ SCOPED. These were written unscoped, so under `logopen` the trace
+   ran TOO — a second accent effect on the same path, which is what the
+   "odd dimming" was: an accent halo round the mark while the pen was
+   still writing, then the whole glyph flooding from the wrong layer. */
+.dr-root:has(.dr-hero-wrap[data-v~="logoink"]) .dr-mark-trace {
   fill: none; stroke: var(--accent); stroke-width: 24;
   stroke-linecap: round; stroke-linejoin: round;
   stroke-dasharray: var(--len, 4200);
@@ -6559,7 +6569,8 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
   transition: stroke-dashoffset .4s cubic-bezier(.4, 0, 1, 1) .18s,
               stroke-width .32s var(--ease-ui);
 }
-.dr-lockup:hover .dr-mark-trace, .dr-lockup:focus-visible .dr-mark-trace {
+.dr-root:has(.dr-hero-wrap[data-v~="logoink"]) .dr-lockup:hover .dr-mark-trace,
+.dr-root:has(.dr-hero-wrap[data-v~="logoink"]) .dr-lockup:focus-visible .dr-mark-trace {
   stroke-dashoffset: 0; stroke-width: 210;
   transition: stroke-dashoffset .85s cubic-bezier(.22, .68, .24, 1),
               stroke-width .55s cubic-bezier(.3, .7, .2, 1) .5s;
