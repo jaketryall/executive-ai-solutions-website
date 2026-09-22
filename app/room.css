@@ -6477,13 +6477,36 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
 .dr-mark-ink { fill: var(--ink); }
 .dr-mark-lit { fill: var(--accent); }
 .dr-mark-draw { fill: none; stroke: none; }
+/* ── THE FLOOD'S SHAPE ("logo ink is close", 2026-09-22). Three things
+   the first pass got wrong, all visible once you watch it at 5×:
+
+   1. A CIRCLE from a corner floods the NEAR side almost instantly and
+      then crawls — the wavefront's speed across the mark is the
+      circle's radius, so nothing happens for the last third. The clip
+      is a wide RECTANGLE rotated 45° now: a straight diagonal
+      wavefront that crosses at one speed, which is what reads as ink
+      travelling rather than a blob opening.
+   2. It started BELOW the box, so the first frames were already a third
+      filled. It starts a hair outside the corner and ends a hair past
+      the far one — 0 → 1 covers exactly the diagonal, nothing wasted.
+   3. The waterline was a hard edge. A 6-unit feather (the mask's own
+      gradient) gives it the wet edge ink has.
+   The ease is unchanged: .72s in on the long settle, .42s out. */
+/* ⚠ ORDER AND SIGN, both measured wrong the first time: CSS composes
+   transforms LEFT TO RIGHT, so `rotate() translate()` moves along the
+   ROTATED axis (translate-then-rotate moved it along the box's own, and
+   the flood stalled at 40%); and +45° points down-right in SVG's
+   y-down space, while the corner-to-corner run is up-right, which is
+   −45°. The slab's leading edge starts 40 units before the bottom-left
+   corner and ends 40 past the top-right one — the 707-unit diagonal
+   plus a hair at each end, so the mark inks completely. */
 .dr-mark-c {
-  transform: scale(0);
+  transform: rotate(-45deg) translate(-40px);
   transform-origin: 0px 500px;   /* the bottom-left corner of the box */
   transition: transform .42s cubic-bezier(.4, 0, 1, 1);
 }
 .dr-lockup:hover .dr-mark-c, .dr-lockup:focus-visible .dr-mark-c {
-  transform: scale(1.45);
+  transform: rotate(-45deg) translate(750px);
   transition: transform .72s cubic-bezier(.16, .84, .24, 1);
 }
 
