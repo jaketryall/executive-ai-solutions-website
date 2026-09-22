@@ -6186,10 +6186,9 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
    which is the nav Jake asked for back — "just before the lightmode
    switch" (2026-09-22) */
 .dr-root:has(.dr-hero-wrap[data-v~="hudask"]) .dr-rail .dr-ask { display: none; }
-.dr-hud-ask { display: none; }
 .dr-root:has(.dr-hero-wrap[data-v~="hudask"]) .dr-hud-ask { display: inline-flex; }
 .dr-hud-ask {
-  display: inline-flex; align-items: center; height: 38px; padding: 0 18px;
+  display: none; align-items: center; height: 38px; padding: 0 18px;
   border: 0; border-radius: 999px; cursor: pointer;
   background: rgba(11, 11, 13, .92); color: #fff;
   backdrop-filter: blur(14px) saturate(120%);
