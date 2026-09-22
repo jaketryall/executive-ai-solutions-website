@@ -1166,12 +1166,13 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   max-width: 0; opacity: 0; padding: 12px 0; overflow: hidden;
   transition: max-width .55s var(--ease-structure),
               padding .55s var(--ease-structure),
+              margin-left .55s var(--ease-structure), /* it used to jump — the one step in the regroup's move (nav.tsx) */
               opacity .35s var(--ease-ui),
               background var(--t-micro) var(--ease-ui);
 }
 .dr-navcta::before { opacity: 0; transition: opacity .4s var(--ease-ui); }
 .dr-rail[data-stuck] .dr-navcta {
-  max-width: 260px; opacity: 1; padding: 12px 22px; margin-left: var(--fib-4);
+  max-width: var(--cta-w, 260px); opacity: 1; padding: 12px 22px; margin-left: var(--fib-4);
 }
 .dr-rail[data-stuck] .dr-navcta::before { opacity: 1; }
 .dr-navcta:hover { background: var(--surface-3); }
@@ -5971,6 +5972,12 @@ body:has(.dr-root) .schat-panel.is-open { clip-path: inset(0 0 0 0 round var(--r
 }
 .dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail:not([data-stuck]) .dr-links--l { order: 1; justify-self: end; margin: 0; }
 .dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail:not([data-stuck]) .dr-lockup { order: 2; justify-self: center; }
+/* THE MARK, not the words, at the centre (Jake: "instead of saying
+   executive ai solutions can it be the logo") — the stuck state's own
+   collapse, applied at rest too, so the lockup is the same 21px object
+   in both rows and the regroup moves one thing */
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail:not([data-stuck]) .dr-lockup b { max-width: 0; opacity: 0; }
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail:not([data-stuck]) .dr-mono { width: 21px; opacity: 1; }
 .dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail:not([data-stuck]) .dr-rail-r {
   order: 3; display: flex; align-items: center; justify-self: start; min-width: 0;
 }

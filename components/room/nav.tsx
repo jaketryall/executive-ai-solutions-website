@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { CLIENT_MARKS, GOOGLE_REVIEWS } from "@/lib/proof";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 /* THE ROOM'S NAV, as the site's nav.
 
@@ -38,8 +38,104 @@ export function Roll({ label }: { label: string }) {
 }
 
 export function RoomNav() {
-  const [stuck, setStuck] = useState(false);
+  const [stuck, setStuckState] = useState(false);
   const [ground, setGround] = useState<"dark" | "light">("dark");
+
+  /* THE REGROUP IS A MOVE, NOT A CUT (Jake: "can we animate the regroup
+     when it becomes the pill"). At rest the rail is Work · Services —
+     the mark — Pricing; stuck it is the mark, the links, the call. Two
+     layouts, so the browser cannot transition between them — FLIP does:
+     the moment `stuck` is about to change, every item's rect is taken
+     (First); after React lays the other row out (Last), each item is
+     put back where it was with a transform (Invert) and the transform
+     is released on the structure curve (Play). The pill's own padding
+     and the call's width open on the same curve and duration, so the
+     two motions read as one. Same in reverse when the hero comes back. */
+  const railRef = useRef<HTMLDivElement>(null);
+  type Snap = { first: Map<HTMLElement, DOMRect>; old: Map<HTMLElement, Record<string, string>> };
+  const snapRef = useRef<Snap | null>(null);
+  const stuckRef = useRef(false);
+  /* the two surfaces whose own CSS transitions move the layout while the
+     pill forms — the row's padding and the call's width. Their transition
+     is restarted by hand (below) so Last can be measured at the FINAL
+     layout: measured before this, Work dipped 19px left and came back
+     as the call opened under a FLIP aimed at the wrong target. */
+  const SETTLE: [string, string[]][] = [
+    [".dr-rail-in", ["paddingLeft", "paddingRight", "backgroundColor"]],
+    [".dr-navcta--call", ["maxWidth", "paddingLeft", "paddingRight", "marginLeft", "opacity"]],
+  ];
+  const setStuck = (v: boolean) => {
+    if (v === stuckRef.current) return;
+    stuckRef.current = v;
+    const rail = railRef.current;
+    if (rail && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const items = rail.querySelectorAll<HTMLElement>(".dr-lockup, .dr-links a");
+      const first = new Map(Array.from(items, (el) => [el, el.getBoundingClientRect()]));
+      const old = new Map<HTMLElement, Record<string, string>>();
+      for (const [sel, props] of SETTLE) {
+        const el = rail.querySelector<HTMLElement>(sel);
+        if (!el) continue;
+        const cs = getComputedStyle(el);
+        old.set(el, Object.fromEntries(props.map((p) => [p, cs.getPropertyValue(p.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase()))])));
+      }
+      snapRef.current = { first, old };
+    }
+    setStuckState(v);
+  };
+  useLayoutEffect(() => {
+    const snap = snapRef.current;
+    if (!snap) return;
+    snapRef.current = null;
+    /* THE MATHS. With the items' transform and the surfaces' own
+       transitions on ONE curve e(t), started in the SAME frame, an item
+       lands at First·(1−e) + Final·e — a clean move — only if its
+       inversion is taken against the layout the surfaces START from
+       (old padding, closed call), not the one they end at. And the
+       "same frame" is not optional: the surfaces' transitions begin at
+       React's commit, and releasing the transform a frame later put the
+       two curves 16ms apart — on a curve this fast at its start that
+       was a 19px dip in Work (measured). So: freeze the surfaces, hold
+       them at their OLD values, measure, invert, then release all of it
+       in one rAF. */
+    snap.old.forEach((vals, el) => {
+      el.style.transition = "none";
+      for (const p in vals) (el.style as unknown as Record<string, string>)[p] = vals[p];
+    });
+    void railRef.current?.offsetWidth; // the row as the surfaces start it
+    const moves: HTMLElement[] = [];
+    snap.first.forEach((r0, el) => {
+      const r1 = el.getBoundingClientRect();
+      const dx = r0.left - r1.left;
+      const dy = r0.top - r1.top;
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+      el.style.transition = "none";
+      el.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`;
+      moves.push(el);
+    });
+    void railRef.current?.offsetWidth; // commit the inverted items
+    // release everything in one frame — one curve, one duration, one start
+    const raf = requestAnimationFrame(() => {
+      moves.forEach((el) => {
+        el.style.transition = "transform .55s var(--ease-structure)";
+        el.style.transform = "";
+      });
+      snap.old.forEach((vals, el) => {
+        el.style.removeProperty("transition");
+        for (const p in vals) (el.style as unknown as Record<string, string>)[p] = "";
+      });
+    });
+    const t = window.setTimeout(() => {
+      moves.forEach((el) => {
+        el.style.removeProperty("transition");
+        el.style.removeProperty("transform");
+      });
+    }, 620);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(t);
+    };
+  }, [stuck]);
+
   useEffect(() => {
     const top = document.querySelector<HTMLElement>(".dr-top");
     if (!top) {
@@ -117,7 +213,22 @@ export function RoomNav() {
     const hero = document.querySelector<HTMLElement>(".dr-hero");
     const rail = document.querySelector<HTMLElement>(".dr-rail");
     if (!hero || !rail) return;
-    const fit = () => rail.style.setProperty("--rail-w", `${hero.offsetWidth}px`);
+    const fit = () => {
+      rail.style.setProperty("--rail-w", `${hero.offsetWidth}px`);
+      /* the call's OPEN width, measured once, so its max-width transition
+         runs 0 → exactly that and its rendered width is on the curve the
+         whole way. Against a 260px ceiling the width hit its 173px
+         content at 66% of the curve and stopped — ahead of the regroup's
+         transform by ~19px at 120ms (measured), the last dip in Work. */
+      const cta = rail.querySelector<HTMLElement>(".dr-navcta--call");
+      if (cta) {
+        const prev = cta.style.cssText;
+        cta.style.cssText = "transition:none;max-width:none;padding:12px 22px;opacity:0;position:absolute;visibility:hidden";
+        const w = cta.getBoundingClientRect().width;
+        cta.style.cssText = prev;
+        if (w) rail.style.setProperty("--cta-w", `${Math.ceil(w)}px`);
+      }
+    };
     fit();
     const ro = new ResizeObserver(fit);
     ro.observe(hero);
@@ -207,7 +318,7 @@ export function RoomNav() {
 
   return (
     <header className="dr-nav wrap">
-      <div className="dr-rail dr-edge" data-stuck={stuck ? "true" : undefined} data-ground={ground}>
+      <div className="dr-rail dr-edge" ref={railRef} data-stuck={stuck ? "true" : undefined} data-ground={ground}>
         <div className="dr-rail-in">
           <Link className="dr-lockup" href="/">
             <span className="dr-mono" aria-hidden />
