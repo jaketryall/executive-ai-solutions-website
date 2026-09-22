@@ -6024,7 +6024,14 @@ body:has(.dr-root) .schat-panel.is-open { clip-path: inset(0 0 0 0 round var(--r
    baseline → film): Apple's own proportion on a product page. */
 /* third pass ("i feel like the title and video are really close" …
    "focus on video"): 52 above, 72 below at 900. */
-.dr-hero-wrap[data-v~="tidy"] .dr-slot { --slot-show: 426px; }
+/* THE GAP IS THE RULE, not the film's depth into the screen ("the small
+   gap is back now the bigger one is gone"): --slot-show pins the film's
+   top a fixed distance into the FIRST SCREEN, so on any window shorter
+   than 900 the calc went negative and the 26px floor took over — the
+   gap he liked existed only at one height. Now the film sits a fixed
+   clamp under the title at every height (72 at 900, 59 at 736, 80 from
+   1000 up) and takes whatever depth that leaves it. */
+.dr-hero-wrap[data-v~="tidy"] .dr-slot { margin-top: clamp(52px, 8svh, 80px); }
 .dr-hero-wrap[data-v~="tidy"] .dr-h1.dr-greet { margin-top: clamp(30px, 5.2svh, 60px); }
 .dr-root:has(.dr-hero-wrap[data-v~="tidy"]) { --nav-pad: clamp(16px, 2.7svh, 24px); }
 .dr-root:has(.dr-hero-wrap[data-v~="tidy"]) .dr-links a { font-size: 14px; letter-spacing: .1em; }
