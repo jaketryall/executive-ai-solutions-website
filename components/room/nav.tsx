@@ -88,7 +88,12 @@ export function RoomNav() {
        — the proof after the mark, the one door at the end — so the rail
        is the pill from the first frame, not something the first scroll
        earns. */
-    const always = !!document.querySelector('.dr-hero-wrap[data-v~="navstrip"], .dr-hero-wrap[data-v~="navpill"]');
+    /* `navc` too (Jake: "i like it when its in the scrolling state not
+       the original"): the centred rail is the pill — mark, links, the
+       call — from the first frame. */
+    const always = !!document.querySelector(
+      '.dr-hero-wrap[data-v~="navstrip"], .dr-hero-wrap[data-v~="navpill"], .dr-hero-wrap[data-v~="navc"]'
+    );
     if (always) setStuck(true);
     const io = new IntersectionObserver(([e]) => setStuck(always || !e.isIntersecting), {
       threshold: 0,
