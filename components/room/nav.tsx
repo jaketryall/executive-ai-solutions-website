@@ -154,6 +154,11 @@ export function RoomNav() {
          the root's --flip is the only truth here, the hero's sentinel
          says nothing about it */
       const paper = !!document.querySelector('.dr-hero-wrap[data-v~="paper"]');
+      /* `?v=lm`: the whole page on the light tokens, hero included — light chrome, full stop */
+      if (document.querySelector('.dr-hero-wrap[data-v~="lm"]')) {
+        setGround("light");
+        return;
+      }
       if (!isLightRoom && !paper) {
         setGround("dark");
         return;

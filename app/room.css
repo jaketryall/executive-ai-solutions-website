@@ -3473,7 +3473,30 @@ a.dr-hero-proof-rating:hover { color: var(--accent); }
    and inline would beat the room's own 0 — in `?dark` the page read
    light until the work. !important on a stylesheet rule outranks an
    inline style; the reduced-motion rule below does the same. */
-.dr-root:not(.dr-light):not(:has(.dr-hero-wrap[data-v~="paper"])) { --flip: 0 !important; }
+.dr-root:not(.dr-light):not(:has(.dr-hero-wrap[data-v~="paper"])):not(:has(.dr-hero-wrap[data-v~="lm"])) { --flip: 0 !important; }
+
+/* ── LIGHT MODE (trial `?v=lm`, 2026-09-21 — Jake: "can we try a light
+   mode version of the current site"). Not the old light page (`?light`:
+   a black hero on a white page, flipping back to dark at the work) but
+   THIS page, every section, on the light tokens: --flip held at 1 end
+   to end, the hero's own dark zone released to inherit the room, the
+   work's flip-to-dark track not rendered (hero-room.tsx), the lamps off
+   (they are dark-room objects; the atmos already rides 1 − flip). The
+   nav reads it (nav.tsx). In CSS rather than the .dr-light class so it
+   is in the first paint — the class is set after hydration and would
+   flash black. */
+:root:has(.dr-hero-wrap[data-v~="lm"]),
+body:has(.dr-hero-wrap[data-v~="lm"]) { background: #e7e7ea; }
+.dr-root:has(.dr-hero-wrap[data-v~="lm"]) { --flip: 1; --edge-strong: #84848c; }
+.dr-hero-wrap[data-v~="lm"].dr-zone-dark {
+  --void: inherit; --surface-1: inherit; --surface-2: inherit; --surface-3: inherit;
+  --ink: inherit; --ink-2: inherit; --ink-3: inherit; --ink-4: inherit;
+  --edge: inherit; --edge-strong: inherit;
+}
+.dr-root:has(.dr-hero-wrap[data-v~="lm"]) .t-hero { color: #35353a; }
+.dr-root:has(.dr-hero-wrap[data-v~="lm"]) .dr-h1.t-hero,
+.dr-root:has(.dr-hero-wrap[data-v~="lm"]) .dr-h1.dr-greet { color: var(--ink); }
+.dr-root:has(.dr-hero-wrap[data-v~="lm"]) .dr-lamps { opacity: 0; }
 
 /* ── PAPER (trial, 2026-09-21 — Jake: "do work after the second section
    with white background flip like this site", landonorris.com). What

@@ -1157,7 +1157,7 @@ export default function DarkRoom({
           root), so under paper it is not rendered. room.css "PAPER". */}
       <div
         className="dr-work-zone"
-        {...(has("paper")
+        {...(has("paper") || has("lm")
           ? {}
           : {
               "data-sp": true,
