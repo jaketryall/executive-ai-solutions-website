@@ -11,7 +11,7 @@ import ObjectionsSection from "@/components/dark/objections-section";
 import { Monogram } from "@/components/ui/monogram";
 import { CustomEase } from "gsap/CustomEase";
 import { gsap, reducedMotion } from "@/components/anim/ease";
-import { GOOGLE_REVIEWS, NEXT_START } from "@/lib/proof";
+import { CLIENT_MARKS, GOOGLE_REVIEWS, NEXT_START } from "@/lib/proof";
 import { pickGreeting, replyLine, splitLead, type Greeting } from "@/lib/greeting";
 import { getPersona } from "@/lib/persona";
 
@@ -635,7 +635,7 @@ export default function DarkRoom({
       // same day: title, then the day line, then the door pill — the
       // door's own bottom edge is what the slot must clear, same as the
       // room's very first hero).
-      const day = document.querySelector<HTMLElement>(".dr-hero-door");
+      const day = document.querySelector<HTMLElement>(".dr-hero-proof") ?? document.querySelector<HTMLElement>(".dr-hero-door");
       if (day) {
         const db = box(day);
         reel.closest<HTMLElement>(".dr-hero-wrap")?.style.setProperty("--day-b", `${db.y + db.h}px`);
@@ -914,6 +914,44 @@ export default function DarkRoom({
               <Link href={greeting.door.href} className="dr-herocta dr-hero-door t-cta">
                 {greeting.door.label}
               </Link>
+              {/* THE PROOF LINE (2026-09-21 — the one thing the white
+                  "Design that sells" hero had that this one lost: the
+                  strip's proof. Jake: "okay lets try it"). One quiet row
+                  under the door, the screen's own 14px register: the three
+                  client marks and the Google rating. lib/proof.ts's rule
+                  stands — the rating renders only while `count` is real
+                  (0 hides it); the numbers there are PLACEHOLDERS until
+                  Jake sets the live ones. The row is the last thing above
+                  the slot now, so measure() clears it, not the door. */}
+              <div className="dr-hero-proof">
+                <span className="dr-hero-proof-marks" aria-hidden>
+                  {CLIENT_MARKS.map((m) => (
+                    <i key={m.name} className="dr-hero-proof-mark" title={m.name}>
+                      {m.src ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={m.src} alt="" width={26} height={26} loading="lazy" />
+                      ) : (
+                        m.initials
+                      )}
+                    </i>
+                  ))}
+                </span>
+                <span className="dr-hero-proof-who">Built for Desert Wings, AAHG and Riled Up</span>
+                {GOOGLE_REVIEWS.count > 0 && (
+                  <>
+                    <i className="dr-hero-proof-dot" aria-hidden />
+                    {GOOGLE_REVIEWS.url ? (
+                      <a className="dr-hero-proof-rating" href={GOOGLE_REVIEWS.url} target="_blank" rel="noopener">
+                        {GOOGLE_REVIEWS.rating.toFixed(1)} on Google · {GOOGLE_REVIEWS.count} reviews
+                      </a>
+                    ) : (
+                      <span className="dr-hero-proof-rating">
+                        {GOOGLE_REVIEWS.rating.toFixed(1)} on Google · {GOOGLE_REVIEWS.count} reviews
+                      </span>
+                    )}
+                  </>
+                )}
+              </div>
 
               {/* THE CARD — the reel's rest position: full width, its top
                   in the first screen and its bottom past the fold, the way

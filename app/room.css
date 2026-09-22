@@ -1848,6 +1848,29 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
 .dr-lit .dr-strip   { animation: dr-strip-in 1s var(--ease-reveal) 415ms backwards; }
 @keyframes dr-strip-in { from { opacity: 0; transform: translate(-5%, 40%); } to { opacity: 1; transform: none; } }
 .dr-lit .dr-herocta { animation: dr-fadein var(--t-enter) var(--ease-structure) 720ms backwards; }
+/* THE PROOF LINE under the door (2026-09-21): the marks, who they were
+   built for, the rating — 14px, the screen's corner register, centred;
+   arrives after the door on the same curve */
+.dr-hero-proof {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin-top: clamp(18px, 3svh, 28px);
+  font-family: var(--font-instrument), sans-serif; font-size: 14px; letter-spacing: -0.01em;
+  color: var(--ink-3); opacity: 0;
+}
+.dr-lit .dr-hero-proof { animation: dr-fadein var(--t-enter) var(--ease-structure) 900ms forwards; }
+.dr-hero-proof-marks { display: inline-flex; }
+.dr-hero-proof-mark {
+  width: 26px; height: 26px; border-radius: 50%; overflow: hidden; display: grid; place-items: center;
+  background: var(--surface-3); color: var(--ink); font-style: normal; font-size: 10px; font-weight: 600; letter-spacing: .04em;
+  outline: 2px solid var(--void); margin-left: -6px;
+}
+.dr-hero-proof-mark:first-child { margin-left: 0; }
+.dr-hero-proof-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dr-hero-proof-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-4); }
+.dr-hero-proof-rating { color: var(--ink); text-decoration: none; }
+a.dr-hero-proof-rating:hover { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .dr-hero-proof { opacity: 1; animation: none; } }
+@media (max-width: 900px) { .dr-hero-proof { flex-wrap: wrap; gap: 8px 10px; font-size: 13px; } .dr-hero-proof-who { display: none; } }
 /* THE META ROW takes the day line's own slot (520ms) — it is the h1's
    second line now, same as .dr-hero-day was before it retired. */
 .dr-lit .dr-meta { animation: dr-fadein var(--t-enter) var(--ease-structure) 520ms backwards; }
