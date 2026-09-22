@@ -120,8 +120,20 @@ function shotsFor(p: Project): Shot[] {
 
 type Tile = { shot: Shot; project: Project; k: number; first: boolean };
 
-export default function WorkSection() {
+/* `paper` (trial, 2026-09-21 — Jake: "do work after the second section
+   with white background flip like this site", landonorris.com): the
+   room's --flip is scrubbed dark → light across the first third of this
+   rail (the clock below, `--fp` on the root; room.css "PAPER" for the
+   mixing and why a third), and Desert Wings — the one mid-tone case,
+   whose shots read as mush on a mid-grey ground — goes LAST, so its
+   pictures arrive in the light. The two dark cases lead, dark panels on
+   the dark room turning to dark panels on paper. */
+export default function WorkSection({ paper = false }: { paper?: boolean }) {
   const cases = PROJECTS.filter((p) => p.slug !== OURS && p.cover);
+  if (paper) {
+    const dw = cases.findIndex((p) => p.slug === "desert-wings");
+    if (dw >= 0) cases.push(...cases.splice(dw, 1));
+  }
 
   // ONE flat rail: each case's first SHOTS_PER_PROJECT shots, in project
   // order, each tile knowing its case index (k, for --c below) and
@@ -259,6 +271,24 @@ export default function WorkSection() {
         data-sp-lerp="0.2" /* .2, not the room's .1: the chase is part of the swipe's delay (Jake, 2026-09-19); leoparpeix follows at .068 per frame on a 60fps clock — ours is the same order once the dwell is out of the way */
         /* data-sp-force="28" — the squash's input, off with the squash (2026-09-20) */
       >
+        {/* THE PAPER CLOCK (trial, see the component's note): a point at
+            the stage's top — the pin's own start — writing `--fp` 0 → 1 on
+            the ROOT over the first third of the travel. Lando's ground
+            fades over his whole rail (~2.5 screens); ours over 1.4. */}
+        {paper && (
+          <i
+            className="dr-paper-clock"
+            aria-hidden
+            data-sp
+            data-sp-edge="top"
+            data-sp-from="0"
+            data-sp-to={String(-(TRAVEL_SVH / 300))}
+            data-sp-var="--fp"
+            data-sp-target=".dr-root"
+            data-sp-lerp="0.1"
+            data-sp-step="0.03125"
+          />
+        )}
         <div className="dr-work-pin">
           {/* THE LIGHTS IN THE VOID (2026-09-21, Jake: "maybe even add blue
               glows somewhere"): three cyan lamps behind the rail, INSIDE

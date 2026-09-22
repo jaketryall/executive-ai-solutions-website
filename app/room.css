@@ -3473,7 +3473,48 @@ a.dr-hero-proof-rating:hover { color: var(--accent); }
    and inline would beat the room's own 0 — in `?dark` the page read
    light until the work. !important on a stylesheet rule outranks an
    inline style; the reduced-motion rule below does the same. */
-.dr-root:not(.dr-light) { --flip: 0 !important; }
+.dr-root:not(.dr-light):not(:has(.dr-hero-wrap[data-v~="paper"])) { --flip: 0 !important; }
+
+/* ── PAPER (trial, 2026-09-21 — Jake: "do work after the second section
+   with white background flip like this site", landonorris.com). What
+   Lando does is not a cut: his ground is SCRUBBED across his photo rail
+   (measured at 1440×900 — olive 40,44,32 at the pin's start, 70 at 8%,
+   131 at a quarter, 197 at half, 226 at 70%, 244,244,237 by 90%), so
+   the first pictures are in the dark and the last arrive in daylight,
+   his stats then sit on paper, and his helmets take a black group
+   before a light footer. Two acts, dark bookends.
+
+   Ours: --fp (the clock at the rail's top, work-section.tsx) rises 0 → 1
+   over the first THIRD of the travel — 1.4 screens against his 2.5,
+   because two of our three cases are mid-tone UI rather than
+   photographs and have no business dwelling on a mid-grey; the voices,
+   the runs and the objections then sit on the light tokens; --fe (the
+   sentinel before the close, hero-room.tsx) takes the room back to dark
+   in a fifth of a screen. TWO CLOCKS, ONE NUMBER: --flip is the smaller
+   of the two, so neither writer can fight the other — and it is typed,
+   so min() resolves to a number the nav can read (nav.tsx reads the
+   root's --flip for its chrome). Every token below the root then mixes
+   on it exactly as it did for the light page's own flip.
+
+   THE INK CROSSES FASTER THAN THE GROUND. Linear ink on a linear ground
+   meets it in the middle — grey on grey, measured 2026-09-20 as the
+   flip's one real flaw. --fi holds the ink white until the ground is at
+   .4 and has it black by .6: white on the mid-grey ground clears 3:1,
+   black on it clears 4.5, and nothing lives at 50%. The lamps are
+   dark-room objects and go out with the dark (Lando's rail has no light
+   source but the photographs). */
+@property --flip { syntax: "<number>"; inherits: true; initial-value: 0; }
+.dr-root:not(.dr-light):has(.dr-hero-wrap[data-v~="paper"]) {
+  --flip: min(var(--fp, 0), var(--fe, 1));
+  --fi: clamp(0, (var(--flip) - .4) * 5, 1);
+  --ink:   color-mix(in oklab, #ffffff calc((1 - var(--fi)) * 100%), #0a0a0b);
+  --ink-2: color-mix(in oklab, #d4d4d8 calc((1 - var(--fi)) * 100%), #35353a);
+  --ink-3: color-mix(in oklab, #949498 calc((1 - var(--fi)) * 100%), #5c5c63);
+  --ink-4: color-mix(in oklab, #8a8a8e calc((1 - var(--fi)) * 100%), #67676e);
+}
+.dr-root:has(.dr-hero-wrap[data-v~="paper"]) .dr-lamps { opacity: calc(1 - var(--flip, 0)); }
+.dr-paper-clock { position: absolute; top: 0; left: 0; width: 0; height: 0; pointer-events: none; }
+.dr-paper-end { display: block; height: 0; pointer-events: none; }
 
 /* THE HEADLINE DOES NOT RIDE THE TOKENS — and no longer needs to. It
    used to invert with the room (a highlight sweeping a dark surface

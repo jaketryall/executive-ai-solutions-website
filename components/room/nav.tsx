@@ -147,8 +147,14 @@ export function RoomNav() {
     let frame = 0;
     const check = () => {
       frame = 0;
-      const isLightRoom = document.querySelector(".dr-root")?.classList.contains("dr-light");
-      if (!isLightRoom) {
+      const root = document.querySelector<HTMLElement>(".dr-root");
+      const isLightRoom = root?.classList.contains("dr-light");
+      /* `?v=paper` (trial, 2026-09-21): the dark page turns light INSIDE
+         the work rail and dark again at the close (room.css "PAPER") —
+         the root's --flip is the only truth here, the hero's sentinel
+         says nothing about it */
+      const paper = !!document.querySelector('.dr-hero-wrap[data-v~="paper"]');
+      if (!isLightRoom && !paper) {
         setGround("dark");
         return;
       }
@@ -157,10 +163,13 @@ export function RoomNav() {
          before the work, hero-room.tsx): the root's --flip is the ground's
          truth — under .5 the page is on its dark side and the chrome
          follows it, wherever the hero's own sentinel is */
-      const root = document.querySelector<HTMLElement>(".dr-root");
       const flip = root ? parseFloat(getComputedStyle(root).getPropertyValue("--flip")) : 1;
       if (Number.isFinite(flip) && flip < 0.5) {
         setGround("dark");
+        return;
+      }
+      if (paper) {
+        setGround("light");
         return;
       }
       setGround(groundEnd.getBoundingClientRect().top < hem ? "light" : "dark");

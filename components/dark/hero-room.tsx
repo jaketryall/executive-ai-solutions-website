@@ -1144,18 +1144,30 @@ export default function DarkRoom({
           measured perf floor for twelve color-mix tokens (1/32, see the
           old .dr-flip note below); the rail (nav.tsx) reads the root's
           --flip for its own chrome. */}
+      {/* `paper` (trial, 2026-09-21): the flip runs the OTHER way and
+          INSIDE the rail — dark → light across its first third (the
+          clock in work-section.tsx writes --fp), light through the
+          voices, the runs and the objections, and back to dark as the
+          close arrives (--fe, the sentinel after .dr-flip below). This
+          wrapper's own track — the light page's flip TO dark before the
+          work — would fight it (a second writer of --flip on the same
+          root), so under paper it is not rendered. room.css "PAPER". */}
       <div
         className="dr-work-zone"
-        data-sp
-        data-sp-edge="top"
-        data-sp-from="0.9"
-        data-sp-to="1.1"
-        data-sp-var="--flip"
-        data-sp-target=".dr-root"
-        data-sp-lerp="0.1"
-        data-sp-step="0.03125"
+        {...(has("paper")
+          ? {}
+          : {
+              "data-sp": true,
+              "data-sp-edge": "top",
+              "data-sp-from": "0.9",
+              "data-sp-to": "1.1",
+              "data-sp-var": "--flip",
+              "data-sp-target": ".dr-root",
+              "data-sp-lerp": "0.1",
+              "data-sp-step": "0.03125",
+            })}
       >
-        <WorkSection />
+        <WorkSection paper={has("paper")} />
       </div>
       <VoicesSection />
 
@@ -1220,6 +1232,25 @@ export default function DarkRoom({
         <RunsSection />
         <ObjectionsSection />
       </div>
+      {/* `paper`: the close takes the room back to dark — --fe 1 → 0 as
+          this point (the close's top, shell.tsx renders it next) rises
+          from 1.1 screens to .9, the same fifth-of-a-screen window the
+          flip-to-dark used (a crossfade of ground and ink has a muddy
+          middle; the cure is not to dwell there). */}
+      {has("paper") && (
+        <div
+          className="dr-paper-end"
+          aria-hidden
+          data-sp
+          data-sp-edge="top"
+          data-sp-from="0.9"
+          data-sp-to="1.1"
+          data-sp-var="--fe"
+          data-sp-target=".dr-root"
+          data-sp-lerp="0.1"
+          data-sp-step="0.03125"
+        />
+      )}
     </>
   );
 }
