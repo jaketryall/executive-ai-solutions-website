@@ -6466,16 +6466,19 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
    in — the mark writes, then inks. */
 .dr-mark { display: none; }
 .dr-root:has(.dr-hero-wrap[data-v~="logoink"]) .dr-mark,
+.dr-root:has(.dr-hero-wrap[data-v~="logowipe"]) .dr-mark,
 .dr-root:has(.dr-hero-wrap[data-v~="logodraw"]) .dr-mark {
   display: block; width: 100%; height: 100%; overflow: visible;
 }
 /* the CSS-mask fill steps aside when the paths are on duty */
 .dr-root:has(.dr-hero-wrap[data-v~="logoink"]) .dr-mono,
+.dr-root:has(.dr-hero-wrap[data-v~="logowipe"]) .dr-mono,
 .dr-root:has(.dr-hero-wrap[data-v~="logodraw"]) .dr-mono {
   background: none; mask: none; -webkit-mask: none;
 }
 .dr-mark-ink { fill: var(--ink); }
-.dr-mark-lit { fill: var(--accent); }
+.dr-mark-lit { fill: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="logowipe"]) .dr-mark-lit { fill: var(--accent); }
 .dr-mark-draw { fill: none; stroke: none; }
 /* ── THE FLOOD'S SHAPE ("logo ink is close", 2026-09-22). Three things
    the first pass got wrong, all visible once you watch it at 5×:
@@ -6528,3 +6531,37 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
 @media (prefers-reduced-motion: reduce) {
   .dr-mark-c, .dr-mark-draw { transition: none !important; }
 }
+
+/* ── THE TRACE (`?v=logoink`, second pass — "i want it to start somewhere
+   and like trace the logo to fill not just a wipe"). The accent is a
+   STROKE on the mark's own path, 190 units wide against letterforms
+   ~70 wide, clipped back to the glyph: so the half that would spill
+   outside is cut away and the half that runs inside FILLS the shape as
+   the stroke advances. The dash is the path's real length (measured at
+   mount, mark-svg.tsx), which keeps the speed even through the counters
+   and the tight corners. Round caps and joins so the ink has a wet
+   head rather than a chisel. .95s in — a trace has further to go than
+   a wipe and wants to be watched — .45s out. */
+/* ⚠ A THICK STROKE CANNOT TRACE. At 190 units on a 3,834-unit contour
+   the round cap covered the whole glyph within the first eighth of the
+   run — measured: 85% inked by frame two, so there was nothing to
+   watch. The stroke has to be THIN to read as a line and THICK to read
+   as a fill, so it is both, in that order: the accent runs the contour
+   as a 24-unit line (.85s), and the line then SWELLS to 210 (.55s,
+   starting at .5s — before the trace lands, so the two read as one
+   gesture) with the glyph clipping whatever spills outside. The mark
+   draws itself and then inks itself, from one element and one path. */
+.dr-mark-trace {
+  fill: none; stroke: var(--accent); stroke-width: 24;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: var(--len, 4200);
+  stroke-dashoffset: var(--len, 4200);
+  transition: stroke-dashoffset .4s cubic-bezier(.4, 0, 1, 1) .18s,
+              stroke-width .32s var(--ease-ui);
+}
+.dr-lockup:hover .dr-mark-trace, .dr-lockup:focus-visible .dr-mark-trace {
+  stroke-dashoffset: 0; stroke-width: 210;
+  transition: stroke-dashoffset .85s cubic-bezier(.22, .68, .24, 1),
+              stroke-width .55s cubic-bezier(.3, .7, .2, 1) .5s;
+}
+@media (prefers-reduced-motion: reduce) { .dr-mark-trace { transition: none; } }
