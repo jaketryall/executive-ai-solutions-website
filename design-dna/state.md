@@ -535,3 +535,11 @@ The page, top to bottom: the hero (the personal-message title fitted to the colu
 **Next:** (1) housekeeping — fold the winning tokens into plain CSS, delete the losers, drop the light-page seams (glass/seam/after/flip); (2) real names and words for the tiles (Jake); (3) the scrawl in Jake's own hand; (4) the reel cut on black with a bright opening frame — the film's own first second is near-black (ffmpeg: mean luminance 30 → 41–44) and reads as a dark box arriving, which no gating fixes; (5) the persona table.
 
 **Pipeline law learned today:** never write `-webkit-backdrop-filter` in room.css (Lightning CSS drops the bare property when both are present; Chrome ignores the prefix) — checks.md 2026-09-20.
+
+## 2026-09-22 · where the page stands (after the nav/hero night)
+
+**Default (`app/page.tsx` DEFAULT = `wide edge cyan full flat frost scrawl still nopill navc logoc tidy`):** the hero is the title and the film — no door, no proof line under the title; the film on the title's column, 52px nav→cap line, 72px baseline→film at 900 (a fixed clamp at every height — the old "N px into the first screen" rule is gone); the rail centred at rest as Work · Services — the mark — Pricing (a 1fr auto 1fr grid), becoming the usual pill (mark left, links, the call) on the first scroll through a FLIP move; links 14, mark 24. The title's line masks have descender room. Jake: "now the gap is good".
+
+**Liked, not default:** `paper` (the ground lifts dark → off-white across the first 60% of the rail, Lando's way; the close takes it back to dark). **Seen:** `lm` (the whole page light — the accent needs a light-mode value before it can be judged), `ask` (the chat's one entry in the rail; panel drops from under it — its skin and the production API key are owed), `nob` / `noc`, `strip` / `navpill` / `navstrip`, `left`. **Rejected:** `gallery` (Apple's media card gallery as the work — "i miss the pin").
+
+**Owed:** the interior pages' rail (centred at rest is homepage-only until it's the site's rail), the light-mode accent, the chat's skin + key, the price door's home now that the hero has none (§02b's doors + /pricing), the Google numbers, the tiles' real quotes, the reel cut, the `?v=` housekeeping (fold the defaults into plain CSS, delete the losers).
