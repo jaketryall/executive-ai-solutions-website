@@ -5946,8 +5946,8 @@ body:has(.dr-hero-wrap[data-v~="lm"]) { background: #e7e7ea; }
    the old floating pill's bottom-right spot) drops from under the rail
    instead — top-centred, opening from a capsule the width of the word.
    The old floating pill stays hidden. */
-.dr-ask { display: none; }
-.dr-root:has(.dr-hero-wrap[data-v~="ask"]) .dr-ask { display: inline-flex; }
+.dr-links .dr-ask { display: none; }   /* (.dr-links a sets display — this has to outrank it) */
+.dr-root:has(.dr-hero-wrap[data-v~="ask"]) .dr-links .dr-ask { display: inline-flex; }
 body:has(.dr-root) .schat-panel {
   top: 96px; bottom: auto; right: auto; left: 50%; translate: -50% 0;
   width: min(460px, calc(100vw - 32px));
@@ -5961,19 +5961,18 @@ body:has(.dr-root) .schat-panel.is-open { clip-path: inset(0 0 0 0 round var(--r
    Services at the end of the left cell, the lockup in the middle,
    Pricing · Ask (and the call, once stuck) at the start of the right
    cell — the centre holds whatever the sides weigh. */
-.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail-in {
+/* AT REST ONLY (Jake, the next message: "i want the logo in the middle
+   at rest and when scrolling i dont want it in the middle"): the pill
+   that forms on the first scroll is the row it always was — the mark
+   at its left, the links, the call at its right — so the centred mark
+   is the hero's composition and the pill is the site's chrome. */
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail:not([data-stuck]) .dr-rail-in {
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
 }
-/* once stuck the call joins the right group and equal cells would leave
-   the call's width EMPTY on the pill's left (measured: 200px of nothing
-   before Work) — so the pill packs its contents and the mark sits at
-   the centre of what is in it, a call's half-width left of the page's
-   centre. A compact pill beats a centred mark in a lopsided one. */
-.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail[data-stuck] .dr-rail-in { grid-template-columns: auto auto auto; }
-.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-links--l { order: 1; justify-self: end; margin: 0; }
-.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-lockup { order: 2; justify-self: center; }
-.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail-r {
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail:not([data-stuck]) .dr-links--l { order: 1; justify-self: end; margin: 0; }
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail:not([data-stuck]) .dr-lockup { order: 2; justify-self: center; }
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail:not([data-stuck]) .dr-rail-r {
   order: 3; display: flex; align-items: center; justify-self: start; min-width: 0;
 }
-.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-links--r { margin: 0; }
-.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-nav-proof { order: 4; }
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail:not([data-stuck]) .dr-links--r { margin: 0; }
+.dr-root:has(.dr-hero-wrap[data-v~="logoc"]) .dr-rail:not([data-stuck]) .dr-nav-proof { order: 4; }
