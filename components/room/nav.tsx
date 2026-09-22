@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { CLIENT_MARKS, GOOGLE_REVIEWS } from "@/lib/proof";
 import { SiteChat } from "@/components/ui/site-chat";
+import { MarkSvg } from "@/components/room/mark-svg";
 import type { CSSProperties } from "react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
@@ -500,6 +501,9 @@ export function RoomNav() {
         <div className="dr-rail-in">
           <Link className="dr-lockup" href="/" ref={lockRef}>
             <span className="dr-mono" aria-hidden>
+              {/* the real SVG — shown only by the tokens that need paths
+                  (`logoink`, `logodraw`); the CSS mask is the default */}
+              <MarkSvg />
               {/* `logoslice` only — inert in every other layout (room.css) */}
               <span className="dr-mono-slices">
                 <span className="dr-mono-slice dr-mono-slice--1" />

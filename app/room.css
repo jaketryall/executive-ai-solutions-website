@@ -6310,9 +6310,8 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
    a real glitch settles. The mask's own box grows with it (overflow is
    hidden on .dr-mono, so the slices need the room). */
 .dr-root:has(.dr-hero-wrap[data-v~="logoslice"]) .dr-mono { overflow: visible; }
-@keyframes dr-mono-grow {
-  0% { scale: 1 } 18% { scale: 1.55 } 62% { scale: 1.4 } 100% { scale: 1 }
-}
+/* (the grow is gone — Jake: "also i dont like the scale". The cut carries
+   itself on the shear alone now, at ±28% of the mark.) */
 @keyframes dr-mono-cut-a {
   0% { translate: 0 0 } 16% { translate: 7px 0 } 34% { translate: -3px 0 }
   58% { translate: 4px 0 } 78% { translate: -1px 0 } 100% { translate: 0 0 }
@@ -6329,7 +6328,6 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
   0% { translate: 0 0 } 16% { translate: 5px 0 } 34% { translate: -4px 0 }
   58% { translate: 3px 0 } 78% { translate: -1px 0 } 100% { translate: 0 0 }
 }
-.dr-lockup:hover .dr-mono, .dr-lockup:focus-visible .dr-mono { animation: dr-mono-grow .76s cubic-bezier(.4, 0, 0, 1); }
 .dr-lockup:hover .dr-mono-slice--1, .dr-lockup:focus-visible .dr-mono-slice--1 { animation: dr-mono-cut-a .76s cubic-bezier(.4, 0, 0, 1); }
 .dr-lockup:hover .dr-mono-slice--2, .dr-lockup:focus-visible .dr-mono-slice--2 { animation: dr-mono-cut-b .76s cubic-bezier(.4, 0, 0, 1); }
 .dr-lockup:hover .dr-mono-slice--3, .dr-lockup:focus-visible .dr-mono-slice--3 { animation: dr-mono-cut-c .76s cubic-bezier(.4, 0, 0, 1); }
@@ -6452,4 +6450,58 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
 }
 @media (prefers-reduced-motion: reduce) {
   .dr-root:has(.dr-hero-wrap[data-v~="logofill"]) .dr-mono { transition: none; }
+}
+
+/* ── THE CORNER FLOOD (trial `?v=logoink`, 2026-09-22 — Jake: "i want it
+   to start at a corner or something, this is an svg we should be able to
+   do something cool"). The mark is REAL PATHS now (mark-svg.tsx), drawn
+   twice: the ink copy, and an accent copy clipped by a circle sitting on
+   the BOTTOM-LEFT corner of the 500-unit box. The circle is scaled from
+   that corner — 0 → 1.45, which is past the 707-unit diagonal, so the
+   accent reaches the far corner last and the flood has a real direction.
+   One transform, composited; the paths never re-tessellate.
+
+   `logodraw` is the other half of the same idea: the outline DRAWS
+   itself first (a 4000-unit dash running off), and the flood follows it
+   in — the mark writes, then inks. */
+.dr-mark { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="logoink"]) .dr-mark,
+.dr-root:has(.dr-hero-wrap[data-v~="logodraw"]) .dr-mark {
+  display: block; width: 100%; height: 100%; overflow: visible;
+}
+/* the CSS-mask fill steps aside when the paths are on duty */
+.dr-root:has(.dr-hero-wrap[data-v~="logoink"]) .dr-mono,
+.dr-root:has(.dr-hero-wrap[data-v~="logodraw"]) .dr-mono {
+  background: none; mask: none; -webkit-mask: none;
+}
+.dr-mark-ink { fill: var(--ink); }
+.dr-mark-lit { fill: var(--accent); }
+.dr-mark-draw { fill: none; stroke: none; }
+.dr-mark-c {
+  transform: scale(0);
+  transform-origin: 0px 500px;   /* the bottom-left corner of the box */
+  transition: transform .42s cubic-bezier(.4, 0, 1, 1);
+}
+.dr-lockup:hover .dr-mark-c, .dr-lockup:focus-visible .dr-mark-c {
+  transform: scale(1.45);
+  transition: transform .72s cubic-bezier(.16, .84, .24, 1);
+}
+
+/* `logodraw`: the outline first, then the flood a beat behind it */
+.dr-root:has(.dr-hero-wrap[data-v~="logodraw"]) .dr-mark-ink { fill: color-mix(in oklab, var(--ink) 22%, transparent); }
+.dr-root:has(.dr-hero-wrap[data-v~="logodraw"]) .dr-mark-draw {
+  stroke: var(--accent); stroke-width: 1.5;
+  stroke-dasharray: 4200; stroke-dashoffset: 4200;
+  transition: stroke-dashoffset .5s var(--ease-ui);
+}
+.dr-root:has(.dr-hero-wrap[data-v~="logodraw"]) .dr-lockup:hover .dr-mark-draw,
+.dr-root:has(.dr-hero-wrap[data-v~="logodraw"]) .dr-lockup:focus-visible .dr-mark-draw {
+  stroke-dashoffset: 0; transition: stroke-dashoffset .9s cubic-bezier(.3, .7, .2, 1);
+}
+.dr-root:has(.dr-hero-wrap[data-v~="logodraw"]) .dr-lockup:hover .dr-mark-c,
+.dr-root:has(.dr-hero-wrap[data-v~="logodraw"]) .dr-lockup:focus-visible .dr-mark-c {
+  transition: transform .8s cubic-bezier(.16, .84, .24, 1) .34s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dr-mark-c, .dr-mark-draw { transition: none !important; }
 }
