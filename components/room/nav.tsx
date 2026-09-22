@@ -226,6 +226,7 @@ export function RoomNav() {
     // the sentinel ends at the DOOR when one exists (every shape this
     // hero has had, current and past), else the CARD, else the TITLE
     // alone, else the old day line — first match wins
+    const rail = railRef.current;
     const metaRow =
       document.querySelector<HTMLElement>(".dr-hero-door") ??
       document.querySelector<HTMLElement>(".dr-hero-band") ??
@@ -243,15 +244,40 @@ export function RoomNav() {
        leave (392px of scroll at 900, measured). The hero has none of
        that now — just the title and the film — so it ends at the
        title's CAP LINE: the rail becomes the pill as the words start to
-       go. Jake, on the 242px that gave: "try 150" — so the sentinel
-       stops at the title's TOP (it ends where the words begin), and the
-       pill forms the moment the title starts to move. */
-    const CAP = 0; // 0.28 = the cap line (242px at 1440x900); 0 = the title's top (150px)
+       go. Jake, on the 242px that gave: "try 150" — the title's top.
+
+       ⚠ AND THEN THE REAL RULE (same night): "i want to make sure it
+       flips before nav bar text goes on top of title text." Measured, at
+       rest: the title's first glyphs sit at doc 129 and the links' own
+       bottom at 63 — so the words MEET after 66px of scroll, less than
+       half of the 150 that was asked for. There is no number to pick
+       here; the flip point is the collision, so it is computed from the
+       two boxes on every fit and given 24px of clearance. (At 1440x900
+       that is 42px of scroll; at 1280x720, 32; on the phone, where the
+       links are hidden, it is measured off the rail itself: 67.) The
+       CAP fallback stays for a hero whose last thing is not the title. */
+    const CLEAR = 24; // px of scroll between the flip and the first contact
+    const CAP = 0;    // the title's top, when the collision cannot be measured
     const fit = () => {
       if (!metaRow || !wrap) return;
       const isTitle = metaRow.classList.contains("dr-greet");
       const h = isTitle ? metaRow.offsetHeight * CAP : metaRow.offsetHeight;
-      top.style.height = `${docY(metaRow) + h - docY(wrap)}px`;
+      let height = docY(metaRow) + h - docY(wrap);
+      if (isTitle) {
+        /* the collision: the title's own GLYPHS (a range, not the line
+           box — the box carries the leading) against the lowest thing
+           the rail paints, its links when it has them */
+        const range = document.createRange();
+        range.selectNodeContents(metaRow);
+        const glyphTop = range.getBoundingClientRect().top + window.scrollY;
+        const linkEls = rail?.querySelectorAll<HTMLElement>(".dr-links a") ?? [];
+        const navBottom = linkEls.length
+          ? Math.max(...Array.from(linkEls, (a) => a.getBoundingClientRect().bottom))
+          : (rail?.getBoundingClientRect().bottom ?? 0);
+        const meet = glyphTop - navBottom - CLEAR - docY(wrap);
+        if (Number.isFinite(meet)) height = Math.max(0, Math.min(height, meet));
+      }
+      top.style.height = `${height}px`;
     };
     fit();
     const ro = metaRow && wrap ? new ResizeObserver(fit) : null;
