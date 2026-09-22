@@ -273,8 +273,10 @@ export default function WorkSection({ paper = false }: { paper?: boolean }) {
       >
         {/* THE PAPER CLOCK (trial, see the component's note): a point at
             the stage's top — the pin's own start — writing `--fp` 0 → 1 on
-            the ROOT over the first third of the travel. Lando's ground
-            fades over his whole rail (~2.5 screens); ours over 1.4. */}
+            the ROOT over the first 60% of the travel: 2.5 screens, which
+            is Lando's own distance (his fade spans his whole rail, 2243px
+            at 900 tall; a third of ours read fast — Jake: "make the fade
+            slower like lando"). */}
         {paper && (
           <i
             className="dr-paper-clock"
@@ -282,7 +284,7 @@ export default function WorkSection({ paper = false }: { paper?: boolean }) {
             data-sp
             data-sp-edge="top"
             data-sp-from="0"
-            data-sp-to={String(-(TRAVEL_SVH / 300))}
+            data-sp-to={String(-(TRAVEL_SVH * 0.6) / 100)}
             data-sp-var="--fp"
             data-sp-target=".dr-root"
             data-sp-lerp="0.1"

@@ -12,9 +12,26 @@ import { CLIENT_MARKS } from "@/lib/proof";
    pair with them by index (lib/proof.ts CLIENT_MARKS), so the day the
    real ones land nothing here changes but the data. The room's one
    triggered gesture (data-wipe) brings the sentences in, staggered. */
-export default function VoicesTiles() {
+/* `lampsOn`: under `?v=nob` (no §02b) this section is the first thing
+   after the screen, so it carries the --son clock that brings the room's
+   lamps back (services-section.tsx OfferMore declares the same track;
+   room.css .dr-atmos reads it). */
+export default function VoicesTiles({ lampsOn = false }: { lampsOn?: boolean }) {
   return (
-    <section className="wrap dr-tiles" aria-label="What clients say">
+    <section
+      className="wrap dr-tiles"
+      aria-label="What clients say"
+      {...(lampsOn
+        ? {
+            "data-sp": true,
+            "data-sp-edge": "top",
+            "data-sp-from": "0.8",
+            "data-sp-to": "0.35",
+            "data-sp-var": "--son",
+            "data-sp-target": ".dr-root",
+          }
+        : {})}
+    >
       <ul className="dr-tiles-row">
         {QUOTES.map((q, i) => {
           const mark = CLIENT_MARKS[i] ?? CLIENT_MARKS[0];

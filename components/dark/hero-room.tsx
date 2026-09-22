@@ -1123,10 +1123,13 @@ export default function DarkRoom({
           the work. ServicesSection still exists (services-section.tsx —
           OfferHead above is exported from it) for the services pages. */}
 
-      {/* §02b · the paragraph and the in-page nav (services-section.tsx) */}
-      <OfferMore />
-      {/* §02c · the three voices as tiles, the last thing on the light page */}
-      <VoicesTiles />
+      {/* §02b · the paragraph and the in-page nav (services-section.tsx).
+          `?v=nob` (trial, 2026-09-21: "should we remove 2b i want to see
+          it") leaves it out; the tiles then carry its lamp clock. */}
+      {!has("nob") && <OfferMore />}
+      {/* §02c · the three voices as tiles, the last thing on the light
+          page. `?v=noc` leaves these out instead — the other cut. */}
+      {!has("noc") && <VoicesTiles lampsOn={has("nob")} />}
 
       {/* THE FLIP TO DARK, SCROLL-DRIVEN (2026-09-20 — Jake: "we need the
           background flip to dark before work section" → "i mean the flip

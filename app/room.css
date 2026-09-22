@@ -3499,14 +3499,23 @@ a.dr-hero-proof-rating:hover { color: var(--accent); }
    THE INK CROSSES FASTER THAN THE GROUND. Linear ink on a linear ground
    meets it in the middle — grey on grey, measured 2026-09-20 as the
    flip's one real flaw. --fi holds the ink white until the ground is at
-   .4 and has it black by .6: white on the mid-grey ground clears 3:1,
-   black on it clears 4.5, and nothing lives at 50%. The lamps are
+   .45 and has it black by .55: white on the mid-grey ground clears 3:1,
+   black on it clears 4.5, and nothing lives at 50%. (The fade went from
+   1.4 screens to Lando's 2.5 the same day, and the ink's window
+   tightened from a fifth to a tenth so the grey quarter-screen did not
+   become a grey half.)
+
+   `nob` / `noc` (the same day — "should we remove 2b i want to see it"):
+   the page without §02b (the paragraph and the doors) or without §02c
+   (the tiles). Not CSS — the sections are simply not rendered
+   (hero-room.tsx), and under nob the tiles carry §02b's --son clock so
+   the room's lamps still come back after the screen. The lamps are
    dark-room objects and go out with the dark (Lando's rail has no light
    source but the photographs). */
 @property --flip { syntax: "<number>"; inherits: true; initial-value: 0; }
 .dr-root:not(.dr-light):has(.dr-hero-wrap[data-v~="paper"]) {
   --flip: min(var(--fp, 0), var(--fe, 1));
-  --fi: clamp(0, (var(--flip) - .4) * 5, 1);
+  --fi: clamp(0, (var(--flip) - .45) * 10, 1); /* a tenth of the (now 2.5-screen) window */
   --ink:   color-mix(in oklab, #ffffff calc((1 - var(--fi)) * 100%), #0a0a0b);
   --ink-2: color-mix(in oklab, #d4d4d8 calc((1 - var(--fi)) * 100%), #35353a);
   --ink-3: color-mix(in oklab, #949498 calc((1 - var(--fi)) * 100%), #5c5c63);
