@@ -25,11 +25,32 @@ import { useEffect, useRef } from "react";
    the picture reacting rather than a decoration running on its own.
    Both are chased at CHASE per frame, so it settles instead of snapping. */
 
-const BANDS = 22;
-const REACH = 7.5; // bands of falloff each side of the pointer's row
-const AMP = 64; // px at full strength, at the pointer's own row
-const EDGE = "30, 229, 255"; // the accent, as the cut's own light
-const CHASE = 0.14;
+/* ── WHAT HIS ACTUALLY IS (looked at properly, 2026-09-22, after "have u
+   looked at landos slice still broken by the way"): NOT the whole
+   picture displaced a little. A TIGHT HORIZONTAL ZONE around the
+   cursor's row — about a sixth of the frame — cut into thin strips that
+   jump sideways by hundreds of pixels, each a different amount, with
+   hard edges; outside the zone the picture is untouched and sharp. And
+   the strips show DIFFERENT CONTENT, not a gap: the displacement is of
+   the SOURCE, so every strip stays full width and pulls pixels from
+   somewhere else in the frame. That is why his reads as a scanner
+   tearing through the image instead of as a picture sliding apart.
+
+   Ours adds a vertical source shift as well, because this reel's frame
+   is largely black: pulling only sideways in a black region shows black.
+   Pulling up and down brings the lit part of the picture into the cut. */
+const BANDS = 44; // thin strips: ~20px each in a 860px-tall film
+const REACH = 5; // bands each side — a tight zone, not the whole picture
+const AMP_X = 0.34; // of the frame's width, at full strength
+const AMP_Y = 0.18; // of its height
+const CHASE = 0.18;
+const EDGE = "30, 229, 255"; // the accent, along the cut
+
+// deterministic per-strip noise, so a strip keeps its own character
+const rnd = (i: number) => {
+  const v = Math.sin(i * 12.9898) * 43758.5453;
+  return v - Math.floor(v);
+};
 
 export default function FilmSlice() {
   const cvsRef = useRef<HTMLCanvasElement>(null);
@@ -78,20 +99,21 @@ export default function FilmSlice() {
       const row = P.y * BANDS;
       for (let i = 0; i < BANDS; i++) {
         const d = Math.abs(i + 0.5 - row) / REACH;
-        const f = d >= 1 ? 0 : 0.5 + 0.5 * Math.cos(d * Math.PI); // raised cosine
-        // alternate the direction band to band: a cut, not a bulge
-        const dir = i % 2 ? -1 : 1;
-        const dx = dir * f * P.amp * AMP;
-        ctx.drawImage(video, 0, i * sbh, vw, sbh + 1, dx, i * bh, w, bh + 1);
-        /* THE CUT HAS TO BE VISIBLE ON BLACK. Displacing dark pixels
-           against dark pixels shows nothing, and most of this reel's
-           frame IS black — the first build read as "not working" for
-           exactly that reason. So each opened band gets the accent along
-           its own edge: the scan line, not the displacement, is what the
-           eye follows. */
-        if (f > 0.02) {
-          ctx.fillStyle = `rgba(${EDGE}, ${(f * P.amp * 0.5).toFixed(3)})`;
-          ctx.fillRect(0, i * bh, w, 1.25);
+        if (d >= 1) {
+          ctx.drawImage(video, 0, i * sbh, vw, sbh + 1, 0, i * bh, w, bh + 1);
+          continue;
+        }
+        const f = (0.5 + 0.5 * Math.cos(d * Math.PI)) * P.amp; // raised cosine
+        const r = rnd(i);
+        const sx = (r - 0.5) * 2 * f * AMP_X * vw;
+        const sy = (rnd(i + 97) - 0.5) * 2 * f * AMP_Y * vh;
+        /* THE SOURCE MOVES, not the destination: the strip stays full
+           width and shows pixels from elsewhere in the frame */
+        const syc = Math.max(0, Math.min(vh - sbh - 1, i * sbh + sy));
+        ctx.drawImage(video, sx, syc, vw, sbh + 1, 0, i * bh, w, bh + 1);
+        if (f > 0.04) {
+          ctx.fillStyle = `rgba(${EDGE}, ${(f * 0.55).toFixed(3)})`;
+          ctx.fillRect(0, i * bh, w, 1);
         }
       }
       cvs.dataset.on = "true";
@@ -117,7 +139,7 @@ export default function FilmSlice() {
       P.lastX = e.clientX;
       P.lastY = e.clientY;
       P.lastT = now;
-      P.tamp = Math.min(1, 0.22 + v * 0.55);
+      P.tamp = Math.min(1, 0.45 + v * 0.5);
       if (!live) {
         live = true;
         size();

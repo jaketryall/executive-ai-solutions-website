@@ -6301,17 +6301,38 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
 .dr-mono-slice--1 { clip-path: inset(0 0 66% 0); }
 .dr-mono-slice--2 { clip-path: inset(34% 0 34% 0); }
 .dr-mono-slice--3 { clip-path: inset(66% 0 0 0); }
-@keyframes dr-mono-cut-a { 0% { translate: 0 0 } 30% { translate: 2.5px 0 } 62% { translate: -1px 0 } 100% { translate: 0 0 } }
+/* ⚠ IT HAS TO BE BIG ENOUGH TO SEE. The first cut sheared ±3.5px on a
+   24px mark over 500ms — measured, running, and invisible: at that size
+   it reads as a rendering glitch, not an animation ("still broken").
+   So the mark GROWS while it is cut — 1 → 1.55, outside the flex row's
+   layout — the shear goes to ±28% of the mark, and the whole thing
+   takes 760ms in two beats, the second smaller than the first, the way
+   a real glitch settles. The mask's own box grows with it (overflow is
+   hidden on .dr-mono, so the slices need the room). */
+.dr-root:has(.dr-hero-wrap[data-v~="logoslice"]) .dr-mono { overflow: visible; }
+@keyframes dr-mono-grow {
+  0% { scale: 1 } 18% { scale: 1.55 } 62% { scale: 1.4 } 100% { scale: 1 }
+}
+@keyframes dr-mono-cut-a {
+  0% { translate: 0 0 } 16% { translate: 7px 0 } 34% { translate: -3px 0 }
+  58% { translate: 4px 0 } 78% { translate: -1px 0 } 100% { translate: 0 0 }
+}
 @keyframes dr-mono-cut-b {
   0% { translate: 0 0; background: var(--ink) }
-  30% { translate: -3.5px 0; background: var(--accent) }
-  62% { translate: 1.5px 0; background: var(--accent) }
+  16% { translate: -8px 0; background: var(--accent) }
+  34% { translate: 5px 0; background: var(--accent) }
+  58% { translate: -4px 0; background: var(--accent) }
+  78% { translate: 2px 0; background: var(--accent) }
   100% { translate: 0 0; background: var(--ink) }
 }
-@keyframes dr-mono-cut-c { 0% { translate: 0 0 } 30% { translate: 2px 0 } 62% { translate: -.5px 0 } 100% { translate: 0 0 } }
-.dr-lockup:hover .dr-mono-slice--1, .dr-lockup:focus-visible .dr-mono-slice--1 { animation: dr-mono-cut-a .5s cubic-bezier(.4, 0, 0, 1); }
-.dr-lockup:hover .dr-mono-slice--2, .dr-lockup:focus-visible .dr-mono-slice--2 { animation: dr-mono-cut-b .5s cubic-bezier(.4, 0, 0, 1); }
-.dr-lockup:hover .dr-mono-slice--3, .dr-lockup:focus-visible .dr-mono-slice--3 { animation: dr-mono-cut-c .5s cubic-bezier(.4, 0, 0, 1); }
+@keyframes dr-mono-cut-c {
+  0% { translate: 0 0 } 16% { translate: 5px 0 } 34% { translate: -4px 0 }
+  58% { translate: 3px 0 } 78% { translate: -1px 0 } 100% { translate: 0 0 }
+}
+.dr-lockup:hover .dr-mono, .dr-lockup:focus-visible .dr-mono { animation: dr-mono-grow .76s cubic-bezier(.4, 0, 0, 1); }
+.dr-lockup:hover .dr-mono-slice--1, .dr-lockup:focus-visible .dr-mono-slice--1 { animation: dr-mono-cut-a .76s cubic-bezier(.4, 0, 0, 1); }
+.dr-lockup:hover .dr-mono-slice--2, .dr-lockup:focus-visible .dr-mono-slice--2 { animation: dr-mono-cut-b .76s cubic-bezier(.4, 0, 0, 1); }
+.dr-lockup:hover .dr-mono-slice--3, .dr-lockup:focus-visible .dr-mono-slice--3 { animation: dr-mono-cut-c .76s cubic-bezier(.4, 0, 0, 1); }
 @media (prefers-reduced-motion: reduce) {
   .dr-mono, .dr-mono-slice { transition: none !important; animation: none !important; }
 }
