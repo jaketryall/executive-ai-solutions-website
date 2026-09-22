@@ -5919,3 +5919,16 @@ body:has(.dr-hero-wrap[data-v~="lm"]) { background: #e7e7ea; }
 .dr-hero-wrap[data-v~="navpill"] .dr-slot,
 .dr-hero-wrap[data-v~="nopill"] .dr-slot { --slot-show: 470px; }
 @media (max-width: 900px) { .dr-nav-proof-l { display: none; } }
+
+/* `navc` (trial, same night — Jake: "do you think nav should be centered
+   instead of wide"). With the title centred and the film full-bleed,
+   the rail was the last EDGE-aligned thing on the first screen — a
+   justified bar over a centred title, the same tension the strip had.
+   Centred, it is one cluster on the page's one axis: the mark, the
+   links, and on the first scroll the call, in the pill, floating.
+   (2026-09-13's "links sit right" was made for a left-aligned hero;
+   this hero is centred, so the rail follows it. Under `left` the wide
+   rail stays right.) */
+.dr-root:has(.dr-hero-wrap[data-v~="navc"]:not([data-v~="left"])) .dr-rail { width: max-content; }
+.dr-root:has(.dr-hero-wrap[data-v~="navc"]:not([data-v~="left"])) .dr-rail-in { gap: clamp(22px, 2.6vw, 44px); }
+.dr-root:has(.dr-hero-wrap[data-v~="navc"]:not([data-v~="left"])) .dr-links { margin-left: 0; margin-right: 0; }
