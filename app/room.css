@@ -5848,3 +5848,28 @@ body:has(.dr-hero-wrap[data-v~="lm"]) { background: #e7e7ea; }
   .dr-strip .dr-logos { display: none; }
   .dr-root .dr-strip .dr-hero-door { width: auto; }
 }
+
+/* THE STRIP'S SECOND PASS (same day — Jake: "i kinda like it … i think
+   the nav area looks weird and maybe the top half spacing is odd").
+   Three things, all under the token:
+   1. THE FILM COMES UP. --slot-show pins the film's top 300px into the
+      first screen (the settled proportion for the door + proof line);
+      under the strip that left 121px of nothing between the bar and the
+      film. 380 puts the film 41px under the strip — the strip is the
+      film's header bar, the way it was drawn.
+   2. THE TICKER IS NOT A NAV. Spaced caps in the strip were a second
+      nav row a title's height under the real one — the same register,
+      the same width. It runs in the rating's own register instead:
+      Instrument, sentence case, ink-2.
+   3. THE NAV RECEDES AT REST. Wordmark left + three links right was a
+      third bar of the same width; with the strip that made a sandwich —
+      bar / title / bar / film. At rest the lockup collapses to the mark
+      (the stuck state's own rule), so the top row is a mark and three
+      words, not a bar. */
+.dr-hero-wrap[data-v~="strip"] .dr-slot { --slot-show: 380px; }
+.dr-root:has(.dr-hero-wrap[data-v~="strip"]) .dr-logos-set span {
+  font-family: var(--font-instrument), sans-serif; font-variation-settings: normal;
+  font-weight: 500; font-size: var(--fs-body-s); letter-spacing: 0; text-transform: none;
+}
+.dr-root:has(.dr-hero-wrap[data-v~="strip"]) .dr-rail .dr-lockup b { max-width: 0; opacity: 0; }
+.dr-root:has(.dr-hero-wrap[data-v~="strip"]) .dr-rail .dr-mono { width: 21px; opacity: 1; }
