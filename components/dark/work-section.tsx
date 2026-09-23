@@ -11,6 +11,7 @@ import type { Project } from "@/lib/work";
 import { Roll } from "@/components/room/nav";
 import { onLenis } from "@/components/anim/lenis-store";
 import WorkGallery from "@/components/dark/work-gallery";
+import WorkStack from "@/components/dark/work-stack";
 
 /* §03 · THE WORK, v5 → THE RAIL STEPS (2026-09-19). Supersedes v5's own
    continuous scrub (caa3f58, "one row, sticky") on Jake's call: "can we
@@ -135,7 +136,15 @@ type Tile = { shot: Shot; project: Project; k: number; first: boolean };
    the progress pill (work-gallery.tsx). No pin: the section is one
    screen, and under `paper` the ground lifts as it enters instead of
    across a travel that no longer exists. The head stays. */
-export default function WorkSection({ paper = false, gallery = false }: { paper?: boolean; gallery?: boolean }) {
+export default function WorkSection({
+  paper = false,
+  gallery = false,
+  stack = false,
+}: {
+  paper?: boolean;
+  gallery?: boolean;
+  stack?: boolean;
+}) {
   const cases = PROJECTS.filter((p) => p.slug !== OURS && p.cover);
   if (paper) {
     const dw = cases.findIndex((p) => p.slug === "desert-wings");
@@ -281,7 +290,9 @@ export default function WorkSection({ paper = false, gallery = false }: { paper?
         </h2>
       </header>
 
-      {gallery ? (
+      {stack ? (
+        <WorkStack cases={cases} />
+      ) : gallery ? (
         <div className="dr-gal-zone">
           <WorkGallery
             cards={tiles.map((t) => ({
@@ -422,6 +433,27 @@ export default function WorkSection({ paper = false, gallery = false }: { paper?
                           />
                         )}
                         <span className="dr-work-name">{t.project.listName}</span>
+                        {/* `?v=bigpill` (2026-09-23 — Jake, with cosmos.studio's
+                            project card: "i really like the info pill on the work
+                            that cosmos has, maybe we do a bigger one and include
+                            the info they have somehow"): Cosmos sets YEAR and
+                            NICHE in the page's margins beside the card; ours
+                            carries them INSIDE the pill, with what we built —
+                            the info row under the rail then has nothing left to
+                            say but its two links. Hidden without the token. */}
+                        {(
+                          [
+                            ["Year", t.project.year],
+                            ["Niche", t.project.sector],
+                            ["Built", t.project.kind],
+                          ] as const
+                        ).map(([k, v]) => (
+                          <span className="dr-work-meta" key={k}>
+                            <i className="dr-work-sep" aria-hidden />
+                            <span className="dr-work-meta-k">{k}</span>
+                            <span className="dr-work-meta-v">{v}</span>
+                          </span>
+                        ))}
                         <i className="dr-work-sep" aria-hidden />
                         <span className="dr-work-see">
                           <Roll label="See work" />

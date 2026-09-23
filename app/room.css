@@ -6883,7 +6883,8 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
   100%   { transform: rotateY(0deg); }
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .dr-root:has(.dr-hero-wrap[data-v~="roll"]) a:is(:hover, :focus-visible) i[aria-hidden] {
+  /* arrows only — the work pill's hairline separators are <i aria-hidden> too */
+  .dr-root:has(.dr-hero-wrap[data-v~="roll"]) a:is(:hover, :focus-visible) i[aria-hidden]:not(.dr-work-sep) {
     display: inline-block; translate: none;
     animation: dr-flip 380ms both;
   }
@@ -6935,4 +6936,121 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
      where every one of the broken numbers came from. Under `still` the
      slot IS the film's place; it stays in the layout, unseen. */
   .dr-root .dr-hero-wrap[data-v~="still"] .dr-slot { display: block; visibility: hidden; }
+}
+
+/* ══ `?v=bigpill` · THE WORK'S PILL, BIGGER, CARRYING THE INFO (2026-09-23)
+   Jake, with cosmos.studio's project card: "i really like the info pill
+   on the work that cosmos has, maybe we do a bigger one and include the
+   info they have somehow". Theirs: a pill top-centre on the card —
+   thumbnail, name, a hairline, "See work" — with YEAR and NICHE set in
+   the page margins either side. Ours: the same pill, top-centre, larger
+   (64px), and the margins' facts moved INTO it as label/value pairs —
+   Year, Niche, Built. It overrides the default `frost` strip, and it
+   keeps the 2026-09-06 law: no backdrop-filter inside a translating card
+   — the frost is the blurred COPY of the case's own poster again. The
+   info row under the rail keeps only its two links (Live ↗ and See the
+   case →); a link cannot live inside the card's own link. */
+.dr-work-meta { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-pill {
+  top: 28px; bottom: auto; left: 50%; right: auto; translate: -50% 0;
+  border-radius: 14px; padding: 6px 22px 6px 6px; gap: 16px;
+  backdrop-filter: none;
+}
+.dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-pill::before { display: block; }
+.dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-pill::after { background: rgba(10, 10, 11, .5); }
+.dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-pill-num { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-thumb { display: block; width: 52px; height: 52px; border-radius: 9px; }
+.dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-name { font-size: 20px; font-weight: 500; }
+.dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-sep { display: block; height: 30px; background: rgba(255, 255, 255, .22); }
+.dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-meta {
+  display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto;
+  column-gap: 16px; align-items: center;
+}
+.dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-meta .dr-work-sep { grid-row: 1 / span 2; }
+.dr-work-meta-k { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 255, 255, .55); line-height: 1.2; }
+.dr-work-meta-v { grid-column: 2; font-size: 15px; letter-spacing: -0.01em; color: #fff; line-height: 1.25; }
+.dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-see { margin-left: 0; font-size: 15px; --work-see-alt: var(--accent); }
+.dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-num,
+.dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-title,
+.dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-date,
+.dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-scope { visibility: hidden; }
+@media (max-width: 900px) {
+  .dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-meta { display: none; }
+  .dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-pill { top: 12px; padding: 4px 14px 4px 4px; gap: 10px; }
+  .dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-thumb { width: 36px; height: 36px; }
+  .dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-name { font-size: 15px; }
+  .dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-num,
+  .dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-title,
+  .dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-date,
+  .dr-root:has(.dr-hero-wrap[data-v~="bigpill"]) .dr-work-scope { visibility: visible; }
+}
+
+/* ══ `?v=stack` · THE WORK, ONE AT A TIME (work-stack.tsx) ═══════════
+   Cosmos's sticky stack (decodes/cosmos-works.md), measured numbers:
+   items sticky at top 0, one screen each, the next painted over the
+   last; the wrap 1.10 → 1 and the image 1.20 → 1 on the item's own
+   arrival (--st, chased .37). The card is bigger than theirs and the
+   pill carries Year / Niche / Built. */
+.dr-stack { list-style: none; margin: 0; padding: 0; position: relative; }
+.dr-stack-item {
+  position: sticky; top: 0; height: 100svh;
+  display: grid; place-items: center;
+  padding-top: calc(var(--nav-space, 80px) * .6);
+}
+.dr-stack-wrap {
+  width: min(82vw, 1180px, calc((100svh - 150px) * 1.6));
+  scale: calc(1.1 - .1 * var(--st, 1));
+  will-change: transform;
+}
+.dr-stack-card {
+  position: relative; display: block; aspect-ratio: 16 / 10;
+  border-radius: 20px; overflow: clip; background: #111113;
+  color: #fff; text-decoration: none;
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .6);
+}
+.dr-stack-well { position: absolute; inset: 0; overflow: clip; }
+.dr-stack-img {
+  object-fit: cover; object-position: 50% 0%;
+  scale: calc(1.2 - .2 * var(--st, 1));
+  will-change: transform;
+}
+/* THE PILL — Cosmos's, top-centre and 32px in, bigger, with the facts.
+   The frost is a blurred copy of the case's own poster under an ink
+   tint (the 2026-09-06 law: no backdrop-filter inside a moving card). */
+/* BOTTOM-centre, not Cosmos's top: their cards are artwork, ours are the
+   sites themselves, each with its own nav bar across the top — the pill
+   over it read as two navs stacked (first cut). width: max-content, or
+   an abs box at left: 50% may only use half the card and "See work" was
+   clipped to "See w". */
+.dr-stack-pill {
+  position: absolute; bottom: 28px; left: 50%; translate: -50% 0; z-index: 1; width: max-content;
+  display: inline-flex; align-items: center; gap: 16px;
+  padding: 6px 22px 6px 6px; border-radius: 14px;
+  white-space: nowrap; overflow: clip; isolation: isolate;
+  background: rgba(12, 12, 14, .82);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08);
+}
+.dr-stack-thumb { width: 52px; height: 52px; border-radius: 9px; object-fit: cover; display: block; }
+.dr-stack-name { font-size: 20px; font-weight: 500; letter-spacing: -0.02em; line-height: 1; }
+.dr-stack-sep { display: block; width: 1px; height: 30px; background: rgba(255, 255, 255, .22); }
+.dr-stack-meta { display: grid; grid-template-columns: auto auto; column-gap: 16px; align-items: center; }
+.dr-stack-meta .dr-stack-sep { grid-row: 1 / span 2; }
+.dr-stack-k { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 255, 255, .55); line-height: 1.2; }
+.dr-stack-v { grid-column: 2; font-size: 15px; letter-spacing: -0.01em; line-height: 1.25; }
+.dr-stack-see { font-size: 15px; letter-spacing: -0.01em; line-height: 1; }
+.dr-stack-see .dr-char::after { color: var(--accent); }
+.dr-stack-card:is(:hover, :focus-visible) .dr-stack-see .dr-char { transform: translateY(-100%); }
+.dr-stack-card:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 4px; }
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .dr-stack-item { position: relative; height: auto; padding: 0 var(--col-inset) 12px; }
+  .dr-stack-wrap, .dr-stack-img { scale: none; }
+}
+@media (max-width: 900px) {
+  .dr-stack-wrap { width: 100%; }
+  .dr-stack-card { aspect-ratio: 4 / 5; }
+  .dr-stack-img { object-position: 0% 0%; }
+  .dr-stack-pill { bottom: 12px; gap: 10px; padding: 4px 14px 4px 4px; }
+  .dr-stack-meta { display: none; }
+  .dr-stack-thumb { width: 36px; height: 36px; border-radius: 6px; }
+  .dr-stack-name { font-size: 15px; }
 }
