@@ -6124,7 +6124,7 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
    clamp under the title at every height (72 at 900, 59 at 736, 80 from
    1000 up) and takes whatever depth that leaves it. */
 .dr-hero-wrap[data-v~="tidy"] .dr-slot { margin-top: clamp(60px, 9.1svh, 92px); } /* 82 box → 72 from the baseline at 900, the number he approved */
-.dr-hero-wrap[data-v~="tidy"] .dr-h1.dr-greet { margin-top: clamp(30px, 5.2svh, 60px); }
+.dr-hero-wrap[data-v~="tidy"] .dr-h1.dr-greet { margin-top: clamp(24px, 4.2svh, 50px); } /* 52 → 42 at 900 (Jake, 2026-09-22: "slightly smaller") */
 .dr-root:has(.dr-hero-wrap[data-v~="tidy"]) { --nav-pad: clamp(16px, 2.7svh, 24px); }
 .dr-root:has(.dr-hero-wrap[data-v~="tidy"]) .dr-links a { font-size: 14px; letter-spacing: .1em; }
 .dr-root:has(.dr-hero-wrap[data-v~="tidy"]) .dr-rail-in { gap: 40px; }
