@@ -149,12 +149,14 @@ export default function WorkSection({
   stack = false,
   hcard = false,
   dwlast = false,
+  workfirst = false,
 }: {
   paper?: boolean;
   gallery?: boolean;
   stack?: boolean;
   hcard?: boolean;
   dwlast?: boolean;
+  workfirst?: boolean;
 }) {
   /* `dwlast` — Jake: "yea build 1 to 4". Desert Wings has already been
      the film, all three service photographs and (as card one) the same
@@ -166,13 +168,13 @@ export default function WorkSection({
      persona is session storage, so it is read after mount. */
   const [lead, setLead] = useState<string | null>(null);
   useEffect(() => {
-    if (!dwlast) return;
+    if (!dwlast && !workfirst) return;
     capturePersona();
     const slug = CASE_FOR_AUDIENCE[audienceIndex(getPersona().i)] ?? null;
     if (!slug) return;
     const id = requestAnimationFrame(() => setLead(slug));
     return () => cancelAnimationFrame(id);
-  }, [dwlast]);
+  }, [dwlast, workfirst]);
   /* `?v=hcard` (2026-09-23 — Jake: "i wanted our horizontal scroll for
      works just with the card"): the rail he loves, one Cosmos card per
      case instead of three tiles — each card the case's cover, bigger,
@@ -183,7 +185,16 @@ export default function WorkSection({
   const PER = hcard ? 1 : SHOTS_PER_PROJECT;
   const TRAVEL = hcard ? 200 : TRAVEL_SVH;
   const cases = PROJECTS.filter((p) => p.slug !== OURS && p.cover);
-  if (dwlast) {
+  if (workfirst) {
+    /* with the rail straight after the hero, Desert Wings can neither open
+       it (the film is Desert Wings) nor close it (the services that follow
+       are Desert Wings): it goes in the MIDDLE — Riled Up, Desert Wings,
+       AAHG — and the visitor's own case still leads when the ad named one */
+    const rank = ["riled-up", "desert-wings", "aahg"];
+    cases.sort((a, b) => rank.indexOf(a.slug) - rank.indexOf(b.slug));
+    const l = lead ? cases.findIndex((p) => p.slug === lead) : -1;
+    if (l > 0) cases.unshift(...cases.splice(l, 1));
+  } else if (dwlast) {
     const dw = cases.findIndex((p) => p.slug === "desert-wings");
     if (dw >= 0) cases.push(...cases.splice(dw, 1));
     const l = lead ? cases.findIndex((p) => p.slug === lead) : -1;

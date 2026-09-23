@@ -1265,7 +1265,9 @@ export default function DarkRoom({
           data-sp-target=".dr-root"
         />
       )}
-      {(has("show") || has("one")) && <OfferShow inUse={has("inuse")} one={has("one")} price={has("price")} />}
+      {(has("show") || has("one")) && !has("workfirst") && (
+        <OfferShow inUse={has("inuse")} one={has("one")} price={has("price")} />
+      )}
       {!has("nob") && !has("apart") && !has("after") && <OfferMore />}
       {/* §02c · the three voices as tiles, the last thing on the light
           page. `?v=noc` leaves these out instead — the other cut. */}
@@ -1310,8 +1312,24 @@ export default function DarkRoom({
               "data-sp-step": "0.03125",
             })}
       >
-        <WorkSection paper={has("paper")} gallery={has("gallery")} stack={has("stack")} hcard={has("hcard")} dwlast={has("dwlast")} />
+        <WorkSection
+          paper={has("paper")}
+          gallery={has("gallery")}
+          stack={has("stack")}
+          hcard={has("hcard")}
+          dwlast={has("dwlast")}
+          workfirst={has("workfirst")}
+        />
       </div>
+      {/* `?v=workfirst` (2026-09-23 — Jake: "do you think works should be
+          before services"): proof before the pitch. The work rail follows
+          the statement straight away — the page's one pin a quarter of the
+          way down, where Lando keeps his spectacle — and the services, now
+          priced, land after it, next to the voices and the price door where
+          the visitor is deciding. */}
+      {(has("show") || has("one")) && has("workfirst") && (
+        <OfferShow inUse={has("inuse")} one={has("one")} price={has("price")} />
+      )}
       {has("apart") && (
         <OfferMore lamps={false} doors={OFFER_NAV.filter((d) => d.href !== "/work")} />
       )}
