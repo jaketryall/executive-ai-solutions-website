@@ -334,11 +334,22 @@ export default function DarkRoom({
     const air = document.querySelector<HTMLElement>(".dr-air-key");
     const bx = air ? gsap.quickTo(air, "x", { duration: 1.2, ease: U }) : null;
     const by = air ? gsap.quickTo(air, "y", { duration: 1.2, ease: U }) : null;
+    /* ⚠ AND IT IS A WHISPER IN THE DAY ROOM. ±78/±46 is right on the void,
+       where the lamps are soft and most of the frame is black: you read
+       "the light shifted". On paper the pools are near-white against a
+       220 sheet, so the same travel reads as the whole background
+       sliding with the cursor (Jake, 2026-09-22: "something is following
+       the cursor i see the whole background move"). A fifth of it keeps
+       the room alive without the sheet moving. */
+    const root = document.querySelector<HTMLElement>(".dr-root");
     const onMove = (e: PointerEvent) => {
-      ax((e.clientX / window.innerWidth - 0.5) * 78);
-      ay((e.clientY / window.innerHeight - 0.5) * 46);
-      bx?.((e.clientX / window.innerWidth - 0.5) * 78);
-      by?.((e.clientY / window.innerHeight - 0.5) * 46);
+      const day = !!root?.classList.contains("dr-day");
+      const px = day ? 16 : 78;
+      const py = day ? 9 : 46;
+      ax((e.clientX / window.innerWidth - 0.5) * px);
+      ay((e.clientY / window.innerHeight - 0.5) * py);
+      bx?.((e.clientX / window.innerWidth - 0.5) * px);
+      by?.((e.clientY / window.innerHeight - 0.5) * py);
     };
     window.addEventListener("pointermove", onMove, { passive: true });
 
