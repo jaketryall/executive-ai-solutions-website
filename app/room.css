@@ -6915,3 +6915,24 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
 @media (prefers-reduced-motion: reduce) {
   .dr-show-use, .dr-show-use-in, .dr-show-well::after { transition: none; }
 }
+
+/* ══ REDUCED MOTION: THE FILM DOES NOT GROW (fix, 2026-09-23) ════════
+   Found by the ?v=inuse verifier: under prefers-reduced-motion the
+   measure pass (hero-room.tsx) never writes --t0/--h/--c0, so the grow
+   math falls back to 0px/1px and --sy resolves to tan(atan2(1px − 86px,
+   1px)) = −85 — the reel scaled to 63,617px tall and FLIPPED, sitting at
+   z 1 over the whole page and swallowing every hover and click below the
+   hero (elementFromPoint at mid-screen, scrolled to 3000: .dr-hero-reel).
+   It predates this session's work — the default page had it. The phone
+   already opts the reel out of the grow (max-width: 900px above); reduced
+   motion now does the same: the film is simply the block in its dock. */
+@media (prefers-reduced-motion: reduce) {
+  .dr-root .dr-hero-wrap .dr-hero-reel { translate: none; scale: none; border-radius: 10px; }
+  .dr-root .dr-hero-wrap .dr-hero-reel video { translate: 0 -50%; scale: none; }
+  /* and the ROOT of it: the reduced-motion block above hides the slot
+     (display: none, from before `still` existed), and the measure pass
+     boxes the film off the slot — a hidden slot measures 0,0,0, which is
+     where every one of the broken numbers came from. Under `still` the
+     slot IS the film's place; it stays in the layout, unseen. */
+  .dr-root .dr-hero-wrap[data-v~="still"] .dr-slot { display: block; visibility: hidden; }
+}
