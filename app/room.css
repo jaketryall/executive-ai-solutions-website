@@ -6755,3 +6755,66 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
   .dr-root:has(.dr-hero-wrap[data-v~="answer"]) .dr-more-p { font-size: clamp(1.2rem, 5.2vw, 1.8rem); }
   .dr-root:has(.dr-hero-wrap[data-v~="answer"]) .dr-more-nav { gap: 10px 24px; font-size: 16px; }
 }
+
+/* ══ `?v=show` · SAY IT, THEN SHOW IT (trial, 2026-09-22 — Jake: "i need
+   to find a way to make it beatiful and visual") ═══════════════════
+   The poster's three words as three photographs (offer-show.tsx). A
+   bento on the column: Websites big on the left (2 of 3 columns), the
+   two phones stacked on the right; the big well stretches to the
+   stack's height, so the block is one rectangle. Captions under the
+   pictures, Apple's order: picture, then its word. */
+.dr-show { padding-block: 0 clamp(56px, 9svh, 110px); }
+.dr-show-grid {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: 16px;
+  grid-template-columns: 2fr 1fr; grid-template-rows: auto auto;
+}
+.dr-show-card--big { grid-row: 1 / span 2; }
+.dr-show-card { min-width: 0; }
+.dr-show-link {
+  display: flex; flex-direction: column; gap: 14px; height: 100%;
+  color: inherit; text-decoration: none;
+}
+.dr-show-well {
+  position: relative; display: block; overflow: hidden;
+  /* 3:2 on the phones, not their 4:3: two 3:2 wells and their captions
+     stack to the height of the big well at ~4:3 (648 vs 657 at 1440), so
+     the laptop is shown whole instead of cover-cropped at the corners
+     (the first cut's 1.21 box clipped the laptop's base). The phones
+     lose only the backdrop above them and the bottom of the phone. */
+  border-radius: 14px; aspect-ratio: 3 / 2;
+  background: #2b2b2f;             /* the shots' own backdrop, so no flash before decode */
+}
+.dr-show-card--big .dr-show-well { aspect-ratio: auto; flex: 1; }
+.dr-show-img {
+  object-fit: cover; object-position: 50% 30%;
+  /* the settle: 8% large at the fold, at rest by a third of the screen */
+  scale: calc(1.08 - .08 * var(--pp, 1));
+  transition: transform .6s var(--ease-ui);
+}
+.dr-show-link:hover .dr-show-img, .dr-show-link:focus-visible .dr-show-img { transform: scale(1.03); }
+.dr-show-cap {
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  font-family: var(--font-instrument), sans-serif; font-size: 15px; letter-spacing: -0.01em;
+  color: var(--ink-3);
+}
+.dr-show-cap b {
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 600; font-weight: 600;
+  font-size: 24px; letter-spacing: -0.03em; color: var(--ink);
+}
+/* the arrow follows its own words — pushed to the card's far edge it sat
+   beside the NEXT card's caption and read as that one's (first cut) */
+.dr-show-last { white-space: nowrap; }
+.dr-show-cap i { font-style: normal; display: inline-block; margin-left: 8px; color: var(--ink); transition: translate .35s var(--ease-ui); }
+.dr-show-link:hover .dr-show-cap i, .dr-show-link:focus-visible .dr-show-cap i { translate: 6px 0; }
+.dr-show-link:focus-visible { outline: 2px solid var(--edge-strong); outline-offset: 4px; border-radius: 16px; }
+@media (prefers-reduced-motion: reduce) { .dr-show-img { scale: none; transition: none; } }
+@media (max-width: 900px) {
+  .dr-show-grid { grid-template-columns: 1fr; gap: 28px; }
+  .dr-show-card--big { grid-row: auto; }
+  .dr-show-card--big .dr-show-well { aspect-ratio: 4 / 3; flex: none; }
+  .dr-show-cap b { font-size: 21px; }
+}
+/* the sentence follows the pictures now, not the poster: its own top band back */
+.dr-root:has(.dr-hero-wrap[data-v~="answer"]):has(.dr-show) .dr-show + .dr-more { padding-top: clamp(40px, 7svh, 90px); }
