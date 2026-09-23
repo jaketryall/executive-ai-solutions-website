@@ -6818,3 +6818,20 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
 }
 /* the sentence follows the pictures now, not the poster: its own top band back */
 .dr-root:has(.dr-hero-wrap[data-v~="answer"]):has(.dr-show) .dr-show + .dr-more { padding-top: clamp(40px, 7svh, 90px); }
+
+/* ══ `?v=survey` · THE GROUND (step 1, design-dna/lando-ground-plan.md) ══
+   Lando's contour field (survey.tsx). z −1 inside <main>'s stacking
+   context: above the room's ground, under every section — the static
+   §02 sections paint below the z 1–3 fixed layers, so the field has to
+   sit below those too or its lines would cross their words. Fades in
+   once the first frame is drawn. */
+.dr-survey { position: fixed; inset: 0; z-index: -1; pointer-events: none;
+             opacity: 0; transition: opacity 1.2s var(--ease-ui); }
+.dr-survey[data-on] { opacity: 1; }
+.dr-survey canvas { display: block; width: 100%; height: 100%; }
+/* the hero paints its own copy of the ground (::before, var(--void) —
+   from the era when the hero stayed dark on a light page) and that copy
+   covered the field for the first 1320px. It is the root's colour in
+   both rooms now, so under the field it steps aside and the field runs
+   behind the title the way Lando's runs behind his portrait. */
+.dr-hero-wrap[data-v~="survey"].dr-zone-dark::before { background: transparent; }

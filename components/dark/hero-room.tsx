@@ -5,6 +5,7 @@ import Link from "next/link";
 import { OfferHead, OfferMore, OFFER_NAV } from "@/components/dark/services-section";
 import VoicesTiles from "@/components/dark/voices-tiles";
 import OfferShow from "@/components/dark/offer-show";
+import Survey from "@/components/dark/survey";
 import FilmSlice from "@/components/dark/film-slice";
 import WorkSection from "@/components/dark/work-section";
 import VoicesSection from "@/components/dark/voices-section";
@@ -757,6 +758,9 @@ export default function DarkRoom({
 
   return (
     <>
+      {/* THE GROUND (`?v=survey`, step 1 of design-dna/lando-ground-plan.md):
+          Lando's contour field, under every section (survey.tsx) */}
+      {has("survey") && <Survey />}
       <div className="dr-atmos" aria-hidden>
         <div className="dr-key" />
       </div>
