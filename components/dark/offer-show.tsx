@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 
 /* §02 · SAY IT, THEN SHOW IT (trial `?v=show`, 2026-09-22 — Jake: "i
    need to find a way to make it beatiful and visual").
@@ -30,6 +33,9 @@ const ITEMS = [
     sub: "Designed, built and hosted. Yours the day it ships.",
     href: "/services/websites",
     src: "/services/websites.jpg",
+    /* the desktop home at its own 16:10 — the tall tour cropped a half
+       card row into the well's bottom (first cut) */
+    use: "/work/live/dw-hero.jpg",
     sizes: "(max-width: 900px) 92vw, 880px",
   },
   {
@@ -37,6 +43,7 @@ const ITEMS = [
     sub: "Every enquiry answered, and booked.",
     href: "/services/ai",
     src: "/services/follow-up.jpg",
+    use: "/work/live/dw-mobile-booking.jpg",
     sizes: "(max-width: 900px) 92vw, 440px",
   },
   {
@@ -44,13 +51,43 @@ const ITEMS = [
     sub: "The first result when they search.",
     href: "/services/google-ads",
     src: "/services/ad.jpg",
+    use: "/work/live/dw-mobile-hero.jpg",
     sizes: "(max-width: 900px) 92vw, 440px",
   },
 ];
 
-export default function OfferShow() {
+/* `inUse` (`?v=inuse`, step 5 of design-dna/lando-ground-plan.md —
+   Jake: "yea show me step 5"): THE ONE BIG HOVER. Lando's helmet cards,
+   measured: the studio photograph is replaced by the same helmet in
+   action, wiping up from the card's bottom edge, the card's outline
+   lighting at the same moment — declared 0.75s cubic-bezier(.65,.05,0,1),
+   ~90% there by 300ms because that curve front-loads. Ours: the photo of
+   the device gives way to the real screen itself, flat — the site, the
+   advisor page a text leads to, the page the ad lands on. Evidence stays
+   still until someone asks (decision 10: a moving picture beside words
+   steals the glance; a hover is asking).
+
+   A TRANSFORM SLIT, not a clip-path: the outer box rises from 101% below
+   while the inner box counter-moves by the same amount, so the picture
+   stands still and only its edge travels — nothing re-rasterises per
+   frame (decision 14: a clip-path'd layer inside a moving card
+   flickered in Chrome). Armed only once its picture has DECODED, so the
+   first hover never wipes up an empty box; pointer:fine only (room.css). */
+export default function OfferShow({ inUse = false }: { inUse?: boolean }) {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!inUse) return;
+    const imgs = ref.current?.querySelectorAll<HTMLImageElement>(".dr-show-use img");
+    imgs?.forEach((img) => {
+      const arm = () => img.closest(".dr-show-well")?.setAttribute("data-armed", "");
+      img
+        .decode()
+        .then(arm)
+        .catch(() => img.addEventListener("load", arm, { once: true }));
+    });
+  }, [inUse]);
   return (
-    <section className="wrap dr-show" aria-label="What we make">
+    <section className="wrap dr-show" aria-label="What we make" ref={ref}>
       <ul className="dr-show-grid">
         {ITEMS.map((it, i) => (
           <li className={`dr-show-card${i === 0 ? " dr-show-card--big" : ""}`} key={it.word}>
@@ -65,6 +102,24 @@ export default function OfferShow() {
                 data-sp-lerp="0.1"
               >
                 <Image src={it.src} alt="" fill sizes={it.sizes} className="dr-show-img" />
+                {inUse && (
+                  <span className="dr-show-use" aria-hidden>
+                    <span className="dr-show-use-in">
+                      <Image
+                        src={it.use}
+                        alt=""
+                        fill
+                        sizes={it.sizes}
+                        loading="eager"
+                        className="dr-show-use-img"
+                        /* the desktop capture's headline starts at its left edge, so
+                           the wider-than-the-well picture anchors LEFT (first cut
+                           centred it and cut "WHERE" to "HERE") */
+                        style={i === 0 ? { objectPosition: "0% 0%" } : undefined}
+                      />
+                    </span>
+                  </span>
+                )}
               </span>
               <span className="dr-show-cap">
                 <b>{it.word}</b>

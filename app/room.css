@@ -6888,3 +6888,30 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
     animation: dr-flip 380ms both;
   }
 }
+
+/* ══ `?v=inuse` · THE ONE BIG HOVER (step 5, design-dna/lando-ground-plan.md)
+   The show wells' device photographs give way to the real screen,
+   wiping up from the bottom edge through a transform slit (offer-show.tsx
+   has the why), the well's edge lighting in the accent on the same
+   timing. Lando's curve and duration exactly. The real screens are tall
+   captures, so they anchor to their own top — the header and the
+   headline, never the middle of a page. */
+.dr-show-use, .dr-show-use-in { position: absolute; inset: 0; overflow: hidden; }
+.dr-show-use { transform: translateY(101%); z-index: 1; }
+.dr-show-use-in { transform: translateY(-101%); }
+.dr-show-use-img { object-fit: cover; object-position: 50% 0%; }
+.dr-show-well::after {
+  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  border-radius: inherit; box-shadow: inset 0 0 0 1px var(--accent); opacity: 0;
+}
+@media (hover: hover) and (pointer: fine) {
+  .dr-show-use, .dr-show-use-in, .dr-show-well::after {
+    transition: transform .75s cubic-bezier(.65, .05, 0, 1), opacity .75s cubic-bezier(.65, .05, 0, 1);
+  }
+  .dr-show-link:is(:hover, :focus-visible) .dr-show-well[data-armed] .dr-show-use,
+  .dr-show-link:is(:hover, :focus-visible) .dr-show-well[data-armed] .dr-show-use-in { transform: translateY(0); }
+  .dr-show-link:is(:hover, :focus-visible) .dr-show-well[data-armed]::after { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dr-show-use, .dr-show-use-in, .dr-show-well::after { transition: none; }
+}
