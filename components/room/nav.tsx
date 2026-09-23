@@ -61,6 +61,11 @@ export function RoomNav() {
      pill and dropped its links (caught live) */
   const [hud, setHud] = useState(false);
   useEffect(() => setHud(!!document.querySelector('.dr-hero-wrap[data-v~="hudask"]')), []);
+  /* `?v=roll` (step 4 of design-dna/lando-ground-plan.md): the call rolls
+     its label on hover like Lando's STORE pill — the same per-letter
+     Roll the links already use, so the rail has one hover, not two */
+  const [roll, setRoll] = useState(false);
+  useEffect(() => setRoll(!!document.querySelector('.dr-hero-wrap[data-v~="roll"]')), []);
   useEffect(() => {
     const el = document.documentElement;
     const read = () => setDay(el.classList.contains("eas-day"));
@@ -607,8 +612,9 @@ export function RoomNav() {
             className="dr-navcta dr-navcta--call dr-edge t-cta"
             tabIndex={stuck ? undefined : -1}
             aria-hidden={!stuck}
+            aria-label={roll ? "Book the call" : undefined}
           >
-            Book the call
+            {roll ? <Roll label="Book the call" /> : "Book the call"}
           </Link>
           {/* THE ROOM SWITCH, last in the row before the action: the two
               rooms are both real now (shell.tsx), and this is how you

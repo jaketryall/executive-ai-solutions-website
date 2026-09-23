@@ -6866,3 +6866,25 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
 .dr-root:has(.dr-hero-wrap[data-v~="hold"]) .dr-offer-rot-w { animation: none; opacity: 0; translate: 0 0; }
 .dr-root:has(.dr-hero-wrap[data-v~="hold"]) .dr-offer-rot:not([data-held]) .dr-offer-rot-w:first-child,
 .dr-root:has(.dr-hero-wrap[data-v~="hold"]) .dr-offer-rot[data-held] .dr-offer-rot-w[data-on] { opacity: 1; }
+
+/* ══ `?v=roll` · SMALL HOVERS EVERYWHERE (step 4, design-dna/lando-ground-plan.md)
+   Lando's, measured: his STORE pill rolls its label (settled ~520ms) and
+   every CTA arrow is a Rive 'btn-ui' arrow that flips through an edge-on
+   sliver in 150–300ms. Ours: "Book the call" takes the rail's own
+   per-letter Roll (nav.tsx), and every arrow in a link (→ and ↗, all
+   `<i aria-hidden>` — the doors, the show captions, the rail's "See the
+   case" and "Live", the close) flips instead of nudging: a quarter turn
+   in to the sliver, the glyph comes round the other side and lands.
+   Pointer devices only, and never on text that is not a link. */
+@keyframes dr-flip {
+  0%     { transform: rotateY(0deg); animation-timing-function: cubic-bezier(.55, 0, 1, .45); }
+  42%    { transform: rotateY(90deg); }
+  42.01% { transform: rotateY(-90deg); animation-timing-function: cubic-bezier(.19, 1, .22, 1); }
+  100%   { transform: rotateY(0deg); }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .dr-root:has(.dr-hero-wrap[data-v~="roll"]) a:is(:hover, :focus-visible) i[aria-hidden] {
+    display: inline-block; translate: none;
+    animation: dr-flip 380ms both;
+  }
+}
