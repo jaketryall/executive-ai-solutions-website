@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { MARK_D } from "@/components/room/mark-svg";
 
 /* THE GROUND · `?v=survey` (step 1 of design-dna/lando-ground-plan.md,
    2026-09-22 — Jake: "i want a visually impressive animation … the lando
@@ -71,6 +72,95 @@ const TRAVEL = 0.1; // field px per scroll px
 const A_DARK = 0.1; // white line core on the void
 const A_DAY = 0.14; // black line core on paper
 
+/* `?v=mark` (2026-09-23 — Jake, on "is it too close to lando": "yea just
+   to see it"). His lines are HIS: the same swirl as his helmet and his
+   jacket, so his background is his brand moving. Ours were generic
+   hills. Here the height is the EA mark's signed distance field: the
+   contours ring out from the monogram like a survey of it — near the
+   glyph they follow its strokes, farther out they round into hills —
+   and the same time warp makes them breathe. It is NOT the mark in the
+   background (the wall, removed 2026-09-20): no fill, no outline, only
+   lines that bunch around a shape you find if you look for it. */
+const SDF_N = 512; // the distance field's texture
+const SDF_BOX = 300; // the mark's 500-unit box drawn this many texels wide, centred
+const MARK_RINGS = 22; // rings per mark width
+const MARK_WARP = 110; // CSS px the rings wobble by, at full warp
+const MARK_HILLS = 0.18; // how much of the plain hills rides on top
+
+/* Felzenszwalb & Huttenlocher's exact squared EDT, one axis at a time
+   (the form Mapbox's tiny-sdf uses) */
+const INF = 1e20;
+function edt1d(g: Float64Array, off: number, stride: number, n: number, f: Float64Array, v: Uint16Array, z: Float64Array) {
+  v[0] = 0;
+  z[0] = -INF;
+  z[1] = INF;
+  f[0] = g[off];
+  for (let q = 1, k = 0, s = 0; q < n; q++) {
+    f[q] = g[off + q * stride];
+    const q2 = q * q;
+    do {
+      const r = v[k];
+      s = (f[q] - f[r] + q2 - r * r) / (q - r) / 2;
+    } while (s <= z[k] && --k > -1);
+    k++;
+    v[k] = q;
+    z[k] = s;
+    z[k + 1] = INF;
+  }
+  for (let q = 0, k = 0; q < n; q++) {
+    while (z[k + 1] < q) k++;
+    const r = v[k];
+    g[off + q * stride] = f[r] + (q - r) * (q - r);
+  }
+}
+function edt(g: Float64Array, n: number) {
+  const f = new Float64Array(n), v = new Uint16Array(n), z = new Float64Array(n + 1);
+  for (let x = 0; x < n; x++) edt1d(g, x, n, n, f, v, z);
+  for (let y = 0; y < n; y++) edt1d(g, y * n, 1, n, f, v, z);
+}
+/* the mark's signed distance, in mark-box widths (negative inside) */
+function markField(): Float32Array | null {
+  const c = document.createElement("canvas");
+  c.width = c.height = SDF_N;
+  const ctx = c.getContext("2d");
+  if (!ctx) return null;
+  const k = SDF_BOX / 500;
+  ctx.setTransform(k, 0, 0, k, (SDF_N - SDF_BOX) / 2, (SDF_N - SDF_BOX) / 2);
+  ctx.fill(new Path2D(MARK_D));
+  const a = ctx.getImageData(0, 0, SDF_N, SDF_N).data;
+  const N = SDF_N * SDF_N;
+  const outside = new Float64Array(N), inside = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    const on = a[i * 4 + 3] > 127;
+    outside[i] = on ? 0 : INF;
+    inside[i] = on ? INF : 0;
+  }
+  edt(outside, SDF_N);
+  edt(inside, SDF_N);
+  const out = new Float32Array(N);
+  for (let i = 0; i < N; i++) out[i] = (Math.sqrt(outside[i]) - Math.sqrt(inside[i])) / SDF_BOX;
+  /* the EDT of a hard-edged mask steps by whole texels, and the texture
+     is magnified ~4× on a desk — two separable box passes (radius 2)
+     take the stair-steps out of the rings (first cut: visible jaggies) */
+  const tmp = new Float32Array(N);
+  const R = 2;
+  for (let pass = 0; pass < 2; pass++) {
+    for (let y = 0; y < SDF_N; y++)
+      for (let x = 0; x < SDF_N; x++) {
+        let sum = 0;
+        for (let d = -R; d <= R; d++) sum += out[y * SDF_N + Math.min(SDF_N - 1, Math.max(0, x + d))];
+        tmp[y * SDF_N + x] = sum / (2 * R + 1);
+      }
+    for (let y = 0; y < SDF_N; y++)
+      for (let x = 0; x < SDF_N; x++) {
+        let sum = 0;
+        for (let d = -R; d <= R; d++) sum += tmp[Math.min(SDF_N - 1, Math.max(0, y + d)) * SDF_N + x];
+        out[y * SDF_N + x] = sum / (2 * R + 1);
+      }
+  }
+  return out;
+}
+
 const VERT = `#version 300 es
 in vec2 p;
 void main() { gl_Position = vec4(p, 0.0, 1.0); }`;
@@ -86,6 +176,14 @@ uniform float uDay;
 uniform float uK;
 uniform float uScale;
 uniform float uA;
+uniform float uMark;
+uniform sampler2D uSdf;
+uniform vec2 uMarkC;
+uniform float uMarkS;
+uniform float uMarkW;
+uniform float uKm;
+uniform float uWarp;
+uniform float uHills;
 out vec4 o;
 
 vec2 g(vec2 p) {
@@ -105,18 +203,27 @@ float fbm(vec2 p) {
 }
 void main() {
   vec2 css = vec2(gl_FragCoord.x, uRes.y * uDpr - gl_FragCoord.y) / uDpr;
-  vec2 q = (css + vec2(0.0, uScroll)) / uScale;
+  vec2 P = css + vec2(0.0, uScroll);
+  vec2 q = P / uScale;
   /* the time lives in a domain warp, so the hills change shape where
      they stand instead of the whole field translating */
   vec2 w = vec2(fbm(q + vec2(0.0, uTime * 0.026)), fbm(q + vec2(5.2, 1.3) - vec2(uTime * 0.021, 0.0)));
   float h = uK * fbm(q + 0.3 * w);
+  if (uMark > 0.5) {
+    /* the mark's rings, sampled through the same warp, plus a little of
+       the hills; past the texture's edge the distance keeps growing */
+    vec2 uv = (P + w * uWarp - uMarkC) / uMarkS + 0.5;
+    vec2 uc = clamp(uv, 0.0, 1.0);
+    float sd = texture(uSdf, uc).r + length((uv - uc) * uMarkS) / uMarkW;
+    h = uKm * sd + uHills * h;
+  }
   float d = abs(fract(h + 0.5) - 0.5) / max(fwidth(h), 1e-4);
   float line = 1.0 - clamp(d - 0.35, 0.0, 1.0);
   float a = uA * uInk * line;
   o = vec4(vec3(1.0 - uDay) * a, a);
 }`;
 
-export default function Survey() {
+export default function Survey({ mark = false }: { mark?: boolean }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const cvsRef = useRef<HTMLCanvasElement>(null);
 
@@ -168,7 +275,28 @@ export default function Survey() {
       const U = {
         res: u("uRes"), dpr: u("uDpr"), scroll: u("uScroll"), time: u("uTime"), ink: u("uInk"),
         day: u("uDay"), k: u("uK"), scale: u("uScale"), a: u("uA"),
+        mark: u("uMark"), sdf: u("uSdf"), markC: u("uMarkC"), markS: u("uMarkS"), markW: u("uMarkW"),
+        km: u("uKm"), warp: u("uWarp"), hills: u("uHills"),
       };
+      gl.uniform1f(U.mark, 0);
+      if (mark) {
+        const field = markField();
+        if (field) {
+          const tex = gl.createTexture();
+          gl.activeTexture(gl.TEXTURE0);
+          gl.bindTexture(gl.TEXTURE_2D, tex);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.R16F, SDF_N, SDF_N, 0, gl.RED, gl.FLOAT, field);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+          gl.uniform1i(U.sdf, 0);
+          gl.uniform1f(U.mark, 1);
+          gl.uniform1f(U.km, MARK_RINGS);
+          gl.uniform1f(U.warp, MARK_WARP);
+          gl.uniform1f(U.hills, MARK_HILLS);
+        }
+      }
       gl.uniform1f(U.k, K);
       gl.uniform1f(U.scale, SCALE);
 
@@ -187,6 +315,14 @@ export default function Survey() {
         gl.viewport(0, 0, cvs.width, cvs.height);
         gl.uniform2f(U.res, W, H);
         gl.uniform1f(U.dpr, dpr);
+        /* the mark's box: wider than the screen on a desk, taller on a
+           phone, centred a little below the middle at scroll 0 — at a
+           tenth of the scroll it rises through the first ~8000px */
+        const mw = Math.max(W * 0.85, H * 0.9);
+        const ms = (mw * SDF_N) / SDF_BOX;
+        gl.uniform2f(U.markC, W / 2, H * 0.58);
+        gl.uniform1f(U.markS, ms);
+        gl.uniform1f(U.markW, mw);
         measure();
         dirty = true;
       };
@@ -329,7 +465,7 @@ export default function Survey() {
       window.clearTimeout(timer);
       stop();
     };
-  }, []);
+  }, [mark]);
 
   return (
     <div className="dr-survey" ref={wrapRef} aria-hidden>

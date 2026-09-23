@@ -27,6 +27,10 @@ const D =
 const PEN =
   "M250,50 H62 Q40,50 40,88 V168 Q40,205 78,205 H215 L215,258 H78 Q40,258 40,296 V402 Q40,442 80,442 H244 L188,472 L332,42 H402 Q458,42 458,100 V216 L344,268 L458,330 V392 Q458,442 410,442 H300 L268,442";
 
+/* the glyph's outline, for anything else that draws the mark (the ground's
+   `?v=mark` field — components/dark/survey.tsx) */
+export const MARK_D = D;
+
 export function MarkSvg() {
   const trace = useRef<SVGPathElement>(null);
   useEffect(() => {

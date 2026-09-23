@@ -760,7 +760,7 @@ export default function DarkRoom({
     <>
       {/* THE GROUND (`?v=survey`, step 1 of design-dna/lando-ground-plan.md):
           Lando's contour field, under every section (survey.tsx) */}
-      {has("survey") && <Survey />}
+      {has("survey") && <Survey mark={has("mark")} />}
       <div className="dr-atmos" aria-hidden>
         <div className="dr-key" />
       </div>
