@@ -46,7 +46,9 @@ import { MARK_D } from "@/components/room/mark-svg";
    WebGL2: nothing is drawn and the page is exactly as it was. */
 
 const FIELD: [selector: string, ink: number, drift: number][] = [
-  [".dr-say-stage", 0.35, 0],
+  /* the pin, not the stage: under `?v=aud` the ticker opens the stage
+     and has to stay alive — the stillness belongs to the statement */
+  [".dr-say-pin", 0.35, 0],
   [".dr-show", 0.6, 0.3],
   [".dr-more", 0.8, 0.7],
   [".dr-tiles", 0.8, 0.8],

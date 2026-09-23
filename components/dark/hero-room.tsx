@@ -2,10 +2,14 @@
 
 import { memo, useEffect, useState } from "react";
 import Link from "next/link";
-import { OfferHead, OfferMore, OFFER_NAV } from "@/components/dark/services-section";
+import { OfferHead, OfferMore, OFFER_NAV, OFFER_ROT_WORDS } from "@/components/dark/services-section";
+
+/* the six audiences as the ticker says them: capitalised, no full stop */
+const AUDIENCES = OFFER_ROT_WORDS.map((w) => w.charAt(0).toUpperCase() + w.slice(1).replace(/\.$/, ""));
 import VoicesTiles from "@/components/dark/voices-tiles";
 import OfferShow from "@/components/dark/offer-show";
 import Survey from "@/components/dark/survey";
+import Ticker from "@/components/dark/ticker";
 import FilmSlice from "@/components/dark/film-slice";
 import WorkSection from "@/components/dark/work-section";
 import VoicesSection from "@/components/dark/voices-section";
@@ -1185,6 +1189,18 @@ export default function DarkRoom({
         data-sp-to="-1"
         data-sp-var="--cur"
       >
+        {/* `?v=aud` (step 2 of design-dna/lando-ground-plan.md): Lando's
+            message ticker — the six audiences in two rows running opposite
+            ways, in the band between the film and the statement. It lives
+            INSIDE the stage, not between the hero and it: under `flat` the
+            stage's own geometry is keyed on `.dr-hero-wrap + .dr-say-stage`
+            (room.css), and a sibling in between would break that. */}
+        {has("aud") && (
+          <Ticker
+            className="dr-tick--aud"
+            rows={[AUDIENCES, [...AUDIENCES.slice(3), ...AUDIENCES.slice(0, 3)]]}
+          />
+        )}
         {/* the pin's own approach, for the gate that keeps the words
             invisible until the film is the screen (room.css) */}
         <div

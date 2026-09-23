@@ -6835,3 +6835,25 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
    both rooms now, so under the field it steps aside and the field runs
    behind the title the way Lando's runs behind his portrait. */
 .dr-hero-wrap[data-v~="survey"].dr-zone-dark::before { background: transparent; }
+
+/* ══ THE TICKER (components/dark/ticker.tsx) · `?v=aud` — step 2 of
+   design-dna/lando-ground-plan.md: Lando's message ticker, the six
+   audiences in two rows running opposite ways between the film and the
+   statement. Full bleed, no mask at the edges (his runs edge to edge),
+   the space as the separator (Jake's standing call on the marquee). The
+   first row is dimmer than the second, as his is; neither is the
+   message — the statement below is. */
+.dr-tick { position: relative; overflow: hidden; pointer-events: none; user-select: none; }
+.dr-tick-track { display: flex; width: max-content; will-change: transform; }
+.dr-tick-set { display: flex; flex: none; }
+.dr-tick-set span {
+  display: block; white-space: nowrap; padding-right: .5em;
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 100, "wght" 600; font-weight: 600;
+  letter-spacing: -0.045em; line-height: 1;
+}
+.dr-tick--aud { padding-block: clamp(8px, 2svh, 24px) clamp(24px, 5svh, 56px); }
+/* 92px at 1440, Lando's row height; 28px on a phone — never larger than
+   the hero's own title there (first cut: 38px against the title's 32) */
+.dr-tick--aud .dr-tick-set span { font-size: clamp(1.75rem, 6.4vw, 5.75rem); color: color-mix(in srgb, var(--ink-3) 45%, transparent); }
+.dr-tick--aud .dr-tick-row + .dr-tick-row .dr-tick-set span { color: var(--ink-3); }
