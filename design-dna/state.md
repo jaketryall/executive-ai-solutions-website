@@ -558,3 +558,27 @@ The page, top to bottom: the hero (the personal-message title fitted to the colu
 **Light-room ambience — in progress** (`?v=lm+shade`): the finding is the RELATIONSHIP, not the colour — the dark room's lamps sit ~40 levels above an 11 ground; the day room was pinned at 231 with nowhere to go. So under `shade` the day ground drops to #dcdce0 and the lamps become near-white pools (~250), plus neutral edge shade and 2.4% grain; blue tint abandoned ("the blue is so hard to see"). The atmos cursor parallax (it EXISTS — `.dr-atmos` quickTo ±78/±46 in hero-room.tsx) is ±16/±9 in the day room. Jake has not yet ruled on shade v3.
 
 **Next when he's back**: his verdict on `?v=lm+shade`; if kept, fold it into the day room and give the light room a shadow ladder for surfaces. Then the owed list: interior pages' rail, the chat's key, a home for the price door, the Google numbers, real quotes, the reel cut, the `?v=` housekeeping.
+
+## 2026-09-23 · the Lando plan + the layout review (one long day, all trials)
+
+**The one link that shows everything built today** (tokens ADD to the default; nothing below is default yet):
+`/?v=answer+survey+aud+hold+roll+inuse+one+hcard+noc+noruns+after+dwlast+price+vone+svc`. The page is 12,515px at 1440 (was 14,311).
+
+**Why the page never felt like Lando** (the census, `design-dna/lando-ground-plan.md` + `decodes/lando-census-2026-09-22.json`, the same script run on both sites): scroll motion is EQUAL (20.2% vs 19.8%). The difference is motion AT REST (his 16/31 stops, ours 5/31, then 26 dead stops in a row) and whose it is: ~11 of our ~21 motions were lifted from other sites. Jake: "lando site is perfection", so Lando is the ONLY model now (memory `feedback_lando_only_model.md`).
+
+**Built today, in page order:**
+- `survey` — the ground: a WebGL2 contour field under every section, morphing in place, calibrated on his frames. Hills kept (Jake); `mark` / `loose` (the lines drawn from the EA mark) are tokens he passed on ("the hills better").
+- `aud` — the six audiences in two opposite rows between the film and the poster (his message ticker); `ticker.tsx` is the one runner for every strip.
+- `hold` — the poster's word stops rotating; the ad's own audience (`?i=`) is held when there is one.
+- `one` — the services one at a time on a sticky stack; `price` puts each service's real price on its pill; `inuse` — hovering a service photo wipes up to the real screen (his helmet cards).
+- `hcard` — THE WORK: the horizontal rail he loves, one Cosmos card per case with a pill carrying Year / Niche / Built. `dwlast` puts AAHG → Riled Up → Desert Wings, with the ad's own case first. (`stack` = Cosmos's vertical version, kept as a token; `bigpill` = the pill on the old rail.)
+- `noc` (tiles out), `noruns` (the second sideways rail off the homepage, Jake's own 09-19 call), `after` (the promise below the voices with ONE door, "See your price →").
+- `vone` — the quotes one per screen; `svc` — the services strip along the close (the bookend to the audience ticker).
+- `roll` — small hovers everywhere: the call's label rolls, and every link arrow flips through an edge-on sliver.
+- Also from earlier today: `answer` (2b set on 2a's centre line), `apart`, `show` (the photo bento, superseded by `one`).
+
+**Fixed for real (not a token):** under reduced motion the hero film was scaled −85 over the whole page, so every click in the middle of the page hit the film (checks.md 2026-09-23). The remaining reduced-motion title-size bug was spun off as its own task (task_1b311b4f).
+
+**Waiting on Jake:** his look at the full link; which tokens become DEFAULT; a PHOTO of himself for "Built by the person you talk to" (the page never shows his face or name, the biggest asset Lando has that we lack); REAL named quotes (placeholders can't ship); his OK on showing prices (`price`). Review reference: `design-dna/layout-review-2026-09-23.md`.
+
+**Next after that:** fold the chosen tokens into the default and delete the losers (housekeeping is overdue); the rest of the Lando plan (step 9 `sign`: the close's mark writes itself once; the cursor-light on the lines; one text vocabulary, each its own call).
