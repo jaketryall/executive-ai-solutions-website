@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { Roll } from "@/components/room/nav";
 
 /* §02 · SAY IT, THEN SHOW IT (trial `?v=show`, 2026-09-22 — Jake: "i
    need to find a way to make it beatiful and visual").
@@ -73,7 +74,16 @@ const ITEMS = [
    frame (decision 14: a clip-path'd layer inside a moving card
    flickered in Chrome). Armed only once its picture has DECODED, so the
    first hover never wipes up an empty box; pointer:fine only (room.css). */
-export default function OfferShow({ inUse = false }: { inUse?: boolean }) {
+/* `one` (`?v=one`, 2026-09-23 — Jake: "maybe the services isnt bad, maybe
+   its just the effects … i kinda want users to see everything one at a
+   time, i dont want them to have to decide where to look"): the bento
+   shows three pictures at once, so the eye has to choose. Under `one`
+   the three become the SAME sticky stack as the work (`?v=stack`,
+   work-stack.tsx — Cosmos's, measured): one service per screen, the next
+   dealt over the last, the card settling 1.1 → 1 and the picture 1.2 → 1
+   as it lands, the pill carrying the poster's word and its one line.
+   Services and proof then move the same way — one system, not two. */
+export default function OfferShow({ inUse = false, one = false }: { inUse?: boolean; one?: boolean }) {
   const ref = useRef<HTMLElement>(null);
   useEffect(() => {
     if (!inUse) return;
@@ -86,6 +96,59 @@ export default function OfferShow({ inUse = false }: { inUse?: boolean }) {
         .catch(() => img.addEventListener("load", arm, { once: true }));
     });
   }, [inUse]);
+  const screenLayer = (it: (typeof ITEMS)[number], i: number) =>
+    inUse && (
+      <span className="dr-show-use" aria-hidden>
+        <span className="dr-show-use-in">
+          <Image
+            src={it.use}
+            alt=""
+            fill
+            sizes={one ? "(max-width: 900px) 92vw, 1180px" : it.sizes}
+            loading="eager"
+            className="dr-show-use-img"
+            style={i === 0 ? { objectPosition: "0% 0%" } : undefined}
+          />
+        </span>
+      </span>
+    );
+  if (one)
+    return (
+      <section className="dr-show dr-show--one" aria-label="What we make" ref={ref}>
+        <ol className="dr-stack">
+          {ITEMS.map((it, i) => (
+            <li
+              className="dr-stack-item"
+              key={it.word}
+              data-sp
+              data-sp-edge="top"
+              data-sp-from="1"
+              data-sp-to="0"
+              data-sp-var="--st"
+              data-sp-lerp="0.37"
+            >
+              <div className="dr-stack-wrap">
+                <Link href={it.href} className="dr-stack-card dr-show-link" aria-label={`${it.word} — ${it.sub}`}>
+                  <span className="dr-stack-well dr-show-well">
+                    <Image src={it.src} alt="" fill sizes="(max-width: 900px) 92vw, 1180px" className="dr-stack-img" />
+                    {screenLayer(it, i)}
+                  </span>
+                  <span className="dr-stack-pill dr-stack-pill--svc" aria-hidden>
+                    <span className="dr-stack-word">{it.word}</span>
+                    <i className="dr-stack-sep" />
+                    <span className="dr-stack-line">{it.sub}</span>
+                    <i className="dr-stack-sep" />
+                    <span className="dr-stack-see">
+                      <Roll label="See the service" />
+                    </span>
+                  </span>
+                </Link>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    );
   return (
     <section className="wrap dr-show" aria-label="What we make" ref={ref}>
       <ul className="dr-show-grid">

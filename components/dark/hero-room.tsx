@@ -1248,7 +1248,7 @@ export default function DarkRoom({
       {/* `?v=show` (trial, 2026-09-22 — "i need to find a way to make it
           beatiful and visual"): the poster's three words, shown — the
           three photographs of the real deliverables (offer-show.tsx) */}
-      {has("show") && <OfferShow inUse={has("inuse")} />}
+      {(has("show") || has("one")) && <OfferShow inUse={has("inuse")} one={has("one")} />}
       {!has("nob") && !has("apart") && <OfferMore />}
       {/* §02c · the three voices as tiles, the last thing on the light
           page. `?v=noc` leaves these out instead — the other cut. */}

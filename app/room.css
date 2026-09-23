@@ -1383,6 +1383,16 @@ a:focus-visible > .dr-roll .dr-char { transform: translateY(-100%); }
   .dr-lit .dr-greet { opacity: 1; animation: none; transform: none; }
   .dr-greet { opacity: 1; }
   .dr-greet-li { transform: none; transition: none; }
+  /* THE FIT READS WHAT IT WROTE (fix, 2026-09-23). globals.css gives
+     every element `transition-duration: .01ms !important` under reduced
+     motion, and the default transition-property is `all` — so each
+     --fit the `wide` fit wrote on its probe (same classes) started a
+     font-size transition, and the Range read the OLD size: the longest
+     line never moved, the ratio compounded three passes (1.1118³ =
+     1.3743, 162px, four lines over the film), and splitRise cut the
+     lines at a stale size too. A property of none survives the
+     !important duration; the title has no transitions of its own. */
+  .dr-greet, .dr-greet * { transition-property: none; }
 }
 /* THE CROSSFADE — "the site recognising you, not a glitch" (Jake). Armed
    only when the return-visit swap actually changes the title's text
@@ -7053,4 +7063,22 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
   .dr-stack-meta { display: none; }
   .dr-stack-thumb { width: 36px; height: 36px; border-radius: 6px; }
   .dr-stack-name { font-size: 15px; }
+}
+
+/* ══ `?v=one` · THE SERVICES ONE AT A TIME (offer-show.tsx) ══════════
+   The show's three photographs on the work's own sticky stack. The
+   photos are devices on a grey studio ground, so they centre (the
+   sites anchor top); the pill carries the poster's word, big, and its
+   one line. The `.dr-show` band's own bottom padding is not wanted
+   between two stacks' screens. */
+.dr-show--one { padding-block: 0; }
+.dr-show--one .dr-stack-img { object-position: 50% 50%; }
+.dr-show--one .dr-show-well { aspect-ratio: auto; border-radius: 0; }
+.dr-stack-word { font-family: var(--font-archivo), sans-serif; font-variation-settings: "wdth" 100, "wght" 600; font-weight: 600; font-size: 24px; letter-spacing: -0.03em; line-height: 1; padding-left: 12px; }
+.dr-stack-line { font-size: 15px; letter-spacing: -0.01em; color: rgba(255, 255, 255, .72); }
+.dr-stack-pill--svc { padding: 14px 22px 14px 10px; }
+@media (max-width: 900px) {
+  .dr-show--one .dr-stack-card { aspect-ratio: 4 / 3; }
+  .dr-stack-line { display: none; }
+  .dr-stack-word { font-size: 18px; padding-left: 6px; }
 }
