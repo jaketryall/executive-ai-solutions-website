@@ -5047,7 +5047,10 @@ body:has(.dr-root.dr-day) { background: #e7e7ea; }
    inheriting that would make the button itself six rem tall. */
 .dr-close-cta {
   display: inline-flex; align-items: center; gap: .5em;
-  border-radius: var(--radius-chrome); background: var(--ink); color: #000;
+  /* the text is the GROUND's colour, not #000: the pill is --ink, which
+     is dark in the day room, and #000 on it was dark-on-dark (the page
+     verifier, 2026-09-23). --void is always the pill's opposite. */
+  border-radius: var(--radius-chrome); background: var(--ink); color: var(--void);
   text-decoration: none;
   font-size: var(--fs-body-s); letter-spacing: .1em;
 }
@@ -7173,3 +7176,7 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
    not a headline. */
 .dr-tick--svc { grid-column: 1 / -1; margin: clamp(40px, 7svh, 88px) calc(-1 * var(--col-inset)) clamp(16px, 3svh, 32px); padding-block: 10px; border-block: 1px solid var(--hairline); }
 .dr-tick--svc .dr-tick-set span { font-size: clamp(1.25rem, 2.6vw, 2.4rem); color: var(--ink-3); padding-right: 1.1em; }
+
+/* the promise's one door is a real tap target on a phone (the page
+   verifier: 16px tall as a text link) */
+.dr-more--after .dr-more-link { min-height: 44px; align-items: center; padding-inline: 10px; }
