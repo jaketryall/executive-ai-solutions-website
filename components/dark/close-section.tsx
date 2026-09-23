@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { NEXT_START } from "@/lib/proof";
+import { NEXT_START, TICKER } from "@/lib/proof";
+import Ticker from "@/components/dark/ticker";
 
 /* §06 · THE CLOSE
    The page's one action, and the thing that earns it — now built as CTA
@@ -38,6 +39,20 @@ type Finding = { id: string; status: "good" | "fix"; title: string; detail: stri
 type Result = { host: string; findings: Finding[]; summary: string };
 
 export default function CloseSection() {
+  /* `?v=svc` (2026-09-23, layout review #7 / step 8 of the Lando plan):
+     the services run along the close's bottom edge, above the wordmark —
+     Lando's footer strip (the last moving thing on his page, 0.89–1.30%
+     at rest), and the bookend to the audience ticker under the film:
+     the page opens on who it's for and ends on what they get. Read from
+     the homepage's own trial tokens (this close is the room shell's, on
+     every page); the room's one runner, the space as the separator. */
+  const [strip, setStrip] = useState(false);
+  useEffect(() => {
+    const on = !!document.querySelector('.dr-hero-wrap[data-v~="svc"]');
+    if (!on) return;
+    const id = requestAnimationFrame(() => setStrip(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
   const inputRef = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState("");
   const [state, setState] = useState<"idle" | "busy" | "done">("idle");
@@ -253,6 +268,7 @@ export default function CloseSection() {
             end. A div, not <footer>: this route hides every footer
             element to drop the site's own, and a real one here would
             vanish with it. */}
+        {strip && <Ticker className="dr-tick--svc" rows={[[...TICKER]]} speed={21} reach={0.06} />}
         <div className="dr-close-foot">
           <p className="dr-close-lockup">
             <span className="dr-close-mk" aria-hidden />

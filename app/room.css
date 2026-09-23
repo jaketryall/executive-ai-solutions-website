@@ -7133,3 +7133,43 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
 .dr-root:has(.dr-hero-wrap[data-v~="after"]) .dr-more.dr-more--after {
   padding-block: clamp(96px, 16svh, 180px) clamp(96px, 16svh, 180px);
 }
+
+/* ══ `?v=price` · the price on each service card (layout review #5) ══
+   The line is the price now, in the ink, not the dimmed sub; on a phone
+   it stays (the word + the price are the two things the card says). */
+.dr-stack-line--price { color: #fff; }
+@media (max-width: 900px) { .dr-stack-line.dr-stack-line--price { display: inline; font-size: 13px; } }
+
+/* ══ `?v=vone` · THE VOICES ONE AT A TIME (layout review #6) ══════════
+   Each quote owns a screen — the lens (--lit) already peaks mid-pass, so
+   a quote alone on its screen is simply the thing being read — and the
+   claim above them comes up sooner (the empty screen between the rail's
+   release and the claim: the header's 66svh centring plus the section's
+   top band). The attribution takes the work's pill (dark, 14px corners),
+   the one object carried from services to work to voices. Role only: the
+   quotes are de-named placeholders (lib/quotes.ts), and linking one to a
+   named case would put words in a real person's mouth. */
+.dr-root:has(.dr-hero-wrap[data-v~="vone"]) .dr-voices { padding-top: 0; }
+.dr-root:has(.dr-hero-wrap[data-v~="vone"]) .dr-voices-head { min-height: min(50svh, 480px); margin-bottom: 0; }
+/* ONE PER SCREEN BY THE GAPS, not by tall items: each quote's light
+   (--lit) peaks on its OWN box's pass, so a screen-tall item lit its
+   quote near the bottom of the screen (first cut) — the gap keeps the
+   box the card and puts a screen of air between cards */
+.dr-root:has(.dr-hero-wrap[data-v~="vone"]) .dr-voices-list { gap: clamp(280px, 50svh, 540px); padding-bottom: clamp(80px, 14svh, 160px); }
+/* the work's pill shape, the ground's own light: a dark pill on the void
+   is invisible (first cut) — the work's sits on bright screenshots */
+.dr-root:has(.dr-hero-wrap[data-v~="vone"]) .dr-voice figcaption span {
+  padding: 10px 18px; border-radius: 14px; border: 0;
+  background: rgba(255, 255, 255, .06); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14);
+  color: var(--ink-3); font-size: 15px;
+}
+@media (max-width: 900px) {
+  .dr-root:has(.dr-hero-wrap[data-v~="vone"]) .dr-voices-list { gap: 36svh; }
+}
+
+/* ══ `?v=svc` · the services strip along the close (layout review #7) ═
+   One row, full bleed, above the wordmark: the same runner and speed as
+   the audience ticker, smaller and quieter — it is the footer's line,
+   not a headline. */
+.dr-tick--svc { grid-column: 1 / -1; margin: clamp(40px, 7svh, 88px) calc(-1 * var(--col-inset)) clamp(16px, 3svh, 32px); padding-block: 10px; border-block: 1px solid var(--hairline); }
+.dr-tick--svc .dr-tick-set span { font-size: clamp(1.25rem, 2.6vw, 2.4rem); color: var(--ink-3); padding-right: 1.1em; }

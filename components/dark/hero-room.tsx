@@ -1265,7 +1265,7 @@ export default function DarkRoom({
           data-sp-target=".dr-root"
         />
       )}
-      {(has("show") || has("one")) && <OfferShow inUse={has("inuse")} one={has("one")} />}
+      {(has("show") || has("one")) && <OfferShow inUse={has("inuse")} one={has("one")} price={has("price")} />}
       {!has("nob") && !has("apart") && !has("after") && <OfferMore />}
       {/* §02c · the three voices as tiles, the last thing on the light
           page. `?v=noc` leaves these out instead — the other cut. */}

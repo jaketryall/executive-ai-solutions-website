@@ -4,6 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { Roll } from "@/components/room/nav";
+import { SERVICES } from "@/lib/services";
+
+/* `?v=price` (2026-09-23, layout review #5 — Jake: "whatever you think do
+   it all ill look after"): the page never said what anything costs, and
+   cost is the buyer's first question (the FAQ's first card, the Ask
+   chat's first suggestion). Each service card's line becomes its price —
+   the SAME words the service pages already print (lib/services.ts
+   heroPrice), so nothing here is a new promise. */
+const PRICE: Record<string, string> = Object.fromEntries(
+  SERVICES.map((s) => [`/services/${s.slug}`, s.heroPrice])
+);
 
 /* §02 · SAY IT, THEN SHOW IT (trial `?v=show`, 2026-09-22 — Jake: "i
    need to find a way to make it beatiful and visual").
@@ -83,7 +94,15 @@ const ITEMS = [
    dealt over the last, the card settling 1.1 → 1 and the picture 1.2 → 1
    as it lands, the pill carrying the poster's word and its one line.
    Services and proof then move the same way — one system, not two. */
-export default function OfferShow({ inUse = false, one = false }: { inUse?: boolean; one?: boolean }) {
+export default function OfferShow({
+  inUse = false,
+  one = false,
+  price = false,
+}: {
+  inUse?: boolean;
+  one?: boolean;
+  price?: boolean;
+}) {
   const ref = useRef<HTMLElement>(null);
   useEffect(() => {
     if (!inUse) return;
@@ -136,7 +155,11 @@ export default function OfferShow({ inUse = false, one = false }: { inUse?: bool
                   <span className="dr-stack-pill dr-stack-pill--svc" aria-hidden>
                     <span className="dr-stack-word">{it.word}</span>
                     <i className="dr-stack-sep" />
-                    <span className="dr-stack-line">{it.sub}</span>
+                    {price && PRICE[it.href] ? (
+                      <span className="dr-stack-line dr-stack-line--price">{PRICE[it.href]}</span>
+                    ) : (
+                      <span className="dr-stack-line">{it.sub}</span>
+                    )}
                     <i className="dr-stack-sep" />
                     <span className="dr-stack-see">
                       <Roll label="See the service" />
