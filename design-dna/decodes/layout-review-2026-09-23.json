@@ -1,0 +1,474 @@
+{
+ "reviews": [
+  {
+   "lens": "LANDO FIDELITY & ONE SYSTEM. I measured the page against the 12 laws and the census, using the review sheets, map.json, my own at-rest diffs every 450px (1440\u00d7900: full-res |\u0394|\u22654 and the census method, 360\u00d7225 >12), section and sticky geometry at 1440 and 390, and a live render of ?v=\u2026+noc+apart.",
+   "verdict": "The page is closer to one system than it has been, but it isn't there yet. What is now shared: one ground under every section (the field moves 0.8\u20132.9% at full res at almost every stop), one strip runner, small hovers everywhere, and one card-and-pill object that both the services and the work carry. What still reads as a collage: (1) There are TWO pinned horizontal rails, work at 43.7\u201362.6% and runs at 70.6\u201390.6%, and they use two different card skins. About 39% of the page scrolls sideways; Lando has one axis switch at 23.1%. (2) The testimonial tiles are the voices' three quotes, word for word, and they appear 3,500px apart. (3) The stretch Jake dislikes is three whitespace seams in a row (services exit \u2192 \u00a702b \u2192 tiles \u2192 Proof), 1,100px of still centred text between the two loud pinned rooms. (4) At least five text motions play inside the reading zone: the masked rise, \u00a702b's scrubbed sweep, the scrawl, the voices' blur focus-pull, and the close's line fill. Lando has one triggered wipe that finishes before you read. (5) There is no bookend. The close is the only left-set display type after the poster, and it has nothing moving at rest. On the census method, every stop from y 1800 to 13050 reads \u22640.13%. Pinned or stacked scroll is 67% of the page (9,000 of 13,411px); Lando's is 32%. Lando's grammar would make four moves here: cut to one horizontal scroll, the work rail Jake asked for; cut the duplicate tiles and move the promise to after the proof, so the statement \u2192 services \u2192 proof run is unbroken; flip the ground once, under that one rail; and close on a bookend that rhymes with the film and ticker. The ranked changes below build each of those as one trial.",
+   "problems": [
+    {
+     "where": "\u00a703 work rail (.dr-work-stage 6261\u20138961) + runs (.dr-runs 10102\u201312964)",
+     "problem": "Two axis switches, two pinned sideways rails. The second sits in the back of the page, where Lando has 0 pins (laws 6 and 10). The runs rail uses a different card (step cards with UI sketches), so 'the card' moves sideways in two different skins. Jake's own framing is 'OUR horizontal scroll for works': the runs rail dilutes it.",
+     "severity": "high",
+     "evidence": "Sticky elements measured: 3\u00d7 .dr-stack-item + .dr-work-pin + .dr-runs-pin = 5 (Lando rations 4). Horizontal share: 2700 + 2862 = ~39% of 14,311 (Lando 23.1%). Frames y10800\u201312000 show the runs rail sliding. The 2026-09-19 convergence says 'process + objections are to LEAVE the homepage (decided, not done)' (state.md), and ground-plan step 10 says the same."
+    },
+    {
+     "where": "\u00a702c tiles (.dr-tiles 5574) vs Voices (.dr-voices 9069)",
+     "problem": "The same three testimonials appear twice. The tiles are also the one frame in the stretch with three focal points at once, which breaks 'one focal per viewport'.",
+     "severity": "high",
+     "evidence": "The innerText of .dr-tiles and .dr-voices carries the same three quotes in the same order (AAHG director / flight-school owner / flight-school head instructor, lib/quotes.ts). At y5450 the three tiles, the half-written 'Pro' scrawl and 'The sites we built.' share one screen."
+    },
+    {
+     "where": "Statement \u2192 proof stretch, y 5167\u20136261",
+     "problem": "Three whitespace seams in a row (last service card leaves \u2192 \u00a702b \u2192 tiles \u2192 Proof head), on one ground and one centred axis. The loud stack hands to 1,100px of still text and cards before the loud rail. Law 1 says never repeat a seam device twice in a row; this repeats it three times. Inside the stack, the same sticky-cover deal also runs three times in a row (poster\u2192card 1\u2192card 2\u2192card 3).",
+     "severity": "high",
+     "evidence": "Frames at 4700/4950/5200/5450: the sentence and doors, then the tiles, then the scrawl, one after another with no change of device. This is the stretch Jake calls 'not the biggest fan'."
+    },
+    {
+     "where": "Whole page: where the spectacle and pins sit",
+     "problem": "The spectacle is not front-loaded and the page is mostly pinned. Pins run to 90.6% of the page, and the back 43% (from y\u22486150) holds the rail, the runs pin, the white plate and the recede. Pinned or stacked scroll is 2\u00d7 Lando's share.",
+     "severity": "medium",
+     "evidence": "Poster hold 900 + stack 2700 + rail 2700 + runs 2700 = 9,000 of 13,411 scroll px (67%). Lando: 4,043 of 12,678 (32%), with all pins in the first 57%."
+    },
+    {
+     "where": "At-rest motion, y1800 \u2192 end",
+     "problem": "The 'always moving' layer exists only at tint level. After the ticker, nothing registers at the visible threshold, and the back third has no strip. Lando carries his back third with the partners marquee and the footer strip.",
+     "severity": "medium",
+     "evidence": "Census method: 9.3/19.2/16.6/7.5% at y0/450/900/1350 (film + ticker), then \u22640.13% at every stop from 1800 to 13050. Full res: the field reads 0.8\u20132.9% at most stops, but the services stack is 0.05\u20130.25% and \u00a702a 0.33%. Lando's partners marquee reads 4.73%, his footer strip 0.89\u20131.30%."
+    },
+    {
+     "where": "Text in the reading zone: \u00a702b, Voices, close",
+     "problem": "At least five text vocabularies, three of them scrubbed, so words are still performing while you read. Lando's rule (laws 3 and 11): words land once, fire at top 90%, and are finished before the reading zone.",
+     "severity": "medium",
+     "evidence": "y4700: \u00a702b's cyan sweep is half-lit mid-sentence. y8384 and y8817: 'They wanted the phone to ring.' is blurred by the focus-pull while quote 1 is already on screen. y13074: the close's lines are mid-fill (grey gradient). There are also the masked rises (hero, poster) and the scrawl write."
+    },
+    {
+     "where": "Close (.dr-close 13657)",
+     "problem": "No bookend (law 12). The hero is a centred title over a framed film with the ticker band under it. The close is a left-set statement, link columns and a wordmark: the only left-aligned display type after the poster (under `answer`, \u00a702b, voices and objections are all centred). Nothing on it moves at rest.",
+     "severity": "medium",
+     "evidence": "y13411 frame: statement at x\u2248990 of the sheet, left, beside the columns. The at-rest read at 13411 is 1.42% full res, which is the field only."
+    },
+    {
+     "where": "Card inventory, page-wide",
+     "problem": "Six kinds of card (service stack card, rail card, tile, voice card, run card, white objections card). The pill, the one designed object that recurs, rides only the stack and the rail.",
+     "severity": "low-medium",
+     "evidence": "Sheets 1 and 2: y2400 stack card, y6600 rail card, y5400 tiles, y9600 voice card, y10800 run cards, y12600 white card."
+    },
+    {
+     "where": "Recurring imagery, y600 \u2192 6300",
+     "problem": "The page's accidental motif is a client's airplane, not EAS. Under noc+apart that becomes four Desert Wings pictures in a row, with AAHG (also aviation) next.",
+     "severity": "low",
+     "evidence": "The reel's laptop frame (N9487K plane, y600); stack cards 1\u20133 are all DW (laptop, chat, search); rail card 1 is DW. The live noc+apart render shows y4500 Ads/DW \u2192 y5115 DW rail card."
+    },
+    {
+     "where": "Proof head, y5950\u20136150",
+     "problem": "The 'Proof' scrawl's top runs under the nav pill, and before that it shares the screen with the tiles.",
+     "severity": "low",
+     "evidence": "Frames 5950/6150: the tops of the cyan glyphs sit behind the rail pill. Frame 5450: the scrawl is beside the tiles."
+    },
+    {
+     "where": "Ground, end to end",
+     "problem": "No ground change at all. The white objections card at 90.6% is the page's only light surface, a plate with no light room around it. Lando flips the ground once, under his one axis switch, and his field only registers on the cream.",
+     "severity": "low-medium",
+     "evidence": "The page is dark end to end (09-21). Lando's census: the field reads 0.00 on olive and 0.38\u20131.97% on cream. The `paper` token exists and Jake said 'i like it' (09-21 evening)."
+    }
+   ],
+   "changes": [
+    {
+     "change": "1 \u00b7 ONE HORIZONTAL SCROLL: `?v=noruns`. The runs rail leaves the homepage, and the work rail becomes the page's only sideways, pinned room.",
+     "why": "Laws 10 and 6: switch the axis at most once, give it the biggest budget, and keep the back of the page free of pins. It also delivers Jake's ask literally: 'our horizontal scroll for works'. Measured effect: the page goes from 14,311 to ~11,450 (10,978 with change 2), the rail becomes ~24% of the page (Lando's track is 23.1%), sticky elements drop from 5 to 4 (Lando's ration), and there are 0 pins after the rail. The objections plate then enters on its edge straight after the voices and leaves by the recede: hard in, soft out (law 8).",
+     "how": "hero-room.tsx, inside .dr-flip: render <RunsSection/> only when !has('noruns'). The voices' third card loses its conversion target. First cut: let it end, with a whitespace seam and then the white plate arriving by its edge. Second cut (optional): re-aim the existing --lead conversion so the third quote card grows into .dr-obj-card instead of .dr-runs-card, which keeps the page's one law-9 seam (the next room revealed already moving). The four steps move to /services as one still row: show the whole path at once, per the reassurance memory. Measure doc height, sticky count and pin end %.",
+     "conflicts": "This carries out Jake's 2026-09-19 convergence call (process off the homepage) and ground-plan step 10, so it is not a reversal. It does drop the 09-08 voices\u2192\u00a704 conversion unless that is re-aimed. The same 09-19 call also removed the objections. I keep them because the 09-06 Off+Brand recede ending lives on that card. Keeping them is Jake's call."
+    },
+    {
+     "change": "2 \u00b7 COLLAPSE THE STRETCH: `?v=noc+apart` added to the current link (both tokens exist, zero build). The duplicate tiles go, and \u00a702b's promise moves to after the proof.",
+     "why": "The tiles repeat the voices word for word, and they make the one three-focal frame (y5450). With them gone, the statement \u2192 services \u2192 proof run is unbroken: measured live, the last service card at y4500 hands straight to the scrawl, and the rail starts at 5428 instead of 6261. \u00a702b then lands after the rail, where Lando puts his sell: the store comes after the helmets peak, on a calm page. Under `answer` both \u00a702b (y8000) and the voices head (y8384) are centred, so the axis clash that made `apart` 'only half a fix' is gone. Three whitespace seams in a row become zero.",
+     "how": "URL: ?v=answer+survey+aud+hold+roll+inuse+one+hcard+noc+apart. Nothing to build. Verified geometry: stack 2467\u20135167, work head 5275, rail 5428\u20138128, \u00a702b 8236, voices 8598. Check the seam at y4500\u20135115 (scrawl under the last service card) and the still\u2192still pair at 8000/8384.",
+     "conflicts": "noc and apart are built but undecided, and `answer` was recommended over `apart` (09-22). Taking both together is new and Jake's call. apart drops the 'See the work' door, which is correct once the work is above it."
+    },
+    {
+     "change": "3 \u00b7 FLIP THE GROUND ONCE, UNDER THE ONE RAIL: `?v=paper` added to 1 and 2 (the token exists).",
+     "why": "Law 2: one ground flip, riding the one axis switch. With runs gone, paper covers rail \u2192 \u00a702b \u2192 voices \u2192 objections, and the close takes the room back to dark. That is Lando's exact shape: dark hero and statement, a light middle across the track, then a dark footer panel. It also makes the already-built field visible at rest, since Lando's own field reads 0.00 on olive and 0.38\u20131.97% on cream. It turns the white objections card from a lone plate into part of a room. And the three big 16:10 hcard covers, dark UIs, read as product on paper, which was paper's own measured reason.",
+     "how": "Add `paper` to the link. Re-measure the field on the light ground (target: at least 3 census stops in the back third), and check that the objections card keeps a distinct surface on paper.",
+     "conflicts": "THE PAGE IS DARK (09-21) is Jake's call. Paper was liked after it ('i like it') but was never defaulted. Two rooms are also real now: this is a within-page lift, not the day-room switch."
+    },
+    {
+     "change": "4 \u00b7 THE BOOKEND: the close rhymes with the hero (`?v=sign+svc`, ground-plan steps 8 and 9 as one trial).",
+     "why": "Law 12: the last room reuses the first room's grammar. The hero is a centred title, a framed film and the ticker band under it. The close becomes: the statement and the call centred on the hero's axis, the EA mark writing itself once (scrubbed on Lando's signature curve 0/0/45/88/97/100), and the services TICKER (lib/proof.ts, decision 105) running along its bottom edge above the wordmark, which is the ticker under the film rhymed. That puts a visible at-rest mover in the back third (today every stop after y1350 is \u22640.13% on the census method; Lando's footer strip reads 0.89\u20131.30%).",
+     "how": "MarkSvg per-instance ids first (useId). Then ticker.tsx's runner (21px/s, direction latched, the space as separator) is mounted in its own band inside .dr-close. .dr-close-say is centred with the pill inline, the link columns go to a row under it, and the wordmark stays. Reduced motion: the mark is already written, the strip stands still.",
+     "conflicts": "Centring the close touches the 09-06 close composition (a left 4-line statement beside the columns) and the 09-06 retirement of the 'rig/glow/dome/mark bookend'. This keeps the Off+Brand recede and brings back only the mark draw and the strip. Jake's call. Steps 8 and 9 are in the plan he has been saying 'yea' to one at a time."
+    },
+    {
+     "change": "5 \u00b7 ONE TEXT VOCABULARY below the hero: `?v=w2b`, `?v=wvoice`, `?v=wclose` (ground-plan step 13), one token each.",
+     "why": "Laws 3 and 11: words land once and are resolved before the reading zone; motion belongs to the ground, the strips and the thing under your hand. At present \u00a702b is half-lit at y4700, the voices head is blurred at y8384 and y8817 with a quote already on screen, and the close is mid-fill at y13074: three scrubbed text effects, from three sources.",
+     "how": "Replace each with Lando's data-anim-high wipe: per-line clip inset(0 100% 0 0)\u21920, .6s power2.out, .15s stagger, a cyan bar trailing +.3s scaleX 1\u21920, fired at top 90%, once. The hero's settled rise stays as the flagged exception, and the poster rise stays unless Jake says otherwise.",
+     "conflicts": "Each one reverses an approved vocabulary: the \u00a702b Huge sweep, the voices focus-pull (decision 38), and the close's line fill. Jake's call, one token at a time."
+    },
+    {
+     "change": "6 \u00b7 THE PILL IS THE CARRIED OBJECT: `?v=vpill` on the voices.",
+     "why": "The pill is the one object that already ties services to work. Lando's pages hold together because one object recurs (his helmet and face). Put each quote big and centred, one at a time as now, with its attribution in the same bottom pill (role \u00b7 the case it belongs to \u00b7 See the case \u2192), so every voice points back to a card you have just seen. With the tiles and runs gone, card kinds drop from 6 to 3 (the card, the voice with its pill, the objections plate).",
+     "how": "voices-section.tsx: swap the bordered voice card for the rail's pill component, anchored bottom-centre under the quote. Lead with the DW quote (the owner, 'show up ready to book a discovery flight') so the voices follow the rail's order. Quotes 1 and 3 map to AAHG and DW.",
+     "conflicts": "The quotes are de-named placeholders, and real permissioned ones are owed by Jake. There is no Riled Up quote, so the voices and the cases cannot map 1:1."
+    },
+    {
+     "change": "7 \u00b7 (Optional, for Jake's 'maybe its just the effects') THE SERVICES AS ONE FRAME: `?v=frame`.",
+     "why": "The stack deals the same sticky-cover seam three times in a row, and at rest the field is almost stopped under it (0.05\u20130.25%). Lando's \u00a73.7 anchor is a fixed frame that never resizes. One card arrives once by its edge and holds the centre across three screens. Its picture HARD-CUTS Websites \u2192 Automation \u2192 Ads at scroll thresholds (Lando's law: rail captions cut, never crossfade), and the pill's word wipes once per cut. That keeps one at a time and still evidence, and it rhymes with the hero film, a frame whose picture cuts.",
+     "how": "offer-show.tsx: under `frame`, one sticky .dr-stack-card in the same 2700 wrapper. Three images stacked with visibility swapped at p = 1/3 and 2/3 (no opacity ramp), no 1.10/1.20 settle, and inuse still armed on the current image.",
+     "conflicts": "This replaces `one`'s Cosmos stack, which Jake has not ruled on. It is derived rather than measured, so it is offered as a comparison only."
+    }
+   ],
+   "proposedOrder": [
+    "1 \u00b7 Hero: the personal title and the reel film (the one self-moving picture), with the six-audience ticker in its own band under the film.",
+    "2 \u00b7 \u00a702a statement: 'Websites / Automation / Ads for owner-run businesses.' Held one screen; the words land once and hold (field drift 0).",
+    "3 \u00b7 Services one at a time: the three deliverable photos on the card with the pill (the vertical sticky stack, or `frame`); the evidence stays still.",
+    "4 \u00b7 Proof head: the 'Proof' scrawl and 'The sites we built.' on a clean screen, directly after the last service card (no tiles).",
+    "5 \u00b7 The work: THE one horizontal pinned rail, one 16:10 card per case with the Year / Niche / Built pill. The page's single axis switch and largest room, with the paper lift here if Jake takes it.",
+    "6 \u00b7 \u00a702b, the promise after the proof: one centred sentence ('Built by the person you talk to\u2026') and the doors, landing once.",
+    "7 \u00b7 Voices: the quotes one at a time, DW first, attribution in the same pill linking to its case. The last card hands to the plate.",
+    "8 \u00b7 Objections: the one plate (the four questions and Ask), entering on its edge and receding Off+Brand's way.",
+    "9 \u00b7 Close: the bookend. Statement and call on the hero's centre axis, the mark writing itself once, the services strip along the bottom edge, the wordmark.",
+    "Off the homepage: the testimonial tiles (a duplicate of the voices) and the runs rail (the second axis switch), which moves to /services as one still four-step row."
+   ]
+  },
+  {
+   "lens": "One thing at a time (Jake's rule) and cognitive ease: how many focal points compete in each viewport, which beats repeat each other, and page length against what the page actually says. Evidence is the two review sheets plus 20 extra frames at 1440\u00d7900 and 8 at 390\u00d7844 (Playwright, script deleted afterwards). Each frame came with a count of the visible media and of type 36px or larger. No project files were edited.",
+   "verdict": "The page is 15.9 screens at 1440\u00d7900 (Lando's is 14.1), and about 3.3 of those screens say something the page has already said. 64% of the document sits under a pin or sticky: \u00a702a 900 + services 2700 + work 2700 + runs 2862 = 9,162px. The hero, the held poster, each services card at rest, a rail card at the centre of its window, and the voices head at y 9000 all pass the one-focal test. y 9000 is the cleanest frame on the page. The failures cluster in four places:\n(1) The same three quotes run twice: as tiles at y 5574, three at once, and again as the voices at 9069\u201310400.\n(2) A second sideways rail, runs, is the single largest slice of the page (20%). It sits at 71\u201391%, shows three cards at once, has a near-empty frame at y 10250, and on the phone its head is printed on top of a voices quote.\n(3) Desert Wings is on screen five times before the second case appears. The rail opens on the same 'WHERE PILOTS ARE BORN' screenshot that services card 1 showed 3,600px earlier.\n(4) The stretch from y 4700 to 6100 (\u00a702b, tiles, proof head) never gives a screen one job. At y 5000 there are eight targets: the sentence, four doors and three tiles. The four doors repeat the nav pill, which is on screen at the same moment.\nCutting the tiles and the runs, removing the doors, putting DW last in the rail and moving the ticker to the close brings the page to about 12.4 screens with one job per screen. None of this reverses the rail or the pin Jake loves.",
+   "problems": [
+    {
+     "where": "\u00a702c tiles (y 5574, h 426) and voices (y 9069\u201310400)",
+     "problem": "The same three testimonials appear twice, word for word (lib/quotes.ts). The tiles show all three at once, which breaks one-at-a-time. The voices then repeat them one by one, 3,500px later. Both sets are de-named placeholders, so the second pass adds no new evidence.",
+     "severity": "high",
+     "evidence": "y 5000/5300 frames: tiles 'They moved decades of history\u2026', 'The site does the selling for us now\u2026', 'Fast, clean, and it just works on a phone\u2026'. y 9500/9900 frames: the same sentences at 38px in the voices cards."
+    },
+    {
+     "where": "runs (y 10102\u201312964, h 2862) after the work rail (y 6261\u20138961)",
+     "problem": "This is a second pinned horizontal rail and the page's largest slice (20%, bigger than the work's 2700). It sits at 71\u201391% of the page. That breaks Lando law 6 (no pins in the back 43%) and law 10 (switch axis once and give that switch the biggest budget). At rest it shows three step cards at once, so the eye has to choose. It also creates the page's deadest frame.",
+     "severity": "high",
+     "evidence": "y 10600: '01 The call / 02 The design / 03 The build' all on screen. y 10250: an empty frame holding only a dim, low-contrast '01 The call \u00b7 Day 1' lead card. Phone 390\u00d7844, y 4500: the runs head ('HOW IT RUNS / Four steps from the first call to a site that earns. / Fixed quote up front\u2026') is drawn at full opacity ON TOP of the voices quote card ('The site does the selling\u2026'), text over text."
+    },
+    {
+     "where": "film (y 600) \u2192 services 1\u20133 (y 2467\u20135167) \u2192 work card 1 (y 6000\u20136600)",
+     "problem": "Desert Wings is the subject of the film, all three services cards and the first proof card, so five DW beats come before any second client. The 'WHERE PILOTS ARE BORN' hero screenshot appears as services card 1 (y 2400) and again as rail card 1 (y 6000). The step-5 hover on the Websites card swaps in live/dw-hero.jpg, the rail's own DW cover. The proof opens on something the visitor has just seen, so it reads as a replay rather than new evidence.",
+     "severity": "high",
+     "evidence": "Sheet 1: y 2400 DW laptop + phone 'WHERE PILOTS ARE BORN'; y 3600 DW chat 'Yes \u2014 Saturday morning'; y 4200 DW Google ad; y 6000 rail card 1 'WHERE PILOTS ARE BORN' again; y 600 the film's laptop with the N9487K plane."
+    },
+    {
+     "where": "\u00a702b + doors + tiles + proof head (y 4700\u20136100)",
+     "problem": "No screen in this stretch has one job, and it is the stretch Jake is 'not the biggest fan' of. The four doors ('See the work \u2192 What we build \u2192 See your price \u2192 Book the call \u2192') say the same thing as the nav pill (Work \u00b7 Services \u00b7 Pricing \u00b7 Book the call), which is on screen at the same moment. 'See the work' points at the very next section. 'What we build' points at the section that just ended.",
+     "severity": "high",
+     "evidence": "y 5000: the 43px sentence + 4 doors + 3 tiles + the nav pill in one frame. y 5300: doors + tiles + the 432px 'Proof' scrawl, parts of three sections in one frame. Phone y 1800: the Ads card + the 2b sentence + doors + the top of a tile."
+    },
+    {
+     "where": "hero film \u2192 audience ticker \u2192 \u00a702a poster (y 600\u20132467)",
+     "problem": "Three big-type beats run back to back: the title at 131, the ticker's two rows at 92, the poster at 138. They share frames. The ticker's first word, 'Owner-run businesses', is the poster's last line, so the ticker and the poster say the same thing in the same viewport. Under the film, the ticker adds a second moving thing beside the moving film.",
+     "severity": "medium",
+     "evidence": "y 650: video covers 74% of the frame + both ticker rows running. y 1350: ticker rows (92px) + five corner facts (Mesa / Building for anyone / Phoenix clock / Replies within the hour / One build at a time) + poster (138px) rising, three type layers. y 2000: the poster's tail 'owner-run businesses.' + services card 1 rising, two focal points."
+    },
+    {
+     "where": "work rail, hcard (y 6261\u20138961)",
+     "problem": "The centred card is 1060 of 1440 wide, so the neighbours show about 140px slivers on each side, and the slivers carry the loudest colour in the frame. Between windows, no card is centred at all. That works against 'just with the card'.",
+     "severity": "medium",
+     "evidence": "y 7200: AAHG centred, while the Riled Up neon-yellow 'BEAT.' sliver on the right and AAHG's orange Donate button are the brightest marks in the frame. y 6600: DW cropped at the left edge and AAHG off-centre right, so there is no single card to look at."
+    },
+    {
+     "where": "voices (y 9069\u201310400)",
+     "problem": "After the clean head frame, two quotes share the screen: one fading above, one carded below. The section then dims into the runs conversion, not a clean ending.",
+     "severity": "medium",
+     "evidence": "y 9500: 'They moved decades\u2026' (plain, fading) above the 'The site does the selling\u2026' card. y 9900: quote 2 + quote 3 together. y 10250: near-empty."
+    },
+    {
+     "where": "objections + close (y 12964\u201314311)",
+     "problem": "The last 1.5 screens hold three separate ask/entry points: the nav's Ask, the objections' 'Ask anything about the work' input, and the close's 'Already have a site? Put the address in \u2192 Run the check' input. The close also carries the statement, the inline Book the call pill, three link columns, the clock and the wordmark. The close's one job (book the call) competes with a second conversion form.",
+     "severity": "low",
+     "evidence": "y 13100: the objections card (4 chips + input) and the close statement in one frame; that recede is the accepted Off+Brand seam. y 13411: statement + pill + SITE/REACH/OFFICE columns + address input + 'Run the check' + the 115px wordmark."
+    },
+    {
+     "where": "whole page",
+     "problem": "The length does not match the content. 15.9 screens (desktop) and 10.3 (phone) carry about seven ideas: who, what, see it, the deal, proof, what clients say, and FAQ + close. Roughly 3,300px (the tiles 426 + the runs 2862) restate ideas already on the page. Services and work are the same form: three 16:10 cards, one at a time, an info pill, 2700px each, 833px apart. Jake chose that on purpose ('one system'), so only the repeated DW content makes the two read as one beat twice.",
+     "severity": "medium",
+     "evidence": "map.json: services 2700, work 2700, runs 2862, pins total 9,162 of 14,311. Phone H 8,673."
+    }
+   ],
+   "changes": [
+    {
+     "change": "1 \u00b7 Cut the tiles: add `noc` (the token already exists) to the trial link.",
+     "why": "This removes the exact duplicate testimonial moment, the one beat that shows three things at once, and two of the three crowded frames in the y 4700\u20136100 stretch. The voices become the page's only testimony, and they are the one-at-a-time version.",
+     "how": "`?v=answer+survey+aud+hold+roll+inuse+one+hcard+noc`. Nothing to build. VoicesTiles no longer renders, and VoicesSection is unchanged.",
+     "conflicts": "None in decisions.md: `noc` was built on 2026-09-21 as 'built to be looked at; neither decided'. The 09-21 nopill entry parked 'the rating in the tiles until Jake places it elsewhere'. The real Google rating is still owed, but it would need a new home."
+    },
+    {
+     "change": "2 \u00b7 Take runs off the homepage (`?v=noruns`). Voices go straight to the objections.",
+     "why": "This removes the second axis switch and the page's largest slice, and it leaves no pin in the back of the page (Lando laws 6 and 10). It also removes the three-cards-at-once frame (y 10600), the dead frame (y 10250) and the phone text-on-text collision (y 4500). The process is already stated in one line in 2b ('a fixed quote in two days\u2026'), and the objections answer 'how does this work'. The page drops about 2,860px, from 15.9 to roughly 12.7 screens.",
+     "how": "Don't render RunsSection on the homepage; it stays for /services. The voices' third quote no longer converts into the runs lead card and ends as a plain card that releases into the objections' white card. If a timeline answer is wanted, add a 'How long does it take?' chip to the objections.",
+     "conflicts": "lando-ground-plan.md step 10 calls this 'the 2026-09-20 call', but decisions.md has no such entry. The nearest is 30ac61c (09-19, 'process+objections off the homepage'), and both are rendered again now, so confirm with Jake. It also retires the 09-08 lead-card seam ('i want the title card to become full size and stick and horizontal scroll'), which was his call."
+    },
+    {
+     "change": "3 \u00b7 Reorder the rail so Desert Wings comes last: AAHG \u2192 Riled Up \u2192 Desert Wings (`?v=dwlast`).",
+     "why": "By the rail, the visitor has watched DW's story four times (the film and the three services cards). The proof has to open on a new face. With DW last, the rail ends on the payoff: 'the one you just watched book Saturday'. It also moves the repeated 'WHERE PILOTS ARE BORN' screenshot from 3,600px after its first showing to about 5,400px. This is the smallest trial that fixes the biggest content repeat.",
+     "how": "Change the case order used by WorkSection's hcard branch. The pills (Year / Niche / Built) move with their cards. Optional: point the Websites card's `inuse` hover at a different DW page than live/dw-hero.jpg, since that is the rail's DW cover.",
+     "conflicts": "Nothing recorded against it. There is a precedent: the `paper` commit 0e0a2ec ordered 'the two dark cases leading and Desert Wings arriving in the light'. The 09-06 'one client's story end to end' for services is untouched."
+    },
+    {
+     "change": "4 \u00b7 \u00a702b stands alone: one centred sentence on its own screen, no doors (`?v=solo`).",
+     "why": "This gives the 'not the biggest fan' stretch one job per screen: poster \u2192 see it (services) \u2192 the deal (this sentence) \u2192 Proof. The doors are the nav printed a second time while the nav is on screen. Cutting them removes four of the eight targets in the y 5000 frame, and the sentence ('Built by the person you talk to. A fixed quote in two days, a price that never moves\u2026') is the page's only statement of the deal, so it earns a screen of its own.",
+     "how": "Render OfferMore with an empty door list. Give the section a min-height of about 100svh with the sentence centred at the 43 rung (as in `answer`), keeping the existing sweep, and hand off to the Proof head on a clean edge: the head's scrawl enters only after the sentence has left the reading zone (Lando law 3: a room arrives by its edge).",
+     "conflicts": "2026-09-21 nopill says 'the price door lives in \u00a702b's doors and /pricing', so this removes the homepage's only price door. The nav's Pricing link and the objections' 'What does a website cost?' chip cover it, but this is Jake's call."
+    },
+    {
+     "change": "5 \u00b7 Move the audience ticker from the film\u2192poster seam to the close's bottom edge (`?v=audend`).",
+     "why": "This leaves the film as the only moving thing in its frame (y 650) and the poster as the only type in its frame (y 1350). It also stops the ticker and the poster saying 'owner-run businesses' in the same viewport, and turns three big-type beats in a row into two. It is also the lando-ground-plan's own second strip placement (Lando's footer strip), so the ticker still runs, just somewhere nothing else is being read.",
+     "how": "Render the Ticker inside close-section above the util row, not inside .dr-say-stage. Take care with the `flat` geometry, which keys on `.dr-hero-wrap + .dr-say-stage`; removing the child is safe. Keep `hold`: the poster still states the persona's audience or 'owner-run businesses.' and holds, the way Lando's statement does.",
+     "conflicts": "Jake approved seeing step 2 in this position ('keep the hills, go to step 2'). The `hold` entry partly justified itself by the ticker 'above' carrying the six words; Lando's own statement holds anyway. His call."
+    },
+    {
+     "change": "6 \u00b7 Dim the rail's neighbours (`?v=hlit`) so only the centred card is lit.",
+     "why": "'i wanted our horizontal scroll for works just with the card.' Right now the neighbour slivers carry the loudest colours in the frame (Riled Up's neon 'BEAT.', AAHG's orange Donate) and pull the glance off the centred cover. The page should decide where the eye goes.",
+     "how": "Make opacity a pure function of each card's distance from the rail's centre, from 1 at the centre down to about .35 one pitch away. Ink-mix, no transition, reusing \u00a702's accepted raised-cosine 'lens' (--spot, rows dim to .5). No scale and no snap. The pill rides its card, so it dims with it.",
+     "conflicts": "2026-09-20 'the rail is continuous and flat \u2014 steps, snap and depth squash off'. A dim is not a squash or a step, but it is the same family of effect, so this is his call."
+    },
+    {
+     "change": "7 \u00b7 Voices: one quote per screen, or one quote only until real permissioned quotes arrive.",
+     "why": "With the tiles cut, the voices carry all the testimony. At y 9500 and y 9900 two quotes still share the screen. Three de-named placeholders read weaker than one; the strongest line for this business is 'The site does the selling for us now\u2026'. The voices are also the still beat after the loud rail (Lando law 7).",
+     "how": "Either deal each quote over the last on the same sticky stack the services and `stack` use (one system, one screen each), or keep the head 'They didn't want a website. They wanted the phone to ring.' plus one card, then release into the objections.",
+     "conflicts": "Linked to change 2: the 09-08 voices\u2192runs lead-card seam goes away with runs."
+    },
+    {
+     "change": "8 \u00b7 Give the close one job: move 'Already have a site? Put the address in / Run the check' into the objections card, beside 'Can you redesign my existing site?'.",
+     "why": "The close should be the statement, Book the call, and quiet wayfinding. Right now it holds a second conversion form, and there are three entry fields (nav Ask, objections Ask, close address) in the last 1.5 screens.",
+     "how": "Move the site-check form into objections-section under the chips. The close keeps the statement + pill + SITE/REACH/OFFICE + clock + wordmark, and gains the ticker from change 5.",
+     "conflicts": "No entry found in decisions.md for the site-check's placement."
+    },
+    {
+     "change": "9 \u00b7 (Bigger, optional) Fold the poster into the services stack: the poster pins, and each line lights in turn as its card is dealt.",
+     "why": "This removes the say-it-then-say-it-again pattern: the poster names Websites / Automation / Ads, then three pills rename them. It also removes one of the two back-to-back pinned rooms (900 + 2700) and gives one pinned room where the word and its deliverable are one beat.",
+     "how": "The poster holds, and the active word goes to full ink while the other two drop to .35, driven by the stack's own --st. The card rises beneath, the photograph stays still, and the pill drops its title word. About 2,700px total instead of 3,600.",
+     "conflicts": "Jake: 'i like the first two sections hero and 2a', and 2a is currently its own held screen. This changes 2a, so rank it last and treat it as his call."
+    }
+   ],
+   "proposedOrder": [
+    "1 \u00b7 Hero: the title and the film, nothing else in the frame; the film is the one moving thing (y 0\u20131320)",
+    "2 \u00b7 \u00a702a: the held poster 'Websites / Automation / Ads for owner-run businesses.', with the ticker moved out and the corner facts kept small (one pinned screen)",
+    "3 \u00b7 Services one at a time: Websites / Automation / Ads, Desert Wings' story end to end, one card per screen on the sticky stack",
+    "4 \u00b7 \u00a702b: one centred sentence ('Built by the person you talk to. A fixed quote in two days\u2026'), alone on its own screen, no doors",
+    "5 \u00b7 Proof head: 'Proof / The sites we built.', arriving by its edge on an empty ground",
+    "6 \u00b7 The work: the pinned horizontal rail, one lit card per window, AAHG \u2192 Riled Up \u2192 Desert Wings, the info pill on each, neighbours dimmed",
+    "7 \u00b7 Voices: 'They didn't want a website. They wanted the phone to ring.', then one quote per screen (the still beat after the loud rail)",
+    "8 \u00b7 Objections: the white card with the four questions, the ask field and the site check, receding",
+    "9 \u00b7 Close: the statement and Book the call, links / clock / wordmark, the audience ticker running along the bottom edge (about 12.4 screens in total, with no pin in the last quarter)"
+   ]
+  },
+  {
+   "lens": "The buyer's story and conversion. The visitor is an owner-run business (flight school, coach, clinic, contractor) who arrives from an ad. They need, in order: what is this, is it for me, show me it works, who is behind it, what does it cost, how does it go, how do I start.",
+   "verdict": "The first three screens do their job. The hero title and film say what this is (y 0). The audience ticker (y 1320) and the \u00a702a poster holding the persona's word (y 1567) say who it's for, and Jake likes all three, so they stay. After that the story falls apart.\n\n**Questions the page never answers:**\n- **Who.** The rendered page never names Jake and never shows his face. \"Built by the person you talk to.\" is a 43px clause at y ~5200.\n- **Cost.** There is no price anywhere. \"See your price \u2192\" is one of four equal ~13px text links at y 5420. \"What does a website cost?\" is an accordion at y 13370, 93% of the way down. The numbers are already written in lib/services.ts and never rendered: \"From $2.5k \u00b7 fixed quote in 2 days\", \"Quoted per project \u00b7 no retainer\", \"$500/mo + your ad spend \u00b7 no lock-in\".\n\n**Questions answered too much or too early:**\n- **Proof is split into four places.** Services are three Desert Wings photos (y 2467). Placeholder tiles follow (y 5574), then the rail (y 6261), then voices (y 9069), which repeats the same three placeholder quotes word for word; the third reappears inside runs (y 10102).\n- **\"How it goes\" gets 2,862px.** It is a second pinned sideways rail (runs), plus a 693px FAQ. Jake already decided on 09-19 to take both off the homepage; it hasn't been done.\n- **The asks come too early and then stop.** \u00a702b asks \"Book the call\" before any proof and splits the eye four ways. After the rail ends (y 8961) there is no door in the page for 4,800px (5.3 screens), until the close at y 13800.\n\n**The fix is mostly subtraction plus two new jobs:**\n- the price rides each service card's pill\n- one \"who\" screen after the proof carries Jake, the how-it-goes line and one estimator door\n- the tiles, \u00a702b's four-link row, runs and objections come out\n\nEvery answer then lands one screen at a time in the buyer's order. The page drops from 14,311 to about 10,500px at 1440, and the pinned sideways work rail stays exactly as Jake asked for it.",
+   "problems": [
+    {
+     "where": "Whole page. \u00a702b (.dr-more, y 5167) is the only mention",
+     "problem": "WHO is missing: the page has no face and no name. The only thing EAS has that an agency doesn't is \"the person you talk to\", and the page states it once, as a clause, before any proof, with no photograph and no name.",
+     "severity": "high",
+     "evidence": "The rendered text of all 12 sections contains \"Jake\" 0 times. The sentence \"Built by the person you talk to.\" sits in .dr-more (frame y 4800). decisions 2026-09-08 ABOUT says the beat \"cannot ship\" without a real photograph. decisions 2026-09-18 COPY says \"the About photo and the Google rating remain the trust gaps no copy can cover\". lando-ground-plan says \"Lando's face = Jake \u2026 no photo of him exists (the about beat is owed)\"."
+    },
+    {
+     "where": "Whole page. The only paths to a price are the \u00a702b text link (y 5420) and the FAQ accordion (y 13370)",
+     "problem": "COST is never stated. An owner from an ad asks price first (it is FAQ #1 and the Ask chat's first suggestion), and the page shows no number anywhere. The estimator door is one of four identical small text links, and the written answer is hidden in an accordion at 93% of the page.",
+     "severity": "high",
+     "evidence": "The prices are already written and never rendered on the homepage: lib/services.ts heroPrice gives \"From $2.5k \u00b7 fixed quote in 2 days\", \"Quoted per project \u00b7 no retainer\" and \"$500/mo + your ad spend \u00b7 no lock-in\". The 2026-09-21 nopill decision moved the price door off the hero into \u00a702b's doors, the section Jake is lukewarm on. In frame y 4800 the four links are about 13px next to a 138px poster two screens earlier."
+    },
+    {
+     "where": ".dr-tiles (y 5574\u20136000) and .dr-voices / .dr-runs (y 9069\u201310400)",
+     "problem": "The same three quotes appear twice, and all three are placeholders. A quote wall before the work reads as testimonials before evidence. The repeat 3,500px later tells an attentive buyer the list is short, the thing decision 105 warned about for a three-name marquee.",
+     "severity": "high",
+     "evidence": "The DOM text is identical: \"They moved decades of history off a clunky old platform\u2026\", \"The site does the selling for us now\u2026\" and \"Fast, clean, and it just works on a phone\u2026\" appear in .dr-tiles, then again in .dr-voices and .dr-runs (frames y 5400, 9600, 10200). decisions 2026-09-07 marks lib/quotes.ts \"\u26a0 BLOCKED FROM SHIPPING: PLACEHOLDER quotes\". On a phone the tiles stack to 833px, nearly a full screen before the work."
+    },
+    {
+     "where": "\u00a702b .dr-more (y 5167\u20135574)",
+     "problem": "It asks before it shows. There are four equal doors at y 5420: \"See the work \u2192 / What we build \u2192 / See your price \u2192 / Book the call \u2192\". Two of them point at content on this same page (the work is 900px below, the services just scrolled past). Four equal choices is the \"decide where to look\" moment Jake has banned, and it sits in the stretch he's \"not the biggest fan\" of.",
+     "severity": "medium",
+     "evidence": "Link dump: all four at y 5420, same size. On the phone they are 24px-tall text links (under a 44px touch target). The 2026-09-22 \u00a702a\u00d7\u00a702b entry records the two sections clashing. The `answer` token restyles the clash but doesn't change what the section asks."
+    },
+    {
+     "where": "y 8961 (rail release) \u2192 y 13800 (close pill)",
+     "problem": "There is no door after the proof. The page's strongest persuasion moment, the rail, is followed by 4,800px (5.3 screens) of quotes, a process rail and an FAQ with no in-page action. Only the nav pill carries \"Book the call\".",
+     "severity": "medium",
+     "evidence": "Visible /contact or /pricing links sit only at y 5420 (\u00a702b) and y 13768\u201313800 (close). Frames y 9000\u201312600 hold no action."
+    },
+    {
+     "where": ".dr-runs (y 10102\u201312964) + .dr-obj (y 12964\u201313657)",
+     "problem": "The back quarter re-tells how it goes. 3,555px (25% of the page) go to a second pinned horizontal rail of four steps and a four-question FAQ. Their content fits in one line (call, then a fixed quote in two days, then yours the day it ships) plus the service prices.",
+     "severity": "medium",
+     "evidence": "decisions 2026-09-19 THE CONVERGENCE says \"THE PROCESS AND THE OBJECTIONS LEAVE THE HOMEPAGE\". state.md says \"decided, not done\". lando-ground-plan step 10 is \"runs off the homepage\". Lando law 6/10: one axis switch, 0 pins in the back 43%. Runs is the second sideways rail, at 71\u201390% of the page."
+    },
+    {
+     "where": "The rail pill (Year / Niche / Built) and the voices headline",
+     "problem": "The proof shows craft, not outcome. The page's best buyer line, \"They didn't want a website. They wanted the phone to ring.\" (y 9000), is followed by no case that shows the phone ringing. The receipts that exist are not on the page.",
+     "severity": "low",
+     "evidence": "The pill text is \"YEAR 2026 NICHE Aviation BUILT Website \u00b7 Ads \u00b7 SEO\". lib/proof.ts RECEIPTS holds $0/mo platform fees (AAHG, Wix gone), 2 days to a fixed quote and 60 s to a price, and none of them render."
+    },
+    {
+     "where": "The first 6,000px",
+     "problem": "Desert Wings is the only client a coach, clinic or contractor sees for six screens: the film, all three service photos, the DW avatar in the tiles and the first rail card. \"Is it for me\" is said by the ticker and then contradicted by the pictures.",
+     "severity": "low",
+     "evidence": "The images list shows services/websites.jpg, follow-up.jpg and ad.jpg (all DW) and desert-wings-logo in the tiles at y 5602. The lando-ground-plan says \"the page's accidental motif is a client's product\". The persona reorder (rail leads with the case the ad named) is designed, not built (state.md NEXT 6)."
+    },
+    {
+     "where": ".dr-close (y 13657)",
+     "problem": "The close works but buries its gentlest door. \"Already have a site? Put the address in. Run the check\" is a no-call, low-commitment action for the owner who already has a site, and it sits in footer-size type at y 14030. The conversion headline's text also runs words together.",
+     "severity": "low",
+     "evidence": "The close h2's textContent is \"How abouta site that booksfor you, Book the call\u2192while you work.\" Sheet frame y 13200 shows it rendered that way mid-rise, and it reads correctly at rest (y 13800)."
+    }
+   ],
+   "changes": [
+    {
+     "change": "1 \u00b7 `?v=price`: each service card's pill carries its price.",
+     "why": "It answers COST in the flow, one card at a time, 2.7 screens in instead of never. It uses copy that already exists. Price transparency is the calm, non-hype close that decisions 09-18 asks for (\"the booking needs four plain answers: what, how much, how long, who\"). It also gives the services, which Jake half-likes (\"maybe it's just the effects\"), a job nothing else on the page does. Jake's own Convergence (09-19, item 6) planned the service cards with \"one line + the price at 43\".",
+     "how": "offer-show.tsx under `one`: the pill becomes [word] \u00b7 [heroPrice from lib/services.ts] \u00b7 See the service \u2192.\n- Websites: \"From $2.5k \u00b7 fixed quote in 2 days\"\n- Automation: \"Quoted per project \u00b7 no retainer\"\n- Ads: \"$500/mo + your ad spend \u00b7 no lock-in\"\n\nThe price takes the slot of the current one-liner. \"Yours the day it ships\" moves to the who screen (change 3). On the phone the pill keeps word + price and drops the link text to the arrow. Nothing else moves; the photos stay still.",
+     "conflicts": "None found in decisions.md. The retainer and lock-in phrases answer two of the four FAQ questions early."
+    },
+    {
+     "change": "2 \u00b7 `?v=noc` plus one quote: cut the tiles (\u00a702c). Voices keeps its headline and at most ONE quote, with a real name linked to its case.",
+     "why": "This removes the verbatim duplication and a whole screen (833px on phone) of placeholder quotes that sits before the evidence. It also shortens the stretch between the statement and the proof that Jake dislikes. \"They didn't want a website. They wanted the phone to ring.\" becomes the one-screen beat right after the rail. That keeps Lando law 7 (loud rail \u2192 still line), and the quote now follows the cases it vouches for.",
+     "how": "Default `noc` (already built, 2026-09-21). In voices-section.tsx render the headline and one quote from lib/quotes.ts, attributed to the case (e.g. \"Owner, Desert Wings Flight School\" \u2192 /work/desert-wings). Until Jake supplies a real named quote, render the headline alone. Voices no longer converts into runs (see change 4), so it ends on its own hold.",
+     "conflicts": "Real, permissioned quotes are owed by Jake. The placeholders are already blocked from production (decisions 2026-09-07). The voices\u2192runs conversion card (2026-09-08) retires with runs."
+    },
+    {
+     "change": "3 \u00b7 `?v=who` (with `nob`): replace \u00a702b with a WHO screen after the voices. Jake's photo, his name, one line of how it goes, and ONE door.",
+     "why": "It answers WHO, HOW and \"what does it cost for me\" in one still screen, right where the buyer has seen the proof and is deciding whether to call. It turns EAS's only differentiator from a claim into a face. It swaps four equal pre-proof links for one door at the moment of intent, the low-commitment one (the estimator: sixty seconds, no email). That keeps the call as the close's job. This is Lando's face-equals-Jake from the ground plan, and item 5 of Jake's own Convergence (\"Built by the person you talk to.\" after the work).",
+     "how": "A new section between voices and close, one screen, in flow and not pinned (Lando law 6 keeps the back half free of pins).\n- Left: the photo, a still portrait, with nothing moving beside the copy.\n- Right, at the 57 rung: \"Built by the person you talk to.\"\n- Under it, at 19: \"Jake Ryall \u00b7 Mesa, Arizona\".\n- At 43: \"Twenty minutes on a call. A fixed quote in two days. Yours the day it ships.\"\n- One cyan pill: \"See your price\" \u2192 /pricing#estimate, with the `roll` hover.\n\n\u00a702b's y 5167 slot is removed (`nob`, already built). On the phone it's a single column with the photo first. The trial uses a grey placeholder, which cannot ship.",
+     "conflicts": "JAKE'S CALL:\n- \u00a702b's `answer` restyle and its scrubbed sweep were approved vocabulary.\n- Since `nopill` (2026-09-21), \u00a702b's doors are the price door's home; this moves that home.\n- The photograph is owed (decisions 2026-09-08 ABOUT).\n\nThe \u00a702a corners (Mesa \u00b7 Replies within the hour \u00b7 One build at a time) stay untouched; Jake likes 2a."
+    },
+    {
+     "change": "4 \u00b7 `?v=norun+noobj`: take runs and objections off the homepage. Their answers are already covered by changes 1 and 3.",
+     "why": "It removes 3,555px of re-telling and the second horizontal pin, 25% of the page. Nothing a buyer needs is lost:\n- cost and retainer \u2192 the service pills\n- ownership and how it goes \u2192 the who line\n- \"Something else?\" \u2192 the nav's Ask, whose first suggestion is already \"What does a website cost?\"\n\nThe page ends with the proof, the person, the door and the close, with no second sideways mode in the back third (Lando laws 6 and 10).",
+     "how": "Unmount runs-section.tsx and objections-section.tsx under the token. The close's sub-line keeps \"Twenty minutes. A fixed quote within two days.\" The process and the FAQ stay whole on /services and /pricing.",
+     "conflicts": "This carries out Jake's own decision (2026-09-19 THE CONVERGENCE, and lando-ground-plan step 10); it reverses nothing. Note: the field's per-section ink table (survey) loses two rows, so the close's ink should be re-checked at the new seam."
+    },
+    {
+     "change": "5 \u00b7 The close: one primary and one quiet door, and the headline's text fixed.",
+     "why": "The close is where \"how do I start\" gets answered. The primary stays \"Book the call\" in the sentence. The owner who isn't ready for a call but already has a site gets the no-call path (\"Run the check\"), which currently sits in footer type below the fold of the close.",
+     "how": "close-section.tsx: move \"Already have a site? Put the address in. [Run the check]\" up to sit under the statement's sub-line, at the 19 rung, as the one secondary action. Show the NEXT_START capacity line when Jake sets it. Give the split lines of the h2 real spaces (or an aria-label), so textContent reads \"How about a site that books for you, Book the call, while you work.\"",
+     "conflicts": "None. NEXT_START is still null, and Jake has to keep it true."
+    },
+    {
+     "change": "6 \u00b7 Persona leads the pictures: with `?i=`, the rail opens on the matching case, and one service photo per persona where an honest one exists.",
+     "why": "\"Is it for me\" is said by the ticker and the held word, then contradicted by an airplane in five places before y 6000. A coach from a pickleball ad should see Riled Up first. This is page-wide personalisation Jake asked for (\"maybe we can add personalization throughout the site too\").",
+     "how": "work-section.tsx under `hcard`: reorder the three cards by lib/persona.ts, using the same loose matching `hold` already uses (coach \u2192 Riled Up, nonprofit \u2192 AAHG, flight \u2192 Desert Wings). With no persona the order is unchanged.",
+     "conflicts": "None. It is state.md NEXT item 6, designed but not built. Service photos for other niches don't exist, so only the rail reorders for now."
+    },
+    {
+     "change": "7 \u00b7 An outcome in the rail pill, where an honest one exists.",
+     "why": "\"Show me it works\" means results, not the year built. The receipts already on the record make the rail answer the voices headline's promise.",
+     "how": "The hcard pill gains a fourth slot, \"Result\", from lib/proof.ts RECEIPTS, only where one exists: AAHG \"$0/mo platform fees\". DW's \"1,000+ page views\" is too weak until the real GA or form count arrives. With no receipt, no slot. It must fit `width: max-content` at 1440 and drop on the phone.",
+     "conflicts": "The pill's content was just settled in `hcard` (Year / Niche / Built, Cosmos's), so this is Jake's call. The receipts need Jake's real numbers (proof.ts \u26a0)."
+    },
+    {
+     "change": "8 \u00b7 Alternative (Jake's call, lower rank): `?v=railup` puts the work rail directly after \u00a702a, and the priced services after it.",
+     "why": "This is Lando's own adjacency (statement \u2192 horizontal track, law 10). It deletes the disliked stretch between statement and proof outright and puts the evidence at about 1.7 screens.",
+     "how": "Swap the order of .dr-show--one and .dr-work-head/.dr-work-stage in hero-room.tsx. Nothing else changes.",
+     "conflicts": "It puts the services' pinned deal into the back half, against Lando law 6. Desert Wings then shows back to back (rail card 1, then three DW service photos). The `one` commit's aim was for services and proof to move as one system, and this reorders it. Recommended only if change 1 still leaves the services feeling like a delay before the proof."
+    }
+   ],
+   "proposedOrder": [
+    "1 \u00b7 Hero: the title \"We build the site. You get on with the business.\" + the film. Answers: what is this.",
+    "2 \u00b7 Audience ticker, six audiences in two rows. Answers: is it for me (ambient, no words that move inside a sentence).",
+    "3 \u00b7 \u00a702a statement, one screen pinned: \"Websites / Automation / Ads for [the persona's word]\" held. Answers: what + for me.",
+    "4 \u00b7 Services one at a time (sticky stack), each pill with its price: From $2.5k \u00b7 Quoted per project, no retainer \u00b7 $500/mo, no lock-in. Answers: what you get + what it costs.",
+    "5 \u00b7 \"Proof / The sites we built.\" + the pinned horizontal rail, one big card per case, pill Year / Niche / Built (persona-ordered). Answers: show me it works.",
+    "6 \u00b7 Voices, one still screen: \"They didn't want a website. They wanted the phone to ring.\" + one real named quote linked to its case. Answers: it works, in their words.",
+    "7 \u00b7 Who, one screen in flow: Jake's photo + \"Built by the person you talk to.\" + name, Mesa + \"Twenty minutes on a call. A fixed quote in two days. Yours the day it ships.\" + ONE door: See your price. Answers: who, how it goes, cost for you.",
+    "8 \u00b7 Close: \"How about a site that books for you, [Book the call] while you work.\" + Run the check as the quiet second door + links, clock, wordmark. Answers: how do I start.",
+    "Cut from the homepage: \u00a702b's four-link row (it becomes 7), the testimonial tiles (\u00a702c), runs (the process rail), objections (the FAQ). The page goes from 14,311px to about 10,500px at 1440."
+   ]
+  }
+ ],
+ "synth": {
+  "headline": "Keep the top half (hero, ticker, held poster, services one at a time) and the new card rail as the page's only sideways room. Cut the two repeats: the quote tiles and the runs rail. Move the \"Built by the person you talk to\" promise below the proof, with one price door. About 3,300px comes off and the stretch Jake dislikes goes away.",
+  "agreed": [
+   "The hero (title + film), the held \u00a702a poster, the services one at a time and the new hcard rail all work. The rail stays pinned, sideways and one card per case, which is exactly Jake's ask ('our horizontal scroll for works just with the card').",
+   "The testimonial tiles (\u00a702c) repeat the voices' three quotes word for word, 3,500px apart. They are also the one frame that shows three things at once (y 5000\u20135450). All three reviewers cut them (`noc`, already built).",
+   "The runs rail is a second pinned sideways scroll at 71\u201391% of the page. It makes the work rail no longer the special one, gives the page two axis switches (Lando has one) and puts a pin in the back of the page. All three take it off the homepage. That carries out Jake's own 2026-09-19 call ('the process \u2026 leave the homepage'), logged as decided but never done.",
+   "The statement \u2192 proof stretch (\u00a702b + four doors + tiles, y 4700\u20136100) is where one-focal-per-screen breaks. It is three still seams in a row, and the four doors repeat the nav pill while the nav is on screen.",
+   "Desert Wings is over-shown before the proof: the film, all three service photos, then rail card 1 opens on the same 'WHERE PILOTS ARE BORN' screen as service card 1. The proof reads as a replay.",
+   "The voices should be one quote at a time after the rail. Today two quotes share the screen at y 9500 and 9900, and all three quotes are placeholders that are blocked from shipping.",
+   "The page is too long and too pinned: 15.9 screens, 64\u201367% under a pin or sticky, against Lando's 32%. Cutting the tiles and runs alone takes ~3,300px off.",
+   "The ending is weak. Nothing moves at rest in the back third (\u22640.13% at every census stop after y 1800), and the close carries a second form competing with 'Book the call'."
+  ],
+  "ranked": [
+   {
+    "rank": 1,
+    "change": "Cut the testimonial tiles (\u00a702c). The voices become the page's only testimony.",
+    "why": "Removes the verbatim duplicate and the only three-focal frame on the page. It also takes the first of three still seams out of the stretch Jake dislikes. All three reviewers rank it high.",
+    "token": "noc",
+    "effort": "S (built 09-21, add to the link)",
+    "jakesCall": false
+   },
+   {
+    "rank": 2,
+    "change": "Take the runs rail off the homepage. The hcard work rail becomes the ONE pinned sideways room. The four steps move to /services as one still row.",
+    "why": "One axis switch, given the biggest budget (Lando laws 6 and 10). Measured effect: the page goes 14,311 \u2192 ~11,000px, the sideways share goes 39% \u2192 ~24% (Lando 23.1%), sticky elements go 5 \u2192 4, and nothing is pinned after the rail. It also removes the three-cards-at-once frame (y 10600), the dead frame (y 10250) and the phone text-on-text collision (runs head over a voices quote). This carries out Jake's 09-19 call; the 09-08 voices\u2192runs lead-card hand-off retires with it, so the voices end on their own.",
+    "token": "noruns",
+    "effort": "S (hero-room.tsx: render RunsSection only when !has('noruns'))",
+    "jakesCall": false
+   },
+   {
+    "rank": 3,
+    "change": "Move the promise after the proof. \u00a702b ('Built by the person you talk to. A fixed quote in two days\u2026') moves below the voices, in `answer`'s centred grammar, and its four doors become ONE: 'See your price \u2192'.",
+    "why": "The last service card then hands straight to the Proof head (measured under noc+apart: the rail starts at 5428 instead of 6261), so statement \u2192 services \u2192 proof runs unbroken and the three whitespace seams in a row drop to zero. The deal lands where a buyer has just seen proof and quotes and is deciding whether to call. The price door keeps the home `nopill` gave it (09-21), and the three doors that repeat the nav go. This merges R1's `apart`, R2's 'no doors' and R3's 'who after the voices'. When Jake's photo exists, a `who` follow-up adds it and his name beside the sentence.",
+    "token": "after",
+    "effort": "S (`apart` already moves it after the rail; move one slot further, doors = [price])",
+    "jakesCall": false
+   },
+   {
+    "rank": 4,
+    "change": "Reorder the rail so Desert Wings comes last: AAHG \u2192 Riled Up \u2192 Desert Wings. When an ad names an audience (?i=), that persona's case leads, using the same loose match `hold` already uses.",
+    "why": "The proof opens on a new face instead of the screenshot service card 1 showed 3,600px earlier. The rail ends on the payoff (the client you just watched book Saturday), and a coach from a pickleball ad sees Riled Up first. There is precedent: the `paper` commit already had Desert Wings arriving last.",
+    "token": "dwlast",
+    "effort": "S (case order in WorkSection's hcard branch; pills ride their cards)",
+    "jakesCall": false
+   },
+   {
+    "rank": 5,
+    "change": "Put each service's price on its pill, from lib/services.ts heroPrice: Websites \u00b7 From $2.5k \u00b7 fixed quote in 2 days / Automation \u00b7 Quoted per project \u00b7 no retainer / Ads \u00b7 $500/mo + your ad spend \u00b7 no lock-in. On the phone the pill keeps the word and the price.",
+    "why": "Today no price appears anywhere on the page. Cost is the buyer's first question (FAQ #1 and the Ask chat's first suggestion), and the only answers sit behind a small text link or an accordion at 93% of the page. This answers it one card at a time with copy that already exists, and it gives the services a job nothing else on the page does. It also covers two of the four objections (retainer, lock-in) early.",
+    "token": "price",
+    "effort": "S (offer-show.tsx under `one`)",
+    "jakesCall": true
+   },
+   {
+    "rank": 6,
+    "change": "Voices one at a time. Keep the head 'They didn't want a website. They wanted the phone to ring.', then one quote per screen in normal flow (no pin), each attributed in the rail's pill (role \u00b7 case \u00b7 See the case \u2192) and in the rail's order. Until real named quotes exist: the head plus one quote.",
+    "why": "Ends the two-quotes-per-screen frames at y 9500 and 9900. It makes the pill the one object carried from services to work to voices, which cuts the card kinds from 6 to 3. It ties each voice back to a card the visitor just saw, and it keeps the back of the page free of pins.",
+    "token": "vone",
+    "effort": "M (voices-section.tsx: swap the bordered card for the rail's pill; spacing one per screen)",
+    "jakesCall": true
+   },
+   {
+    "rank": 7,
+    "change": "The close gets the services strip (lib/proof.ts TICKER on the existing ticker runner) along its bottom edge above the wordmark. The close keeps its statement and inline 'Book the call'. 'Run the check' becomes its one quiet second door, directly under the statement.",
+    "why": "The film has a strip running under it, and the close would too: a bookend that rhymes (Lando law 12). It is also the first thing moving at rest in the back third, where every stop reads \u22640.13% today (Lando's footer strip reads 0.89\u20131.30%). This is ground-plan step 8, the next step of the plan Jake has been approving one at a time.",
+    "token": "svc",
+    "effort": "S (mount the runner in its own band inside .dr-close)",
+    "jakesCall": false
+   }
+  ],
+  "order": [
+   "1 \u00b7 Hero: 'We build the site. You get on with the business.' and the film, the one self-moving picture.",
+   "2 \u00b7 The audience ticker: six audiences in two opposite rows under the film, where Jake approved it.",
+   "3 \u00b7 \u00a702a, held one screen: 'Websites / Automation / Ads for [the persona's word or owner-run businesses].' The words land once and hold.",
+   "4 \u00b7 Services one at a time on the sticky stack: the three deliverable photos, still, each pill carrying its word and its price.",
+   "5 \u00b7 Proof head: the 'Proof' scrawl and 'The sites we built.' on a clean screen, straight after the last service card (no tiles, no doors).",
+   "6 \u00b7 The work: THE one pinned horizontal rail, one 16:10 card per case with the Year / Niche / Built pill, AAHG \u2192 Riled Up \u2192 Desert Wings (the persona's case first when ?i= is set).",
+   "7 \u00b7 Voices: 'They didn't want a website. They wanted the phone to ring.', then one quote per screen with its pill pointing to its case (the still beat after the loud rail).",
+   "8 \u00b7 The promise: 'Built by the person you talk to. A fixed quote in two days\u2026', centred, with one door, 'See your price \u2192'. Jake's photo and name go here when they exist.",
+   "9 \u00b7 Objections: the one white plate (four questions + Ask), entering on its edge and receding the Off+Brand way. Jake's call: his 09-19 decision also takes it off the homepage.",
+   "10 \u00b7 Close: the statement with 'Book the call' inline, 'Run the check' as the quiet second door, the link columns, the clock and the wordmark, with the services strip running along the bottom edge.",
+   "Off the homepage: the testimonial tiles (a duplicate of the voices) and the runs rail (the second sideways scroll; it moves to /services as one still four-step row). Result: ~11,000px at 1440 (~12 screens, down from 15.9), one sideways pin, nothing pinned after the rail."
+  ],
+  "disagreements": [
+   "Where \u00a702b goes. R1 moves it to right after the rail (`apart`, zero build). R2 keeps it before the proof, alone on its own screen with no doors (`solo`). R3 replaces it with a 'who' screen after the voices carrying Jake's photo. The merge takes R3's slot and R1's grammar: after the voices, centred, one door. R2's in-place option leaves the statement\u2192proof stretch Jake dislikes.",
+   "The objections plate. R1 and R2 keep it: the 09-06 Off+Brand recede ending lives on that white card, and R2 would move the site check into it. R3 cuts it (`noobj`), carrying out the 09-19 convergence, because the priced pills and the promise line already answer its four questions. It is kept in the order, flagged as Jake's call.",
+   "The audience ticker. R2 moves it to the close's bottom edge (`audend`) so the film and the poster each have their frame alone and 'owner-run businesses' isn't said twice in one viewport. R1 and R3 keep it under the film, where Jake approved step 2. It is kept there, and the close gets the services strip instead.",
+   "Desert Wings' place. R2 puts DW last in the rail. R3 puts the persona's case first. R1 would lead the voices with the DW quote to follow the rail's old order. The merge is DW last by default with the persona overriding, and the voices follow whatever order the rail has.",
+   "How many quotes. R1 keeps all three, one at a time, in the pill. R3 shows at most one until real named quotes exist. R2 accepts either. The merge: one per screen, and ship with one until real quotes arrive.",
+   "The site check ('Already have a site? Run the check'). R2 moves it into the objections card. R3 lifts it up in the close as the one quiet second door. The merge keeps it in the close (R3), because the objections plate may leave.",
+   "Single-reviewer proposals held out of the 7 because each bends a logged call. R1: `paper` ground flip under the one rail (THE PAGE IS DARK, 09-21, though paper was liked); one text wipe replacing the \u00a702b sweep, voices focus-pull and close fill (`w2b`/`wvoice`/`wclose`, all approved vocabularies); a centred close with the mark writing itself (`sign`, touches 09-06's close); services as one fixed frame (`frame`). R2: dimming the rail's neighbour slivers (`hlit`, against 09-20 'the rail is continuous and flat'); folding the poster into the services stack (against 'i like \u2026 2a'). R3: the rail directly after \u00a702a (`railup`, puts the services' pin in the back half and shows DW back to back); a Result slot in the rail pill (needs real numbers)."
+  ],
+  "forJake": "The top of the page works: the title and film, the audience ticker, the held \"Websites / Automation / Ads\" screen, and the services one at a time. The new work rail works too. One big card per client, each with its pill, sliding sideways while the page holds. All three reviewers want to keep it exactly like that.\n\nThree changes matter most:\n\n1. Cut the three quote tiles. They repeat the same three quotes that show up again further down. They're also the one screen where the eye has three things to choose from.\n\n2. Take the \"how it runs\" rail off the homepage. It's a second sideways scroll, so your work rail stops being the special one. You decided this on 09-19 and it never got done. It moves to the Services page.\n\n3. Move the \"Built by the person you talk to\" sentence below the work and the quotes, and give it one button: See your price. Then the services run straight into your work, and most of the stretch you don't like goes away.\n\nTogether these make the page about a quarter shorter, with one thing to look at on every screen.\n\nWhat only you can give:\n- A photo of you for that sentence. Right now the page never shows your face or your name.\n- Real quotes from real clients, with names and their permission. The current ones are placeholders and can't go live.\n- Your OK to show prices on the service cards. Nothing on the page says what anything costs yet."
+ }
+}
