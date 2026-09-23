@@ -12,6 +12,13 @@ import { Roll } from "@/components/room/nav";
 import { onLenis } from "@/components/anim/lenis-store";
 import WorkGallery from "@/components/dark/work-gallery";
 import WorkStack from "@/components/dark/work-stack";
+import { useState } from "react";
+import { capturePersona, getPersona } from "@/lib/persona";
+import { audienceIndex } from "@/components/dark/services-section";
+
+/* `?v=dwlast` (2026-09-23, layout review #4): the audience word the ad
+   named (services-section.tsx's loose match) → the case that proves it */
+const CASE_FOR_AUDIENCE: Record<number, string> = { 1: "desert-wings", 2: "riled-up", 4: "aahg" };
 
 /* §03 · THE WORK, v5 → THE RAIL STEPS (2026-09-19). Supersedes v5's own
    continuous scrub (caa3f58, "one row, sticky") on Jake's call: "can we
@@ -141,12 +148,31 @@ export default function WorkSection({
   gallery = false,
   stack = false,
   hcard = false,
+  dwlast = false,
 }: {
   paper?: boolean;
   gallery?: boolean;
   stack?: boolean;
   hcard?: boolean;
+  dwlast?: boolean;
 }) {
+  /* `dwlast` — Jake: "yea build 1 to 4". Desert Wings has already been
+     the film, all three service photographs and (as card one) the same
+     "WHERE PILOTS ARE BORN" screen service card one showed: the proof
+     read as a replay. It goes LAST — the rail opens on a new face and
+     ends on the client whose Saturday booking the visitor just watched —
+     unless the visitor's own ad named an audience, in which case THEIR
+     case leads (a coach from a pickleball ad sees Riled Up first). The
+     persona is session storage, so it is read after mount. */
+  const [lead, setLead] = useState<string | null>(null);
+  useEffect(() => {
+    if (!dwlast) return;
+    capturePersona();
+    const slug = CASE_FOR_AUDIENCE[audienceIndex(getPersona().i)] ?? null;
+    if (!slug) return;
+    const id = requestAnimationFrame(() => setLead(slug));
+    return () => cancelAnimationFrame(id);
+  }, [dwlast]);
   /* `?v=hcard` (2026-09-23 — Jake: "i wanted our horizontal scroll for
      works just with the card"): the rail he loves, one Cosmos card per
      case instead of three tiles — each card the case's cover, bigger,
@@ -157,6 +183,12 @@ export default function WorkSection({
   const PER = hcard ? 1 : SHOTS_PER_PROJECT;
   const TRAVEL = hcard ? 200 : TRAVEL_SVH;
   const cases = PROJECTS.filter((p) => p.slug !== OURS && p.cover);
+  if (dwlast) {
+    const dw = cases.findIndex((p) => p.slug === "desert-wings");
+    if (dw >= 0) cases.push(...cases.splice(dw, 1));
+    const l = lead ? cases.findIndex((p) => p.slug === lead) : -1;
+    if (l > 0) cases.unshift(...cases.splice(l, 1));
+  }
   if (paper) {
     const dw = cases.findIndex((p) => p.slug === "desert-wings");
     if (dw >= 0) cases.push(...cases.splice(dw, 1));

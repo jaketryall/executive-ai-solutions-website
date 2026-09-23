@@ -1248,8 +1248,25 @@ export default function DarkRoom({
       {/* `?v=show` (trial, 2026-09-22 — "i need to find a way to make it
           beatiful and visual"): the poster's three words, shown — the
           three photographs of the real deliverables (offer-show.tsx) */}
+      {/* THE LAMPS' WAY BACK ON after §02a: §02b carries the --son clock,
+          or the tiles do when 2b is elsewhere — with 2b moved (`after`,
+          `apart`) or cut (`nob`) AND the tiles cut (`noc`), nothing would,
+          and the room's lamps would stay out for the rest of the page. This
+          empty marker carries it instead, as the services arrive. */}
+      {(has("after") || has("apart") || has("nob")) && has("noc") && (
+        <div
+          className="dr-son"
+          aria-hidden
+          data-sp
+          data-sp-edge="top"
+          data-sp-from="0.8"
+          data-sp-to="0.35"
+          data-sp-var="--son"
+          data-sp-target=".dr-root"
+        />
+      )}
       {(has("show") || has("one")) && <OfferShow inUse={has("inuse")} one={has("one")} />}
-      {!has("nob") && !has("apart") && <OfferMore />}
+      {!has("nob") && !has("apart") && !has("after") && <OfferMore />}
       {/* §02c · the three voices as tiles, the last thing on the light
           page. `?v=noc` leaves these out instead — the other cut. */}
       {!has("noc") && <VoicesTiles lampsOn={has("nob") || has("apart")} />}
@@ -1293,12 +1310,19 @@ export default function DarkRoom({
               "data-sp-step": "0.03125",
             })}
       >
-        <WorkSection paper={has("paper")} gallery={has("gallery")} stack={has("stack")} hcard={has("hcard")} />
+        <WorkSection paper={has("paper")} gallery={has("gallery")} stack={has("stack")} hcard={has("hcard")} dwlast={has("dwlast")} />
       </div>
       {has("apart") && (
         <OfferMore lamps={false} doors={OFFER_NAV.filter((d) => d.href !== "/work")} />
       )}
-      <VoicesSection />
+      <VoicesSection all={has("noruns")} />
+      {/* `?v=after` (2026-09-23, layout review #3): the promise lands AFTER
+          the proof and the voices — where a buyer is deciding whether to
+          call — in `answer`'s centred grammar, with ONE door: the price.
+          The other three repeated the nav while the nav was on screen. */}
+      {has("after") && (
+        <OfferMore after lamps={false} doors={OFFER_NAV.filter((d) => d.href.startsWith("/pricing"))} />
+      )}
 
       {/* ══ THE FLIP ══════════════════════════════════════════════════
           The room turns inside out between the testimonials and the
@@ -1358,7 +1382,10 @@ export default function DarkRoom({
           re-sited, that is §05's track to re-declare — not a second one
           here. */}
       <div className="dr-flip">
-        <RunsSection />
+        {/* `?v=noruns` (2026-09-23, layout review #2 — Jake's own 09-19
+            call, "the process … leave the homepage", logged but never
+            done): the work rail becomes the page's ONE sideways room. */}
+        {!has("noruns") && <RunsSection />}
         <ObjectionsSection />
       </div>
       {/* `paper`: the close takes the room back to dark — --fe 1 → 0 as

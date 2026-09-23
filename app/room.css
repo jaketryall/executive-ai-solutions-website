@@ -7125,3 +7125,11 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
   inset: -6% auto auto -2%; width: 108%; height: 112%; object-position: 0% 0%;
   translate: calc(var(--ndc) * -1.25 * 1.5%) calc(var(--pp) * 0.03 * var(--th));
 }
+
+/* ══ `?v=after` · the promise after the proof (layout review #3) ══════
+   §02b below the voices: its own top band back (the `answer` rule took
+   it away for sitting under the poster), one door, centred. */
+.dr-son { height: 0; }
+.dr-root:has(.dr-hero-wrap[data-v~="after"]) .dr-more.dr-more--after {
+  padding-block: clamp(96px, 16svh, 180px) clamp(96px, 16svh, 180px);
+}

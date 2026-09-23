@@ -186,10 +186,14 @@ function SweepLines({ text, className, ...rest }: { text: string; className: str
    instead: two writers of one root variable fight, and the one lower on
    the page would put the lamps out again through the whole work).
    `doors`: the in-page nav, minus any door the reader just came through. */
-export function OfferMore({ lamps = true, doors = OFFER_NAV }: { lamps?: boolean; doors?: typeof OFFER_NAV } = {}) {
+export function OfferMore({
+  lamps = true,
+  doors = OFFER_NAV,
+  after = false,
+}: { lamps?: boolean; doors?: typeof OFFER_NAV; after?: boolean } = {}) {
   return (
     <section
-      className="wrap dr-more"
+      className={`wrap dr-more${after ? " dr-more--after" : ""}`}
       aria-label="What you get"
       /* the rig comes back on as this section rises (see OfferHead) */
       {...(lamps

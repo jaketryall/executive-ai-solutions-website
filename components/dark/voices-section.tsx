@@ -51,7 +51,10 @@ import { QUOTES } from "@/lib/quotes";
    lives with the rail, and this column is just the quotes again.
    */
 
-export default function VoicesSection() {
+/* `all` (`?v=noruns`, 2026-09-23): with the runs rail off the homepage
+   there is no lead card to carry the last quote, so the column says all
+   of them itself. */
+export default function VoicesSection({ all = false }: { all?: boolean }) {
   return (
     <section className="dr-voices" aria-labelledby="dr-voices-h">
       <div className="wrap">
@@ -128,7 +131,7 @@ export default function VoicesSection() {
         </header>
 
         <ul className="dr-voices-list">
-          {QUOTES.slice(0, -1).map((q, i) => {
+          {(all ? QUOTES : QUOTES.slice(0, -1)).map((q, i) => {
             return (
             /* EACH QUOTE OWNS ITS OWN LIGHT. It declares the window of its
                whole pass across the screen and the engine writes --sp;
