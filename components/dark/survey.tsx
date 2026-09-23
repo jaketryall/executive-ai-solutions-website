@@ -83,9 +83,17 @@ const A_DAY = 0.14; // black line core on paper
    lines that bunch around a shape you find if you look for it. */
 const SDF_N = 512; // the distance field's texture
 const SDF_BOX = 300; // the mark's 500-unit box drawn this many texels wide, centred
-const MARK_RINGS = 22; // rings per mark width
-const MARK_WARP = 110; // CSS px the rings wobble by, at full warp
-const MARK_HILLS = 0.18; // how much of the plain hills rides on top
+/* two readings of the mark. TIGHT (`?v=survey+mark`): the rings follow the
+   letters — Jake: "i like the hills better it feels too tight right
+   now". LOOSE (`?v=survey+loose`): the field blurred until the letters
+   are gone and only the mark's MASS is left, the rings far apart, and
+   most of the hills back on top — a landscape that swells around the
+   mark rather than a drawing of it. */
+const MARK = {
+  tight: { rings: 22, box: 0.85, blur: 2, passes: 2, warp: 110, hills: 0.18 },
+  loose: { rings: 17, box: 1.15, blur: 14, passes: 3, warp: 170, hills: 0.45 },
+} as const;
+type MarkKind = keyof typeof MARK;
 
 /* Felzenszwalb & Huttenlocher's exact squared EDT, one axis at a time
    (the form Mapbox's tiny-sdf uses) */
@@ -119,7 +127,7 @@ function edt(g: Float64Array, n: number) {
   for (let y = 0; y < n; y++) edt1d(g, y * n, 1, n, f, v, z);
 }
 /* the mark's signed distance, in mark-box widths (negative inside) */
-function markField(): Float32Array | null {
+function markField(R: number, passes: number): Float32Array | null {
   const c = document.createElement("canvas");
   c.width = c.height = SDF_N;
   const ctx = c.getContext("2d");
@@ -140,23 +148,30 @@ function markField(): Float32Array | null {
   const out = new Float32Array(N);
   for (let i = 0; i < N; i++) out[i] = (Math.sqrt(outside[i]) - Math.sqrt(inside[i])) / SDF_BOX;
   /* the EDT of a hard-edged mask steps by whole texels, and the texture
-     is magnified ~4× on a desk — two separable box passes (radius 2)
-     take the stair-steps out of the rings (first cut: visible jaggies) */
+     is magnified ~4× on a desk — separable box passes take the
+     stair-steps out of the rings (first cut: visible jaggies); a wide
+     radius rounds the letters away entirely (LOOSE). Running sums, so a
+     radius costs nothing extra. */
   const tmp = new Float32Array(N);
-  const R = 2;
-  for (let pass = 0; pass < 2; pass++) {
-    for (let y = 0; y < SDF_N; y++)
-      for (let x = 0; x < SDF_N; x++) {
-        let sum = 0;
-        for (let d = -R; d <= R; d++) sum += out[y * SDF_N + Math.min(SDF_N - 1, Math.max(0, x + d))];
-        tmp[y * SDF_N + x] = sum / (2 * R + 1);
+  const n = SDF_N;
+  const at = (i: number) => Math.min(n - 1, Math.max(0, i));
+  for (let pass = 0; pass < passes; pass++) {
+    for (let y = 0; y < n; y++) {
+      let sum = 0;
+      for (let d = -R; d <= R; d++) sum += out[y * n + at(d)];
+      for (let x = 0; x < n; x++) {
+        tmp[y * n + x] = sum / (2 * R + 1);
+        sum += out[y * n + at(x + R + 1)] - out[y * n + at(x - R)];
       }
-    for (let y = 0; y < SDF_N; y++)
-      for (let x = 0; x < SDF_N; x++) {
-        let sum = 0;
-        for (let d = -R; d <= R; d++) sum += tmp[Math.min(SDF_N - 1, Math.max(0, y + d)) * SDF_N + x];
-        out[y * SDF_N + x] = sum / (2 * R + 1);
+    }
+    for (let x = 0; x < n; x++) {
+      let sum = 0;
+      for (let d = -R; d <= R; d++) sum += tmp[at(d) * n + x];
+      for (let y = 0; y < n; y++) {
+        out[y * n + x] = sum / (2 * R + 1);
+        sum += tmp[at(y + R + 1) * n + x] - tmp[at(y - R) * n + x];
       }
+    }
   }
   return out;
 }
@@ -223,7 +238,7 @@ void main() {
   o = vec4(vec3(1.0 - uDay) * a, a);
 }`;
 
-export default function Survey({ mark = false }: { mark?: boolean }) {
+export default function Survey({ mark }: { mark?: MarkKind }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const cvsRef = useRef<HTMLCanvasElement>(null);
 
@@ -280,7 +295,8 @@ export default function Survey({ mark = false }: { mark?: boolean }) {
       };
       gl.uniform1f(U.mark, 0);
       if (mark) {
-        const field = markField();
+        const M = MARK[mark];
+        const field = markField(M.blur, M.passes);
         if (field) {
           const tex = gl.createTexture();
           gl.activeTexture(gl.TEXTURE0);
@@ -292,9 +308,9 @@ export default function Survey({ mark = false }: { mark?: boolean }) {
           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
           gl.uniform1i(U.sdf, 0);
           gl.uniform1f(U.mark, 1);
-          gl.uniform1f(U.km, MARK_RINGS);
-          gl.uniform1f(U.warp, MARK_WARP);
-          gl.uniform1f(U.hills, MARK_HILLS);
+          gl.uniform1f(U.km, M.rings);
+          gl.uniform1f(U.warp, M.warp);
+          gl.uniform1f(U.hills, M.hills);
         }
       }
       gl.uniform1f(U.k, K);
@@ -318,7 +334,7 @@ export default function Survey({ mark = false }: { mark?: boolean }) {
         /* the mark's box: wider than the screen on a desk, taller on a
            phone, centred a little below the middle at scroll 0 — at a
            tenth of the scroll it rises through the first ~8000px */
-        const mw = Math.max(W * 0.85, H * 0.9);
+        const mw = Math.max(W, H * 1.06) * (mark ? MARK[mark].box : 1);
         const ms = (mw * SDF_N) / SDF_BOX;
         gl.uniform2f(U.markC, W / 2, H * 0.58);
         gl.uniform1f(U.markS, ms);
