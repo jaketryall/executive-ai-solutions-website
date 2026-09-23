@@ -115,27 +115,11 @@ export default function OfferShow({
         .catch(() => img.addEventListener("load", arm, { once: true }));
     });
   }, [inUse]);
-  const screenLayer = (it: (typeof ITEMS)[number], i: number) =>
-    inUse && (
-      <span className="dr-show-use" aria-hidden>
-        <span className="dr-show-use-in">
-          <Image
-            src={it.use}
-            alt=""
-            fill
-            sizes={one ? "(max-width: 900px) 92vw, 1180px" : it.sizes}
-            loading="eager"
-            className="dr-show-use-img"
-            style={i === 0 ? { objectPosition: "0% 0%" } : undefined}
-          />
-        </span>
-      </span>
-    );
   if (one)
     return (
       <section className="dr-show dr-show--one" aria-label="What we make" ref={ref}>
         <ol className="dr-stack">
-          {ITEMS.map((it, i) => (
+          {ITEMS.map((it) => (
             <li
               className="dr-stack-item"
               key={it.word}
@@ -146,11 +130,24 @@ export default function OfferShow({
               data-sp-var="--st"
               data-sp-lerp="0.37"
             >
-              <div className="dr-stack-wrap">
+              {/* the departure's own clock (`?v=flow`): the wrap's top from
+                  where it sits centred (.12 of the screen) to mostly gone */}
+              <div
+                className="dr-stack-wrap"
+                data-sp
+                data-sp-edge="top"
+                data-sp-from="0.12"
+                data-sp-to="-0.55"
+                data-sp-var="--lv"
+              >
                 <Link href={it.href} className="dr-stack-card dr-show-link" aria-label={`${it.word} — ${it.sub}`}>
+                  {/* NO HOVER on these cards (2026-09-23 — Jake: "since a lot
+                      of people leave their cursor in the middle of their
+                      screen while scrolling they may trigger an effect they
+                      dont mean to"): the `inuse` wipe is not rendered here
+                      whatever the token says, and the label does not roll */}
                   <span className="dr-stack-well dr-show-well">
                     <Image src={it.src} alt="" fill sizes="(max-width: 900px) 92vw, 1180px" className="dr-stack-img" />
-                    {screenLayer(it, i)}
                   </span>
                   <span className="dr-stack-pill dr-stack-pill--svc" aria-hidden>
                     <span className="dr-stack-word">{it.word}</span>

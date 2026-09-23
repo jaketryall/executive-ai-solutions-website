@@ -562,7 +562,7 @@ The page, top to bottom: the hero (the personal-message title fitted to the colu
 ## 2026-09-23 · the Lando plan + the layout review (one long day, all trials)
 
 **The one link that shows everything built today** (tokens ADD to the default; nothing below is default yet):
-`/?v=answer+survey+aud+hold+roll+inuse+one+hcard+noc+noruns+after+dwlast+price+vone+svc`. The page is 12,515px at 1440 (was 14,311).
+`/?v=answer+survey+aud+hold+roll+one+flow+hcard+noc+noruns+after+dwlast+price+vone+svc` (later the same day: `inuse` dropped, no hover on the service cards; `flow`, the services no longer pin, the work rail is the one pin). The page is 12,515px at 1440 (was 14,311).
 
 **Why the page never felt like Lando** (the census, `design-dna/lando-ground-plan.md` + `decodes/lando-census-2026-09-22.json`, the same script run on both sites): scroll motion is EQUAL (20.2% vs 19.8%). The difference is motion AT REST (his 16/31 stops, ours 5/31, then 26 dead stops in a row) and whose it is: ~11 of our ~21 motions were lifted from other sites. Jake: "lando site is perfection", so Lando is the ONLY model now (memory `feedback_lando_only_model.md`).
 

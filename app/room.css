@@ -7180,3 +7180,26 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
 /* the promise's one door is a real tap target on a phone (the page
    verifier: 16px tall as a text link) */
 .dr-more--after .dr-more-link { min-height: 44px; align-items: center; padding-inline: 10px; }
+
+/* ══ THE SERVICE CARDS DO NOT ANSWER HOVER (2026-09-23) ══════════════
+   Jake: "a lot of people leave their cursor in the middle of their
+   screen while scrolling they may trigger an effect they dont mean to".
+   A big card scrolling under a parked cursor is not a hover anyone
+   meant. The label rolls for KEYBOARD focus only. */
+.dr-show--one .dr-stack-card:hover:not(:focus-visible) .dr-stack-see .dr-char { transform: none; }
+
+/* ══ `?v=flow` · CINEMATIC WITHOUT THE PIN (2026-09-23) ══════════════
+   Jake: "im not sure going sticky section to sticky section is the best
+   for user experience". The services no longer pin: each card owns a
+   screen in normal flow, ARRIVES with the same settle (wrap 1.1 → 1,
+   picture 1.2 → 1 on the item's own --st) and LEAVES by receding (scale
+   −6%, dimming to .4 on the wrap's --lv) — the Off+Brand/Lando recede,
+   scroll-derived both ways. The work rail stays the page's one pin. */
+.dr-root:has(.dr-hero-wrap[data-v~="flow"]) .dr-show--one .dr-stack-item { position: relative; }
+.dr-root:has(.dr-hero-wrap[data-v~="flow"]) .dr-show--one .dr-stack-wrap {
+  scale: calc((1.1 - .1 * var(--st, 1)) * (1 - .06 * var(--lv, 0)));
+  opacity: calc(1 - .6 * var(--lv, 0));
+}
+@media (prefers-reduced-motion: reduce) {
+  .dr-root:has(.dr-hero-wrap[data-v~="flow"]) .dr-show--one .dr-stack-wrap { scale: none; opacity: 1; }
+}
