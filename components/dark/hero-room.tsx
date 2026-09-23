@@ -2,7 +2,7 @@
 
 import { memo, useEffect, useState } from "react";
 import Link from "next/link";
-import { OfferHead, OfferMore } from "@/components/dark/services-section";
+import { OfferHead, OfferMore, OFFER_NAV } from "@/components/dark/services-section";
 import VoicesTiles from "@/components/dark/voices-tiles";
 import FilmSlice from "@/components/dark/film-slice";
 import WorkSection from "@/components/dark/work-section";
@@ -1215,10 +1215,19 @@ export default function DarkRoom({
       {/* §02b · the paragraph and the in-page nav (services-section.tsx).
           `?v=nob` (trial, 2026-09-21: "should we remove 2b i want to see
           it") leaves it out; the tiles then carry its lamp clock. */}
-      {!has("nob") && <OfferMore />}
+      {/* `?v=apart` (trial, 2026-09-22 — Jake: "i really like section 2a
+          and 2b individually im not sure they each go together"): they
+          are two sites' grammars back to back — leoparpeix's centred
+          poster, then Huge's left paragraph with its doors at the far
+          right — and at the handoff they share one frame. Under apart
+          neither changes; §02b moves to after the work, where its
+          promise ("a fixed quote in two days…") lands once the proof
+          has, and its doors are the way on. The tiles take the lamp
+          clock. */}
+      {!has("nob") && !has("apart") && <OfferMore />}
       {/* §02c · the three voices as tiles, the last thing on the light
           page. `?v=noc` leaves these out instead — the other cut. */}
-      {!has("noc") && <VoicesTiles lampsOn={has("nob")} />}
+      {!has("noc") && <VoicesTiles lampsOn={has("nob") || has("apart")} />}
 
       {/* THE FLIP TO DARK, SCROLL-DRIVEN (2026-09-20 — Jake: "we need the
           background flip to dark before work section" → "i mean the flip
@@ -1261,6 +1270,9 @@ export default function DarkRoom({
       >
         <WorkSection paper={has("paper")} gallery={has("gallery")} />
       </div>
+      {has("apart") && (
+        <OfferMore lamps={false} doors={OFFER_NAV.filter((d) => d.href !== "/work")} />
+      )}
       <VoicesSection />
 
       {/* ══ THE FLIP ══════════════════════════════════════════════════

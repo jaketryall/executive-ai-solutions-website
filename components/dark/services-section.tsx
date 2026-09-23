@@ -163,18 +163,28 @@ function SweepLines({ text, className, ...rest }: { text: string; className: str
   );
 }
 
-export function OfferMore() {
+/* `lamps`: this section carries the --son clock that brings the room's
+   lamps back after §02a — unless it is somewhere else on the page
+   (`?v=apart`, where it follows the work and the tiles carry the clock
+   instead: two writers of one root variable fight, and the one lower on
+   the page would put the lamps out again through the whole work).
+   `doors`: the in-page nav, minus any door the reader just came through. */
+export function OfferMore({ lamps = true, doors = OFFER_NAV }: { lamps?: boolean; doors?: typeof OFFER_NAV } = {}) {
   return (
     <section
       className="wrap dr-more"
       aria-label="What you get"
       /* the rig comes back on as this section rises (see OfferHead) */
-      data-sp
-      data-sp-edge="top"
-      data-sp-from="0.8"
-      data-sp-to="0.35"
-      data-sp-var="--son"
-      data-sp-target=".dr-root"
+      {...(lamps
+        ? {
+            "data-sp": true,
+            "data-sp-edge": "top",
+            "data-sp-from": "0.8",
+            "data-sp-to": "0.35",
+            "data-sp-var": "--son",
+            "data-sp-target": ".dr-root",
+          }
+        : {})}
     >
       {/* THE SWEEP (2026-09-21 — Jake: "the scroll effect on the text
           that huge has where the words like glow" → "theirs is still
@@ -201,7 +211,7 @@ export function OfferMore() {
         data-sp-lerp="0.12" /* the chase: theirs is smoothed too (Jake: "it feels super smooth") */
       />
       <nav className="dr-more-nav" aria-label="On this site">
-        {OFFER_NAV.map((n, i) => (
+        {doors.map((n, i) => (
           <Link
             key={n.href}
             href={n.href}
