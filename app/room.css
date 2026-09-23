@@ -7082,3 +7082,46 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
   .dr-stack-line { display: none; }
   .dr-stack-word { font-size: 18px; padding-left: 6px; }
 }
+
+/* ══ `?v=hcard` · THE RAIL, ONE CARD PER CASE (2026-09-23) ═══════════
+   Jake: "i wanted our horizontal scroll for works just with the card".
+   The same pinned sideways rail and the same two parallaxes inside each
+   picture — one card per case now, the cover at its own 16:10, bigger
+   than the nine tiles were (1094×684 at 1440×900) — and Cosmos's pill on
+   every card, bottom-centre (the covers are whole sites with their own
+   nav bars across the top), carrying Year / Niche / Built. The info row
+   under the rail has nothing left to say and goes. The gated prefix
+   outranks the default `frost` strip's (0,4,0). */
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage { --th: min(46vw, 74svh); --tw: calc(var(--th) * 1.6); --gap: 48px; }
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-card { border-radius: 20px; background: #111113; }
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-pill {
+  top: auto; bottom: 28px; left: 50%; right: auto; translate: -50% 0; width: max-content;
+  border-radius: 14px; padding: 6px 22px 6px 6px; gap: 16px; backdrop-filter: none;
+}
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-pill::before { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-pill::after { background: rgba(12, 12, 14, .82); }
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-pill-num { display: none; }
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-thumb { display: block; width: 52px; height: 52px; border-radius: 9px; }
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-name { font-size: 20px; font-weight: 500; }
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-sep { display: block; width: 1px; height: 30px; background: rgba(255, 255, 255, .22); }
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-meta { display: grid; grid-template-columns: auto auto; column-gap: 16px; align-items: center; }
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-meta .dr-work-sep { grid-row: 1 / span 2; }
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-see { margin-left: 0; font-size: 15px; --work-see-alt: var(--accent); }
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-infos { display: none; }
+@media (max-width: 900px) {
+  .dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage { --th: min(62vw, 300px); --tw: calc(var(--th) * 1.6); --gap: 12px; }
+  .dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-meta { display: none; }
+  .dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-pill { bottom: 10px; gap: 10px; padding: 4px 14px 4px 4px; }
+  .dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-thumb { width: 32px; height: 32px; border-radius: 6px; }
+  .dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-name { font-size: 14px; }
+  .dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-sep { height: 16px; }
+}
+/* the picture's two parallaxes, turned DOWN for the covers: the rail's
+   128% bleed and 8.5% drift cropped 11% off the left of every card, and
+   these covers set their headlines hard left ("WHERE" read "VHERE",
+   first cut). 108% × 112% anchored top-left, ±2% sideways and ±3%
+   vertical: the drift is still there, the headline never leaves. */
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-img {
+  inset: -6% auto auto -2%; width: 108%; height: 112%; object-position: 0% 0%;
+  translate: calc(var(--ndc) * -1.25 * 1.5%) calc(var(--pp) * 0.03 * var(--th));
+}

@@ -140,11 +140,22 @@ export default function WorkSection({
   paper = false,
   gallery = false,
   stack = false,
+  hcard = false,
 }: {
   paper?: boolean;
   gallery?: boolean;
   stack?: boolean;
+  hcard?: boolean;
 }) {
+  /* `?v=hcard` (2026-09-23 — Jake: "i wanted our horizontal scroll for
+     works just with the card"): the rail he loves, one Cosmos card per
+     case instead of three tiles — each card the case's cover, bigger,
+     the pill on EVERY card carrying Year / Niche / Built (room.css). Two
+     windows of ~100svh instead of eight of 52.5: a card fills the
+     centre for a real beat before the next slides in, so the rail shows
+     one thing at a time without steps. */
+  const PER = hcard ? 1 : SHOTS_PER_PROJECT;
+  const TRAVEL = hcard ? 200 : TRAVEL_SVH;
   const cases = PROJECTS.filter((p) => p.slug !== OURS && p.cover);
   if (paper) {
     const dw = cases.findIndex((p) => p.slug === "desert-wings");
@@ -156,7 +167,7 @@ export default function WorkSection({
   // whether it's that case's first tile (the pill).
   const tiles: Tile[] = cases.flatMap((p, k) =>
     shotsFor(p)
-      .slice(0, SHOTS_PER_PROJECT)
+      .slice(0, PER)
       .map((shot, i) => ({ shot, project: p, k, first: i === 0 }))
   );
   const n = tiles.length;
@@ -209,7 +220,7 @@ export default function WorkSection({
       cleanup = () => {};
       if (!lenis) return; // touch: no Lenis, nothing to hand a snap
 
-      const windowPx = ((TRAVEL_SVH / 100) * window.innerHeight) / (n - 1);
+      const windowPx = ((TRAVEL / 100) * window.innerHeight) / (n - 1);
       const snap = new Snap(lenis, {
         type: "proximity",
         distanceThreshold: windowPx / 2 + 20, // half a window + 20px (~213 at 736)
@@ -222,7 +233,7 @@ export default function WorkSection({
         removers.splice(0).forEach((r) => r());
         // the stage never transforms — its own top is a stable document position
         const top = stage.getBoundingClientRect().top + window.scrollY;
-        const travelPx = (TRAVEL_SVH / 100) * window.innerHeight;
+        const travelPx = (TRAVEL / 100) * window.innerHeight;
         for (let i = 0; i < n; i++) {
           removers.push(snap.add(top + (i / (n - 1)) * travelPx));
         }
@@ -241,7 +252,7 @@ export default function WorkSection({
       off();
       cleanup();
     };
-  }, [n]);
+  }, [n, TRAVEL]);
 
   if (!cases.length) return null;
 
@@ -315,11 +326,12 @@ export default function WorkSection({
       <div
         className="dr-work-stage"
         ref={stageRef}
-        style={{ "--n": n, "--travel": `${TRAVEL_SVH}svh` } as CSSProperties}
+        style={{ "--n": n, "--travel": `${TRAVEL}svh` } as CSSProperties}
+        data-hcard={hcard ? "" : undefined}
         data-sp
         data-sp-edge="top"
         data-sp-from="0"
-        data-sp-to={String(-(TRAVEL_SVH / 100))}
+        data-sp-to={String(-(TRAVEL / 100))}
         data-sp-var="--bp"
         data-sp-lerp="0.2" /* .2, not the room's .1: the chase is part of the swipe's delay (Jake, 2026-09-19); leoparpeix follows at .068 per frame on a 60fps clock — ours is the same order once the dwell is out of the way */
         /* data-sp-force="28" — the squash's input, off with the squash (2026-09-20) */
@@ -337,7 +349,7 @@ export default function WorkSection({
             data-sp
             data-sp-edge="top"
             data-sp-from="0"
-            data-sp-to={String(-(TRAVEL_SVH * 0.6) / 100)}
+            data-sp-to={String(-(TRAVEL * 0.6) / 100)}
             data-sp-var="--fp"
             data-sp-target=".dr-root"
             data-sp-lerp="0.1"
@@ -475,7 +487,7 @@ export default function WorkSection({
               <div
                 className="dr-work-info"
                 key={p.slug}
-                style={{ "--c": k * SHOTS_PER_PROJECT + 1 } as CSSProperties}
+                style={{ "--c": k * PER + (PER > 1 ? 1 : 0) } as CSSProperties}
               >
                 <span className="t-label dr-work-num">{String(k + 1).padStart(2, "0")}</span>
                 <h3 className="dr-work-title">

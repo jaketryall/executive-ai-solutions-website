@@ -1293,7 +1293,7 @@ export default function DarkRoom({
               "data-sp-step": "0.03125",
             })}
       >
-        <WorkSection paper={has("paper")} gallery={has("gallery")} stack={has("stack")} />
+        <WorkSection paper={has("paper")} gallery={has("gallery")} stack={has("stack")} hcard={has("hcard")} />
       </div>
       {has("apart") && (
         <OfferMore lamps={false} doors={OFFER_NAV.filter((d) => d.href !== "/work")} />
