@@ -543,3 +543,18 @@ The page, top to bottom: the hero (the personal-message title fitted to the colu
 **Liked, not default:** `paper` (the ground lifts dark → off-white across the first 60% of the rail, Lando's way; the close takes it back to dark). **Seen:** `lm` (the whole page light — the accent needs a light-mode value before it can be judged), `ask` (the chat's one entry in the rail; panel drops from under it — its skin and the production API key are owed), `nob` / `noc`, `strip` / `navpill` / `navstrip`, `left`. **Rejected:** `gallery` (Apple's media card gallery as the work — "i miss the pin").
 
 **Owed:** the interior pages' rail (centred at rest is homepage-only until it's the site's rail), the light-mode accent, the chat's skin + key, the price door's home now that the hero has none (§02b's doors + /pricing), the Google numbers, the tiles' real quotes, the reel cut, the `?v=` housekeeping (fold the defaults into plain CSS, delete the losers).
+
+## 2026-09-22 (late) · handoff before compaction
+
+**Default** (`app/page.tsx` DEFAULT = `wide edge cyan full flat frost scrawl still nopill navc logoc tidy ask hud logopen`):
+- Hero: title + film only; nav→title 42px at 900 (glyph top to rail bottom), title→film 72px as a fixed clamp at every height.
+- Rail: centred at rest (Work · Services — the mark — Pricing · Ask), the pill on scroll via a FLIP regroup; the flip point is COMPUTED from the title's glyph box against the links' bottom with 24px clearance (checks.md) — 42px of scroll at 1440×900.
+- Ask: the chat lives in the rail and the rail grows into it (yeqq.com.tr's island, measured) — Web Animations width, dark skin, Escape closes. Prod still 502s on the ANTHROPIC_API_KEY — owed.
+- The room switch (lamp) lives alone in the bottom-right corner (`hud`, itsoffbrand.com's corner, measured).
+- The mark writes itself on hover (`logopen`): a hand-authored centreline in `components/room/mark-svg.tsx` (PEN) used as a MASK over the real glyph; 0.00% unfilled, measured.
+
+**Two rooms are real**: `.dr-day` via the switch, remembered in localStorage, applied pre-paint by an inline script in `layout.tsx`; `?v=lm` still works. Day accent `#00768f` (same hue/chroma as #1ee5ff, L .846 → .50; 4.27:1 on the ground).
+
+**Light-room ambience — in progress** (`?v=lm+shade`): the finding is the RELATIONSHIP, not the colour — the dark room's lamps sit ~40 levels above an 11 ground; the day room was pinned at 231 with nowhere to go. So under `shade` the day ground drops to #dcdce0 and the lamps become near-white pools (~250), plus neutral edge shade and 2.4% grain; blue tint abandoned ("the blue is so hard to see"). The atmos cursor parallax (it EXISTS — `.dr-atmos` quickTo ±78/±46 in hero-room.tsx) is ±16/±9 in the day room. Jake has not yet ruled on shade v3.
+
+**Next when he's back**: his verdict on `?v=lm+shade`; if kept, fold it into the day room and give the light room a shadow ladder for surfaces. Then the owed list: interior pages' rail, the chat's key, a home for the price door, the Google numbers, real quotes, the reel cut, the `?v=` housekeeping.
