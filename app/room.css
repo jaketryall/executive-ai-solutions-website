@@ -6857,3 +6857,12 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
    the hero's own title there (first cut: 38px against the title's 32) */
 .dr-tick--aud .dr-tick-set span { font-size: clamp(1.75rem, 6.4vw, 5.75rem); color: color-mix(in srgb, var(--ink-3) 45%, transparent); }
 .dr-tick--aud .dr-tick-row + .dr-tick-row .dr-tick-set span { color: var(--ink-3); }
+
+/* ══ `?v=hold` · THE STATEMENT HOLDS (step 3, design-dna/lando-ground-plan.md)
+   The rotating word's timer stops. The word shown is the visitor's own
+   audience (OfferHead sets data-held + data-on from the ad's `?i=`) or
+   the true sentence's first word. Lando's words land once and hold;
+   the six audiences already move in the ticker above (`?v=aud`). */
+.dr-root:has(.dr-hero-wrap[data-v~="hold"]) .dr-offer-rot-w { animation: none; opacity: 0; translate: 0 0; }
+.dr-root:has(.dr-hero-wrap[data-v~="hold"]) .dr-offer-rot:not([data-held]) .dr-offer-rot-w:first-child,
+.dr-root:has(.dr-hero-wrap[data-v~="hold"]) .dr-offer-rot[data-held] .dr-offer-rot-w[data-on] { opacity: 1; }

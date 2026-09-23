@@ -8,6 +8,7 @@ import { PersonIcon } from "@/components/ui/person-icon";
 import { SHOTS } from "@/components/dark/service-shots";
 import { useEffect, useRef } from "react";
 import SayCorners from "@/components/dark/say-corners";
+import { capturePersona, getPersona } from "@/lib/persona";
 
 /* §02 · THE OFFER — the statement, and the three things under it.
 
@@ -84,6 +85,22 @@ export const OFFER_ROT_WORDS = [
   "contractors.",
 ];
 export const OFFER_SAY = OFFER_PREFIX + OFFER_ROT_WORDS[0];
+/* `?v=hold` (step 3 of design-dna/lando-ground-plan.md): the ad's own
+   audience (lib/persona.ts `?i=`) picks which of the six words the
+   statement HOLDS; anything unrecognised holds index 0, the true
+   sentence. Loose on purpose — campaigns name industries many ways. */
+const AUDIENCE_MATCH: [RegExp, number][] = [
+  [/flight|aviat|pilot/i, 1],
+  [/coach|pickle|fitness|sport|trainer/i, 2],
+  [/clinic|health|medic|dental|chiro|therap|spa/i, 3],
+  [/non-?profit|charit|museum|foundation/i, 4],
+  [/contract|plumb|roof|hvac|electric|landscap|trade|build/i, 5],
+];
+export function audienceIndex(i: string | null): number {
+  if (!i) return 0;
+  for (const [re, n] of AUDIENCE_MATCH) if (re.test(i)) return n;
+  return 0;
+}
 /* THE STATEMENT IN THE MODEL'S FORM (2026-09-20, decisions.md): Huge's
    own paragraph under its statement is ONE sentence — the three-sentence
    27-word version above (2026-09-18) is gone, per the law (one line at
@@ -245,6 +262,31 @@ export function OfferHead() {
      the CSS (.dr-say-l / .dr-say-li, room.css) does every frame.
      Reduced motion: the lines are simply there (room.css). */
   const ref = useRef<HTMLDivElement>(null);
+  /* THE HELD WORD (`?v=hold`, 2026-09-23 — step 3 of the Lando plan; Jake:
+     "yea show me step 3"). Lando's statement lands and holds (census,
+     his y 1800: 0.00% at rest); ours swapped its last word on an 11.7s
+     timer — the message itself moving, and since `?v=aud` the same six
+     words already run in the ticker above it. Under the token the timer
+     stops (room.css) and the word that stays is the visitor's own
+     audience when their ad named one, otherwise the true sentence's.
+     The screen reader hears the word that is shown. */
+  useEffect(() => {
+    const el = ref.current;
+    const rot = el?.querySelector<HTMLElement>(".dr-offer-rot");
+    const tokens = document.querySelector(".dr-hero-wrap")?.getAttribute("data-v")?.split(/\s+/) ?? [];
+    if (!rot || !tokens.includes("hold")) return;
+    capturePersona();
+    const n = audienceIndex(getPersona().i);
+    const words = rot.querySelectorAll<HTMLElement>(".dr-offer-rot-w");
+    if (n <= 0 || !words[n]) return;
+    rot.setAttribute("data-held", "");
+    words.forEach((w, k) => {
+      if (k === n) {
+        w.setAttribute("data-on", "");
+        w.removeAttribute("aria-hidden");
+      } else w.setAttribute("aria-hidden", "true");
+    });
+  }, []);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
