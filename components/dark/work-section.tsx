@@ -432,6 +432,7 @@ export default function WorkSection({
               {tiles.map((t, i) => (
                 <li
                   className="dr-work-tile"
+                  data-case={t.project.slug}
                   key={`${t.project.slug}-${t.shot.src}`}
                   style={{ "--i": i } as CSSProperties}
                 >

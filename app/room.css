@@ -7203,3 +7203,25 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
 @media (prefers-reduced-motion: reduce) {
   .dr-root:has(.dr-hero-wrap[data-v~="flow"]) .dr-show--one .dr-stack-wrap { scale: none; opacity: 1; }
 }
+
+/* THE PILL GOES BACK UP, where Cosmos keeps it (2026-09-23 — Jake: "you
+   have the pills inside the cards for work low, i think people will miss
+   them they were pretty high in the reference which i think worked").
+   Bottom-centre was my call against two navs stacked — the covers are
+   whole sites with their own nav bars across the top. So the cover is
+   cropped instead: its top 13% (every one of the three sites' nav bars)
+   sits above the card, and the pill is the card's only nav. The bottom
+   stays covered through the ±3% drift (118 − 13 = 105%). */
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-pill { top: 28px; bottom: auto; }
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-img { inset: -13% auto auto -2%; height: 118%; }
+@media (max-width: 900px) {
+  .dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-pill { top: 10px; bottom: auto; }
+}
+/* Riled Up's headline sits high on its own page: at the 13% crop it came
+   up under the pill ("STOP LOSING" touching it). An 8.5% crop at the SAME
+   118% size takes its nav bar off exactly (5% left it peeking over the
+   pill — measured) and still drops the headline ~30px (a 9% crop at 114% barely moved it — the
+   smaller box shrank the picture and cancelled the shift); the pill
+   itself sits 20px in, not 28. */
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-pill { top: 20px; }
+.dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-tile[data-case="riled-up"] .dr-work-img { inset: -8.5% auto auto -2%; height: 118%; }
