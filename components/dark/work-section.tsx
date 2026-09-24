@@ -12,6 +12,7 @@ import { Roll } from "@/components/room/nav";
 import { onLenis } from "@/components/anim/lenis-store";
 import WorkGallery from "@/components/dark/work-gallery";
 import WorkStack from "@/components/dark/work-stack";
+import NextLogoGL from "@/components/dark/next-logo-gl";
 import { useState } from "react";
 import { capturePersona, getPersona } from "@/lib/persona";
 import { audienceIndex } from "@/components/dark/services-section";
@@ -584,6 +585,8 @@ export default function WorkSection({
                 <li className="dr-work-tile dr-work-tile--next" style={{ "--i": tiles.length } as CSSProperties}>
                   <a href="#services" className="dr-work-card dr-next-card" aria-label="Yours could be next — see the services">
                     <span className="dr-next-shape" aria-hidden />
+                    {/* the zoom, redrawn sharp at every size (`nlogo+grow`) */}
+                    {GROW && nlogo && <NextLogoGL />}
                     {ORB && (
                       /* the three words, Off+Brand's placement around the
                          object ("A DIFFERENT / CREATIVE / APPROACH"): each

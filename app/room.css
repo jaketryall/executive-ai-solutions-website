@@ -7600,3 +7600,8 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
   opacity: 1; filter: none;
   will-change: transform, scale, rotate;
 }
+
+/* the sharp zoom's canvas (next-logo-gl.tsx): placed and sized by JS to
+   the viewport, in the card's stacking order — shown only while the mark
+   is growing (the CSS mark hides then) */
+.dr-next-gl { position: absolute; left: 0; top: 0; display: none; pointer-events: none; }

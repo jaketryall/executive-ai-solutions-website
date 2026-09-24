@@ -129,33 +129,35 @@ function edt(g: Float64Array, n: number) {
   for (let y = 0; y < n; y++) edt1d(g, y * n, 1, n, f, v, z);
 }
 /* the mark's signed distance, in mark-box widths (negative inside) */
-export function markField(R: number, passes: number): Float32Array | null {
+/* `n`/`box`: the texture's size and the mark's box inside it — the zoom
+   (next-logo-gl.tsx) asks for 1024/600 so its edges hold at 20×+ */
+export function markField(R: number, passes: number, n0 = SDF_N, box = SDF_BOX): Float32Array | null {
   const c = document.createElement("canvas");
-  c.width = c.height = SDF_N;
+  c.width = c.height = n0;
   const ctx = c.getContext("2d");
   if (!ctx) return null;
-  const k = SDF_BOX / 500;
-  ctx.setTransform(k, 0, 0, k, (SDF_N - SDF_BOX) / 2, (SDF_N - SDF_BOX) / 2);
+  const k = box / 500;
+  ctx.setTransform(k, 0, 0, k, (n0 - box) / 2, (n0 - box) / 2);
   ctx.fill(new Path2D(MARK_D));
-  const a = ctx.getImageData(0, 0, SDF_N, SDF_N).data;
-  const N = SDF_N * SDF_N;
+  const a = ctx.getImageData(0, 0, n0, n0).data;
+  const N = n0 * n0;
   const outside = new Float64Array(N), inside = new Float64Array(N);
   for (let i = 0; i < N; i++) {
     const on = a[i * 4 + 3] > 127;
     outside[i] = on ? 0 : INF;
     inside[i] = on ? INF : 0;
   }
-  edt(outside, SDF_N);
-  edt(inside, SDF_N);
+  edt(outside, n0);
+  edt(inside, n0);
   const out = new Float32Array(N);
-  for (let i = 0; i < N; i++) out[i] = (Math.sqrt(outside[i]) - Math.sqrt(inside[i])) / SDF_BOX;
+  for (let i = 0; i < N; i++) out[i] = (Math.sqrt(outside[i]) - Math.sqrt(inside[i])) / box;
   /* the EDT of a hard-edged mask steps by whole texels, and the texture
      is magnified ~4× on a desk — separable box passes take the
      stair-steps out of the rings (first cut: visible jaggies); a wide
      radius rounds the letters away entirely (LOOSE). Running sums, so a
      radius costs nothing extra. */
   const tmp = new Float32Array(N);
-  const n = SDF_N;
+  const n = n0;
   const at = (i: number) => Math.min(n - 1, Math.max(0, i));
   for (let pass = 0; pass < passes; pass++) {
     for (let y = 0; y < n; y++) {
