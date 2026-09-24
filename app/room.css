@@ -7580,3 +7580,23 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
 }
 .dr-work-stage[data-next-logo] .dr-next-shape::after { border-radius: 0; }
 .dr-work-stage[data-next-logo] .dr-next-say { top: 14%; }
+
+/* ══ `?v=next+nlogo+grow` · THE MARK FILLS THE SCREEN (2026-09-23) ═════
+   Jake: "im curious can we manipulate the logo to fill the full screen
+   like off brand". A glyph cannot cover a screen by scaling about its
+   centre (its counters open into holes), so it zooms INTO ITSELF: the
+   origin is the deepest point inside its strokes (55.2%, 56.0% of the
+   box — an inscribed circle of 9.2% of the box, measured off the path),
+   and --xg (the rail's 1.2-window hold, `grow`) scales it up to 23× on an
+   accelerating curve until that stroke is the whole screen — the
+   gradient becomes the background, the line turns to ink over it (the
+   `grow` rule), then the rail lets go into the services. The card's
+   clip opens so the mark can leave it; transform only, rastered once. */
+.dr-root .dr-work-stage[data-next-grow][data-next-logo] .dr-work-tile--next .dr-next-card.dr-next-card { overflow: visible; }
+.dr-work-stage[data-next-grow][data-next-logo] .dr-next-shape {
+  transform-origin: 55.2% 56%;
+  scale: calc((.7 + .3 * (1 - var(--dist, 0))) * (1 + 22 * var(--xg, 0) * var(--xg, 0)));
+  rotate: calc(var(--ndc, 0) * 28deg - var(--xg, 0) * 6deg);
+  opacity: 1; filter: none;
+  will-change: transform, scale, rotate;
+}

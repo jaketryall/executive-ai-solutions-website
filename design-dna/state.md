@@ -598,3 +598,5 @@ The page, top to bottom: the hero (the personal-message title fitted to the colu
 **+ `ymorph`** (2026-09-23): the EA mark rendered live in WebGL (its outline always flowing, stirred by the scroll), with the words, then to the RIGHT of the service cards (cards step left). Link: `/?v=answer+survey+aud+hold+roll+one+flow+hcard+noc+noruns+after+price+vone+svc+workfirst+yours+ymorph`.
 
 **+ `nlogo`** (2026-09-23): `next` (the rail's last card) with the EA mark as its shape instead of the card → orb. Link: `/?v=answer+survey+aud+hold+roll+one+flow+hcard+noc+noruns+after+price+vone+svc+workfirst+next+nlogo`.
+
+**+ `nlogo+grow`** (2026-09-23): the mark zooms into its own thickest stroke (origin 55.2% / 56%) until the gradient is the screen, the line turning to ink. Link: `/?v=answer+survey+aud+hold+roll+one+flow+hcard+noc+noruns+after+price+vone+svc+workfirst+next+nlogo+grow`.
