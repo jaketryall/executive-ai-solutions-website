@@ -160,6 +160,7 @@ export default function WorkSection({
   dwlast = false,
   workfirst = false,
   next = false,
+  grow = false,
 }: {
   paper?: boolean;
   gallery?: boolean;
@@ -168,6 +169,7 @@ export default function WorkSection({
   dwlast?: boolean;
   workfirst?: boolean;
   next?: boolean;
+  grow?: boolean;
 }) {
   /* `dwlast` — Jake: "yea build 1 to 4". Desert Wings has already been
      the film, all three service photographs and (as card one) the same
@@ -203,7 +205,14 @@ export default function WorkSection({
   /* `?v=next` adds one card to the rail (the visitor's own), so one more
      100svh window */
   const NEXT = next && hcard;
-  const TRAVEL = hcard ? (NEXT ? 300 : 200) : TRAVEL_SVH;
+  /* `?v=next+grow` (2026-09-23 — Jake: "on theirs the shape starts small
+     and grows like full screen … im looking more for something like
+     that"): the rail HOLDS on its last card for 1.2 more windows while
+     the orb grows past the card to fill the screen (room.css, --xg) —
+     inside the rail's own pin, so the page still has ONE pinned room. */
+  const GROW = NEXT && grow;
+  const XTRA = 1.2;
+  const TRAVEL = hcard ? (NEXT ? (GROW ? 100 * (3 + XTRA) : 300) : 200) : TRAVEL_SVH;
   const cases = PROJECTS.filter((p) => p.slug !== OURS && p.cover);
   if (workfirst) {
     /* with the rail straight after the hero, Desert Wings can neither open
@@ -389,8 +398,9 @@ export default function WorkSection({
       <div
         className="dr-work-stage"
         ref={stageRef}
-        style={{ "--n": n, "--travel": `${TRAVEL}svh` } as CSSProperties}
+        style={{ "--n": n, "--travel": `${TRAVEL}svh`, "--xtra": XTRA } as CSSProperties}
         data-hcard={hcard ? "" : undefined}
+        data-next-grow={GROW ? "" : undefined}
         data-sp
         data-sp-edge="top"
         data-sp-from="0"

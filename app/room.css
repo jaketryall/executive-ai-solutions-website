@@ -7274,3 +7274,41 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
   .dr-next-shape { animation: none; }
   .dr-next-say { font-size: 7.4vw; }
 }
+
+/* ══ `?v=next+grow` · THE ORB STARTS SMALL AND FILLS THE SCREEN ═══════
+   Off+Brand's, as Jake read it: the shape starts small and grows until
+   it is the screen. The rail's clock runs 1.2 windows PAST its last card
+   (--t over n − 1 + --xtra), the slide stops at the last card (--rx
+   capped at n − 1) and the overrun becomes --xg, 0 → 1: the orb's
+   growth. On the way in the orb is a dot (.18) that swells to its full
+   circle as the card centres (--dist 1 → 0) while the line assembles;
+   then --xg scales it 1 → 6× (a 400px circle past the screen's
+   diagonal) — transform only, rastered once (will-change) — over the
+   neighbours (the tile's z 3), and the line turns from white to ink as
+   the light comes up behind it. The card itself has no plate: the orb is
+   the object. One pin: all of this is the rail's own hold. */
+.dr-work-stage[data-next-grow] {
+  --t: calc(var(--bp, 0) * (var(--n) - 1 + var(--xtra, 1.2)));
+  --rx: min(var(--t), var(--n) - 1);
+  --xg: clamp(0, (var(--t) - (var(--n) - 1)) / var(--xtra, 1.2), 1);
+}
+.dr-work-stage[data-next-grow] .dr-work-tile--next { z-index: 3; }
+.dr-work-stage[data-next-grow] .dr-next-card { overflow: visible; background: transparent; }
+.dr-work-stage[data-next-grow] .dr-next-shape {
+  top: 50%; height: 60%; aspect-ratio: 1; border-radius: 50%;
+  rotate: none; opacity: 1;
+  scale: calc((.18 + .82 * (1 - var(--dist, 0))) * (1 + 5 * var(--xg, 0)));
+  will-change: transform, scale;
+}
+/* the line stays WHITE until the orb has passed under all of it (by --xg
+   ~.45 the circle is wider than the line), then turns to ink over a
+   short span — a linear mix read grey on half-dark, half-lit ground
+   (first cut, measured mid-growth) */
+.dr-work-stage[data-next-grow] .dr-next-say {
+  --ink-in: clamp(0, (var(--xg, 0) - .42) / .22, 1);
+  color: color-mix(in srgb, #0b0b0b calc(var(--ink-in) * 100%), #fff);
+  text-shadow: 0 2px 30px rgba(12, 12, 15, calc(.35 * (1 - var(--ink-in))));
+}
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .dr-work-stage[data-next-grow] { --xg: 0; }
+}

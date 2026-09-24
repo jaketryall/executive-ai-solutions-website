@@ -1320,6 +1320,7 @@ export default function DarkRoom({
           dwlast={has("dwlast")}
           workfirst={has("workfirst")}
           next={has("next")}
+          grow={has("grow")}
         />
       </div>
       {/* `?v=workfirst` (2026-09-23 — Jake: "do you think works should be
