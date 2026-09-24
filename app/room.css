@@ -7225,3 +7225,52 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
    itself sits 20px in, not 28. */
 .dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-pill { top: 20px; }
 .dr-root:has(.dr-hero-wrap[data-v~="hcard"]) .dr-work-stage .dr-work-tile[data-case="riled-up"] .dr-work-img { inset: -8.5% auto auto -2%; height: 118%; }
+
+/* ══ `?v=next` · YOURS COULD BE NEXT — the rail's last card (work-section.tsx)
+   Off+Brand's shape-and-words move, on the rail's own clock. The shape is
+   a 1.6:1 box scaled horizontally toward a square as the card centres
+   (--dist 1 → 0), its radius opening to 50% on the same number: a card
+   becomes an orb with no layout change (transform + radius only). The
+   conic gradient turns on its own 14s clock — the card is never still. */
+@property --na { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes dr-next-spin { to { --na: 360deg; } }
+.dr-next-card { background: #0c0c0f; display: grid; place-items: center; overflow: clip; }
+.dr-next-shape {
+  position: absolute; left: 50%; top: 52%; height: 70%; aspect-ratio: 1.6;
+  translate: -50% -50%;
+  scale: calc(.625 + .375 * var(--dist, 0)) 1;
+  rotate: calc(var(--ndc, 0) * 24deg);
+  border-radius: calc(50% - (50% - 22px) * var(--dist, 0));
+  background: conic-gradient(from var(--na), #1ee5ff, #6d7bff, #c86bff, #ff7ab8, #ffc98a, #1ee5ff);
+  box-shadow: 0 0 140px 10px rgba(109, 123, 255, .28);
+  opacity: calc(.55 + .45 * (1 - var(--dist, 0)));
+  animation: dr-next-spin 14s linear infinite;
+}
+/* the sphere's light: a soft highlight up and to the left, so the flat
+   gradient reads as a body, not a sticker */
+.dr-next-shape::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: radial-gradient(circle at 34% 30%, rgba(255, 255, 255, .55), transparent 52%),
+              radial-gradient(circle at 70% 78%, rgba(12, 12, 15, .35), transparent 60%);
+}
+.dr-next-say {
+  position: relative; z-index: 1; white-space: nowrap;
+  font-family: var(--font-archivo), sans-serif; font-variation-settings: "wdth" 100, "wght" 600; font-weight: 600;
+  font-size: min(6vw, 5.6rem); letter-spacing: -0.045em; line-height: 1; color: #fff;
+  text-shadow: 0 2px 30px rgba(12, 12, 15, .35);
+}
+/* the letters assemble as the card centres: each on the same number,
+   staggered by its index — 0 at the rail's edge, all in by the centre */
+.dr-next-say span {
+  display: inline-block;
+  --r: clamp(0, (1 - var(--dist, 0) * 2.2) * 1.9 - var(--c) * .05, 1);
+  opacity: var(--r);
+  translate: 0 calc((1 - var(--r)) * .45em);
+}
+/* the mark file is WHITE (public/brand/eas-mark.svg) — on a white tile it vanished */
+.dr-next-mark { background: #1c1c22; padding: 8px; object-fit: contain; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12); }
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .dr-work-tile--next { --dist: 0; --ndc: 0; }
+  .dr-next-shape { animation: none; }
+  .dr-next-say { font-size: 7.4vw; }
+}

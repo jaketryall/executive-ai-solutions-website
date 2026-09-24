@@ -117,7 +117,7 @@ export default function OfferShow({
   }, [inUse]);
   if (one)
     return (
-      <section className="dr-show dr-show--one" aria-label="What we make" ref={ref}>
+      <section className="dr-show dr-show--one" id="services" aria-label="What we make" ref={ref}>
         <ol className="dr-stack">
           {ITEMS.map((it) => (
             <li

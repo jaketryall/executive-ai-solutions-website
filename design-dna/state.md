@@ -584,3 +584,5 @@ The page, top to bottom: the hero (the personal-message title fitted to the colu
 **Next after that:** fold the chosen tokens into the default and delete the losers (housekeeping is overdue); the rest of the Lando plan (step 9 `sign`: the close's mark writes itself once; the cursor-light on the lines; one text vocabulary, each its own call).
 
 **Later still (2026-09-23):** services no longer pin (`flow`) and their cards have no hover; the work pills are back at the top of each card (covers cropped so the sites' own navs sit above the card); `workfirst` puts the rail straight after the poster (22% down, Lando's place) and the priced services after it. Current full link: `/?v=answer+survey+aud+hold+roll+one+flow+hcard+noc+noruns+after+price+vone+svc+workfirst` (compare without `workfirst` — add `dwlast` back — for services-first).
+
+**+ `next`** (2026-09-23): the rail's 4th card is the visitor's own — "Yours could be next." on a gradient that morphs card → orb, the pill with their niche; it hands to the services. Full link now: `/?v=answer+survey+aud+hold+roll+one+flow+hcard+noc+noruns+after+price+vone+svc+workfirst+next`.

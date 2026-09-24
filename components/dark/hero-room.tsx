@@ -1319,6 +1319,7 @@ export default function DarkRoom({
           hcard={has("hcard")}
           dwlast={has("dwlast")}
           workfirst={has("workfirst")}
+          next={has("next")}
         />
       </div>
       {/* `?v=workfirst` (2026-09-23 — Jake: "do you think works should be

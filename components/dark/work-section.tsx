@@ -19,6 +19,15 @@ import { audienceIndex } from "@/components/dark/services-section";
 /* `?v=dwlast` (2026-09-23, layout review #4): the audience word the ad
    named (services-section.tsx's loose match) → the case that proves it */
 const CASE_FOR_AUDIENCE: Record<number, string> = { 1: "desert-wings", 2: "riled-up", 4: "aahg" };
+/* the "yours could be next" card's niche, from the same match */
+const NICHE_FOR_AUDIENCE: Record<number, string> = {
+  1: "Flight school",
+  2: "Coaching",
+  3: "Clinic",
+  4: "Nonprofit",
+  5: "Contracting",
+};
+const NEXT_SAY = "Yours could be next.";
 
 /* §03 · THE WORK, v5 → THE RAIL STEPS (2026-09-19). Supersedes v5's own
    continuous scrub (caa3f58, "one row, sticky") on Jake's call: "can we
@@ -150,6 +159,7 @@ export default function WorkSection({
   hcard = false,
   dwlast = false,
   workfirst = false,
+  next = false,
 }: {
   paper?: boolean;
   gallery?: boolean;
@@ -157,6 +167,7 @@ export default function WorkSection({
   hcard?: boolean;
   dwlast?: boolean;
   workfirst?: boolean;
+  next?: boolean;
 }) {
   /* `dwlast` — Jake: "yea build 1 to 4". Desert Wings has already been
      the film, all three service photographs and (as card one) the same
@@ -167,14 +178,20 @@ export default function WorkSection({
      case leads (a coach from a pickleball ad sees Riled Up first). The
      persona is session storage, so it is read after mount. */
   const [lead, setLead] = useState<string | null>(null);
+  const [niche, setNiche] = useState("Yours");
   useEffect(() => {
-    if (!dwlast && !workfirst) return;
+    if (!dwlast && !workfirst && !next) return;
     capturePersona();
-    const slug = CASE_FOR_AUDIENCE[audienceIndex(getPersona().i)] ?? null;
-    if (!slug) return;
-    const id = requestAnimationFrame(() => setLead(slug));
+    const a = audienceIndex(getPersona().i);
+    const slug = CASE_FOR_AUDIENCE[a] ?? null;
+    const label = NICHE_FOR_AUDIENCE[a] ?? null;
+    if (!slug && !label) return;
+    const id = requestAnimationFrame(() => {
+      if (slug && (dwlast || workfirst)) setLead(slug);
+      if (label) setNiche(label);
+    });
     return () => cancelAnimationFrame(id);
-  }, [dwlast, workfirst]);
+  }, [dwlast, workfirst, next]);
   /* `?v=hcard` (2026-09-23 — Jake: "i wanted our horizontal scroll for
      works just with the card"): the rail he loves, one Cosmos card per
      case instead of three tiles — each card the case's cover, bigger,
@@ -183,7 +200,10 @@ export default function WorkSection({
      centre for a real beat before the next slides in, so the rail shows
      one thing at a time without steps. */
   const PER = hcard ? 1 : SHOTS_PER_PROJECT;
-  const TRAVEL = hcard ? 200 : TRAVEL_SVH;
+  /* `?v=next` adds one card to the rail (the visitor's own), so one more
+     100svh window */
+  const NEXT = next && hcard;
+  const TRAVEL = hcard ? (NEXT ? 300 : 200) : TRAVEL_SVH;
   const cases = PROJECTS.filter((p) => p.slug !== OURS && p.cover);
   if (workfirst) {
     /* with the rail straight after the hero, Desert Wings can neither open
@@ -213,7 +233,7 @@ export default function WorkSection({
       .slice(0, PER)
       .map((shot, i) => ({ shot, project: p, k, first: i === 0 }))
   );
-  const n = tiles.length;
+  const n = tiles.length + (NEXT ? 1 : 0);
   const stageRef = useRef<HTMLDivElement>(null);
   const railRef = useRef<HTMLOListElement>(null);
   /* the two clocks' pinned ends are the band's own geometry, not a
@@ -519,6 +539,59 @@ export default function WorkSection({
                   </Link>
                 </li>
               ))}
+              {/* ══ `?v=next` · YOURS COULD BE NEXT (2026-09-23 — Jake, with
+                  itsoffbrand.com's hero: "something like this off brand has
+                  the shape transform text thing, it would be cool to have
+                  something like this at the end of work section and then
+                  say yours could be next check out our services … thats the
+                  services entrance"). THE RAIL'S LAST CARD IS THE VISITOR'S:
+                  the same card and pill as the cases, the pill filled with
+                  THEIR facts (their niche when the ad named one). Off+Brand's
+                  move, measured on their hero (frames/offbrand-x): their "+"
+                  morphs into a soft gradient orb while the words assemble
+                  letter by letter around it. Ours runs on the rail's own
+                  position (--dist: 1 at the edge, 0 centred): a card-shaped
+                  gradient becomes an orb, and the line assembles, as the card
+                  reaches the centre — pure f(scroll), both ways. The gradient
+                  turns on its own clock (always moving). It links to the
+                  services, which follow. No hover (a big surface under a
+                  parked cursor, 2026-09-23). ══ */}
+              {NEXT && (
+                <li className="dr-work-tile dr-work-tile--next" style={{ "--i": tiles.length } as CSSProperties}>
+                  <a href="#services" className="dr-work-card dr-next-card" aria-label="Yours could be next — see the services">
+                    <span className="dr-next-shape" aria-hidden />
+                    <span className="dr-next-say" aria-hidden>
+                      {NEXT_SAY.split("").map((ch, c) => (
+                        <span key={c} style={{ "--c": c } as CSSProperties}>
+                          {ch === " " ? "\u00a0" : ch}
+                        </span>
+                      ))}
+                    </span>
+                    <span className="dr-work-pill">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img className="dr-work-thumb dr-next-mark" src="/brand/eas-mark.svg" alt="" width={36} height={36} />
+                      <span className="dr-work-name">Your business</span>
+                      {(
+                        [
+                          ["Year", "2026"],
+                          ["Niche", niche],
+                          ["Built", "Website · Automation · Ads"],
+                        ] as const
+                      ).map(([k, v]) => (
+                        <span className="dr-work-meta" key={k}>
+                          <i className="dr-work-sep" aria-hidden />
+                          <span className="dr-work-meta-k">{k}</span>
+                          <span className="dr-work-meta-v">{v}</span>
+                        </span>
+                      ))}
+                      <i className="dr-work-sep" aria-hidden />
+                      <span className="dr-work-see">
+                        <Roll label="See the services" />
+                      </span>
+                    </span>
+                  </a>
+                </li>
+              )}
             </ol>
           </div>
 
