@@ -596,3 +596,5 @@ The page, top to bottom: the hero (the personal-message title fitted to the colu
 **+ shapes for `yours`** (2026-09-23): `yx` (Off+Brand's kind of X, goo-joined arms, becomes the background — silhouette close to their mark) and `ylogo` (the EA mark itself, same path — our mark doing what theirs does). Also `yblob` / `yspark` / `ypill`. Links: `…+workfirst+yours+yx` · `…+workfirst+yours+ylogo`.
 
 **+ `ymorph`** (2026-09-23): the EA mark rendered live in WebGL (its outline always flowing, stirred by the scroll), with the words, then to the RIGHT of the service cards (cards step left). Link: `/?v=answer+survey+aud+hold+roll+one+flow+hcard+noc+noruns+after+price+vone+svc+workfirst+yours+ymorph`.
+
+**+ `nlogo`** (2026-09-23): `next` (the rail's last card) with the EA mark as its shape instead of the card → orb. Link: `/?v=answer+survey+aud+hold+roll+one+flow+hcard+noc+noruns+after+price+vone+svc+workfirst+next+nlogo`.

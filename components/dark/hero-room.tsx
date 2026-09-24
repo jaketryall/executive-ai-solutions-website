@@ -1346,6 +1346,7 @@ export default function DarkRoom({
           next={has("next")}
           grow={has("grow")}
           orb={has("orb")}
+          nlogo={has("nlogo")}
         />
       </div>
       {/* `?v=workfirst` (2026-09-23 — Jake: "do you think works should be

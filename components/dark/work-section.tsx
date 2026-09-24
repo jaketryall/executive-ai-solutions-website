@@ -162,6 +162,7 @@ export default function WorkSection({
   next = false,
   grow = false,
   orb = false,
+  nlogo = false,
 }: {
   paper?: boolean;
   gallery?: boolean;
@@ -172,6 +173,7 @@ export default function WorkSection({
   next?: boolean;
   grow?: boolean;
   orb?: boolean;
+  nlogo?: boolean;
 }) {
   /* `dwlast` — Jake: "yea build 1 to 4". Desert Wings has already been
      the film, all three service photographs and (as card one) the same
@@ -409,6 +411,10 @@ export default function WorkSection({
         data-hcard={hcard ? "" : undefined}
         data-next-grow={GROW || ORB ? "" : undefined}
         data-next-orb={ORB ? "" : undefined}
+        /* `?v=next+nlogo` (2026-09-23 — Jake: "can we try my logo instead
+           of what the shape is in that one"): the same card, pill and
+           assembling line; the shape is the EA mark (room.css) */
+        data-next-logo={NEXT && nlogo ? "" : undefined}
         data-sp
         data-sp-edge="top"
         data-sp-from="0"
