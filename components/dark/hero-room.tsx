@@ -770,7 +770,19 @@ export default function DarkRoom({
           stays on screen while the page flows past it */}
       {has("yours") && (
         <YoursOrb
-          shape={has("yx") ? "x" : has("yblob") ? "blob" : has("yspark") ? "spark" : has("ypill") ? "pill" : undefined}
+          shape={
+            has("ylogo")
+              ? "logo"
+              : has("yx")
+                ? "x"
+                : has("yblob")
+                  ? "blob"
+                  : has("yspark")
+                    ? "spark"
+                    : has("ypill")
+                      ? "pill"
+                      : undefined
+          }
         />
       )}
       <div className="dr-atmos" aria-hidden>
