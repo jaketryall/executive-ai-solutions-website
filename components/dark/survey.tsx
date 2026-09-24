@@ -83,8 +83,8 @@ const A_DAY = 0.14; // black line core on paper
    and the same time warp makes them breathe. It is NOT the mark in the
    background (the wall, removed 2026-09-20): no fill, no outline, only
    lines that bunch around a shape you find if you look for it. */
-const SDF_N = 512; // the distance field's texture
-const SDF_BOX = 300; // the mark's 500-unit box drawn this many texels wide, centred
+export const SDF_N = 512; // the distance field's texture
+export const SDF_BOX = 300; // the mark's 500-unit box drawn this many texels wide, centred
 /* two readings of the mark. TIGHT (`?v=survey+mark`): the rings follow the
    letters — Jake: "i like the hills better it feels too tight right
    now". LOOSE (`?v=survey+loose`): the field blurred until the letters
@@ -129,7 +129,7 @@ function edt(g: Float64Array, n: number) {
   for (let y = 0; y < n; y++) edt1d(g, y * n, 1, n, f, v, z);
 }
 /* the mark's signed distance, in mark-box widths (negative inside) */
-function markField(R: number, passes: number): Float32Array | null {
+export function markField(R: number, passes: number): Float32Array | null {
   const c = document.createElement("canvas");
   c.width = c.height = SDF_N;
   const ctx = c.getContext("2d");

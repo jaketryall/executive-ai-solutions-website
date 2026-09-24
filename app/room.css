@@ -7533,3 +7533,30 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
   animation: dr-yx-sway 9s ease-in-out infinite alternate;
 }
 @media (prefers-reduced-motion: reduce) { .dr-yorb--logo .dr-yorb-body { animation: none; } }
+
+/* ══ `?v=yours+ymorph` · THE MARK, ALIVE, RIGHT OF THE CARDS (mark-morph.tsx)
+   The fixed layer on the room's clocks: it comes up among the words
+   (small → its size as --yin opens), then is CARRIED to the right column
+   (+27vw: its centre at ~77vw) as the services arrive — beside the cards,
+   not behind them — then slides further right and fades before the
+   voices (--yout). The shape itself never stops moving (the shader). */
+.dr-mmorph {
+  position: fixed; left: 50%; top: 50%; z-index: -1; pointer-events: none;
+  width: 72svh; aspect-ratio: 1; margin: -36svh 0 0 -36svh;
+  --a: clamp(0, var(--yin, 0) / .35, 1);
+  --g: clamp(0, (var(--yin, 0) - .52) / .48, 1);
+  --x: clamp(0, var(--yout, 0), 1);
+  translate: calc(var(--g) * 27vw + var(--x) * 30vw) calc(var(--g) * 2svh);
+  scale: calc((.3 + .7 * var(--a)) * (1 + .08 * var(--g)));
+  opacity: calc(var(--a) * (1 - var(--x)));
+  will-change: transform, opacity;
+}
+.dr-mmorph canvas { display: block; width: 100%; height: 100%; }
+/* the services step LEFT so the mark has the right column */
+.dr-root:has(.dr-hero-wrap[data-v~="ymorph"]) .dr-show--one .dr-stack-item { justify-items: start; padding-left: var(--col-inset); }
+.dr-root:has(.dr-hero-wrap[data-v~="ymorph"]) .dr-show--one .dr-stack-wrap { width: min(54vw, 920px, calc((100svh - 150px) * 1.6)); }
+@media (max-width: 900px) {
+  /* no right column on a phone: the mark stays with the words, then goes */
+  .dr-mmorph { width: 80vw; margin: -40vw 0 0 -40vw; translate: 0 0; opacity: calc(var(--a) * (1 - var(--g))); }
+  .dr-root:has(.dr-hero-wrap[data-v~="ymorph"]) .dr-show--one .dr-stack-wrap { width: 100%; }
+}

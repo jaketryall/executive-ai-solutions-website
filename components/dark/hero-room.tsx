@@ -11,6 +11,7 @@ import OfferShow from "@/components/dark/offer-show";
 import Survey from "@/components/dark/survey";
 import Ticker from "@/components/dark/ticker";
 import YoursNext, { YoursOrb, YoursOut } from "@/components/dark/yours-next";
+import MarkMorph from "@/components/dark/mark-morph";
 import FilmSlice from "@/components/dark/film-slice";
 import WorkSection from "@/components/dark/work-section";
 import VoicesSection from "@/components/dark/voices-section";
@@ -768,7 +769,10 @@ export default function DarkRoom({
       {has("survey") && <Survey mark={has("loose") ? "loose" : has("mark") ? "tight" : undefined} />}
       {/* `?v=yours`: Off+Brand's fixed orb (yours-next.tsx) — a light that
           stays on screen while the page flows past it */}
-      {has("yours") && (
+      {/* `ymorph`: the EA mark as a live WebGL body, to the right of the
+          service cards (mark-morph.tsx) — replaces the CSS-mask shapes */}
+      {has("yours") && has("ymorph") && <MarkMorph />}
+      {has("yours") && !has("ymorph") && (
         <YoursOrb
           shape={
             has("ylogo")
