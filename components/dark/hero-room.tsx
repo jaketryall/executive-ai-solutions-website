@@ -769,7 +769,9 @@ export default function DarkRoom({
       {/* `?v=yours`: Off+Brand's fixed orb (yours-next.tsx) — a light that
           stays on screen while the page flows past it */}
       {has("yours") && (
-        <YoursOrb shape={has("yblob") ? "blob" : has("yspark") ? "spark" : has("ypill") ? "pill" : undefined} />
+        <YoursOrb
+          shape={has("yx") ? "x" : has("yblob") ? "blob" : has("yspark") ? "spark" : has("ypill") ? "pill" : undefined}
+        />
       )}
       <div className="dr-atmos" aria-hidden>
         <div className="dr-key" />

@@ -7477,3 +7477,34 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
   border-radius: 0; animation: none; rotate: calc(-24deg + var(--yin, 0) * 40deg);
   width: 120svh; margin: -60svh 0 0 -60svh;
 }
+
+/* ══ `?v=yours+yx` · THEIR KIND OF SHAPE, BECOMING THE BACKGROUND ═════
+   Jake: "i really want something more like the off brand one, the shape
+   to the right as you scroll it grows and scales and becomes the
+   background". Theirs (his screenshot): a plus laid on its side — four
+   thick rounded arms whose centre joins are smooth concave fillets — in a
+   soft blue → lavender → pink. Ours is built, not traced: two rounded
+   bars crossed at 42°/−48°, merged by a goo filter (a blur and an alpha
+   threshold) so the joins run liquid, as an SVG mask over the gradient.
+   On the path it drifts right, turns ~34° and grows to 2.6× — past a
+   "big object on the right" into THE BACKGROUND behind the services —
+   with a slow idle sway so it never stops. */
+.dr-yorb--x {
+  --os: calc((.22 + .78 * var(--a)) * (1 + 1.6 * var(--g)) * (1 - .92 * var(--x)));
+}
+.dr-yorb--x .dr-yorb-body, .dr-yorb--x .dr-yorb-ring {
+  translate: calc(var(--g) * 34vw - var(--x) * 72vw) calc(var(--x) * 10svh - var(--g) * 6svh);
+}
+.dr-yorb--x .dr-yorb-body {
+  width: 96svh; margin: -48svh 0 0 -48svh;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><filter id='g' x='-10%' y='-10%' width='120%' height='120%'><feGaussianBlur stdDeviation='3.2'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 26 -11'/></filter></defs><g filter='url(%23g)'><rect x='9' y='41.5' width='82' height='17' rx='8.5' transform='rotate(42 50 50)'/><rect x='9' y='41.5' width='82' height='17' rx='8.5' transform='rotate(-48 50 50)'/></g></svg>"); mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><filter id='g' x='-10%' y='-10%' width='120%' height='120%'><feGaussianBlur stdDeviation='3.2'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 26 -11'/></filter></defs><g filter='url(%23g)'><rect x='9' y='41.5' width='82' height='17' rx='8.5' transform='rotate(42 50 50)'/><rect x='9' y='41.5' width='82' height='17' rx='8.5' transform='rotate(-48 50 50)'/></g></svg>");
+  -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+  border-radius: 0;
+  background:
+    radial-gradient(circle at 60% 44%, rgba(255, 255, 255, .22), rgba(255, 255, 255, 0) 40%),
+    linear-gradient(225deg, #ef839d 0%, #c79bc6 42%, #9fb2dd 66%, #6fbde8 100%);
+  rotate: calc(-6deg + var(--g) * 34deg);
+  animation: dr-yx-sway 9s ease-in-out infinite alternate;
+}
+@keyframes dr-yx-sway { from { transform: rotate(-2.5deg) scale(.985); } to { transform: rotate(2.5deg) scale(1.015); } }
+@media (prefers-reduced-motion: reduce) { .dr-yorb--x .dr-yorb-body { animation: none; } }

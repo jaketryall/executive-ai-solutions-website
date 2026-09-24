@@ -48,7 +48,7 @@ const rnd = (i: number) => {
    OFF+BRAND), so ours is not our mark either — three shapes of our own on
    the same fixed path and gradient: a living blob, a four-point spark,
    a pill (the site's own recurring object). The circle stays the default. */
-export function YoursOrb({ shape }: { shape?: "blob" | "spark" | "pill" }) {
+export function YoursOrb({ shape }: { shape?: "blob" | "spark" | "pill" | "x" }) {
   return (
     <div className={`dr-yorb${shape ? ` dr-yorb--${shape}` : ""}`} aria-hidden>
       <span className="dr-yorb-ring dr-yorb-ring--1" />
