@@ -10,6 +10,7 @@ import VoicesTiles from "@/components/dark/voices-tiles";
 import OfferShow from "@/components/dark/offer-show";
 import Survey from "@/components/dark/survey";
 import Ticker from "@/components/dark/ticker";
+import YoursNext, { YoursOrb, YoursOut } from "@/components/dark/yours-next";
 import FilmSlice from "@/components/dark/film-slice";
 import WorkSection from "@/components/dark/work-section";
 import VoicesSection from "@/components/dark/voices-section";
@@ -765,6 +766,9 @@ export default function DarkRoom({
       {/* THE GROUND (`?v=survey`, step 1 of design-dna/lando-ground-plan.md):
           Lando's contour field, under every section (survey.tsx) */}
       {has("survey") && <Survey mark={has("loose") ? "loose" : has("mark") ? "tight" : undefined} />}
+      {/* `?v=yours`: Off+Brand's fixed orb (yours-next.tsx) — a light that
+          stays on screen while the page flows past it */}
+      {has("yours") && <YoursOrb />}
       <div className="dr-atmos" aria-hidden>
         <div className="dr-key" />
       </div>
@@ -1330,9 +1334,11 @@ export default function DarkRoom({
           way down, where Lando keeps his spectacle — and the services, now
           priced, land after it, next to the voices and the price door where
           the visitor is deciding. */}
+      {has("yours") && <YoursNext />}
       {(has("show") || has("one")) && has("workfirst") && (
         <OfferShow inUse={has("inuse")} one={has("one")} price={has("price")} />
       )}
+      {has("yours") && <YoursOut />}
       {has("apart") && (
         <OfferMore lamps={false} doors={OFFER_NAV.filter((d) => d.href !== "/work")} />
       )}

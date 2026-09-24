@@ -590,3 +590,5 @@ The page, top to bottom: the hero (the personal-message title fitted to the colu
 **+ `grow`** (2026-09-23): with `next`, the orb starts as a dot, reaches its circle as the card centres, then grows to fill the screen inside the rail's hold (the line turns to ink). Jake prefers this direction; `next` alone (card → orb) is kept. Link: `/?v=answer+survey+aud+hold+roll+one+flow+hcard+noc+noruns+after+price+vone+svc+workfirst+next+grow`.
 
 **+ `orb`** (2026-09-23, Jake: "just an object no box and as you scroll the words come in"): with `next`, the rail's last slot is the orb alone; "Yours / could be / next." arrive one by one around it, dark where they cross it. Link: `/?v=answer+survey+aud+hold+roll+one+flow+hcard+noc+noruns+after+price+vone+svc+workfirst+next+orb` (`next+grow` = fills the screen; `next` = card → orb).
+
+**+ `yours`** (2026-09-23, after the proper decode, decodes/offbrand-hero.md): Off+Brand's orb as they do it, a FIXED light, nothing pinned, the words in flow with masked letters. Replaces the rail-card versions (`next`, `grow`, `orb`, kept). Link: `/?v=answer+survey+aud+hold+roll+one+flow+hcard+noc+noruns+after+price+vone+svc+workfirst+yours`.
