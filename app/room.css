@@ -7312,3 +7312,62 @@ body:has(.dr-root.dr-day .dr-hero-wrap[data-v~="shade"]) { background: #dcdce0; 
 @media (max-width: 900px), (prefers-reduced-motion: reduce) {
   .dr-work-stage[data-next-grow] { --xg: 0; }
 }
+
+/* ══ `?v=next+orb` · JUST THE OBJECT, THE WORDS COME IN (2026-09-23) ══
+   Jake: "i want it to be more like theirs where its just an object no
+   box and as you scroll the words come in". The rail's last slot has no
+   card and no pill: the orb alone on the ground. It arrives with the
+   rail as a small body (.16) and swells to its circle as it centres,
+   then across the hold (--xg over 1.6 windows) it keeps growing gently
+   (to 1.7×, not the screen) while the three words arrive one by one in
+   Off+Brand's placement around it — "Yours" high left, "could be" right,
+   "next." low left — each on its own window of --xg, letters staggered.
+   The words are white on the void and INVERT over the light body
+   (difference), the way theirs stay legible over their orb. */
+.dr-root .dr-work-stage[data-next-orb] .dr-work-tile--next .dr-next-card.dr-next-card { background: transparent; overflow: visible; box-shadow: none; }
+.dr-work-stage[data-next-orb] .dr-work-tile--next .dr-work-pill,
+.dr-work-stage[data-next-orb] .dr-work-tile--next .dr-next-say { display: none; }
+.dr-work-stage[data-next-orb] .dr-next-shape {
+  height: 58%;
+  scale: calc((.16 + .84 * (1 - var(--dist, 0))) * (1 + .7 * var(--xg, 0)));
+  box-shadow: 0 0 160px 30px rgba(109, 123, 255, .22);
+}
+.dr-orb-words {
+  position: absolute; inset: -6% -10%; z-index: 1; pointer-events: none;
+  color: #fff;
+  /* the orb's scale, for the ink copy's mask (the same product the shape
+     uses) — radius = 29% of the tile's height × this */
+  --os: calc((.16 + .84 * (1 - var(--dist, 0))) * (1 + .7 * var(--xg, 0)));
+  font-family: var(--font-archivo), sans-serif; font-variation-settings: "wdth" 100, "wght" 600; font-weight: 600;
+  font-size: min(8.4vw, 8.2rem); letter-spacing: -0.045em; line-height: 1;
+}
+.dr-orb-w { position: absolute; white-space: nowrap; }
+.dr-orb-w--0 { left: 4%; top: 8%; }
+.dr-orb-w--1 { right: 4%; top: 42%; }
+.dr-orb-w--2 { left: 12%; bottom: 8%; }
+/* each word's own window of the hold: .05–.33, .33–.61, .61–.89 */
+.dr-orb-w span {
+  display: inline-block;
+  --r: clamp(0, (var(--xg, 0) - .05 - var(--w) * .28) / .2 * 1.6 - var(--c) * .09, 1);
+  opacity: var(--r);
+  translate: 0 calc((1 - var(--r)) * .5em);
+  filter: blur(calc((1 - var(--r)) * 6px));
+}
+.dr-orb-more {
+  position: absolute; left: 50%; bottom: -2%; translate: -50% 0;
+  font-family: var(--font-instrument), sans-serif; font-size: 15px; letter-spacing: -0.01em;
+  mix-blend-mode: normal; color: var(--ink-3);
+  opacity: clamp(0, (var(--xg, 0) - .86) / .1, 1);
+}
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .dr-work-stage[data-next-orb] .dr-orb-w span { --r: 1; filter: none; }
+  .dr-orb-more { opacity: 1; }
+  .dr-orb-words { font-size: 11vw; }
+}
+/* the ink copy: the same words, dark, visible only inside the orb's
+   circle (a radial mask of the orb's own radius, centred like the orb) */
+.dr-orb-words--ink {
+  color: #0b0b0b; z-index: 2;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 calc(.29 * var(--th) * var(--os) - 1px), transparent calc(.29 * var(--th) * var(--os)));
+  mask-image: radial-gradient(circle at 50% 50%, #000 calc(.29 * var(--th) * var(--os) - 1px), transparent calc(.29 * var(--th) * var(--os)));
+}

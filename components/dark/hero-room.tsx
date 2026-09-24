@@ -1321,6 +1321,7 @@ export default function DarkRoom({
           workfirst={has("workfirst")}
           next={has("next")}
           grow={has("grow")}
+          orb={has("orb")}
         />
       </div>
       {/* `?v=workfirst` (2026-09-23 — Jake: "do you think works should be

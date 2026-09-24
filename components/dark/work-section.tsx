@@ -161,6 +161,7 @@ export default function WorkSection({
   workfirst = false,
   next = false,
   grow = false,
+  orb = false,
 }: {
   paper?: boolean;
   gallery?: boolean;
@@ -170,6 +171,7 @@ export default function WorkSection({
   workfirst?: boolean;
   next?: boolean;
   grow?: boolean;
+  orb?: boolean;
 }) {
   /* `dwlast` — Jake: "yea build 1 to 4". Desert Wings has already been
      the film, all three service photographs and (as card one) the same
@@ -210,9 +212,14 @@ export default function WorkSection({
      that"): the rail HOLDS on its last card for 1.2 more windows while
      the orb grows past the card to fill the screen (room.css, --xg) —
      inside the rail's own pin, so the page still has ONE pinned room. */
-  const GROW = NEXT && grow;
-  const XTRA = 1.2;
-  const TRAVEL = hcard ? (NEXT ? (GROW ? 100 * (3 + XTRA) : 300) : 200) : TRAVEL_SVH;
+  const GROW = NEXT && grow && !orb;
+  /* `?v=next+orb` (2026-09-23 — Jake: "i want it to be more like theirs
+     where its just an object no box and as you scroll the words come
+     in"): no card, no pill — the orb alone on the ground, and the three
+     words arriving one by one across the hold */
+  const ORB = NEXT && orb;
+  const XTRA = ORB ? 1.6 : 1.2;
+  const TRAVEL = hcard ? (NEXT ? (GROW || ORB ? 100 * (3 + XTRA) : 300) : 200) : TRAVEL_SVH;
   const cases = PROJECTS.filter((p) => p.slug !== OURS && p.cover);
   if (workfirst) {
     /* with the rail straight after the hero, Desert Wings can neither open
@@ -400,7 +407,8 @@ export default function WorkSection({
         ref={stageRef}
         style={{ "--n": n, "--travel": `${TRAVEL}svh`, "--xtra": XTRA } as CSSProperties}
         data-hcard={hcard ? "" : undefined}
-        data-next-grow={GROW ? "" : undefined}
+        data-next-grow={GROW || ORB ? "" : undefined}
+        data-next-orb={ORB ? "" : undefined}
         data-sp
         data-sp-edge="top"
         data-sp-from="0"
@@ -570,6 +578,32 @@ export default function WorkSection({
                 <li className="dr-work-tile dr-work-tile--next" style={{ "--i": tiles.length } as CSSProperties}>
                   <a href="#services" className="dr-work-card dr-next-card" aria-label="Yours could be next — see the services">
                     <span className="dr-next-shape" aria-hidden />
+                    {ORB && (
+                      /* the three words, Off+Brand's placement around the
+                         object ("A DIFFERENT / CREATIVE / APPROACH"): each
+                         its own window of the hold, letters staggered */
+                      /* TWO COPIES: white on the ground, and an ink copy masked
+                         to the orb's own circle — so a word that crosses the
+                         body turns dark exactly where it crosses (theirs stay
+                         legible over their orb); a difference blend turned
+                         the letters green over the pink (first cut) */
+                      <>
+                        {(["", " dr-orb-words--ink"] as const).map((ink) => (
+                          <span className={`dr-orb-words${ink}`} aria-hidden key={ink || "w"}>
+                            {["Yours", "could be", "next."].map((w, k) => (
+                              <span className={`dr-orb-w dr-orb-w--${k}`} key={w} style={{ "--w": k } as CSSProperties}>
+                                {w.split("").map((ch, c) => (
+                                  <span key={c} style={{ "--c": c } as CSSProperties}>
+                                    {ch === " " ? "\u00a0" : ch}
+                                  </span>
+                                ))}
+                              </span>
+                            ))}
+                            {!ink && <span className="dr-orb-more">See the services ↓</span>}
+                          </span>
+                        ))}
+                      </>
+                    )}
                     <span className="dr-next-say" aria-hidden>
                       {NEXT_SAY.split("").map((ch, c) => (
                         <span key={c} style={{ "--c": c } as CSSProperties}>
