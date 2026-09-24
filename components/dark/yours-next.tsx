@@ -43,9 +43,14 @@ const rnd = (i: number) => {
   return v - Math.floor(v);
 };
 
-export function YoursOrb() {
+/* `shape` (2026-09-23 — Jake: "i want the shape to not be a circle im
+   worried about the logo though"): theirs is THEIR mark (the + of
+   OFF+BRAND), so ours is not our mark either — three shapes of our own on
+   the same fixed path and gradient: a living blob, a four-point spark,
+   a pill (the site's own recurring object). The circle stays the default. */
+export function YoursOrb({ shape }: { shape?: "blob" | "spark" | "pill" }) {
   return (
-    <div className="dr-yorb" aria-hidden>
+    <div className={`dr-yorb${shape ? ` dr-yorb--${shape}` : ""}`} aria-hidden>
       <span className="dr-yorb-ring dr-yorb-ring--1" />
       <span className="dr-yorb-ring dr-yorb-ring--2" />
       <span className="dr-yorb-body" />

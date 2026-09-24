@@ -768,7 +768,9 @@ export default function DarkRoom({
       {has("survey") && <Survey mark={has("loose") ? "loose" : has("mark") ? "tight" : undefined} />}
       {/* `?v=yours`: Off+Brand's fixed orb (yours-next.tsx) — a light that
           stays on screen while the page flows past it */}
-      {has("yours") && <YoursOrb />}
+      {has("yours") && (
+        <YoursOrb shape={has("yblob") ? "blob" : has("yspark") ? "spark" : has("ypill") ? "pill" : undefined} />
+      )}
       <div className="dr-atmos" aria-hidden>
         <div className="dr-key" />
       </div>
